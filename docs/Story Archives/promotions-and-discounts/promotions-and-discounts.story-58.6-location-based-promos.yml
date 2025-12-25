@@ -1,0 +1,24 @@
+id: story-58.6
+epic: promotions-and-discounts
+slug: location-based-promos
+title: Enable Location-Based Promotions
+status: Done
+author: Bob (sm)
+date: '2024-08-09T18:55:00Z'
+
+description: >
+  As a marketing manager, I want to create promotions that are only valid for
+  trips starting or ending within a specific geographic area, so I can drive
+  traffic to or from certain locations.
+
+acceptance_criteria:
+  - When creating a promo code in the `admin-panel`, the admin must have an option to define a geofenced area (e.g., by drawing a polygon on a map).
+  - The admin can specify if the rule applies to the trip's origin, destination, or both.
+  - The `incentive-service` must check the trip's coordinates against the promo code's geofence rules before validating the code.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/promotions/page.tsx # To add geofencing UI
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To add geofence validation logic
+
+dev_notes: >
+  This is a powerful tool for strategic marketing (e.g., promoting rides to a concert, encouraging airport trips). It requires a geospatial library on the backend to handle the point-in-polygon calculations.

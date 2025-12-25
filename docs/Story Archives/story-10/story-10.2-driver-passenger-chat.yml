@@ -1,0 +1,95 @@
+id: story-10.2
+epic: epic-10.0
+slug: driver-passenger-chat
+title: Implement Driver-Passenger Chat
+status: Done
+author: Sarah (po)
+date: '2024-06-28T15:05:00Z'
+
+description: >
+  As a driver or passenger, I want to be able to send and receive messages
+  with the other party during an active trip, so that we can easily
+  coordinate pickup details or communicate about any trip-related issues.
+
+acceptance_criteria:
+  - A new "Chat" screen is created in both the `passenger-app` and `driver-app`.
+  - A "Chat" button or icon is added to the active trip screen in both apps, visible only during an active trip.
+  - Tapping the "Chat" button navigates the user to the new chat screen.
+  - The chat screen must establish a WebSocket connection to the `chat-service`, authenticating with a mock JWT.
+  - Upon connecting, the client must join a room specific to the current `tripId`.
+  - The screen must display a list of messages for the current trip.
+  - A text input field and a "Send" button must be available to send new messages.
+  - Sending a message must emit a `sendMessage` event to the WebSocket server with the `tripId` and message content.
+  - The app must listen for `newMessage` events from the server and display new messages in the UI in real-time.
+  - The UI must differentiate between messages sent by the current user and messages received from the other party (e.g., alignment).
+
+files_to_be_created:
+  - docs/stories/story-10.2-driver-passenger-chat.yml
+  - Cabi Alpha/mobile/passenger_app/lib/screens/chat_screen.dart
+  - Cabi Alpha/mobile/driver_app/lib/screens/chat_screen.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/active_trip_screen.dart # To add chat button
+  - Cabi Alpha/mobile/driver_app/lib/screens/active_trip_screen.dart # To add chat button
+
+dev_notes: >
+  This story builds directly on the `chat-service` created in `story-10.1`. It
+  will require a WebSocket client library in Flutter (e.g., `socket_io_client`).
+  The UI should be a standard chat interface. For this story, chat history is
+  ephemeral and only exists for the duration of the connection.
+
+tasks:
+  - id: task-1
+    description: "Implement the frontend chat UI and logic for both apps."
+    subtasks:
+      - "[x] Create `chat_screen.dart` for both the passenger and driver apps."
+      - "[x] Implement WebSocket connection, room joining, and message handling using `socket_io_client`."
+      - "[x] Build a standard chat UI to display messages and a text input to send them."
+      - "[x] Create mock `active_trip_screen.dart` for both apps to provide an entry point to the chat screen."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  completion_notes:
+    - >-
+      All tasks for this story are complete. A new chat screen has been
+      created and integrated into both the passenger and driver apps. The
+      screen successfully connects to the `chat-service` backend, joins a
+      trip-specific room, and allows for real-time messaging. The feature is
+      now ready for QA review.
+  file_list:
+    - Cabi Alpha/mobile/passenger_app/lib/screens/chat_screen.dart
+    - Cabi Alpha/mobile/passenger_app/lib/screens/active_trip_screen.dart
+    - Cabi Alpha/mobile/driver_app/lib/screens/chat_screen.dart
+    - Cabi Alpha/mobile/driver_app/lib/screens/active_trip_screen.dart
+  change_log:
+    - file: Cabi Alpha/mobile/passenger_app/lib/screens/chat_screen.dart
+      change: Created the chat screen with WebSocket integration for real-time messaging.
+    - file: Cabi Alpha/mobile/passenger_app/lib/screens/active_trip_screen.dart
+      change: Created a mock screen to provide an entry point to the chat feature.
+    - file: Cabi Alpha/mobile/driver_app/lib/screens/chat_screen.dart
+      change: Created the chat screen for the driver app, with identical functionality to the passenger app's version.
+    - file: Cabi Alpha/mobile/driver_app/lib/screens/active_trip_screen.dart
+      change: Created a mock screen for the driver app to access the chat feature.
+
+qa_results:
+  - id: qa-1
+    date: '2024-06-28T15:30:00Z'
+    agent: Quinn (qa)
+    summary: >-
+      The implementation is excellent and meets all acceptance criteria. The
+      chat feature is functional in both the driver and passenger apps, with
+      real-time messaging working as expected.
+    requirements_traceability:
+      - criteria: "A new 'Chat' screen is created in both the `passenger-app` and `driver-app`."
+        test_case: "Given the project structure, when I inspect the apps, then `chat_screen.dart` exists in both."
+        status: PASS
+      - criteria: "The chat screen must establish a WebSocket connection... and join a room..."
+        test_case: "Given a user opens the chat screen, when the screen initializes, then it connects to the WebSocket server and joins the correct tripId room."
+        status: PASS
+      - criteria: "Sending a message must emit a `sendMessage` event... The app must listen for `newMessage` events..."
+        test_case: "Given two users are in the same chat room, when User A sends a message, then User B receives the message in real-time."
+        status: PASS
+      - criteria: "The UI must differentiate between messages sent by the current user and messages received..."
+        test_case: "Given a user is in a chat, when they send a message, then it appears aligned to the right. When they receive a message, then it appears aligned to the left."
+        status: PASS
+    gate_decision: PASS

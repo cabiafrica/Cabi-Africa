@@ -1,0 +1,26 @@
+id: story-48.3
+epic: driver-performance
+slug: driver-passenger-feedback-details
+title: Display Passenger Compliments and Improvement Areas
+status: Done
+author: Bob (sm)
+date: '2024-08-09T17:35:00Z'
+
+description: >
+  As a driver, I want to see the specific compliments and anonymous feedback
+  that passengers provide, so I can understand what I'm doing well and where I
+  can improve.
+
+acceptance_criteria:
+  - The "Performance" screen in the `driver-app` must be updated with a section for detailed feedback.
+  - This section should display aggregated counts of compliments received (e.g., "Clean Car," "Great Conversation").
+  - It should also show aggregated counts of selected areas for improvement.
+  - The feedback must be presented anonymously and not tied to a specific trip or rating to protect passenger privacy.
+  - The `analytics-service` must be updated to aggregate this feedback data.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/performance_screen.dart # To add the feedback UI
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To aggregate and expose feedback
+
+dev_notes: >
+  This feature provides crucial context to the driver's star rating, making it an actionable tool for improvement. This builds on the passenger rating feature (`story-20.2`).

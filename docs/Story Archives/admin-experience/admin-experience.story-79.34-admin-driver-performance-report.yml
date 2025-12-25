@@ -1,0 +1,31 @@
+id: story-79.34
+epic: admin-experience
+slug: admin-driver-performance-report
+title: "Admin: View Driver Performance Reports"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-06T22:15:00Z'
+
+description: >
+  As an operations manager, I need to view and filter reports on key driver performance metrics like acceptance rates,
+  cancellation rates, and online hours, so I can identify top performers and drivers who may need support.
+
+acceptance_criteria:
+  - A new "Driver Performance" page must be created under the "Reporting" section of the `admin-panel`.
+  - The page must display a data table of drivers with columns for key metrics: Name, Total Trips, Acceptance Rate (%), Cancellation Rate (%), Average Rating, and Total Online Hours.
+  - The report must be filterable by date range and city.
+  - The data in the table must be sortable by any of the metric columns.
+  - The UI must call a new backend endpoint (e.g., in an `analytics-service`) that aggregates this performance data from various sources (ride history, driver sessions, ratings).
+
+files_to_be_created:
+  - apps/admin-panel/src/app/reports/driver-performance/page.tsx
+  - # A new backend service/controller (e.g., analytics-service) for aggregating driver performance data.
+
+files_to_be_modified:
+  - # The main navigation in `admin-panel` to add a link to the new report page.
+
+dev_notes: >
+  This story provides a crucial analytics tool for the operations team, as required by the PRD (section 2.3). This is a data-intensive feature.
+
+  The main challenge is on the backend. A new service (or a new module in an existing service) will be needed to perform complex aggregations. This service will need to read data from the ride service (for trip counts and cancellations), the user service (for driver online sessions), and the rating service to compile a comprehensive performance profile for each driver. The queries should be optimized for performance, as they will run over large datasets.
+  PRD Reference: 2.3. Admin Panel -> Reporting & Analytics -> Driver Metrics Report

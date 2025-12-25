@@ -1,0 +1,32 @@
+id: story-79.1
+epic: admin-experience
+slug: admin-user-list-view
+title: Create Admin Panel with User List View
+status: Done
+author: Bob (sm)
+date: '2024-08-09T10:00:00Z'
+
+description: >
+  As an administrator, I need a basic web-based admin panel where I can
+  view a list of all registered users (both drivers and passengers),
+  so that I can begin to manage the user base.
+
+acceptance_criteria:
+  - A new `admin-panel` web application is created (e.g., using Next.js or a similar framework).
+  - The admin panel must be secured and require admin-level authentication.
+  - A new page is created that displays a paginated list of all users.
+  - The list must show key user information: Name, Email, User Type (Driver/Passenger), and Registration Date.
+  - The list must be sortable by each of these columns.
+  - Clicking on a user in the list should navigate to a placeholder user detail page (the full detail page will be built in another story).
+
+files_to_be_created:
+  - apps/admin-panel/src/app/users/page.tsx # The main user list page
+  - apps/admin-panel/src/app/users/[userId]/page.tsx # The placeholder detail page
+  - apps/admin-panel/src/components/users/user_table.tsx # The component for the user list table
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.controller.ts # To add an endpoint for fetching a paginated list of users
+  - libs/backend/user-service/src/lib/user.service.ts # To implement the logic for fetching users
+
+dev_notes: >
+  This is the foundational story for the entire `admin-experience` epic. It establishes the new `admin-panel` application and the primary user management interface. Authentication is a prerequisite and can be handled via a simple admin role check in the user service. The focus here is on displaying the data; creating/editing users will come in later stories.

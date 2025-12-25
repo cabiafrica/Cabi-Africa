@@ -1,0 +1,25 @@
+id: story-90.3
+epic: accessibility
+slug: color-contrast-review
+title: Review and Improve App-wide Color Contrast
+status: Done
+author: Bob (sm)
+date: '2024-08-09T14:25:00Z'
+
+description: >
+  As a user with low vision or color blindness, I need text and important UI
+  elements to have sufficient color contrast against their background, so that
+  I can easily perceive and interact with the app.
+
+acceptance_criteria:
+  - An audit of both `passenger-app` and `driver-app` must be conducted to identify all instances of text and icons that do not meet WCAG AA contrast ratio standards (4.5:1 for normal text, 3:1 for large text).
+  - The app's theme and color palette must be updated to use accessible color combinations.
+  - Key areas to check include buttons, input fields, informational text, and icons on the map.
+  - The changes must be verified using accessibility color contrast analyzer tools.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/core/theme/app_theme.dart
+  - Cabi Alpha/mobile/driver_app/lib/core/theme/app_theme.dart
+
+dev_notes: >
+  This story may require collaboration with a UI/UX designer to select a new, accessible color palette that still aligns with the brand. The focus is on ensuring legibility and clarity for all users.

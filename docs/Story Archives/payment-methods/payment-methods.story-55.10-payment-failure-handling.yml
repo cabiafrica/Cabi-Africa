@@ -1,0 +1,25 @@
+id: story-55.10
+epic: payment-methods
+slug: payment-failure-handling
+title: Implement Graceful Payment Failure Handling
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T19:15:00Z'
+
+description: >
+  As a passenger, if my payment for a ride fails, I want the app to clearly
+  inform me and allow me to easily add a new payment method to settle the
+  outstanding balance.
+
+acceptance_criteria:
+  - If a post-ride payment fails, the user's account is marked with an outstanding balance.
+  - The user is blocked from requesting new rides until the balance is paid.
+  - The next time the user opens the app, they are presented with a screen showing the outstanding amount and prompting them to update their payment method.
+  - The `payment-service` must manage the outstanding balance and re-attempt the charge when a new payment method is added.
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To manage outstanding balances
+  - apps/passenger-app/src/screens/home_screen.dart # To add logic to check for and display the payment resolution screen
+
+dev_notes: >
+  This is a critical flow to prevent revenue loss and user churn. The experience should be clear and low-friction, guiding the user to resolve the issue quickly.

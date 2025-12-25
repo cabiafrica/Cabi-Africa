@@ -1,0 +1,26 @@
+id: story-92.1
+epic: driver-ecosystem
+slug: driver-vacation-rental
+title: Implement "Driver Vacation" Asset Rental
+status: Done
+author: Bob (sm)
+date: '2024-08-09T10:16:00Z'
+
+description: >
+  As a driver going on vacation, I want to be able to list my vehicle on the
+  Vehicle Marketplace (`story-65.1`) for other approved drivers to rent while
+  I'm away, so that my asset can continue to generate income.
+
+acceptance_criteria:
+  - This is the first story for a new `driver-ecosystem` epic.
+  - This integrates the Vacation Mode (`story-69.1`) with the Vehicle Marketplace (`story-65.1`).
+  - When setting vacation dates, a driver is prompted if they want to list their vehicle for rent during that period.
+  - The platform facilitates the booking and payment, and may offer additional insurance for the rental period.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/settings_screen.dart # To integrate the two features
+
+dev_notes: >
+  A powerful ecosystem feature that creates a new revenue stream for drivers and increases vehicle supply on the platform. This has complex insurance and liability implications.

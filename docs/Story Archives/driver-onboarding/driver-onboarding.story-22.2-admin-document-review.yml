@@ -1,0 +1,45 @@
+id: story-22.2
+epic: driver-onboarding
+slug: admin-document-review
+title: "Admin: Review and Approve/Reject Driver Documents"
+status: Done
+author: Bob (sm)
+date: '2024-08-20T14:05:00Z'
+
+description: >
+  As an administrator, I need a dedicated interface to review, approve, or reject
+  the documents submitted by prospective drivers, so that I can ensure compliance
+  and maintain the quality and safety of the driver pool.
+
+acceptance_criteria:
+  - A new "Document Approvals" page must be created in the `admin-panel`.
+  - This page must list all drivers who have submitted their documents and are in a "Pending Review" state.
+  - Clicking on a driver's name must navigate to a detailed review screen.
+  - The detail screen must display each of the driver's submitted documents (e.g., Driver's License, Vehicle Insurance) and the uploaded image for each.
+  - For each document, an admin must have "Approve" and "Reject" buttons.
+  - If an admin clicks "Reject", they must be prompted to provide a reason for the rejection (e.g., "Image is blurry," "Document is expired").
+  - Upon approval or rejection of a document, the driver must be notified of the status change (and the reason, if rejected).
+  - Once all of a driver's documents have been "Approved", their overall user status must automatically be updated to "Active", allowing them to start receiving ride requests.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/approvals/page.tsx
+  - apps/admin-panel/src/app/approvals/[driverId]/page.tsx
+
+files_to_be_modified:
+  - libs/backend/document-service/src/lib/document.service.ts # To add logic for approving/rejecting documents.
+  - libs/backend/document-service/src/lib/document.controller.ts # To expose admin endpoints for document review.
+  - libs/backend/user-service/src/lib/user.service.ts # To update the driver's main status upon full approval.
+  - libs/backend/notification-service/src/lib/notification.service.ts # To send notifications to the driver.
+
+dev_notes: >
+  This story is the administrative counterpart to `story-22.1` and closes the loop on the driver onboarding verification process. The workflow must be efficient for the operations team. Clear rejection reasons are crucial for a positive driver experience, as they provide actionable feedback. The final status change in the `user-service` is a key integration point that officially activates the driver on the platform.
+
+tasks:
+  - id: task-1
+    description: "Create the frontend UI in the admin panel for listing and reviewing driver documents."
+  - id: task-2
+    description: "Implement backend endpoints and service logic for an admin to approve or reject a document."
+  - id: task-3
+    description: "Integrate with the notification service to inform drivers of the outcome."
+  - id: task-4
+    description: "Implement the logic to automatically update the driver's main status to 'Active' in the user-service once all documents are approved."

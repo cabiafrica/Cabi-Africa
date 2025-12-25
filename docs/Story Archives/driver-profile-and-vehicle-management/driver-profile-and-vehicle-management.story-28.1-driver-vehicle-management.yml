@@ -1,0 +1,32 @@
+id: story-28.1
+epic: driver-profile-and-vehicle-management
+slug: driver-vehicle-management
+title: Implement Vehicle Management for Drivers
+status: Done
+author: Bob (sm)
+date: '2024-07-25T09:02:00Z'
+
+description: >
+  As a driver, I want to add and manage my vehicle details (make, model,
+  color, license plate) in the app, so that my information is accurate and
+  passengers can easily identify my car.
+
+acceptance_criteria:
+  - A new "My Vehicle" section must be added to the `driver-app`'s profile or settings area.
+  - This navigates to a `VehicleManagementScreen` where a driver can view their active vehicle.
+  - The screen must allow the driver to add a new vehicle or edit the details of an existing one.
+  - Vehicle details must include: Make, Model, Year, Color, and License Plate Number.
+  - A new `vehicle-service` must be created on the backend to store vehicle information associated with a driver's ID.
+  - When a driver updates their vehicle, the information must be sent to the `vehicle-service` for storage.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/vehicle_management_screen.dart
+  - libs/backend/vehicle-service/src/lib/vehicle.service.ts
+  - libs/backend/vehicle-service/src/lib/vehicle.controller.ts
+  - libs/backend/vehicle-service/src/lib/vehicle.module.ts
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/profile_screen.dart # To add link to the new screen
+
+dev_notes: >
+  This is the foundational story for a new `driver-profile-and-vehicle-management` epic. A dedicated `vehicle-service` is proposed to handle the complexities of vehicle data, including future requirements like vehicle-specific documents and inspections.

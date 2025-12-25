@@ -1,0 +1,27 @@
+id: story-88.1
+epic: shared-rides-and-pooling
+slug: shared-ride-option
+title: Introduce Shared Ride (Pooling) Option
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T23:10:00Z'
+
+description: >
+  As a price-sensitive passenger, I want to be able to book a "Shared" ride
+  at a lower price, with the understanding that other passengers may be picked
+  up and dropped off along my route.
+
+acceptance_criteria:
+  - A new "Shared" ride option must be available in the vehicle selector in the `passenger-app`.
+  - The fare for a Shared ride is significantly lower than a standard ride.
+  - The `ride-service` matching algorithm must be fundamentally updated to support pooling: matching multiple passengers with overlapping routes to a single driver.
+  - The driver's in-app navigation (`story-96.3`) must be updated to handle a multi-stop route with an optimized order of pickups and drop-offs.
+  - The passenger app must clearly show the multi-stop nature of the trip.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To add the Shared option
+  - libs/backend/ride-service/src/lib/ride.service.ts # To implement the core pooling algorithm
+  - apps/driver-app/src/screens/trip_in_progress_screen.dart # To update navigation for multiple stops
+
+dev_notes: >
+  This is a major, highly complex feature that is foundational for the `shared-rides-and-pooling` epic. The matching algorithm is the core challenge and will require significant R&D.

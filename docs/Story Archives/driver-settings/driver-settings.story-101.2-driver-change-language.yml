@@ -1,0 +1,41 @@
+id: story-101.2
+epic: driver-settings
+slug: driver-change-language
+title: Driver Change App Language
+status: DONE
+author: Sarah (po)
+date: '2024-08-12T17:30:00Z'
+
+description: >
+  As a driver, I want to change the language of the application so that I can
+  navigate the interface and understand instructions in my preferred language.
+
+acceptance_criteria:
+  - The `SettingsScreen` must include a "Language" section.
+  - Drivers can select from a list of supported languages (English, Spanish, French, Swahili).
+  - Selecting a language updates the UI immediately (mocked for now) and persists the choice.
+  - The preference is sent to the `settings-service` via the existing update endpoint.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/settings_screen.dart
+  - libs/backend/settings-service/src/lib/settings.service.ts
+
+dev_notes: >
+  The backend `settings-service` was already updated in Story 101.1 to support the `language` field,
+  so no backend changes are required for this story.
+  For a real implementation, this would hook into `flutter_localizations` or `easy_localization`
+  to actually swap the locale strings.
+
+tasks:
+  - id: task-1
+    description: Implement frontend language selection.
+    subtasks:
+      - "[x] Update `settings_screen.dart` to include a language dropdown."
+      - "[x] Bind selection to the `_updateLanguage` method."
+  - id: task-2
+    description: Verify backend persistence.
+    subtasks:
+      - "[x] Ensure `settings.service.ts` accepts language updates (verified in 101.1)."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro

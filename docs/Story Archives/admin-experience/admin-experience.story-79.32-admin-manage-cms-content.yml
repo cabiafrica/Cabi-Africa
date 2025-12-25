@@ -1,0 +1,33 @@
+id: story-79.32
+epic: admin-experience
+slug: admin-manage-cms-content
+title: "Admin: Manage Content for In-App Help Center and Website"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-06T22:05:00Z'
+
+description: >
+  As a content manager, I need a Content Management System (CMS) within the admin panel to create, edit, and organize
+  FAQ articles and other static page content, so I can provide up-to-date information to users without needing a code deployment.
+
+acceptance_criteria:
+  - A new "Content" section must be added to the `admin-panel` navigation.
+  - This section must have a sub-page for "FAQs" that allows an admin to create, edit, delete, and re-order FAQ items.
+  - This section must have a sub-page for "Website Pages" that lists editable pages (e.g., "About Us", "Why Drive With Us?").
+  - Clicking to edit a website page must open a view with a rich text (WYSIWYG) editor to modify the page's content.
+  - All changes must be saved by calling the appropriate endpoints on the `ContentService`.
+  - The `ContentService` and `ContentController` (from `document.service.ts`) must be used and potentially expanded to support these features.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/content/faq/page.tsx
+  - apps/admin-panel/src/app/content/pages/page.tsx
+  - apps/admin-panel/src/app/content/pages/[slug]/page.tsx
+
+files_to_be_modified:
+  - c:/Users/User/Desktop/Cabi-Flutter/docs/document.service.ts # To ensure the ContentService supports all required CRUD operations.
+
+dev_notes: >
+  This story provides the administrative interface for the content that is consumed by `story-33.1` (Passenger Help Center) and `story-104.6` (Static Content Pages).
+
+  The backend logic for managing FAQs and basic page content already exists in the `ContentService` within `document.service.ts`. This story focuses on building the admin UI to interact with those endpoints. The most significant new frontend component will be the integration of a rich text editor (e.g., TipTap, TinyMCE) for editing the website page content.
+  PRD Reference: 2.3. Admin Panel -> Content & Configuration Management -> Content Management System

@@ -1,0 +1,23 @@
+id: story-55.14
+epic: data-and-privacy
+slug: incognito-mode
+title: Implement "Incognito Mode" for Trips
+status: Done
+author: Bob (sm)
+date: '2024-08-10T03:50:00Z'
+
+description: >
+  As a passenger, I want the option to take a trip in "incognito mode," which
+  hides it from my main trip history for privacy reasons.
+
+acceptance_criteria:
+  - A toggle for "Incognito Mode" must be available on the ride confirmation screen.
+  - If a trip is taken in incognito mode, it does not appear in the user's main, visible trip history in the app.
+  - The trip record is still stored on the backend for billing and safety purposes but is flagged as "incognito".
+  - The user can access their incognito trips through a separate, password-protected section of the Privacy Center.
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To add the incognito flag
+
+dev_notes: >
+  This is a privacy-enhancing feature that gives users more control over their visible activity in the app, similar to incognito mode in a web browser.

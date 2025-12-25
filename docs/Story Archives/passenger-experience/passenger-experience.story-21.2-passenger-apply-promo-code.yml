@@ -1,0 +1,31 @@
+id: story-21.2
+epic: passenger-experience
+slug: passenger-apply-promo-code
+title: "Passenger: Apply a Promo Code to a Ride"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-06T16:15:00Z'
+
+description: >
+  As a passenger, I want to be able to enter a promotional code before confirming my ride,
+  so I can apply a discount to my fare.
+
+acceptance_criteria:
+  - On the `RideConfirmationPanel`, an "Add Promo Code" input field or button must be available.
+  - Entering a valid promo code must trigger a call to a backend endpoint to validate the code.
+  - If the code is valid, the UI must update to show the applied discount and the new estimated fare.
+  - If the code is invalid or expired, a clear error message must be shown.
+  - The ride creation request must include the applied `promoCode`.
+  - The backend `payment-service` must apply the discount when calculating the final charge for the ride.
+
+files_to_be_created:
+  - # A new backend service or controller for validating promo codes.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/ride_confirmation_panel.dart # To add the promo code input field and logic.
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle the application of the discount.
+  - # The Admin Panel will need a separate story to create and manage these promo codes.
+
+dev_notes: >
+  This story implements the user-facing part of the promotions system from the PRD (section 2.1). It requires a new backend service or endpoint dedicated to validating promo codes against a database of active promotions (which will be managed by admins). The `payment-service` will then need to be aware of this discount when processing the final payment. This is a critical feature for marketing and user acquisition campaigns.
+  PRD Reference: 2.1. Passenger App -> Payments & Promotions -> Promotions & Discounts

@@ -1,0 +1,28 @@
+id: story-48.1
+epic: driver-community
+slug: driver-chat
+title: Implement Driver-to-Driver Chat
+status: Done
+author: Bob (sm)
+date: '2024-08-01T09:10:00Z'
+
+description: >
+  As a driver, I want a space within the app to chat with other nearby
+  drivers, so that I can share information about traffic, events, or just
+  build a sense of community.
+
+acceptance_criteria:
+  - A new "Community" or "Chat" tab must be added to the `driver-app`.
+  - The app will feature geo-based chat rooms (e.g., "Airport Queue", "Downtown").
+  - Drivers can see and join rooms for the area they are currently in.
+  - The `chat-service` must be expanded to support these persistent, multi-user chat rooms.
+  - A profanity filter and a reporting mechanism must be included.
+
+files_to_be_created:
+  - apps/driver-app/src/screens/community_chat_screen.dart
+
+files_to_be_modified:
+  - libs/backend/support-service/src/lib/support.service.ts # Or a new chat-service, to handle group chats
+
+dev_notes: >
+  This is the first story for a new `driver-community` epic. It aims to build a stronger community among drivers, which can improve retention. It requires a significant expansion of our chat capabilities.

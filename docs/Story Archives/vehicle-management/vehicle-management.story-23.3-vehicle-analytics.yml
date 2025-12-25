@@ -1,0 +1,23 @@
+id: story-23.3
+epic: vehicle-management
+slug: vehicle-specific-analytics
+title: Provide Vehicle-Specific Earnings Analytics
+status: Done
+author: Bob (sm)
+date: '2024-08-09T22:35:00Z'
+
+description: >
+  As a driver with multiple vehicles, I want to see my earnings and other
+  metrics broken down by vehicle, so I can understand the profitability of each car.
+
+acceptance_criteria:
+  - The driver's "Earnings" screen (`story-45.4`) must be updated with a filter to view stats for "All Vehicles" or a specific vehicle.
+  - The `analytics-service` must be updated to aggregate earnings, trips, and hours online per vehicle.
+  - This data should be available in the driver's weekly performance summary (`story-48.6`).
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/wallet_screen.dart # To add the vehicle filter
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To aggregate data per vehicle
+
+dev_notes: >
+  This is a key feature for fleet owners and professional drivers, helping them make informed business decisions about their assets.

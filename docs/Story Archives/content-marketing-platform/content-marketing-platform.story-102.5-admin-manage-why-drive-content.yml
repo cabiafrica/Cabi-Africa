@@ -1,0 +1,41 @@
+id: story-102.5
+epic: content-marketing-platform
+slug: admin-manage-why-drive-content
+title: Admin Panel UI for Managing "Why Drive with Us?" Page Content
+status: Done
+author: Bob (sm)
+date: '2025-12-02T18:15:00Z'
+
+description: >
+  As an administrator or content manager, I want a user interface in the admin panel to edit the content of the "Why Drive with Us?" page,
+  so that I can keep the information about driver benefits up-to-date and compelling without needing a developer.
+
+acceptance_criteria:
+  - A new "Why Drive with Us?" management page must be created in the `admin-panel` under the "Content" section.
+  - The page must display the current content of the "Why Drive with Us?" page.
+  - The UI must provide a rich-text editor or markdown editor for the main content area.
+  - The UI must allow an admin to save changes to the content.
+  - The `content-service` must be extended to support fetching and updating the content for this specific page.
+  - The `marketing-website`'s "Why Drive with Us?" page (`Cabi Alpha/web/user_portal/app/why-drive/page.tsx` from `story-101.1`) must be refactored to fetch its content from the `content-service` API instead of using static content.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/content/why-drive/page.tsx # The admin UI for managing the page content.
+
+files_to_be_modified:
+  - apps/content-service/src/app/content.controller.ts # To add new endpoints for this page's content.
+  - apps/content-service/src/app/content.service.ts # To add business logic for fetching/updating this page's content.
+  - Cabi Alpha/web/user_portal/app/why-drive/page.tsx # To refactor the page to fetch live data from the API.
+  - apps/admin-panel/src/components/layout/Sidebar.tsx # Or similar, to add a link to the new management page.
+
+dev_notes: >
+  This story continues to build out our headless CMS capabilities within the `content-service`, making the marketing site more dynamic and manageable by non-developers. It directly addresses the PRD requirement for the "Why Drive with Us?" page (R1.3). The backend will need to handle a single content entry for this page, unlike the list-based management for FAQs or testimonials. The rich-text editor is crucial for enabling content managers to format the text effectively.
+
+tasks:
+  - id: task-1
+    description: "Extend the `content-service` with endpoints and logic for fetching and updating the 'Why Drive with Us?' page content."
+  - id: task-2
+    description: "Create the 'Why Drive with Us?' management page in the `admin-panel` with a rich-text editor."
+  - id: task-3
+    description: "Refactor the public 'Why Drive with Us?' page on the `marketing-website` to fetch and display the content from the `content-service`."
+  - id: task-4
+    description: "Add a link to the new management page in the admin panel's navigation."

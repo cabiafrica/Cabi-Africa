@@ -1,0 +1,28 @@
+id: story-79.25
+epic: admin-experience
+slug: admin-heat-map-analytics
+title: "Admin Panel: Implement Heat Map Analytics View"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-05T11:25:00Z'
+
+description: >
+  As an administrator, I want to view a heat map that visualizes ride demand (pickups) and driver supply (available drivers)
+  across the city, so I can identify operational imbalances and make informed decisions about surge pricing and driver incentives.
+
+acceptance_criteria:
+  - A new "Heat Map" page must be created in the `admin-panel`.
+  - The page must display a map of the operational area.
+  - The UI must have controls to toggle between viewing "Demand (Pickups)" and "Supply (Drivers)".
+  - The page must fetch data from a new backend endpoint (e.g., `GET /admin/analytics/heatmap?type=...`) that provides aggregated location data.
+  - The fetched data must be rendered on the map as a heat map layer.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/analytics/heatmap/page.tsx
+
+files_to_be_modified:
+  - # A backend service (e.g., a new `analytics-service`) will need to be created or modified to aggregate location data from ride requests and driver pings.
+
+dev_notes: >
+  This story implements the "Heat Map Analytics" requirement from the PRD (section 2.3). This is a data-intensive feature. The backend will need an efficient way to aggregate large volumes of location data into a grid or hexagonal bins suitable for rendering as a heat map. The frontend will require a map library (like Mapbox or Leaflet) and a heat map plugin.
+  PRD Reference: 2.3. Admin Panel -> Operational Dashboards & Tools -> Heat Map Analytics

@@ -1,0 +1,27 @@
+id: story-62.1
+epic: customer-support
+slug: support-agent-ticket-dashboard
+title: Create Support Agent Ticket Dashboard
+status: Done
+author: Bob (sm)
+date: '2024-08-09T11:00:00Z'
+
+description: >
+  As a customer support agent, I need a dashboard where I can view and manage
+  all incoming support tickets, so that I can efficiently address user issues.
+
+acceptance_criteria:
+  - A new "Support" section must be added to the `admin-panel`.
+  - This section must display a list of all support tickets from the `support-service`.
+  - The list should be searchable and filterable by status (e.g., New, Open, Closed), priority, and creation date.
+  - Each ticket in the list must display key information: Ticket ID, User Name, Subject, and Status.
+  - Clicking a ticket must navigate to a ticket detail view (to be built in a subsequent story).
+  - The system must poll for new tickets or update in real-time.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/support/page.tsx # The main ticket dashboard page
+  - libs/backend/support-service/src/lib/support.service.ts # To manage ticket lifecycle
+  - libs/backend/support-service/src/lib/support.controller.ts # To expose ticket data to the admin panel
+
+dev_notes: >
+  This is the foundational story for the `customer-support` epic. It establishes the core interface for support agents. This story focuses on viewing and organizing tickets. Actions like replying or resolving will be handled in upcoming stories. This builds upon features like `story-73.1` which programmatically create tickets.

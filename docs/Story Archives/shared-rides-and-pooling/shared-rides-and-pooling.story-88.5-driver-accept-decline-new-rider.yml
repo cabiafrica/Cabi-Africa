@@ -1,0 +1,25 @@
+id: story-88.5
+epic: shared-rides-and-pooling
+slug: driver-accept-decline-new-rider
+title: Allow Driver to Accept/Decline Additional Pooled Riders
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T00:50:00Z'
+
+description: >
+  As a driver on a shared ride, I want the ability to accept or decline an
+  additional rider that the system wants to add to my route, so I have some
+  control over my trip.
+
+acceptance_criteria:
+  - When the pooling algorithm finds a new rider to add to an in-progress shared ride, it sends a request to the driver.
+  - The `driver-app` displays a non-intrusive request showing the pickup location of the new rider and the impact on the driver's earnings and time.
+  - The driver has a short window (e.g., 15 seconds) to accept or decline.
+  - If declined or ignored, the algorithm will look for another driver for the new rider.
+
+files_to_be_modified:
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To display the new rider request
+  - libs/backend/ride-service/src/lib/ride.service.ts # To handle the driver's response
+
+dev_notes: >
+  This gives drivers more agency, which is crucial for the acceptance of a pooling product. The request UI must be designed for safe, minimal interaction.

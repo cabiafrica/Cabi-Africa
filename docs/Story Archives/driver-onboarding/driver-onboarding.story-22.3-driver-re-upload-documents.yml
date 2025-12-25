@@ -1,0 +1,39 @@
+id: story-22.3
+epic: driver-onboarding
+slug: driver-re-upload-documents
+title: "Driver: View Document Status and Re-upload Rejected Documents"
+status: Done
+author: Bob (sm)
+date: '2024-08-20T14:10:00Z'
+
+description: >
+  As a driver whose documents have been reviewed, I need to see the status of
+  each document (e.g., Approved, Rejected) and the reason for any rejections,
+  so that I can re-upload the correct documents and complete my onboarding.
+
+acceptance_criteria:
+  - The "Document Submission" screen must be updated to fetch and display the current status of each document for the logged-in driver.
+  - The screen must visually distinguish between different statuses: "Approved", "Rejected", and "Pending Review".
+  - If a document's status is "Rejected", the rejection reason provided by the administrator must be clearly displayed to the driver.
+  - A document with an "Approved" status should be displayed as complete (e.g., with a checkmark) and offer no further action.
+  - A document with a "Rejected" status must display a "Re-upload" button.
+  - Tapping "Re-upload" must initiate the same image picker/camera flow from `story-22.1`.
+  - After a successful re-upload of a rejected document, its status must change back to "Pending Review" and it should re-enter the admin's approval queue.
+
+files_to_be_modified:
+  - apps/driver-app/lib/screens/document_submission_screen.dart # To display statuses, rejection reasons, and handle re-uploads.
+  - libs/backend/document-service/src/lib/document.service.ts # To add a method for fetching a user's document statuses.
+  - libs/backend/document-service/src/lib/document.controller.ts # To expose an endpoint for fetching document statuses.
+
+dev_notes: >
+  This story builds upon the initial document submission and admin review process (`story-22.1` and `story-22.2`). It creates a crucial feedback loop that prevents drivers from getting stuck in the onboarding process. The `document_submission_screen` will evolve from a one-time submission form into a persistent status dashboard for the driver's documents. The backend will need a new endpoint for the driver to fetch their document statuses, which should include any rejection reasons.
+
+tasks:
+  - id: task-1
+    description: "Implement a backend endpoint for a driver to fetch their document statuses."
+  - id: task-2
+    description: "Update the Document Submission screen to fetch and display the live status for each document."
+  - id: task-3
+    description: "On the UI, display the rejection reason and a 'Re-upload' button for rejected documents."
+  - id: task-4
+    description: "Implement the re-upload logic, which should reuse the existing upload mechanism and set the status back to 'Pending Review'."

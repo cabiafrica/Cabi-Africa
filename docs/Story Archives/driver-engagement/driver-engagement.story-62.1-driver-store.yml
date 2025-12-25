@@ -1,0 +1,28 @@
+id: story-62.1
+epic: driver-engagement
+slug: driver-store
+title: Implement "Driver Store" for Merchandise
+status: Done
+author: Bob (sm)
+date: '2024-08-05T09:18:00Z'
+
+description: >
+  As a driver, I want to be able to order branded merchandise (like hats,
+  phone mounts, car fresheners) through the app, so I can represent the brand
+  and improve my in-car setup.
+
+acceptance_criteria:
+  - A new "Store" must be added to the `driver-app`.
+  - It will list available merchandise with prices.
+  - Drivers can add items to a cart and check out.
+  - Payment can be made using their earnings wallet or a credit card.
+  - The backend will need to integrate with an e-commerce/fulfillment provider (e.g., Shopify) to manage the orders.
+
+files_to_be_created:
+  - apps/driver-app/src/screens/store_screen.dart
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle store payments
+
+dev_notes: >
+  This is the first story for a new `driver-engagement` epic. It helps build brand loyalty and provides drivers with useful equipment.

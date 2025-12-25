@@ -1,0 +1,110 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:passenger_app/api/auth_service.dart';
+import 'package:passenger_app/providers/auth_provider.dart';
+import 'package:passenger_app/screens/login_screen.dart';
+import 'package:provider/provider.dart';
+
+import 'login_screen_test.mocks.dart';
+
+@GenerateMocks([AuthService, AuthProvider])
+void main() {
+  late MockAuthService mockAuthService;
+  late MockAuthProvider mockAuthProvider;
+
+  setUp(() {
+    mockAuthService = MockAuthService();
+    mockAuthProvider = MockAuthProvider();
+  });
+
+  Widget createWidgetUnderTest() {
+    return ChangeNotifierProvider<AuthProvider>.value(
+      value: mockAuthProvider,
+      child: MaterialApp(
+        home: LoginScreen(authService: mockAuthService),
+      ),
+    );
+  }
+
+  group('LoginScreen Tests', () {
+    testWidgets('Renders form fields and buttons', (widgetTester) async {
+      await widgetTester.pumpWidget(createWidgetUnderTest());
+
+      expect(find.widgetWithText(TextFormField, 'Phone Number'), findsOneWidget);
+      expect(find.widgetWithText(TextFormField, 'Password'), findsOneWidget);
+      expect(find.widgetWithText(ElevatedButton, 'Login'), findsOneWidget);
+      expect(find.widgetWithText(TextButton, 'Don\'t have an account? Register'), findsOneWidget);
+    });
+
+    testWidgets('Shows validation errors for empty fields', (widgetTester) async {
+      await widgetTester.pumpWidget(createWidgetUnderTest());
+
+      await widgetTester.tap(find.widgetWithText(ElevatedButton, 'Login'));
+      await widgetTester.pump(); // Let the validation run
+
+      expect(find.text('Please enter your phone number'), findsOneWidget);
+      expect(find.text('Please enter your password'), findsOneWidget);
+
+      // Verify that the login method was not called
+      verifyNever(mockAuthService.login(phone: anyNamed('phone'), password: anyNamed('password')));
+    });
+
+    testWidgets('Calls login service and provider on successful login', (widgetTester) async {
+      // Arrange
+      const phone = '0712345678';
+      const password = 'password123';
+      const token = 'fake-jwt-token';
+
+      when(mockAuthService.login(phone: phone, password: password))
+          .thenAnswer((_) async => token);
+
+      await widgetTester.pumpWidget(createWidgetUnderTest());
+
+      // Act
+      await widgetTester.enterText(find.widgetWithText(TextFormField, 'Phone Number'), phone);
+      await widgetTester.enterText(find.widgetWithText(TextFormField, 'Password'), password);
+      await widgetTester.tap(find.widgetWithText(ElevatedButton, 'Login'));
+      await widgetTester.pump(); // Show loading indicator
+
+      // Assert
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await widgetTester.pump(); // Complete the future
+
+      verify(mockAuthService.login(phone: phone, password: password)).called(1);
+      verify(mockAuthProvider.login(token)).called(1);
+    });
+
+    testWidgets('Shows SnackBar on failed login', (widgetTester) async {
+      // Arrange
+      const phone = 'wrong';
+      const password = 'wrong';
+      final exception = Exception('Invalid phone number or password');
+
+      when(mockAuthS-rvice.login(phone: phone, password: password))
+          .thenThrow(exception);
+
+      await widgetTester.pumpWidget(createWidgetUnderTest());
+
+      // Act
+      await widgetTester.enterText(find.widgetWithText(TextFormField, 'Phone Number'), phone);
+      await widgetTester.enterText(find.widgetWithText(TextFormField, 'Password'), password);
+      await widgetTester.tap(find.widgetWithText(ElevatedButton, 'Login'));
+      await widgetTester.pump(); // Show loading indicator
+
+      // Assert
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await widgetTester.pumpAndSettle(); // Complete future and animations
+
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(find.text('Login Failed: $exception'), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+
+      // Verify provider was not called on failure
+      verifyNever(mockAuthProvider.login(any));
+    });
+  });
+}

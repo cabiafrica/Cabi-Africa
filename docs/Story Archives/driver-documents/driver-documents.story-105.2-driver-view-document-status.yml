@@ -1,0 +1,42 @@
+id: story-105.2
+epic: driver-documents
+slug: driver-view-document-status
+title: Driver View Document Status & Notifications
+status: DONE
+author: Sarah (po)
+date: '2024-08-12T19:30:00Z'
+
+description: >
+  As a driver, I want to be notified immediately when my submitted documents are
+  approved or rejected, so that I can take action (re-upload or start driving)
+  without constantly checking the app.
+
+acceptance_criteria:
+  - The Driver App must listen for document status update notifications.
+  - When a notification is received (e.g., via FCM), the `DocumentManagementScreen` must automatically refresh if open.
+  - A visual indicator (SnackBar or Banner) must display the notification message (e.g., "License Approved").
+  - The list of documents must reflect the new status (e.g., changing from Pending to Approved).
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/document_management_screen.dart
+  - Cabi Alpha/mobile/driver_app/lib/services/notification_service.dart
+
+dev_notes: >
+  This story implements the client-side handling of the notifications triggered by the Admin Panel
+  in Story 12.2. For this implementation, we created a `NotificationService` that mocks the
+  stream of incoming push notifications to demonstrate the UI reactivity.
+
+tasks:
+  - id: task-1
+    description: Implement Notification Service.
+    subtasks:
+      - "[x] Create `notification_service.dart` with a broadcast stream."
+      - "[x] Add method to simulate incoming messages for dev/demo."
+  - id: task-2
+    description: Integrate with Document Screen.
+    subtasks:
+      - "[x] Subscribe to notification stream in `initState`."
+      - "[x] Trigger list refresh and show SnackBar on data."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro

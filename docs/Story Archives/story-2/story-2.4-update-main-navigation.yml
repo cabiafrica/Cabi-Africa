@@ -1,0 +1,25 @@
+id: story-2.4
+epic: epic-2.0
+slug: update-main-navigation
+title: Update Main Navigation to Include New Pages
+status: Done
+author: Sarah (po)
+date: '2024-06-11T09:00:00Z'
+
+description: >
+  As a site visitor, I want to easily navigate to the main sections of the
+  website (Drivers, Passengers, Blog) from the main header, so that I can
+  quickly find the information relevant to me.
+
+acceptance_criteria:
+  - The main navigation header in the `user-portal` is updated to include new links.
+  - A "For Drivers" link is added, pointing to the `/drivers` page.
+  - A "For Passengers" link is added, pointing to the `/passengers` page.
+  - A "Blog" link is added, pointing to the `/blog` page.
+  - The navigation bar must be responsive and function correctly on mobile devices (e.g., within a hamburger menu).
+
+files_to_be_modified:
+  - apps/user-portal/src/components/layout/Header.tsx # Or a similar shared navigation component
+
+dev_notes: >
+  This story improves the overall site usability by making our newly created content sections discoverable. The implementation will likely involve modifying a shared `Header` or `Layout` component within the `user-portal` application.

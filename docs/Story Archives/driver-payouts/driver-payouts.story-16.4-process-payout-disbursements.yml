@@ -1,0 +1,35 @@
+id: story-16.4
+epic: driver-payouts
+slug: process-payout-disbursements
+title: Process and Disburse Driver Payouts to Bank Accounts
+status: Done
+author: Bob (sm)
+date: '2024-06-03T11:00:00Z'
+
+description: >
+  As a finance administrator, I want to trigger a secure process that
+  aggregates all pending earnings for each driver and disburses the funds to
+  their registered bank accounts, so that drivers are paid accurately and on time.
+
+acceptance_criteria:
+  - A new, secure, internal-only API endpoint (e.g., `POST /payouts/process`) is created in the `payment-service`.
+  - This endpoint must be protected and only callable by an authorized administrator or a trusted scheduled job.
+  - When triggered, the service queries the database for all unpaid earnings and commission transactions.
+  - It aggregates the total payable amount for each driver.
+  - For each driver with a balance above a configurable minimum threshold (e.g., KES 500), the service initiates a payment transfer.
+  - The service must integrate with a third-party payment provider (e.g., Stripe Connect, M-Pesa API) to send funds to the driver's payout method, which is retrieved from the `user-service`.
+  - After a successful transfer is confirmed by the payment provider, the corresponding transactions in the database must be updated to a `paid` status.
+  - If a transfer fails, the system must log the error, mark the payout attempt as `failed`, and trigger an alert for manual investigation. The underlying transactions should remain `unpaid`.
+  - A new `payouts` log or table must be created to record each batch payout attempt, its status (success/failed), the total amount, and the driver it belongs to.
+
+files_to_be_created:
+  - libs/backend/payment-service/src/lib/payout.service.ts
+  - libs/backend/payment-service/src/lib/payout.controller.ts
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.module.ts # To include the new PayoutService and Controller
+  - libs/backend/user-service/src/lib/user.service.ts # To add a method for retrieving a driver's payout details
+  - The database schema for the `transactions` table/collection will need a `status` field (e.g., 'unpaid', 'paid', 'failed').
+
+dev_notes: >
+  This story handles a critical, high-sensitivity financial transaction. The implementation must be robust, idempotent, and secure. All interactions with the external payment gateway must be logged. The choice of payment provider will dictate the specific API integration details. For development, a mock payment provider class should be created to simulate successful and failed transfers. The process should be designed to be runnable as a scheduled task (e.g., a weekly cron job).

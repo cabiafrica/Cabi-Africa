@@ -1,0 +1,31 @@
+id: story-20.2
+epic: passenger-experience
+slug: passenger-rate-driver
+title: "Passenger: Rate a Driver After a Trip"
+status: Done
+author: sm.md
+date: '2025-12-04T09:00:00Z'
+
+description: >
+  As a passenger, I want to rate my driver on a scale of 1 to 5 stars and provide optional feedback
+  immediately after my trip is completed, so I can share my experience.
+
+acceptance_criteria:
+  - After a trip ends, the passenger app must automatically navigate to a new `RateDriverScreen`.
+  - The screen must display the driver's name, profile picture, and the final trip details (fare, route).
+  - A 5-star rating system must be present and interactive.
+  - An optional, multi-line text field for comments must be available.
+  - A "Submit Rating" button should be present.
+  - Submitting the rating should call a backend endpoint (e.g., `POST /rides/{tripId}/rating`).
+  - The `ride-service` must be updated to handle storing the rating and feedback.
+  - The screen must include a "Skip" or "Do it later" option.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/rate_driver_screen.dart
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts
+  - libs/backend/ride-service/src/lib/ride.controller.ts
+
+dev_notes: >
+  This is a core part of the post-trip passenger flow. It's a direct dependency for story-20.3 (Tipping), as the tipping UI will be added to this screen. The backend will need to associate the rating with the specific trip and driver.

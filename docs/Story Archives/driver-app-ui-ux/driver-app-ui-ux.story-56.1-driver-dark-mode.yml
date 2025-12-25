@@ -1,0 +1,26 @@
+id: story-56.1
+epic: driver-app-ui-ux
+slug: driver-dark-mode
+title: Implement Driver App Dark Mode
+status: Done
+author: Bob (sm)
+date: '2024-08-05T09:03:00Z'
+
+description: >
+  As a driver who often works at night, I want a "dark mode" for my app, so
+  that it's easier on my eyes and less distracting in the car.
+
+acceptance_criteria:
+  - A dark mode toggle must be available in the `driver-app` settings.
+  - The app should also be able to automatically follow the OS's dark mode setting.
+  - All screens, widgets, and especially the map style must have a corresponding dark theme version.
+  - This is the driver-specific counterpart to the high-contrast accessibility feature.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/theme/dark_theme.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/main.dart # To manage theme switching
+
+dev_notes: >
+  This is the first story for a new `driver-app-ui-ux` epic. It's a highly requested quality-of-life feature for drivers. The map theme is particularly important to get right.

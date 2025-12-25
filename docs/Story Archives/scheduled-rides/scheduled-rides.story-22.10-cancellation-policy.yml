@@ -1,0 +1,25 @@
+id: story-22.10
+epic: scheduled-rides
+slug: scheduled-ride-cancellation-policy
+title: Implement Cancellation Policy for Scheduled Rides
+status: Done
+author: Bob (sm)
+date: '2024-08-09T19:40:00Z'
+
+description: >
+  As a driver who has accepted a scheduled ride, I want to be compensated if
+  the passenger cancels at the last minute, as I have planned my time around it.
+
+acceptance_criteria:
+  - A specific cancellation policy for scheduled rides must be defined (e.g., "Free cancellation up to 60 minutes before pickup").
+  - If a passenger cancels a scheduled ride within the fee window, their default payment method is charged a cancellation fee.
+  - If a driver had already accepted that ride, a portion of the cancellation fee is credited to the driver's earnings.
+  - The `payment-service` must handle the cancellation fee transaction.
+  - The cancellation policy must be clearly displayed to the passenger when they are scheduling the ride and when they attempt to cancel.
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle cancellation fees
+  - apps/passenger-app/src/screens/scheduled_rides_screen.dart # To display policy and handle cancellation flow
+
+dev_notes: >
+  This brings the scheduled ride feature in line with on-demand rides, which have similar cancellation policies. It creates a fair marketplace for both passengers and drivers.

@@ -1,0 +1,49 @@
+id: story-35.4
+epic: passenger-personalization
+slug: adaptive-home-screen
+title: Implement Adaptive Home Screen Shortcuts
+status: DONE for Review
+author: Bob (sm)
+date: '2024-08-10T07:15:00Z'
+
+description: >
+  As a passenger, I want the app's home screen to intelligently suggest
+  destinations based on the time of day and my past behavior, so booking is even faster.
+
+acceptance_criteria:
+  - This enhances the home screen redesign (`story-111.1`).
+  - The home screen should display "smart shortcuts" in addition to Home/Work.
+  - Example: At 8 AM on a weekday, it might suggest "Work". At 6 PM, it might suggest "Home". On a Saturday, it might suggest the user's most frequent weekend destination.
+  - The `analytics-service` must provide the logic for these personalized suggestions.
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To generate personalized suggestions
+
+dev_notes: >
+  This makes the app feel smarter and more personal. The logic can start with simple time-based rules and evolve to use more sophisticated machine learning models.
+
+tasks:
+  - id: task-1
+    description: Implement backend service to generate personalized destination suggestions.
+    subtasks:
+      - "[x] Modify `libs/backend/analytics-service/src/lib/analytics.service.ts`."
+      - "[x] Add a method to generate suggestions based on time of day and user history."
+      - "[x] Expose the suggestions via a new endpoint."
+  - id: task-2
+    description: Update the passenger home screen to display adaptive shortcuts.
+    subtasks:
+      - "[x] Modify the passenger home screen to fetch and display the suggested shortcuts."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - libs/backend/analytics-service/src/lib/analytics.service.ts
+    - libs/backend/analytics-service/src/lib/analytics.controller.ts
+    - apps/passenger-app/src/screens/home_screen.dart
+  change_log:
+    - file: libs/backend/analytics-service/src/lib/analytics.service.ts
+      change: Added a method to generate personalized destination shortcuts based on time of day and user history.
+    - file: libs/backend/analytics-service/src/lib/analytics.controller.ts
+      change: Exposed a new endpoint to provide the suggestions to the client app.
+    - file: apps/passenger-app/src/screens/home_screen.dart
+      change: Updated the home screen to fetch and display adaptive shortcuts as chips in a search panel.

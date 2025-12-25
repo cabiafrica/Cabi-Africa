@@ -1,0 +1,37 @@
+id: story-23.2
+epic: vehicle-management
+slug: verify-vehicle-documents
+title: Implement Vehicle Document Verification
+status: Done
+author: Bob (sm)
+date: '2024-07-08T09:00:00Z'
+
+description: >
+  As an administrator, I want to verify documents for each driver's vehicle
+  (e.g., logbook, insurance), so that I can ensure all vehicles on the platform
+  are compliant and safe for service.
+
+acceptance_criteria:
+  - In the `driver-app`, the `VehiclesScreen` must allow the driver to manage documents for each vehicle.
+  - For each vehicle, the driver must be able to upload required documents (e.g., "Vehicle Logbook", "PSV Insurance Certificate").
+  - The existing `document-service` must be extended to associate uploaded documents with a `vehicleId`.
+  - The `vehicle-service` must be updated to track the verification status of each vehicle (e.g., 'Unverified', 'Pending Review', 'Verified', 'Rejected').
+  - A driver must only be able to set a vehicle as "Active" if its verification status is "Verified".
+  - The `admin-panel`'s "Driver Approvals" page must be updated to show a list of vehicles for each driver, along with the status of each vehicle's documents.
+  - Admins must be able to view, approve, and reject vehicle documents, providing a reason for rejection, similar to the personal document review process (`story-12.2`).
+  - When all required documents for a vehicle are approved, its status in the `vehicle-service` is updated to "Verified".
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/vehicle_documents_screen.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/vehicles_screen.dart # To add navigation to the documents screen
+  - libs/backend/document-service/src/lib/document.service.ts # To handle vehicleId association
+  - libs/backend/document-service/src/lib/document.controller.ts # To handle vehicle document uploads
+  - libs/backend/vehicle-service/src/lib/vehicle.service.ts # To manage vehicle verification status
+  - The database schema for the `vehicle-service` to add a `verificationStatus` field.
+  - The database schema for the `document-service` to add an optional `vehicleId` field.
+  - apps/admin-panel/src/app/approvals/[driverId]/page.tsx # To display vehicle documents for review
+
+dev_notes: >
+  This story extends our existing document verification framework (`driver-onboarding` epic) to cover vehicles. It reuses the `document-service` but applies it to a new entity (`Vehicle`). A key business rule is that a driver cannot use a vehicle for rides until its documents are verified. This creates a hard dependency between a vehicle's status in the `vehicle-service` and the driver's ability to select it as active.

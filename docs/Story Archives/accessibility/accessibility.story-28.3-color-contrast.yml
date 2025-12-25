@@ -1,0 +1,32 @@
+id: story-28.3
+epic: accessibility
+slug: sufficient-color-contrast
+title: Ensure Sufficient Color Contrast Across All UI Elements
+status: Done
+author: Bob (sm)
+date: '2024-07-29T09:00:00Z'
+
+description: >
+  As a user with low vision or color blindness, I want all text and important
+  UI elements to have sufficient color contrast against their background, so
+  that I can easily read and interact with the app.
+
+acceptance_criteria:
+  - All text elements in both the `passenger-app` and `driver-app` must meet at least the WCAG 2.1 AA contrast ratio (4.5:1 for normal text and 3:1 for large text).
+  - All meaningful non-text elements (e.g., icons, input field borders) must have a contrast ratio of at least 3:1 against their background.
+  - The primary, secondary, and accent colors defined in the shared `core_ui` package's theme must be audited and adjusted to meet these contrast standards.
+  - Color must not be the only means of conveying information or indicating an action (e.g., an error state should be indicated by an icon and/or text in addition to color).
+  - Automated accessibility checks should be run to identify contrast issues.
+  - A manual audit of all key screens in both apps must be performed to verify compliance.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - packages/core_ui/lib/src/theme/app_theme.dart # Or wherever theme colors are defined, to adjust the color palette.
+  - Various widget files across both apps may need color adjustments if they use hardcoded colors instead of theme values. Examples include:
+    - `Cabi Alpha/mobile/passenger_app/lib/widgets/ride_confirmation_panel.dart`
+    - `Cabi Alpha/mobile/driver_app/lib/widgets/trip_in_progress_panel.dart`
+    - `apps/admin-panel/src/app.css` # Or equivalent global style file for the web app.
+
+dev_notes: >
+  This is a fundamental accessibility requirement that impacts the entire visual design of our applications. The primary effort should be to audit and correct the central color theme in the `core_ui` package. This will ensure the widest impact and future consistency. Developers should use tools like the Flutter Inspector's accessibility checker and online contrast checkers to validate color pairs. This task may require collaboration with a designer to select a new, compliant color palette that aligns with our brand.

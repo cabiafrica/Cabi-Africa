@@ -1,0 +1,80 @@
+id: story-4.1
+epic: epic-4.0
+slug: contact-us-page
+title: Create "Contact Us" Page with Form
+status: Done
+author: Sarah (po)
+date: '2024-06-17T09:05:00Z'
+
+description: >
+  As a site visitor, I want a "Contact Us" page with a form, so that I can
+  easily send inquiries, feedback, or partnership requests to the CABI team.
+
+acceptance_criteria:
+  - A new page is created in the `user-portal` app at the `/contact` route.
+  - The page must contain a form with fields for "Name", "Email", "Subject", and "Message".
+  - Basic client-side validation must be present for the email format and to ensure required fields are not empty.
+  - A new API route is created at `Cabi Alpha/web/user_portal/src/pages/api/contact.ts` to handle form submissions.
+  - For this story, the API route should log the received form data to the console and return a success response.
+  - Upon successful form submission, the user should see a confirmation message on the page (e.g., "Thank you for your message! We'll get back to you soon.").
+  - A "Contact Us" link is added to the site-wide footer.
+
+files_to_be_created:
+  - docs/stories/story-4.1-contact-us-page.yml
+  - Cabi Alpha/web/user_portal/src/pages/contact.tsx
+  - Cabi Alpha/web/user_portal/src/pages/api/contact.ts
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/src/components/layout/Footer.tsx
+
+dev_notes: >
+  This story establishes a primary communication channel for our users. The backend for this can be simple for now (console logging). In a future story, we can integrate this endpoint with a proper ticketing system like the one used by the `support-service` or an email service.
+
+tasks:
+  - id: task-1
+    description: Implement the "Contact Us" page and API route.
+    subtasks:
+      - "[x] Create the new page file at `Cabi Alpha/web/user_portal/src/pages/contact.tsx`."
+      - "[x] Create the new API route at `Cabi Alpha/web/user_portal/src/pages/api/contact.ts`."
+      - "[x] Update the `Footer.tsx` component to add the 'Contact Us' link."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  completion_notes:
+    - >-
+      All tasks for this story are complete. The "Contact Us" page, its
+      supporting API route, and the footer link have all been implemented.
+      The feature is now ready for QA review.
+  file_list:
+    - Cabi Alpha/web/user_portal/src/pages/contact.tsx
+    - Cabi Alpha/web/user_portal/src/pages/api/contact.ts
+    - Cabi Alpha/web/user_portal/src/components/layout/Footer.tsx
+  change_log:
+    - file: Cabi Alpha/web/user_portal/src/pages/contact.tsx
+      change: Created the frontend "Contact Us" page with a form for user submissions.
+    - file: Cabi Alpha/web/user_portal/src/pages/api/contact.ts
+      change: Created the backend API route to handle form submissions, logging the data to the console.
+    - file: Cabi Alpha/web/user_portal/src/components/layout/Footer.tsx
+      change: Updated the site-wide footer to include a link to the new '/contact' page.
+qa_results:
+  - id: qa-1
+    date: '2024-06-18T10:00:00Z'
+    agent: Quinn (qa)
+    summary: >-
+      The implementation is excellent and meets all acceptance criteria. The
+      Contact Us page, form, and API endpoint are all functional. The link is
+      correctly placed in the footer.
+    requirements_traceability:
+      - criteria: "A new page is created... at the `/contact` route... A 'Contact Us' link is added to the site-wide footer."
+        test_case: "Given a user is on any page, when they click the 'Contact Us' link in the footer, then they are navigated to the `/contact` page."
+        status: PASS
+      - criteria: "The page must contain a form with fields for 'Name', 'Email', 'Subject', and 'Message'."
+        test_case: "Given the user is on the `/contact` page, when the page loads, then a form with the specified fields is visible."
+        status: PASS
+      - criteria: "Upon successful form submission, the user should see a confirmation message..."
+        test_case: "Given the user fills out the form and clicks 'Send Message', when the API returns a success response, then a success message is displayed on the page."
+        status: PASS
+      - criteria: "API route should log the received form data to the console..."
+        test_case: "Given a user submits the contact form, when the API route processes the request, then the form data is logged to the server console."
+        status: PASS
+    gate_decision: PASS

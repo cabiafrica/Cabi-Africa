@@ -1,0 +1,35 @@
+id: story-23.4
+epic: vehicle-management
+slug: admin-manage-vehicle-categories
+title: Implement Admin Panel to Manage Vehicle Categories and Eligibility Rules
+status: Done
+author: Bob (sm)
+date: '2024-07-15T09:00:00Z'
+
+description: >
+  As an administrator, I want to define and manage vehicle categories (e.g.,
+  Standard, XL, Luxury) and their eligibility rules, so that I can structure
+  our service tiers and control which vehicles qualify for them.
+
+acceptance_criteria:
+  - A new "Vehicle Categories" page must be created in the `admin-panel`.
+  - On this page, an admin must be able to create, view, edit, and delete vehicle categories.
+  - When creating or editing a category, the admin must define its name (e.g., "XL"), description, and potentially other attributes like a base fare multiplier.
+  - The `vehicle-service` must be updated with a new data model to store these categories.
+  - The `admin-panel` must provide a UI for admins to manually assign eligible categories to a specific vehicle. This could be on the vehicle detail page within the driver approval flow.
+  - The `vehicle-service` must expose new, secure, admin-only endpoints for CRUD (Create, Read, Update, Delete) operations on vehicle categories.
+  - The `vehicle-service` must also expose an endpoint for an admin to update the `eligibleCategories` for a specific vehicle.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/vehicle-categories/page.tsx
+  - apps/admin-panel/src/app/vehicle-categories/create/page.tsx
+
+files_to_be_modified:
+  - apps/admin-panel/src/components/layout/sidebar.tsx # To add link to the new page
+  - libs/backend/vehicle-service/src/lib/vehicle.controller.ts # To add admin endpoints for categories
+  - libs/backend/vehicle-service/src/lib/vehicle.service.ts # To implement category management logic
+  - The database schema for the `vehicle-service` to add a `vehicle_categories` table and modify the `vehicles` table to store eligible categories.
+  - apps/admin-panel/src/app/approvals/[driverId]/page.tsx # To add UI for assigning categories to a vehicle
+
+dev_notes: >
+  This story provides the administrative backbone for the vehicle category feature introduced in `story-23.3`. It gives the business control over its service tiers. For this initial version, the assignment of eligible categories to a vehicle will be a manual process done by an admin. A future story could introduce a rule-based engine for automatic assignment based on vehicle attributes (e.g., number of seats).

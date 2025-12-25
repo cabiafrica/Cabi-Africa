@@ -1,0 +1,144 @@
+id: epic-101
+slug: driver-acquisition-funnel
+title: Driver Acquisition & MLM Registration Funnel
+status: Done
+author: Bob (sm)
+date: '2025-12-12T12:58:00Z'
+priority: HIGH
+
+description: >
+  This epic encompasses the complete driver acquisition funnel for the Cabi Marketing Website (user-portal),
+  enabling prospective drivers to discover Cabi, learn about benefits, register online, pay the registration fee,
+  and be onboarded into the Multi-Level Marketing (MLM) referral system. This is a critical business initiative
+  to address the "15% drop-off" problem identified in the PRD and to enable scalable driver growth through
+  referral-based acquisition.
+
+business_value: >
+  **Problem Statement:** The current driver acquisition process lacks a web presence, resulting in a 15% drop-off
+  rate during initial contact. Prospective drivers have no way to learn about Cabi or begin registration without
+  downloading the mobile app first, creating unnecessary friction.
+  
+  **Solution:** A high-performance marketing website (user-portal) that serves as the primary driver acquisition
+  channel, featuring:
+  - Professional marketing content to build trust and communicate value proposition
+  - Frictionless web-based registration with MLM referral tracking
+  - Integrated payment processing for registration fees
+  - Automated commission distribution to incentivize referrals
+  
+  **Expected Outcomes:**
+  - Reduce driver acquisition drop-off from 15% to <5%
+  - Enable viral growth through MLM referral incentives
+  - Generate registration fee revenue while compensating referrers
+  - Establish scalable, automated driver onboarding pipeline
+
+alignment_with_prd: >
+  **Unified PRD References:**
+  - Section 2.6 (Marketing Website - Driver Acquisition Funnel): Multi-step web registration, referrer code input,
+    prospect status creation, registration fee collection, seamless app hand-off
+  - Section 2.6 (Marketing Website - Brand Communication): Homepage, About Us, Why Drive with Us, FAQ
+  - Section 2.2 (Driver App - MLM Commission Payouts): Receive commissions from registration fees
+  - Section 3.2 (Security - NFR2): Bot protection via reCAPTCHA
+  - Section 3.1 (Performance - NFR1): PageSpeed score ≥85
+
+alignment_with_architecture: >
+  **Architecture Document References:**
+  - Section 2.1 (Technical Summary): Hybrid architecture with Next.js frontend and microservices backend
+  - Section 5.1.1 (Cabi Marketing Website - Frontend): User-facing web pages, registration form
+  - Section 5.1.2 (Driver Lead Service): POST /driver-leads/register endpoint, reCAPTCHA validation
+  - Section 5.1.3 (MLM Service): POST /mlm/distribute-fee endpoint, commission calculation
+  - Section 7.1 (Driver Registration & Commission Workflow): Complete sequence diagram from form submission to fee distribution
+  - Section 9 (Database Schema): User, DriverProfile (PROSPECT status), MlmFeeFormula, RegistrationFeeLedger
+
+key_stakeholders:
+  - Product Owner: Defines driver acquisition strategy and MLM formula
+  - Marketing Team: Provides content for static pages and value proposition
+  - Finance Team: Defines registration fee amount and commission structure
+  - Development Team: Implements frontend, backend services, and integrations
+  - QA Team: Validates end-to-end registration flow and payment processing
+  - Operations Team: Monitors conversion rates and referral performance
+
+success_metrics:
+  - Driver registration conversion rate: >20% (visitors → registered prospects)
+  - Registration form completion rate: >80% (started → completed)
+  - PageSpeed score: ≥85 (mobile and desktop)
+  - Average registration time: <3 minutes
+  - MLM referral adoption rate: >40% (registrations with referral code)
+  - Payment success rate: >95%
+  - Time to first commission payout: <24 hours
+
+dependencies:
+  external:
+    - Google reCAPTCHA API (for bot protection)
+    - Stripe Payment API (for registration fee collection)
+  internal:
+    - User Management Service (for creating User and DriverProfile entities)
+    - Authentication Service (for future login/session management)
+    - Cabi Database (PostgreSQL with Prisma ORM)
+
+risks_and_mitigations:
+  - risk: "Payment processing failures could block registrations"
+    mitigation: "Implement robust error handling, retry logic, and manual reconciliation process"
+  - risk: "MLM commission calculation errors could lead to financial disputes"
+    mitigation: "Comprehensive unit tests, audit logging in RegistrationFeeLedger, admin review dashboard"
+  - risk: "Bot/spam registrations could inflate costs"
+    mitigation: "Google reCAPTCHA v3, email verification, admin approval workflow for PROSPECT → ACTIVE transition"
+  - risk: "Poor PageSpeed performance could reduce conversions"
+    mitigation: "Next.js SSR/SSG optimization, CDN usage, regular performance audits"
+
+stories:
+  - id: story-101.1
+    title: Create Static Marketing Pages for Driver Acquisition
+    status: IN_PROGRESS
+    priority: HIGH
+    description: "Homepage, About Us, Why Drive with Us, FAQ pages with Tailwind CSS and PageSpeed ≥85"
+    
+  - id: story-101.2
+    title: Implement Web-Based Driver Registration Form UI
+    status: READY
+    priority: HIGH
+    description: "Multi-step form with client-side validation, reCAPTCHA, and referral code field"
+    
+  - id: story-101.3
+    title: Implement Backend for Web-Based Driver Registration
+    status: READY
+    priority: HIGH
+    description: "Driver Lead Service with reCAPTCHA validation, User/DriverProfile creation (PROSPECT status), Stripe payment, MLM Service trigger"
+    
+  - id: story-101.4
+    title: Implement Backend for MLM Registration Fee Distribution
+    status: READY
+    priority: HIGH
+    description: "MLM Service to calculate and record commissions in RegistrationFeeLedger based on referral hierarchy"
+
+future_stories:
+  - "Admin UI for configuring MLM fee distribution formula (see mlm-and-organizations.story-110.1)"
+  - "Driver dashboard to view referral network and earned commissions (see driver-mlm-experience.story-103.1)"
+  - "Email notifications for successful registration and commission payouts"
+  - "A/B testing framework for registration form optimization"
+  - "Analytics dashboard for tracking funnel conversion metrics"
+
+technical_notes: >
+  **Tech Stack:**
+  - Frontend: Next.js 14+ with Tailwind CSS, deployed on Vercel or AWS Amplify
+  - Backend: NestJS microservices (driver-lead-service, mlm-service) on AWS Lambda
+  - Database: PostgreSQL 15 with Prisma ORM
+  - Payment: Stripe API
+  - Security: Google reCAPTCHA v3
+  - Infrastructure: AWS (API Gateway, RDS, CloudFront CDN)
+  
+  **Key Design Patterns:**
+  - API Gateway for unified backend entry point
+  - Repository Pattern for data access abstraction
+  - Event-Driven Communication (DriverRegistered event triggers MLM distribution)
+  - Idempotency for payment processing (prevent duplicate charges)
+
+definition_of_done:
+  - All 4 stories (101.1 - 101.4) are implemented and pass QA
+  - End-to-end registration flow works: visitor → form → payment → PROSPECT user → commission distribution
+  - PageSpeed score ≥85 on all marketing pages
+  - reCAPTCHA successfully blocks bot submissions
+  - Stripe payment integration is PCI-compliant
+  - MLM commission calculations are accurate and auditable
+  - All code is reviewed, tested (unit + integration), and deployed to production
+  - Documentation is updated (API specs, user guides, runbooks)
+  - Monitoring and alerting are configured for critical paths

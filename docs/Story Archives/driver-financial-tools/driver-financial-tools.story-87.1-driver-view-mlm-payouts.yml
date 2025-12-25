@@ -1,0 +1,29 @@
+id: story-87.1
+epic: driver-financial-tools
+slug: driver-view-mlm-payouts
+title: "Driver App: View MLM Commission Payouts"
+status: Done
+author: Gemini Code Assist
+date: '2025-12-05T11:10:00Z'
+
+description: >
+  As a driver participating in the referral program, I want to see a clear breakdown of the commissions
+  I've earned from my referred drivers' registration fees and ride fares, so I can track my MLM income.
+
+acceptance_criteria:
+  - A new "Commissions" tab or section must be added to the driver's main earnings screen.
+  - This section must display a list of commission transactions, separate from trip fares.
+  - Each commission entry must show the amount, the source (e.g., "Registration Fee from John D.", "Ride commission from Jane S."), and the date.
+  - The UI must call a new endpoint on the `MLM Service` (e.g., `GET /mlm/my-commissions`) to fetch this data for the authenticated driver.
+
+files_to_be_created:
+  # No new files, modifies existing screens.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/earnings_summary_screen.dart # To add the new "Commissions" section.
+  - # The backend MLM Service will need a new controller/service to implement the `GET /mlm/my-commissions` endpoint.
+
+dev_notes: >
+  This story provides the driver-facing view for the MLM system defined in `architecture.md` and the PRD (section 2.2). It requires the `MLM Service` to expose an endpoint that can query the `RegistrationFeeLedger` (and a future ride commission ledger) for a specific recipient. The frontend work involves modifying the existing earnings screen to display this new category of income.
+  PRD Reference: 2.2. Driver App -> Earnings, Payouts & Financial Tools -> MLM Commission Payouts
+  Architecture Reference: 9. Database Schema (RegistrationFeeLedger)

@@ -1,0 +1,61 @@
+id: epic-120
+slug: driver-organization-management
+title: Driver Organization Management Portal
+status: DONE
+author: Mary (analyst)
+date: '2024-08-10T11:05:00Z'
+
+description: >
+  This epic covers the creation of a comprehensive, self-service portal for
+  Driver Organizations. It allows formal groups of drivers to register on the
+  platform, manage their members, coordinate activities, and operate under a
+  clear governance structure. The goal is to empower driver communities while
+  providing robust administrative oversight and ensuring driver autonomy.
+
+stories:
+  # Foundational Setup & Lifecycle
+  - user-groups-and-networks.story-120.1-group-portal-foundation.yml
+  - user-groups-and-networks.story-120.9-organization-certificate-expiration-handling.yml
+  - user-groups-and-networks.story-120.10-organization-dissolution.yml
+
+  # Governance & Leadership
+  - user-groups-and-networks.story-120.5-founder-succession-flow.yml
+  - user-groups-and-networks.story-120.8-organization-audit-log.yml
+
+  # Membership Management
+  - user-groups-and-networks.story-120.4-driver-organization-join-flow.yml
+  - user-groups-and-networks.story-120.7-driver-voluntary-leave.yml
+  - user-groups-and-networks.story-120.6-organization-member-removal.yml
+
+  # Organization Activities
+  - user-groups-and-networks.story-120.2-organization-activity-management.yml
+  - user-groups-and-networks.story-120.3-driver-activity-rsvp.yml
+
+  # Discovery & Engagement
+  - user-groups-and-networks.story-120.2-public-organization-profile.yml
+  - user-groups-and-networks.story-120.3-organization-browser.yml
+  - user-groups-and-networks.story-120.10-organization-leaderboards.yml
+
+completion_summary:
+  total_stories: 13
+  completed_stories: 13
+  completion_percentage: 100
+  completion_date: '2024-12-16T03:30:00Z'
+  
+key_deliverables:
+  - Group Portal Web Application (Next.js)
+  - Organization registration and verification system
+  - Member management and join/leave flows
+  - Leadership succession and governance tools
+  - Activity management and RSVP system
+  - Certificate tracking and renewal
+  - Audit logging for transparency
+  - Public organization profiles
+  - Organization discovery browser
+  - Performance leaderboards
+
+dev_notes: >
+  This is a major new feature set that introduces a new user type (Organization Manager)
+  and a new web application (the Group Portal). It has significant implications for
+  the user service, which will need to model the relationships between users,
+  organizations, and leadership roles.

@@ -1,0 +1,26 @@
+id: story-60.1
+epic: passenger-convenience
+slug: saved-routes
+title: Implement "Saved Routes" for Passengers
+status: Done
+author: Bob (sm)
+date: '2024-08-05T09:11:00Z'
+
+description: >
+  As a passenger who frequently takes the same trip (e.g., my daily
+  commute), I want to save the entire route as a one-tap shortcut on my home
+  screen.
+
+acceptance_criteria:
+  - After a trip, or in the trip history, a "Save this Route" option must be available.
+  - The `passenger-app` home screen must have a section for saved routes.
+  - Tapping a saved route immediately pre-fills the pickup and destination, taking the user directly to the vehicle selection/confirmation screen.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To display saved routes
+  - apps/passenger-app/src/screens/trip_detail_screen.dart # To add the save option
+
+dev_notes: >
+  This is the first story for a new `passenger-convenience` epic. It streamlines the booking process for the most common trips, reducing friction for power users.

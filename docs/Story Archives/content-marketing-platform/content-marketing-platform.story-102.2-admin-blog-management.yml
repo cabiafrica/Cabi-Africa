@@ -1,0 +1,44 @@
+id: story-102.2
+epic: content-marketing-platform
+slug: admin-blog-management
+title: Admin Panel UI for Blog Post Management
+status: Done
+author: Bob (sm)
+date: '2025-12-02T11:30:00Z'
+
+description: >
+  As a content manager or administrator, I want a user interface in the admin panel to create, edit, and publish blog posts,
+  so that I can manage the content for the marketing website's blog.
+
+acceptance_criteria:
+  - A new "Content" or "Blog" section must be created in the `admin-panel`.
+  - This section must contain a page that lists all blog posts, showing their title, author, status (e.g., Draft, Published), and last updated date.
+  - The page must have a "Create New Post" button that navigates to a post editor.
+  - The post editor must provide fields for a title, a URL slug, and the main body content (using a rich-text or markdown editor).
+  - An admin must be able to save a post as a "Draft" or "Publish" it.
+  - A new NestJS application, `content-service`, must be created to handle CRUD operations for blog posts.
+  - The `content-service` must expose endpoints for creating, reading, updating, and deleting posts.
+  - The `marketing-website`'s blog pages (from `story-102.1`) must be updated to fetch content from this new `content-service` instead of local markdown files.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/content/blog/page.tsx # The blog post list page.
+  - apps/admin-panel/src/app/content/blog/edit/[postId]/page.tsx # The editor page for a post.
+  - apps/content-service/src/main.ts # And other boilerplate for the new service.
+  - apps/content-service/src/app/content.controller.ts
+  - apps/content-service/src/app/content.service.ts
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/lib/posts.ts # To fetch posts from the new content-service API.
+  - Cabi Alpha/web/user_portal/app/blog/page.tsx # To use the updated posts.ts library.
+  - Cabi Alpha/web/user_portal/app/blog/[slug]/page.tsx # To use the updated posts.ts library.
+
+dev_notes: >
+  This story completes the blog feature by providing the necessary backend and administrative interface, as required by the PRD ("Content Management System" under Admin Panel). It replaces the temporary local markdown file system from `story-102.1` with a persistent, database-backed solution. The choice of a rich-text editor component for the admin panel is a key implementation detail for the development team to decide on.
+
+tasks:
+  - id: task-1
+    description: "Create and configure the new `content-service` NestJS application for blog post CRUD."
+  - id: task-2
+    description: "Implement the blog post list and editor pages in the `admin-panel`."
+  - id: task-3
+    description: "Refactor the `marketing-website` to fetch blog content from the `content-service` API."

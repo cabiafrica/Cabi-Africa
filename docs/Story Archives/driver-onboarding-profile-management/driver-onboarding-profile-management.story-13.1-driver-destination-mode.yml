@@ -1,0 +1,29 @@
+id: story-13.1
+epic: driver-onboarding-profile-management
+slug: driver-destination-mode
+title: "Driver App: Implement Destination Mode"
+status: Done
+author: Gemini Code Assist
+date: '2025-12-05T11:05:00Z'
+
+description: >
+  As a driver, I want to set a personal destination (like heading home) and only receive ride requests
+  that are along my route, so I can earn money on my way to a specific location.
+
+acceptance_criteria:
+  - An option to "Set Destination" must be available on the driver's home screen map interface.
+  - Tapping this option must allow the driver to search for and select a destination address.
+  - Once a destination is set, the app UI must clearly indicate that "Destination Mode" is active.
+  - The backend dispatch system must be updated to filter ride requests, only offering the driver trips that progress them towards their set destination.
+  - The driver must be able to clear or cancel the destination mode at any time.
+
+files_to_be_created:
+  # No new files, modifies existing screens and services.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/home_screen.dart # To add the UI for setting and viewing the destination.
+  - # The backend dispatch service will need significant modification to support destination-based ride filtering.
+
+dev_notes: >
+  This story introduces the "Destination Mode" feature from the PRD (section 2.2). The frontend work is relatively straightforward, involving adding a new state and UI flow to the home screen. The main complexity lies in the backend dispatching logic. The dispatch service will need a new algorithm to calculate if a potential ride's route aligns with the driver's path to their destination.
+  PRD Reference: 2.2. Driver App -> Core Trip Management & Navigation -> Destination Mode

@@ -1,0 +1,26 @@
+id: story-61.3
+epic: platform-communication
+slug: passenger-surveys
+title: Implement In-App Passenger Surveys and Polls
+status: DONE
+author: Bob (sm)
+date: '2024-08-07T09:15:00Z'
+
+description: >
+  As a marketing manager, I want to push short surveys or polls to passengers
+  in-app, so that I can gather quick feedback on new ideas or user sentiment.
+
+acceptance_criteria:
+  - The `admin-panel` must have a tool to create simple surveys (e.g., multiple choice, single question).
+  - Admins can target the survey to a specific user segment (e.g., all users in a city, frequent riders).
+  - The `passenger-app` will display the survey in a non-intrusive way (e.g., a card on the home screen).
+  - The results must be collected and viewable in an analytics dashboard in the admin panel.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/communications/page.tsx # To add survey creation tool
+  - libs/backend/notification-service/src/lib/notification.service.ts # To manage survey distribution and data collection
+
+dev_notes: >
+  A powerful tool for market research and user feedback. It allows us to get a quick pulse check from our user base.

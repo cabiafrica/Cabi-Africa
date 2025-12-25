@@ -1,0 +1,19 @@
+id: ride-dispatch
+slug: ride-dispatch
+title: Ride Dispatch & Matching
+status: DONE
+owner: Sarah (po)
+description: >
+  This epic encompasses the core logic for matching passengers with available drivers.
+  It covers the lifecycle of a ride request from the moment a passenger confirms a booking
+  until a driver accepts it and the trip begins.
+  
+  Key capabilities include:
+  - Finding nearest available drivers (Geospatial search).
+  - Sending ride offers to drivers.
+  - Driver acceptance/rejection flow.
+  - Trip state management (Requested -> Assigned -> Arrived -> In Progress -> Completed).
+tags:
+  - core-domain
+  - real-time
+  - driver-experience

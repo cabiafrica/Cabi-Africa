@@ -1,0 +1,27 @@
+id: story-40.4
+epic: payment-methods
+slug: pay-for-friend
+title: Implement "Pay for a Friend's Ride"
+status: DONE
+author: Bob (sm)
+date: '2024-08-01T09:03:00Z'
+
+description: >
+  As a user, I want to pay for a ride that another user is currently taking,
+  so that I can treat a friend or family member.
+
+acceptance_criteria:
+  - A user must be able to find a friend's active trip (e.g., if the friend has shared their trip with them).
+  - On the live tracking screen for the shared trip, a "Pay for this Ride" button should be visible.
+  - Tapping the button confirms that the user wants to pay for the trip using their own default payment method.
+  - The `payment-service` must be updated to handle a third-party payer for a trip.
+  - The original rider and the new payer must both be notified of the change.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/web-live-tracking/src/app/track/[shareToken]/page.tsx # To add the "Pay for Ride" button
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle third-party payment logic
+
+dev_notes: >
+  This feature adds a social dimension to payments. It requires careful handling of payment authorization and state changes to ensure the correct person is charged.

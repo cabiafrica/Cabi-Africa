@@ -1,0 +1,31 @@
+id: story-10.4
+epic: user-profile-and-settings
+slug: passenger-trip-history
+title: Implement Passenger Trip History Screen
+status: DONE
+author: Bob (sm)
+date: '2024-05-30T18:00:00Z'
+
+description: >
+  As a passenger, I want to view a list of my completed trips, so that I can
+  easily track my travel history and review the details of past journeys.
+
+acceptance_criteria:
+  - A new `TripHistoryScreen` is created for the passenger app.
+  - The passenger's `ProfileScreen` should be updated with a button or link (e.g., "My Trips") that navigates to the `TripHistoryScreen`.
+  - The `RideService` in the passenger app must be updated with a new `getTripHistory()` method.
+  - The `TripHistoryScreen` must fetch and display a list of the passenger's completed trips from the `getTripHistory()` method.
+  - Each item in the list should display key information, such as the date, destination, and the final fare paid.
+  - The screen must properly handle loading and empty states (e.g., display a message like "You haven't taken any trips yet.").
+  - Tapping on a trip in the list is not required to do anything for this story.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/trip_history_screen.dart
+  - apps/passenger-app/test/screens/trip_history_screen_test.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/profile_screen.dart
+  - Cabi Alpha/mobile/passenger_app/lib/api/ride_service.dart
+
+dev_notes: >
+  This story mirrors the trip history feature recently added to the driver app, providing feature parity. The `RideService` can return a hardcoded list of mock `Ride` objects for now. This feature is a fundamental part of the user's account management and sets the stage for more detailed trip receipts or support requests in the future.

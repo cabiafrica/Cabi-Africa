@@ -1,0 +1,39 @@
+id: story-26.3
+epic: driver-incentives
+slug: peak-hours-bonus
+title: Implement Peak Hours Fare Multiplier (Surge Pricing)
+status: Done
+author: Bob (sm)
+date: '2024-07-22T09:00:00Z'
+
+description: >
+  As a system administrator, I want to define peak hour zones and times with
+  fare multipliers, so that we can incentivize drivers to work in high-demand
+  areas, balancing supply with demand and improving service reliability for
+  passengers.
+
+acceptance_criteria:
+  - The `admin-panel` must have a new page under "Incentives" for managing "Peak Hour Zones".
+  - On this page, an admin must be able to define a peak hour rule by drawing a polygon on a map, setting a time window (e.g., Mon-Fri, 7-9 AM), and specifying a fare multiplier (e.g., 1.5x).
+  - These rules must be stored in the `incentive-service`.
+  - The `driver-app` home screen map must display a visual overlay (e.g., a heatmap) indicating areas where peak hour pricing is currently active.
+  - When a passenger requests a ride, the `ride-service` must check if the pickup location and current time fall within an active peak hour zone.
+  - If a peak hour rule applies, the fare estimate shown to the passenger in the `passenger-app` must reflect the multiplier, and a clear message indicating "Peak pricing is active" should be displayed.
+  - The final fare calculated by the `payment-service` must also incorporate this multiplier.
+  - The driver's earnings summary for the trip must clearly show the peak hours bonus.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/incentives/peak-hours/page.tsx
+  - libs/backend/incentive-service/src/lib/peak_hours.service.ts
+  - libs/backend/incentive-service/src/lib/peak_hours.controller.ts
+
+files_to_be_modified:
+  - libs/backend/incentive-service/src/lib/incentive.module.ts # To include peak hours components
+  - The database schema for the `incentive-service` to store peak hour rules (including geospatial data for zones).
+  - libs/backend/ride-service/src/lib/ride.service.ts # To query incentive-service and apply multiplier to fare estimates
+  - libs/backend/payment-service/src/lib/payment.service.ts # To apply multiplier to final charge
+  - Cabi Alpha/mobile/driver_app/lib/screens/home_screen.dart # To display the heatmap/surge zones
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/ride_booking_panel.dart # To display peak pricing message
+
+dev_notes: >
+  This story introduces dynamic pricing, a powerful but complex feature. The `incentive-service` will become the source of truth for all dynamic pricing rules. The use of geospatial queries will be necessary to check if a pickup point is within a defined zone. The UI for drawing zones in the admin panel will require a map library (like Leaflet or Mapbox). For drivers, the heatmap is a critical visual cue to draw them into high-demand areas.

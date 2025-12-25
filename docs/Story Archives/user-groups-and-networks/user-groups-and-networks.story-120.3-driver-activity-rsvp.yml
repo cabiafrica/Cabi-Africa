@@ -1,0 +1,28 @@
+id: story-120.3
+epic: user-groups-and-networks
+slug: driver-activity-rsvp
+title: Allow Drivers to RSVP for Organization Activities
+status: DONE
+author: Mary (analyst)
+date: '2024-08-10T10:20:00Z'
+
+description: >
+  As a driver, I want to RSVP for activities created by my organization directly
+  in my app, so I can confirm my participation and the manager knows who plans to attend.
+
+acceptance_criteria:
+  - In the `driver-app`'s "Organization Activities" view, each activity listing must have an "RSVP" or "Join" button.
+  - When a driver taps the button, their participation status for that activity is recorded on the backend.
+  - The button's state must update to show the driver has joined (e.g., it changes to "Joined" and becomes disabled or changes to a "Leave" option).
+  - In the `group-portal-web`, the organization manager must be able to see a list of members who have RSVP'd for each activity.
+  - A new backend service or module is needed to store the relationship between a user and their activity participation.
+
+files_to_be_created:
+  - apps/group-portal-web/src/app/dashboard/[groupId]/activities/[activityId]/page.tsx # A new detail page for an activity, showing participants.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/organization_activities_screen.dart # To add the RSVP button and its logic.
+  - libs/backend/user-service/src/lib/user.service.ts # To add a data model for tracking activity participation (e.g., an ActivityRSVP table).
+
+dev_notes: >
+  This story introduces the first two-way interaction within the organization portal. It requires a new data model to link users to activities (a many-to-many relationship). The manager's view should show a simple count of RSVPs on the main list, with a detailed list of names on the new activity detail page.

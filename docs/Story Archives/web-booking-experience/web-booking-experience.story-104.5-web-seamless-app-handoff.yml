@@ -1,0 +1,34 @@
+id: story-104.5
+epic: web-booking-experience
+slug: web-seamless-app-handoff
+title: "Website: Implement Seamless Hand-off to Driver App After Registration"
+status: Done
+author: Gemini Code Assist
+date: '2025-12-04T10:10:00Z'
+
+description: >
+  As a new driver who has just registered on the website, I want to be automatically logged into the driver app
+  when I open it via the link provided, so I can continue my onboarding without having to log in again.
+
+acceptance_criteria:
+  - After successful web registration (from story-104.2/104.4), the `Driver Lead Service` must generate a secure, single-use authentication token.
+  - The success page on the website must embed this token into the deep link URL for the driver app (e.g., `cabi-driver://onboard?token=...`).
+  - The `driver-app` must be configured to handle this deep link.
+  - When the app is opened via the deep link, it must extract the token.
+  - The app must call a new backend endpoint in the `auth-service` (e.g., `POST /auth/exchange-token`) with the single-use token.
+  - The `auth-service` must validate the token, and if valid, return a standard session token (JWT).
+  - The driver app must use the session token to log the user in and navigate them directly to the next onboarding step.
+
+files_to_be_created:
+  # No new files on the web side.
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/app/register/page.tsx # To construct the deep link with the token.
+  - # The Driver Lead Service needs to generate the token.
+  - # The backend auth-service needs a new controller/service method for token exchange.
+  - # The driver-app's main entry point or routing logic needs to be updated to handle the deep link.
+
+dev_notes: >
+  This is a high-impact UX improvement story that fulfills a key requirement from the PRD (section 2.6). It creates a magical "it just works" experience for the new driver.
+  The security of the single-use token is paramount. It should be short-lived (e.g., expires in 10 minutes) and be invalidated immediately after its first use to prevent replay attacks. This flow requires coordinated changes across the web frontend, backend services, and the mobile driver app.
+  PRD Reference: 2.6. Marketing Website -> Driver Acquisition Funnel -> Seamless App Hand-off

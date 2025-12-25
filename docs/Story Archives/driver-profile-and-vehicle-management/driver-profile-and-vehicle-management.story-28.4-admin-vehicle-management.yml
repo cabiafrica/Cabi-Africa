@@ -1,0 +1,28 @@
+id: story-28.4
+epic: driver-profile-and-vehicle-management
+slug: admin-vehicle-management
+title: Admin View and Management of Vehicles
+status: Done
+author: Bob (sm)
+date: '2024-07-27T09:08:00Z'
+
+description: >
+  As an administrator, I want to view a list of all vehicles on the platform
+  and be able to edit their details, so that I can manage the fleet and
+  resolve data inconsistencies.
+
+acceptance_criteria:
+  - A new "Vehicles" page must be added to the `admin-panel`.
+  - The page must list all registered vehicles with key details (Make, Model, License Plate, Associated Driver).
+  - The list must be searchable and filterable.
+  - Clicking on a vehicle must allow an admin to view and edit its details.
+  - The `vehicle-service` must expose secure, admin-only endpoints for listing and managing all vehicles.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/vehicles/page.tsx
+
+files_to_be_modified:
+  - libs/backend/vehicle-service/src/lib/vehicle.controller.ts # To add admin endpoints
+
+dev_notes: >
+  This provides the necessary administrative oversight for the vehicle management features introduced in `story-28.1` and `story-28.2`. It's essential for support and data quality management.

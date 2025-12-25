@@ -1,0 +1,26 @@
+id: story-120.6
+epic: user-groups-and-networks
+slug: organization-member-removal
+title: Allow Leader Board Members to Remove Drivers from Organization
+status: DONE
+author: Mary (analyst)
+date: '2024-08-10T10:40:00Z'
+
+description: >
+  As a driver organization admin (a member of the leader board), I want to
+  remove a driver from my organization, so I can manage my member roster and
+  remove drivers who are no longer affiliated with us.
+
+acceptance_criteria:
+  - A new "Members" page must be added to the `group-portal-web` dashboard, accessible to leader board members.
+  - This page must list all drivers currently belonging to the organization.
+  - Next to each member's name, there must be a "Remove" button.
+  - Clicking "Remove" must show a confirmation dialog to prevent accidental removals.
+  - Upon confirmation, the backend must update the driver's profile to set their `organizationId` to null.
+  - The removed driver must receive a notification informing them they are no longer part of the organization.
+
+files_to_be_created:
+  - apps/group-portal-web/src/app/dashboard/[groupId]/members/page.tsx # UI for leader board to view and manage members.
+
+dev_notes: >
+  This provides a key administrative control for organization leaders. The action is destructive in the sense that it severs the link between the driver and the organization. The driver will revert to being an independent driver on the platform. All actions should be logged for auditing purposes.

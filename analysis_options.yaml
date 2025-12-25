@@ -1,0 +1,6 @@
+analyzer:
+  exclude:
+    - tools/**
+    - node_modules/**
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"

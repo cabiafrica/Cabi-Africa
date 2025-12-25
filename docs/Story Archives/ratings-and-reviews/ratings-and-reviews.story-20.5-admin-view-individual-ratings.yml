@@ -1,0 +1,30 @@
+id: story-20.5
+epic: ratings-and-reviews
+slug: admin-view-individual-ratings
+title: Admin View of Individual Ratings and Comments
+status: DONE
+author: Bob (sm)
+date: '2024-07-23T14:00:00Z'
+
+description: >
+  As an administrator, I want to view a list of all individual ratings and
+  comments for a specific driver, so that I can investigate low ratings,
+  identify patterns, and handle support issues.
+
+acceptance_criteria:
+  - A "Ratings" tab or section must be added to the driver detail page in the `admin-panel`.
+  - This section must display a paginated list of all ratings received by that driver.
+  - Each item in the list must show the star rating, the passenger's comment (if provided), and the date of the trip.
+  - For privacy, the passenger's identity should not be displayed.
+  - The list should be sortable by rating (high-to-low or low-to-high) and by date.
+  - The `rating-service` must expose a new, secure admin-only endpoint (e.g., GET `/ratings/driver/{driverId}`) to fetch this detailed rating history.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/drivers/[driverId]/page.tsx # To add the ratings tab and UI
+  - libs/backend/rating-service/src/lib/rating.controller.ts # To add the new admin endpoint
+  - libs/backend/rating-service/src/lib/rating.service.ts # To implement the logic for fetching detailed ratings
+
+dev_notes: >
+  This story provides crucial drill-down capability for admins, moving beyond the aggregate average rating in `story-20.4`. It's essential for quality control, driver feedback, and resolving disputes. The backend service will need to provide a paginated and sortable list of ratings for a given driver.

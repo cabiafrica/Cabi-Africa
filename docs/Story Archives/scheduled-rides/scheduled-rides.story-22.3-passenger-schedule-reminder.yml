@@ -1,0 +1,32 @@
+id: story-22.3
+epic: scheduled-rides
+slug: passenger-schedule-reminder
+title: Send Reminder Notification to Passenger Before Scheduled Ride
+status: Done
+author: Bob (sm)
+date: '2024-07-03T09:00:00Z'
+
+description: >
+  As a passenger who has scheduled a ride, I want to receive a reminder
+  notification shortly before my pickup time, so that I don't forget about my
+  upcoming trip and can be ready on time.
+
+acceptance_criteria:
+  - The scheduled job that runs periodically (from `story-22.2`) must also identify scheduled rides that are within a reminder window (e.g., 30 minutes before pickup).
+  - When a ride enters this window, the `ride-service` must publish a `ScheduledRideReminder` event.
+  - The event must contain the `passengerId`, the scheduled pickup time, and the pickup location.
+  - The `notification-service` must subscribe to and listen for the `ScheduledRideReminder` event.
+  - Upon receiving the event, the `notification-service` must construct a notification message (e.g., "Reminder: Your ride is scheduled for [Time]. Please be ready for pickup.").
+  - The `notification-service` must send this message as a push notification to the passenger's registered device(s).
+  - The `passenger-app` must be able to receive and display this notification.
+
+files_to_be_created:
+  - libs/backend/notification-service/src/lib/listeners/ride.listener.ts # Or add to existing listener
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/scheduled_ride_dispatcher.service.ts # To add logic for publishing the reminder event
+  - libs/backend/notification-service/src/lib/notification.service.ts # To add logic for sending the reminder notification
+  - Cabi Alpha/mobile/passenger_app/lib/main.dart # Or equivalent to handle displaying the notification
+
+dev_notes: >
+  This story improves the reliability and user experience of the scheduled rides feature. It should leverage the same scheduled job infrastructure created for dispatching rides (`story-22.2`). The reminder window (e.g., 30 minutes) should be configurable and must be set to trigger before the dispatch window. This is an event-driven feature that relies on asynchronous communication between the `ride-service` and `notification-service`.

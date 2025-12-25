@@ -1,0 +1,26 @@
+id: story-59.1
+epic: driver-payments-and-reimbursements
+slug: automated-reimbursements
+title: Implement Automated Toll and Fee Reimbursement
+status: Done
+author: Bob (sm)
+date: '2024-08-05T09:09:00Z'
+
+description: >
+  As a driver, I want the app to automatically detect when I pay for a toll
+  or airport fee and add it to the trip fare, so I don't have to request
+  reimbursement manually.
+
+acceptance_criteria:
+  - This story enhances `story-30.3` (Toll Roads Surcharge).
+  - The `ride-service` will use the driver's GPS data during a trip to detect passage through known toll gantries or airport fee zones.
+  - When detected, the known cost of that toll/fee is automatically added to the final fare.
+  - This removes the need for the driver to report the expense.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To implement GPS-based toll detection
+
+dev_notes: >
+  This is the first story for a new `driver-payments-and-reimbursements` epic. It improves accuracy and reduces friction for drivers compared to manual reporting or route-based estimation.

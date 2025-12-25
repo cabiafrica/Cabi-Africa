@@ -1,0 +1,62 @@
+id: story-14.1
+epic: driver-onboarding-profile-management
+slug: driver-document-submission-ui
+title: "'Driver App: Implement Document Submission UI'"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-06T11:00:00Z'
+
+description: >
+  As a new driver who has just registered, I need a clear interface in the driver app to upload my required documents
+  (e.g., driver's license, vehicle insurance), so I can complete my onboarding process and get approved to drive.
+
+acceptance_criteria:
+  - A new "Documents" screen must be created in the `driver-app` as part of the onboarding flow.
+  - The screen must display a list of required documents (e.g., "Driver's License", "Vehicle Insurance").
+  - For each document, the user must be able to tap to upload an image from their device's camera or gallery.
+  - After selecting an image, a preview should be shown before confirming the upload.
+  - Uploading a document must call a backend endpoint to submit the file for review.
+  - The UI must update to show the status of each document (e.g., "Pending Review", "Approved", "Rejected").
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/document_submission_screen.dart
+
+files_to_be_modified:
+  - # The driver app's onboarding router/navigator to include this new screen.
+  - # The backend DocumentService will need an endpoint to handle file uploads.
+
+dev_notes: >
+  This story is a critical part of the MVP driver onboarding funnel as defined in `brief.md`. It provides the driver-facing UI for the document management system. The frontend will need to integrate with device-native image pickers and camera functionality. The backend will require a secure endpoint for handling multipart/form-data file uploads and associating them with the driver's profile. This story is the user-facing counterpart to the admin-side document review features.
+  PRD Reference: 2.2. Driver App -> Onboarding & Profile Management -> Driver Document Submission
+
+tasks:
+  - id: task-1
+    description: '[x] Create the initial UI for the Document Submission screen.'
+  - id: task-2
+    description: '[x] Integrate a native image picker to allow document selection.'
+  - id: task-3
+    description: '[x] Implement backend logic to handle multipart file uploads.'
+  - id: task-4
+    description: '[x] Connect the frontend to the new backend upload endpoint.'
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - Cabi Alpha/mobile/driver_app/lib/screens/document_submission_screen.dart
+    - Cabi Alpha/mobile/driver_app/lib/services/document_api_service.dart
+    - libs/backend/user-service/src/lib/user.controller.ts
+    - libs/backend/user-service/src/lib/user.service.ts
+    - libs/shared/dtos/src/lib/user.dto.ts
+    - docs/driver-onboarding-profile-management.story-14.1-driver-document-submission-ui.yml
+  change_log:
+    - file: Cabi Alpha/mobile/driver_app/lib/screens/document_submission_screen.dart
+      change: Created the screen UI, integrated the image_picker, and implemented state management to handle the upload flow.
+    - file: Cabi Alpha/mobile/driver_app/lib/services/document_api_service.dart
+      change: Created a dedicated service to handle the multipart/form-data request for document uploads.
+    - file: libs/backend/user-service/src/lib/user.controller.ts
+      change: Created the `POST /users/me/documents` endpoint with `FileInterceptor` to handle file uploads.
+    - file: libs/backend/user-service/src/lib/user.service.ts
+      change: Implemented the service logic to save the uploaded file to a local directory and update the mock user data.
+  completion_notes:
+    - >-
+      The full-stack implementation for the driver document submission UI is complete. The driver can now select a document from their device, which is then uploaded to the backend. The UI provides feedback during the upload process and updates the document's status accordingly. The feature is now ready for QA review.

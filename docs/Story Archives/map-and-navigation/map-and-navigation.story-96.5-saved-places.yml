@@ -1,0 +1,27 @@
+id: story-96.5
+epic: map-and-navigation
+slug: saved-places
+title: Implement Saved Places (Home/Work)
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T23:05:00Z'
+
+description: >
+  As a passenger, I want to save my "Home" and "Work" addresses, so I can
+  quickly book rides to my most frequent destinations.
+
+acceptance_criteria:
+  - A new "Saved Places" section must be added to the `passenger-app` settings.
+  - Users can set addresses for "Home" and "Work".
+  - On the home screen, "Home" and "Work" must appear as quick-select destination shortcuts.
+  - The `user-service` must be updated to store these saved addresses.
+
+files_to_be_created:
+  - apps/passenger-app/src/screens/saved_places_screen.dart
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To add the shortcuts
+  - libs/backend/user-service/src/lib/user.service.ts # To store the addresses
+
+dev_notes: >
+  This is a fundamental convenience feature in any location-based app. It significantly speeds up the booking process for the most common trips.

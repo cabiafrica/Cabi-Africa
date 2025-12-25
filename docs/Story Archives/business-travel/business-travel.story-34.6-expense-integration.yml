@@ -1,0 +1,26 @@
+id: story-34.6
+epic: business-travel
+slug: expense-integration
+title: Integration with Expense Platforms
+status: Done
+author: Bob (sm)
+date: '2024-07-31T11:17:00Z'
+
+description: >
+  As a passenger using a business profile, I want to automatically forward my
+  ride receipts to my company's expense management software (e.g., Expensify, Concur).
+
+acceptance_criteria:
+  - In the `Business Profile` settings, a new section for "Expense Integration" must be added.
+  - The user can authenticate and link their Expensify/Concur account.
+  - When a business trip is completed, the `payment-service` or `notification-service` must use the expense platform's API to automatically create a new expense report with the ride receipt.
+  - This requires building API integrations with each supported third-party expense platform.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/business_profile_screen.dart # To add the integration link
+  - libs/backend/payment-service/src/lib/payment.service.ts # To trigger the expense submission
+
+dev_notes: >
+  A high-value feature for business users that removes a major point of friction in expensing. Each integration with a third-party platform is a significant piece of work.

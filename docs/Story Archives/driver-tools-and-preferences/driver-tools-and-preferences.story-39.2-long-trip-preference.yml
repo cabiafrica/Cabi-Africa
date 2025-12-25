@@ -1,0 +1,32 @@
+id: story-39.2
+epic: driver-tools-and-preferences
+slug: long-trip-preference
+title: Allow Drivers to Set Long Trip Preference
+status: Done
+author: Bob (sm)
+date: '2024-07-22T11:30:00Z'
+
+description: >
+  As a driver, I want to set a preference for receiving longer trips, so that
+  the system can prioritize sending me ride requests that better match my
+  earning strategy.
+
+acceptance_criteria:
+  - A new toggle or setting, "Prefer Long Trips," must be added to the `driver-app`'s settings or preferences screen.
+  - When the driver enables this setting, the `driver-app` must call the `user-service` to save this preference to their profile.
+  - The `user-service` must be updated to store this boolean preference for each driver.
+  - The ride matching logic in the `ride-service` (already implemented in `story-39.2` context) must use this preference to prioritize drivers for trips exceeding the `LONG_TRIP_THRESHOLD_MINUTES`.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/settings_screen.dart # To add the UI toggle for the preference
+  - libs/backend/user-service/src/lib/user.service.ts # To store the preference
+  - libs/backend/user-service/src/lib/user.model.ts # To add the preference field to the user model
+
+dev_notes: >
+  This story provides the driver-facing UI for a backend capability that already exists. The `ride-service` can already factor this preference into its matching algorithm. This story is about exposing that control to the driver, completing the feature loop.
+
+tasks:
+  - id: task-1
+    description: Update backend user service to store the long trip preference.
+  - id: task-2
+    description: Update the driver app settings screen to include the new preference toggle.

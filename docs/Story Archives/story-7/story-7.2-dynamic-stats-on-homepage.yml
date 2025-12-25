@@ -1,0 +1,35 @@
+id: story-7.2
+epic: epic-7.0
+slug: dynamic-stats-on-homepage
+title: Display Dynamic Stats on Homepage
+status: DONE
+author: Sarah (po)
+date: '2024-06-26T14:00:00Z'
+
+description: >
+  As a potential user, I want to see real-time statistics on the homepage,
+  such as the number of active drivers or completed trips, so that I can see
+  the platform is active and trustworthy.
+
+acceptance_criteria:
+  - A new reusable "DynamicStats" component is created in the `user-portal`.
+  - The component is added to the homepage (`/`).
+  - The component must display at least three key metrics (e.g., "Active Drivers", "Completed Trips", "Happy Passengers").
+  - A new mock API route is created at `apps/user-portal/src/pages/api/stats.ts` to provide these numbers.
+  - The component must fetch data from the `/api/stats` endpoint to display the metrics.
+  - The numbers should be formatted with commas for readability (e.g., 1,000).
+  - The component should be visually appealing and placed prominently on the homepage.
+
+files_to_be_created:
+  - docs/stories/story-7.2-dynamic-stats-on-homepage.yml
+  - apps/user-portal/src/components/marketing/DynamicStats.tsx
+  - apps/user-portal/src/pages/api/stats.ts
+
+files_to_be_modified:
+  - apps/user-portal/src/pages/index.tsx
+
+dev_notes: >
+  This feature adds social proof to our homepage. The mock API should be simple
+  but structured in a way that it can be easily replaced by a real backend
+  service that aggregates data from our production systems. The component
+  should handle loading and error states gracefully.

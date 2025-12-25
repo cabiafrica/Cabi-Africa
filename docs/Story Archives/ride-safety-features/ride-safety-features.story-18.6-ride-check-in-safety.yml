@@ -1,0 +1,57 @@
+id: story-18.6
+epic: ride-safety-features
+slug: ride-check-in-safety
+title: Implement Ride Check-in Safety Feature (PIN Verification)
+status: Done
+author: Bob (sm)
+date: '2024-08-09T12:20:00Z'
+
+description: >
+  As a passenger, I want to receive a unique PIN for my ride that the driver
+  must enter to start the trip, so that I can be certain I am getting into
+  the correct vehicle.
+
+acceptance_criteria:
+  - When a ride is assigned, the `passenger-app` must display a 4-digit PIN.
+  - The `driver-app` must prompt the driver to enter this PIN before they can start the trip.
+  - The `ride-service` must validate the PIN entered by the driver.
+  - The trip cannot be started until the correct PIN is entered.
+  - The passenger can choose to enable or disable this feature in their safety settings.
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To generate, store, and validate the PIN
+  - apps/passenger-app/src/widgets/driver_details_panel.dart # To display the PIN
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To add PIN entry for the driver
+
+dev_notes: >
+  This feature adds a layer of verification before a trip begins, preventing wrong-car pickups. The PIN should be specific to each ride. We need to consider the user experience for the driver entering the PIN.
+
+tasks:
+  - id: task-1
+    description: Update backend to generate, store, and validate the ride PIN.
+    subtasks:
+      - "[x] Modify the `ride-service` to generate a 4-digit PIN when a ride is assigned."
+      - "[x] Add a `pin` field to the ride data model."
+      - "[x] Create a new endpoint/method for the driver to submit and validate the PIN."
+  - id: task-2
+    description: Display the ride PIN in the passenger app.
+    subtasks:
+      - "[x] Modify the passenger app UI to display the PIN once a driver is assigned."
+  - id: task-3
+    description: Add PIN entry functionality to the driver app.
+    subtasks:
+      - "[x] Modify the driver app UI to include a PIN entry field before starting a trip."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - libs/backend/ride-service/src/lib/ride.service.ts
+    - apps/passenger-app/src/widgets/driver_details_panel.dart
+    - apps/driver-app/src/widgets/pin_entry_dialog.dart
+  change_log:
+    - file: libs/backend/ride-service/src/lib/ride.service.ts
+      change: Modified the service to generate a PIN on ride assignment, notify the passenger, and added a `startTripWithPin` method for validation.
+    - file: apps/passenger-app/src/widgets/driver_details_panel.dart
+      change: Created a new widget to display driver details and the ride PIN to the passenger.
+    - file: apps/driver-app/src/widgets/pin_entry_dialog.dart
+      change: Created a dialog for the driver to enter the passenger's PIN and validate it before starting a trip.

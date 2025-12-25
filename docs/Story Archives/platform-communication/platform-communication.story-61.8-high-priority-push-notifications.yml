@@ -1,0 +1,22 @@
+id: story-61.8
+epic: platform-communication
+slug: high-priority-push-notifications
+title: Add High-Priority Push Notification Option for Admin Messages
+status: Done
+author: Bob (sm)
+date: '2024-08-09T15:30:00Z'
+
+description: >
+  As an operations manager sending a critical message (e.g., "Protest blocking downtown"),
+  I want to mark it as "high-priority" to send a push notification in addition
+  to the in-app message, so that drivers see it immediately.
+
+acceptance_criteria:
+  - The `admin-panel` communications interface must include a "Send Push Notification" checkbox.
+  - If checked, the `notification-service` must send a push notification to the target users' devices in addition to creating the in-app message.
+  - The push notification should contain a short summary of the message.
+  - Tapping the notification should open the app and navigate directly to the full message.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/communications/page.tsx # To add the high-priority option
+  - libs/backend/notification-service/src/lib/notification.service.ts # To integrate with a push notification provider (e.g., FCM, APNS)

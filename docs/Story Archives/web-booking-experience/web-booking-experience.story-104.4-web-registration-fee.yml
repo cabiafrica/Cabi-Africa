@@ -1,0 +1,34 @@
+id: story-104.4
+epic: web-booking-experience
+slug: web-registration-fee
+title: "Website: Collect Registration Fee During Driver Sign-up"
+status: Done
+author: Gemini Code Assist
+date: '2025-12-04T10:05:00Z'
+
+description: >
+  As a prospective driver signing up on the website, I want to securely pay the required registration fee,
+  so I can complete the initial phase of my application and my referrer can receive their commission.
+
+acceptance_criteria:
+  - After submitting the initial registration form (from story-104.2), the user must be directed to a new payment step in the UI.
+  - This step must integrate with a payment gateway (e.g., Stripe Checkout) to collect the registration fee.
+  - The `Driver Lead Service` must be updated with an endpoint that is called by the payment gateway's webhook upon successful payment.
+  - Upon receiving the successful payment webhook, the `Driver Lead Service` must:
+    - Update the `DriverProfile` status from `PROSPECT` to `PENDING_DOCUMENTS`.
+    - Trigger the `MLM Service` to distribute the fee as per the architecture.
+  - If payment is successful, the user is shown the success message with the deep link to the app.
+  - If payment fails, the user must be shown a clear error message and given the option to retry.
+
+files_to_be_created:
+  # No new pages, this modifies the existing registration flow.
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/app/register/page.tsx # To add the payment step after form submission.
+  - # The Driver Lead Service controller/service will need a new endpoint to handle payment webhooks.
+
+dev_notes: >
+  This story adds the monetization and MLM-triggering step to the driver registration flow, as required by the PRD (section 2.6) and architecture. It modifies the flow of `story-104.2`.
+
+  The implementation will require careful handling of the payment gateway integration. Using a webhook-based approach is crucial for security and reliability, ensuring the driver's status is only updated after a confirmed payment, even if the user closes their browser. This decouples the frontend flow from the critical backend state change.
+  PRD Reference: 2.6. Marketing Website -> Driver Acquisition Funnel -> Registration Fee Collection

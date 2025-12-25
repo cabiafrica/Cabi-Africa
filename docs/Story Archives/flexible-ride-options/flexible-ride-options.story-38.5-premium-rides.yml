@@ -1,0 +1,25 @@
+id: story-38.5
+epic: flexible-ride-options
+slug: premium-rides
+title: Introduce Premium / Black Car Ride Option
+status: Done
+author: Bob (sm)
+date: '2024-08-09T23:35:00Z'
+
+description: >
+  As a passenger going to a special event or business meeting, I want to be
+  able to request a high-end, premium vehicle with a professional driver, so
+  I can travel in comfort and style.
+
+acceptance_criteria:
+  - A new "Premium" or "Black" ride option must be available in the vehicle selector.
+  - This tier has stricter vehicle requirements (e.g., must be a black luxury sedan, newer model year) and potentially higher driver rating requirements.
+  - The fare for a Premium ride is significantly higher than a standard ride.
+  - The `ride-service` must match the request only with drivers and vehicles that meet the Premium criteria.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To add the Premium option
+  - libs/backend/ride-service/src/lib/ride.service.ts # To add Premium matching logic
+
+dev_notes: >
+  This is a high-margin product tier that caters to business travelers and special occasions. It helps capture more of the transportation market.

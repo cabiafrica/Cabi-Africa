@@ -1,0 +1,84 @@
+id: story-6.2
+epic: epic-6.0
+slug: newsletter-signup-component
+title: Create Newsletter Signup Component
+status: Done
+author: Sarah (po)
+date: '2024-06-24T11:00:00Z'
+
+description: >
+  As a marketing manager, I want a newsletter signup component on the website,
+  so that we can capture visitor email addresses for lead nurturing and
+  marketing campaigns.
+
+acceptance_criteria:
+  - A new reusable "NewsletterSignup" component is created in the `user-portal`.
+  - The component must contain an email input field and a "Subscribe" button.
+  - The component is added to the site-wide footer, making it visible on all pages.
+  - A new API route is created at `Cabi Alpha/web/user_portal/src/pages/api/newsletter.ts` to handle form submissions.
+  - For this story, the API route should log the submitted email to the console and return a success response.
+  - Upon successful submission, the user should see a confirmation message (e.g., "Thanks for subscribing!").
+
+files_to_be_created:
+  - docs/stories/story-6.2-newsletter-signup-component.yml
+  - Cabi Alpha/web/user_portal/src/components/marketing/NewsletterSignup.tsx
+  - Cabi Alpha/web/user_portal/src/pages/api/newsletter.ts
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/src/components/layout/Footer.tsx
+
+dev_notes: >
+  This is a key lead-generation feature. The initial backend can be simple
+  (console logging), with the plan to integrate it with a marketing automation
+  platform (e.g., Mailchimp, SendGrid) in a future story.
+
+tasks:
+  - id: task-1
+    description: Implement the Newsletter Signup component and API route.
+    subtasks:
+      - "[x] Create a new reusable `NewsletterSignup.tsx` component."
+      - "[x] Create the new API route at `Cabi Alpha/web/user_portal/src/pages/api/newsletter.ts`."
+      - "[x] Add the NewsletterSignup component to the site-wide `Footer.tsx`."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  completion_notes:
+    - >-
+      All tasks for this story are complete. A reusable newsletter signup
+      component has been created and added to the site-wide footer. A
+      supporting API route has also been implemented to handle submissions.
+      The feature is now ready for QA review.
+  file_list:
+    - Cabi Alpha/web/user_portal/src/components/marketing/NewsletterSignup.tsx
+    - Cabi Alpha/web/user_portal/src/pages/api/newsletter.ts
+    - Cabi Alpha/web/user_portal/src/components/layout/Footer.tsx
+  change_log:
+    - file: Cabi Alpha/web/user_portal/src/components/marketing/NewsletterSignup.tsx
+      change: Created a new reusable component for newsletter signups with form state management.
+    - file: Cabi Alpha/web/user_portal/src/pages/api/newsletter.ts
+      change: Created a new API route to handle newsletter submissions, logging the email to the console.
+    - file: Cabi Alpha/web/user_portal/src/components/layout/Footer.tsx
+      change: Integrated the new NewsletterSignup component into the site-wide footer.
+
+qa_results:
+  - id: qa-1
+    date: '2024-06-25T10:00:00Z'
+    agent: Quinn (qa)
+    summary: >-
+      The implementation is excellent and meets all acceptance criteria. The
+      newsletter signup component is functional, responsive, and correctly
+      integrated into the site-wide footer. The API endpoint works as specified.
+    requirements_traceability:
+      - criteria: "A new reusable 'NewsletterSignup' component is created... and added to the site-wide footer..."
+        test_case: "Given a user views the footer on any page, when the page loads, then the newsletter signup form is visible."
+        status: PASS
+      - criteria: "The component must contain an email input field and a 'Subscribe' button."
+        test_case: "Given a user views the newsletter form, when they inspect it, then an email input and a 'Subscribe' button are present."
+        status: PASS
+      - criteria: "Upon successful submission, the user should see a confirmation message..."
+        test_case: "Given a user enters a valid email and clicks 'Subscribe', when the API returns a success response, then a 'Thanks for subscribing!' message is displayed."
+        status: PASS
+      - criteria: "API route should log the submitted email to the console..."
+        test_case: "Given a user submits the newsletter form, when the API route processes the request, then the submitted email is logged to the server console."
+        status: PASS
+    gate_decision: PASS

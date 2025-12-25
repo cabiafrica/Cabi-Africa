@@ -1,0 +1,22 @@
+id: story-55.19
+epic: payment-methods
+slug: payment-method-verification
+title: Implement Payment Method Verification
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T01:30:00Z'
+
+description: >
+  As a risk manager, I want the system to perform a small verification charge
+  when a new credit card is added, to ensure it is valid and reduce fraud.
+
+acceptance_criteria:
+  - When a user adds a new credit card (`story-55.1`), the `payment-service` should attempt to place a temporary authorization hold for a small amount (e.g., $1.00).
+  - If the authorization succeeds, the card is confirmed as valid, and the hold is immediately released.
+  - If the authorization fails, the user is shown an error message and the card is not saved.
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To add the verification logic
+
+dev_notes: >
+  This is a standard practice for reducing fraudulent card usage. It helps ensure that a user's payment method is legitimate before they attempt to take a ride.

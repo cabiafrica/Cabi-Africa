@@ -1,0 +1,28 @@
+id: story-50.4
+epic: dispatch-system
+slug: dispatch-airport-queue
+title: "Dispatch: Implement Airport Virtual Queue (FIFO)"
+status: Done
+author: Gemini Code Assist
+date: '2025-12-06T18:05:00Z'
+
+description: >
+  As a platform operator, I want the dispatch system to manage a virtual First-In, First-Out (FIFO) queue for drivers
+  waiting in designated airport geofenced zones, so that ride offers are distributed fairly to drivers who have been waiting the longest.
+
+acceptance_criteria:
+  - The system must support the creation of geofenced "waiting zones" for airports (managed by admins).
+  - When a driver enters a designated airport waiting zone, the `dispatch-service` must add them to the virtual queue for that zone.
+  - When a ride request originates from the corresponding airport pickup area, the dispatch system must offer the ride to the driver at the front of the FIFO queue.
+  - If the driver at the front of the queue rejects or times out, they are moved to the back of the queue, and the offer cascades to the next driver.
+  - When a driver leaves the waiting zone, they must be automatically removed from the queue.
+
+files_to_be_created:
+  # No new files are expected; this modifies the core dispatch logic.
+
+files_to_be_modified:
+  - # The core logic of the backend dispatch service.
+
+dev_notes: >
+  This story implements a specialized dispatch logic for high-traffic areas like airports, as required by the PRD (section 2.5). The implementation will require the `dispatch-service` to manage in-memory queues (e.g., using Redis) for each airport zone. It needs to process real-time location updates from drivers to manage their entry and exit from these zones. This logic overrides the standard "closest driver" or "highest score" logic for requests originating from airport pickup points.
+  PRD Reference: 2.5. Dispatch System -> Airport Operations -> Virtual Queue Management

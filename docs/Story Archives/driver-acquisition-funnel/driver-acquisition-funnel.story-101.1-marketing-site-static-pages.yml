@@ -1,0 +1,40 @@
+id: story-101.1
+epic: driver-acquisition-funnel
+slug: marketing-site-static-pages
+title: Create Static Marketing Pages for Driver Acquisition
+status: Done
+author: Bob (sm)
+date: '2025-12-02T10:00:00Z'
+
+description: >
+  As a prospective driver, I want to visit a professional and informative website
+  so that I can learn about the benefits of driving for Cabi before I decide to sign up.
+
+acceptance_criteria:
+  - A new Next.js application for the `marketing-website` must be created within the monorepo.
+  - The website must include the following static pages, with placeholder content:
+    - Homepage (R1.1 from prd.md)
+    - "About Us" page (R1.2 from prd.md)
+    - "Why Drive with Us?" page (R1.3 from prd.md)
+    - A comprehensive FAQ section (R1.5 from prd.md)
+  - The pages must be styled using Tailwind CSS, following a clean, professional design.
+  - The website must be responsive and viewable on both desktop and mobile browsers.
+  - All pages must achieve a Google PageSpeed score of 85 or higher (NFR1 from prd.md).
+
+files_to_be_created:
+  - Cabi Alpha/web/user_portal/app/page.tsx # Homepage
+  - Cabi Alpha/web/user_portal/app/about/page.tsx # About Us page
+  - Cabi Alpha/web/user_portal/app/why-drive/page.tsx # Why Drive with Us? page
+  - Cabi Alpha/web/user_portal/app/faq/page.tsx # FAQ page
+  - Cabi Alpha/web/user_portal/tailwind.config.ts
+
+dev_notes: >
+  This story establishes the foundation of the marketing website. Focus on creating the Next.js app structure, routing, and basic static page layouts. The content can be placeholder text for now, to be filled in by the marketing team later. This work directly addresses the problem statement in `prd.md` of lacking a web presence to attract drivers.
+
+tasks:
+  - id: task-1
+    description: "Setup Next.js application for `marketing-website`."
+  - id: task-2
+    description: "Create the static pages (Homepage, About, Why Drive, FAQ) with responsive layouts using Tailwind CSS."
+  - id: task-3
+    description: "Ensure all pages meet the performance requirement (PageSpeed > 85)."

@@ -1,0 +1,40 @@
+id: story-23.1
+epic: vehicle-management
+slug: driver-add-vehicle
+title: Allow Driver to Add and Manage Their Vehicle
+status: Done
+author: Bob (sm)
+date: '2024-07-07T09:00:00Z'
+
+description: >
+  As a driver, I want to add my vehicle's details to my profile and select
+  which vehicle is active, so that the correct car information is displayed to
+  passengers and used for ride assignments.
+
+acceptance_criteria:
+  - A new "My Vehicles" option must be added to the `ProfileScreen` in the `driver-app`.
+  - This navigates to a new `VehiclesScreen` that lists the driver's saved vehicles.
+  - The `VehiclesScreen` must have an "Add New Vehicle" button.
+  - Tapping this button opens an `AddVehicleScreen` with a form for: Make, Model, Color, and License Plate Number.
+  - A new backend `vehicle-service` must be created to store and manage vehicle data, linking vehicles to a `driverId`.
+  - A driver can have multiple vehicles saved but must select one as "Active".
+  - The `VehiclesScreen` must allow the driver to switch which vehicle is active.
+  - The driver's `activeVehicleId` should be stored in the `user-service` for quick retrieval by other services.
+  - The `ride-service` must use the driver's active vehicle information when assigning a ride, so the passenger sees the correct car details.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/vehicles_screen.dart
+  - Cabi Alpha/mobile/driver_app/lib/screens/add_vehicle_screen.dart
+  - libs/backend/vehicle-service/src/lib/vehicle.service.ts
+  - libs/backend/vehicle-service/src/lib/vehicle.controller.ts
+  - libs/backend/vehicle-service/src/lib/vehicle.module.ts
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/profile_screen.dart # To add link to the new screen
+  - libs/backend/user-service/src/lib/user.service.ts # To manage the activeVehicleId
+  - The database schema for the `user-service` to add an `activeVehicleId` field.
+  - The database schema for the new `vehicle-service`.
+  - libs/backend/ride-service/src/lib/ride.service.ts # To fetch and use active vehicle info
+
+dev_notes: >
+  This is the foundational story for the new "Vehicle Management" epic. It introduces a new `vehicle-service` to handle all vehicle-specific data, keeping it separate from the `user-service`. The concept of an "active" vehicle is critical, as it's the link between the driver's session and the car they are currently using. This story focuses on the driver managing their own vehicles; vehicle document verification will be a separate story.

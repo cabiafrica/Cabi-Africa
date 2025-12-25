@@ -1,0 +1,26 @@
+id: story-60.3
+epic: passenger-convenience
+slug: order-ahead-food
+title: Implement "Order Ahead" for Food Delivery
+status: DONE
+author: Bob (sm)
+date: '2024-08-06T09:06:00Z'
+
+description: >
+  As a user ordering food, I want to be able to schedule my delivery for a
+  later time today, so that I can have my meal arrive right when I want it.
+
+acceptance_criteria:
+  - In the food delivery checkout flow (`story-42.3`), the user must have an option to select "Deliver Now" or "Schedule for Later".
+  - If "Schedule for Later" is chosen, they can select a delivery time window.
+  - The `restaurant-service` must hold the order and send it to the restaurant at the appropriate time to be ready for the scheduled delivery.
+  - The `ride-service` will then dispatch a driver as usual.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/food_checkout_screen.dart # To add scheduling UI
+  - libs/backend/restaurant-service/src/lib/restaurant.service.ts # To manage scheduled orders
+
+dev_notes: >
+  This adds a key feature to our food delivery vertical, moving beyond on-demand to scheduled meals, which opens up new use cases like ordering lunch in the morning.

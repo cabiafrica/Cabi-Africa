@@ -1,0 +1,26 @@
+id: story-54.5
+epic: driver-ecosystem
+slug: retirement-savings
+title: Implement Retirement Savings Plan Partnerships
+status: Done
+author: Bob (sm)
+date: '2024-08-08T11:00:00Z'
+
+description: >
+  As a driver, I want to access and contribute to retirement savings plans
+  through the app, so I can plan for my long-term financial future.
+
+acceptance_criteria:
+  - The "Marketplace" or a new "Financial Tools" section will feature retirement plan partners.
+  - This will link out to third-party financial service providers specializing in plans for independent contractors.
+  - The platform could offer an integration to allow drivers to automatically contribute a percentage of their weekly earnings to their chosen plan.
+  - This would require integration with the `payment-service` to handle the deduction from a driver's payout and transfer it to the partner.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/marketplace_screen.dart # To add the new partner section
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle automated contributions
+
+dev_notes: >
+  A significant value-add for drivers, treating them as long-term partners and helping them with financial planning. The complexity lies in the payment integration and partnership management.

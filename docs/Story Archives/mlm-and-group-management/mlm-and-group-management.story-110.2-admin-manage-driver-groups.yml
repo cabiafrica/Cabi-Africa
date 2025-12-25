@@ -1,0 +1,34 @@
+id: story-110.2
+epic: mlm-and-group-management
+slug: admin-manage-driver-groups
+title: "Admin: Manage Driver Groups and Subgroups"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-05T10:05:00Z'
+
+description: >
+  As an administrator, I need a user interface to create, view, edit, and delete driver groups and their hierarchical subgroups,
+  so I can organize the driver community as required by the business.
+
+acceptance_criteria:
+  - A new "Driver Groups" management page must be created in the `admin-panel`.
+  - The page must display a tree-like or nested list view of all driver groups and their subgroups.
+  - Admins must be able to create a new top-level group.
+  - Admins must be able to create a subgroup under an existing group.
+  - Admins must be able to edit the name and description of any group or subgroup.
+  - Admins must be able to delete a group (with appropriate confirmation and handling for groups that contain drivers).
+  - The UI must interact with new backend endpoints on the `MLM Service` (or `User Management Service`) for managing groups (e.g., `GET /admin/driver-groups`, `POST /admin/driver-groups`).
+
+files_to_be_created:
+  - apps/admin-panel/src/app/driver-groups/page.tsx
+
+files_to_be_modified:
+  - # The backend service (MLM or User Management) will need a new controller/service to manage the CRUD operations for DriverGroups.
+  - # The main navigation in `admin-panel` will need a link to this new page.
+
+dev_notes: >
+  This story provides the administrative interface for the `DriverGroup` data model defined in `architecture.md` (section 9). The main challenge is creating an intuitive UI for managing a hierarchical structure. A tree view component would be ideal.
+
+  The backend will need to implement the full CRUD (Create, Read, Update, Delete) logic for the `DriverGroup` model, including handling the parent/child relationships for subgroups. This is a foundational feature for organizing the driver base.
+  PRD Reference: 2.3. Admin Panel -> Organization Management
+  Architecture Reference: 4. Data Models, 9. Database Schema

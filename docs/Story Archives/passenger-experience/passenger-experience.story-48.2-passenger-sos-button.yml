@@ -1,0 +1,35 @@
+id: story-48.2
+epic: passenger-experience
+slug: passenger-sos-button
+title: "Passenger: Implement In-App Emergency (SOS) Button"
+status: DONE
+author: Bob (sm)
+date: '2025-12-03T11:00:00Z'
+
+description: >
+  As a passenger, I want an easily accessible emergency button in the app
+  during an active ride, so that I can quickly get help if I feel unsafe.
+
+acceptance_criteria:
+  - A prominent "SOS" or "Emergency" button must be visible on the passenger app's in-trip screen (e.g., `in_trip_panel`).
+  - Tapping the button must present a confirmation dialog to prevent accidental activation.
+  - The confirmation dialog must provide options to:
+    - Call local emergency services (e.g., 911).
+    - Alert a pre-defined trusted contact (integrates with story-32.1).
+  - Upon confirmation of any emergency action, the app must silently call the `POST /safety/sos` endpoint (created in story-48.1).
+  - The call to the backend must include the trip ID and the device's last known GPS location.
+  - The UI must be clear, simple, and easy to use under stress.
+
+files_to_be_created:
+  # No new files are expected, this modifies existing widgets.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/in_trip_panel.dart # To add the SOS button and its associated logic.
+  - Cabi Alpha/mobile/passenger_app/lib/api/safety_service.dart # To add a method for calling the backend SOS endpoint.
+
+dev_notes: >
+  This story focuses on the passenger-app frontend implementation of the SOS feature, as defined in the PRD (section 2.1).
+  It is the passenger-facing counterpart to the backend work completed in `story-48.1`. The `safety-service` and the `/safety/sos` endpoint are already available for use.
+  The main effort will be adding the button to the `in_trip_panel`, creating the confirmation dialog, and triggering the backend call.
+  This story also has a dependency on `story-32.1` (Emergency Contacts) for the "alert trusted contact" option.
+  PRD Reference: 2.1. Passenger App -> SOS Button

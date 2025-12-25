@@ -1,0 +1,47 @@
+id: story-48.1
+epic: driver-performance
+slug: driver-performance-dashboard
+title: Create Driver Performance Dashboard
+status: Done for Review
+author: Bob (sm)
+date: '2024-08-09T16:35:00Z'
+
+description: >
+  As a driver, I want a dashboard that shows my key performance metrics, so I
+  can understand how I'm doing and where I can improve.
+
+acceptance_criteria:
+  - A new "Performance" or "Stats" screen must be added to the `driver-app`.
+  - The screen must display the driver's overall rating, acceptance rate, and cancellation rate.
+  - It should show trends for these metrics over the last week and month.
+  - The `analytics-service` must provide the data for this dashboard.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/performance_screen.dart
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To calculate and expose performance metrics
+
+dev_notes: >
+  This is the foundational story for the `driver-performance` epic. It provides transparency and helps drivers self-manage their quality of service.
+
+qa_results:
+  - id: qa-1
+    date: '2024-08-12T11:00:00Z'
+    agent: Quinn (qa)
+    summary: >
+      The implementation successfully delivers a foundational performance dashboard for drivers, meeting all specified acceptance criteria. The backend service correctly provides the necessary metrics, and the new driver app screen displays them clearly, including trend data. This feature provides essential transparency for drivers.
+    requirements_traceability:
+      - criteria: "A new 'Performance' or 'Stats' screen must be added to the driver-app."
+        test_case: "Given the driver is logged into the driver-app, when they navigate to the main menu, then a 'Performance' option is available and opens the dashboard screen."
+        status: PASS
+      - criteria: "The screen must display the driver's overall rating, acceptance rate, and cancellation rate."
+        test_case: "Given the driver is on the Performance screen, then their overall rating (e.g., '4.91'), acceptance rate (e.g., '92%'), and cancellation rate (e.g., '3%') are clearly displayed."
+        status: PASS
+      - criteria: "It should show trends for these metrics over the last week and month."
+        test_case: "Given the driver is on the Performance screen, when they view a metric, then they can see a trend indicator or chart showing performance over the last 7 days and last 30 days."
+        status: PASS
+      - criteria: "The analytics-service must provide the data for this dashboard."
+        test_case: "Given the analytics-service calculates a driver's acceptance rate as 92%, when the driver-app requests performance data, then the service returns '92%' for the acceptance rate."
+        status: PASS
+    gate_decision: PASS

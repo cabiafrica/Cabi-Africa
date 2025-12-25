@@ -1,0 +1,25 @@
+id: story-55.13
+epic: payment-methods
+slug: business-ride-expensing
+title: Allow Passengers to Add Expense Information to Business Rides
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T19:50:00Z'
+
+description: >
+  As a passenger taking a business trip, I want to add an expense code and a
+  note to my ride before I confirm, so that it's easier to categorize for my
+  company's accounting.
+
+acceptance_criteria:
+  - When a passenger selects their Business Profile for a ride, new optional input fields for "Expense Code" and "Note" must appear.
+  - This information must be saved with the trip details.
+  - The expense code and note must appear on the e-receipt (`story-55.4`) for that trip.
+  - This data must also be visible to the company's travel manager in the corporate dashboard (`story-55.8`).
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To add expensing fields
+  - libs/backend/ride-service/src/lib/ride.service.ts # To store expense info with the trip
+
+dev_notes: >
+  This simple feature adds significant value for business users and integrates our product more deeply into their company's workflow.

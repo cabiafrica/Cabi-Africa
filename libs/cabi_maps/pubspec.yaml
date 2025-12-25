@@ -1,0 +1,14 @@
+name: cabi_maps
+description: Shared map component for Cabi platform
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+  http: ^1.1.0

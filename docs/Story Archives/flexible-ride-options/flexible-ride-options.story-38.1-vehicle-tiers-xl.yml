@@ -1,0 +1,26 @@
+id: story-38.1
+epic: flexible-ride-options
+slug: vehicle-tiers-xl
+title: Introduce Vehicle Tiers (e.g., XL, Premium)
+status: Done
+author: Bob (sm)
+date: '2024-08-09T21:00:00Z'
+
+description: >
+  As a passenger traveling with a group or extra luggage, I want to be able
+  to request a larger vehicle (e.g., an XL ride), so that my party can travel
+  comfortably.
+
+acceptance_criteria:
+  - The `passenger-app` home screen must be updated to show different vehicle tiers (e.g., "Standard," "XL," "Premium").
+  - The fare estimation must update based on the selected tier.
+  - The `ride-service` must be updated to match the passenger with a driver whose vehicle is registered in the selected tier.
+  - The `driver-app` onboarding (`story-12.6`) and vehicle management (`story-23.1`) must allow drivers to classify their vehicles into these tiers.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To add the tier selector
+  - libs/backend/ride-service/src/lib/fare.service.ts # To handle different pricing for tiers
+  - libs/backend/ride-service/src/lib/ride.service.ts # To match based on tier
+
+dev_notes: >
+  This is a foundational story for expanding our service offerings. It requires changes across the stack, from driver onboarding to passenger fare calculation and ride matching.

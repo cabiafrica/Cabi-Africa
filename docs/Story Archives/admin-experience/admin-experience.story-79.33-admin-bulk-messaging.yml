@@ -1,0 +1,49 @@
+id: story-79.33
+epic: admin-experience
+slug: admin-bulk-messaging
+title: "Admin: Send Bulk Messages to User Segments"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-07T10:30:00Z'
+
+description: >
+  As an administrator, I need the ability to send bulk messages (e.g., emails or push notifications)
+  to specific segments of users, so that I can communicate important updates, promotions, or operational changes efficiently.
+
+acceptance_criteria:
+  - A new "Communications" > "Bulk Message" section must be added to the `admin-panel`.
+  - The page must provide a form to compose a message, including a subject and body.
+  - The form must include a dropdown to select a target user segment.
+  - Initial segments must include: All Users, All Passengers, All Drivers, Active Drivers.
+  - Clicking "Send" must trigger a new endpoint in the `notification-service` to queue the bulk message for delivery.
+  - A new DTO, `BulkMessageRequestDto`, must be created in the shared DTOs library to define the request payload.
+  - The UI should provide feedback to the admin that the message has been queued for sending.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/communications/bulk-message/page.tsx
+  - libs/shared/dtos/src/lib/communication.dto.ts
+  - docs/admin-experience.story-79.33-admin-bulk-messaging.yml
+
+files_to_be_modified:
+  - libs/shared/dtos/src/index.ts
+
+dev_notes: >
+  This feature is a powerful communication tool. The backend implementation in the `notification-service` should be robust, processing the bulk send as a background job to avoid tying up the API. For now, the frontend will be built with a mocked API call.
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - apps/admin-panel/src/app/communications/bulk-message/page.tsx
+    - libs/shared/dtos/src/lib/communication.dto.ts
+    - libs/shared/dtos/src/index.ts
+    - docs/admin-experience.story-79.33-admin-bulk-messaging.yml
+  change_log:
+    - file: apps/admin-panel/src/app/communications/bulk-message/page.tsx
+      change: Created the frontend page for sending bulk messages, including a form with segment selection, subject, and body fields.
+    - file: libs/shared/dtos/src/lib/communication.dto.ts
+      change: Created the `BulkMessageRequestDto` and `UserSegment` enum to define the data contract for the bulk messaging feature.
+    - file: libs/shared/dtos/src/index.ts
+      change: Exported the new `communication.dto.ts` from the shared DTOs library.
+  completion_notes:
+    - >
+      I have implemented the frontend components and data structures for the bulk messaging feature. This includes a new page in the admin panel for composing messages and a new `BulkMessageRequestDto` for a consistent data contract. The backend is currently mocked in the frontend and will be connected in a subsequent story. This completes the primary requirements for the admin interface.

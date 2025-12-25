@@ -1,0 +1,23 @@
+id: story-70.5
+epic: surge-and-dynamic-pricing
+slug: personal-surge-pricing
+title: Implement Personal Surge Pricing
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T06:00:00Z'
+
+description: >
+  As a passenger in a hurry, if there are no cars available, I want the option
+  to offer a higher price to attract a driver, so I can increase my chances of
+  getting a ride.
+
+acceptance_criteria:
+  - If an on-demand ride request finds no available drivers, the app should offer the user a "Bid Higher" option.
+  - The user can choose to add a tip or a multiplier to their fare.
+  - This modified, higher-fare request is then broadcast to a wider range of drivers, making it more attractive for a driver to accept.
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To handle the bidding and rebroadcasting logic
+
+dev_notes: >
+  This flips the surge model, allowing passengers to initiate it. It's a powerful feature for high-value customers who prioritize speed over cost.

@@ -1,0 +1,31 @@
+id: story-7.1
+epic: driver-earnings-and-history
+slug: driver-earnings-dashboard
+title: Implement Driver Earnings Dashboard
+status: DONE
+author: Sarah (po)
+date: '2024-06-02T10:00:00Z'
+
+description: >
+  As a driver, I want a dedicated dashboard to view my financial performance,
+  including my current wallet balance, earnings summaries for the day and week,
+  and a list of recent trips, so that I can track my income effectively.
+
+acceptance_criteria:
+  - A new `EarningsScreen` is created for the driver app.
+  - The screen must display the current "Wallet Balance" prominently at the top.
+  - A "Withdraw" button must be present near the balance (logic to be implemented in a future story).
+  - The screen must show summary cards for "Today's Earnings" and "This Week's Earnings".
+  - A placeholder area for a "Weekly Overview" chart should be included.
+  - A "Recent Trips" section should list the last few completed trips with their amounts.
+  - Navigation to this screen should be added to the Driver App's main drawer or profile menu.
+
+files_to_be_created:
+  - apps/driver-app/src/screens/earnings_screen.dart
+  - apps/driver-app/test/screens/earnings_screen_test.dart
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/profile_screen.dart # To add the entry point
+
+dev_notes: >
+  We have a reference implementation for the UI in `earnings_screen.dart` (found in the context). We should formalize this into the `driver-app` structure. For now, the data can be mocked within the widget or a mock service, similar to how we handled the trip history.

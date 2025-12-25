@@ -1,0 +1,24 @@
+id: story-90.2
+epic: accessibility
+slug: dynamic-type-support
+title: Ensure UI Supports Dynamic Type and Font Scaling
+status: Done
+author: Bob (sm)
+date: '2024-08-09T14:20:00Z'
+
+description: >
+  As a user with low vision, I need the app's text to respect the larger
+  font size I've set in my phone's operating system, so that I can read
+  all information without difficulty.
+
+acceptance_criteria:
+  - All text within both the `passenger-app` and `driver-app` must scale according to the user's system-level font size settings.
+  - UI layouts must adapt gracefully to larger font sizes without text being truncated, overlapping, or causing visual bugs.
+  - Key screens to verify include the home screen, trip details, settings, and wallet/earnings screens.
+  - Buttons and other interactive elements must expand to accommodate larger text.
+
+files_to_be_modified:
+  - All major screen and widget files across `passenger-app` and `driver-app` will need to be reviewed and potentially updated to use responsive layouts (e.g., using `Expanded`, `Flexible` instead of fixed sizes).
+
+dev_notes: >
+  This is a global effort that impacts the entire UI. The goal is to avoid fixed heights and ensure all text-containing widgets can grow. Testing should involve setting the system font size to the largest available setting on both iOS and Android.

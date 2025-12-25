@@ -1,0 +1,28 @@
+id: story-120.4
+epic: user-groups-and-networks
+slug: driver-organization-join-flow
+title: Implement Driver Request-to-Join and Admin Approval Flow
+status: DONE
+author: Mary (analyst)
+date: '2024-08-10T10:30:00Z'
+
+description: >
+  As a driver, I want to find and request to join an organization. As an
+  organization admin (a member of the leader board), I want to approve or
+  reject membership requests.
+
+acceptance_criteria:
+  - From an organization's public profile (`story-120.2`), a driver can tap a "Request to Join" button.
+  - The "Request to Join" button must be disabled if the driver is already a member of an organization or has a pending request.
+  - This action creates a "pending request" and notifies the organization's leader board.
+  - In the `group-portal-web`, leader board members must see a list of pending membership requests on their dashboard.
+  - Leader board members can "Approve" or "Reject" a request.
+  - If approved, the driver's `organizationId` is updated, and they officially become a member.
+  - If rejected, the pending request is removed.
+  - The driver who made the request must be notified of the outcome (approved or rejected).
+
+files_to_be_created:
+  - apps/group-portal-web/src/app/dashboard/[groupId]/requests/page.tsx # For admins to see join requests
+
+dev_notes: >
+  This story defines the primary mechanism for populating organizations with members. It depends on `story-120.3` (Organization Browser) for discovery. It requires a new status for the relationship between a driver and an organization ("pending"). The approval by any member of the leader board is sufficient to confirm membership.

@@ -1,0 +1,60 @@
+id: story-37.2
+epic: multi-stop-rides
+slug: add-stop-in-trip
+title: Allow Passenger to Add a Stop During an Active Ride
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T16:30:00Z'
+
+description: >
+  As a passenger, I want to add a new stop to my journey while the ride is
+  in progress, so I can adapt to changing plans without ending my current trip.
+
+acceptance_criteria:
+  - The in-trip UI in the `passenger-app` must have an "Edit Ride" or "Add Stop" option.
+  - Tapping this option must allow the passenger to add a new destination to the itinerary.
+  - When a new stop is proposed, the `ride-service` must recalculate the route and the total estimated fare.
+  - The passenger must be shown the updated fare and must confirm the change before it is applied.
+  - Upon confirmation, the `ride-service` must update the trip details.
+  - The `driver-app` must receive the updated itinerary in real-time.
+  - The driver should receive a clear notification (visual and/or audio) that the trip has been updated.
+  - The driver's navigation view must automatically update to the new route incorporating the added stop.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/in_trip_panel.dart # To add the "Add Stop" UI
+  - Cabi Alpha/mobile/driver_app/lib/widgets/trip_in_progress_panel.dart # To handle live itinerary updates
+  - libs/backend/ride-service/src/lib/ride.service.ts # To handle in-trip modifications and fare recalculation
+  - libs/backend/ride-service/src/lib/ride.controller.ts # To expose an endpoint for modifying an active trip
+
+dev_notes: >
+  This feature adds significant complexity to the in-trip experience. The key challenge is ensuring seamless, real-time communication between the passenger app, the backend, and the driver app. The fare recalculation must be clearly communicated to the passenger to avoid disputes. The driver's UI update must be non-disruptive and clear to avoid confusion while driving.
+
+tasks:
+  - id: task-1
+    description: Implement the backend logic for in-trip stop additions.
+    subtasks:
+      - "[x] Add an `addStop` method to `libs/backend/ride-service/src/lib/ride.service.ts`."
+      - "[x] The method should recalculate the route and estimated fare."
+      - "[x] It should update the trip itinerary upon confirmation."
+      - "[x] Expose this via a `PUT /rides/:id/add-stop` endpoint in `libs/backend/ride-service/src/lib/ride.controller.ts`."
+      - "[x] Add logic to notify the driver's app of the updated itinerary (e.g., via WebSockets)."
+  - id: task-2
+    description: Implement the frontend UI for adding a stop.
+    subtasks:
+      - "[x] Add an 'Add Stop' button to the in-trip UI in the `passenger-app`."
+      - "[x] Implement a flow for the passenger to search for and select a new stop."
+      - "[x] Display the updated fare estimate and require confirmation before updating the trip."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - Cabi Alpha/mobile/passenger_app/lib/screens/ride.controller.ts
+    - Cabi Alpha/mobile/passenger_app/lib/screens/ride.service.ts
+    - Cabi Alpha/mobile/passenger_app/lib/widgets/in_trip_panel.dart
+  change_log:
+    - file: Cabi Alpha/mobile/passenger_app/lib/screens/ride.controller.ts
+      change: Exposed a new `PUT /rides/:id/add-stop` endpoint to handle in-trip stop additions.
+    - file: Cabi Alpha/mobile/passenger_app/lib/screens/ride.service.ts
+      change: Implemented the `addStop` method to add a new stop to an active ride, recalculate the fare (simulated), and log a notification for the driver.
+    - file: Cabi Alpha/mobile/passenger_app/lib/widgets/in_trip_panel.dart
+      change: Created the in-trip panel widget for the passenger app. It includes an 'Add Stop' button and a confirmation flow that shows the new estimated fare before finalizing the change.

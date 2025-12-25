@@ -1,0 +1,23 @@
+id: story-85.9
+epic: airport-experience
+slug: airport-rematching
+title: Implement High-Priority Airport Rematching
+status: Done
+author: Bob (sm)
+date: '2024-08-10T04:35:00Z'
+
+description: >
+  As a passenger at an airport whose driver just cancelled, I want the system
+  to immediately and automatically find me a new driver with high priority,
+  because I'm in a time-sensitive situation.
+
+acceptance_criteria:
+  - If a driver cancels a trip where the pickup is inside an airport geofence, the `ride-service` must immediately trigger a high-priority rematch process.
+  - The new ride request should be offered to the next available driver, potentially bypassing the standard FIFO queue (`story-85.6`) to ensure a fast recovery.
+  - The passenger's app should display a message like "Your driver cancelled. We're finding you a new one right away."
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To handle the high-priority rematch logic
+
+dev_notes: >
+  Airport pickups are stressful. A smooth service recovery after a cancellation is critical for user retention.

@@ -1,0 +1,28 @@
+id: story-91.1
+epic: new-verticals
+slug: medical-transport
+title: Implement "Medical Transport" Vertical
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T10:13:00Z'
+
+description: >
+  As a healthcare provider, I want to book non-emergency medical transport
+  for my patients through a dedicated portal, so that I can ensure they get
+  to their appointments reliably.
+
+acceptance_criteria:
+  - This is a B2B feature that builds on the `corporate-portal`.
+  - It requires a new "Healthcare" portal with HIPAA compliance considerations.
+  - Drivers must opt-in and may require special training or background checks to be eligible for these trips.
+  - The service may need to support Wheelchair Accessible Vehicles (WAV) (`story-41.3`).
+  - Billing is handled centrally through the healthcare provider's account.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/corporate-portal/src/app/page.tsx # To be forked or adapted for healthcare
+  - libs/backend/ride-service/src/lib/ride.service.ts # To handle special requirements for medical trips
+
+dev_notes: >
+  A specialized, high-value vertical. This has significant compliance and driver training requirements but can create a strong, defensible business line.

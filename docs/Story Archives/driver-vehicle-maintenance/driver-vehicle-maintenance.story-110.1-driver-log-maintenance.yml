@@ -1,0 +1,51 @@
+id: story-110.1
+epic: driver-vehicle-maintenance
+slug: driver-log-maintenance
+title: Driver Log Maintenance Activity
+status: DONE
+author: Sarah (po)
+date: '2024-08-13T10:00:00Z'
+
+description: >
+  As a driver, I want to log maintenance activities (e.g., oil change, repairs)
+  and their costs, so that I can keep a record of my vehicle's health and expenses.
+
+acceptance_criteria:
+  - The Driver App must have a `LogMaintenanceScreen`.
+  - The screen must contain a form with the following fields:
+    - Service Type (Dropdown: Oil Change, Tire Rotation, Brake Service, Other).
+    - Date of Service (Date Picker, defaults to today).
+    - Cost (Numeric).
+    - Odometer Reading (Numeric).
+    - Notes (Text Area).
+  - Drivers should be able to attach a photo of the receipt (optional).
+  - Submitting the form must persist the record to the `maintenance-service`.
+  - Input validation: Cost must be positive; Date cannot be in the future.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/log_maintenance_screen.dart
+  - libs/backend/maintenance-service/src/lib/maintenance.service.ts
+  - libs/backend/maintenance-service/src/lib/maintenance.controller.ts
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/home_screen.dart # Add entry point
+
+dev_notes: >
+  We are introducing a new `maintenance-service` to keep this domain logic separate
+  from the core `vehicle-service` (which handles registration/active status).
+  For the receipt upload, reuse the pattern established in the `driver-documents` epic.
+
+tasks:
+  - id: task-1
+    description: Implement backend maintenance logging.
+    subtasks:
+      - "[x] Create `maintenance.service.ts` with in-memory storage."
+      - "[x] Create `maintenance.controller.ts` exposing `POST /maintenance/log`."
+  - id: task-2
+    description: Implement frontend logging screen.
+    subtasks:
+      - "[x] Create `log_maintenance_screen.dart` with form validation."
+      - "[x] Add navigation to this screen from the Home or Profile menu."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro

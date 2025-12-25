@@ -1,0 +1,30 @@
+id: story-30.1
+epic: advanced-pricing-models
+slug: destination-surcharge
+title: Implement High-Demand Destination Surcharge
+status: DONE
+author: Bob (sm)
+date: '2024-07-27T09:06:00Z'
+
+description: >
+  As a system administrator, I want to apply a fixed surcharge for trips
+  ending in specific high-traffic areas (e.g., airports, event venues), so
+  that we can account for extra waiting time and access fees.
+
+acceptance_criteria:
+  - An admin must be able to define "destination surcharge zones" (as polygons) and a corresponding fixed fee in the `admin-panel`.
+  - These rules must be stored in the `incentive-service` or a new `pricing-service`.
+  - When a passenger requests a ride, the `ride-service` must check if the *destination* falls within a surcharge zone.
+  - If it does, the estimated fare must include the surcharge, and a message explaining the fee (e.g., "Includes KES 200 airport fee") must be displayed to the passenger.
+  - The `payment-service` must include this surcharge in the final charge.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/incentives/page.tsx # To add UI for surcharge zones
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To store and check for surcharge zones
+  - libs/backend/ride-service/src/lib/ride.service.ts # To add surcharge to fare estimate
+  - libs/backend/payment-service/src/lib/payment.service.ts # To add surcharge to final payment
+
+dev_notes: >
+  This is the first story for a new `advanced-pricing-models` epic. Unlike percentage-based surge pricing, this is a fixed fee applied based on the destination. It's useful for covering specific operational costs like airport tolls.

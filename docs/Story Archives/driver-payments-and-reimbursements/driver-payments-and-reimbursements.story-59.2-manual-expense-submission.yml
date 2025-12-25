@@ -1,0 +1,27 @@
+id: story-59.2
+epic: driver-payments-and-reimbursements
+slug: manual-expense-submission
+title: Implement Manual Expense Submission for Drivers
+status: Done
+author: Bob (sm)
+date: '2024-08-05T09:10:00Z'
+
+description: >
+  As a driver, if I incur an unexpected trip-related expense (e.g., cleaning
+  fee for a messy passenger, an unlisted toll), I want a way to submit it for
+  reimbursement.
+
+acceptance_criteria:
+  - In the `TripDetailScreen` of the `driver-app`, a "Request Reimbursement" button must be available.
+  - The driver can select an expense type, enter an amount, and upload a photo of the receipt.
+  - This creates a support ticket in the `support-service` for an agent to review.
+  - If approved, the agent can trigger a manual payment to the driver.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/trip_detail_screen.dart # To add the reimbursement request flow
+  - libs/backend/support-service/src/lib/support.service.ts # To handle the reimbursement ticket type
+
+dev_notes: >
+  This provides a fallback for any expenses not covered by automated systems, ensuring drivers have a path to be made whole for legitimate costs.

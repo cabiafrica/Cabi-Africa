@@ -1,0 +1,23 @@
+id: story-55.17
+epic: payment-methods
+slug: automated-toll-management
+title: Implement Automated Toll Detection and Payment
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T23:30:00Z'
+
+description: >
+  As a passenger, I want tolls to be automatically detected and added to my
+  fare, so that the pricing is transparent and not dependent on the driver's manual input.
+
+acceptance_criteria:
+  - The `fare-service` must integrate with a mapping provider's API (e.g., Google Maps, Waze) that provides toll information along a given route.
+  - During fare calculation, the service must query this API to get the expected toll costs for the planned route.
+  - The estimated toll amount is added to the upfront fare shown to the passenger.
+  - The final charge is adjusted based on the actual route and tolls incurred.
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/fare.service.ts # To integrate with a toll data API
+
+dev_notes: >
+  This improves fare accuracy and transparency, reducing disputes over toll charges. It removes the burden from the driver to remember and report tolls.

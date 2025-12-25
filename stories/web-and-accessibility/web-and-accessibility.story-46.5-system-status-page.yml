@@ -1,0 +1,25 @@
+---
+description: Implement Public System Status Page
+---
+
+# User Story
+As a User (Passenger or Driver), I want to be able to view the real-time operational status of the Cabi platform so that I can understand if any service disruptive issues I am experiencing are known platform-wide outages (PRD 3.4).
+
+# Acceptance Criteria
+- [ ] **Public Status Page**:
+    - Create a lightweight, publicly accessible page (e.g., `status.cabi.com` or `/status` on the marketing site).
+    - Page must be hosted independently of the main booking backend if possible (to ensure visibility during outages).
+- [ ] **Service Health Indicators**:
+    - Display current status (Operational, Degraded Performance, Partial Outage, Major Outage) for key components:
+        - Passenger App
+        - Driver App
+        - Web Booking
+        - Support / Admin Panel
+- [ ] **Incident Communication**:
+    - Allow administrators to post manual incident updates (title, description, severity, time).
+- [ ] **Automated Integration (Optional for MVP)**:
+    - If possible, integrate with basic uptime monitoring pingers to auto-toggle status (or use a third-party tool like Atlassian Statuspage).
+
+# Technical Notes
+- Consider using a static site or a specialized third-party service (e.g., Statuspage.io, Better Uptime) to avoid engineering overhead and ensure availability when the main stack is down.
+- If building custom: Ensure it has zero dependencies on the core API Gateway or Database.

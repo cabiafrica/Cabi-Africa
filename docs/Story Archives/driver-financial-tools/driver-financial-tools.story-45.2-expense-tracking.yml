@@ -1,0 +1,27 @@
+id: story-45.2
+epic: driver-financial-tools
+slug: expense-tracking
+title: Implement Automatic Expense Tracking for Drivers
+status: Done
+author: Bob (sm)
+date: '2024-08-01T09:14:00Z'
+
+description: >
+  As a driver, I want the app to automatically estimate my expenses (like
+  fuel and maintenance) based on my mileage, so that I can better understand
+  my net earnings.
+
+acceptance_criteria:
+  - In the driver's earnings screen, a new section for "Estimated Expenses" must be shown.
+  - The admin panel must allow setting a configurable cost-per-km.
+  - The `analytics-service` will calculate the total distance driven for a period and multiply it by the cost-per-km to get the expense estimate.
+  - The earnings screen will then show: Gross Earnings - Estimated Expenses = Estimated Net Earnings.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/wallet_screen.dart # To display estimated net earnings
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To calculate the expense estimate
+
+dev_notes: >
+  This feature provides a more realistic picture of a driver's financial situation, improving transparency and helping them with their own accounting.

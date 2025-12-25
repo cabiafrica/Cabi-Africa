@@ -1,0 +1,27 @@
+id: story-96.1
+epic: map-and-navigation
+slug: predictive-pickup
+title: Implement "Predictive Pickup"
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T10:20:00Z'
+
+description: >
+  As a passenger, I want the app to predict where I'm likely going based on
+  my current location and the time of day, and show me the ETA and fare
+  without me having to type anything.
+
+acceptance_criteria:
+  - This builds on "Smart Saved Places" (`story-60.4`).
+  - When the user opens the app, the `analytics-service` predicts their most likely destination.
+  - The home screen immediately shows a card like: "Going to Work? 10 min wait, KES 350".
+  - The user can book this predicted trip in one tap.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/home_screen.dart # To display the predictive card
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To implement the prediction logic
+
+dev_notes: >
+  This feature aims to create a "zero-input" booking experience for the most common trips, representing a major step forward in user convenience.

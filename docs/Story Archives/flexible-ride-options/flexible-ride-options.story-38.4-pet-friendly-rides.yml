@@ -1,0 +1,25 @@
+id: story-38.4
+epic: flexible-ride-options
+slug: pet-friendly-rides
+title: Introduce Pet-Friendly Ride Option
+status: Done
+author: Bob (sm)
+date: '2024-08-09T22:55:00Z'
+
+description: >
+  As a passenger, I want to be able to request a pet-friendly ride, so I can
+  be sure the driver is willing and able to transport my pet.
+
+acceptance_criteria:
+  - A new "Pet-Friendly" toggle or ride option must be available on the ride request screen.
+  - Drivers must be able to opt-in to offering pet-friendly rides in their app settings.
+  - When a passenger requests a pet-friendly ride, the `ride-service` must only match them with drivers who have opted in.
+  - A small surcharge may be applied to pet-friendly rides.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/home_screen.dart # To add the pet-friendly option
+  - Cabi Alpha/mobile/driver_app/lib/screens/settings_screen.dart # For driver opt-in
+  - libs/backend/ride-service/src/lib/ride.service.ts # To add matching logic
+
+dev_notes: >
+  This feature addresses a common user need and reduces conflicts or cancellations that occur when a passenger shows up with a pet unexpectedly.

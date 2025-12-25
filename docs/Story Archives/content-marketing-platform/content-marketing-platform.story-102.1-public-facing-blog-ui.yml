@@ -1,0 +1,38 @@
+id: story-102.1
+epic: content-marketing-platform
+slug: public-facing-blog-ui
+title: Implement Public-Facing Blog on Marketing Website
+status: Done
+author: Bob (sm)
+date: '2025-12-02T11:15:00Z'
+
+description: >
+  As a prospective driver or interested visitor, I want to read blog posts on the marketing website
+  so that I can learn more about the company, driver experiences, and industry news.
+
+acceptance_criteria:
+  - A main blog listing page must be created at the `/blog` route in the `marketing-website` app.
+  - The `/blog` page must display a list of all published articles, showing at least the title, a brief summary, author, and publication date for each.
+  - A dynamic route for individual blog posts (e.g., `/blog/[slug]`) must be created to display the full content of a single article.
+  - Both the listing and individual post pages must be responsive and styled with Tailwind CSS, consistent with the rest of the marketing site.
+  - The pages must be statically generated (SSG) or use Incremental Static Regeneration (ISR) to ensure high performance (NFR1) and SEO-friendliness.
+  - For this story, blog content can be sourced from local markdown files within the `marketing-website` project as a placeholder for a future CMS.
+
+files_to_be_created:
+  - Cabi Alpha/web/user_portal/app/blog/page.tsx # The main blog listing page.
+  - Cabi Alpha/web/user_portal/app/blog/[slug]/page.tsx # The dynamic page for a single blog post.
+  - Cabi Alpha/web/user_portal/content/posts/sample-post-1.mdx # Example blog post content.
+  - Cabi Alpha/web/user_portal/lib/posts.ts # Utility functions to read and parse blog content from the filesystem.
+
+dev_notes: >
+  This story covers the frontend implementation of the blog as required by the PRD (R1.4). The focus is on creating the UI and routing for displaying content. To keep this story self-contained, we will source content from local markdown files. The integration with a proper CMS managed via the Admin Panel will be handled in a separate story. Using SSG/ISR in Next.js is critical for meeting the performance requirements (NFR1).
+
+tasks:
+  - id: task-1
+    description: "Create the `/blog` and `/blog/[slug]` routes and corresponding page components."
+  - id: task-2
+    description: "Implement the logic to read and parse blog content from local markdown files."
+  - id: task-3
+    description: "Style the blog listing and individual post pages using Tailwind CSS to match the site design."
+  - id: task-4
+    description: "Ensure pages are statically generated and meet performance targets."

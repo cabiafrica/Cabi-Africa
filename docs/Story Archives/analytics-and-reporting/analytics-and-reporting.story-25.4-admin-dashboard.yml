@@ -1,0 +1,33 @@
+id: story-25.4
+epic: analytics-and-reporting
+slug: admin-dashboard
+title: Implement Admin Panel Dashboard for Key Metrics
+status: Done
+author: Bob (sm)
+date: '2024-07-22T10:05:00Z'
+
+description: >
+  As an administrator, I want a dashboard as the main landing page of the
+  admin panel that displays key platform metrics, so that I can quickly assess
+  the health and activity of the business at a glance.
+
+acceptance_criteria:
+  - The main page of the `admin-panel` must be a dashboard displaying several key metrics.
+  - The dashboard must include widgets for:
+    - Total active drivers
+    - Total active passengers
+    - Number of ongoing trips
+    - Total completed trips (today / last 7 days)
+    - Total revenue (today / last 7 days)
+  - The `analytics-service` must expose a new endpoint (e.g., GET `/analytics/dashboard`) that provides all the data needed for this dashboard.
+  - The `analytics-service` will need to listen to various system events (`UserRegistered`, `TripCompleted`, etc.) to keep these metrics updated in near real-time.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/page.tsx # To implement the dashboard UI
+  - libs/backend/analytics-service/src/lib/analytics.controller.ts # To add the dashboard endpoint
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To implement the logic for aggregating dashboard metrics
+
+dev_notes: >
+  This story provides a vital "mission control" view for the business. The `analytics-service` will need to be a consumer of many events across the system to build its data aggregates. For performance, these metrics should be pre-calculated and cached rather than computed on every request.

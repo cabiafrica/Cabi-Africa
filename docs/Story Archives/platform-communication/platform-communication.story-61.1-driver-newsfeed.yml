@@ -1,0 +1,28 @@
+id: story-61.1
+epic: platform-communication
+slug: driver-newsfeed
+title: Implement "Driver App Newsfeed"
+status: DONE
+author: Bob (sm)
+date: '2024-08-05T09:13:00Z'
+
+description: >
+  As an operations manager, I want a way to broadcast messages, news, and
+  updates to all drivers in a specific city, so that I can communicate
+  important information effectively.
+
+acceptance_criteria:
+  - A new "Newsfeed" or "Inbox" screen must be added to the `driver-app`.
+  - The `admin-panel` must have a new interface for writing and publishing these messages.
+  - Admins must be able to target messages to all drivers or drivers in a specific city.
+  - The `driver-app` must show a badge when there are unread messages.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/communications/page.tsx
+  - Cabi Alpha/mobile/driver_app/lib/screens/newsfeed_screen.dart
+
+files_to_be_modified:
+  - libs/backend/notification-service/src/lib/notification.service.ts # To handle storing and distributing newsfeed items
+
+dev_notes: >
+  This is the first story for a new `platform-communication` epic. It provides a direct and reliable communication channel to drivers, which is better than relying on email.

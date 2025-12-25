@@ -1,0 +1,53 @@
+id: story-79.5
+epic: admin-experience
+slug: fraud-detection-dashboard
+title: Create Fraud Detection Dashboard
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T00:25:00Z'
+
+description: >
+  As a risk manager, I need a dashboard that automatically flags suspicious
+  user activity, so I can investigate and prevent fraudulent behavior.
+
+acceptance_criteria:
+  - A new "Fraud" dashboard must be created in the `admin-panel`.
+  - The `analytics-service` must run jobs to detect patterns of potential fraud (e.g., GPS spoofing, unusually short/long trips, collusive trips between a driver and passenger).
+  - The dashboard must list flagged trips and user accounts with details about the suspicious activity.
+  - The agent can then use this information to take action (e.g., suspend user, refund trip).
+
+files_to_be_created:
+  - apps/admin-panel/src/app/fraud/page.tsx
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To add fraud detection algorithms
+
+dev_notes: >
+  Fraud is a significant cost center. Proactively identifying it is crucial. The initial version can start with simple rule-based heuristics.
+
+tasks:
+  - id: task-1
+    description: Implement backend fraud detection logic.
+    subtasks:
+      - "[x] Modify `libs/backend/analytics-service/src/lib/analytics.service.ts` to add fraud detection algorithms."
+      - "[x] Implement a method to detect suspicious trips based on simple rules."
+      - "[x] Expose the flagged trips via a new endpoint."
+  - id: task-2
+    description: Create the frontend fraud detection dashboard.
+    subtasks:
+      - "[x] Create `apps/admin-panel/src/app/fraud/page.tsx`."
+      - "[x] Fetch and display the flagged trips in a table."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - libs/backend/analytics-service/src/lib/analytics.service.ts
+    - libs/backend/analytics-service/src/lib/analytics.controller.ts
+    - apps/admin-panel/src/app/fraud/page.tsx
+  change_log:
+    - file: libs/backend/analytics-service/src/lib/analytics.service.ts
+      change: Implemented fraud detection logic with simple rules to flag suspicious trips.
+    - file: libs/backend/analytics-service/src/lib/analytics.controller.ts
+      change: Exposed a new endpoint to provide the list of flagged trips to the admin panel.
+    - file: apps/admin-panel/src/app/fraud/page.tsx
+      change: Created the frontend dashboard page that fetches and displays flagged trips in a table for review.

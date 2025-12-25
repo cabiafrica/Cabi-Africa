@@ -1,0 +1,24 @@
+id: story-70.4
+epic: surge-and-dynamic-pricing
+slug: surge-pricing-notifications
+title: Notify Passengers When Surge Pricing Ends
+status: Done
+author: Bob (sm)
+date: '2024-08-09T22:50:00Z'
+
+description: >
+  As a passenger who was deterred by surge pricing, I want to receive a push
+  notification when surge in my area has ended or dropped significantly, so I
+  can try booking my ride again at a lower price.
+
+acceptance_criteria:
+  - When a user opens the app and sees surge pricing but does not request a ride, the app should offer a "Notify me when surge ends" option.
+  - If the user opts in, the `pricing-service` tracks this interest.
+  - When the surge multiplier in that zone drops below a certain threshold (e.g., 1.2x), the `notification-service` sends a push notification to the interested users.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/home_screen.dart # To add the opt-in UI
+  - libs/backend/ride-service/src/lib/pricing.service.ts # To track user interest and trigger notifications
+
+dev_notes: >
+  This is a powerful re-engagement feature that can recover potentially lost trips. It turns a negative user experience (high price) into a positive follow-up.

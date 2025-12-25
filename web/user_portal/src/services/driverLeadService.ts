@@ -1,0 +1,34 @@
+import { useState, useEffect } from 'react';
+
+export type ApplicationStatus = 'WEB_REGISTERED' | 'DOCUMENTS_PENDING' | 'BACKGROUND_CHECK_PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface ProspectStatus {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    status: ApplicationStatus;
+    nextAction: string;
+    submittedDate: string;
+}
+
+// Mock service
+class DriverLeadService {
+    private mockProspect: ProspectStatus = {
+        id: 'prospect-123',
+        email: 'driver@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        status: 'DOCUMENTS_PENDING',
+        nextAction: 'Download the app to submit your documents',
+        submittedDate: new Date().toISOString()
+    };
+
+    async getProspectStatus(email: string): Promise<ProspectStatus> {
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+        return { ...this.mockProspect, email }; // Echo back email
+    }
+}
+
+export const driverLeadService = new DriverLeadService();

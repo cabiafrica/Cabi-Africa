@@ -1,0 +1,24 @@
+id: story-63.9
+epic: map-and-navigation
+slug: 3d-buildings
+title: Implement 3D Building Layer on Map
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T10:11:00Z'
+
+description: >
+  As a user, I want to see 3D buildings on the map, especially in dense
+  urban areas, so that it's easier to orient myself and recognize my location.
+
+acceptance_criteria:
+  - The maps in both apps must have a toggle or setting to enable a 3D building layer.
+  - The map view should be able to be tilted to a non-perpendicular angle to make the 3D effect visible.
+  - This is dependent on the mapping provider's SDK supporting 3D building data and rendering.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To add 3D map configuration
+
+dev_notes: >
+  A visual enhancement that can significantly improve the user's spatial awareness and make the app feel more modern and premium.

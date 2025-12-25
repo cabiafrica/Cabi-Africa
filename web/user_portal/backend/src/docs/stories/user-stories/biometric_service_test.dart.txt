@@ -1,0 +1,42 @@
+import 'package:driver_app/services/biometric_service.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+
+import 'biometric_service_test.mocks.dart';
+
+@GenerateMocks([LocalAuthentication])
+void main() {
+  group('BiometricService', () {
+    late MockLocalAuthentication mockAuth;
+    late BiometricService biometricService;
+
+    setUp(() {
+      mockAuth = MockLocalAuthentication();
+      biometricService = BiometricService.withAuth(mockAuth);
+    });
+
+    test('authenticate returns true on success', () async {
+      when(mockAuth.canCheckBiometrics).thenAnswer((_) async => true);
+      when(mockAuth.authenticate(
+        localizedReason: anyNamed('localizedReason'),
+        options: anyNamed('options'),
+      )).thenAnswer((_) async => true);
+
+      final result = await biometricService.authenticate();
+      expect(result, isTrue);
+    });
+
+    test('authenticate returns false on failure', () async {
+      when(mockAuth.canCheckBiometrics).thenAnswer((_) async => true);
+      when(mockAuth.authenticate(
+        localizedReason: anyNamed('localizedReason'),
+        options: anyNamed('options'),
+      )).thenAnswer((_) async => false);
+
+      final result = await biometricService.authenticate();
+      expect(result, isFalse);
+    });
+  });
+}

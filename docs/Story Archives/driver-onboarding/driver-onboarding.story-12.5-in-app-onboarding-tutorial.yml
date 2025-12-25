@@ -1,0 +1,24 @@
+id: story-12.5
+epic: driver-onboarding
+slug: in-app-onboarding-tutorial
+title: Create In-App Onboarding Tutorial for New Drivers
+status: Done
+author: Bob (sm)
+date: '2024-08-09T13:05:00Z'
+
+description: >
+  As a new driver logging in for the first time after being verified, I want
+  to be guided through the app's main features, so that I understand how to
+  go online, accept a trip, and view my earnings.
+
+acceptance_criteria:
+  - A one-time, skippable tutorial flow must be shown to drivers the first time they open the app after their account status becomes 'Verified'.
+  - The tutorial must highlight key UI elements: the "Go Online" button, the location of incoming trip requests, the earnings screen, and the profile/settings area.
+  - The tutorial should consist of a series of overlays or modals that explain each feature.
+  - The `user-service` should track whether a driver has completed or skipped the tutorial to prevent it from showing again.
+
+files_to_be_created:
+  - apps/driver-app/src/widgets/onboarding_tutorial_overlay.dart
+
+dev_notes: >
+  This feature is key to driver activation and retention. A good first-time experience is critical. The tutorial should be simple and visual. We can use a package like `flutter_showcaseview` to implement the feature highlights.

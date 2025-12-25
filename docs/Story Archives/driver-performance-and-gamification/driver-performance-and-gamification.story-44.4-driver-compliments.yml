@@ -1,0 +1,28 @@
+id: story-44.4
+epic: driver-performance-and-gamification
+slug: driver-compliments
+title: Implement Driver "Compliments" from Passengers
+status: Done
+author: Bob (sm)
+date: '2024-08-01T09:18:00Z'
+
+description: >
+  As a passenger, when I give a 5-star rating, I want to be able to select
+  pre-defined compliments (e.g., "Excellent Service", "Great Conversation",
+  "Clean Car"), so I can give more specific positive feedback.
+
+acceptance_criteria:
+  - On the `RateDriverScreen`, if the passenger gives a 5-star rating, a selection of "compliment" tags must appear.
+  - The passenger can select one or more compliments.
+  - This data must be stored and associated with the driver.
+  - The driver's profile should display a count of each compliment they have received (e.g., "25x Excellent Service").
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/rate_driver_screen.dart # To add the compliment UI
+  - libs/backend/rating-service/src/lib/rating.service.ts # To store compliment data
+  - apps/driver-app/src/screens/profile_screen.dart # To display compliments
+
+dev_notes: >
+  This feature provides more granular positive feedback than just a star rating and can be a strong motivator for drivers.

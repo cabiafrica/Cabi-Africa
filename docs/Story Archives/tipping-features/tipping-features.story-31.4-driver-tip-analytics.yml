@@ -1,0 +1,29 @@
+id: story-31.4
+epic: tipping-features
+slug: driver-tip-analytics
+title: Driver View of Tip History and Analytics
+status: Done
+author: Bob (sm)
+date: '2024-07-29T14:08:00Z'
+
+description: >
+  As a driver, I want to see more details about my tips, such as what
+  percentage of my trips include a tip and my average tip amount, so that I
+  can better understand this part of my earnings.
+
+acceptance_criteria:
+  - A new "Tips" section must be added to the driver's earnings/wallet screen.
+  - This section must display analytics for a selected period (e.g., last 30 days):
+    - Total tips earned
+    - Percentage of trips that were tipped
+    - Average tip amount
+  - The `analytics-service` must be updated to calculate these metrics for drivers.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/wallet_screen.dart # To add the new analytics section
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To calculate tip-specific metrics
+
+dev_notes: >
+  This feature provides drivers with more detailed financial insights, helping them understand their performance. It requires the `analytics-service` to perform calculations on transaction data from the `payment-service`.

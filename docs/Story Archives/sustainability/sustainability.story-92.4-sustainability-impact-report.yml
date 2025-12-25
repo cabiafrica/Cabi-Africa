@@ -1,0 +1,23 @@
+id: story-92.4
+epic: sustainability
+slug: sustainability-impact-report
+title: Provide Users with a Personal Sustainability Impact Report
+status: Done
+author: Bob (sm)
+date: '2024-08-10T01:00:00Z'
+
+description: >
+  As a user, I want to see a report of my personal environmental impact based
+  on my ride choices, so I can understand and feel good about my contribution.
+
+acceptance_criteria:
+  - A new "My Impact" section must be added to the user's profile in the `passenger-app`.
+  - It should display stats like: total CO2 offset, number of "Green" rides taken, and number of "Shared" rides taken.
+  - The `analytics-service` must calculate and store these stats for each user.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/profile_screen.dart # To add the "My Impact" section
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To calculate and store impact stats
+
+dev_notes: >
+  This feature reinforces our sustainability mission and gives users positive feedback for making green choices, encouraging future green behavior.

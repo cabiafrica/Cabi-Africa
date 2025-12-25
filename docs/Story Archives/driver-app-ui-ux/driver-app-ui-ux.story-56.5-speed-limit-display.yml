@@ -1,0 +1,24 @@
+id: story-56.5
+epic: driver-app-ui-ux
+slug: speed-limit-display
+title: Implement Speed Limit Display in Driver App
+status: Done
+author: Bob (sm)
+date: '2024-08-07T09:02:00Z'
+
+description: >
+  As a driver, I want to see the current speed limit for the road I'm on
+  displayed in the app, so that I can be more aware of local regulations.
+
+acceptance_criteria:
+  - The in-app navigation UI (`story-63.3`) must display the speed limit for the current road segment.
+  - The display should subtly change (e.g., turn red) if the driver's current speed exceeds the speed limit.
+  - This requires that our mapping/navigation SDK provides speed limit data.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To add the speed limit UI element
+
+dev_notes: >
+  A helpful safety and awareness feature for drivers. Its feasibility is entirely dependent on the data provided by our mapping partner.

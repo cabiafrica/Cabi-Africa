@@ -1,0 +1,33 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:cabi_passenger/providers/theme_provider.dart';
+import 'package:cabi_passenger/theme/app_theme.dart';
+import 'package/cabi_passenger/screens/settings_screen.dart'; // Placeholder for home screen
+
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          title: 'Cabi Passenger',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeProvider.themeMode,
+          home: const SettingsScreen(), // Replace with your actual home screen
+        );
+      },
+    );
+  }
+}

@@ -1,0 +1,26 @@
+id: story-67.1
+epic: ride-safety-features
+slug: personal-safety-network
+title: Implement "Personal Safety Network"
+status: DONE
+author: Bob (sm)
+date: '2024-08-06T09:16:00Z'
+
+description: >
+  As a user, I want my designated Emergency Contacts (`story-32.1`) to be
+  able to see my live location if I don't arrive at my destination within a
+  certain time of my ETA, so they are automatically alerted if something is wrong.
+
+acceptance_criteria:
+  - When a user starts a trip, the `ride-service` logs the initial ETA.
+  - If the trip is not marked "complete" within a configurable window after the ETA (e.g., 15 minutes), the system triggers an alert.
+  - The alert sends an SMS to the user's emergency contacts with a live tracking link.
+  - The user must be able to disable this feature or adjust the time window in their privacy settings.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To monitor trip ETA and trigger alerts
+
+dev_notes: >
+  This is a proactive safety feature that builds on the emergency contacts system. It provides peace of mind by automating the check-in process.

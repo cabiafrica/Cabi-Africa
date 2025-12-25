@@ -1,0 +1,30 @@
+id: story-13.1
+epic: driver-availability
+slug: driver-set-availability
+title: Allow Drivers to Set Their Availability Status
+status: DONE
+author: Bob (sm)
+date: '2024-08-11T15:30:00Z'
+
+description: >
+  As a driver, I want to toggle my availability status between "Online" and
+  "Offline" within the driver app, so that I can control when I am available
+  to receive ride requests.
+
+acceptance_criteria:
+  - The main screen of the `driver-app` must feature a prominent control (e.g., a switch or a button like "Go Online" / "Go Offline").
+  - When a driver goes "Online", the app must begin broadcasting their location to the backend.
+  - The driver's status must be updated to 'online' in the `user-service` (or a dedicated driver status service).
+  - The `ride-service` must only consider drivers with an 'online' status for new ride matches.
+  - When a driver goes "Offline", the app must stop broadcasting their location.
+  - The driver's status must be updated to 'offline' in the backend.
+  - An "Offline" driver must not be eligible for new ride requests.
+  - The UI must provide clear, persistent visual feedback indicating the driver's current status.
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/home_screen.dart # To add the availability toggle and logic
+  - libs/backend/user-service/src/lib/user.service.ts # To store and update the driver's availability status
+  - libs/backend/ride-service/src/lib/ride.service.ts # To filter for 'online' drivers during matching
+
+dev_notes: >
+  This is a cornerstone feature for the driver experience. It directly controls a driver's ability to earn money on the platform. The backend implementation must be robust to ensure that "Offline" drivers are strictly excluded from the ride-matching pool. The frontend must clearly and reliably communicate the driver's status at all times.

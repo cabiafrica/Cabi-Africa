@@ -1,0 +1,25 @@
+id: story-45.3
+epic: driver-financial-tools
+slug: tax-savings-tool
+title: Implement "Tax Savings" Tool for Drivers
+status: Done
+author: Bob (sm)
+date: '2024-08-01T09:19:00Z'
+
+description: >
+  As a driver, I want the app to help me estimate my tax obligations by
+  setting aside a percentage of my earnings, so that I'm prepared for tax season.
+
+acceptance_criteria:
+  - In the driver's wallet/earnings screen, a "Tax Savings" tool must be available.
+  - The driver can set a percentage of their earnings to notionally "set aside" for taxes.
+  - The UI will show: Total Earnings, Estimated Tax Withholding, and Take-Home Pay.
+  - This is purely a display feature and does not involve actually holding or remitting any funds. It's a planning tool for the driver.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/wallet_screen.dart # To add the tax estimation UI
+
+dev_notes: >
+  A valuable financial planning tool for independent contractors. The implementation is entirely on the client-side and must be made very clear that the app is not providing tax advice or actually withholding money.

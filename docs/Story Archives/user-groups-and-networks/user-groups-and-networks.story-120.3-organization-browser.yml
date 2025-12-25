@@ -1,0 +1,23 @@
+id: story-120.3
+epic: user-groups-and-networks
+slug: organization-browser
+title: Create Organization Browser in Driver App
+status: DONE
+author: Sarah (po)
+date: '2024-06-12T12:00:00Z'
+
+description: >
+  As a driver, I want to browse and search for active organizations within my
+  app, so I can discover groups to join.
+
+acceptance_criteria:
+  - A new "Organizations" section must be added to the `driver-app`.
+  - This section must display a list of all "Active" organizations.
+  - The list should be searchable by organization name.
+  - Tapping on an organization in the list must navigate to its public profile page (`story-120.2`).
+
+files_to_be_created:
+  - apps/driver-app/src/screens/organization_browser_screen.dart
+
+dev_notes: >
+  This story provides the discovery mechanism for drivers to find organizations. It is a prerequisite for `story-120.4` (Join Flow).

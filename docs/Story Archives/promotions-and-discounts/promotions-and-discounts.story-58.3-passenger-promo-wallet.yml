@@ -1,0 +1,24 @@
+id: story-58.3
+epic: promotions-and-discounts
+slug: passenger-promo-wallet
+title: Create Passenger Promotion Wallet
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T18:40:00Z'
+
+description: >
+  As a passenger, I want a section in the app where I can see all my available
+  promotions and their expiry dates, so I can keep track of my discounts.
+
+acceptance_criteria:
+  - A new "Promotions" or "Discounts" section must be added to the passenger's Wallet screen (`story-55.1`).
+  - This screen must list all manually entered promo codes and any automatically applied credits or discounts.
+  - Each promotion in the list must clearly show its value (e.g., "$5 off," "20% off"), its expiry date, and any key conditions.
+  - The `incentive-service` must expose an endpoint to list all available promotions for a given user.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/wallet_screen.dart # To add the promotions list UI
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To expose user's available promotions
+
+dev_notes: >
+  This feature provides essential visibility for the user. It helps them understand what discounts they have and encourages them to take a ride before a promotion expires.

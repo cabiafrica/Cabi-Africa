@@ -1,0 +1,25 @@
+id: story-85.6
+epic: airport-experience
+slug: airport-virtual-queue
+title: Implement Airport Virtual Queue (FIFO) for Drivers
+status: Done
+author: Bob (sm)
+date: '2024-08-10T02:05:00Z'
+
+description: >
+  As a driver waiting at the airport, I want to be placed in a fair,
+  first-in-first-out (FIFO) virtual queue, so that ride requests are dispatched
+  in an orderly manner.
+
+acceptance_criteria:
+  - When a driver enters a designated airport waiting zone (a geofence defined by admins), they are automatically added to a virtual queue.
+  - The `driver-app` must show the driver their position in the queue (e.g., "You are 5th in line").
+  - When a ride request comes from that airport, the `ride-service` must offer it to the driver at the front of the queue.
+  - If the driver declines or misses the request, they are moved to the back of the queue.
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To manage the FIFO queue logic
+  - apps/driver-app/src/screens/home_screen.dart # To display queue position
+
+dev_notes: >
+  This system is essential for managing driver supply at airports and is often a requirement by airport authorities. It prevents chaos and ensures fairness.

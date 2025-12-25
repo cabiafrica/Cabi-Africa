@@ -1,0 +1,35 @@
+id: story-22.8
+epic: scheduled-rides
+slug: admin-scheduled-rides-management
+title: Admin View and Management of Scheduled Rides
+status: DONE
+author: Bob (sm)
+date: '2024-07-20T09:04:00Z'
+
+description: >
+  As an administrator, I want to view a list of all scheduled rides and their
+  current status, and be able to manually intervene (e.g., cancel a ride),
+  so that I can monitor the system and resolve issues.
+
+acceptance_criteria:
+  - A new "Scheduled Rides" page must be added to the `admin-panel`.
+  - This page must display a comprehensive list of all scheduled rides, including:
+    - Passenger name
+    - Driver name (if assigned)
+    - Pickup/Destination
+    - Scheduled date/time
+    - Current status (e.g., 'pending', 'assigned', 'cancelled')
+  - The list should be sortable and filterable (e.g., by date, status).
+  - Admins must have the ability to manually cancel a scheduled ride from this interface.
+  - The `ride-service` must expose secure, admin-only endpoints to fetch scheduled ride data and to perform administrative cancellations.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/scheduled-rides/page.tsx
+
+files_to_modified:
+  - apps/admin-panel/src/components/layout/sidebar.tsx # To add link to the new page
+  - libs/backend/ride-service/src/lib/scheduled_ride.controller.ts # To add admin endpoints
+  - libs/backend/ride-service/src/lib/scheduled_ride.service.ts # To implement admin-level fetching and cancellation logic
+
+dev_notes: >
+  This story provides the administrative oversight for the scheduled rides feature. It's crucial for debugging, customer support, and ensuring the smooth operation of the system. The `ride-service` will need to provide robust endpoints for querying and modifying scheduled ride data.

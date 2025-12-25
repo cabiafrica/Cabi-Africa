@@ -1,0 +1,26 @@
+id: story-83.1
+epic: driver-incentives
+slug: surge-free-perk
+title: Implement "Surge-Free Zone" Perks for Drivers
+status: Done
+author: Bob (sm)
+date: '2024-08-08T11:14:00Z'
+
+description: >
+  As a top-tier driver, I want to be rewarded with the ability to get rides
+  from high-demand (surged) areas without the surge multiplier being shown
+  to the passenger, making my car a more attractive option.
+
+acceptance_criteria:
+  - This is a new perk for high-tier drivers (`story-44.3`).
+  - When a top-tier driver is in a surge zone, the `ride-service` can choose to offer them a ride request at the standard, non-surged price.
+  - The driver still gets paid a bonus equivalent to the surge amount, paid by the platform.
+  - This creates a competitive advantage for top drivers and can reduce prices for some passengers.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To implement the special matching logic
+
+dev_notes: >
+  A complex incentive that manipulates pricing based on driver status. It aims to reward top drivers and can be used strategically to lower prices in key areas.

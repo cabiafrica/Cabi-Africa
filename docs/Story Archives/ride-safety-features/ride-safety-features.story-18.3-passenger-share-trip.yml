@@ -1,0 +1,31 @@
+id: story-18.3
+epic: ride-safety-features
+slug: passenger-share-trip
+title: Implement "Share My Trip" for Passengers
+status: DONE
+author: Bob (sm)
+date: '2024-07-23T14:03:00Z'
+
+description: >
+  As a passenger, I want to share my live trip status, including my current
+  location and ETA, with a trusted contact, so they can have peace of mind
+  and know I am safe.
+
+acceptance_criteria:
+  - A "Share Trip" button must be added to the `passenger-app`'s in-trip UI.
+  - Tapping this button must open the native OS share sheet.
+  - The content shared must be a URL to a web-based, real-time map view of the trip.
+  - This web view does not require a login and should display the car's current location, the route, the driver's name, car model, and license plate, and the passenger's ETA.
+  - A new public-facing web app or page must be created to host this live tracking view.
+  - The `ride-service` must expose a public, non-authenticated endpoint that provides the necessary live trip data when queried with a unique, secure trip-sharing token.
+
+files_to_be_created:
+  - apps/web-live-tracking/src/app/track/[shareToken]/page.tsx
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/trip_in_progress_view.dart # To add the share button
+  - libs/backend/ride-service/src/lib/ride.controller.ts # To add the public tracking endpoint
+  - libs/backend/ride-service/src/lib/ride.service.ts # To generate share tokens and provide live data
+
+dev_notes: >
+  This is a high-impact safety feature. The main complexity lies in creating the public, real-time web tracking page. This requires a secure, unguessable token for each shared trip to protect privacy. The backend will need a new public endpoint that doesn't require standard user authentication but is secured by this token.

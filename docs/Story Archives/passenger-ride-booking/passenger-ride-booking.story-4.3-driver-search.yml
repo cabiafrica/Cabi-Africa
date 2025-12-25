@@ -1,0 +1,38 @@
+id: story-4.3
+epic: passenger-ride-booking
+slug: driver-search-and-assignment
+title: 'Passenger: See Nearby Drivers and Wait for Assignment'
+status: DONE
+author: Bob (sm)
+date: '2024-08-15T10:00:00Z'
+
+description: >
+  As a passenger, after confirming my ride request, I want to see the app
+  actively searching for nearby drivers and receive a notification when a
+  driver is assigned, so I have confidence that my request is being processed.
+
+acceptance_criteria:
+  - After tapping "Confirm Ride" (from story-4.2), the UI must transition to a "Searching for drivers..." state.
+  - This state should display an animation or message indicating the search is in progress.
+  - The app must subscribe to a real-time event source (e.g., WebSocket, SSE) from the `dispatch-service` for updates on the ride status.
+  - When the `dispatch-service` assigns a driver, the app must receive a `DriverAssigned` event.
+  - Upon receiving the `DriverAssigned` event, the UI must update to show the assigned driver's details (name, vehicle, rating) and their ETA.
+  - A new `DriverEnRouteCard` widget should display this information.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/driver_en_route_card.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/home_screen.dart # To manage the "searching" and "driver assigned" states.
+  - Cabi Alpha/mobile/passenger_app/lib/api/ride_service.dart # To handle real-time event subscription.
+
+dev_notes: >
+  This story connects the passenger app to the real-time dispatch flow. The key is handling the state transition from "requesting" to "searching" to "driver assigned". For the MVP, the real-time subscription can be mocked with a delayed future that simulates receiving a `DriverAssigned` event.
+
+qa_results:
+  - id: qa-1
+    date: '2024-08-15T14:00:00Z'
+    agent: Quinn (qa)
+    summary: >
+      The driver search and assignment flow works as expected. The UI correctly transitions between states, and the mock `DriverAssigned` event triggers the display of the driver's details.
+    gate_decision: PASS

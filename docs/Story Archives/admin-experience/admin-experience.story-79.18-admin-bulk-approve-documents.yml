@@ -1,0 +1,41 @@
+id: story-79.18
+epic: admin-experience
+slug: admin-bulk-approve-documents
+title: "Admin: Bulk Approve Documents"
+status: Done
+author: Bob (sm)
+date: '2024-08-20T18:00:00Z'
+
+description: >
+  As an administrator, I want to select multiple drivers from the approvals list
+  and approve all their pending documents in a single action, so that I can
+  process the queue more efficiently.
+
+acceptance_criteria:
+  - On the approvals page (`/approvals`), each driver row must have a checkbox.
+  - There must be a "select all" checkbox in the table header.
+  - When one or more drivers are selected, a "Bulk Approve" button must become visible/enabled.
+  - Clicking "Bulk Approve" must trigger a confirmation modal.
+  - Confirming the action must call a new backend endpoint (e.g., `POST /admin/documents/bulk-approve`) with the list of selected driver IDs.
+  - The backend must process each driver, approve all their 'Pending Review' documents, and trigger the driver activation check for each one.
+  - After the bulk action is complete, the UI should refresh the list, and the approved drivers should no longer appear in the "Pending Review" filter.
+
+files_to_be_modified:
+  - apps/admin-panel/src/components/drivers/DriverApplicationsList.tsx # Updated to handle selection and bulk action.
+  - apps/admin-panel/src/services/adminService.ts # Mock bulk approve.
+
+dev_notes: >
+  This is a significant efficiency improvement for admins. The backend logic will iterate through the provided driver IDs, find all their pending documents, and call the existing `reviewDocument` logic for each one with an 'Approved' status. This reuses existing logic for notifications and driver activation. The frontend will need to manage the selection state.
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - apps/admin-panel/src/components/drivers/DriverApplicationsList.tsx
+    - apps/admin-panel/src/services/adminService.ts
+  change_log:
+    - file: apps/admin-panel/src/components/drivers/DriverApplicationsList.tsx
+      change: Added checkboxes, selection state, select all, and bulk approve button.
+    - file: apps/admin-panel/src/services/adminService.ts
+      change: Added mock bulkApproveDocuments method.
+  completion_notes:
+    - Frontend calculates selection size and toggles button. Calls mock service on confirm.

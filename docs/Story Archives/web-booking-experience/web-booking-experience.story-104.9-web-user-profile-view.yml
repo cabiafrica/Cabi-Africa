@@ -1,0 +1,40 @@
+id: story-104.9
+epic: web-booking-experience
+slug: web-user-profile-view
+title: Allow Web User to View and Edit Their Profile Information
+status: DONE
+author: Bob (sm)
+date: '2025-12-02T15:45:00Z'
+
+description: >
+  As a logged-in website user, I want to view and edit my basic profile information,
+  so that I can ensure my account details are accurate and up-to-date.
+
+acceptance_criteria:
+  - A new "My Profile" page must be created in the `marketing-website` app (e.g., at `/account/profile`), accessible only to logged-in users.
+  - The page must fetch and display the user's current profile information: First Name, Last Name, Email (read-only), and Phone Number.
+  - The user must be able to edit their First Name, Last Name, and Phone Number in form fields.
+  - A "Save Changes" button must call a backend endpoint to persist the updated information.
+  - The `user-service` must be updated with endpoints for an authenticated user to get their own profile (`GET /users/me`) and update it (`PUT /users/me`).
+  - A link to the "My Profile" page must be available in the user's account dropdown or profile section.
+
+files_to_be_created:
+  - Cabi Alpha/web/user_portal/app/account/profile/page.tsx # The user profile page.
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/components/Header.tsx # Or similar navigation component to add a link to the new page.
+  - libs/backend/user-service/src/lib/user.service.ts # To add logic for a user to get and update their own profile.
+  - libs/backend/user-service/src/lib/user.controller.ts # To expose the new /me endpoints.
+
+dev_notes: >
+  This story provides fundamental account management functionality for our web users, enhancing the logged-in experience. It leverages the authentication system we've already established. The backend endpoints must be secured so that users can only access and modify their own data. The email address should be treated as a read-only identifier on this page to prevent complex re-verification flows.
+
+tasks:
+  - id: task-1
+    description: "Implement the `GET /users/me` and `PUT /users/me` endpoints in `user-service` for self-service profile management."
+  - id: task-2
+    description: "Create the 'My Profile' page in the `marketing-website` app."
+  - id: task-3
+    description: "Implement the form UI to display the user's current information and allow edits to name and phone number."
+  - id: task-4
+    description: "Connect the form's 'Save' action to the backend and add a link to the profile page in the site navigation."

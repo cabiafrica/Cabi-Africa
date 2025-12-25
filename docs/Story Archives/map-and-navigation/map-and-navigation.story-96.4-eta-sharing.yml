@@ -1,0 +1,23 @@
+id: story-96.4
+epic: map-and-navigation
+slug: real-time-eta-sharing
+title: Implement Real-Time ETA Sharing with Destination
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T22:45:00Z'
+
+description: >
+  As a passenger, I want to be able to share my live trip and real-time ETA
+  with someone waiting for me at my destination, so they know exactly when to expect me.
+
+acceptance_criteria:
+  - This enhances the "Share Trip Status" feature (`story-18.4`).
+  - When a passenger shares their trip, the public web page must prominently display the live, continuously updated ETA to the destination.
+  - The page should clearly show the destination address.
+
+files_to_be_modified:
+  - apps/trip-sharing-web/src/app/[tripId]/page.tsx # To add the live ETA display
+  - libs/backend/ride-service/src/lib/ride.service.ts # To ensure the ETA is passed to the web view
+
+dev_notes: >
+  This is a small but highly useful improvement to an existing safety feature, making it a convenience feature as well. It answers the common question: "When will you be here?".

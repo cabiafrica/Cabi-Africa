@@ -1,0 +1,27 @@
+id: story-47.4
+epic: advanced-booking-options
+slug: rental-by-day
+title: Implement "Rental by the Day"
+status: DONE
+author: Bob (sm)
+date: '2024-08-02T10:05:00Z'
+
+description: >
+  As a user, I want to book a driver and their car for a full day (e.g., 8
+  hours) at a fixed price, so that I have maximum flexibility for tourism or
+  business.
+
+acceptance_criteria:
+  - This is an extension of the hourly booking feature (`story-47.2`).
+  - The UI will offer pre-set full-day or half-day packages.
+  - The pricing will be a flat rate for the block of time, potentially with a mileage limit.
+  - The `pricing-service` and `ride-service` must be updated to handle these packages.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/widgets/ride_booking_panel.dart # To add daily rental options
+  - libs/backend/ride-service/src/lib/fare.service.ts # To handle flat-rate pricing
+
+dev_notes: >
+  This feature productizes the hourly booking into an easy-to-understand package, appealing to specific use cases like tourism.

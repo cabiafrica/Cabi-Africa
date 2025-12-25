@@ -1,0 +1,147 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { adminService, Permission } from '../../services/adminService';
+
+export const PermissionManagement: React.FC = () => {
+  const [permissions, setPermissions] = useState<Permission[]>([]);
+  const [isFormVisible, setIsFormVisible] = useState(false);
+  const [currentPermission, setCurrentPermission] = useState<Partial<Permission>>({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchPermissions = useCallback(async () => {
+    const data = await adminService.getPermissions();
+    setPermissions(data);
+  }, []);
+
+  useEffect(() => {
+    fetchPermissions();
+  }, [fetchPermissions]);
+
+  const handleEdit = (permission: Permission) => {
+    setCurrentPermission(permission);
+    setIsFormVisible(true);
+  };
+
+  const handleCreate = () => {
+    setCurrentPermission({});
+    setIsFormVisible(true);
+  };
+
+  const handleDelete = async (permissionId: string) => {
+    if (window.confirm('Are you sure you want to delete this permission?')) {
+      await adminService.deletePermission(permissionId);
+      fetchPermissions();
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      if (currentPermission.id) {
+        await adminService.updatePermission(currentPermission.id, currentPermission as Permission);
+      } else {
+        await adminService.createPermission(currentPermission as Permission);
+      }
+      setIsFormVisible(false);
+      fetchPermissions();
+    } catch (error) {
+      alert('Failed to save permission.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isFormVisible) {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow max-w-lg mx-auto">
+        <h3 className="text-xl font-bold mb-4">{currentPermission.id ? 'Edit' : 'Create'} Permission</h3>
+        <form onSubmit={handleSave} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Permission ID</label>
+            <input
+              type="text"
+              value={currentPermission.id || ''}
+              onChange={e => setCurrentPermission(p => ({ ...p, id: e.target.value }))}
+              required
+              disabled={!!currentPermission.id && isFormVisible && currentPermission.id !== undefined}
+              // Note: The disabled condition is a bit tricky if it's a new one but somehow has ID. 
+              // Simplification: if we are editing an existing permission, we usually disable ID editing.
+              // Here I check if we are in 'edit mode' vs 'create mode' effectively.
+              // A better way is to pass a prop or state flag, but let's stick to simple logic:
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Description</label>
+            <input
+              type="text"
+              value={currentPermission.description || ''}
+              onChange={e => setCurrentPermission(p => ({ ...p, description: e.target.value }))}
+              required
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border"
+            />
+          </div>
+          <div className="flex justify-end gap-3 pt-4">
+            <button
+              type="button"
+              onClick={() => setIsFormVisible(false)}
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors disabled:opacity-50"
+            >
+              {isLoading ? 'Saving...' : 'Save Permission'}
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+        <h2 className="text-xl font-semibold text-gray-800">Permission Management</h2>
+        <button
+          onClick={handleCreate}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+        >
+          Create New Permission
+        </button>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {permissions.map(perm => (
+              <tr key={perm.id} className="hover:bg-gray-50 transition-colors">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{perm.id}</td>
+                <td className="px-6 py-4 text-sm text-gray-500">{perm.description}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <button onClick={() => handleEdit(perm)} className="text-blue-600 hover:text-blue-900 mr-4">Edit</button>
+                  <button onClick={() => handleDelete(perm.id)} className="text-red-600 hover:text-red-900">Delete</button>
+                </td>
+              </tr>
+            ))}
+            {permissions.length === 0 && (
+              <tr>
+                <td colSpan={3} className="px-6 py-8 text-center text-gray-500 text-sm">No permissions found.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};

@@ -1,0 +1,83 @@
+id: story-5.1
+epic: epic-5.0
+slug: testimonials-section
+title: Add Testimonials Section to Landing Pages
+status: Done
+author: Sarah (po)
+date: '2024-06-20T09:05:00Z'
+
+description: >
+  As a prospective user (driver or passenger), I want to see testimonials
+  from current users, so that I can build trust in the service and be
+  encouraged to sign up.
+
+acceptance_criteria:
+  - A new reusable "Testimonials" component is created in the `user-portal`.
+  - The component should display a quote, the person's name, and their role (e.g., "Driver in Nairobi").
+  - The new Testimonials component is added to the 'For Drivers' page (`/drivers`).
+  - The new Testimonials component is added to the 'For Passengers' page (`/passengers`).
+  - The component should be populated with 2-3 placeholder testimonials for each user type.
+  - The section must be visually appealing and responsive.
+
+files_to_be_created:
+  - docs/stories/story-5.1-testimonials-section.yml
+  - Cabi Alpha/web/user_portal/src/components/marketing/Testimonials.tsx
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/src/pages/drivers.tsx
+  - Cabi Alpha/web/user_portal/src/pages/passengers.tsx
+
+dev_notes: >
+  This is a key social proof feature. The component should be designed to be
+  easily reusable on other pages, like the homepage, in the future.
+
+tasks:
+  - id: task-1
+    description: Implement the Testimonials component and add to landing pages.
+    subtasks:
+      - "[x] Create a new reusable `Testimonials.tsx` component."
+      - "[x] Add the Testimonials component to the `/drivers` page with placeholder content."
+      - "[x] Add the Testimonials component to the `/passengers` page with placeholder content."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  completion_notes:
+    - >-
+      All tasks for this story are complete. A reusable Testimonials component
+      has been created and added to the 'For Drivers' and 'For Passengers'
+      landing pages to provide social proof. The feature is now ready for QA review.
+  file_list:
+    - Cabi Alpha/web/user_portal/src/components/marketing/Testimonials.tsx
+    - Cabi Alpha/web/user_portal/src/pages/drivers.tsx
+    - Cabi Alpha/web/user_portal/src/pages/passengers.tsx
+  change_log:
+    - file: Cabi Alpha/web/user_portal/src/components/marketing/Testimonials.tsx
+      change: Created a new reusable component to display a list of user testimonials.
+    - file: Cabi Alpha/web/user_portal/src/pages/drivers.tsx
+      change: Integrated the Testimonials component into the 'For Drivers' landing page with driver-specific content.
+    - file: Cabi Alpha/web/user_portal/src/pages/passengers.tsx
+      change: Integrated the Testimonials component into the 'For Passengers' landing page with passenger-specific content.
+
+qa_results:
+  - id: qa-1
+    date: '2024-06-21T10:00:00Z'
+    agent: Quinn (qa)
+    summary: >-
+      The implementation is excellent and meets all acceptance criteria. The
+      reusable testimonials component is well-designed and correctly integrated
+      into the driver and passenger landing pages. A non-blocking suggestion was
+      made to render the user avatars to further enhance the feature.
+    requirements_traceability:
+      - criteria: "A new reusable 'Testimonials' component is created..."
+        test_case: "Given the codebase, when inspecting the components directory, then a `Testimonials.tsx` component exists."
+        status: PASS
+      - criteria: "The new Testimonials component is added to the 'For Drivers' page (`/drivers`)."
+        test_case: "Given a user navigates to the `/drivers` page, when they scroll down, then the 'Hear from Our Drivers' testimonials section is visible."
+        status: PASS
+      - criteria: "The new Testimonials component is added to the 'For Passengers' page (`/passengers`)."
+        test_case: "Given a user navigates to the `/passengers` page, when they scroll down, then the 'What Our Passengers Are Saying' testimonials section is visible."
+        status: PASS
+      - criteria: "The section must be visually appealing and responsive."
+        test_case: "Given the user views the testimonials section on both mobile and desktop, when the page renders, then the layout adjusts correctly."
+        status: PASS
+    gate_decision: PASS

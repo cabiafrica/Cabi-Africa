@@ -1,0 +1,30 @@
+id: story-33.1
+epic: passenger-experience
+slug: passenger-help-center
+title: "Passenger: Access In-App Help Center with FAQs"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-04T09:20:00Z'
+
+description: >
+  As a passenger, I want to access a help center within the app, so I can find answers to
+  frequently asked questions without needing to contact support directly.
+
+acceptance_criteria:
+  - A "Help" or "Support" option must be added to the app's main navigation or profile screen.
+  - Tapping this option navigates to a new `HelpCenterScreen`.
+  - The `HelpCenterScreen` must fetch and display a list of FAQ categories from the backend (`GET /content/faq-categories`).
+  - Tapping a category must display a list of questions within that category.
+  - Tapping a question must expand to show the answer.
+  - The content (FAQs, categories) is managed from the Admin Panel (covered in other stories).
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/help_center_screen.dart
+
+files_to_be_modified:
+  - libs/backend/content-service/src/lib/content.service.ts # To add methods for fetching categorized FAQs.
+  - libs/backend/content-service/src/lib/content.controller.ts # To expose the new endpoints.
+
+dev_notes: >
+  This story creates the passenger-facing view for the CMS functionality defined in the PRD (section 2.1 & 2.3). It relies on the backend `ContentService` to provide structured help content. The frontend work involves creating a new screen that can render a nested list of categories and their corresponding question/answer pairs. This is the first step in building out the self-serve support funnel.
+  PRD Reference: 2.1. Passenger App -> Safety & Support -> In-App Help Center

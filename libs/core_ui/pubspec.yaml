@@ -1,0 +1,11 @@
+name: core_ui
+description: A shared package for common UI widgets and theme elements across Cabi apps.
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter

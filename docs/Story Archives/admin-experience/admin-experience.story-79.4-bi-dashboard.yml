@@ -1,0 +1,26 @@
+id: story-79.4
+epic: admin-experience
+slug: bi-dashboard
+title: Create High-Level Business Intelligence Dashboard
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T21:50:00Z'
+
+description: >
+  As an executive or city manager, I want a high-level dashboard that shows
+  key business metrics for the entire platform or a specific city, so I can
+  quickly assess the health of the business.
+
+acceptance_criteria:
+  - A new "BI Dashboard" page must be created in the `admin-panel`, accessible to specific admin roles.
+  - The dashboard must display key performance indicators (KPIs) like: Total Trips, Gross Bookings, New Users, Active Drivers, and Average Trip Rating.
+  - All KPIs must be filterable by date range and by city.
+  - The dashboard should feature charts showing trends for these KPIs over time.
+  - The `analytics-service` must be responsible for aggregating and providing this data.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/dashboard/page.tsx # Or a new /bi page
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To add aggregation logic for KPIs
+
+dev_notes: >
+  This provides a "mission control" view for business leaders. The data needs to be aggregated efficiently, likely through a separate data warehousing or ETL process for performance reasons.

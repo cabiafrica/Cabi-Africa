@@ -1,0 +1,29 @@
+id: story-42.1
+epic: new-verticals
+slug: package-delivery
+title: Implement "Deliver a Package" Service
+status: DONE
+author: Bob (sm)
+date: '2024-07-30T10:19:00Z'
+
+description: >
+  As a user, I want to use the app to send a small package from one location
+  to another, so that I can leverage the driver network for local courier services.
+
+acceptance_criteria:
+  - A new "Delivery" option must be added to the main screen of the `passenger-app`.
+  - The booking flow will be similar to a ride, but the user will specify package details instead of passenger count.
+  - The user must provide the recipient's name and phone number.
+  - The driver who accepts the delivery must be shown pickup/dropoff instructions.
+  - The recipient must receive an SMS with a tracking link.
+  - The driver must be able to confirm pickup and dropoff, possibly by getting a signature or code from the recipient in-app.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To add the "Delivery" option
+  - libs/backend/ride-service/src/lib/ride.service.ts # To handle a new "delivery" trip type
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To show delivery-specific UI
+
+dev_notes: >
+  This is the first story for a new `new-verticals` epic. It represents a major expansion of the business beyond ride-sharing. It will require significant changes to the UI and backend logic to differentiate between a "ride" and a "delivery".

@@ -1,0 +1,32 @@
+id: story-22.6
+epic: scheduled-rides
+slug: scheduled-ride-reminders
+title: Send Reminders for Upcoming Scheduled Rides
+status: DONE
+author: Bob (sm)
+date: '2024-08-11T15:00:00Z'
+
+description: >
+  As a passenger or driver, I want to receive a notification reminder before my
+  scheduled ride is due to start, so that I don't forget about it and can be
+  prepared on time.
+
+acceptance_criteria:
+  - A new scheduled job (e.g., a cron job) must be created on the backend to periodically check for upcoming scheduled rides.
+  - The job must identify rides that are due to start within a configurable timeframe (e.g., 60 minutes).
+  - For each identified ride, the system must trigger the `notification-service`.
+  - The `notification-service` must send a push notification to the passenger (e.g., "Your ride to [Destination] is in 1 hour.").
+  - If a driver is assigned, the `notification-service` must also send a push notification to the driver (e.g., "Your scheduled ride to [Destination] is in 1 hour.").
+  - To ensure reminders are sent only once, the `ride` entity must be updated with a new field (e.g., `reminderSentAt: DateTime`).
+  - The scheduled job must only select rides where `reminderSentAt` is null and the status is 'pending' or 'accepted'.
+  - After sending notifications, the job must update the `reminderSentAt` field for the ride to prevent re-sending.
+
+files_to_be_created:
+  - libs/backend/scheduler-service/src/lib/ride_reminder.job.ts # Or similar cron job implementation
+
+files_to_be_modified:
+  - libs/backend/notification-service/src/lib/notification.service.ts # To add templates and logic for ride reminders
+  - libs/backend/ride-service/src/lib/ride.entity.ts # To add the new reminderSentAt field
+
+dev_notes: >
+  This story introduces a time-based, proactive notification system, which is a new pattern for our backend. The implementation will likely involve a cron job within a new `scheduler-service`. If this service does not exist, its initial scaffolding will be part of this story's scope. The job will run at a regular interval (e.g., every 5 minutes) to query for rides that fall within the configurable reminder window. This feature is key to ensuring a smooth experience for scheduled rides.

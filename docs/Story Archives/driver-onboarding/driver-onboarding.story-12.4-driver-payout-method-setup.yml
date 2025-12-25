@@ -1,0 +1,26 @@
+id: story-12.4
+epic: driver-onboarding
+slug: driver-payout-method-setup
+title: Implement Driver Payout Method Setup
+status: Done
+author: Bob (sm)
+date: '2024-08-09T13:00:00Z'
+
+description: >
+  As a newly verified driver, I need to add my bank account or other payout
+  information to my profile, so that I can receive my earnings.
+
+acceptance_criteria:
+  - After a driver's account is 'Verified', the `driver-app` must prompt them to set up their payout method.
+  - A new "Payout Methods" screen must be created within the app's Wallet or Account section.
+  - The user must be able to securely enter their bank account details (e.g., account number, routing number).
+  - The system must integrate with a payment processor (e.g., Stripe, Adyen) to securely store and verify this information.
+  - The `user-service` must store a reference to the payment method (e.g., a token from the payment provider), not the raw bank details.
+  - The driver must be able to view and update their payout method.
+
+files_to_be_created:
+  - apps/driver-app/src/screens/payout_setup_screen.dart
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To integrate with a payment processor and store payment method references.
+  - libs/backend/user-service/src/lib/user.controller.ts # To add endpoints for managing payout methods.

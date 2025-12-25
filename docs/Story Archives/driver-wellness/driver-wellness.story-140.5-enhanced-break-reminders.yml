@@ -1,0 +1,25 @@
+id: story-140.5
+epic: driver-wellness
+slug: enhanced-break-reminders
+title: Implement Enhanced Break Reminders
+status: Done
+author: Sarah (po)
+date: '2024-06-12T12:00:00Z'
+
+description: >
+  As a driver, I want to receive intelligent reminders to take breaks during
+  long driving sessions, so I can manage my fatigue and stay safe on the road.
+
+acceptance_criteria:
+  - This feature builds on the time tracking implemented in `story-140.1`.
+  - The system must send a non-intrusive in-app notification to the driver after a configurable period of continuous "online" time (e.g., 2 hours).
+  - The notification should suggest taking a short break (e.g., "You've been driving for 2 hours. Time for a quick break?").
+  - The driver must be able to dismiss the reminder.
+  - The reminder interval must be configurable by an administrator in the `admin-panel`.
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To add logic to trigger break reminders.
+  - Cabi Alpha/mobile/driver_app/lib/services/background_service.dart # To listen for and display the reminder notification.
+
+dev_notes: >
+  This feature encourages proactive fatigue management, acting as a "soft" reminder that complements the "hard" mandatory stop enforced by `story-140.1`. It's a driver-centric wellness feature that shows we care about their well-being beyond just regulatory compliance.

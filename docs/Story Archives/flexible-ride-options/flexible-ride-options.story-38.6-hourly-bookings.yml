@@ -1,0 +1,23 @@
+id: story-38.6
+epic: flexible-ride-options
+slug: hourly-bookings
+title: Introduce Hourly Bookings
+status: Done
+author: Bob (sm)
+date: '2024-08-10T05:35:00Z'
+
+description: >
+  As a passenger who needs to run multiple errands, I want to book a driver
+  for a block of time at a fixed hourly rate, so I can have a car at my disposal.
+
+acceptance_criteria:
+  - A new "Hourly" ride option must be available in the `passenger-app`.
+  - The user can select the number of hours they want to book (e.g., 2 hours minimum).
+  - The fare is a fixed rate per hour plus a per-mile charge.
+  - The driver who accepts the booking is committed to the passenger for the entire duration, making multiple stops as requested by the passenger.
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/fare.service.ts # To handle hourly pricing
+
+dev_notes: >
+  This opens up a new use case and revenue stream, catering to users who need more than a simple A-to-B trip.

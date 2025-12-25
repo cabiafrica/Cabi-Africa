@@ -1,0 +1,30 @@
+id: story-16.6
+epic: driver-payouts
+slug: automated-payout-job
+title: Implement Automated Weekly Payout Job
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T16:00:00Z'
+
+description: >
+  As the system, I want to automatically process payouts for all eligible
+  drivers on a regular schedule (e.g., weekly), so that drivers receive their
+  earnings reliably without needing to manually request them.
+
+acceptance_criteria:
+  - A new scheduled job (e.g., cron job, scheduled Lambda) must be created in the `payment-service`.
+  - The job must run on a configurable, recurring schedule (e.g., every Friday at 5 PM).
+  - When the job runs, it must identify all drivers with a positive, unpaid earnings balance.
+  - For each eligible driver, the system must trigger the same payout logic used in the manual cash-out (`story-16.3`).
+  - This includes validating the payout method, initiating the transfer via the payment gateway, and creating a payout transaction record.
+  - All associated earnings transactions for the driver must be updated from 'unpaid' to 'payout_processing'.
+  - The `notification-service` must send a notification to the driver confirming that their weekly payout has been processed.
+  - The job must include robust logging to track successful and failed payouts within the batch.
+
+files_to_be_created:
+  - libs/backend/payment-service/src/jobs/automated-payout.job.ts # To contain the logic for the scheduled task
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To support being called by the batch job
+  - libs/backend/payment-service/src/lib/payment.module.ts # To register and configure the scheduled job
+  - libs/backend/notification-service/src/lib/notification.service.ts # To add the payout processed notification

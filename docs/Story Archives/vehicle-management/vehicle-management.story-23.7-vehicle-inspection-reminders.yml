@@ -1,0 +1,23 @@
+id: story-23.7
+epic: vehicle-management
+slug: vehicle-inspection-reminders
+title: Implement Vehicle Inspection Reminders
+status: Done
+author: Bob (sm)
+date: '2024-08-10T03:05:00Z'
+
+description: >
+  As a driver in a region that requires annual vehicle inspections, I want
+  the app to remind me when my inspection is due, so I can stay compliant.
+
+acceptance_criteria:
+  - This enhances the document management feature (`story-23.6`).
+  - Drivers can upload their vehicle inspection report and its expiry date.
+  - The system sends proactive reminders before the inspection expires.
+  - If the inspection expires, the specific vehicle is blocked from being used for trips until a new, valid inspection is uploaded and approved.
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To add inspection document type and expiry logic
+
+dev_notes: >
+  This helps ensure vehicle safety and regulatory compliance across the platform.

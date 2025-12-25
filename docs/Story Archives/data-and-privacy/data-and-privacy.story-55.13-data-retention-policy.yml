@@ -1,0 +1,23 @@
+id: story-55.13
+epic: data-and-privacy
+slug: data-retention-policy
+title: Implement Automated Data Retention and Purging
+status: Done
+author: Bob (sm)
+date: '2024-08-10T03:00:00Z'
+
+description: >
+  As a compliance officer, I want the system to automatically purge or
+  anonymize old user data that is no longer needed for business or legal
+  reasons, to comply with data minimization principles.
+
+acceptance_criteria:
+  - A configurable data retention policy must be defined (e.g., "anonymize trip data older than 7 years").
+  - A scheduled background job must run periodically to identify and purge/anonymize data that is older than the retention period.
+  - This process must apply to all relevant services (e.g., ride history, location data).
+
+files_to_be_modified:
+  - A new backend service or job runner to handle the data purging process across multiple databases.
+
+dev_notes: >
+  This is a critical data governance and privacy feature. It reduces our liability by ensuring we don't store personal data for longer than necessary.

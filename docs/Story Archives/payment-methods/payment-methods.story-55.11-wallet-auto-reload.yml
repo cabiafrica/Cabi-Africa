@@ -1,0 +1,23 @@
+id: story-55.11
+epic: payment-methods
+slug: wallet-auto-reload
+title: Implement Auto-Reload for In-App Wallet
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T19:20:00Z'
+
+description: >
+  As a frequent wallet user, I want to set up an auto-reload rule, so that my
+  wallet balance is automatically topped up when it falls below a certain amount.
+
+acceptance_criteria:
+  - In the `WalletScreen` (`story-40.1`), a new "Auto-Reload" option must be available.
+  - The user can enable auto-reload, set a minimum balance threshold (e.g., "$5"), and choose a reload amount (e.g., "Add $20").
+  - When a transaction causes the user's wallet balance to drop below the threshold, the `payment-service` must automatically charge their default credit card to add the specified reload amount.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/wallet_screen.dart # To add the auto-reload settings UI
+  - libs/backend/payment-service/src/lib/payment.service.ts # To add the server-side logic for checking thresholds and triggering reloads
+
+dev_notes: >
+  This feature increases user convenience and ensures a smoother payment experience for those who prefer to use the wallet. It requires careful server-side logic to trigger the reload transaction reliably.

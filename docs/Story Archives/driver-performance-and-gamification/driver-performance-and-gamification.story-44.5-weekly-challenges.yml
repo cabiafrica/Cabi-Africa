@@ -1,0 +1,30 @@
+id: story-44.5
+epic: driver-performance-and-gamification
+slug: weekly-challenges
+title: Implement Weekly Driver Challenges
+status: Done
+author: Bob (sm)
+date: '2024-08-02T10:00:00Z'
+
+description: >
+  As a driver, I want to see and opt-in to weekly challenges (e.g., "Complete
+  50 trips this week to earn KES 1000"), so that I have clear, short-term
+  earning goals.
+
+acceptance_criteria:
+  - A new "Challenges" section must be added to the `IncentivesScreen` in the `driver-app`.
+  - The `admin-panel` must allow creating these challenges with specific goals (trip count, earnings target, 5-star rating count) and bonus amounts.
+  - The `incentive-service` must track driver progress towards active challenges.
+  - The driver app UI must clearly show the challenge rules and the driver's current progress.
+  - When a challenge is completed, the `incentive-service` must automatically award the bonus via the `payment-service`.
+  - The `notification-service` must alert the driver upon challenge completion.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/incentives_screen.dart # To display challenges
+  - apps/admin-panel/src/app/incentives/page.tsx # To add challenge creation UI
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To manage challenge logic
+
+dev_notes: >
+  This feature adds another layer to our incentive offerings, providing more dynamic and short-term goals than the static tier system. It leverages the existing incentive infrastructure.

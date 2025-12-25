@@ -1,0 +1,28 @@
+id: story-44.2
+epic: driver-performance-and-gamification
+slug: driver-achievements
+title: Implement Driver Achievements and Badges
+status: Done
+author: Bob (sm)
+date: '2024-08-01T09:01:00Z'
+
+description: >
+  As a driver, I want to earn badges for reaching certain milestones, so that
+  I feel recognized for my hard work and loyalty.
+
+acceptance_criteria:
+  - A new "Achievements" section must be added to the driver's profile screen.
+  - The system must define a set of achievements (e.g., "100 Trips", "500 5-Star Ratings", "Night Owl" for late-night driving, "Road Warrior" for high mileage).
+  - The `incentive-service` or `analytics-service` must track driver progress towards these achievements.
+  - When an achievement is unlocked, the driver must receive a notification.
+  - Earned badges must be displayed on the driver's profile, visible to both the driver and passengers.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/profile_screen.dart # To display badges
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To track and award achievements
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/trip_in_progress_view.dart # To show driver's badges
+
+dev_notes: >
+  This feature adds a layer of gamification that rewards long-term commitment. The logic for tracking progress can be complex and should be handled by an asynchronous process.

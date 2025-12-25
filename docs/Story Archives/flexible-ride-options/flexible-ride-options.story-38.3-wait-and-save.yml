@@ -1,0 +1,26 @@
+id: story-38.3
+epic: flexible-ride-options
+slug: wait-and-save-option
+title: Introduce "Wait & Save" Ride Option
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T21:40:00Z'
+
+description: >
+  As a price-sensitive passenger, I want a "Wait & Save" ride option that
+  offers a lower fare in exchange for a longer wait time, so I can save money
+  when I'm not in a hurry.
+
+acceptance_criteria:
+  - A new "Wait & Save" option must be added to the vehicle tier selector in the `passenger-app`.
+  - Selecting this option will show a lower estimated fare but a longer estimated wait time.
+  - The `ride-service` matching algorithm must be updated to handle this ride type by batching it with other nearby requests or waiting for a driver to become available closer to the pickup location.
+  - The fare difference between "Standard" and "Wait & Save" should be dynamic based on current demand.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To add the new ride option
+  - libs/backend/ride-service/src/lib/ride.service.ts # To update the matching algorithm
+  - libs/backend/ride-service/src/lib/fare.service.ts # To calculate the discounted fare
+
+dev_notes: >
+  This feature helps with demand shaping. By encouraging some users to wait, we can improve the efficiency of the driver fleet and reduce the need for surge pricing.

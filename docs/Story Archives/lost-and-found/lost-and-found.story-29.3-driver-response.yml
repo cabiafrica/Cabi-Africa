@@ -1,0 +1,25 @@
+id: story-29.3
+epic: lost-and-found
+slug: driver-response-to-lost-item
+title: Enable Driver to Respond to Lost Item Report
+status: Done
+author: Bob (sm)
+date: '2024-08-09T16:05:00Z'
+
+description: >
+  As a driver who has been notified about a lost item, I need a way to respond
+  within the app to confirm whether I have found the item or not.
+
+acceptance_criteria:
+  - After a passenger reports a lost item (`story-29.1`), the driver receives an in-app notification and an item in their inbox.
+  - The message must contain the trip details and the passenger's description of the item.
+  - The driver must be presented with two options: "I found the item" and "I did not find the item".
+  - The driver's response must update the corresponding support ticket in the `support-service`.
+  - If the driver selects "I did not find the item", the passenger is notified and the ticket status is updated accordingly.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/newsfeed_screen.dart # Or a new "Trip Issues" screen to handle the response
+  - libs/backend/support-service/src/lib/support.service.ts # To update the ticket with the driver's response
+
+dev_notes: >
+  This is the crucial second step in the workflow. It provides a clear, binary response from the driver that dictates the next actions for the support team and the passenger.

@@ -1,0 +1,58 @@
+id: story-79.5
+epic: admin-experience
+slug: admin-view-user-ride-history
+title: Admin View of User's Ride History
+status: DONE
+author: Bob (sm)
+date: '2024-08-11T13:00:00Z'
+
+description: >
+  As an administrator, on the user detail page, I want to see a list of the
+  user's past rides, so that I can investigate support tickets, disputes, or
+  safety incidents related to specific trips.
+
+acceptance_criteria:
+  - A new "Ride History" tab or section must be added to the user detail page (`/users/[userId]`).
+  - This section must display a paginated list of all rides associated with the user (as a passenger or driver).
+  - Each ride in the list must show key details: Date, Pickup Location, Destination, Final Fare, and Status (e.g., 'Completed', 'Cancelled').
+  - The `ride-service` must expose a new, admin-protected endpoint to fetch the ride history for a specific user ID.
+  - Clicking on a ride in the list should navigate to a detailed ride view page (the creation of this detailed page can be a future story).
+
+files_to_be_created:
+  - apps/admin-panel/src/components/users/ride_history_list.tsx # A component to display the list of rides
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/users/[userId]/page.tsx # To add the new "Ride History" tab and component
+  - libs/backend/ride-service/src/lib/ride.service.ts # To add logic to fetch ride history for a given user ID
+  - libs/backend/ride-service/src/lib/ride.controller.ts # To expose the new admin-only endpoint
+
+dev_notes: >
+  This story adds a crucial capability for support and operational staff. It connects the user profile to their core activity on the platform. The backend endpoint must be properly secured to ensure only authorized administrators can access another user's ride history.
+
+tasks:
+  - id: task-1
+    description: Implement the backend logic for fetching user ride history.
+    subtasks:
+      - "[x] Add a `findForUser` method to `ride.service.ts`."
+      - "[x] The method should be paginated and return all rides for a given user ID."
+      - "[x] Expose this via a new admin-protected endpoint `GET /admin/users/:userId/rides` in `ride.controller.ts`."
+  - id: task-2
+    description: Implement the frontend ride history component.
+    subtasks:
+      - "[x] Create `apps/admin-panel/src/components/users/ride_history_list.tsx`."
+      - "[x] The component should fetch and display a list of rides in a table."
+      - "[x] Integrate this component into the user detail page (`apps/admin-panel/src/app/users/[userId]/page.tsx`) within a new tab or section."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - apps/admin-panel/src/components/users/ride_history_list.tsx
+  change_log:
+    - file: apps/admin-panel/src/components/users/ride_history_list.tsx
+      change: Created a new component to fetch and display a user's ride history in a table format for the admin panel.
+    - file: Cabi Alpha/mobile/passenger_app/lib/screens/ride.service.ts
+      change: Implemented the `findForUser` method to retrieve a paginated list of rides for a specific user, searching both passenger and driver IDs.
+    - file: Cabi Alpha/mobile/passenger_app/lib/screens/ride.controller.ts
+      change: Exposed the new `findForUser` service method via a `GET /admin/users/:userId/rides` endpoint.
+    - file: apps/admin-panel/src/app/users/[userId]/page.tsx
+      change: Integrated the `RideHistoryList` component into the user detail page to display the user's ride history in a new card.

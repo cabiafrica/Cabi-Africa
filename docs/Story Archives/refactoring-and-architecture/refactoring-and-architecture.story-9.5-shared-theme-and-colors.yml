@@ -1,0 +1,33 @@
+id: story-9.5
+epic: refactoring-and-architecture
+slug: shared-theme-and-colors
+title: Define and Share a Core Theme and Color Palette
+status: DONE
+author: Gemini Code Assist
+date: '2024-05-30T10:00:00Z'
+
+description: >
+  As a developer, I want to define a centralized theme and color palette in the
+  `core_ui` package, so that both the passenger and driver apps can share the
+  same visual foundation, ensuring brand consistency and simplifying future
+  design updates.
+
+acceptance_criteria:
+  - A new file is created in `packages/core_ui/lib/src/theme/` to define the application's `ThemeData`.
+  - A new file is created in `packages/core_ui/lib/src/theme/` to define a `CabiColors` class with static color constants.
+  - The `CabiColors` class must include definitions for primary, secondary, accent, background, error, and text colors.
+  - The shared `ThemeData` must use the colors defined in the `CabiColors` class.
+  - Both `passenger-app` and `driver-app` must be updated to use the new shared theme from the `core_ui` package as their main application theme.
+  - After refactoring, both apps must build and run correctly, displaying the new shared theme.
+  - All existing UI should render correctly with the new theme, without any visual regressions.
+
+files_to_be_created:
+  - packages/core_ui/lib/src/theme/cabi_colors.dart
+  - packages/core_ui/lib/src/theme/cabi_theme.dart
+
+files_to_be_modified:
+  - apps/passenger-app/lib/main.dart # To apply the new shared theme.
+  - apps/driver-app/lib/main.dart # To apply the new shared theme.
+
+dev_notes: >
+  This story builds directly on `story-9.4`. By centralizing theme and colors, we make the apps more maintainable. Any future branding change can be done in one place. This is a crucial step for scaling the UI development and maintaining a high-quality, consistent user experience.

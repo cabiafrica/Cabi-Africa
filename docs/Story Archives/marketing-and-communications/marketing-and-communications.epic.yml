@@ -1,0 +1,26 @@
+id: epic-130
+slug: marketing-and-communications
+title: Marketing and Communications Platform
+status: DONE
+author: Mary (analyst)
+date: '2024-08-10T12:10:00Z'
+
+description: >
+  This epic covers the creation of a comprehensive content and communications
+  platform. It includes a public-facing blog, tools for in-app promotion of
+  content, a dynamic home screen component for featuring news, and the analytics
+  required to measure the effectiveness of these efforts.
+
+stories:
+  - marketing-and-communications.story-130.1-platform-blog.yml
+  - marketing-and-communications.story-130.2-in-app-blog-promotion.yml
+  - marketing-and-communications.story-130.3-home-screen-whats-new.yml
+  - marketing-and-communications.story-130.5-admin-featured-content-ui.yml
+  - marketing-and-communications.story-130.4-blog-promotion-analytics.yml
+  - marketing-and-communications.story-130.6-ab-test-featured-content.yml
+
+dev_notes: >
+  This is a major new feature set focused on driving user engagement and providing
+  measurable ROI for content marketing. It introduces a new "Content Management"
+  capability to the admin panel and enhances the notification and analytics services
+  to support these new workflows.

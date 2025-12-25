@@ -1,0 +1,27 @@
+id: story-53.1
+epic: location-specific-features
+slug: airport-pickup
+title: Implement "Airport Pickup" Instructions
+status: DONE
+author: Bob (sm)
+date: '2024-08-02T10:12:00Z'
+
+description: >
+  As a passenger requesting a ride from an airport, I want the app to give
+  me specific instructions on where to meet my driver (e.g., "Go to Level 3,
+  Rideshare Zone C"), so that the pickup process is smooth.
+
+acceptance_criteria:
+  - The `admin-panel` must allow defining special zones (geofences) for airports.
+  - For each zone, admins can specify detailed pickup instructions and designated meeting points.
+  - When a passenger requests a ride from within one of these zones, the `passenger-app` must display these specific instructions.
+  - The `driver-app` should also be guided to the official pickup location, not just the passenger's GPS pin.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To check for special zones and provide instructions
+  - apps/passenger-app/src/widgets/ride_booking_panel.dart # To display the instructions
+
+dev_notes: >
+  This is the first story for a new `location-specific-features` epic. It solves a major pain point at complex locations like airports and stadiums.

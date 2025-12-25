@@ -1,0 +1,32 @@
+id: story-19.4
+epic: user-profile-management
+slug: admin-profile-history-view
+title: Implement Admin View for User Profile Edit History
+status: Done
+author: Bob (sm)
+date: '2024-06-19T09:00:00Z'
+
+description: >
+  As an administrator, I want to view a history of significant changes made to a
+  user's profile, so that I can track modifications for support, auditing, and
+  security investigation purposes.
+
+acceptance_criteria:
+  - The `user-service` must be updated to log key profile modification events to a new audit trail (e.g., a new `profile_audit_log` table).
+  - Logged events must include: user name changes, phone number changes, and profile picture changes.
+  - Each audit log entry must record the user ID, the field changed, the value before the change, the value after the change, and a timestamp.
+  - A new secure, admin-only endpoint must be added to the `user-service` to retrieve the audit history for a specific user ID.
+  - A new "History" tab or section must be added to the user detail view within the `admin-panel`.
+  - This history view must fetch and display a chronological list of all profile changes for that user in a human-readable format (e.g., "Name changed from 'Jane Doe' to 'Jane Smith' on 2024-06-19").
+
+files_to_be_created:
+  - apps/admin-panel/src/app/users/[userId]/history/page.tsx # Or as a component
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To add logic for creating audit log entries on update
+  - libs/backend/user-service/src/lib/user.controller.ts # To add a new endpoint for fetching history
+  - The database schema for the `user-service` to add the new audit log table.
+  - apps/admin-panel/src/app/users/[userId]/page.tsx # To add a link/tab to the history view
+
+dev_notes: >
+  This story introduces an audit trail for user profile data, which is a key feature for security and customer support. The implementation should focus on extending the `user-service` to capture these changes during existing update operations (e.g., `updateProfile`, `confirmPhoneNumberChange`). The new endpoint must be secured to ensure only administrators can view this potentially sensitive history.

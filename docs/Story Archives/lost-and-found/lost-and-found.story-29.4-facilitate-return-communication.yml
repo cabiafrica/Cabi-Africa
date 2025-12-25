@@ -1,0 +1,25 @@
+id: story-29.4
+epic: lost-and-found
+slug: facilitate-return-communication
+title: Facilitate Communication Between Passenger and Driver for Return
+status: Done
+author: Bob (sm)
+date: '2024-08-09T16:10:00Z'
+
+description: >
+  As a passenger whose lost item has been found, I want a secure way to
+  communicate with the driver to coordinate its return.
+
+acceptance_criteria:
+  - If a driver confirms they have the item (`story-29.3`), a temporary, secure communication channel is opened.
+  - This can be achieved by enabling the masked call/chat feature (`story-61.6`, `story-61.5`) for this specific past trip.
+  - The communication channel should only be active for a limited time (e.g., 48 hours) to protect privacy.
+  - Both the passenger and driver are notified that the channel is open and are encouraged to arrange the return.
+
+files_to_be_modified:
+  - libs/backend/notification-service/src/lib/notification.service.ts # To enable/disable the temporary communication channel
+  - Cabi Alpha/mobile/passenger_app/lib/screens/trip_history_screen.dart # To re-enable the contact button
+  - Cabi Alpha/mobile/driver_app/lib/screens/newsfeed_screen.dart # To provide the contact button
+
+dev_notes: >
+  This leverages existing communication tools for a new purpose. The main challenge is managing the lifecycle of this temporary communication channel securely.

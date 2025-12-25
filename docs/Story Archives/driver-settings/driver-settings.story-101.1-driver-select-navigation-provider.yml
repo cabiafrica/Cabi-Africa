@@ -1,0 +1,44 @@
+id: story-101.1
+epic: driver-settings
+slug: driver-select-navigation-provider
+title: Driver Select Navigation Provider
+status: DONE
+author: Sarah (po)
+date: '2024-08-12T17:00:00Z'
+
+description: >
+  As a driver, I want to select my preferred navigation app (Google Maps, Waze, etc.)
+  so that when I start a trip, the app automatically launches the correct provider for directions.
+
+acceptance_criteria:
+  - The Driver App must have a `SettingsScreen`.
+  - The screen must allow selecting a "Navigation Provider".
+  - Options should include: Google Maps, Waze, and Apple Maps (if on iOS).
+  - The selection must be persisted to the backend `settings-service` to sync across devices.
+  - The UI should indicate the currently selected provider.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/settings_screen.dart
+  - Cabi Alpha/mobile/driver_app/lib/screens/home_screen.dart
+  - libs/backend/settings-service/src/lib/settings.service.ts
+  - libs/backend/settings-service/src/lib/settings.controller.ts
+
+dev_notes: >
+  While this story handles the *selection* of the provider, the actual *launching* logic
+  (using `url_launcher` with specific schemes like `waze://` or `comgooglemaps://`)
+  will be integrated into the Ride Navigation flow in a separate story, reading this preference.
+
+tasks:
+  - id: task-1
+    description: Implement backend settings storage.
+    subtasks:
+      - "[x] Create `settings.service.ts` to manage user preferences."
+      - "[x] Create `settings.controller.ts` exposing `GET` and `PUT` endpoints."
+  - id: task-2
+    description: Implement frontend settings screen.
+    subtasks:
+      - "[x] Create `settings_screen.dart` with RadioListTiles."
+      - "[x] Add navigation icon to `home_screen.dart`."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro

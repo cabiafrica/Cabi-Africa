@@ -1,0 +1,27 @@
+id: story-76.1
+epic: platform-integrity
+slug: driver-safety-score
+title: Implement "Driver Safety Score"
+status: DONE
+author: Bob (sm)
+date: '2024-08-08T11:01:00Z'
+
+description: >
+  As a driver, I want to see a "Safety Score" based on my on-road behavior,
+  so that I can understand and improve my driving. As an administrator, I
+  want to use this score to identify both safe and at-risk drivers.
+
+acceptance_criteria:
+  - The `analytics-service` will create a composite score for each driver based on telematics data.
+  - The score will be calculated from factors like speeding events (`story-52.4`), harsh driving events (`story-73.2`), and total kilometers driven without incident.
+  - The driver's profile in the `driver-app` must display this score and a breakdown of contributing factors.
+  - The score should be used to qualify drivers for rewards (e.g., lower insurance offers) or for warnings and coaching.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To calculate the safety score
+  - apps/driver-app/src/screens/profile_screen.dart # To display the score
+
+dev_notes: >
+  This is the first story for a new `platform-integrity` epic. It gamifies safe driving and provides a powerful metric for risk management. The algorithm for the score needs to be transparent and fair.

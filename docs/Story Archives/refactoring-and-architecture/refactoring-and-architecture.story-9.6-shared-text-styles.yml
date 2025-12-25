@@ -1,0 +1,31 @@
+id: story-9.6
+epic: refactoring-and-architecture
+slug: shared-text-styles
+title: Define and Share Core Text Styles
+status: Done
+author: Gemini Code Assist
+date: '2024-05-30T10:05:00Z'
+
+description: >
+  As a developer, I want to define a centralized set of `TextStyle` constants
+  in the `core_ui` package, so that both the passenger and driver apps can use a
+  consistent typographic scale for headings, body text, buttons, and other UI
+  elements.
+
+acceptance_criteria:
+  - A new file `packages/core_ui/lib/src/typography/cabi_text_styles.dart` is created.
+  - The `CabiTextStyles` class must define static `TextStyle` properties for different semantic purposes (e.g., `headline1`, `bodyText`, `button`, `caption`).
+  - These text styles should utilize the shared colors from `CabiColors` where appropriate (e.g., for the text color).
+  - At least one widget in both the `passenger-app` and `driver-app` must be refactored to use a text style from the new `CabiTextStyles` class.
+  - The refactored widgets must render correctly with the new shared text styles, without any visual regressions.
+  - Both applications must build and run successfully after the changes.
+
+files_to_be_created:
+  - packages/core_ui/lib/src/typography/cabi_text_styles.dart
+
+files_to_be_modified:
+  - # At least one file in `apps/passenger-app/lib/` that contains a Text widget.
+  - # At least one file in `apps/driver-app/lib/` that contains a Text widget.
+
+dev_notes: >
+  This story continues the effort of centralizing our UI foundations. By creating a shared typographic scale, we reduce one-off `TextStyle` definitions scattered throughout the codebase. This makes it easier to apply global changes to fonts, sizes, and weights, and helps developers choose the correct style for a given context.

@@ -1,0 +1,61 @@
+id: story-28.2
+epic: driver-profile-and-vehicle-management
+slug: driver-set-active-vehicle
+title: Allow Drivers to Manage Multiple Vehicles and Set Active Car
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T18:30:00Z'
+
+description: >
+  As a driver with more than one registered vehicle, I want to be able to
+  select which vehicle I am currently using for rides, so that passengers
+  receive the correct vehicle information before pickup.
+
+acceptance_criteria:
+  - The `VehicleManagementScreen` in the `driver-app` must be updated to display a list of all vehicles associated with the driver.
+  - The driver must be able to select one vehicle from the list to be their "active" vehicle for taking trips.
+  - Only one vehicle can be active at a time.
+  - The UI must clearly indicate which vehicle is currently active.
+  - The `vehicle-service` must be updated to support an "isActive" status for a vehicle, ensuring only one vehicle is active per driver.
+  - When a ride is assigned, the `ride-service` must fetch the details of the driver's *active* vehicle to share with the passenger.
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/vehicle_management_screen.dart # To display a list and handle selection
+  - libs/backend/vehicle-service/src/lib/vehicle.service.ts # To add logic for setting an active vehicle
+  - libs/backend/vehicle-service/src/lib/vehicle.controller.ts # To expose an endpoint for setting the active vehicle
+  - libs/backend/ride-service/src/lib/ride.service.ts # To ensure it fetches the active vehicle for a trip
+
+dev_notes: >
+  This story builds directly on `story-28.1`. It introduces the concept of an "active" vehicle. The backend logic in the `vehicle-service` must be robust to enforce the "only one active vehicle" rule. This change will also impact the `ride-service`, which must now be aware of which vehicle to associate with a new ride.
+
+tasks:
+  - id: task-1
+    description: Implement the backend logic for managing active vehicles.
+    subtasks:
+      - "[x] Add a `setActive` method to `vehicle.service.ts` that ensures only one vehicle is active per driver."
+      - "[x] Expose this via a `PUT /vehicles/:id/set-active` endpoint in `vehicle.controller.ts`."
+      - "[x] Update the `ride-service` to fetch the driver's *active* vehicle when creating a ride."
+  - id: task-2
+    description: Update the frontend vehicle management screen.
+    subtasks:
+      - "[x] Create `apps/driver-app/src/screens/vehicle_management_screen.dart`."
+      - "[x] The screen should fetch and display a list of the driver's vehicles."
+      - "[x] The UI must clearly indicate the active vehicle."
+      - "[x] Provide a 'Set Active' button for inactive vehicles that calls the new backend endpoint."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - apps/driver-app/src/screens/vehicle_management_screen.dart
+    - libs/backend/vehicle-service/src/lib/vehicle.service.ts
+    - libs/backend/vehicle-service/src/lib/vehicle.controller.ts
+    - libs/backend/ride-service/src/lib/ride.service.ts
+  change_log:
+    - file: apps/driver-app/src/screens/vehicle_management_screen.dart
+      change: Created the vehicle management screen, which lists a driver's vehicles and allows them to set one as active.
+    - file: libs/backend/vehicle-service/src/lib/vehicle.service.ts
+      change: Created the vehicle service with logic to set a driver's active vehicle, ensuring only one is active at a time.
+    - file: libs/backend/vehicle-service/src/lib/vehicle.controller.ts
+      change: Created the vehicle controller to expose the `set-active` endpoint.
+    - file: libs/backend/ride-service/src/lib/ride.service.ts
+      change: Updated the ride service to fetch the driver's active vehicle when assigning a ride.

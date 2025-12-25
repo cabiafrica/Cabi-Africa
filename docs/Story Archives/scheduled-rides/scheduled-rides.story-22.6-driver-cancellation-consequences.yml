@@ -1,0 +1,35 @@
+id: story-22.6
+epic: scheduled-rides
+slug: driver-cancellation-consequences
+title: Define Consequences for Accumulated Late Cancellation Infractions
+status: DONE
+author: Bob (sm)
+date: '2024-07-09T09:00:00Z'
+
+description: >
+  As a system administrator, I want to automatically enforce consequences for
+  drivers who repeatedly cancel scheduled rides at the last minute, so that we
+  can maintain the integrity of the scheduled ride marketplace and protect the
+  passenger experience.
+
+acceptance_criteria:
+  - The `user-service` must track the count of "late cancellation" infractions for each driver over a rolling time period (e.g., 30 days).
+  - When the `ride-service` logs a late cancellation infraction (`story-22.5`), it must trigger a check in the `user-service` for the driver's total infraction count.
+  - "**Warning Threshold:** If a driver reaches a configurable threshold (e.g., 3 infractions in 30 days), the `user-service` must trigger the `notification-service` to send the driver a warning notification."
+  - "**Suspension Threshold:** If a driver reaches a higher configurable threshold (e.g., 5 infractions in 30 days), the `user-service` must automatically suspend them from the scheduled rides feature for a configurable duration (e.g., 7 days)."
+  - A new status field (e.g., `scheduled_ride_suspension_until`) must be added to the user model in the `user-service`.
+  - The `ride-service` endpoint that lists available scheduled rides must not return any results for a driver who is currently suspended.
+  - The "Ride Opportunities" screen in the `driver-app` must display a message to a suspended driver, explaining why they are suspended and when the suspension will be lifted.
+  - The `notification-service` must send a notification to the driver informing them of their suspension and its duration.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To manage infraction counts and suspension status
+  - libs/backend/ride-service/src/lib/scheduled_ride.service.ts # To check for suspended drivers when listing rides
+  - libs/backend/notification-service/src/lib/notification.service.ts # To send warning and suspension notifications
+  - Cabi Alpha/mobile/driver_app/lib/screens/scheduled_rides_screen.dart # To display the suspension status UI
+  - The database schema for the `user-service` to add fields for infraction tracking and suspension status.
+
+dev_notes: >
+  This story adds a disciplinary layer to the scheduled rides feature, which is crucial for its long-term health. All thresholds (infraction counts, rolling period, suspension duration) must be stored in a configuration file for easy adjustment. The logic for checking and applying suspensions should be owned by the `user-service`, which acts as the central authority on driver status. The `ride-service` simply queries this status before returning ride opportunities.

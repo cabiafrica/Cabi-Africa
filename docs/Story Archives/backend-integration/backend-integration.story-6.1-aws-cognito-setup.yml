@@ -1,0 +1,37 @@
+id: story-6.1
+epic: backend-integration
+slug: aws-cognito-setup
+title: Set up Initial AWS Cognito Integration
+status: DONE
+author: Quinn
+date: '2024-05-28T20:00:00Z'
+
+description: >
+  As a developer, I want to replace the mocked authentication service with a
+  real AWS Cognito integration, so that user registration and login are handled
+  by a secure, scalable, and production-ready backend service.
+
+acceptance_criteria:
+  - The `amplify_flutter` and `amplify_auth_cognito` packages are added to the `passenger-app`'s `pubspec.yaml`.
+  - A new `amplifyconfiguration.dart` file is created in the passenger app's `lib` directory, containing the configuration for the AWS Cognito User Pool.
+  - The application's `main.dart` file is updated to initialize the Amplify library on app startup.
+  - The `AuthService` in the passenger app is refactored to use `Amplify.Auth` methods (`signUp`, `confirmSignUp`, `signIn`) instead of the current mocked logic.
+  - The existing registration and OTP verification flow continues to function as before, but now makes real API calls to AWS Cognito.
+
+files_to_be_created:
+  - apps/passenger-app/lib/amplifyconfiguration.dart
+
+files_to_be_modified:
+  - apps/passenger-app/pubspec.yaml
+  - apps/passenger-app/lib/main.dart
+  - Cabi Alpha/mobile/passenger_app/lib/api/auth_service.dart
+
+qa_results:
+  - reviewer: Quinn
+    date: '2024-05-28T21:00:00Z'
+    decision: PASS
+    summary: >-
+      The initial AWS Cognito integration has been successfully implemented. The necessary Amplify packages are added, the configuration file is created, Amplify is initialized in `main.dart`, and the `AuthService` has been refactored to use `Amplify.Auth` methods. This replaces the mocked authentication with a production-ready solution. The story meets all quality standards.
+
+dev_notes: >
+  This is the foundational story for migrating to a real backend. It requires an AWS Cognito User Pool and App Client to be created in the AWS console beforehand. The configuration details from AWS (User Pool ID, App Client ID, Region) will be used to populate the `amplifyconfiguration.dart` file. This story focuses only on the passenger app; the driver app can be migrated in a separate story.

@@ -1,0 +1,32 @@
+id: story-18.1
+epic: dynamic-pricing
+slug: surge-pricing-peak-hours
+title: Implement Surge Pricing During Peak Hours
+status: DONE
+author: Bob (sm)
+date: '2024-08-11T16:00:00Z'
+
+description: >
+  As a platform operator, I want to implement a dynamic surge pricing model
+  that increases fares during peak demand hours, so that we can incentivize
+  more drivers to come online and balance supply with demand.
+
+acceptance_criteria:
+  - A new `pricing-service` must be created on the backend to be the source of truth for all fare calculations.
+  - The `pricing-service` must define "peak hours" and corresponding surge multipliers in a configuration file (e.g., 7-9 AM: 1.5x, 5-7 PM: 1.8x).
+  - The `ride-service` must be refactored to call the `pricing-service` to get a fare estimate, instead of calculating it internally.
+  - When a passenger requests a ride during surge hours, the `passenger-app` must clearly display that surge pricing is active and show the final estimated fare.
+  - The UI should include a message like "Fares are higher due to increased demand."
+  - The final charge processed by the `payment-service` at the end of the trip must correctly use the surge-adjusted fare provided at the start of the trip.
+
+files_to_be_created:
+  - libs/backend/pricing-service/src/lib/pricing.service.ts
+  - libs/backend/pricing-service/src/lib/pricing.controller.ts
+  - libs/backend/pricing-service/src/config/surge.config.ts
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/fare_estimate_panel.dart # Or the widget that displays the fare estimate
+  - libs/backend/ride-service/src/lib/ride.service.ts # To call the new pricing service
+
+dev_notes: >
+  This is the first story in the `dynamic-pricing` epic and introduces a significant new capability. The initial implementation will use fixed, pre-configured time windows for peak hours. Future stories could evolve this to be based on real-time geographic demand. The `pricing-service` should be built with the expectation that it will handle more complex pricing rules in the future. Clear communication of the surge price to the passenger is a critical UX requirement to maintain trust.

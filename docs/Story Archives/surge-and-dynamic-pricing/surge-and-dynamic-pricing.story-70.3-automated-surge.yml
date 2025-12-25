@@ -1,0 +1,26 @@
+id: story-70.3
+epic: surge-and-dynamic-pricing
+slug: automated-surge-pricing
+title: Implement Automated, Algorithm-Driven Surge Pricing
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T21:35:00Z'
+
+description: >
+  As an operations manager, I want the system to automatically adjust surge
+  multipliers in real-time based on the supply of available drivers versus
+  passenger demand in a given zone, so that the market can balance itself efficiently.
+
+acceptance_criteria:
+  - The `pricing-service` must continuously monitor driver supply and passenger demand within each defined surge zone (`story-70.1`).
+  - A configurable algorithm must be developed that adjusts the surge multiplier up or down based on the supply/demand ratio.
+  - The system should have built-in caps to prevent excessive surge multipliers.
+  - The `admin-panel` must provide a real-time view of the current automated surge levels across all zones.
+  - Admins must have the ability to override the automated surge with a manual multiplier (`story-70.2`) at any time.
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/pricing.service.ts # To implement the core surge algorithm
+  - apps/admin-panel/src/app/pricing/page.tsx # To add a real-time monitoring view
+
+dev_notes: >
+  This is a highly complex but critical feature for market efficiency. The algorithm needs to be carefully tuned to be responsive but not overly volatile. It will require significant data analysis to get right.

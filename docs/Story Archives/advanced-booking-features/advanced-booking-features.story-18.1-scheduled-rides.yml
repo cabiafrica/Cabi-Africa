@@ -1,0 +1,34 @@
+id: story-18.1
+epic: advanced-booking-features
+slug: scheduled-rides
+title: Implement "Schedule a Ride" Feature
+status: DONE
+author: Sarah (po)
+date: '2024-06-01T16:00:00Z'
+
+description: >
+  As a passenger, I want to schedule a ride for a later date and time, so I
+  can plan my travel in advance for important appointments and have peace of
+  mind that my ride is booked.
+
+acceptance_criteria:
+  - On the `RideConfirmationPanel`, a "Schedule" option (e.g., a button or icon) is added next to the "Confirm Ride" button.
+  - Tapping "Schedule" opens a native date and time picker dialog.
+  - After a user selects a future time and confirms, the panel updates to show the scheduled time, and the button text changes to "Schedule Ride".
+  - Tapping "Schedule Ride" calls a new `scheduleRide()` method in the `RideService`, which simulates the backend booking.
+  - A new "Scheduled Trips" or "My Rides" item is added to the passenger's `ProfileScreen` or main navigation.
+  - This navigates to a new `ScheduledTripsScreen` that lists all upcoming, scheduled rides.
+  - Each item in the list should show the destination and the scheduled pickup time.
+  - Users must be able to cancel a scheduled ride from this screen.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/scheduled_trips_screen.dart
+  - apps/passenger-app/test/screens/scheduled_trips_screen_test.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/ride_confirmation_panel.dart
+  - Cabi Alpha/mobile/passenger_app/lib/screens/profile_screen.dart
+  - Cabi Alpha/mobile/passenger_app/lib/api/ride_service.dart
+
+dev_notes: >
+  This is a major new feature that adds significant value for passengers who need to plan ahead. The implementation will require careful state management on the `HomeScreen` and `RideConfirmationPanel`. The `RideService` will simulate the scheduling, and the new `ScheduledTripsScreen` will fetch and display this mock data.

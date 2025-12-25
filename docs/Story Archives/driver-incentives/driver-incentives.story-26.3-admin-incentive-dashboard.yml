@@ -1,0 +1,38 @@
+id: story-26.3
+epic: driver-incentives
+slug: admin-incentive-dashboard
+title: Implement Admin Dashboard for Driver Incentive Performance
+status: Done
+author: Bob (sm)
+date: '2024-07-26T09:00:00Z'
+
+description: >
+  As an administrator, I want to view a dashboard with key metrics on driver
+  incentive performance, so I can understand their effectiveness, cost, and
+  impact on driver behavior and platform liquidity.
+
+acceptance_criteria:
+  - A new "Dashboard" page must be created under the "Incentives" section of the `admin-panel`.
+  - The dashboard must allow filtering of all metrics by a selectable date range (e.g., Last 7 Days, Last 30 Days).
+  - The dashboard must display key metrics for the "Consecutive Trips Bonus", including:
+    - Total number of bonuses awarded.
+    - Total financial cost of bonuses paid.
+    - A chart showing the distribution of bonuses awarded by hour of the day.
+  - The dashboard must display key metrics for "Peak Hours", including:
+    - Total peak hours bonus amount paid.
+    - A map view displaying a heatmap of where peak hour bonuses are most frequently earned.
+  - The `incentive-service` must be updated to log every awarded bonus (both type and amount) to a new `bonus_awards` table for analytics.
+  - The `incentive-service` must expose new, secure, admin-only endpoints to provide the aggregated data required for this dashboard.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/incentives/dashboard/page.tsx
+
+files_to_be_modified:
+  - apps/admin-panel/src/components/layout/sidebar.tsx # To add link to the new dashboard
+  - libs/backend/incentive-service/src/lib/incentive.controller.ts # To add new endpoints for dashboard data
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To implement data aggregation logic
+  - libs/backend/incentive-service/src/lib/peak_hours.service.ts # To ensure peak bonuses are logged for analytics
+  - The database schema for the `incentive-service` to add a `bonus_awards` table.
+
+dev_notes: >
+  This story provides critical business intelligence for our incentive programs. The `incentive-service` will need to perform potentially complex data aggregations. For performance, these queries should be optimized, and in the future, we might consider offloading this to a dedicated analytics database. The dashboard should use clear data visualizations (charts, maps) to make the information easily digestible for the operations team.

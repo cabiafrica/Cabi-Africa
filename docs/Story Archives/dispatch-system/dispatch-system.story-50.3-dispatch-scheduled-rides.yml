@@ -1,0 +1,31 @@
+id: story-50.3
+epic: dispatch-system
+slug: dispatch-scheduled-rides
+title: "Dispatch: Manage and Assign Scheduled Rides"
+status: Done
+author: Gemini Code Assist
+date: '2025-12-06T18:00:00Z'
+
+description: >
+  As a platform operator, I need the dispatch system to automatically trigger the ride-matching process for scheduled rides
+  at a configurable time before the scheduled pickup, so that pre-booked rides are assigned to drivers reliably.
+
+acceptance_criteria:
+  - A background job (e.g., a cron job) must be implemented in the `ride-service` or a dedicated `dispatch-service`.
+  - The job must run periodically (e.g., every minute) to query for rides with a 'scheduled' status.
+  - It must identify rides that are within a configurable dispatch window (e.g., 20 minutes before scheduled pickup time).
+  - For each due ride, the system must invoke the ride-matching algorithm (from story-50.1) to find the best-ranked available driver.
+  - Once a driver is assigned, the ride's status must be updated from 'scheduled' to 'assigned'.
+  - The `notification-service` must be called to alert both the passenger and the assigned driver.
+  - If no driver is found, the system must retry the assignment process until a configurable time before pickup, after which it should be marked 'unfulfilled' and the passenger notified.
+
+files_to_be_created:
+  # No new files are expected; this modifies the core dispatch/ride service logic.
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To add the scheduled ride dispatch logic.
+  - # The module file for the ride-service to configure the scheduler (e.g., using NestJS Schedule).
+
+dev_notes: >
+  This story implements the backend logic for `story-18.2` (Passenger: Schedule a Ride). The core of this task is a reliable, scheduled job. Using a library like `node-cron` or a framework-native scheduler (like NestJS Schedule) is recommended. The logic must be resilient, with clear rules for when to start looking for a driver and how to handle the failure case where no drivers are available. This story is the counterpart to the already `Done` story `story-22.2`, but this new story will be the canonical one for implementation in the new architecture.
+  PRD Reference: 2.5. Dispatch System -> Scheduled Ride Management -> Dispatching Scheduled Rides

@@ -1,0 +1,28 @@
+id: story-58.2
+epic: promotions-and-discounts
+slug: passenger-apply-promo-code
+title: Allow Passengers to Apply Promo Codes to Rides
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T18:30:00Z'
+
+description: >
+  As a passenger, I want to apply a promo code before confirming my ride, so
+  that I can receive a discount on my fare.
+
+acceptance_criteria:
+  - On the ride confirmation screen in the `passenger-app`, a new "Add Promo Code" option must be available.
+  - Tapping this option should allow the passenger to enter a promo code.
+  - The app must call an endpoint in the `incentive-service` to validate the entered code for the current user and ride details.
+  - If the code is valid, the estimated fare displayed on the screen must be updated to reflect the discount.
+  - If the code is invalid (e.g., expired, incorrect, not applicable), an appropriate error message must be shown to the passenger.
+  - Once a valid code is applied, the `ride-service` must be informed so the final fare calculation includes the discount.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/ride_confirmation_screen.dart # To add the promo code input field and update the UI.
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To add logic for validating a promo code.
+  - libs/backend/incentive-service/src/lib/incentive.controller.ts # To expose the validation endpoint.
+  - libs/backend/ride-service/src/lib/ride.service.ts # To factor the applied promotion into the final fare calculation.
+
+dev_notes: >
+  This story is the passenger-facing counterpart to `story-58.1`. It connects the promo codes created by admins to the actual ride booking flow. The main challenge will be the real-time validation and fare update on the frontend. The `incentive-service` needs to provide a robust endpoint that can check a code's validity against its rules (expiry, usage limits, user eligibility, etc.).

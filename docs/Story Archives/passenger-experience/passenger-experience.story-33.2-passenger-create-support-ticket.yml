@@ -1,0 +1,32 @@
+id: story-33.2
+epic: passenger-experience
+slug: passenger-create-support-ticket
+title: "Passenger: Create a Support Ticket"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-04T09:25:00Z'
+
+description: >
+  As a passenger, when I can't find an answer in the Help Center, I want to submit a support ticket
+  directly within the app, so I can get assistance from a support agent.
+
+acceptance_criteria:
+  - A "Contact Us" or "Create Ticket" button must be available within the `HelpCenterScreen`.
+  - Tapping this button navigates to a new `CreateTicketScreen`.
+  - The `CreateTicketScreen` must have a field to select a relevant topic/category (e.g., "Billing Issue", "Problem with a trip").
+  - The screen must allow the user to select a specific past trip if the topic is trip-related.
+  - A text area for describing the issue in detail must be provided.
+  - Submitting the form must call a new backend endpoint `POST /support/tickets` in the `support-service`.
+  - Upon successful submission, the user must be shown a confirmation message with a ticket ID.
+
+files_to_be_created:
+  - apps/passenger-app/src/screens/create_ticket_screen.dart
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/help_center_screen.dart # To add the "Create Ticket" button.
+  - libs/backend/support-service/src/lib/support.service.ts # To add logic for creating a new ticket.
+  - libs/backend/support-service/src/lib/support.controller.ts # To expose the ticket creation endpoint.
+
+dev_notes: >
+  This story builds on the `HelpCenterScreen` (story-33.1) and implements the next step in the support funnel as per the PRD (section 2.1). The key is to structure the ticket creation process to gather as much context as possible upfront (e.g., linking to a specific trip), which will help support agents resolve issues more efficiently. The backend `support-service` will handle the logic for ingesting these tickets.
+  PRD Reference: 2.1. Passenger App -> Safety & Support -> Create Support Ticket

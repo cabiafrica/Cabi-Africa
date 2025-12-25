@@ -1,0 +1,29 @@
+id: story-18.1.1
+epic: ride-safety-features
+slug: remote-config-for-sos-number
+title: Implement Remote Configuration for SOS Emergency Number
+status: In Progress
+author: Sarah (po)
+date: '2024-06-12T12:00:00Z'
+
+description: >
+  As a platform operator, I want the emergency number used by the SOS feature
+  to be fetched from a remote configuration service, so that the correct
+  emergency number can be used for each operational region without requiring an app update.
+
+acceptance_criteria:
+  - A new service or utility must be created to manage fetching configuration values from Firebase Remote Config (or a similar service).
+  - This service must be integrated into both the `passenger-app` and `driver-app`.
+  - The SOS feature implementation in `TripInProgressPanel` (driver) and `DriverDetailsPanel` (passenger) must be updated to use this service to retrieve the emergency number.
+  - A sensible default emergency number (e.g., "911") must be hardcoded in the app to be used as a fallback if the remote configuration service is unavailable or fails.
+  - The remote configuration service (e.g., Firebase console) must be set up with a key (e.g., `emergency_call_number`) and initial values for our operational regions.
+
+files_to_be_created:
+  - libs/shared/remote-config/src/remote_config_service.dart # A new shared service to handle fetching remote config values.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/widgets/trip_in_progress_panel.dart # To use the new service instead of a hardcoded number.
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/driver_details_panel.dart # To use the new service instead of a hardcoded number.
+
+dev_notes: >
+  This is a technical story that follows up on the implementation of `story-18.1` and `story-18.2`. It decouples the emergency number from the application code, which is critical for international expansion and regulatory compliance. A new shared library for remote configuration is the preferred approach to avoid code duplication between the passenger and driver apps. The implementation must be resilient, with a reliable fallback mechanism.

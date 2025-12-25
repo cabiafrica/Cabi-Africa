@@ -1,0 +1,27 @@
+id: story-46.1
+epic: web-and-accessibility
+slug: web-booking
+title: Implement "Book a Ride via Website"
+status: DONE
+author: Bob (sm)
+date: '2024-08-01T09:05:00Z'
+
+description: >
+  As a user, I want to be able to book a ride from the company's main
+  website, so that I don't need to have the app installed to use the service.
+
+acceptance_criteria:
+  - The main marketing website must have a ride booking widget.
+  - The user must be able to log in or sign up.
+  - The booking interface should be similar to the app's, allowing users to enter pickup/destination and select a vehicle type.
+  - The web client will call the same backend APIs as the mobile app to request and manage the ride.
+  - The user must be able to see the driver's location and ETA on the web page after booking.
+
+files_to_be_created:
+  - apps/web-booking-portal/src/app/page.tsx
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.controller.ts # To ensure CORS policies allow web client access
+
+dev_notes: >
+  This is the first story for a new `web-and-accessibility` epic. It expands our service to the web, making it accessible to a wider audience. It requires building a new frontend application.

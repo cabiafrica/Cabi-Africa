@@ -1,0 +1,25 @@
+id: story-58.7
+epic: promotions-and-discounts
+slug: user-specific-credits
+title: Allow Admins to Grant User-Specific Credits
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T19:00:00Z'
+
+description: >
+  As a customer support agent, I want to be able to add a specific credit
+  amount directly to a passenger's account, so I can resolve a complaint or
+  provide a "make-good" for a poor experience.
+
+acceptance_criteria:
+  - In the `admin-panel`, on a user's detail page, there must be an "Add Credit" action.
+  - The agent can enter a credit amount and an optional internal note explaining the reason.
+  - The `incentive-service` processes this action, adding the specified amount to the user's promotional balance.
+  - The credit is automatically applied to the user's next ride(s) until it is depleted.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/users/[userId]/page.tsx # To add the "Add Credit" action
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To handle direct credit application
+
+dev_notes: >
+  This is a crucial tool for customer support, enabling them to provide immediate and tangible solutions to user problems. It needs to be logged for auditing purposes.

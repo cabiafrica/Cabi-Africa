@@ -1,0 +1,117 @@
+# .github/workflows/ci-cd.yml
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # =================================================================
+  # LINTING & STATIC ANALYSIS
+  # =================================================================
+  lint-and-format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting and formatting checks
+        run: |
+          npm run format:check
+          npm run lint:all
+
+  # =================================================================
+  # SECURITY SCANNING
+  # =================================================================
+  security-scans:
+    runs-on: ubuntu-latest
+    needs: lint-and-format
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run dependency vulnerability scan
+        run: npm audit --audit-level=high
+
+  # = an example of how a docker image scan would work for a service
+  docker-image-scan-example:
+    runs-on: ubuntu-latest
+    needs: lint-and-format
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build an example Docker image
+        run: |
+          cat <<EOF > Dockerfile.example
+          FROM node:18-alpine
+          RUN apk add --no-cache curl
+          EOF
+          docker build -t example-service:latest -f Dockerfile.example .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'example-service:latest'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+  # =================================================================
+  # TESTING
+  # =================================================================
+  unit-and-integration-tests:
+    runs-on: ubuntu-latest
+    needs: lint-and-format
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test:all
+
+  # =================================================================
+  # BUILD & DEPLOY (PLACEHOLDERS)
+  # =================================================================
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    needs: [security-scans, unit-and-integration-tests, docker-image-scan-example]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Placeholder for building Docker images and pushing to ECR
+        run: echo "Building and pushing images..."
+
+      - name: Placeholder for deploying to AWS
+        run: echo "Deploying services..."

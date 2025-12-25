@@ -1,0 +1,27 @@
+id: story-29.4
+epic: lost-and-found
+slug: in-app-status-tracking
+title: In-App Status Tracking for Lost Item Tickets
+status: Done
+author: Bob (sm)
+date: '2024-07-28T10:00:00Z'
+
+description: >
+  As a user who has reported a lost or found item, I want to see the status
+  of my ticket directly in the app, so I know what's happening.
+
+acceptance_criteria:
+  - A new "Support Tickets" or "Lost Items" section must be added to the user's profile/settings screen in both apps.
+  - This screen must list all lost and found tickets for the user and their current status (e.g., 'New', 'Driver Contacted', 'Resolved').
+  - The `support-service` must expose an endpoint for a user to fetch their own tickets.
+  - The app should periodically refresh this status or use push notifications to alert the user of a status change.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/support_tickets_screen.dart
+  - Cabi Alpha/mobile/driver_app/lib/screens/support_tickets_screen.dart
+
+files_to_be_modified:
+  - libs/backend/support-service/src/lib/support.controller.ts # To add user-facing endpoint for tickets
+
+dev_notes: >
+  This story improves user experience by providing transparency into the support process. It reduces the need for users to contact support again for a status update.

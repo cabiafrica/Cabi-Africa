@@ -1,0 +1,35 @@
+id: story-104.3
+epic: web-booking-experience
+slug: web-real-time-tracking
+title: "Website: Display Real-time Ride Tracking on the Web"
+status: Done
+author: Gemini Code Assist
+date: '2025-12-04T10:00:00Z'
+
+description: >
+  As a user who has booked a ride on the website, I want to see a live map on a dedicated web page
+  showing my driver's location and ETA, so I can track my ride's progress without needing the mobile app.
+
+acceptance_criteria:
+  - After a successful web booking (from story-104.1), the user must be redirected to a unique trip tracking page (e.g., `/track/[tripId]`).
+  - The tracking page must display a map showing the driver's vehicle icon moving in real-time.
+  - The page must display the driver's first name, vehicle model/plate, and an updated ETA.
+  - A new backend endpoint (e.g., `GET /rides/track/:tripId`) must be created to provide live location data for the web client.
+  - The frontend must poll this endpoint periodically (e.g., every 10 seconds) to update the map and ETA.
+  - The page must update to reflect key trip statuses: 'Driver on the way', 'Driver has arrived', 'Trip in progress', and 'Trip completed'.
+
+files_to_be_created:
+  - Cabi Alpha/web/user_portal/app/track/[tripId]/page.tsx
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/components/WebBookingWidget.tsx # To handle the redirect after successful booking.
+  - libs/backend/ride-service/src/lib/ride.controller.ts # To add the new GET /rides/track/:tripId endpoint.
+  - libs/backend/ride-service/src/lib/ride.service.ts # To add the logic for fetching live trip data.
+
+dev_notes: >
+  This story is the logical next step after `story-104.1` and implements a core part of the web booking experience from the PRD (section 2.6).
+
+  The main technical challenge is securely exposing live trip data to a potentially unauthenticated web user. The backend endpoint should use the unique (and non-guessable) `tripId` as a temporary access token.
+
+  For V1, a simple polling mechanism from the frontend is sufficient. Future iterations could explore WebSockets for more efficient, real-time communication. This page will also serve as the host for post-ride actions like payment and rating in subsequent stories.
+  PRD Reference: 2.6. Marketing Website -> Web Booking & Services -> Real-time Ride Tracking (Web)

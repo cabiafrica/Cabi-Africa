@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom black and yellow theme */
+body {
+    @apply bg-primaryBlack text-yellow-100;
+}

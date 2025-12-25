@@ -1,0 +1,25 @@
+id: story-85.3
+epic: airport-experience
+slug: flight-tracking-integration
+title: Implement Flight Tracking for Scheduled Airport Pickups
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T22:10:00Z'
+
+description: >
+  As a passenger scheduling a ride from the airport, I want to be able to
+  enter my flight number, so the system can automatically adjust the pickup
+  time if my flight is delayed.
+
+acceptance_criteria:
+  - When scheduling a ride (`story-22.1`) with a pickup location at an airport, the passenger has an optional field to enter their flight number.
+  - If a flight number is provided, the `ride-service` must integrate with a third-party flight data provider (e.g., FlightAware).
+  - The system must monitor the flight's estimated arrival time and automatically adjust the scheduled pickup time accordingly.
+  - The passenger and the assigned driver (if any) are notified of any automatic time adjustments.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/scheduled_rides_screen.dart # To add flight number input
+  - libs/backend/ride-service/src/lib/scheduled_ride.service.ts # To integrate with flight data provider
+
+dev_notes: >
+  This is a high-value convenience feature that dramatically improves the airport pickup experience by removing the stress of flight delays. It requires a subscription to a flight data API.

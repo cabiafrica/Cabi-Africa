@@ -1,0 +1,17 @@
+id: epic-3.0
+slug: trust-and-compliance
+title: Website Trust and Compliance
+status: 'In Progress'
+author: Sarah (po)
+date: '2024-06-14T09:00:00Z'
+
+description: >
+  This epic focuses on building user trust and ensuring legal compliance for the
+  public-facing marketing website. Now that we have our core marketing pages,
+  we need to add essential legal documents (Privacy Policy, Terms of Service)
+  and trust-building content like testimonials and detailed guides.
+
+child_stories:
+  - story-3.1-privacy-policy-page
+  - story-3.2-terms-of-service-page
+  - story-3.3-mlm-explanation-page

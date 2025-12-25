@@ -1,0 +1,41 @@
+id: story-7.3
+epic: driver-earnings-and-history
+slug: driver-view-earnings-dashboard
+title: Driver View Earnings Dashboard
+status: Earah (po)
+date: '2024-08-13T12:00:00Z'
+
+description: >
+  As a driver, I want to view a dashboard of my earnings, including daily and weekly totals,
+  so that I can track my financial progress and plan my driving schedule accordingly.
+
+acceptance_criteria:
+  - The Driver App must have an `EarningsScreen`.
+  - The screen must display the Total Earnings for "Today" and "This Week".
+  - A visual chart (bar or line) must show earnings trends over the last 7 days.
+  - A "Recent Activity" section must list the last few trips with their payout amounts.
+  - The data must be fetched from the `earnings-service`.
+  - Navigation to this screen must be added to the `HomeScreen` (e.g., via a wallet icon).
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/earnings_screen.dart
+  - libs/backend/earnings-service/src/lib/earnings.service.ts
+  - libs/backend/earnings-service/src/lib/earnings.controller.ts
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/home_screen.dart
+
+dev_notes: >
+  This story introduces the `earnings-service`. For the MVP, we can mock the aggregation logic.
+  On the frontend, consider using a library like `fl_chart` for the visualization, or simple
+  custom widgets if dependencies are restricted.
+
+tasks:
+  - id: task-1
+    description: Implement backend earnings aggregation.
+    subtasks:
+      - "[x] 
+    description: Implement frontend earnings dashboard.
+    subtasks:
+      - "[x] Create `earnings_screen.dart` with summary cards and a chart widget."
+      - "[x] Add navigation from `home_screen.dart`."

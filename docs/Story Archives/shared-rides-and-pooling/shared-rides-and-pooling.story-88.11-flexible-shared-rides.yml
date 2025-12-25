@@ -1,0 +1,21 @@
+id: story-88.11
+epic: shared-rides-and-pooling
+slug: flexible-shared-rides
+title: Implement Flexible Shared Rides
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T06:20:00Z'
+
+description: >
+  As a passenger, I want a "Flexible" shared ride option where I book a ride
+  between two general areas (not specific addresses) for an even lower price,
+  giving the system maximum flexibility to create an efficient route.
+
+acceptance_criteria:
+  - A new "Flexible" shared ride option is available.
+  - The user selects a pickup area and a drop-off area.
+  - The pooling algorithm has complete freedom to set the exact pickup and drop-off points (e.g., smart pickup points) and route within those areas to maximize efficiency.
+  - This ride type offers the lowest possible price.
+
+dev_notes: >
+  This is the most advanced form of pooling, treating passengers more like a bus service. It has the highest potential for efficiency but requires users to be very flexible.

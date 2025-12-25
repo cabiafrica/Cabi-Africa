@@ -1,0 +1,26 @@
+id: story-62.8
+epic: driver-engagement
+slug: driver-badges-achievements
+title: Implement Driver Badges and Achievements
+status: Done
+author: Bob (sm)
+date: '2024-08-09T22:20:00Z'
+
+description: >
+  As a driver, I want to earn badges for reaching milestones and providing
+  great service, so I feel recognized and motivated.
+
+acceptance_criteria:
+  - A new "Achievements" section must be added to the driver's profile in the `driver-app`.
+  - The `incentive-service` will define a set of badges (e.g., "1000 Trips Club," "Safety Star," "Top Rated").
+  - The system will automatically award badges to drivers when they meet the criteria.
+  - Earned badges are displayed on the driver's profile, and some may be visible to passengers.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/achievements_screen.dart
+
+files_to_be_modified:
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To define and award badges
+
+dev_notes: >
+  This adds a layer of gamification that can boost driver morale and engagement. The criteria for badges should be clear and achievable.

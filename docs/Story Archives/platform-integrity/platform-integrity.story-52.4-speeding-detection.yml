@@ -1,0 +1,25 @@
+id: story-52.4
+epic: platform-integrity
+slug: speeding-detection
+title: Driver Speeding Detection and Reporting
+status: DONE
+author: Bob (sm)
+date: '2024-08-07T09:03:00Z'
+
+description: >
+  As a system administrator, I want to identify drivers who consistently and
+  significantly exceed speed limits, so that we can address unsafe driving behavior.
+
+acceptance_criteria:
+  - The `analytics-service` must consume driver GPS data during trips.
+  - By correlating this data with map speed limit data, it must detect instances of speeding (e.g., >15 km/h over the limit for more than 30 seconds).
+  - Drivers who frequently trigger speeding events should be flagged in a report for the operations team to review.
+  - This could lead to automated warnings or, in severe cases, account suspension.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To implement the speeding detection logic
+
+dev_notes: >
+  A critical safety and platform integrity feature. This requires significant backend processing and careful tuning to avoid false positives and focus on genuinely unsafe behavior.

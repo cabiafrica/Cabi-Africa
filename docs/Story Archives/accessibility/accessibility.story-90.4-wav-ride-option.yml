@@ -1,0 +1,25 @@
+id: story-90.4
+epic: accessibility
+slug: wav-ride-option
+title: Introduce Wheelchair Accessible Vehicle (WAV) Option
+status: Done
+author: Bob (sm)
+date: '2024-08-09T22:15:00Z'
+
+description: >
+  As a passenger who uses a wheelchair, I want to be able to request a
+  Wheelchair Accessible Vehicle (WAV), so I can use the service safely.
+
+acceptance_criteria:
+  - A new "WAV" or "Access" ride option must be available in the vehicle selector in the `passenger-app`.
+  - Drivers must be able to specify during onboarding (`story-12.6`) or vehicle management (`story-23.1`) if their vehicle is a WAV.
+  - When a passenger requests a WAV, the `ride-service` must only match them with drivers who have a registered WAV.
+  - If no WAVs are available, the app should inform the user.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/home_screen.dart # To add the WAV option
+  - libs/backend/ride-service/src/lib/ride.service.ts # To add WAV matching logic
+  - Cabi Alpha/mobile/driver_app/lib/screens/vehicle_details_screen.dart # To add WAV designation
+
+dev_notes: >
+  This is a critical feature for inclusivity. The supply of WAV vehicles will be limited, so managing user expectations about availability is important.

@@ -1,0 +1,42 @@
+id: story-22.4
+epic: driver-onboarding
+slug: driver-document-history
+title: "Driver: View Submission History for Documents"
+status: Done
+author: Bob (sm)
+date: '2024-08-20T15:00:00Z'
+
+description: >
+  As a driver, I want to see a historical log of all my submission attempts for
+  each document, so that I can track the review process and understand past
+  rejections.
+
+acceptance_criteria:
+  - On the "Document Submission" screen, there must be a "View History" button or similar affordance for each document type.
+  - Tapping "View History" must navigate to a new screen or show a dialog/modal that displays a chronological list of all submissions for that specific document.
+  - Each entry in the history log must display the submission date, the status it received (e.g., "Rejected", "Approved"), and the rejection reason if applicable.
+  - The backend must be updated to store a historical record of each document submission, rather than just the latest status.
+  - A new backend endpoint must be created for the driver app to fetch the submission history for a specific document type or for all documents.
+
+files_to_be_created:
+  - apps/driver-app/lib/screens/document_history_screen.dart # A new screen to display the history for a document.
+
+files_to_be_modified:
+  - apps/driver-app/lib/screens/document_submission_screen.dart # To add the "View History" button and navigation.
+  - apps/driver-app/lib/services/document_service.dart # To add a method for fetching history.
+  - apps/driver-app/lib/viewmodels/document_submission_viewmodel.dart # To manage the history data.
+  - libs/backend/document-service/src/lib/document.service.ts # To implement logic for storing and retrieving submission history.
+  - libs/backend/document-service/src/lib/driver-document.controller.ts # To expose the new history endpoint.
+
+dev_notes: >
+  This feature enhances transparency for the driver. The biggest change is on the backend, where we must shift from overwriting a document's status to creating an immutable log of submission attempts. The `mockDocuments` array will likely need to be replaced with a `mockDocumentSubmissions` array that can store multiple entries per document type for a user. The frontend will then consume this historical data and present it in a clear, easy-to-understand timeline.
+
+tasks:
+  - id: task-1
+    description: "Refactor the backend data model to support a log of document submissions."
+  - id: task-2
+    description: "Implement a new backend service method and controller endpoint to fetch submission history."
+  - id: task-3
+    description: "Create the `DocumentHistoryScreen` in the Flutter app to display the log."
+  - id: task-4
+    description: "Update the main document screen to link to the new history screen."

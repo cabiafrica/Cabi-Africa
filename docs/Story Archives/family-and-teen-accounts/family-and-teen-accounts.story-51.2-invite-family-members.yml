@@ -1,0 +1,35 @@
+id: story-51.2
+epic: family-and-teen-accounts
+slug: invite-family-members
+title: Implement Family Member Invitation and Management
+status: Done
+author: Bob (sm)
+date: '2024-07-22T10:30:00Z'
+
+description: >
+  As a Family Organizer, I want to invite family members to join my Family
+  Profile and manage the list of members, so that they can use the shared
+  payment method and I can oversee their activity.
+
+acceptance_criteria:
+  - From the `Family Profile` screen, the organizer must be able to send an invitation to another user (e.g., via their phone number).
+  - The invited user must receive a notification with the invitation to join the family.
+  - The invited user must be able to accept or decline the invitation from within their app.
+  - If accepted, the user is added to the Family Profile as a "Member".
+  - The `user-service` must handle the invitation lifecycle (pending, accepted, declined) and manage family member relationships.
+  - The Family Organizer's `Family Profile` screen must display a list of all members and their status (e.g., "Pending", "Joined").
+  - The Family Organizer must have the ability to remove a member from the profile.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/family_profile_screen.dart # To add UI for sending invites and managing members
+  - libs/backend/user-service/src/lib/user.service.ts # To handle invitation logic and family relationships
+  - libs/backend/notification-service/src/lib/notification.service.ts # To send the invitation notification
+
+dev_notes: >
+  This story builds directly on the foundation of `story-51.1` (Create Family Profile). It introduces the core social functionality of the feature, allowing profiles to grow. The invitation flow is critical and must be clear for both the sender and the recipient.
+
+tasks:
+  - id: task-1
+    description: Update backend services to handle the invitation lifecycle.
+  - id: task-2
+    description: Update the passenger app to allow organizers to send invites and manage members, and for invitees to respond.

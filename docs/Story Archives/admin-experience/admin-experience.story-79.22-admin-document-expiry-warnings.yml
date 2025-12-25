@@ -1,0 +1,35 @@
+id: story-79.22
+epic: admin-experience
+slug: admin-document-expiry-warnings
+title: "Admin: Display Dashboard Widget for Expiring Driver Documents"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-03T16:00:00Z'
+
+description: >
+  As an administrator, I want to see a prominent warning on my dashboard for drivers whose documents are expiring within the next 30 days,
+  so I can proactively manage compliance and ensure drivers are notified to update their information.
+
+acceptance_criteria:
+  - A new backend endpoint, `GET /admin/documents/expiring`, must be created in the `DocumentController`.
+  - This endpoint must call a new method in the `DocumentService`, `getExpiringDocuments(days: number)`.
+  - The service method must return a list of documents that are currently 'Approved' and have an expiry date within the next 30 days.
+  - The response for each item should include driver details (ID, name) and document details (type, expiry date).
+  - A new reusable widget component, `ExpiringDocumentsWidget`, must be created in the `admin-panel` application.
+  - The widget must be added to the main admin dashboard page.
+  - The widget must call the new endpoint and display a summary count (e.g., "5 documents expiring soon").
+  - The widget must display a list of the affected drivers and their expiring documents.
+  - Clicking on a driver's name in the widget must navigate the admin to that driver's detailed document page.
+
+files_to_be_created:
+  - # A new component for the widget, e.g., `apps/admin-panel/src/components/ExpiringDocumentsWidget.tsx`
+
+files_to_be_modified:
+  - c:/Users/User/Desktop/Cabi-Flutter/docs/document.service.ts # To add the `getExpiringDocuments` method and the new controller endpoint.
+  - # The main admin dashboard page file, to include the new widget.
+
+dev_notes: >
+  This story directly implements the requirement from the PRD (section 2.3) for operational dashboards. The core logic will be in the backend's `DocumentService`. A new method will need to be created to query documents based on their status and expiry date. Note that the current mock data in `document.service.ts` focuses on submissions and lacks an `expiryDate`. The implementation will need to assume that the canonical `Document` model (as per the PRD and architecture) includes this field.
+
+  On the frontend, a new self-contained widget will be created. This widget will fetch data from the new endpoint and present it clearly. This enhances the admin dashboard by making critical, time-sensitive information immediately visible upon login.
+  PRD Reference: 2.3. Admin Panel -> Driver Document Expiry Warnings

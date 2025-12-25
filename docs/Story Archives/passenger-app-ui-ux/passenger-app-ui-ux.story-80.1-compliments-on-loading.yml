@@ -1,0 +1,26 @@
+id: story-80.1
+epic: passenger-app-ui-ux
+slug: compliments-on-loading
+title: Implement "Driver Compliments" on Loading Screen
+status: Done
+author: Bob (sm)
+date: '2024-08-08T11:08:00Z'
+
+description: >
+  As a passenger waiting for a driver to be found, I want to see anonymous,
+  positive compliments left for other drivers, so that the wait time feels
+  more engaging and it reinforces the quality of the drivers.
+
+acceptance_criteria:
+  - While the app is searching for a driver, the UI should cycle through a series of real, anonymized compliments given to drivers on the platform.
+  - Examples: "Jane D. is an excellent driver!", "Someone said John K. has a super clean car."
+  - The `rating-service` must expose a new endpoint to fetch a random selection of recent, positive compliments.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/ride_booking_panel.dart # To display the compliments
+  - libs/backend/rating-service/src/lib/rating.service.ts # To add the endpoint
+
+dev_notes: >
+  This is the first story for a new `passenger-app-ui-ux` epic. A small feature that improves the waiting experience and builds confidence in the service.

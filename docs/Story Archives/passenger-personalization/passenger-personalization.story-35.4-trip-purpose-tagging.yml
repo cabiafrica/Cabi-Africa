@@ -1,0 +1,27 @@
+id: story-35.4
+epic: passenger-personalization
+slug: trip-purpose-tagging
+title: Passenger Trip Purpose Tagging
+status: DONE
+author: Bob (sm)
+date: '2024-07-31T11:14:00Z'
+
+description: >
+  As a passenger, I want to tag my trips with a purpose (e.g., "Commute",
+  "Social", "Errands"), so that I can see a breakdown of my travel habits and spending.
+
+acceptance_criteria:
+  - After a trip is completed, on the rating screen or trip history, the passenger should have an option to add a tag.
+  - The app should provide a list of default tags and allow creating custom ones.
+  - The `ride-service` must store this tag with the trip record.
+  - A new screen in the `passenger-app` must provide a personal analytics dashboard, showing spending broken down by trip purpose tag.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/personal_analytics_screen.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/trip_detail_screen.dart # To add tagging UI
+  - libs/backend/ride-service/src/lib/ride.service.ts # To store the tag
+
+dev_notes: >
+  A personalization feature that gives users more insight into their own data, increasing engagement with the app.

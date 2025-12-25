@@ -1,0 +1,24 @@
+id: story-60.2
+epic: passenger-convenience
+slug: calendar-integration
+title: Calendar Integration for Scheduled Rides
+status: DONE
+author: Bob (sm)
+date: '2024-08-05T09:15:00Z'
+
+description: >
+  As a passenger who schedules rides, I want the app to automatically add my
+  scheduled trips to my phone's calendar, so I don't forget them.
+
+acceptance_criteria:
+  - When a passenger successfully schedules a ride (`story-22.1`), the app must ask for permission to access their calendar.
+  - If permission is granted, the app should create a new calendar event for the ride.
+  - The event details should include the pickup time, estimated duration, and a link back to the app.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/scheduled_rides_screen.dart # Or wherever scheduled rides are confirmed
+
+dev_notes: >
+  A simple convenience feature that improves the user experience for scheduled rides. It requires using a plugin to interact with the native calendar APIs.

@@ -1,0 +1,31 @@
+id: story-34.6
+epic: user-management
+slug: driver-join-organization
+title: "Driver: Search for and Request to Join an Organization"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-06T19:15:00Z'
+
+description: >
+  As a driver who is not part of an organization, I want to be able to search for existing driver organizations
+  by name and submit a request to join one, so I can become part of a driver community.
+
+acceptance_criteria:
+  - In the driver app, if the driver is not part of an organization, a "Join an Organization" option must be visible.
+  - This option leads to a new screen with a search bar.
+  - The user can search for organizations by name. The search must call a backend endpoint that returns a list of matching, active organizations.
+  - Tapping on an organization in the search results shows its details (name, description).
+  - A "Request to Join" button on the detail page sends a request to the backend.
+  - The backend must record this join request and notify the administrators of that specific organization.
+  - The driver's UI should update to show a "Request Pending" status for that organization.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/join_organization_screen.dart
+
+files_to_be_modified:
+  - # The backend service managing DriverGroups (e.g., MLM Service) needs new endpoints for searching groups and submitting join requests.
+  - # The NotificationService will need to be called to inform organization admins of a new join request.
+
+dev_notes: >
+  This story creates the driver-facing entry point into the organization/union ecosystem, as required by the PRD (section 2.4). It's the user-side counterpart to the admin management features. The backend will need to manage the state of a "join request" (pending, approved, rejected) and have a mechanism to route these requests to the correct organization's leadership for approval (which will be covered in a subsequent story).
+  PRD Reference: 2.4. User Management -> User Groups & Organizations -> Driver Organization Join Flow

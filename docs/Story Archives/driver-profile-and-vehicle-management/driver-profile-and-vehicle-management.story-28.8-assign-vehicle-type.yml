@@ -1,0 +1,26 @@
+id: story-28.8
+epic: driver-profile-and-vehicle-management
+slug: assign-vehicle-type
+title: Assign Vehicle Type to Driver Vehicles
+status: Done
+author: Bob (sm)
+date: '2024-07-30T10:03:00Z'
+
+description: >
+  As a driver adding a new vehicle, I need to select its type from a list of
+  approved vehicle types, so that my vehicle is correctly categorized.
+
+acceptance_criteria:
+  - On the `VehicleManagementScreen` (`story-28.1`), when adding or editing a vehicle, the driver must select a "Vehicle Type" from a dropdown list.
+  - This list must be populated from the vehicle types defined in `story-28.7`.
+  - The `vehicle-service` must store the `vehicleTypeId` with each vehicle record.
+  - Admins must also be able to assign/change the vehicle type from the admin panel (`story-28.4`).
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/vehicle_management_screen.dart # To add the type selector
+  - libs/backend/vehicle-service/src/lib/vehicle.service.ts # To associate vehicles with types
+
+dev_notes: >
+  This story connects the vehicle types defined by admins to the actual vehicles registered by drivers, enabling the platform to offer different ride options.

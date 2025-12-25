@@ -1,0 +1,24 @@
+id: story-62.8
+epic: customer-support
+slug: canned-responses-for-agents
+title: Implement Canned Responses for Support Agents
+status: Done
+author: Bob (sm)
+date: '2024-08-10T03:15:00Z'
+
+description: >
+  As a support agent, I want to be able to use pre-written templates
+  ("canned responses") for common questions, so I can answer tickets faster
+  and more consistently.
+
+acceptance_criteria:
+  - The `admin-panel` must have an interface for support managers to create and manage a library of canned responses.
+  - In the ticket detail view (`story-62.2`), an agent must be able to search and insert these canned responses into their reply.
+  - The responses should support placeholders (e.g., `{{user.name}}`) that are automatically filled in.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/support/[ticketId]/page.tsx # To add the canned response UI
+  - libs/backend/support-service/src/lib/support.service.ts # To manage the response templates
+
+dev_notes: >
+  This is a standard helpdesk feature that significantly improves agent efficiency and response consistency.

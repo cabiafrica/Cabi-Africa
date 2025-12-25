@@ -1,0 +1,22 @@
+id: story-55.24
+epic: payment-methods
+slug: scheduled-payment-for-corporate
+title: Implement Scheduled Payments for Corporate Invoices
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T05:20:00Z'
+
+description: >
+  As a travel manager, I want the system to automatically charge our company's
+  credit card for our monthly invoice, so I don't have to process it manually.
+
+acceptance_criteria:
+  - In the corporate dashboard (`story-55.8`), the travel manager can add a credit card for billing.
+  - On a configurable day of the month, the `payment-service` must automatically generate the monthly invoice and charge the saved credit card for the total amount.
+  - An email with the paid invoice is sent to the travel manager.
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To add recurring billing logic
+
+dev_notes: >
+  This automates the B2B payment process, reducing administrative overhead for both our clients and our finance team.

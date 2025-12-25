@@ -1,0 +1,33 @@
+id: story-79.16
+epic: admin-experience
+slug: admin-search-drivers
+title: "Admin: Search for Drivers by Name or Email"
+status: DONE
+author: Bob (sm)
+date: '2024-08-20T17:00:00Z'
+
+description: >
+  As an administrator, I want to search for drivers by name or email on the
+  approvals page, so that I can quickly find a specific driver's record without
+  having to scroll through the entire list.
+
+acceptance_criteria:
+  - The approvals page (`/approvals`) must have a search input field.
+  - Typing in the search field and pressing Enter or a search button must filter the list of drivers based on the query.
+  - The search must query against both driver names and emails.
+  - The search term must be preserved in the URL query parameters for shareability and refreshing.
+  - The backend endpoint (`GET /admin/documents`) must be updated to accept a `search` query parameter.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/approvals/page.tsx # To add the search input and logic.
+  - libs/backend/document-service/src/lib/document.service.ts # To add search filtering logic.
+  - libs/backend/document-service/src/lib/admin-document.controller.ts # To accept the search parameter.
+
+dev_notes: >
+  This is a standard but important enhancement for any list view. The implementation will involve adding a `search` parameter to the `findDriversByStatus` method on the backend and a controlled input component on the frontend. Using URL search parameters for state management is the preferred approach.
+
+tasks:
+  - id: task-1
+    description: "Update `document.service.ts` and `admin-document.controller.ts` to handle a search query."
+  - id: task-2
+    description: "Add a search input field to the approvals page UI and connect it to the API."

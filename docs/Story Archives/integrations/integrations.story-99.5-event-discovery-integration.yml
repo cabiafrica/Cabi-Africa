@@ -1,0 +1,23 @@
+id: story-99.5
+epic: integrations
+slug: event-discovery-integration
+title: Implement Event Discovery Integration
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T01:45:00Z'
+
+description: >
+  As a passenger, I want the app to show me popular upcoming events (concerts,
+  sports) in my city and offer to book a ride there, so I can easily plan my outings.
+
+acceptance_criteria:
+  - The app must integrate with a third-party event data provider (e.g., Ticketmaster, Eventbrite).
+  - A new "Events" section on the home screen should display a curated list of popular local events.
+  - Tapping an event should show details and a "Ride There" button that pre-fills the event venue as the destination.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To add the "Events" UI
+  - libs/backend/map-service/src/lib/map.service.ts # To proxy requests to the event provider
+
+dev_notes: >
+  This is a proactive demand generation feature. It can be paired with promotions (`story-58.6`) to offer special fares for rides to event venues.

@@ -1,0 +1,24 @@
+id: story-55.7
+epic: payment-methods
+slug: 3d-secure-sca
+title: Implement 3D Secure for Strong Customer Authentication (SCA)
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T18:35:00Z'
+
+description: >
+  As a passenger, when adding a new card or making a payment that requires it,
+  I want the app to support 3D Secure verification, so that my payments are
+  compliant with security regulations like SCA in Europe.
+
+acceptance_criteria:
+  - When a payment requires 3D Secure, the app must display a web view or native modal to allow the user to complete the bank's authentication step.
+  - The `payment-service` and mobile apps must correctly handle the payment intent lifecycle required by the payment processor (e.g., Stripe) for SCA.
+  - This applies to both adding a new card and paying for a ride.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/wallet_screen.dart # To handle SCA when adding a card
+  - libs/backend/payment-service/src/lib/payment.service.ts # To manage SCA-compliant payment intents
+
+dev_notes: >
+  This is a mandatory feature for operating in many regions. It requires careful handling of frontend and backend logic to manage the asynchronous nature of 3D Secure authentication.

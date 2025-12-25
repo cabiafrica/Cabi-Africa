@@ -1,0 +1,33 @@
+id: story-79.5
+epic: admin-experience
+slug: admin-provide-suspension-reason
+title: "Admin: Provide Reason for User Suspension"
+status: DONE
+author: Bob (sm)
+date: '2024-08-20T23:00:00Z'
+
+description: >
+  As an administrator, when I suspend a user's account, I must provide a reason
+  for the suspension, so that this action is clearly documented in the audit log.
+
+acceptance_criteria:
+  - When an admin clicks the "Suspend Account" button, the confirmation modal must include a mandatory text area for the suspension reason.
+  - The "Confirm Suspension" button in the modal must be disabled if the reason field is empty.
+  - When confirming the suspension, the reason must be sent to the backend via the `PATCH /admin/users/:userId/status` endpoint.
+  - The backend must store the suspension reason in the audit log entry for that action.
+  - The reason field should not be present when activating an account.
+
+files_to_be_modified:
+  - apps/admin-panel/src/components/common/confirmation_modal.tsx # To add an optional reason textarea.
+  - apps/admin-panel/src/app/users/[userId]/page.tsx # To manage state for the reason and pass it to the modal/API.
+  - libs/backend/user-service/src/lib/user.service.ts # To accept the reason and add it to the audit log.
+  - libs/backend/user-service/src/lib/user.controller.ts # To update the DTO for the endpoint.
+
+dev_notes: >
+  This enhances the audit trail created in story-79.4. The reason is only required for suspensions, not activations. The `ConfirmationModal` can be made more flexible to accommodate this optional input field.
+
+tasks:
+  - id: task-1
+    description: "Update the backend to accept a reason for suspension and store it in the audit log."
+  - id: task-2
+    description: "Update the `ConfirmationModal` to include an optional reason field and integrate it."

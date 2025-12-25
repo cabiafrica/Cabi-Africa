@@ -1,0 +1,41 @@
+id: story-102.7
+epic: content-marketing-platform
+slug: admin-manage-homepage-content
+title: Admin Panel UI for Managing Homepage Content
+status: Done
+author: Bob (sm)
+date: '2025-12-02T19:30:00Z'
+
+description: >
+  As an administrator or content manager, I want a user interface in the admin panel to edit the various content sections of the marketing website's homepage,
+  so that I can keep the primary landing page fresh, compelling, and aligned with current marketing campaigns without needing a developer.
+
+acceptance_criteria:
+  - A new "Homepage Management" page must be created in the `admin-panel` under the "Content" section.
+  - The UI must provide editable fields for key homepage sections, such as the main hero title, subtitle, and call-to-action button text.
+  - The UI must use a rich-text editor for any paragraph or descriptive sections.
+  - An admin must be able to save their changes, which will update the content on the public-facing homepage.
+  - The `content-service` must be extended to support fetching and updating the structured content for the homepage.
+  - The `marketing-website`'s homepage (`Cabi Alpha/web/user_portal/app/page.tsx` from `story-101.1`) must be refactored to fetch its content from the `content-service` API instead of using static placeholder content.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/content/homepage/page.tsx # The admin UI for managing the homepage content.
+
+files_to_be_modified:
+  - apps/content-service/src/app/content.controller.ts # To add new endpoints for homepage content.
+  - apps/content-service/src/app/content.service.ts # To add business logic for fetching/updating homepage content.
+  - Cabi Alpha/web/user_portal/app/page.tsx # To refactor the page to fetch live data from the API.
+  - apps/admin-panel/src/components/layout/Sidebar.tsx # Or similar, to add a link to the new management page.
+
+dev_notes: >
+  This story completes the set of core marketing pages that can be dynamically managed via the `content-service`. It directly addresses the PRD requirement for a dynamic homepage (R1.1). Unlike the other single-block content pages, the homepage might consist of multiple distinct fields (hero title, hero subtitle, etc.), so the backend model should be structured accordingly.
+
+tasks:
+  - id: task-1
+    description: "Extend the `content-service` with endpoints and logic for fetching and updating the structured homepage content."
+  - id: task-2
+    description: "Create the 'Homepage Management' page in the `admin-panel` with fields for each editable content section."
+  - id: task-3
+    description: "Refactor the public homepage on the `marketing-website` to dynamically fetch and display the content from the `content-service`."
+  - id: task-4
+    description: "Add a link to the new management page in the admin panel's navigation."

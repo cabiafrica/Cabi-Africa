@@ -1,0 +1,28 @@
+id: story-24.4
+epic: customer-support
+slug: contextual-support-info
+title: Display Contextual User and Trip Info in Support Chat
+status: Done
+author: Bob (sm)
+date: '2024-07-25T09:00:00Z'
+
+description: >
+  As a customer support agent, when I open a chat with a user, I want to see
+  relevant context about them and their recent trips automatically, so that I
+  can provide faster and more accurate support without asking repetitive questions.
+
+acceptance_criteria:
+  - The agent chat interface in the `admin-panel` (`story-24.3`) must be enhanced with a context panel.
+  - When a chat is opened, this panel must automatically display key user information (e.g., Name, Email, Member Since, Total Trips).
+  - If the chat was initiated from a specific trip context, the panel must also display details of that trip (e.g., Trip ID, Date, Route, Fare, Driver/Passenger names).
+  - The `support-service` must be updated to fetch this contextual data from the `user-service` and `ride-service` when an agent views a conversation.
+  - The UI should provide a quick link to the full user or trip detail page in the admin panel.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/support/page.tsx # To add the context panel UI
+  - libs/backend/support-service/src/lib/support.service.ts # To aggregate contextual data from other services
+
+dev_notes: >
+  This is a major efficiency improvement for the support team. By providing context upfront, it reduces the time spent on each ticket. The `support-service` will act as an orchestrator, fetching data from other microservices to build the context view for the agent.

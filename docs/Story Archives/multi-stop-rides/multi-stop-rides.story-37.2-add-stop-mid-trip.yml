@@ -1,0 +1,28 @@
+id: story-37.2
+epic: multi-stop-rides
+slug: add-stop-mid-trip
+title: Allow Passenger to Add a Stop Mid-Trip
+status: Done
+author: Bob (sm)
+date: '2024-07-30T10:08:00Z'
+
+description: >
+  As a passenger, I want to add or change a stop while my trip is already in
+  progress, so that I can adapt to changing plans.
+
+acceptance_criteria:
+  - During an active trip, the `passenger-app` must allow the user to edit the destination or add a new stop.
+  - When a change is made, the app must call the `ride-service` to get a re-calculated fare estimate for the new route.
+  - The passenger must confirm the new fare before the change is applied.
+  - Once confirmed, the driver's app must be updated in real-time with the new itinerary and route.
+  - The `payment-service` must use the final, updated itinerary for the final charge.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/trip_in_progress_view.dart # To allow editing the destination
+  - libs/backend/ride-service/src/lib/ride.service.ts # To handle mid-trip updates
+  - Cabi Alpha/mobile/driver_app/lib/widgets/trip_in_progress_panel.dart # To receive and display live itinerary changes
+
+dev_notes: >
+  This adds another layer of complexity to `story-37.1`. It requires real-time communication between the passenger, the backend, and the driver to update the trip plan on the fly. Fare re-calculation and passenger confirmation are critical steps.

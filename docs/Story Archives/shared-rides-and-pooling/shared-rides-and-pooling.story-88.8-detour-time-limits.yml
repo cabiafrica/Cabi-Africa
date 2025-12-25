@@ -1,0 +1,23 @@
+id: story-88.8
+epic: shared-rides-and-pooling
+slug: shared-ride-detour-time-limits
+title: Implement Maximum Detour Time Limits for Shared Rides
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T03:20:00Z'
+
+description: >
+  As a passenger on a shared ride, I want the system to guarantee that my
+  trip won't take more than a certain amount of extra time compared to a
+  direct ride, so I can book with confidence.
+
+acceptance_criteria:
+  - The pooling algorithm must have a configurable constraint for maximum allowed detour time (e.g., "no more than 15 minutes extra").
+  - When offering a shared ride, the app must display the latest possible arrival time based on this maximum detour.
+  - The algorithm will not add new riders to a trip if it would violate this time constraint for any existing rider.
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To add detour constraints to the pooling algorithm
+
+dev_notes: >
+  This is a critical feature for passenger trust in the pooling product. It provides an upper bound on the inconvenience, making the trade-off for a lower price much clearer.

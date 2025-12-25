@@ -1,0 +1,26 @@
+id: story-61.2
+epic: platform-communication
+slug: passenger-inbox
+title: Implement Passenger App Inbox for Promotions and Updates
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T15:00:00Z'
+
+description: >
+  As a marketing manager, I want to send messages, promotions, and updates to
+  passengers via an in-app inbox, so that I can drive engagement and inform
+  them of new features or offers.
+
+acceptance_criteria:
+  - A new "Inbox" or "Messages" screen must be added to the `passenger-app`.
+  - The `admin-panel` communications interface (from `story-61.1`) must be enhanced to allow targeting messages to passengers.
+  - Admins should be able to send messages to all passengers or specific segments (e.g., based on city or ride history).
+  - The `passenger-app` must display a badge on the Inbox icon when there are unread messages.
+  - The `notification-service` must be updated to handle storing and distributing passenger-facing messages.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/inbox_screen.dart
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/communications/page.tsx # To add passenger targeting
+  - libs/backend/notification-service/src/lib/notification.service.ts # To handle passenger messages

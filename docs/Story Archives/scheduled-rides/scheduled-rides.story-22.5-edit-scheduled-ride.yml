@@ -1,0 +1,22 @@
+id: story-22.5
+epic: scheduled-rides
+slug: edit-scheduled-ride
+title: Allow Passenger to Edit a Scheduled Ride
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T17:05:00Z'
+
+description: >
+  As a passenger, I want to be able to edit the details of a ride I have
+  scheduled for the future (e.g., change the pickup time or destination), so
+  that I can adapt to changing plans.
+
+acceptance_criteria:
+  - In the `passenger-app`, in the list of upcoming scheduled rides, there must be an "Edit" option.
+  - The user can change the pickup time, pickup location, and destination.
+  - Saving the changes must update the scheduled ride record in the `ride-service`.
+  - The fare must be re-estimated based on the new details.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/scheduled_rides_screen.dart # To add edit functionality
+  - libs/backend/ride-service/src/lib/scheduled_ride.service.ts # To handle update logic

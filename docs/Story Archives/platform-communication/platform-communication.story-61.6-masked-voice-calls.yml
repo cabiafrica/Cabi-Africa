@@ -1,0 +1,25 @@
+id: story-61.6
+epic: platform-communication
+slug: masked-voice-calls
+title: Implement Masked Voice Calls Between Driver and Passenger
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T15:20:00Z'
+
+description: >
+  As a user (driver or passenger), I want to be able to call the other party
+  during an active trip without revealing my personal phone number, so that I
+  can communicate urgent information while maintaining my privacy.
+
+acceptance_criteria:
+  - A "Call" button must be present in the trip details view for both the driver and passenger during an active trip.
+  - Tapping the button must initiate a phone call through a third-party voice provider (e.g., Twilio).
+  - The third-party service must connect the two parties using a proxy/masked phone number, so neither user's real number is exposed.
+  - The `notification-service` or a new `voice-service` will be responsible for initiating the call with the voice provider.
+
+files_to_be_modified:
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To add call button
+  - apps/passenger-app/src/widgets/driver_details_panel.dart # To add call button
+
+dev_notes: >
+  Privacy is the key driver for this story. This requires integration with a third-party API like Twilio Voice. We must manage the lifecycle of the masked number to ensure it's only active for the duration of the trip.

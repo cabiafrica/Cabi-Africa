@@ -1,0 +1,22 @@
+title: Admin Management of Driver Unions
+epic: admin-experience
+story_id: admin-experience.story-79.21
+type: Story
+status: DONE
+owner: John (pm)
+jira_ref: CABI-79-21
+area: Admin Panel
+description: >
+  As a platform administrator, I need to be able to review, approve, and manage driver unions/organizations so that I can oversee and support these groups effectively.
+acceptance_criteria:
+  - An "Organizations" section is available in the admin panel.
+  - The main view lists all driver organizations with their name, founder, status (Pending, Active, Suspended), and member count.
+  - Admins can click on an organization to view its details, including the leadership team, subgroups, and a list of all members.
+  - For organizations with a "Pending" status, the admin must be able to review their submitted information and either "Approve" or "Reject" the application.
+  - Admins must have the ability to "Suspend" or "Reactivate" an active organization.
+  - The system must log all administrative actions related to organizations (approval, rejection, suspension) in the admin audit log.
+notes: >
+  This feature is critical for supporting the "Driver Unions" requirement (R3.3). It requires new endpoints in the backend (likely in the `User Management Service` or a dedicated `Organization Service`) to manage the lifecycle and data of these organizations. The admin panel will consume these APIs to provide the management interface.
+dependencies:
+  - user-groups-and-networks.story-120.1-group-portal-foundation
+  - admin-experience.story-79.6-admin-audit-log

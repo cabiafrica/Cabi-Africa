@@ -1,0 +1,24 @@
+id: story-62.7
+epic: customer-support
+slug: support-sla-tracking
+title: Implement SLA Tracking for Support Tickets
+status: Done
+author: Bob (sm)
+date: '2024-08-10T02:25:00Z'
+
+description: >
+  As a support manager, I want the system to track Service Level Agreements
+  (SLAs), such as "time to first response," so I can monitor team performance
+  and ensure timely support for users.
+
+acceptance_criteria:
+  - The `admin-panel` must allow managers to define SLA policies (e.g., "High priority tickets must have a first response within 1 hour").
+  - The support dashboard (`story-62.1`) must visually indicate tickets that are approaching or have breached their SLA (e.g., by turning yellow or red).
+  - The support analytics dashboard must include reports on overall SLA adherence.
+
+files_to_be_modified:
+  - libs/backend/support-service/src/lib/support.service.ts # To track ticket timers against SLAs
+  - apps/admin-panel/src/app/support/page.tsx # To add SLA indicators and reporting
+
+dev_notes: >
+  This is a standard feature in any professional helpdesk software. It gamifies performance for the support team and provides key metrics for managers.

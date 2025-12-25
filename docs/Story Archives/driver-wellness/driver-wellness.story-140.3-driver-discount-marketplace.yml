@@ -1,0 +1,29 @@
+id: story-140.3
+epic: driver-wellness
+slug: driver-discount-marketplace
+title: Create Discount Marketplace for Drivers
+status: Done
+author: Mary (analyst)
+date: '2024-08-10T12:25:00Z'
+
+description: >
+  As a driver, I want to access a marketplace of exclusive discounts on my
+  regular expenses like gas, car maintenance, and phone plans, so I can reduce
+  my operating costs and increase my net earnings.
+
+acceptance_criteria:
+  - A new "Driver Perks" or "Discounts" section must be added to the `driver-app`.
+  - This section must display a list of available offers from partner vendors.
+  - Each offer must show the partner's name, the discount details, and any key conditions.
+  - Tapping an offer must show how to redeem it (e.g., display a QR code, provide a promo code, or link to a partner website).
+  - A new section in the `admin-panel` must allow an administrator to create, manage, and remove these discount offers.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/discount_marketplace_screen.dart # To display the list of offers.
+  - apps/admin-panel/src/app/driver-perks/page.tsx # For admins to manage offers.
+
+files_to_be_modified:
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To store and serve partner discount offers.
+
+dev_notes: >
+  This feature is a significant driver retention tool. The success of this feature will depend on securing valuable partnerships. The system needs to be flexible to support various redemption methods (in-app codes, external links, etc.). The `incentive-service` can be extended to manage these partner offers, distinguishing them from platform-funded promotions.

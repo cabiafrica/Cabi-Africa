@@ -1,0 +1,33 @@
+id: story-79.17
+epic: admin-experience
+slug: admin-paginate-approvals
+title: "Admin: Paginate Approvals List"
+status: DONE
+author: Bob (sm)
+date: '2024-08-20T17:30:00Z'
+
+description: >
+  As an administrator, I want the list of drivers on the approvals page to be
+  paginated, so that the page loads quickly and is easy to navigate when there
+  are many drivers.
+
+acceptance_criteria:
+  - The driver list on the approvals page (`/approvals`) must be paginated, showing a fixed number of drivers per page (e.g., 10).
+  - Pagination controls (e.g., "Previous", "Next", page numbers) must be displayed below the list.
+  - The current page number must be stored in the URL query parameters (e.g., `?page=2`).
+  - The backend endpoint (`GET /admin/documents`) must be updated to accept `page` and `limit` query parameters.
+  - The backend response must include both the paginated list of drivers and the total count of drivers matching the filter criteria.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/approvals/page.tsx # To add pagination controls and logic.
+  - libs/backend/document-service/src/lib/document.service.ts # To add pagination logic.
+  - libs/backend/document-service/src/lib/admin-document.controller.ts # To accept pagination parameters.
+
+dev_notes: >
+  This is a standard scalability improvement. The backend will handle the pagination logic, and the frontend will render the controls. The API response will be changed to an object containing the data array and the total count.
+
+tasks:
+  - id: task-1
+    description: "Update the backend service and controller to handle `page` and `limit` parameters."
+  - id: task-2
+    description: "Update the frontend approvals page to include pagination controls and handle the paginated data."

@@ -1,0 +1,24 @@
+id: story-68.2
+epic: lost-and-found
+slug: lost-item-reminders
+title: Implement Automated Lost Item Reminders
+status: DONE
+author: Bob (sm)
+date: '2024-08-07T09:12:00Z'
+
+description: >
+  As a user who has reported a lost item, I want to receive periodic
+  reminders if the ticket is still open, so that the issue doesn't get forgotten.
+
+acceptance_criteria:
+  - If a lost item ticket in the `support-service` remains in an open state for more than a certain period (e.g., 48 hours), a scheduled job triggers a reminder.
+  - The `notification-service` sends a push notification to both the passenger and the driver, encouraging them to coordinate.
+  - This helps prompt action and increases the chances of a successful return.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/support-service/src/lib/support.scheduler.ts # To check for stale tickets
+
+dev_notes: >
+  A simple but effective process improvement for the lost and found workflow, reducing the manual load on support agents.

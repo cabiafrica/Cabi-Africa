@@ -1,0 +1,28 @@
+id: story-50.1
+epic: new-verticals
+slug: rental-cars
+title: Implement "Rental Cars" Integration
+status: DONE
+author: Bob (sm)
+date: '2024-08-02T10:03:00Z'
+
+description: >
+  As a user, I want to be able to browse and book rental cars from partner
+  companies directly within the app, so that I can handle all my travel needs
+  in one place.
+
+acceptance_criteria:
+  - A new "Rentals" tab must be added to the `passenger-app`.
+  - This section will allow users to search for rental cars by location and date.
+  - The app must integrate with one or more rental car company APIs to fetch availability and pricing.
+  - Users must be able to complete the booking and payment process within our app.
+  - The `payment-service` must handle the payment and settlement with the rental partner.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/rentals_screen.dart
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle rental car payments
+
+dev_notes: >
+  This story introduces another major vertical, positioning the app as a comprehensive travel tool. It is a large API integration project with third-party partners.

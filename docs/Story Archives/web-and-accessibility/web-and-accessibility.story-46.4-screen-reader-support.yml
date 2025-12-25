@@ -1,0 +1,75 @@
+id: story-46.4
+epic: accessibility
+slug: screen-reader-support
+title: Implement Screen Reader Support (Accessibility)
+status: IN PROGRESS
+author: Bob (sm)
+date: '2024-08-02T10:08:00Z'
+
+description: >
+  As a user who is blind or has low vision, I want the app to be fully
+  compatible with my device's screen reader (e.g., VoiceOver, TalkBack), so
+  that I can navigate and use the app independently.
+
+acceptance_criteria:
+  - All interactive elements (buttons, text fields) in the core booking flow of the `passenger-app` must have proper accessibility labels.
+  - The core flow includes: `HomeScreen`, `SearchScreen`, `RideBookingPanel`, and `DriverDetailsPanel`.
+  - Screen readers must announce the purpose of each element correctly (e.g., "Where to? Button. Double-tap to enter destination.").
+  - The focus order for screen reader navigation must be logical and follow the visual layout of the screen.
+  - The map view on the `HomeScreen` should have an accessible description or be hidden from screen readers, with its functionality provided through accessible UI elements.
+  - Dynamic updates, such as the driver's ETA on the `DriverDetailsPanel`, must be announced to the user.
+  - Flutter's `Semantics` widget must be used where necessary to provide context, group elements, or add custom labels.
+  - Automated accessibility checks using Flutter's built-in tools should pass for these screens without errors.
+  - A full audit and refactoring of both the `passenger-app` and `driver-app` is required to add semantic properties and accessibility labels to all widgets.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/home_screen.dart
+  - Cabi Alpha/mobile/passenger_app/lib/screens/search_screen.dart
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/ride_booking_panel.dart
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/driver_details_panel.dart
+  - All other major screens and widgets in `apps/passenger-app` and `apps/driver-app`.
+
+dev_notes: >
+  This is the foundational story for the "Accessibility" epic, consolidating previous efforts. It focuses on making the most critical user journey compliant with screen reader standards (WCAG AA) and extends to a full audit. This is not just about adding labels; it's about ensuring a logical and understandable user experience for those who cannot see the screen. Manual testing with VoiceOver (iOS) and TalkBack (Android) is mandatory.
+
+tasks:
+  - id: task-1
+    description: Implement screen reader support for the core passenger booking flow.
+    subtasks:
+      - "[ ] Add accessibility labels and `Semantics` widgets to all interactive elements on the `HomeScreen`."
+      - "[ ] Ensure the map view is properly handled (hidden or described)."
+      - "[ ] Add accessibility labels and `Semantics` widgets to the `SearchScreen` and ensure logical focus order."
+      - "[ ] Add accessibility labels and `Semantics` widgets to the `RideBookingPanel`."
+      - "[ ] Add accessibility labels to the `DriverDetailsPanel` and ensure dynamic ETA updates are announced."
+  - id: task-2
+    description: Conduct a full accessibility audit of both applications.
+    subtasks:
+      - "[ ] Systematically review all screens and widgets in the `passenger-app` for accessibility gaps (missing labels, incorrect focus, etc.)."
+      - "[ ] Systematically review all screens and widgets in the `driver-app` for accessibility gaps."
+      - "[ ] Document all findings and create follow-up stories for issues outside the core booking flow."
+  - id: task-3
+    description: Validate accessibility implementation.
+    subtasks:
+      - "[ ] Run automated accessibility checks using Flutter's built-in tools on both apps and fix reported errors for the core flow."
+      - "[ ] Perform manual testing on the core booking flow using VoiceOver on an iOS device."
+      - "[ ] Perform manual testing on the core booking flow using TalkBack on an Android device."
+
+qa_results:
+  - id: qa-1
+    date: '2024-08-13T17:00:00Z'
+    agent: Quinn (qa)
+    summary: >
+      The review was conducted on the story while it is still 'IN PROGRESS'. The development tasks, including adding accessibility labels, implementing logical focus order, and performing manual validation with screen readers, are not yet complete. As a result, the story currently fails to meet all of its acceptance criteria.
+    requirements_traceability:
+      - criteria: "All interactive elements in the core booking flow of the `passenger-app` must have proper accessibility labels."
+        test_case: "Given the user navigates the core booking flow with a screen reader, when they focus on an interactive element, then a descriptive label is announced."
+        status: FAIL
+      - criteria: "The focus order for screen reader navigation must be logical."
+        test_case: "Given the user swipes to navigate through the `HomeScreen`, then the focus moves logically from one element to the next, following the visual layout."
+        status: FAIL
+      - criteria: "Dynamic updates, such as the driver's ETA on the `DriverDetailsPanel`, must be announced to the user."
+        test_case: "Given the driver's ETA changes from '5 minutes' to '4 minutes', when the `DriverDetailsPanel` is visible, then the screen reader announces the updated ETA."
+        status: FAIL
+    gate_decision: FAIL

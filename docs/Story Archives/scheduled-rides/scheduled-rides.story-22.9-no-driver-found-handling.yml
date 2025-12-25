@@ -1,0 +1,24 @@
+id: story-22.9
+epic: scheduled-rides
+slug: no-driver-found-handling
+title: Implement Graceful Handling When No Driver is Found
+status: Done
+author: Bob (sm)
+date: '2024-08-09T19:35:00Z'
+
+description: >
+  As a passenger, if the system cannot find a driver for my scheduled ride, I
+  want to be notified promptly so I can make alternative arrangements.
+
+acceptance_criteria:
+  - If the `ride-service` matching algorithm fails to assign a driver by a certain cutoff time before pickup (e.g., 10 minutes prior), the scheduled ride is marked as "Unfulfilled".
+  - The passenger must be immediately sent a push notification and an in-app message informing them that we were unable to find a driver.
+  - The message should be apologetic and could offer a credit or discount on their next ride as a service recovery gesture.
+  - The scheduled ride should be removed from their upcoming trips list.
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/scheduled_ride.service.ts # To handle the "unfulfilled" state
+  - libs/backend/notification-service/src/lib/notification.service.ts # To send the failure notification
+
+dev_notes: >
+  How we handle service failures is a crucial part of the user experience. This flow must be clear, prompt, and empathetic. The timing of the notification is a balance between trying for as long as possible and giving the user enough time to find an alternative.

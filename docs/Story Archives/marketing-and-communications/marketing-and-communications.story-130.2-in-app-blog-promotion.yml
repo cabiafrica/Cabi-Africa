@@ -1,0 +1,27 @@
+id: story-130.2
+epic: marketing-and-communications
+slug: in-app-blog-promotion
+title: Promote Blog Posts to Users via In-App Messages
+status: Done
+author: Mary (analyst)
+date: '2024-08-10T11:45:00Z'
+
+description: >
+  As a marketing manager, after publishing a new blog post, I want to promote
+  it to users directly within the app, so I can drive readership and engagement.
+
+acceptance_criteria:
+  - In the `admin-panel`'s blog management interface, next to each published post, there must be a "Promote" button.
+  - Clicking "Promote" should open a modal that leverages the existing bulk messaging interface (`story-79.9`).
+  - The marketing manager can define a target audience (e.g., all users, passengers only, drivers only, users in a specific region).
+  - The manager can choose to send a high-priority push notification (`story-61.8`) along with the standard in-app message.
+  - The message body should pre-populate with the blog post's title and a link to its unique URL.
+  - The promotion modal must include an option to send immediately or schedule for a future date and time, reusing the scheduling interface from `story-61.7`.
+  - When a user taps on the in-app message or push notification, it should open the blog post URL in their device's default web browser.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/content/blog/page.tsx # To add the "Promote" button and workflow.
+  - libs/backend/notification-service/src/lib/notification.service.ts # To handle sending the message with the correct deep link/URL.
+
+dev_notes: >
+  This feature connects our content creation efforts directly with our user base. It should reuse as much of the existing admin messaging and scheduling infrastructure (`story-79.9`, `story-61.7`) as possible to ensure consistency and speed of development.

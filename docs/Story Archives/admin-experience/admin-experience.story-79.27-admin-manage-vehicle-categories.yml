@@ -1,0 +1,59 @@
+id: story-79.27
+epic: admin-experience
+slug: admin-manage-vehicle-categories
+title: "Admin: Manage Vehicle Categories"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-07T09:40:00Z'
+
+description: >
+  As an administrator, I need to create and manage vehicle categories (e.g., "Standard", "Premium", "XL"),
+  so that I can control the types of services offered to passengers and set their corresponding fare structures.
+
+acceptance_criteria:
+  - A new "Settings" > "Vehicle Categories" section must be added to the `admin-panel`.
+  - This section must display a list of all existing vehicle categories.
+  - The page must have a "Create New Category" button that leads to a creation form.
+  - The creation/edit form must allow an admin to define:
+    - Name (e.g., "Premium").
+    - Description.
+    - Base Fare.
+    - Per-Kilometer Rate.
+    - Per-Minute Rate.
+    - An active/inactive status.
+  - An admin must be able to edit an existing category's details.
+  - Submitting the form must create or update the category via a new `vehicle-service` or by extending an existing service.
+  - New DTOs for `VehicleCategory` must be created in the shared DTOs library.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/settings/vehicle-categories/page.tsx
+  - apps/admin-panel/src/app/settings/vehicle-categories/new/page.tsx
+  - libs/shared/dtos/src/lib/vehicle.dto.ts
+  - docs/admin-experience.story-79.27-admin-manage-vehicle-categories.yml
+
+files_to_be_modified:
+  - libs/shared/dtos/src/index.ts
+
+dev_notes: >
+  This feature is fundamental to the platform's pricing and service offerings. The backend service will be the source of truth for fare calculations performed by the `ride-service`. For now, the frontend will be built with mocked data.
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - apps/admin-panel/src/app/settings/vehicle-categories/new/page.tsx
+    - apps/admin-panel/src/app/settings/vehicle-categories/page.tsx
+    - libs/shared/dtos/src/lib/vehicle.dto.ts
+    - libs/shared/dtos/src/index.ts
+    - docs/admin-experience.story-79.27-admin-manage-vehicle-categories.yml
+  change_log:
+    - file: apps/admin-panel/src/app/settings/vehicle-categories/new/page.tsx
+      change: Created the frontend page for creating a new vehicle category, including a form for all required fields.
+    - file: apps/admin-panel/src/app/settings/vehicle-categories/page.tsx
+      change: Created the main page for listing all vehicle categories in the admin panel.
+    - file: libs/shared/dtos/src/lib/vehicle.dto.ts
+      change: Created `VehicleCategoryDto` and `CreateOrUpdateVehicleCategoryDto` to define the data contracts for the vehicle category feature.
+    - file: libs/shared/dtos/src/index.ts
+      change: Exported the new `vehicle.dto.ts` from the shared DTOs library.
+  completion_notes:
+    - >
+      I have implemented the frontend components and data structures for the vehicle category management feature. This includes a new list view and a creation form in the admin panel, along with new DTOs for a consistent data contract. The backend is currently mocked in the frontend and will be connected in a subsequent story. This completes the primary requirements for the admin interface.

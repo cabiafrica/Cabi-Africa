@@ -1,0 +1,35 @@
+id: story-79.15
+epic: admin-experience
+slug: admin-provide-rejection-reason
+title: "Admin: Provide Reason for Document Rejection"
+status: DONE
+author: Bob (sm)
+date: '2024-08-20T16:30:00Z'
+
+description: >
+  As an administrator, when I reject a driver's document, I must provide a
+  clear reason for the rejection, so that the driver understands what needs to
+  be corrected.
+
+acceptance_criteria:
+  - On the document review page, clicking the "Reject" button must open a modal.
+  - The modal must prompt the admin to enter a rejection reason.
+  - The modal must have a textarea for the reason and a "Confirm Rejection" button.
+  - The "Confirm Rejection" button must be disabled if the reason is empty.
+  - Clicking "Confirm Rejection" must call the backend API (`PATCH /admin/documents/:documentId/review`) to reject the document with the provided reason.
+  - After a successful rejection, the modal should close and the UI should provide feedback to the admin.
+
+files_to_be_created:
+  - apps/admin-panel/src/components/approvals/rejection_reason_modal.tsx
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/approvals/[driverId]/page.tsx # To add the rejection modal and its logic.
+
+dev_notes: >
+  This is a straightforward but important feature. The backend already validates that a reason is provided for rejections, so the frontend just needs to supply it. A modal is the best UX here to keep the admin in context. After rejection, we can show a success message and perhaps disable the buttons for that document to prevent duplicate actions.
+
+tasks:
+  - id: task-1
+    description: "Create the `RejectionReasonModal` component."
+  - id: task-2
+    description: "Integrate the modal into the driver review page."

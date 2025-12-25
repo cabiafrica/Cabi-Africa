@@ -1,0 +1,29 @@
+id: story-62.2
+epic: customer-support
+slug: support-agent-ticket-communication
+title: Implement Ticket Detail View and User Communication
+status: Done
+author: Bob (sm)
+date: '2024-08-09T11:05:00Z'
+
+description: >
+  As a customer support agent, I need to view the full details of a support
+  ticket and communicate with the user, so that I can resolve their issue.
+
+acceptance_criteria:
+  - A new ticket detail page is created at `apps/admin-panel/src/app/support/[ticketId]`.
+  - The page must display all ticket details, including the full user message and any automated context (e.g., from a fare review).
+  - The page must have a text input for the agent to write a reply.
+  - Sending a reply must store the message in the `support-service` and trigger a notification (e.g., email or push) to the user.
+  - The agent must be able to change the status of the ticket (e.g., from "New" to "Open", or "Open" to "Resolved").
+  - The conversation history between the user and the agent must be clearly displayed.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/support/[ticketId]/page.tsx # The ticket detail and communication view
+
+files_to_be_modified:
+  - libs/backend/support-service/src/lib/support.service.ts # To add methods for posting replies and updating status
+  - libs/backend/support-service/src/lib/support.controller.ts # To add endpoints for agent actions
+
+dev_notes: >
+  This story builds directly on `story-62.1`. The key challenge is integrating with a notification service to ensure users are promptly informed of an agent's reply. The front-end should present the conversation in a clear, chat-like interface.

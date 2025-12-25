@@ -1,0 +1,27 @@
+id: story-66.1
+epic: guest-and-third-party-booking
+slug: concierge-booking
+title: Implement "Concierge" Booking Role
+status: DONE
+author: Bob (sm)
+date: '2024-08-06T09:13:00Z'
+
+description: >
+  As a hotel concierge or receptionist, I want to use the corporate portal to
+  book rides for hotel guests, charging the ride to their room.
+
+acceptance_criteria:
+  - This builds on the corporate portal (`story-33.2`).
+  - A new "Concierge" role is created.
+  - When booking for a guest, a concierge can enter a room number or other guest identifier.
+  - The system needs a way to integrate with hotel property management systems (PMS) to post the charge to the guest's folio.
+  - Alternatively, the hotel can be billed monthly for all rides booked by its concierges.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/corporate-portal/src/app/dashboard/page.tsx # To add concierge-specific fields
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle hotel billing logic
+
+dev_notes: >
+  This is the first story for a new `guest-and-third-party-booking` epic. It opens up a valuable B2B channel through hotels. The integration with hotel PMS is the most complex part.

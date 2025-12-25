@@ -1,0 +1,27 @@
+id: story-46.3
+epic: web-and-accessibility
+slug: high-contrast-mode
+title: Implement High Contrast Mode (Accessibility)
+status: DONE
+author: Bob (sm)
+date: '2024-08-01T09:15:00Z'
+
+description: >
+  As a user with a visual impairment, I want to enable a high-contrast mode
+  in the app, so that I can read text and see UI elements more clearly.
+
+acceptance_criteria:
+  - A "High Contrast Mode" toggle must be added to the accessibility settings in both apps.
+  - When enabled, the app's color theme must switch to a pre-defined high-contrast palette (e.g., black background, white/yellow text, minimal color).
+  - All screens and components must respect this theme change.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/theme/high_contrast_theme.dart
+  - Cabi Alpha/mobile/driver_app/lib/theme/high_contrast_theme.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/main.dart # To manage theme switching
+  - Cabi Alpha/mobile/driver_app/lib/main.dart # To manage theme switching
+
+dev_notes: >
+  A fundamental accessibility feature. It requires defining a new theme and ensuring the entire app can switch to it dynamically.

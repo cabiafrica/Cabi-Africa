@@ -1,0 +1,34 @@
+id: story-110.3
+epic: mlm-and-group-management
+slug: admin-approve-organizations
+title: "Admin: Review and Approve New Driver Organizations"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-06T15:00:00Z'
+
+description: >
+  As an administrator, I need a queue to review and approve or reject newly created driver organizations,
+  so I can ensure they meet platform standards before they become active and can start recruiting members.
+
+acceptance_criteria:
+  - A new "Organization Approvals" page must be created in the `admin-panel`.
+  - This page must list all `DriverGroup` entities with a status of `PENDING_APPROVAL`.
+  - Clicking on an organization must navigate to a detail view showing its name, description, and founder's details.
+  - The detail view must have "Approve" and "Reject" buttons.
+  - Clicking "Approve" must call a backend endpoint to update the organization's status to `ACTIVE`.
+  - Clicking "Reject" must prompt for a reason and call a backend endpoint to update the status to `REJECTED`.
+  - The backend service (e.g., `MLM Service`) must be updated with these endpoints for fetching pending organizations and updating their status.
+  - The organization's founder must be notified of the approval or rejection.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/organization-approvals/page.tsx
+
+files_to_be_modified:
+  - # The backend service managing DriverGroups (e.g., MLM Service) needs new endpoints and logic for status changes.
+  - # The NotificationService will need to be called to inform the founder of the outcome.
+
+dev_notes: >
+  This story implements a critical administrative gatekeeping function from the PRD (section 2.3). It ensures that driver-created organizations are vetted before they can operate on the platform.
+
+  The backend will need to expand its `DriverGroup` management capabilities to include status transitions and fetching by status. The frontend will consist of a queue page and a detail/action page. This workflow is similar to the driver document approval process.
+  PRD Reference: 2.3. Admin Panel -> Organization Management -> Review and Approve Driver Organizations

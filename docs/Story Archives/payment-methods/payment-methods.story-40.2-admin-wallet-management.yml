@@ -1,0 +1,27 @@
+id: story-40.2
+epic: payment-methods
+slug: admin-wallet-management
+title: Admin Management of Passenger Wallets
+status: DONE
+author: Bob (sm)
+date: '2024-07-31T11:02:00Z'
+
+description: >
+  As a customer support agent, I want to view a passenger's wallet balance
+  and transaction history, and be able to issue manual credits or debits, so
+  that I can resolve payment disputes or issue refunds.
+
+acceptance_criteria:
+  - On the passenger detail page in the `admin-panel`, a new "Wallet" tab must be added.
+  - This tab must display the passenger's current wallet balance and a full transaction history.
+  - An admin must have the ability to add a credit or debit to the wallet with a mandatory comment explaining the reason.
+  - The `payment-service` must expose secure, admin-only endpoints for viewing wallet history and posting manual adjustments.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/passengers/[passengerId]/page.tsx # To add the wallet tab and UI
+  - libs/backend/payment-service/src/lib/payment.controller.ts # To add admin endpoints for wallet adjustments
+
+dev_notes: >
+  This is a critical support tool for the wallet feature introduced in `story-40.1`. It gives agents the power to resolve financial issues for customers directly. All manual adjustments must be logged for auditing.

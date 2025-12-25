@@ -1,0 +1,24 @@
+id: story-99.8
+epic: integrations
+slug: public-api-platform
+title: Develop a Public API Platform
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T04:15:00Z'
+
+description: >
+  As a third-party developer, I want access to a public API so I can build
+  new applications and services on top of the Cabi platform (e.g., fare estimators,
+  business intelligence tools).
+
+acceptance_criteria:
+  - A new API gateway service must be created to manage public API traffic.
+  - The platform must provide a developer portal with API documentation, key management, and usage analytics.
+  - The initial version of the API should expose anonymized, aggregated data, such as real-time surge pricing by zone or route-based fare estimates.
+  - All access must be authenticated via API keys.
+
+files_to_be_created:
+  - apps/developer-portal-web/src/app/page.tsx
+
+dev_notes: >
+  This transforms our platform into a true ecosystem. It requires significant investment in infrastructure, security, and documentation. Start with read-only, public data APIs first.

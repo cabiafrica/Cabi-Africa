@@ -1,0 +1,35 @@
+id: story-62.16
+epic: platform-feedback-and-suggestions
+slug: user-feedback-status-view
+title: Allow Users to View the Status of Their Submitted Feedback
+status: Done
+author: Mary (analyst)
+date: '2024-08-10T11:30:00Z'
+
+description: >
+  As a user who has submitted feedback, I want to see a list of my past
+  suggestions and their current status, so I can track the progress of my ideas.
+
+acceptance_criteria:
+  - A new "My Feedback" screen must be added to the `passenger-app` and `driver-app`, accessible from the settings or feedback section.
+  - This screen must list all feedback items previously submitted by the logged-in user.
+  - Each item in the list must display the user's original submission and its current status (e.g., "Received," "Under Review," "Planned," "Shipped," "Not Planned").
+  - The `support-service` must provide a new endpoint to fetch all feedback items and their statuses for a given user ID.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/my_feedback_screen.dart
+  - Cabi Alpha/mobile/driver_app/lib/screens/my_feedback_screen.dart
+
+files_to_be_modified:
+  - libs/backend/support-service/src/lib/support.service.ts # To add a method to fetch feedback by user ID.
+
+dev_notes: >
+  This feature provides the user-facing side of the feedback status system defined in `story-62.14`. It's a crucial part of closing the feedback loop and ensuring users feel their contributions are seen and valued.
+
+  **User-Facing Status Definitions:**
+  - **Received:** "We've successfully received your suggestion. Thanks for sharing!"
+  - **Under Review:** "Our product team is looking at your idea and considering how it fits with our goals."
+  - **Planned:** "Great news! We've decided to build this feature. It's now on our product roadmap."
+  - **Shipped!:** "It's live! The feature you suggested is now available in the latest version of the app."
+  - **Not Planned:** "Thanks for the idea. After review, we've decided not to pursue this feature at this time."
+  - **Merged:** "This is a popular idea! We've merged your suggestion with similar feedback to track it in one place." (The status should then reflect the master idea's status).

@@ -1,0 +1,40 @@
+id: story-120.4
+epic: driver-organization-management
+slug: driver-view-organization-leaders
+title: Allow Drivers to View Their Organization's Leaders
+status: Done
+author: Bob (sm)
+date: '2025-12-02T17:00:00Z'
+
+description: >
+  As a driver who is a member of an organization, I want to see a list of my organization's leaders,
+  so that I know who to contact for support or information regarding the organization.
+
+acceptance_criteria:
+  - A new "My Organization" or "Leadership" screen must be created in the `driver-app`.
+  - This screen must be accessible to any driver who is a member of an organization.
+  - The screen must display a list of all designated leaders for the driver's organization.
+  - For each leader, the list must display their full name and profile picture.
+  - The `user-service` must be updated with an endpoint (e.g., `GET /organizations/my-organization/leaders`) that returns the list of leaders for the authenticated driver's organization.
+  - The backend must verify the driver is part of an organization before returning data.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/organization_leaders_screen.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/widgets/app_drawer.dart # Or similar navigation to add a link to the new screen.
+  - libs/backend/user-service/src/lib/user.controller.ts # To add the new endpoint.
+  - libs/backend/user-service/src/lib/user.service.ts # To add logic to find the user's org and then its leaders.
+
+dev_notes: >
+  This story provides transparency within driver organizations and facilitates communication between members and leaders. It complements the leader-facing management stories (`story-120.2`, `story-120.3`). The backend logic will need to first identify the requesting user's organization and then query for all users within that organization who have a "leader" role or flag.
+
+tasks:
+  - id: task-1
+    description: "Implement the backend endpoint in `user-service` to get the leaders of the authenticated user's organization."
+  - id: task-2
+    description: "Create the 'My Organization Leaders' screen in the `driver-app`."
+  - id: task-3
+    description: "Implement the UI to display the list of leaders with their names and profile pictures."
+  - id: task-4
+    description: "Add a link to the new screen in the app's main navigation for drivers who are part of an organization."

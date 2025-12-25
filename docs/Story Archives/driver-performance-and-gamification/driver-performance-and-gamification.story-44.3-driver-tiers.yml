@@ -1,0 +1,29 @@
+id: story-44.3
+epic: driver-performance-and-gamification
+slug: driver-tiers
+title: Implement Driver Tiers (Bronze, Silver, Gold)
+status: Done
+author: Bob (sm)
+date: '2024-08-01T09:08:00Z'
+
+description: >
+  As a driver, I want to advance through different tiers based on my
+  performance (rating, acceptance rate, trips completed), unlocking perks at
+  each level, so that I am rewarded for providing high-quality service.
+
+acceptance_criteria:
+  - The system must define criteria for different driver tiers (e.g., Gold: >4.9 rating, >95% acceptance, >500 trips).
+  - A scheduled job in the `analytics-service` must periodically evaluate drivers and update their tier status.
+  - The driver's current tier must be displayed in their profile.
+  - Perks can include priority matching, access to special incentives, or lower commission rates.
+  - The relevant services (`ride-service`, `incentive-service`) must be updated to check a driver's tier and apply these perks.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To calculate and assign tiers
+  - libs/backend/user-service/src/lib/user.service.ts # To store the driver's tier
+  - Cabi Alpha/mobile/driver_app/lib/screens/profile_screen.dart # To display the tier
+
+dev_notes: >
+  This creates a long-term progression system for drivers, encouraging consistent, high-quality service. It requires cross-service logic to apply the benefits of each tier.

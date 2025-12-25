@@ -1,0 +1,27 @@
+id: story-43.2
+epic: environmental-options
+slug: carbon-offset
+title: Implement Carbon Offset Program
+status: Done
+author: Bob (sm)
+date: '2024-07-31T11:18:00Z'
+
+description: >
+  As a passenger, I want the option to pay a small extra fee on each ride to
+  offset its carbon emissions, so that I can contribute to environmental projects.
+
+acceptance_criteria:
+  - A "Carbon Offset" toggle must be available in the passenger's settings or on the ride confirmation screen.
+  - If enabled, a small, calculated fee is added to each ride's fare.
+  - The `payment-service` must collect these fees.
+  - The `analytics-service` must track the total amount of offset fees collected.
+  - Periodically, the company will donate these collected funds to a certified carbon offset partner.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/widgets/ride_confirmation_panel.dart # To add the offset option
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle the collection of the fee
+
+dev_notes: >
+  This feature appeals to environmentally conscious users and improves corporate image. It requires a partnership with a carbon offset organization and transparent reporting on the funds collected and donated.

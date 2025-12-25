@@ -1,0 +1,30 @@
+id: story-55.8
+epic: payment-methods
+slug: corporate-dashboard
+title: Create Corporate Travel Management Dashboard
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T19:05:00Z'
+
+description: >
+  As a company's travel manager, I need a web-based dashboard to manage my
+  company's account, add or remove employees, set travel policies, and view
+  all trips in a single monthly invoice.
+
+acceptance_criteria:
+  - A new "Business" portal must be created as part of the `admin-panel` or as a separate web app.
+  - A company can be onboarded and given an admin account for this portal.
+  - The travel manager can invite employees to link their passenger accounts to the company profile.
+  - The manager can set spending limits and other policies (e.g., vehicle class restrictions) for employees.
+  - The dashboard must provide a monthly statement of all trips taken by employees.
+  - The `payment-service` must support centralized monthly invoicing and billing for corporate accounts.
+
+files_to_be_created:
+  - apps/business-portal/src/app/dashboard/page.tsx
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To handle company-employee relationships
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle corporate billing
+
+dev_notes: >
+  This is a major feature that opens up a significant B2B revenue stream. It requires a new web application and substantial changes to the user and payment services to support organizational accounts.

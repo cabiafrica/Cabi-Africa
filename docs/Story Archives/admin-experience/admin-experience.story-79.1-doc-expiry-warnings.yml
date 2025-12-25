@@ -1,0 +1,77 @@
+id: story-79.1
+epic: admin-experience
+slug: doc-expiry-warnings
+title: Implement "Driver Document Expiry Warnings" in Admin Panel
+status: Done
+author: Bob (sm)
+date: '2024-08-08T11:04:00Z'
+
+description: >
+  As an administrator, I want a dashboard widget that shows me all driver
+  documents that are expiring within the next 30 days, so that I can
+  proactively manage driver compliance.
+
+acceptance_criteria:
+  - A new "Expiring Documents" widget must be added to the main admin dashboard.
+  - The widget should list drivers whose documents (license, insurance, etc.) are nearing expiration.
+  - Clicking on a driver should take the admin to that driver's document management page.
+  - The `document-service` must expose an endpoint to provide this data.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/page.tsx # To add the new widget
+  - libs/backend/document-service/src/lib/document.service.ts # To add logic for finding expiring docs
+
+dev_notes: >
+  This is the first story for a new `admin-experience` epic. It provides admins with a proactive tool to prevent drivers from becoming inactive due to expired documents.
+
+tasks:
+  - id: task-1
+    description: Implement backend logic to find expiring documents.
+    subtasks:
+      - "[x] Create `libs/backend/document-service/src/lib/document.service.ts` and `document.controller.ts`."
+      - "[x] Add a `findExpiring` method to the service that returns documents expiring in the next 30 days."
+      - "[x] Expose this method via a new `GET /documents/expiring` endpoint."
+  - id: task-2
+    description: Implement the frontend dashboard widget.
+    subtasks:
+      - "[x] Update `apps/admin-panel/src/app/page.tsx` to include a new 'Expiring Documents' card."
+      - "[x] Fetch data from the new backend endpoint to populate the widget."
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - libs/backend/document-service/src/lib/document.controller.ts
+    - libs/backend/document-service/src/lib/document.service.ts
+    - libs/backend/document-service/src/lib/document.service.spec.ts
+    - apps/admin-panel/src/app/page.tsx
+    - apps/admin-panel/src/app/page.spec.tsx
+  change_log:
+    - file: libs/backend/document-service/src/lib/document.service.ts
+      change: Implemented the `findExpiring` method to find documents expiring within 30 days.
+    - file: apps/admin-panel/src/app/page.tsx
+      change: Created the admin dashboard page with a widget to display expiring driver documents.
+  completion_notes:
+    - >-
+      All tasks completed. Backend endpoint and service logic for finding
+      expiring documents are implemented and tested. Frontend UI for displaying
+      the expiring documents is implemented and covered by component tests. The
+      story meets all acceptance criteria and is ready for review.
+
+qa_results:
+  - id: qa-1
+    date: '2024-08-15T23:15:00Z'
+    agent: Quinn (qa)
+    summary: >-
+      The implementation is excellent. The backend service correctly provides
+      a list of expiring documents, and the new admin dashboard widget
+      displays this information clearly. This provides administrators with the
+      proactive compliance tool they need.
+    requirements_traceability:
+      - criteria: "The `document-service` must expose an endpoint to provide this data."
+        test_case: "Given the admin dashboard loads, when the 'Expiring Documents' widget renders, then it successfully fetches data from the `/documents/expiring` endpoint."
+        status: PASS
+      - criteria: "A new 'Expiring Documents' widget must be added to the main admin dashboard."
+        test_case: "Given an admin logs into the admin panel, when they view the dashboard, then a widget listing drivers with documents expiring in the next 30 days is visible."
+        status: PASS
+    gate_decision: PASS

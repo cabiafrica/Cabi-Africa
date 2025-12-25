@@ -1,0 +1,23 @@
+id: story-23.9
+epic: vehicle-management
+slug: vehicle-telematics-integration
+title: Implement Vehicle Telematics Integration
+status: Done
+author: Bob (sm)
+date: '2024-08-10T04:45:00Z'
+
+description: >
+  As a fleet owner, I want to integrate my existing vehicle telematics system
+  with the platform, so I can get accurate mileage and diagnostic data for my
+  fleet without manual input.
+
+acceptance_criteria:
+  - The platform must provide an API for telematics providers to push data (e.g., mileage, diagnostic trouble codes) for specific vehicles.
+  - When data is received, it should automatically update the vehicle's mileage in the system, which can be used for maintenance reminders (`story-23.4`).
+  - Critical diagnostic codes could trigger alerts for the fleet owner.
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To add an API endpoint for receiving telematics data
+
+dev_notes: >
+  This is a powerful feature for large fleet partners. It automates data entry and provides valuable insights into vehicle health, improving platform safety and reliability.

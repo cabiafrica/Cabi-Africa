@@ -1,0 +1,25 @@
+id: story-63.4
+epic: map-and-navigation
+slug: dynamic-eta
+title: Dynamic ETA Recalculation with Traffic
+status: DONE
+author: Bob (sm)
+date: '2024-08-07T09:01:00Z'
+
+description: >
+  As a passenger watching my driver approach, I want the ETA to be
+  continuously updated based on real-time traffic conditions, so I have the
+  most accurate arrival time possible.
+
+acceptance_criteria:
+  - The `ride-service` must periodically request an updated ETA from the mapping provider during the driver's approach.
+  - This request must include the driver's current location and specify that the ETA should account for live traffic.
+  - The updated ETA is then pushed to the `passenger-app` in real-time.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To implement periodic ETA polling
+
+dev_notes: >
+  This improves accuracy and manages passenger expectations. It requires more frequent API calls to the mapping provider, which may have cost implications.

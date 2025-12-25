@@ -1,0 +1,50 @@
+id: story-17.2
+epic: passenger-payments
+slug: integrate-payment-gateway
+title: Integrate with Payment Gateway for Secure Card Storage
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T19:30:00Z'
+
+description: >
+  As a passenger, when I add a new payment method, I want it to be securely
+  saved with a payment processor, so that my card details are safe and can be
+  used for future ride payments.
+
+acceptance_criteria:
+  - The `AddCardScreen` from `story-17.1` must be updated to integrate with a payment gateway SDK (e.g., Stripe).
+  - Instead of saving card details locally, the app must send the card information to the payment gateway to create a secure payment method token.
+  - This token must be sent to a new endpoint in our backend `payment-service`.
+  - The `payment-service` must use the token to create a "customer" in the payment gateway and attach the payment method to them.
+  - The `payment-service` must store the payment gateway's customer ID and a reference to the payment method (e.g., card brand, last 4 digits) in our database, associated with the passenger's user ID.
+  - The local storage of card details (`shared_preferences`) must be removed.
+  - The `PaymentMethodsScreen` must now fetch the list of saved cards from the `payment-service` instead of from local storage.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/add_card_screen.dart # To integrate with payment gateway SDK
+  - apps/passenger-app/src/screens/payment_methods_screen.dart # To fetch cards from the backend
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle tokenization and customer creation
+  - libs/backend/payment-service/src/lib/payment.controller.ts # To expose endpoints for adding/listing payment methods
+
+dev_notes: >
+  This story replaces the local `shared_preferences` implementation from `story-17.1` with a production-ready payment gateway integration. This is a critical security and functionality enhancement. The focus is on securely saving the payment method; charging the card will be handled in a subsequent story.
+
+tasks:
+  - id: task-1
+    description: Implement backend logic for secure card tokenization.
+    subtasks:
+      - "[ ] Add a `createCustomerWithCard` method to `payment.service.ts`."
+      - "[ ] The method should take a payment method token, create a customer in the payment gateway (e.g., Stripe), and attach the payment method."
+      - "[ ] Store the returned customer ID and card details (brand, last4) in the local database."
+      - "[ ] Expose this via a new `POST /payment/add-card` endpoint in `payment.controller.ts`."
+  - id: task-2
+    description: Update frontend screens to use the payment gateway.
+    subtasks:
+      - "[ ] Update `apps/passenger-app/src/screens/add_card_screen.dart` to use a payment gateway SDK (e.g., `flutter_stripe`) to tokenize card details."
+      - "[ ] On submission, send the generated token to the new backend endpoint instead of saving locally."
+      - "[ ] Update `apps/passenger-app/src/screens/payment_methods_screen.dart` to fetch the list of saved cards from a new backend endpoint (`GET /payment/cards`)."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list: []
+  change_log: []

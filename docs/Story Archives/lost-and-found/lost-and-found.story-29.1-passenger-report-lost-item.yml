@@ -1,0 +1,29 @@
+id: story-29.1
+epic: lost-and-found
+slug: passenger-report-lost-item
+title: Enable Passengers to Report a Lost Item
+status: Done
+author: Bob (sm)
+date: '2024-08-09T16:00:00Z'
+
+description: >
+  As a passenger, I want to report an item I've lost on a recent trip through
+  the app, so that I can initiate the process of recovering it.
+
+acceptance_criteria:
+  - In the `passenger-app` trip history, each completed trip must have a "Report Lost Item" option.
+  - Tapping this option opens a form where the passenger can describe the item and provide contact information.
+  - Submitting the form must automatically create a new support ticket in the `support-service` with a special "Lost Item" category.
+  - The `notification-service` must send an alert to the driver of that specific trip, informing them that a passenger has reported a lost item and instructing them on next steps.
+  - The passenger should receive a confirmation that their report has been submitted and a support ticket has been created.
+
+files_to_be_created:
+  - apps/passenger-app/src/screens/lost_item_report_screen.dart
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/trip_history_screen.dart # To add the "Report Lost Item" option
+  - libs/backend/support-service/src/lib/support.service.ts # To handle the creation of categorized support tickets
+  - libs/backend/notification-service/src/lib/notification.service.ts # To handle alerting the driver
+
+dev_notes: >
+  This is the foundational story for the `lost-and-found` epic. It connects the passenger experience with the backend support and notification systems. The key is to provide a clear, automated handoff to both the support team (via the ticket) and the driver (via the notification).

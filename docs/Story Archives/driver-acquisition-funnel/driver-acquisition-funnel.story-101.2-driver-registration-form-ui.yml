@@ -1,0 +1,38 @@
+id: story-101.2
+epic: driver-acquisition-funnel
+slug: driver-registration-form-ui
+title: Implement Web-Based Driver Registration Form UI
+status: Done
+author: Bob (sm)
+date: '2025-12-02T10:15:00Z'
+
+description: >
+  As a prospective driver, I want to begin the registration process through a simple web form
+  so that I can show my interest without having to download the mobile app first.
+
+acceptance_criteria:
+  - A new page/component for the multi-step registration form must be created in the `marketing-website` app.
+  - The form must capture the fields defined in the `RegistrationRequest` schema in `architecture.md`: First Name, Last Name, Email, Phone, and City.
+  - The form must include an optional field for a `referralCode`.
+  - The form must be protected by Google reCAPTCHA as specified in `architecture.md`.
+  - Client-side validation must be implemented for all required fields (e.g., email format, non-empty fields).
+  - On successful submission, the form should display a success message and a clear call-to-action to download the driver app, as per the flow in `architecture.md`.
+  - The form submission logic should be stubbed for now; it should call a placeholder function that simulates a successful API call.
+
+files_to_be_created:
+  - Cabi Alpha/web/user_portal/app/register/page.tsx # The page hosting the registration form
+  - Cabi Alpha/web/user_portal/components/DriverRegistrationForm.tsx # The form component itself
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/app/page.tsx # To add a "Sign Up" button linking to the /register page.
+
+dev_notes: >
+  This story focuses purely on the frontend UI and client-side logic for the registration form, building on `story-101.1`. The backend integration will be handled in a subsequent story. This aligns with requirement R2.1 from `prd.md` and the component design in `architecture.md`. The reCAPTCHA integration is a critical security requirement (NFR2).
+
+tasks:
+  - id: task-1
+    description: "Create the `/register` page and the `DriverRegistrationForm` component."
+  - id: task-2
+    description: "Implement form fields, client-side validation, and a stubbed submission handler."
+  - id: task-3
+    description: "Integrate Google reCAPTCHA into the form."

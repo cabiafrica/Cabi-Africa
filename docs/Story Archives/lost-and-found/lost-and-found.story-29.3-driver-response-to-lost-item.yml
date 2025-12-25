@@ -1,0 +1,58 @@
+id: story-29.3
+epic: lost-and-found
+slug: driver-response-to-lost-item
+title: Driver Response to Lost Item Report
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T21:30:00Z'
+
+description: >
+  As a driver, after being notified that a passenger has reported a lost item,
+  I need a simple way to respond whether I have found the item or not, so that
+  the recovery process can proceed efficiently.
+
+acceptance_criteria:
+  - When a driver receives a notification about a lost item (from `story-29.1`), it must link to a new response screen in the `driver-app`.
+  - This screen must display details of the trip and the passenger's description of the lost item.
+  - The screen must provide two clear action buttons: "I found the item" and "I did not find the item".
+  - If the driver selects "I found the item", the corresponding support ticket in the `support-service` must be updated, triggering the coordination workflow in `story-29.4`.
+  - If the driver selects "I did not find the item", the support ticket must also be updated, and the `notification-service` should inform the passenger.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/lost_item_response_screen.dart
+
+files_to_be_modified:
+  - libs/backend/support-service/src/lib/support.service.ts # To handle the driver's response and update ticket status
+  - libs/backend/notification-service/src/lib/notification.service.ts # To handle notifications for both outcomes
+
+dev_notes: >
+  This story bridges the gap between the passenger's report (`story-29.1`) and the support agent's coordination (`story-29.4`). It provides the crucial input from the driver that determines the next step in the workflow. The UI for the driver should be extremely simple and clear to encourage a quick response.
+
+tasks:
+  - id: task-1
+    description: Implement the backend logic to handle the driver's response.
+    subtasks:
+      - "[x] Add a `handleDriverLostItemResponse` method to `libs/backend/support-service/src/lib/support.service.ts`."
+      - "[x] This method should add an internal note and update the ticket status to 'Return Pending' if the item is found."
+      - "[x] Expose this logic via a new endpoint, e.g., `POST /support-tickets/:id/driver-response`."
+  - id: task-2
+    description: Create the driver-facing response screen.
+    subtasks:
+      - "[x] Create `Cabi Alpha/mobile/driver_app/lib/screens/lost_item_response_screen.dart`."
+      - "[x] The screen should fetch and display basic details of the lost item report."
+      - "[x] Provide two clear buttons: 'I found the item' and 'I did not find the item'."
+      - "[x] Tapping a button should call the new backend endpoint."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - Cabi Alpha/mobile/driver_app/lib/screens/lost_item_response_screen.dart
+    - libs/backend/support-service/src/lib/support.controller.ts
+    - libs/backend/support-service/src/lib/support.service.ts
+  change_log:
+    - file: libs/backend/support-service/src/lib/support.service.ts
+      change: Added `handleDriverLostItemResponse` method to process the driver's feedback on a lost item report, updating the ticket status accordingly.
+    - file: libs/backend/support-service/src/lib/support.controller.ts
+      change: Added a new `PublicSupportController` to expose the driver response endpoint.
+    - file: Cabi Alpha/mobile/driver_app/lib/screens/lost_item_response_screen.dart
+      change: Created a new screen for the driver app to allow drivers to respond to lost item reports.

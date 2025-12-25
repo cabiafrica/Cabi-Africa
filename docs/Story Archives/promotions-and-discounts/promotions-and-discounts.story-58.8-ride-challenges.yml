@@ -1,0 +1,24 @@
+id: story-58.8
+epic: promotions-and-discounts
+slug: ride-challenges
+title: Implement Ride Challenges
+status: Done
+author: Bob (sm)
+date: '2024-08-09T22:25:00Z'
+
+description: >
+  As a passenger, I want to be able to participate in challenges (e.g., "Take
+  3 rides this week to unlock a 25% discount"), so I can be rewarded for my loyalty.
+
+acceptance_criteria:
+  - The `admin-panel` must allow marketing managers to create "Challenges" with a goal (e.g., number of rides) and a reward (e.g., a specific promo code).
+  - The `passenger-app` must have a section displaying available challenges and the user's progress towards them.
+  - The `incentive-service` must track user progress and automatically award the reward when the challenge is completed.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/promotions/page.tsx # To add challenge creation UI
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To manage challenge logic
+  - Cabi Alpha/mobile/passenger_app/lib/screens/wallet_screen.dart # To display challenges
+
+dev_notes: >
+  Challenges are a great way to drive repeat usage and user engagement. They are more interactive than simple promo codes.

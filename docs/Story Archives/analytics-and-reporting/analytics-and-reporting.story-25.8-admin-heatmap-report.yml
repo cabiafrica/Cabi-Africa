@@ -1,0 +1,28 @@
+id: story-25.8
+epic: analytics-and-reporting
+slug: admin-heatmap-report
+title: Implement Heatmap for Trip Activity
+status: Done
+author: Bob (sm)
+date: '2024-07-27T09:09:00Z'
+
+description: >
+  As an operations manager, I want to see a heatmap of trip pickup locations
+  over a given time period, so that I can visually identify areas of high and
+  low demand to inform driver incentives and marketing efforts.
+
+acceptance_criteria:
+  - A new "Heatmap" report must be added to the `admin-panel`.
+  - The page must display a map.
+  - It must have controls to select a date range and an activity type (e.g., "Pickups", "Dropoffs").
+  - The `analytics-service` must provide an endpoint that returns a set of geographic coordinates and weights for the selected period.
+  - The admin panel frontend must use a map library (e.g., Leaflet with a heatmap plugin) to render this data as a heatmap overlay.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/reports/heatmap/page.tsx
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To aggregate geospatial data
+
+dev_notes: >
+  This is a powerful data visualization tool. The backend query to aggregate potentially millions of coordinates needs to be highly performant, possibly using database-level geospatial functions or a pre-aggregated data store.

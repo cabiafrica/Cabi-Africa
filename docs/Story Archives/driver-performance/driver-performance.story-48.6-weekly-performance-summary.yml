@@ -1,0 +1,24 @@
+id: story-48.6
+epic: driver-performance
+slug: weekly-performance-summary
+title: Send Weekly Performance Summary Notifications
+status: Done
+author: Bob (sm)
+date: '2024-08-09T17:50:00Z'
+
+description: >
+  As a driver, I want to receive a weekly summary of my performance via a push
+  notification, so I can easily track my progress over time.
+
+acceptance_criteria:
+  - A scheduled job must run weekly for all active drivers.
+  - The job gathers key metrics for the week: overall rating, acceptance rate, trips completed, and total earnings.
+  - The system sends a push notification and an in-app message summarizing this information.
+  - The message should compare the week's performance to the previous week (e.g., "Your rating went up from 4.85 to 4.88!").
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To add the weekly summary generation logic
+  - libs/backend/notification-service/src/lib/notification.service.ts # To send the summary notifications
+
+dev_notes: >
+  This is a proactive engagement feature. The summary should be concise and visual. This requires a reliable background job scheduler.

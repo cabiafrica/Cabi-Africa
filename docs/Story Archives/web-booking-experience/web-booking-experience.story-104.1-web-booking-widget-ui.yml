@@ -1,0 +1,33 @@
+id: story-104.1
+epic: web-booking-experience
+slug: web-booking-widget-ui
+title: Implement Web Booking Widget on Marketing Website
+status: Done
+author: Bob (sm)
+date: '2025-12-02T12:00:00Z'
+
+description: >
+  As a website visitor, I want to book a ride directly from the marketing website,
+  so that I can use the service without needing to download the mobile app first.
+
+acceptance_criteria:
+  - A new reusable `WebBookingWidget` component must be created in the `marketing-website` app.
+  - The widget must be placed prominently on the homepage (`page.tsx`).
+  - The widget must include input fields for "Pickup Location" and "Destination".
+  - These input fields must integrate with an address autocomplete service (e.g., Google Places API).
+  - After providing valid locations, the widget must call a backend service to get fare estimates and vehicle types.
+  - The widget must display the available vehicle types and their estimated fares, as per the PRD (R2.6).
+  - A "Book Ride" button should trigger the final ride creation API call.
+  - For this story, the user is assumed to be a guest. The backend will need to handle creating a temporary or guest user account.
+  - A new backend service or new endpoints on an existing service must be created to handle ride requests from the web.
+
+files_to_be_created:
+  - Cabi Alpha/web/user_portal/src/components/marketing/WebBookingWidget.tsx
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/src/pages/index.tsx # To add the new WebBookingWidget.
+  - # A backend service like a new `web-booking-service` or the existing `driver-lead-service` will need to be modified/created to handle ride booking from the web.
+
+dev_notes: >
+  This story introduces a major new user acquisition channel, as outlined in the PRD (section 2.6). The focus is on the frontend UI of the booking widget and the initial API contracts. The backend will need to handle unauthenticated ride requests, potentially by creating a guest user account. The real-time ride tracking on the web after booking will be handled in a subsequent story to keep this one focused on the booking flow itself. This will likely require a new backend service or significant additions to an existing one to orchestrate the ride creation process, similar to how the passenger app does it.
+  PRD Reference: 2.6. Marketing Website -> Web Booking Widget

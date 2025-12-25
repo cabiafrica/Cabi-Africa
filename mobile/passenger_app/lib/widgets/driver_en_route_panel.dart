@@ -1,0 +1,97 @@
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class DriverEnRoutePanel extends StatelessWidget {
+  final Map<String, dynamic> rideDetails;
+  final VoidCallback onArrived;
+
+  const DriverEnRoutePanel({
+    super.key,
+    required this.rideDetails,
+    required this.onArrived,
+  });
+
+  // Helper to launch URLs
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      // In a real app, show a snackbar or dialog
+      debugPrint('Could not launch $url');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Dummy data for passenger name and ETA
+    final passengerName = rideDetails['passengerName'] ?? 'Jane Doe';
+    final eta = rideDetails['eta'] ?? 5;
+
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Card(
+        margin: const EdgeInsets.all(16.0),
+        elevation: 8,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Picking up $passengerName',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Arriving in $eta mins',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              const Divider(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.call),
+                    onPressed: () => _launchUrl('tel:+1234567890'),
+                    tooltip: 'Call Passenger',
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.message),
+                    onPressed: () => _launchUrl('sms:+1234567890'),
+                    tooltip: 'Chat with Passenger',
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.navigation),
+                    onPressed: () {
+                      // In a real app, this would open Google/Apple Maps with directions
+                    },
+                    tooltip: 'Navigate',
+                  ),
+                ],
+              ),
+              const Divider(height: 24),
+              ElevatedButton(
+                onPressed: onArrived,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: const Text(
+                  'I HAVE ARRIVED',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

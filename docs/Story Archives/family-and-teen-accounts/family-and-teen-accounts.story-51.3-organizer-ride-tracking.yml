@@ -1,0 +1,24 @@
+id: story-51.3
+epic: family-and-teen-accounts
+slug: organizer-ride-tracking
+title: Enable Ride Tracking for Family Organizers
+status: Done
+author: Bob (sm)
+date: '2024-08-09T20:55:00Z'
+
+description: >
+  As a Family Organizer, I want to receive notifications and be able to track
+  the live trip of a family member (especially a teen), so I can have peace of mind.
+
+acceptance_criteria:
+  - When a family member starts a trip using the Family Profile, the Family Organizer must receive a push notification.
+  - The notification includes the driver's details and a link to track the trip in real-time.
+  - The live tracking view is similar to the "Share Trip Status" feature (`story-18.4`).
+  - This feature should be a toggle setting that the family member can control for their own privacy, but it is on by default for teen accounts.
+
+files_to_be_modified:
+  - libs/backend/notification-service/src/lib/notification.service.ts # To send notifications to the organizer
+  - libs/backend/ride-service/src/lib/ride.service.ts # To enable trip tracking for the organizer
+
+dev_notes: >
+  This is a key safety and peace-of-mind feature for the family accounts product. It leverages existing real-time location and notification infrastructure.

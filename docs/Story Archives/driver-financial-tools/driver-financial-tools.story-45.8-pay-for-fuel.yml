@@ -1,0 +1,27 @@
+id: story-45.8
+epic: driver-financial-tools
+slug: pay-for-fuel
+title: Implement "Pay for Fuel" with Earnings Wallet
+status: Done
+author: Bob (sm)
+date: '2024-08-07T09:09:00Z'
+
+description: >
+  As a driver, I want to be able to pay for fuel at partner gas stations by
+  generating a QR code from my earnings wallet, so I can use my earnings directly.
+
+acceptance_criteria:
+  - This requires partnerships with fuel station chains.
+  - In the driver's wallet, a "Pay for Fuel" button generates a one-time QR code representing a certain value.
+  - The gas station attendant scans the QR code with their system.
+  - Our `payment-service` needs an API that the partner's system can call to validate and redeem the QR code.
+  - Upon successful redemption, the amount is deducted from the driver's wallet.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/wallet_screen.dart # To add the QR code generation
+  - libs/backend/payment-service/src/lib/payment.service.ts # To add the redemption API for partners
+
+dev_notes: >
+  A powerful feature that makes earnings more liquid for drivers. The main challenge is the integration with third-party point-of-sale systems.

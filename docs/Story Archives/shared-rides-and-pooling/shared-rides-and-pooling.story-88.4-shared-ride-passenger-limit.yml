@@ -1,0 +1,23 @@
+id: story-88.4
+epic: shared-rides-and-pooling
+slug: shared-ride-passenger-limit
+title: Enforce Passenger Limit for Shared Ride Requests
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T00:05:00Z'
+
+description: >
+  As a passenger booking a shared ride, I want to specify if I'm riding alone
+  or with one other person, so the system doesn't overfill the car.
+
+acceptance_criteria:
+  - When a user selects the "Shared" ride option, they must specify the number of seats they need (1 or 2).
+  - The pooling algorithm in the `ride-service` must take the number of requested seats into account and not match a ride if it would exceed the vehicle's capacity.
+  - The price may be adjusted if the user requests 2 seats.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To add the seat selector for shared rides
+  - libs/backend/ride-service/src/lib/ride.service.ts # To incorporate seat count into the matching algorithm
+
+dev_notes: >
+  This is a fundamental requirement for a functional pooling system to prevent overcrowding and ensure a comfortable experience for all passengers.

@@ -1,0 +1,33 @@
+id: story-20.2
+epic: ratings-and-reviews
+slug: passenger-rate-driver
+title: Implement "Rate Your Driver" Screen for Passenger
+status: READY
+author: Bob (sm)
+date: '2024-07-19T09:00:00Z'
+
+description: >
+  As a passenger, after I have paid for my trip, I want to be prompted to
+  rate my driver and leave an optional comment, so that I can provide
+  feedback on my experience and contribute to the driver's overall rating.
+
+acceptance_criteria:
+  - After successful payment in the `TripSummaryPanel` (from `story-5.1`), the UI must transition to a new `RateDriverScreen`.
+  - The `RateDriverScreen` must display the driver's name and photo.
+  - The screen must feature a star rating system (1 to 5 stars).
+  - The screen must include an optional text field for passengers to leave a comment.
+  - A "Submit Rating" button must be present.
+  - Tapping "Submit Rating" must call a new `ratingService.submitDriverRating()` method, passing the rating, comment, and trip ID.
+  - After submitting, the app should navigate back to the main `HomeScreen` in its default state.
+  - A "Skip" or "Do it later" option should be available to dismiss the screen without rating.
+
+files_to_be_created:
+  - apps/passenger-app/src/screens/rate_driver_screen.dart
+  - apps/passenger-app/test/screens/rate_driver_screen_test.dart
+
+files_to_be_modified:
+  - apps/passenger-app/src/widgets/trip_summary_panel.dart # To navigate to the new rating screen on payment success.
+  - apps/passenger-app/src/api/rating_service.dart # To add the submitDriverRating method.
+
+dev_notes: >
+  This story directly follows `story-5.1`. It completes the post-trip passenger flow by introducing the rating mechanism. The `rating_service` will need a new method to send the rating data to the backend. For now, this can be a mocked API call. The backend implementation for receiving and processing these ratings will be handled in a separate story (`story-20.3`). This feature is crucial for building trust and a quality feedback loop in the platform.

@@ -1,0 +1,25 @@
+id: story-40.8
+epic: referrals
+slug: tiered-referral-rewards
+title: Implement Tiered and Campaign-Based Referral Rewards
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T18:00:00Z'
+
+description: >
+  As a marketing manager, I want to create special, time-bound referral
+  campaigns with different reward structures (e.g., "Refer 3 friends this
+  month to earn a $50 bonus"), so I can drive specific growth goals.
+
+acceptance_criteria:
+  - The admin interface for referral management (`story-40.4`) must be enhanced to support creating "Campaigns".
+  - A campaign can override the default referral rules with a new reward structure, conditions, and a start/end date.
+  - The `incentive-service` must apply the campaign rules for referrals that occur within the active campaign window.
+  - The user-facing referral screen in the app should be updated to show information about any active, special campaigns.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/promotions/page.tsx # Or a new /referrals page
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To handle campaign logic
+
+dev_notes: >
+  This adds a powerful layer of flexibility on top of the base referral program. The system must correctly prioritize campaign rules over default rules.

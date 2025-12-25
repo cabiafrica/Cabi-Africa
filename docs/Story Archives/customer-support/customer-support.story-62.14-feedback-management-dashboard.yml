@@ -1,0 +1,30 @@
+id: story-62.14
+epic: platform-feedback-and-suggestions
+slug: feedback-management-dashboard
+title: Create Admin Dashboard for Managing User Feedback
+status: Done
+author: Mary (analyst)
+date: '2024-08-10T11:20:00Z'
+
+description: >
+  As a Product Manager or Community Manager, I need a dashboard to review,
+  triage, and analyze user-submitted feedback, so I can identify trends,
+  quantify demand for features, and inform the product roadmap.
+
+acceptance_criteria:
+  - The `admin-panel/feedback` page must display a list of all user suggestions from the "opinion box".
+  - The list must be filterable by topic (from the user's dropdown), status (e.g., New, Under Review, Planned, Shipped, Rejected), and date range.
+  - The list must be sortable by submission date and by a "request count" to surface the most popular ideas.
+  - An admin must be able to click a suggestion to view its full details.
+  - From the detail view, an admin must be able to change the status of a suggestion.
+  - An admin must be able to link a new suggestion to an existing one, marking it as a duplicate and incrementing the master suggestion's "request count".
+  - An admin must be able to add internal tags to a suggestion for further categorization (e.g., `safety`, `payments`, `ui-ux`).
+  - An admin must have a "Convert to Support Ticket" button that moves the item to the main support queue (`story-62.1`) and closes the feedback item.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/feedback/page.tsx # To implement the main dashboard UI.
+  - libs/backend/support-service/src/lib/support.service.ts # To add logic for status changes, tagging, and linking duplicates.
+  - libs/backend/support-service/src/lib/support.controller.ts # To expose the new management endpoints.
+
+dev_notes: >
+  This dashboard is the control center for the entire feedback management workflow. The ability to link duplicates and increment a request count is the most critical feature for quantifying demand. This allows the product team to move beyond anecdotal evidence and see which feature ideas have the most user support.

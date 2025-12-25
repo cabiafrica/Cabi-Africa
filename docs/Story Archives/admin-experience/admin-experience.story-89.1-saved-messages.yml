@@ -1,0 +1,27 @@
+id: story-89.1
+epic: admin-experience
+slug: saved-messages
+title: Implement "Saved Messages" for Support Agents
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T10:03:00Z'
+
+description: >
+  As a customer support agent, I want to create and use pre-written responses
+  ("canned messages") for common questions, so that I can answer user queries
+  faster and more consistently.
+
+acceptance_criteria:
+  - In the admin support chat interface (`story-24.3`), a button must be available to access saved messages.
+  - An agent can search their saved messages and insert one into the chat with one click.
+  - A new settings page in the `admin-panel` must allow agents to create, edit, and delete their own personal saved messages.
+  - Super-admins should be able to create global saved messages available to all agents.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/support/page.tsx # To add the saved messages UI
+  - libs/backend/support-service/src/lib/support.service.ts # To store and retrieve saved messages
+
+dev_notes: >
+  A major efficiency booster for the customer support team. This reduces repetitive typing and helps standardize answers to frequently asked questions.

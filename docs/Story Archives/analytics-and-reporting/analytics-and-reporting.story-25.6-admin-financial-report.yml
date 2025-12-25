@@ -1,0 +1,34 @@
+id: story-25.6
+epic: analytics-and-reporting
+slug: admin-financial-report
+title: Implement Admin Financial Report
+status: Done
+author: Bob (sm)
+date: '2024-07-26T10:00:00Z'
+
+description: >
+  As a finance administrator, I want to generate a financial report for a
+  given period, so that I can understand revenue, commissions, payouts, and
+  other key financial metrics.
+
+acceptance_criteria:
+  - A new "Financial Report" page must be added under the "Reports" section of the `admin-panel`.
+  - The page must allow an admin to select a date range.
+  - The generated report must display:
+    - Gross Revenue (total of all fares)
+    - Total Platform Commissions
+    - Total Tips Paid to Drivers
+    - Total Bonuses Paid to Drivers
+    - Total Amount Paid Out to Drivers
+  - The `analytics-service` must expose an endpoint to generate this report.
+  - The service will need to aggregate transaction data from the `payment-service`, categorizing it by type (fare, tip, commission, bonus, payout).
+
+files_to_be_created:
+  - apps/admin-panel/src/app/reports/financial/page.tsx
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.controller.ts # To add the financial report endpoint
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To implement financial data aggregation
+
+dev_notes: >
+  This is a critical report for business operations and accounting. The `analytics-service` will be heavily reliant on the accuracy and categorization of transactions in the `payment-service`. This report provides a comprehensive view of the flow of money through the platform.

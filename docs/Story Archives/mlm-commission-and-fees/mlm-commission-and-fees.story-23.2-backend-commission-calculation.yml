@@ -1,0 +1,23 @@
+id: story-23.2
+epic: mlm-commission-and-fees
+slug: backend-commission-calculation
+title: Implement Backend Logic for Commission Calculation and Ledgering
+status: DONE
+author: Sarah (po)
+date: '2024-07-27T11:00:00Z'
+
+description: >
+  As the `MLM Service`, when a new driver successfully registers, I need to
+  calculate the fee distribution according to the current formula and record
+  each portion in an immutable ledger.
+
+acceptance_criteria:
+  - The `MLM Service` must listen for a `DriverRegisteredEvent` (or similar event from the `Driver Lead Service`).
+  - Upon receiving the event, the service must fetch the active `MlmFeeFormula` from the database.
+  - The service must traverse the new driver's upline hierarchy (sponsor, sponsor's sponsor, etc.).
+  - For each rule in the formula, the service must calculate the commission amount.
+  - A new entry must be created in the `RegistrationFeeLedger` table for each calculated portion (e.g., one entry for the sponsor, one for upline 1, one for the company).
+  - The sum of all ledger entries for a single registration must equal the total registration fee.
+
+files_to_be_modified:
+  - apps/mlm-service/src/mlm/mlm.service.ts # To add the calculation and ledgering logic

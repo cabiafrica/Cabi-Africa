@@ -1,0 +1,24 @@
+id: story-85.4
+epic: airport-experience
+slug: airport-prebooking
+title: Allow Pre-booking of Airport Rides
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T00:30:00Z'
+
+description: >
+  As a passenger traveling to the airport, I want to pre-book my ride with a
+  guaranteed pickup time and price, so I have peace of mind for my important trip.
+
+acceptance_criteria:
+  - This enhances the scheduled ride feature (`story-22.1`) for airport trips.
+  - When scheduling a ride to an airport, the user is offered a "Pre-book" option at a premium, fixed price.
+  - This guarantees a driver will be assigned and will arrive within the specified pickup window.
+  - The `ride-service` must have a more aggressive and prioritized matching algorithm for these pre-booked trips to ensure fulfillment.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/scheduled_rides_screen.dart # To offer the pre-book option
+  - libs/backend/ride-service/src/lib/scheduled_ride.service.ts # To add prioritized matching
+
+dev_notes: >
+  This is a high-margin feature that caters to travelers who value reliability above all else. It requires a very high fulfillment rate to be successful.

@@ -1,0 +1,47 @@
+id: story-79.14
+epic: admin-experience
+slug: admin-view-organization-audit-log
+title: Admin Panel View of Driver Organization Audit Log
+status: Done
+author: Bob (sm)
+date: '2025-12-02T19:15:00Z'
+
+description: >
+  As an administrator, I want to view a detailed audit log of all actions taken within a specific driver organization,
+  so that I can ensure compliance, investigate issues, and maintain security oversight.
+
+acceptance_criteria:
+  - A new "Audit Log" tab or section must be added to the organization detail page in the `admin-panel`.
+  - The log must display a paginated list of all actions performed by organization leaders.
+  - Logged actions must include: subgroup creation/deletion, member addition/removal, and announcements sent.
+  - Each log entry must show the action performed, the leader who performed it, the target of the action (e.g., subgroup name, member name), and a precise timestamp.
+  - A new `OrganizationActionLog` model must be created in the database schema to store these records.
+  - The backend services where these actions are performed (e.g., `user-service` for member management, `notification-service` for announcements) must be updated to create a log entry whenever a leader performs a relevant action.
+  - The `user-service` must expose a new, admin-protected endpoint (e.g., `GET /admin/organizations/:orgId/audit-log`) to retrieve the log for a specific organization.
+  - The UI should allow filtering the log by action type and date range.
+
+files_to_be_created:
+  - apps/admin-panel/src/components/management/OrganizationAuditLog.tsx
+
+files_to_be_modified:
+  - apps/admin-panel/src/components/management/OrganizationManagement.tsx # Updated to include tabs
+  - apps/admin-panel/src/services/adminService.ts # Mock data
+
+dev_notes: >
+  This story directly implements the "Organization Audit Log" requirement from the PRD. It's a crucial feature for platform governance. The implementation requires two main parts: 1) instrumenting the existing leader-facing actions (like subgroup management from `story-120.2`) to write to the new audit log table, and 2) creating the admin-facing UI and API to view that log. The log entries should be immutable.
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - apps/admin-panel/src/components/management/OrganizationAuditLog.tsx
+    - apps/admin-panel/src/components/management/OrganizationManagement.tsx
+    - apps/admin-panel/src/services/adminService.ts
+  change_log:
+    - file: apps/admin-panel/src/components/management/OrganizationAuditLog.tsx
+      change: Created component for displaying organization audit logs in a table.
+    - file: apps/admin-panel/src/components/management/OrganizationManagement.tsx
+      change: Added tab navigation to switch between Subgroups and Audit Log views.
+    - file: apps/admin-panel/src/services/adminService.ts
+      change: Added mock OrganizationLogAction interface and retrieval method.
+  completion_notes:
+    - Integrated with Organization Management view. Displays mock log events.

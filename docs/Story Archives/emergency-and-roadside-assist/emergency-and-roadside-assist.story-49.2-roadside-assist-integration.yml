@@ -1,0 +1,28 @@
+id: story-49.2
+epic: emergency-and-roadside-assist
+slug: roadside-assist-integration
+title: Implement Roadside Assistance Service Integration
+status: Done
+author: Bob (sm)
+date: '2024-08-02T10:01:00Z'
+
+description: >
+  As a user (driver or passenger), I want to be able to request professional
+  roadside assistance (e.g., for a flat tire, dead battery) directly through
+  the app.
+
+acceptance_criteria:
+  - The "Roadside Assist" section of the app must have options for specific services (e.g., "Flat Tire", "Towing", "Jump Start").
+  - The app must integrate with a third-party roadside assistance provider's API.
+  - When a user requests a service, our app must pass the user's location and service type to the third-party provider.
+  - The user should be able to see the ETA of the assistance vehicle and pay for the service through our app.
+  - The `payment-service` must handle the payment and settlement with the third-party provider.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To expand the roadside assist feature
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle payments to third-party providers
+
+dev_notes: >
+  This story expands the "Emergency" feature into a full-fledged revenue-generating vertical by integrating with a professional service provider. This is primarily an API integration effort.

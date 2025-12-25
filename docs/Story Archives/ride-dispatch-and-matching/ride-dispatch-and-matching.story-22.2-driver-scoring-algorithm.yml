@@ -1,0 +1,30 @@
+id: story-22.2
+epic: ride-dispatch-and-matching
+slug: driver-scoring-algorithm
+title: Implement Driver Scoring and Selection Algorithm
+status: IN PROGRESS
+author: Sarah (po)
+date: '2024-07-24T17:00:00Z'
+
+description: >
+  As a backend developer, I need to implement a driver scoring and selection
+  algorithm within the `Dispatch Service`, so that the system can identify and
+  select the most suitable driver for a given ride request.
+
+acceptance_criteria:
+  - The `Dispatch Service` must listen for the `RideRequestedEvent` emitted by the request intake process (`story-22.1`).
+  - Upon receiving the event, the service must find all `ACTIVE` drivers who are `ONLINE` within a configurable radius of the ride's pickup location.
+  - The service must filter out any drivers whose vehicle type does not match the request.
+  - For each eligible driver, a score must be calculated based on an initial algorithm weighing at least:
+    - Proximity to the pickup location (higher score for closer drivers).
+    - The driver's average rating (higher score for better-rated drivers).
+  - The driver with the highest score must be selected as the candidate for the ride.
+  - After selection, the service must emit a new internal event, `DriverSelectedForRideEvent`, containing the `rideId` and the selected `driverId`.
+  - The scoring logic should be implemented in a modular way to facilitate adding more scoring factors in the future (e.g., acceptance rate).
+
+files_to_be_created:
+  - apps/dispatch-service/src/dispatch/driver-scoring.service.ts
+
+files_to_be_modified:
+  - apps/dispatch-service/src/dispatch/dispatch.service.ts # To integrate the scoring service and handle the event.
+  - apps/dispatch-service/src/dispatch/dispatch.module.ts # To provide the new scoring service.

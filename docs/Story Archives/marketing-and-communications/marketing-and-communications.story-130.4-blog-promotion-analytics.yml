@@ -1,0 +1,28 @@
+id: story-130.4
+epic: marketing-and-communications
+slug: blog-promotion-analytics
+title: Provide Analytics for Blog Post Promotions
+status: DONE
+author: Mary (analyst)
+date: '2024-08-10T11:55:00Z'
+
+description: >
+  As a marketing manager, I need to see performance analytics for my blog post
+  promotions, so I can measure their effectiveness and optimize my content strategy.
+
+acceptance_criteria:
+  - The `analytics-service` must track user interactions with blog promotion messages sent via `story-130.2`.
+  - Key metrics to track must include: total recipients, message open rate, and link click-through rate (CTR).
+  - In the `admin-panel`'s blog management interface (`apps/admin-panel/src/app/content/blog/page.tsx`), the admin must be able to see these key analytics for each post that has been promoted.
+  - The analytics must be segmented by the target audience of the promotion (e.g., show separate stats for passengers vs. drivers if the promotion was sent to both).
+  - The analytics should be displayed clearly next to each post, showing the performance of its most recent promotion.
+  - Clicking on the stats should ideally show a more detailed view, perhaps with performance over time if a post is promoted multiple times.
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To add logic for tracking and aggregating promotion interaction events.
+  - apps/admin-panel/src/app/content/blog/page.tsx # To display the analytics data.
+  - libs/backend/notification-service/src/lib/notification.service.ts # To ensure it emits the necessary events for the analytics service to consume.
+
+dev_notes: >
+  This feature provides the crucial ROI measurement for our content marketing efforts. It closes the loop started in `story-130.2`. The implementation should be similar to how we track read receipts (`story-61.4`) but focused on the specific metrics of a promotional campaign (opens and clicks).
+  It is critical that the analytics can be broken down by the target audience segment (passenger vs. driver) to provide meaningful insights.

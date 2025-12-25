@@ -1,0 +1,24 @@
+id: story-62.9
+epic: customer-support
+slug: proactive-support-outreach
+title: Implement Proactive Support Outreach for Bad Trips
+status: Done
+author: Bob (sm)
+date: '2024-08-10T04:05:00Z'
+
+description: >
+  As a support manager, I want the system to automatically flag exceptionally
+  bad trip experiences and create a support ticket, so an agent can
+  proactively reach out to the user.
+
+acceptance_criteria:
+  - The `analytics-service` must have a job that identifies "terrible trips" based on certain heuristics (e.g., trip took 3x longer than estimated, driver cancelled after a long wait).
+  - When such a trip is detected, the system automatically creates a high-priority ticket in the `support-service`.
+  - The ticket is pre-filled with the trip details and the reason it was flagged, allowing an agent to quickly reach out to the user with an apology and perhaps a credit.
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To identify bad trips
+  - libs/backend/support-service/src/lib/support.service.ts # To create the proactive ticket
+
+dev_notes: >
+  This turns a negative user experience into a positive customer support interaction. Proactively addressing problems before the user complains can be a powerful loyalty builder.

@@ -1,0 +1,88 @@
+id: story-18.1.1
+epic: ride-safety-features
+slug: fix-sos-remote-config
+title: '[Bug] Fix SOS Button to Use Remote Config for Emergency Number'
+status: Done
+author: Bob (sm)
+date: '2024-08-15T20:15:00Z'
+
+description: >
+  This story addresses a bug identified during the QA review of `story-18.1`.
+  The in-trip SOS button was implemented with a hardcoded emergency number,
+  failing a key acceptance criterion. This prevents us from customizing the
+  number for different regions or updating it without a full app release.
+
+acceptance_criteria:
+  - This story fixes the `FAIL` status in the QA review of `story-18.1`.
+  - A new `ConfigService` must be created in the `driver-app` to handle fetching values from a remote configuration source (e.g., Firebase Remote Config).
+  - The `TripInProgressPanel` widget must be refactored to use this `ConfigService` to retrieve the emergency number.
+  - The logic must gracefully handle cases where the remote configuration is unavailable, falling back to a default, hardcoded number.
+  - The widget test for `TripInProgressPanel` must be updated to mock the `ConfigService` and verify that the number it provides is the one passed to the `url_launcher`.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/services/config_service.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/widgets/trip_in_progress_panel.dart
+  - apps/driver-app/test/widgets/trip_in_progress_panel_test.dart
+
+dev_notes: >
+  This is a high-priority bug fix to address the scalability and maintenance issues with the SOS feature. The new `ConfigService` should be designed as a reusable utility for fetching any remote configuration values we may need in the future. For this story, a mock implementation that returns a predefined value is sufficient, but it should be structured to easily integrate with a real service like Firebase Remote Config later.
+
+tasks:
+  - id: task-1
+    description: Create a `ConfigService` to fetch the emergency number.
+    subtasks:
+      - "[x] Create `Cabi Alpha/mobile/driver_app/lib/services/config_service.dart`."
+      - "[x] Implement a method to get the emergency number with a fallback."
+  - id: task-2
+    description: Refactor the `TripInProgressPanel` to use the `ConfigService`.
+    subtasks:
+      - "[x] Instantiate the `ConfigService` in the widget."
+      - "[x] Update the SOS button's action to call the service for the number."
+  - id: task-3
+    description: Update widget tests to mock the `ConfigService` and verify its usage.
+    subtasks:
+      - "[x] Create a mock version of the `ConfigService` for testing."
+      - "[x] Provide the mock service to the widget under test."
+      - "[x] Verify that the number from the mock service is used in the `url_launcher` call."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  completion_notes:
+    - >-
+      The bug fix is complete. I created a new `ConfigService` to abstract
+      the fetching of the emergency number. The `TripInProgressPanel` and its
+      tests have been refactored to use this service. This resolves the
+      hardcoding issue from `story-18.1` and makes the feature maintainable.
+  file_list:
+    - Cabi Alpha/mobile/driver_app/lib/services/config_service.dart
+    - Cabi Alpha/mobile/driver_app/lib/widgets/trip_in_progress_panel.dart
+    - apps/driver-app/test/widgets/trip_in_progress_panel_test.dart
+  change_log:
+    - file: Cabi Alpha/mobile/driver_app/lib/services/config_service.dart
+      change: Created a new mock service to fetch remote configuration values, including the emergency number with a fallback.
+    - file: Cabi Alpha/mobile/driver_app/lib/widgets/trip_in_progress_panel.dart
+      change: Refactored the SOS button logic to use the new `ConfigService` instead of a hardcoded emergency number.
+    - file: apps/driver-app/test/widgets/trip_in_progress_panel_test.dart
+      change: >-
+        Updated the widget tests to mock the `ConfigService` and verify that
+        the number it provides is correctly passed to the `url_launcher`.
+
+qa_results:
+  - id: qa-1
+    date: '2024-08-15T21:00:00Z'
+    agent: Quinn (qa)
+    summary: >-
+      The bug fix is excellent and successfully resolves the CONCERNS from
+      `story-18.1`. The introduction of a `ConfigService` correctly abstracts
+      the emergency number, and the fallback logic is a robust addition. This
+      resolves the hardcoding issue and makes the feature maintainable.
+    requirements_traceability:
+      - criteria: "The `TripInProgressPanel` widget must be refactored to use this `ConfigService` to retrieve the emergency number."
+        test_case: "Given the driver confirms the SOS action, when the dialer is launched, then the number used is the one provided by the `ConfigService`."
+        status: PASS
+      - criteria: "This story fixes the `FAIL` status in the QA review of `story-18.1`."
+        test_case: "Given the original failing test case from `story-18.1` (hardcoded number), when re-evaluated against the new code, then the test now passes by using the configurable number."
+        status: PASS
+    gate_decision: PASS

@@ -1,0 +1,27 @@
+id: story-21.4
+epic: driver-group-management
+slug: e2e-tests-for-driver-group-api
+title: Implement E2E Tests for Driver Group Management API
+status: IN PROGRESS
+author: Sarah (po)
+date: '2024-07-24T14:00:00Z'
+
+description: >
+  As a developer, I need to create a comprehensive suite of end-to-end tests
+  for the Driver Group Management API, so that we can ensure its stability,
+  correctness, and prevent regressions before deploying to production.
+
+acceptance_criteria:
+  - E2E tests must cover the full CRUD lifecycle for a `DriverGroup` (POST, GET, PUT, DELETE on `/admin/driver-groups`).
+  - A test must verify the creation of a hierarchical relationship (a group with a parentId).
+  - A test must successfully assign a driver to a group using `POST /admin/driver-groups/{groupId}/drivers`.
+  - A test must successfully unassign a driver from a group using `DELETE /admin/driver-groups/{groupId}/drivers/{driverId}`.
+  - Error scenarios must be tested, including:
+    - Requesting a non-existent group ID (should return 404).
+    - Providing invalid data (e.g., invalid UUID) in requests (should return 400).
+    - Attempting to assign a non-existent driver to a group.
+  - The tests must clean up any created entities (groups, drivers) after execution to ensure test idempotency.
+  - All tests must be added to the `mlm-service` e2e test suite.
+
+files_to_be_created:
+  - apps/mlm-service/test/driver-groups.e2e-spec.ts

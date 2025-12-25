@@ -1,0 +1,29 @@
+id: story-35.2
+epic: passenger-personalization
+slug: ride-preferences
+title: Allow Passengers to Set Ride Preferences
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T14:00:00Z'
+
+description: >
+  As a passenger, I want to set my general ride preferences (e.g., "Quiet
+  ride preferred", "Cooler temperature") in my profile, so that this
+  information can be shared with the driver when they accept my trip.
+
+acceptance_criteria:
+  - A new "Ride Preferences" section must be added to the passenger's profile screen in the `passenger-app`.
+  - The section should offer a predefined list of preferences that a user can toggle on or off (e.g., "Quiet Ride", "Open to Chat", "Cooler Temp", "Warmer Temp").
+  - These preferences must be saved to the user's profile via the `user-service`.
+  - When a driver accepts a ride, the passenger's selected preferences must be displayed in the `driver-app` on the trip details screen.
+  - The UI in the `driver-app` must clearly state that these are non-binding preferences.
+
+files_to_be_created:
+  - apps/passenger-app/src/screens/ride_preferences_screen.dart
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To store user preferences
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To display preferences to the driver
+
+dev_notes: >
+  This feature enhances the ride experience by setting expectations early. It's important to frame these as "preferences," not "demands," to maintain a positive driver-passenger relationship. The list of preferences should be curated to be simple and actionable.

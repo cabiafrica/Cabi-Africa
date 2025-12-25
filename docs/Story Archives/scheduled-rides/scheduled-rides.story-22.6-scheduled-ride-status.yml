@@ -1,0 +1,24 @@
+id: story-22.6
+epic: scheduled-rides
+slug: driver-cancellation-consequences
+title: Implement Consequences for Driver Cancellations on Scheduled Rides
+status: Done
+author: Bob (sm)
+date: '2024-08-09T17:10:00Z'
+
+description: >
+  As the system, I need to handle cases where a driver cancels an accepted
+  scheduled ride, so that the ride can be reliably re-assigned and driver
+  accountability is maintained.
+
+acceptance_criteria:
+  - A driver who has been assigned a scheduled ride must be able to cancel it.
+  - When a driver cancels, the ride's status must be reset to 'pending' so it can be re-dispatched.
+  - The driver who cancelled must have a penalty applied to their record (e.g., via a `DriverService`).
+  - The passenger must be immediately notified that their driver has cancelled and that the system is searching for a new one.
+  - The system should not reset the `dispatchAttempts` counter for the ride, to prevent indefinite re-dispatching.
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/scheduled_ride.service.ts # To add the cancellation logic
+  - libs/backend/ride-service/src/lib/ride.module.ts # To provide necessary services
+  - libs/backend/driver-service/src/lib/driver.service.ts # To handle penalties

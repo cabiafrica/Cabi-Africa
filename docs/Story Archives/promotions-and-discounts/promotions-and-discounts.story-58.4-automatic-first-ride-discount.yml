@@ -1,0 +1,24 @@
+id: story-58.4
+epic: promotions-and-discounts
+slug: automatic-first-ride-discount
+title: Implement Automatic First-Ride Discount for New Users
+status: Done
+author: Bob (sm)
+date: '2024-08-09T18:45:00Z'
+
+description: >
+  As a marketing manager, I want all new users in a specific region to
+  automatically receive a discount on their first ride, to incentivize them
+  to try the service without needing a code.
+
+acceptance_criteria:
+  - The `incentive-service` must automatically apply a "First Ride" promotion to a user's account upon successful sign-up.
+  - This promotion is automatically applied during the fare calculation for their first completed trip.
+  - The discount amount/percentage and the applicable regions for this offer must be configurable in the `admin-panel`.
+
+files_to_be_modified:
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To automatically apply the discount to new users
+  - apps/admin-panel/src/app/promotions/page.tsx # To configure the first-ride offer
+
+dev_notes: >
+  This removes friction from the new user experience. Unlike a promo code, this is an automatic "welcome" offer that drives initial conversion.

@@ -1,0 +1,22 @@
+schema: 1
+story: "110.1"
+story_title: "Redesign Driver App Home Screen for Clarity"
+gate: "FAIL"
+status_reason: "Formal review was requested on a story in 'READY' status. A review requires code and tests, which are not available. This is a critical process failure."
+reviewer: "Quinn (Test Architect)"
+updated: "2025-12-01T12:00:00Z"
+waiver: { active: false }
+top_issues:
+  - id: "PROC-001"
+    severity: high
+    finding: "Story is not in 'Review' status."
+    suggested_action: "Ensure stories complete the development and initial testing phases and are moved to 'Review' status before requesting a formal quality gate review."
+  - id: "TEST-001"
+    severity: high
+    finding: "No test plan or tests were provided for review."
+    suggested_action: "Provide widget, integration, and performance tests for the new home screen."
+nfr_validation:
+  security: { status: CONCERNS, notes: "Earnings data handling needs verification." }
+  performance: { status: CONCERNS, notes: "Impact of larger map needs to be tested." }
+  reliability: { status: PASS, notes: "" }
+  maintainability: { status: PASS, notes: "" }

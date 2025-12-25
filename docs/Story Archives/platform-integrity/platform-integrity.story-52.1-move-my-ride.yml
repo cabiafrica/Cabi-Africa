@@ -1,0 +1,28 @@
+id: story-52.1
+epic: platform-integrity
+slug: move-my-ride
+title: Implement "Move My Ride" Feature
+status: DONE
+author: Bob (sm)
+date: '2024-08-02T10:10:00Z'
+
+description: >
+  As a passenger, if my driver asks me to cancel and pay them in cash, I want
+  a discreet way to report this and be quickly matched with a new, compliant
+  driver.
+
+acceptance_criteria:
+  - During the "Driver on the way" phase, a new "Problem with this ride?" button must be available.
+  - One of the options must be "Driver asked to cancel".
+  - Selecting this option immediately cancels the current ride without penalty to the passenger, flags the original driver for review, and re-queues the passenger's ride request with high priority.
+  - The `ride-service` must handle this special cancellation and re-matching flow.
+  - The `rating-service` or a new `trust-and-safety-service` must log this driver infraction.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/trip_in_progress_view.dart # To add the problem button
+  - libs/backend/ride-service/src/lib/ride.service.ts # To handle the cancel and re-queue logic
+
+dev_notes: >
+  This is the first story for a new `platform-integrity` epic. It's a critical feature to combat off-platform trips, which hurt both platform revenue and user safety.

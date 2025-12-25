@@ -1,0 +1,42 @@
+title: Marketing Content - About Us Page
+epic: marketing-and-communications
+story_id: marketing-and-communications.story-130.7
+type: Story
+state: Done
+owner: John (pm)
+jira_ref: CABI-130-7
+area: Marketing Website
+description: >
+  As a prospective driver or customer, I want to understand Cabi's mission, values, and story so that I can determine if the company aligns with my own principles and build trust in the brand.
+acceptance_criteria:
+  - The "About Us" page must be accessible from the main website navigation.
+  - The page must feature a section detailing Cabi's mission statement.
+  - The page must include a section on the company's core values (e.g., safety, reliability, driver empowerment).
+  - The page should tell the founding story of Cabi.
+  - The content should be engaging, professional, and consistent with the Cabi brand voice.
+content: |
+  # About Cabi: Our Journey and Our Promise
+
+  ## Our Mission: Moving People, Improving Lives
+
+  At Cabi, our mission is simple: to provide safe, reliable, and accessible transportation for everyone. We believe that by connecting people and communities, we can create opportunities and improve lives. We are committed to building a platform that not only serves our passengers but also empowers our driver-partners to build sustainable businesses.
+
+  ## The Cabi Story: From a Simple Idea to a Community
+
+  Cabi was founded in [Year] by [Founder's Name(s)] with a simple yet powerful idea: what if getting a ride could be easier, safer, and more enjoyable for everyone involved? Frustrated with the limitations of traditional transportation options, they envisioned a platform that would leverage technology to create a seamless experience for both passengers and drivers.
+
+  What started as a small operation in [City] has grown into a thriving community of riders and drivers across the country. Our growth is a testament to the trust our users place in us and the hard work of our dedicated driver-partners.
+
+  ## Our Values: The Principles that Guide Us
+
+  *   **Safety First:** The safety of our passengers and drivers is our absolute priority. From rigorous driver screening to in-app safety features, we are relentless in our pursuit of a secure platform.
+  *   **Driver Empowerment:** Our drivers are the heart of our business. We are committed to providing them with the tools, support, and opportunities they need to succeed and thrive. We believe in fair compensation, flexible work, and a respectful partnership.
+  *   **Customer Obsession:** We are obsessed with providing an exceptional experience for our riders. We continuously listen to feedback and innovate to meet and exceed their expectations.
+  *   **Community Focus:** We believe in the power of community. We strive to be a positive force in the cities we serve, fostering local connections and contributing to local economies.
+  *   **Integrity:** We operate with transparency and integrity in everything we do. We are honest with our users and accountable for our actions.
+  
+  **Join us on our journey.**
+  
+  [Link to "Why Drive with Us?"] [Link to "Sign Up to Drive"]
+notes: >
+  This story provides the core content for the "About Us" page. The actual implementation will be handled by the development team, who will integrate this content into the marketing website template.

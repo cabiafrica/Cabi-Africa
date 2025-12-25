@@ -1,0 +1,33 @@
+id: story-20.3
+epic: passenger-experience
+slug: passenger-post-trip-tip
+title: "Passenger: Add a Tip After a Trip is Completed"
+status: Done
+author: Gemini Code Assist
+date: '2025-12-04T09:10:00Z'
+
+description: >
+  As a passenger, I want the ability to add a tip for my driver from the trip summary screen or my trip history,
+  so I can reward them for excellent service.
+
+acceptance_criteria:
+  - On the `RateDriverScreen` (from story-20.2), a section for adding a tip must be present.
+  - The tip section should offer pre-set percentage options (e.g., 15%, 20%, 25%) and a "Custom" amount option.
+  - The "Submit Rating" button text should update to "Submit Rating & Tip" if a tip is added.
+  - A "Tip" button must also be available on the `TripDetailsScreen` within the trip history (from story-22.1) for trips that have not yet been tipped.
+  - Submitting a tip must call a new backend endpoint `POST /payments/tip` in the `payment-service`.
+  - The endpoint must accept the `tripId` and `tipAmount`.
+  - The `payment-service` must process the tip using the user's default payment method.
+
+files_to_be_created:
+  # No new files, modifies existing screens.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/rate_driver_screen.dart # To add the tipping UI.
+  - apps/passenger-app/src/screens/trip_details_screen.dart # To add a "Tip" button for past trips.
+  - libs/backend/payment-service/src/lib/payment.service.ts # To add logic for processing a tip.
+  - libs/backend/payment-service/src/lib/payment.controller.ts # To expose the new POST /payments/tip endpoint.
+
+dev_notes: >
+  This story enhances the post-trip flow as defined in the PRD (section 2.1). It integrates directly into the UI of `story-20.2` (Rate Driver) and `story-22.1` (Trip History). The main backend work is in the `payment-service`, which will need a new method to handle this specific transaction type, ensuring it's linked to the original trip and correctly allocated to the driver's earnings.
+  PRD Reference: 2.1. Passenger App -> Payments & Promotions -> Tipping

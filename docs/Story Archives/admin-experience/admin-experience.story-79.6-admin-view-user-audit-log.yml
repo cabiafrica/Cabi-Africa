@@ -1,0 +1,34 @@
+id: story-79.6
+epic: admin-experience
+slug: admin-view-user-audit-log
+title: "Admin: View User Action Audit Log"
+status: DONE
+author: Bob (sm)
+date: '2024-08-21T12:00:00Z'
+
+description: >
+  As a super-admin, I want to view a paginated audit log of all user status
+  changes (suspensions and activations), so that I can monitor administrative
+  actions and ensure accountability.
+
+acceptance_criteria:
+  - A new "Audit Log" page must be created in the `admin-panel` (e.g., at `/audit-log`).
+  - The page must fetch data from a new backend endpoint (e.g., `GET /admin/users/audit-log`).
+  - The log must be displayed in a table showing: Timestamp, Admin ID, Target User ID, Action, and Reason (if applicable).
+  - The log must be paginated to handle a large number of entries.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/audit-log/page.tsx # The new page to display the audit log.
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To add a method to retrieve the audit log.
+  - libs/backend/user-service/src/lib/user.controller.ts # To expose the new audit log endpoint.
+
+dev_notes: >
+  This feature makes the audit trail created in `story-79.4` visible. It provides essential oversight for platform administrators. A link to this page should be added to the main admin navigation in a subsequent step.
+
+tasks:
+  - id: task-1
+    description: "Implement the `GET /admin/users/audit-log` endpoint in the backend."
+  - id: task-2
+    description: "Create the 'Audit Log' page in the `admin-panel` to display the logs."

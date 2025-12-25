@@ -1,0 +1,104 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+// import 'package:image_picker/image_picker.dart';
+// import 'package:image_cropper/image_cropper.dart';
+
+// Placeholder for a real user object
+class User {
+  final String? avatarUrl;
+  User({this.avatarUrl});
+}
+
+class ProfilePictureEditor extends StatefulWidget {
+  final User user;
+  const ProfilePictureEditor({super.key, required this.user});
+
+  @override
+  State<ProfilePictureEditor> createState() => _ProfilePictureEditorState();
+}
+
+class _ProfilePictureEditorState extends State<ProfilePictureEditor> {
+  File? _newImageFile;
+
+  Future<void> _pickImage(ImageSource source) async {
+    // final picker = ImagePicker();
+    // final pickedFile = await picker.pickImage(source: source);
+    // if (pickedFile == null) return;
+
+    // This is a placeholder for the picked file
+    final pickedFile = File('path/to/fake/image.jpg');
+
+    _cropImage(pickedFile.path);
+  }
+
+  Future<void> _cropImage(String filePath) async {
+    // final cropper = ImageCropper();
+    // final croppedFile = await cropper.cropImage(
+    //   sourcePath: filePath,
+    //   aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+    //   compressQuality: 70,
+    //   uiSettings: [ ... ],
+    // );
+    // if (croppedFile == null) return;
+
+    // Placeholder for the cropped file
+    final croppedFile = File(filePath);
+
+    setState(() {
+      _newImageFile = croppedFile;
+    });
+
+    // In a real app, you would now upload this file to S3
+    // and update the user's profile URL in the backend.
+  }
+
+  void _showImageSourceDialog() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Photo Library'),
+              onTap: () {
+                _pickImage(ImageSource.gallery);
+                Navigator.of(context).pop();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_camera),
+              title: const Text('Camera'),
+              onTap: () {
+                _pickImage(ImageSource.camera);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _showImageSourceDialog,
+      child: CircleAvatar(
+        radius: 50,
+        backgroundImage: _newImageFile != null
+            ? FileImage(_newImageFile!)
+            : (widget.user.avatarUrl != null
+                      ? NetworkImage(widget.user.avatarUrl!)
+                      : null)
+                  as ImageProvider,
+        child: widget.user.avatarUrl == null && _newImageFile == null
+            ? const Icon(Icons.person, size: 50)
+            : null,
+      ),
+    );
+  }
+}
+
+// Placeholder for ImageSource enum if image_picker is not imported
+enum ImageSource { gallery, camera }

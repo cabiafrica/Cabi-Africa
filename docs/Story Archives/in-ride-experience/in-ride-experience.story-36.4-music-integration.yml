@@ -1,0 +1,27 @@
+id: story-36.4
+epic: in-ride-experience
+slug: music-integration
+title: Implement In-App Music Integration
+status: DONE
+author: Bob (sm)
+date: '2024-07-31T11:11:00Z'
+
+description: >
+  As a passenger, I want to connect my music streaming account (e.g.,
+  Spotify) during a ride, so that I can play my own music through the car's
+  speakers.
+
+acceptance_criteria:
+  - The `passenger-app` must allow users to link their Spotify (or other music service) account in settings.
+  - During a trip, if the driver's vehicle supports it (e.g., Bluetooth), the passenger can request to play music.
+  - The driver's app would facilitate the connection, allowing the passenger's music to be played.
+  - This requires integration with the music service's SDK and potentially a hardware integration or clear instructions for the driver.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/settings_screen.dart # To link music account
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/trip_in_progress_view.dart # To control music during trip
+
+dev_notes: >
+  A premium "delight" feature. The technical complexity can be high, depending on the level of integration. A simpler version might just show the passenger's currently playing song to the driver to facilitate a conversation.

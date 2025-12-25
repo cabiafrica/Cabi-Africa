@@ -1,0 +1,26 @@
+id: story-55.6
+epic: data-and-privacy
+slug: download-my-data
+title: Allow Users to Request Their Personal Data
+status: Done
+author: Bob (sm)
+date: '2024-08-09T20:15:00Z'
+
+description: >
+  As a user, I want to be able to request a copy of all my personal data that
+  the platform stores, so I can review it and comply with my right to data portability.
+
+acceptance_criteria:
+  - A "Download My Data" option must be available in the "Privacy Center".
+  - Tapping it informs the user that the process is asynchronous and the data will be emailed to them.
+  - This triggers a backend process to gather all data associated with the user (profile, trip history, ratings, payment history, etc.).
+  - The data must be compiled into a machine-readable format (e.g., JSON files in a ZIP archive).
+  - A secure, time-limited download link for the data archive must be sent to the user's registered email address.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/privacy_center_screen.dart # To add the button
+  - Cabi Alpha/mobile/driver_app/lib/screens/privacy_center_screen.dart # To add the button
+  - libs/backend/user-service/src/lib/user.service.ts # To orchestrate the data gathering process
+
+dev_notes: >
+  This is a critical compliance feature. The backend process will be complex as it needs to query multiple microservices to assemble a complete data package. The process must be asynchronous to avoid timing out.

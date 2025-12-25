@@ -1,0 +1,27 @@
+id: story-63.8
+epic: map-and-navigation
+slug: pickup-point-suggestions
+title: Implement Pickup Point Suggestions
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T10:05:00Z'
+
+description: >
+  As a passenger, when I set my pickup pin in a complex area, I want the app
+  to suggest a better, safer, or more convenient nearby pickup spot, so that
+  the pickup is smoother for both me and the driver.
+
+acceptance_criteria:
+  - When a passenger drops their pickup pin, the `ride-service` analyzes the location.
+  - If the pin is in a difficult spot (e.g., on a highway, in a no-stopping zone), the service should find a better nearby point.
+  - The `passenger-app` must display the suggestion on the map (e.g., "Meet at the corner of Main & 1st? It's a 1-minute walk.").
+  - The passenger can accept the suggestion with one tap.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To implement the suggestion logic
+  - apps/passenger-app/src/widgets/ride_booking_panel.dart # To display the suggestion
+
+dev_notes: >
+  This feature can dramatically reduce pickup friction and cancellations. The backend logic needs to combine map data with platform data (e.g., historical pickup success rates) to make smart suggestions.

@@ -1,0 +1,30 @@
+id: story-16.8
+epic: driver-payouts
+slug: driver-earnings-history
+title: Display Driver's Recent Earnings and Payout History
+status: Done
+author: Bob (sm)
+date: '2024-06-28T09:00:00Z'
+
+description: >
+  As a driver, I want to view a detailed history of my earnings, tips,
+  commissions, and payouts in my Wallet, so that I can understand how my
+  balance is calculated and track all my financial activities.
+
+acceptance_criteria:
+  - The `WalletScreen` in the `driver-app` must be updated to display a detailed, chronological list of all financial transactions.
+  - The list must clearly distinguish between different transaction types with an icon or label (e.g., Trip Earning, Tip, Commission, Payout).
+  - Each transaction item in the list must display its type, amount (formatted as positive or negative), and the date/time it occurred.
+  - Trip-related earnings and tips should be tappable, navigating the user to the corresponding `TripDetailsScreen` (`story-7.4`).
+  - A new endpoint must be created in the `payment-service` to fetch a paginated list of all transactions for the currently logged-in driver.
+  - The `payment-service` must aggregate transactions from various sources (ride fares, tips, MLM commissions, payout records) into a unified ledger for the driver.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/wallet_screen.dart # To add the detailed transaction list
+  - libs/backend/payment-service/src/lib/payment.controller.ts # To add a new endpoint for fetching the transaction ledger
+  - libs/backend/payment-service/src/lib/payment.service.ts # To implement the logic for aggregating and returning the transaction history
+
+dev_notes: >
+  This story enhances the `WalletScreen` from a simple balance view to a comprehensive financial ledger for the driver. The main backend challenge is in the `payment-service`, which will need to query and consolidate data from multiple tables (e.g., ride earnings, tips, commissions, payouts) into a single, ordered list. The frontend will need to handle displaying different types of transaction list items and navigating to other screens where appropriate.

@@ -1,0 +1,22 @@
+id: story-62.12
+epic: customer-support
+slug: self-service-refunds
+title: Implement Self-Service Refunds for Common Issues
+status: Done
+author: Bob (sm)
+date: '2024-08-10T06:30:00Z'
+
+description: >
+  As a passenger, if I was incorrectly charged a cancellation or wait-time
+  fee, I want a simple, automated way to request a refund without contacting support.
+
+acceptance_criteria:
+  - In the trip history, if a trip has a specific fee (like a cancellation fee), a "Request Refund" button is available.
+  - The system uses simple, automated rules to approve the refund (e.g., "if GPS shows driver was more than 5 minutes late, auto-refund wait-time fee").
+  - If the request is approved, the `payment-service` automatically processes the refund. If denied, a support ticket is created.
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To add automated refund logic
+
+dev_notes: >
+  This empowers users and significantly reduces the volume of simple, repetitive tickets for the support team.

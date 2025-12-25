@@ -1,0 +1,26 @@
+id: story-70.2
+epic: surge-and-dynamic-pricing
+slug: manual-surge-application
+title: Allow Admins to Manually Apply Surge Multipliers
+status: Done
+author: Bob (sm)
+date: '2024-08-09T21:20:00Z'
+
+description: >
+  As an operations manager, I want to be able to manually set a surge
+  multiplier for a specific surge zone, so I can react to real-time events
+  like concerts or bad weather.
+
+acceptance_criteria:
+  - In the "Dynamic Pricing" admin interface, an admin can select a surge zone and apply a multiplier (e.g., 1.5x).
+  - The `pricing-service` must store this active multiplier and its associated zone.
+  - When a passenger requests a ride with a pickup location inside an active surge zone, the `fare-service` must apply the multiplier to the estimated fare.
+  - The `passenger-app` must clearly indicate that surge pricing is active and show the multiplier.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/pricing/page.tsx # To add the multiplier control
+  - libs/backend/ride-service/src/lib/pricing.service.ts # To store and apply the multiplier
+  - Cabi Alpha/mobile/passenger_app/lib/screens/home_screen.dart # To display surge info to the user
+
+dev_notes: >
+  This story enables the manual application of surge pricing. Automated, algorithm-driven surge will be a future story. The user-facing communication of surge is critical for transparency.

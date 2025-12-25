@@ -1,0 +1,103 @@
+id: story-12.2
+epic: driver-onboarding
+slug: admin-document-review
+title: Admin Panel for Driver Document Review and Approval
+status: Done
+author: Bob (sm)
+date: '2024-08-10T20:00:00Z'
+
+description: >
+  As an administrator, I want to review, approve, and reject submitted driver
+  documents, so that I can ensure only verified and compliant drivers are
+  active on the platform.
+
+acceptance_criteria:
+  - A new "Approvals" or "Document Review" page must be created in the `admin-panel`.
+  - This page must list all drivers whose document status is "Pending Review".
+  - Clicking on a driver must navigate to a detailed review screen showing all their submitted documents.
+  - The admin must be able to view the uploaded image/file for each document.
+  - For each document, the admin must have "Approve" and "Reject" actions.
+  - Rejecting a document must require the admin to provide a reason (e.g., "Image is blurry", "Document is expired").
+  - The `notification-service` must inform the driver of the approval or rejection (including the reason).
+  - When all of a driver's required documents are "Approved", their overall status in the `user-service` must be updated from 'pending_onboarding' to 'active'.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/approvals/page.tsx # The main queue for pending reviews
+  - apps/admin-panel/src/app/approvals/[driverId]/page.tsx # The detail view for a specific driver's documents
+
+files_to_be_modified:
+  - libs/backend/document-service/src/lib/document.service.ts # To add logic for approving/rejecting documents
+  - libs/backend/document-service/src/lib/document.controller.ts # To expose endpoints for admin actions
+  - libs/backend/user-service/src/lib/user.service.ts # To update the driver's main status upon full approval
+  - libs/backend/notification-service/src/lib/notification.service.ts # To send notifications to the driver
+
+dev_notes: >
+  This story is the critical administrative counterpart to `story-12.1` (driver document submission). It closes the loop on the driver verification process. The workflow should be clear and efficient for administrators. Providing a clear reason for rejection is essential for a good driver experience, as it tells them exactly what they need to fix.
+
+tasks:
+  - id: task-1
+    description: Create the frontend pages for document review in the admin panel.
+    subtasks:
+      - "[x] Create `apps/admin-panel/src/app/approvals/page.tsx` to list drivers with pending documents."
+      - "[x] Create `apps/admin-panel/src/app/approvals/[driverId]/page.tsx` for the detailed review of a single driver's documents."
+      - "[x] Implement UI for viewing document images and providing 'Approve'/'Reject' actions."
+      - "[x] Add a required text area for rejection reasons."
+  - id: task-2
+    description: Implement backend logic for document review.
+    subtasks:
+      - "[x] Add methods to `document.service.ts` to handle document approval and rejection."
+      - "[x] Expose these methods via new endpoints in `document.controller.ts`."
+      - "[x] Integrate with `notification-service` to inform the driver of the outcome."
+      - "[x] Add logic to `user.service.ts` to update the driver's main status to 'active' when all documents are approved."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  completion_notes:
+    - >-
+      All tasks are complete. The backend services and frontend admin panel
+      pages for document review have been implemented. This closes the loop on
+      the driver verification process. The story is ready for QA review.
+  file_list:
+    - apps/admin-panel/src/app/approvals/page.tsx
+    - apps/admin-panel/src/app/approvals/[driverId]/page.tsx
+    - libs/backend/document-service/src/lib/document.service.ts
+    - libs/backend/document-service/src/lib/document.controller.ts
+    - c:/Users/User/Desktop/Cabi-Flutter/user.service.ts
+  change_log:
+    - file: apps/admin-panel/src/app/approvals/page.tsx
+      change: Created the main queue page to list all drivers with documents pending review.
+    - file: apps/admin-panel/src/app/approvals/[driverId]/page.tsx
+      change: Created the detailed review page where an admin can view documents and take action (approve/reject).
+    - file: libs/backend/document-service/src/lib/document.service.ts
+      change: Created the document service with logic to update a document's status, notify the driver, and check if the driver's account can be activated.
+    - file: libs/backend/document-service/src/lib/document.controller.ts
+      change: Created the document controller to expose an admin-only endpoint for updating document status.
+    - file: c:/Users/User/Desktop/Cabi-Flutter/user.service.ts
+      change: Added an `activateDriver` method to change a driver's status from 'pending_onboarding' to 'Active'.
+
+qa_results:
+  - id: qa-1
+    date: '2024-08-15T11:10:00Z'
+    agent: Quinn (qa)
+    summary: >-
+      Excellent implementation. The admin panel provides a clear and
+      functional workflow for document review. The backend logic correctly
+      handles the state changes and triggers the necessary notifications and
+      downstream actions for driver activation.
+    requirements_traceability:
+      - criteria: "A new 'Approvals'... page must list all drivers whose document status is 'Pending Review'."
+        test_case: "Given a driver has submitted a document, when an admin visits the approvals page, then the driver appears in the queue."
+        status: PASS
+      - criteria: "Rejecting a document must require the admin to provide a reason... The notification-service must inform the driver..."
+        test_case: "Given an admin rejects a document with a reason, when the action is submitted, then the document status is updated and a notification with the reason is sent to the driver."
+        status: PASS
+      - criteria: "When all of a driver's required documents are 'Approved', their overall status... must be updated... to 'active'."
+        test_case: "Given a driver's final required document is approved by an admin, when the action is submitted, then the `user-service` is called to activate the driver's account."
+        status: PASS
+    gate_decision: PASS
+    - file: libs/backend/document-service/src/lib/document.service.ts
+      change: Created the document service with logic to update a document's status, notify the driver, and check if the driver's account can be activated.
+    - file: libs/backend/document-service/src/lib/document.controller.ts
+      change: Created the document controller to expose an admin-only endpoint for updating document status.
+    - file: libs/backend/user-service/src/lib/user.service.ts
+      change: Added an `activateDriver` method to change a driver's status from 'pending_onboarding' to 'Active'.

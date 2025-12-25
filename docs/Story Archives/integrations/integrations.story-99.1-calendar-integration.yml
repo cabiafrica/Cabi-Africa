@@ -1,0 +1,24 @@
+id: story-99.1
+epic: integrations
+slug: calendar-integration
+title: Implement Calendar Integration for Scheduled Rides
+status: Done
+author: Bob (sm)
+date: '2024-08-09T23:15:00Z'
+
+description: >
+  As a busy passenger, I want to connect my phone's calendar to the app, so
+  that the app can proactively suggest scheduling a ride for my upcoming appointments.
+
+acceptance_criteria:
+  - In the app settings, the user can grant permission to read their device's calendar.
+  - The app scans for upcoming events that have a location.
+  - A new "From Your Calendar" section appears on the home screen, showing upcoming events.
+  - Tapping an event pre-fills the destination and time in the "Schedule a Ride" screen, making booking a ride to the event a one-tap process.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/settings_screen.dart # To add calendar permission
+  - apps/passenger-app/src/screens/home_screen.dart # To display calendar-based suggestions
+
+dev_notes: >
+  This is a powerful proactive convenience feature. It requires careful handling of permissions and user privacy. The logic to parse event locations needs to be robust.

@@ -1,0 +1,60 @@
+id: story-28.3
+epic: driver-profile-and-vehicle-management
+slug: driver-edit-profile
+title: Allow Driver to Edit Personal Profile Information
+status: DONE
+author: Bob (sm)
+date: '2024-08-11T10:00:00Z'
+
+description: >
+  As a driver, I want to be able to edit my personal profile information, such
+  as my name, phone number, and profile picture, so that I can keep my
+  account details accurate and up to date.
+
+acceptance_criteria:
+  - The `driver-app` must have a "Profile" or "Account Settings" screen.
+  - This screen must display the driver's current profile information (Name, Phone Number, Email, Profile Picture).
+  - The driver must be able to edit their Full Name and Phone Number.
+  - The driver must be able to upload a new profile picture (either from the camera or gallery).
+  - Saving the changes must call a new endpoint in the `user-service` to update the user's record.
+  - The `user-service` must handle the update and, in the case of a picture, store the file and update the user's `profilePictureUrl`.
+
+files_to_be_created:
+  - apps/driver-app/src/screens/edit_profile_screen.dart
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/profile_screen.dart # To add a link to the new edit screen
+  - libs/backend/user-service/src/lib/user.service.ts # To add logic for updating user profile data
+  - libs/backend/user-service/src/lib/user.controller.ts # To expose the profile update endpoint
+
+dev_notes: >
+  This story provides essential account management functionality for drivers. While email is often a fixed identifier and shouldn't be editable here, other personal details need to be manageable. For the profile picture, the backend should handle the file upload (e.g., to an S3 bucket) and store the resulting URL in the user's record.
+
+tasks:
+  - id: task-1
+    description: Implement the backend logic for profile updates.
+    subtasks:
+      - "[x] Add an `updateProfile` method to `user.service.ts`."
+      - "[x] Expose this method via a `PUT /users/me/profile` endpoint in `user.controller.ts`."
+      - "[x] Add logic to handle profile picture uploads (e.g., using `multer` and storing to a file service)."
+  - id: task-2
+    description: Create the frontend screen for editing the driver's profile.
+    subtasks:
+      - "[x] Create `apps/driver-app/src/screens/edit_profile_screen.dart`."
+      - "[x] Implement a form to edit Full Name and Phone Number."
+      - "[x] Add a placeholder UI for uploading a new profile picture."
+      - "[x] On save, call the new backend endpoint to persist changes."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - apps/driver-app/src/screens/edit_profile_screen.dart
+    - libs/backend/user-service/src/lib/user.service.ts
+    - libs/backend/user-service/src/lib/user.controller.ts
+  change_log:
+    - file: apps/driver-app/src/screens/edit_profile_screen.dart
+      change: Created the edit profile screen for the driver app, with a form to update personal information and a placeholder for profile picture upload.
+    - file: libs/backend/user-service/src/lib/user.service.ts
+      change: Implemented the `updateProfile` method to allow modification of a user's name and phone number.
+    - file: libs/backend/user-service/src/lib/user.controller.ts
+      change: Exposed a new `PUT /users/me/profile` endpoint to allow authenticated users to update their own profile.

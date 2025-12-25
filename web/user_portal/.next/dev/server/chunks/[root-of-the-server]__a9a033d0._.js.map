@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 16, "column": 0}, "map": {"version":3,"sources":["file:///D:/IBN%20KENYA/PROJECTS/Cabi%20Alpha/Cabi%20Alpha/web/user_portal/src/pages/api/stats.ts"],"sourcesContent":["import type { NextApiRequest, NextApiResponse } from 'next';\r\n\r\ntype Data = {\r\n    activeDrivers: number;\r\n    completedTrips: number;\r\n    happyPassengers: number;\r\n};\r\n\r\nexport default function handler(\r\n    req: NextApiRequest,\r\n    res: NextApiResponse<Data>\r\n) {\r\n    res.status(200).json({\r\n        activeDrivers: 540,\r\n        completedTrips: 15420,\r\n        happyPassengers: 14890\r\n    });\r\n}\r\n"],"names":[],"mappings":";;;;AAQe,SAAS,QACpB,GAAmB,EACnB,GAA0B;IAE1B,IAAI,MAAM,CAAC,KAAK,IAAI,CAAC;QACjB,eAAe;QACf,gBAAgB;QAChB,iBAAiB;IACrB;AACJ"}}]
+}

@@ -1,0 +1,32 @@
+id: story-3.2
+epic: core-ride-hailing-experience
+slug: driver-ride-navigation
+title: "Driver: Navigate to Passenger Pickup Location"
+status: DONE
+author: Sarah (po)
+date: '2024-06-01T13:00:00Z'
+
+description: >
+  As a driver, after accepting a ride, I want to see the passenger's pickup
+  location on a map and get turn-by-turn directions, so I can efficiently
+  navigate to them.
+
+acceptance_criteria:
+  - After a driver accepts a ride on the `IncomingRideScreen`, the app must navigate to a new `RideNavigationScreen`.
+  - The `RideNavigationScreen` must display a map with the route from the driver's current location to the passenger's pickup location.
+  - The screen must display the passenger's name and the full pickup address.
+  - A "Start Navigation" button must be present.
+  - Tapping "Start Navigation" must launch the driver's preferred external navigation app (Google Maps or Waze, as configured in Story 10.3) with the pickup location as the destination.
+  - An "I Have Arrived" button must be displayed. Tapping it will notify the passenger and update the ride state (to be handled in a future story).
+  - A "Cancel Ride" button must be available, which shows a confirmation dialog before proceeding.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/ride_navigation_screen.dart
+  - apps/driver-app/test/screens/ride_navigation_screen_test.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/incoming_ride_screen.dart # To navigate to the new screen on accept.
+  - Cabi Alpha/mobile/driver_app/lib/services/ride_service.dart # To manage the active ride state.
+
+dev_notes: >
+  This story focuses on the "Driver to Passenger" leg of the trip. The map can be implemented with `google_maps_flutter`. For launching the external navigation app, a package like `url_launcher` is recommended. The state for the active ride (e.g., passenger details, locations) will need to be managed, likely within a dedicated `RideService`.

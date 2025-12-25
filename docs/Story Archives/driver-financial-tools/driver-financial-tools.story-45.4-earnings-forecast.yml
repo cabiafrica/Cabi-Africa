@@ -1,0 +1,26 @@
+id: story-45.4
+epic: driver-financial-tools
+slug: earnings-forecast
+title: Implement Driver Earnings Forecast
+status: Done
+author: Bob (sm)
+date: '2024-08-02T10:02:00Z'
+
+description: >
+  As a driver, I want the app to forecast my potential earnings for the rest
+  of the week based on my driving history, so that I can better plan my work schedule.
+
+acceptance_criteria:
+  - On the driver's earnings screen, a new section will show a "Weekly Forecast".
+  - The `analytics-service` must analyze the driver's historical earnings for similar days of the week and times.
+  - Based on this history, it should project a potential earnings range for the remainder of the week.
+  - The UI must clearly state that this is an estimate and not a guarantee.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/wallet_screen.dart # To display the forecast
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To implement the forecasting logic
+
+dev_notes: >
+  A data-driven motivational tool. The forecasting algorithm can start simple (e.g., averaging the last 4 weeks) and become more sophisticated over time.

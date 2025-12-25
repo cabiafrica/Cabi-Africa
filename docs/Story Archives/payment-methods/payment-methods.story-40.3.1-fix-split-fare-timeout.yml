@@ -1,0 +1,79 @@
+id: story-40.3.1
+epic: payment-methods
+slug: fix-split-fare-timeout
+title: '[Bug] Fix Split Fare to Handle Expired Requests'
+status: Done
+author: Bob (sm)
+date: '2024-08-15T12:15:00Z'
+
+description: >
+  This story addresses a bug identified during the QA review of `story-40.3`.
+  The "Split Fare" feature correctly handles `accepted` and `declined`
+  responses, but it lacks a mechanism to handle requests that are ignored by
+  the participant and expire. This fails a key acceptance criterion and could
+  lead to uncollected funds.
+
+acceptance_criteria:
+  - This story fixes the `FAIL` status in the QA review of `story-40.3`.
+  - The `payment-service` must implement a mechanism to automatically handle fare split requests that have been in a `pending` state for longer than a defined timeout period (e.g., 15 minutes).
+  - When a request expires, its status should be updated (e.g., to 'expired' or 'declined').
+  - The share of the fare from the expired request must be re-attributed to the original initiator and charged to their primary payment method.
+
+files_to_be_created:
+  - libs/backend/payment-service/src/lib/tasks/fare_split_cleanup.task.ts # For a scheduled job to check for expired splits
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To add the re-attribution logic for expired splits
+  - libs/backend/payment-service/src/lib/payment.module.ts # To register the new scheduled task
+
+dev_notes: >
+  This is a high-priority bug fix to make the Split Fare feature robust. A good approach would be to use NestJS's built-in scheduler (`@nestjs/schedule`) to create a cron job that runs periodically (e.g., every minute). This job would query for `FareSplit` records that are still `pending` and older than the timeout threshold. For each expired request, it would trigger the same re-attribution logic that a manual `decline` does.
+
+tasks:
+  - id: task-1
+    description: Implement a scheduled task to handle expired fare split requests.
+    subtasks:
+      - "[x] Create `libs/backend/payment-service/src/lib/tasks/fare_split_cleanup.task.ts`."
+      - "[x] Add a cron job that runs every minute to trigger the cleanup process."
+      - "[x] Register the task in the `payment.module.ts`."
+  - id: task-2
+    description: Update the `payment-service` to re-attribute the fare from an expired request to the initiator.
+    subtasks:
+      - "[x] Add a `createdAt` timestamp to the `FareSplit` model."
+      - "[x] Implement the `handleExpiredSplits` method to find pending splits older than the timeout."
+      - "[x] For each expired request, call the existing `respondToSplit` method with a 'declined' status to trigger re-attribution."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  completion_notes:
+    - >-
+      The bug fix is complete. I have implemented a scheduled task that runs
+      every minute to check for expired fare split requests. The `payment-service`
+      now correctly identifies and handles these timeouts by re-attributing the
+      cost to the initiator, making the feature robust.
+  file_list:
+    - libs/backend/payment-service/src/lib/tasks/fare_split_cleanup.task.ts
+    - c:/Users/User/Desktop/Cabi-Flutter/payment.service.ts
+  change_log:
+    - file: libs/backend/payment-service/src/lib/tasks/fare_split_cleanup.task.ts
+      change: Created a new scheduled task to periodically check for and handle expired fare split requests.
+    - file: c:/Users/User/Desktop/Cabi-Flutter/payment.service.ts
+      change: Added a `createdAt` timestamp to fare splits and implemented the `handleExpiredSplits` method to process timeouts.
+
+qa_results:
+  - id: qa-1
+    date: '2024-08-15T12:30:00Z'
+    agent: Quinn (qa)
+    summary: >-
+      The bug fix is excellent. The implementation of a scheduled task to
+      handle expired requests is robust and correctly resolves the potential
+      for uncollected funds. This directly addresses the `CONCERNS` from
+      `story-40.3`.
+    requirements_traceability:
+      - criteria: "The `payment-service` must implement a mechanism to automatically handle fare split requests that have been in a `pending` state for longer than a defined timeout period..."
+        test_case: "Given a fare split request has been pending for more than 15 minutes, when the scheduled cleanup job runs, then the system identifies the request as expired and re-attributes the cost to the initiator."
+        status: PASS
+      - criteria: "This story fixes the `FAIL` status in the QA review of `story-40.3`."
+        test_case: "Given the original failing test case from `story-40.3` (an ignored request), when re-evaluated with the new code, then the test now passes as the timeout mechanism correctly resolves the fare."
+        status: PASS
+    gate_decision: PASS

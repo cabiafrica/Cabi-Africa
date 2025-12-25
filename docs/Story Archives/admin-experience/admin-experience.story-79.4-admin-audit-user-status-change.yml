@@ -1,0 +1,30 @@
+id: story-79.4
+epic: admin-experience
+slug: admin-audit-user-status-change
+title: "Admin: Audit User Status Changes"
+status: DONE
+author: Bob (sm)
+date: '2024-08-20T22:00:00Z'
+
+description: >
+  As a platform owner, I want every user suspension and activation performed by an
+  administrator to be recorded in an audit log, so that we have a clear and
+  immutable record of all moderation actions for security and compliance purposes.
+
+acceptance_criteria:
+  - When an admin uses the `PATCH /admin/users/:userId/status` endpoint to suspend or activate a user, an audit log entry must be created.
+  - The audit log entry must contain the ID of the admin who performed the action, the ID of the target user, the action taken ('Suspended' or 'Activated'), and a timestamp.
+  - The `AdminUserService` must be responsible for creating this log entry.
+  - (Future Story) The audit log must be viewable by super-admins.
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To add the audit logging logic within updateUserStatus.
+
+dev_notes: >
+  This is a critical security and compliance feature. We'll start by creating the log entries. A separate story will cover creating a UI to view these logs. For now, we can mock the audit log as an in-memory array. The admin's ID would typically come from the request's authentication context (e.g., `req.user.id`), but we will mock it for now.
+
+tasks:
+  - id: task-1
+    description: "Update the `updateUserStatus` method in `AdminUserService` to create an audit log entry."
+  - id: task-2
+    description: "Update backend tests to verify that an audit log entry is created upon status change."

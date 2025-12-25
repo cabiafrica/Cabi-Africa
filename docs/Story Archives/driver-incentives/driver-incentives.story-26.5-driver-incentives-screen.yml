@@ -1,0 +1,30 @@
+id: story-26.5
+epic: driver-incentives
+slug: driver-incentives-screen
+title: Implement Driver App "Incentives" Screen
+status: Done
+author: Bob (sm)
+date: '2024-07-24T11:00:00Z'
+
+description: >
+  As a driver, I want a dedicated "Incentives" screen in my app where I can
+  see all available bonuses and promotions, so that I can understand how to
+  maximize my earnings.
+
+acceptance_criteria:
+  - A new "Incentives" item must be added to the `driver-app` main navigation.
+  - This navigates to a new `IncentivesScreen`.
+  - The screen must display a list of currently active incentive programs (e.g., "Consecutive Trip Bonus", "Peak Hour Zones").
+  - Each item in the list must clearly explain the rules of the incentive (e.g., "Complete 3 trips in a row for a KES 150 bonus").
+  - The screen should also show the driver's current progress towards any relevant incentive (reusing the widget from `story-26.2`).
+  - The `incentive-service` must expose a new endpoint to list all active, publicly visible incentive rules.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/incentives_screen.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/navigation/app_router.dart # To add the new route
+  - libs/backend/incentive-service/src/lib/incentive.controller.ts # To add endpoint for listing active incentives
+
+dev_notes: >
+  This story provides a central hub for all things related to incentives, improving driver communication and engagement. It aggregates information from various incentive types into a single, easy-to-understand view.

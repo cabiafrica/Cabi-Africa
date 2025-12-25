@@ -1,0 +1,23 @@
+id: epic-62
+slug: platform-feedback-and-suggestions
+title: Platform Feedback and Suggestions System
+status: DONE
+author: Mary (analyst)
+date: '2024-08-10T11:35:00Z'
+
+description: >
+  This epic covers the creation of a complete, end-to-end system for collecting,
+  managing, and acting on user feedback and feature suggestions. The goal is to
+  create a transparent and engaging feedback loop that makes users feel valued
+  and provides the product team with actionable insights.
+
+stories:
+  - customer-support.story-62.13-user-feature-suggestion-box.yml
+  - customer-support.story-62.14-feedback-management-dashboard.yml
+  - customer-support.story-62.15-feedback-shipped-notification.yml
+  - customer-support.story-62.16-user-feedback-status-view.yml
+
+dev_notes: >
+  This feature set introduces a new workflow that spans from the user-facing apps
+  to the admin panel. It requires significant updates to the `support-service` to
+  handle the logic for feedback triage, status tracking, and notifications.

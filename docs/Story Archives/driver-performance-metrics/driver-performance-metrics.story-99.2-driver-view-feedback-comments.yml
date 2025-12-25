@@ -1,0 +1,44 @@
+id: story-99.2
+epic: driver-performance-metrics
+slug: driver-view-feedback-comments
+title: Driver View Feedback Comments
+status: DONE
+author: Sarah (po)
+date: '2024-08-12T16:00:00Z'
+
+description: >
+  As a driver, I want to read written comments left by passengers along with their ratings,
+  so that I can understand specific areas for improvement or what I am doing well.
+
+acceptance_criteria:
+  - The `PerformanceScreen` must have a button to "View Passenger Feedback".
+  - Tapping the button opens the `FeedbackScreen`.
+  - The screen must display a list of recent ratings.
+  - Each item must show the Star Rating, Date, and Comment (if provided).
+  - If no comment was left, it should be indicated (e.g., "No written comment").
+  - The app must fetch this data from the `performance-service`.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/feedback_screen.dart
+  - Cabi Alpha/mobile/driver_app/lib/screens/performance_screen.dart
+  - libs/backend/performance-service/src/lib/performance.service.ts
+  - libs/backend/performance-service/src/lib/performance.controller.ts
+
+dev_notes: >
+  This adds qualitative data to the quantitative metrics from the previous story.
+  In a real implementation, we might want to filter out abusive comments before showing them to the driver.
+
+tasks:
+  - id: task-1
+    description: Implement backend feedback retrieval.
+    subtasks:
+      - "[x] Update `performance.service.ts` to return mock feedback items."
+      - "[x] Update `performance.controller.ts` to expose `GET /performance/feedback`."
+  - id: task-2
+    description: Implement frontend feedback list.
+    subtasks:
+      - "[x] Create `feedback_screen.dart`."
+      - "[x] Add navigation button to `performance_screen.dart`."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro

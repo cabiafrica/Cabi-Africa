@@ -1,0 +1,17 @@
+id: driver-settings
+slug: driver-settings
+title: Driver App Settings and Preferences
+status: DONE
+owner: Sarah (po)
+description: >
+  This epic covers the configuration options available to the driver to customize
+  their app experience.
+  
+  Key capabilities include:
+  - Selecting a preferred Navigation Provider (e.g., Google Maps, Waze).
+  - Changing the App Language.
+  - Managing Notification preferences (Push, SMS, Email).
+tags:
+  - settings
+  - driver-experience
+  - configuration

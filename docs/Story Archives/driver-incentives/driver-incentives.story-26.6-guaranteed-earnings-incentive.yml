@@ -1,0 +1,32 @@
+id: story-26.6
+epic: driver-incentives
+slug: guaranteed-earnings-incentive
+title: Implement Guaranteed Earnings Incentive
+status: Done
+author: Bob (sm)
+date: '2024-07-24T11:01:00Z'
+
+description: >
+  As an administrator, I want to create "Guaranteed Earnings" promotions, so
+  that I can ensure a minimum level of driver supply during critical periods
+  by guaranteeing a certain income for a set number of hours online.
+
+acceptance_criteria:
+  - The admin panel must allow creating a new incentive type: "Guaranteed Earnings".
+  - An admin must be able to define the rules: a time window (e.g., Friday 5-9 PM), a minimum online duration (e.g., 3 hours), a minimum number of completed trips (e.g., 4), and a guaranteed gross earnings amount (e.g., KES 2000).
+  - The `incentive-service` must track drivers' online time and total earnings during the specified window.
+  - At the end of the window, a scheduled job must run to check for all eligible drivers who met the criteria (online time, trips completed).
+  - For each eligible driver, the job must compare their actual earnings (fares only) to the guaranteed amount.
+  - If the actual earnings are less than the guaranteed amount, the `incentive-service` must calculate the difference and issue a "top-up" bonus payment via the `payment-service`.
+  - The `IncentivesScreen` in the `driver-app` must display this promotion and the driver's progress towards meeting the criteria.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/incentives/page.tsx # To add the new incentive type
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To track and process guaranteed earnings
+  - The database schema for `incentive-service` to store these new rules and track driver progress.
+  - Cabi Alpha/mobile/driver_app/lib/screens/incentives_screen.dart # To display the promotion
+
+dev_notes: >
+  This is a complex but highly effective incentive. It requires the system to accurately track a driver's session time (time spent online and available for rides) and earnings within a specific period. A post-period batch job is the most reliable way to calculate and issue the top-up payments.

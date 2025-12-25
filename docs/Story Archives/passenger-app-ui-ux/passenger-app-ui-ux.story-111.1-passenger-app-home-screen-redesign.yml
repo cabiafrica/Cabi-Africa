@@ -1,0 +1,23 @@
+id: story-111.1
+epic: passenger-app-ui-ux
+slug: passenger-app-home-screen-redesign
+title: Redesign Passenger App Home Screen for Faster Booking
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T06:55:00Z'
+
+description: >
+  As a passenger, I want a home screen that makes it faster to book my most
+  common rides, so I can get on my way with fewer taps.
+
+acceptance_criteria:
+  - A UX/UI design process must be conducted to produce new mockups for the passenger home screen.
+  - The "Where to?" destination input must be the primary focus.
+  - Shortcuts to "Home" and "Work" (`story-96.5`) must be highly prominent.
+  - A list of recent destinations should be easily accessible from the home screen.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To be refactored based on new design
+
+dev_notes: >
+  This is the foundational story for the new `passenger-app-ui-ux` epic. The goal is to reduce the time from app open to ride request for the majority of users.

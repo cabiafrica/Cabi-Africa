@@ -1,0 +1,41 @@
+id: story-79.23
+epic: admin-experience
+slug: admin-manage-support-tickets
+title: "Admin: Manage and Resolve Support Tickets"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-04T11:00:00Z'
+
+description: >
+  As an administrator or support agent, I want a dedicated interface to view, manage, and resolve support tickets submitted by users,
+  so I can provide timely assistance and efficiently track customer issues.
+
+acceptance_criteria:
+  - A new "Support Tickets" page must be created in the `admin-panel`, accessible from the main navigation.
+  - The page must display a filterable and searchable list of all support tickets. Filters should include status (Open, In Progress, Resolved) and category.
+  - Clicking on a ticket in the list must navigate to a detailed ticket view page.
+  - The ticket detail view must display all relevant information: user details, ticket category, full description, associated trip ID (if any), and a history of all communications.
+  - An admin must be able to change the status of a ticket.
+  - An admin must be able to add internal notes (visible only to other admins) or public replies (visible to the user).
+  - The `support-service` (from story-33.2) must be expanded with new admin-only endpoints:
+    - `GET /admin/support/tickets` to fetch a list of all tickets with filtering.
+    - `GET /admin/support/tickets/:ticketId` to fetch details for a single ticket.
+    - `POST /admin/support/tickets/:ticketId/reply` to add a public reply or internal note.
+    - `PATCH /admin/support/tickets/:ticketId/status` to update the ticket's status.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/support/tickets/page.tsx
+  - apps/admin-panel/src/app/support/tickets/[ticketId]/page.tsx
+
+files_to_be_modified:
+  - # The main navigation component in `admin-panel` to add a link to the new support section.
+  - libs/backend/support-service/src/lib/support.service.ts # To add admin-specific logic for fetching and managing tickets.
+  - libs/backend/support-service/src/lib/support.controller.ts # To expose the new admin-only endpoints with appropriate guards.
+
+dev_notes: >
+  This story implements the core "Admin Manage Support Tickets" requirement from the PRD (section 2.3). It is the direct administrative counterpart to `story-33.2` (Passenger Create Support Ticket).
+
+  The primary effort will be on the backend to expand the `support-service` with role-protected endpoints for admins. The service will need logic to handle fetching lists of tickets, individual ticket details, and updating status/adding replies.
+
+  The frontend will consist of two main pages: a queue/list view for triaging tickets and a detailed view for working on a specific ticket. This provides the foundation for the entire customer support workflow.
+  PRD Reference: 2.3. Admin Panel -> Customer Support Management -> Admin Manage Support Tickets

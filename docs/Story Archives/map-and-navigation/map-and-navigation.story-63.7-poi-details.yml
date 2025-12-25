@@ -1,0 +1,25 @@
+id: story-63.7
+epic: map-and-navigation
+slug: poi-details
+title: Implement "Point of Interest" (POI) Details on Map
+status: DONE
+author: Bob (sm)
+date: '2024-08-08T11:12:00Z'
+
+description: >
+  As a user looking at the map, I want to be able to tap on points of
+  interest (like restaurants or parks) to see their name and have a quick
+  button to set it as my destination.
+
+acceptance_criteria:
+  - The maps in both the passenger and driver apps must be configured to make POIs tappable.
+  - Tapping a POI should display a small callout with its name.
+  - The callout should include a "Set as Destination" button.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To handle POI taps
+
+dev_notes: >
+  A standard map feature that improves usability and discovery. Implementation depends on the features of the map provider's SDK.

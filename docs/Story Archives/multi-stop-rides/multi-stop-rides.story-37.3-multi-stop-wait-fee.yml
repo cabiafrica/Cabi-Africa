@@ -1,0 +1,51 @@
+id: story-37.3
+epic: multi-stop-rides
+slug: multi-stop-wait-fee
+title: Implement Per-Stop Wait Time Fee
+status: Done for Review
+author: Bob (sm)
+date: '2024-07-31T11:00:00Z'
+
+description: >
+  As a driver, when on a multi-stop trip, I want to be compensated if a
+  passenger makes me wait at an intermediate stop for an extended period.
+
+acceptance_criteria:
+  - When a driver confirms arrival at an intermediate stop in a multi-stop trip, a timer must start on the backend.
+  - This uses the same wait time fee logic from `story-30.2`, including the grace period and per-minute rate.
+  - The timer stops and the accumulated wait time is recorded when the driver confirms they are leaving the stop to proceed to the next one.
+  - The total wait time fees from all stops are added to the final fare.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To handle wait time timers at intermediate stops
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To add a "Confirm Departure" button at stops
+
+dev_notes: >
+  This story adapts the existing wait time fee logic for the more complex multi-stop trip structure, ensuring drivers are fairly compensated for their time throughout the entire journey.
+
+tasks:
+  - id: task-1
+    description: Implement backend logic for per-stop wait time fees.
+    subtasks:
+      - "[x] Modify `ride.service.ts` to start a wait-time timer when a driver confirms arrival at an intermediate stop."
+      - "[x] The service should use the existing wait time fee configuration (grace period, per-minute rate)."
+      - "[x] The timer should stop when the driver confirms departure from the stop."
+      - "[x] The accumulated wait time fees from all stops must be added to the final fare calculation."
+  - id: task-2
+    description: Implement the frontend UI for managing stops.
+    subtasks:
+      - "[x] Update `apps/driver-app/src/widgets/trip_in_progress_panel.dart` to include a 'Confirm Arrival' button at each stop."
+      - "[x] After arrival, the button should change to 'Confirm Departure' to stop the wait timer."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - libs/backend/ride-service/src/lib/ride.service.ts
+    - apps/driver-app/src/widgets/trip_in_progress_panel.dart
+  change_log:
+    - file: libs/backend/ride-service/src/lib/ride.service.ts
+      change: Implemented `arriveAtStop` and `departFromStop` methods to manage wait time at intermediate stops. The logic calculates a fee for each stop after a grace period and adds it to the ride's total wait time fee.
+    - file: apps/driver-app/src/widgets/trip_in_progress_panel.dart
+      change: Created the in-trip panel widget for the driver app. It includes a button that toggles between 'Confirm Arrival' and 'Confirm Departure' to manage the wait time timer at intermediate stops.

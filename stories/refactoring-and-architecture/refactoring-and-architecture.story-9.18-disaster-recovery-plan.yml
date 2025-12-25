@@ -1,0 +1,25 @@
+---
+description: Implement Disaster Recovery Strategy and Tools
+---
+
+# User Story
+As a Platform Administrator, I want a comprehensive disaster recovery (DR) strategy and automated backup systems so that I can restore the platform functionality and data quickly in the event of a catastrophic failure, ensuring business continuity (NFR 3.3).
+
+# Acceptance Criteria
+- [ ] **Automated Database Backups**:
+    - Configure automated, daily snapshots for primary databases (e.g., AWS RDS).
+    - Enable Point-in-Time Recovery (PITR) with a retention period of at least 7 days (or as defined by policy).
+- [ ] **Infrastructure-as-Code (IaC) Recovery**:
+    - Verify that the entire core infrastructure can be redeployed in a new region/environment using existing IaC scripts (Terraform/CDK).
+- [ ] **Data Redundancy**:
+    - Ensure critical assets (e.g., uploaded documents in S3) have versioning and cross-region replication enabled if required by the tier.
+- [ ] **Disaster Recovery Runbook**:
+    - Create a `docs/disaster-recovery.md` document detailing the step-by-step process for declaring a disaster and executing the recovery.
+    - Include contact escalation paths.
+- [ ] **Recovery Drill**:
+    - Perform a "Game Day" simulation to validate the recovery time (RTO) and recovery point (RPO) objectives.
+
+# Technical Notes
+- Leverage AWS Backup or native RDS backup features.
+- Ensure `Refactoring and Architecture.Story-9.11 (IaC)` is completed first or done in parallel.
+- Define RTO (Recovery Time Objective) and RPO (Recovery Point Objective) in the documentation.

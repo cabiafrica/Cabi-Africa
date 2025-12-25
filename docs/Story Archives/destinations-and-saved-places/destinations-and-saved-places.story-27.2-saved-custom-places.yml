@@ -1,0 +1,29 @@
+id: story-27.2
+epic: destinations-and-saved-places
+slug: saved-custom-places
+title: Allow Passenger to Save Custom Places
+status: Done
+author: Bob (sm)
+date: '2024-07-23T14:01:00Z'
+
+description: >
+  As a passenger, I want to save any location with a custom label (e.g.,
+  "Gym", "Mom's House"), so that I can quickly select frequently visited
+  places that are not my home or work.
+
+acceptance_criteria:
+  - The `SavedPlacesScreen` (`story-27.1`) must be enhanced to allow adding, editing, and deleting custom saved places.
+  - When adding a new place, the user must be able to assign a custom label to it.
+  - The `HomeScreen` must be updated to display these custom saved places as shortcuts, in addition to "Home" and "Work".
+  - Tapping a custom place shortcut must immediately select it as the destination and move to the ride confirmation state.
+  - The `user-service` (or local storage) must be updated to store a list of custom places, each with a label and address details.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/saved_places_screen.dart # To manage custom places
+  - apps/passenger-app/src/screens/home_screen.dart # To display custom place shortcuts
+  - libs/backend/user-service/src/lib/user.service.ts # If using backend persistence, to store a list of places
+
+dev_notes: >
+  This story builds directly on the "Home/Work" feature from `story-27.1`. It provides a more flexible and personalized experience for the user. The main challenge will be designing a clean UI on the `HomeScreen` to accommodate a potentially growing list of saved places without cluttering the interface.

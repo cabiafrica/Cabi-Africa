@@ -1,0 +1,86 @@
+id: story-10.1
+epic: epic-10.0
+slug: chat-backend-setup
+title: Setup Backend for Real-Time Chat
+status: Done
+author: Sarah (po)
+date: '2024-06-28T14:35:00Z'
+
+description: >
+  As a developer, I want to set up a real-time messaging service, so that we
+  have the foundational infrastructure to support in-app chat features
+  between users.
+
+acceptance_criteria:
+  - A new backend service, `chat-service`, is created.
+  - The `chat-service` must use WebSockets (e.g., via NestJS gateways) to handle real-time connections.
+  - The service must handle client connections, disconnections, and message broadcasting.
+  - A basic authentication mechanism must be implemented for the WebSocket gateway to ensure only valid users can connect (e.g., validating a JWT passed during connection).
+  - The service must support the concept of "rooms" or "channels" based on a `tripId`, so that messages are isolated to a specific trip.
+  - A mock endpoint or method should be created to simulate sending a message to a room and have it logged by the service.
+
+files_to_be_created:
+  - docs/stories/story-10.1-chat-backend-setup.yml
+  - libs/backend/chat-service/src/lib/chat.gateway.ts
+  - libs/backend/chat-service/src/lib/chat.module.ts
+  - libs/backend/chat-service/src/lib/chat.service.ts
+
+dev_notes: >
+  This is a purely backend, infrastructural story. The goal is to establish a
+  working WebSocket server that can manage connections and broadcast messages
+  within isolated rooms. We can use a library like `socket.io` or the
+  built-in WebSocket capabilities of NestJS. This story does not include any
+  frontend UI implementation.
+
+tasks:
+  - id: task-1
+    description: "Implement the chat-service backend."
+    subtasks:
+      - "[x] Create the `chat.module.ts`, `chat.service.ts`, and `chat.gateway.ts` files."
+      - "[x] Implement a NestJS WebSocket gateway using `socket.io`."
+      - "[x] Add a mock JWT authentication check for new client connections."
+      - "[x] Implement a `joinRoom` message handler to subscribe clients to trip-specific rooms."
+      - "[x] Implement a `sendMessage` message handler to broadcast messages to clients in a specific room."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  completion_notes:
+    - >-
+      All tasks for this story are complete. A new `chat-service` has been
+      created with a WebSocket gateway. The gateway handles client connections,
+      disconnections, mock authentication, and room-based message broadcasting.
+      The backend is now ready for frontend integration.
+  file_list:
+    - libs/backend/chat-service/src/lib/chat.module.ts
+    - libs/backend/chat-service/src/lib/chat.service.ts
+    - libs/backend/chat-service/src/lib/chat.gateway.ts
+  change_log:
+    - file: libs/backend/chat-service/src/lib/chat.module.ts
+      change: Created the new module for the chat service.
+    - file: libs/backend/chat-service/src/lib/chat.service.ts
+      change: Created the placeholder service for future business logic.
+    - file: libs/backend/chat-service/src/lib/chat.gateway.ts
+      change: Implemented the core WebSocket gateway logic, including connection handling, mock authentication, and message/room management.
+
+qa_results:
+  - id: qa-1
+    date: '2024-06-28T15:00:00Z'
+    agent: Quinn (qa)
+    summary: >-
+      The implementation is excellent and meets all acceptance criteria. The
+      backend service provides a solid foundation for real-time chat. All
+      tests were performed using a WebSocket client.
+    requirements_traceability:
+      - criteria: "A new backend service, `chat-service`, is created."
+        test_case: "Given the project structure, when I inspect the `libs/backend` directory, then the `chat-service` is present."
+        status: PASS
+      - criteria: "The `chat-service` must use WebSockets..."
+        test_case: "Given the `chat.gateway.ts` file, when inspected, then it uses the `@WebSocketGateway` decorator from NestJS."
+        status: PASS
+      - criteria: "A basic authentication mechanism must be implemented..."
+        test_case: "Given a WebSocket client attempts to connect without a valid mock JWT, when the connection is attempted, then the server disconnects the client."
+        status: PASS
+      - criteria: "The service must support the concept of 'rooms' or 'channels'..."
+        test_case: "Given two clients join different rooms ('trip-A' and 'trip-B'), when a message is sent to 'trip-A', then only the client in 'trip-A' receives it."
+        status: PASS
+    gate_decision: PASS

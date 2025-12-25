@@ -1,0 +1,30 @@
+id: story-24.5
+epic: customer-support
+slug: categorize-support-requests
+title: Allow Users to Categorize Support Requests
+status: Done
+author: Bob (sm)
+date: '2024-07-25T09:01:00Z'
+
+description: >
+  As a user, before starting a chat, I want to select a category for my
+  issue (e.g., "Payment Issue", "Lost Item", "Feedback"), so that my request
+  can be routed to the correct support team more efficiently.
+
+acceptance_criteria:
+  - Before initiating a chat in the `passenger-app` or `driver-app`, the user must be presented with a list of support categories.
+  - The selected category must be passed to the `support-service` when the chat session is created.
+  - The agent chat interface in the `admin-panel` must display the selected category for each conversation.
+  - The system should allow for different categories for passengers and drivers.
+  - An admin must be able to manage these categories (add, edit, remove) from a new settings page in the `admin-panel`.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/settings/support-categories/page.tsx
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/help_center_screen.dart # To add the category selection step
+  - Cabi Alpha/mobile/driver_app/lib/screens/help_center_screen.dart # To add the category selection step
+  - libs/backend/support-service/src/lib/support.service.ts # To store and expose the category
+
+dev_notes: >
+  This feature is key for scaling the support operation. It enables automated routing and prioritization of tickets. The list of categories should be configurable by an admin without requiring a new app release.

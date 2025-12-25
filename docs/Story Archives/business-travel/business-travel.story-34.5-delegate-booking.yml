@@ -1,0 +1,27 @@
+id: story-34.5
+epic: business-travel
+slug: delegate-booking
+title: Allow Delegates to Book for Others on Business Accounts
+status: Done
+author: Bob (sm)
+date: '2024-07-31T11:10:00Z'
+
+description: >
+  As a corporate travel manager or executive assistant, I want to be able to
+  book rides for other employees through the corporate portal, so that I can
+  manage travel arrangements centrally.
+
+acceptance_criteria:
+  - In the `corporate-portal` (`story-33.2`), an admin must be able to assign "delegate" permissions to other users.
+  - A delegate user can log in to the portal and book rides on behalf of other employees within the same company.
+  - The booking flow is the same as the admin's, but the delegate can only see and manage trips they have personally booked.
+  - The `user-service` must be updated to handle these delegate roles and permissions within a corporate account.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/corporate-portal/src/app/dashboard/page.tsx # To adapt UI based on user role (admin vs. delegate)
+  - libs/backend/user-service/src/lib/user.service.ts # To implement role-based access control for corporate accounts
+
+dev_notes: >
+  This feature enhances the utility of the corporate portal for larger organizations where travel is managed by specific roles. It requires implementing a more granular permissions system.

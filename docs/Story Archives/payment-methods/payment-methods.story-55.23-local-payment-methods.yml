@@ -1,0 +1,23 @@
+id: story-55.23
+epic: payment-methods
+slug: local-payment-methods
+title: Integrate Local and Regional Payment Methods
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T04:50:00Z'
+
+description: >
+  As a passenger in a specific country, I want to be able to pay with my
+  preferred local payment method (e.g., M-Pesa, GrabPay, iDEAL), so I can use
+  the service conveniently.
+
+acceptance_criteria:
+  - The `payment-service` must be architected to support multiple payment gateways and methods.
+  - For each new region, the platform must integrate with the relevant local payment provider.
+  - The `passenger-app` must dynamically display the available payment options based on the user's region.
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To abstract payment provider logic
+
+dev_notes: >
+  This is critical for international expansion. Credit card penetration is low in many markets, so supporting local payment methods is essential for user adoption.

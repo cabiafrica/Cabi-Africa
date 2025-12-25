@@ -1,0 +1,42 @@
+id: story-22.1
+epic: driver-onboarding
+slug: driver-document-submission
+title: "Driver: Submit Required Documents for Verification"
+status: DONE
+author: Bob (sm)
+date: '2024-08-20T14:00:00Z'
+
+description: >
+  As a prospective driver, I need to upload my required legal and vehicle documents
+  through the app, so that my profile can be verified and I can be approved to drive.
+
+acceptance_criteria:
+  - The app must have a "Submit Your Documents" screen.
+  - The screen must list the required documents: "Driver's License", "Vehicle Insurance", and "Vehicle Registration".
+  - Each document must initially have a status of "Not Uploaded".
+  - For each document, there must be an "Upload" button.
+  - Tapping "Upload" must allow the user to select an image from their photo library or take a new photo with the camera.
+  - After an image is selected and successfully uploaded to the backend, the document's status must change to "Pending Review".
+  - The "Upload" button for a document must be replaced with a success indicator (e.g., a checkmark) after a successful upload.
+  - A "Submit for Review" button must be present on the screen but should be disabled until all required documents have the "Pending Review" status.
+  - Once all documents are uploaded, the "Submit for Review" button must become active.
+  - Tapping the active "Submit for Review" button must notify the backend that the driver's profile is ready for final approval.
+
+files_to_be_created:
+  - apps/driver-app/lib/screens/document_submission_screen.dart # Note: Path is assumed for driver context. Actual file is in /docs.
+
+files_to_be_modified:
+  # The driver registration flow would be modified to navigate to this screen.
+
+dev_notes: >
+  This story covers a critical step in the driver onboarding process. The implementation uses a single screen to manage the state of multiple document uploads. The frontend communicates with two distinct backend endpoints: one for uploading individual files and another for submitting the entire document set for review. This ensures that the final submission only happens when all prerequisites are met. The UI provides clear feedback to the user with status updates, loading indicators, and snackbar messages for success or failure.
+
+tasks:
+  - id: task-1
+    description: "Create the Document Submission screen UI."
+  - id: task-2
+    description: "Implement logic to upload individual document images to the backend."
+  - id: task-3
+    description: "Implement logic to submit all documents for final review."
+  - id: task-4
+    description: "Write widget tests to cover the document upload and submission flow."

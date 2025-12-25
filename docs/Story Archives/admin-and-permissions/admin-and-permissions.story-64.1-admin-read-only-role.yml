@@ -1,0 +1,27 @@
+id: story-64.1
+epic: admin-and-permissions
+slug: admin-read-only-role
+title: Implement "Admin Read-Only" Role
+status: DONE
+author: Bob (sm)
+date: '2024-08-06T09:07:00Z'
+
+description: >
+  As a senior administrator, I want to be able to grant "read-only" access
+  to the admin panel to certain users (e.g., analysts, junior support), so
+  they can view data without being able to make changes.
+
+acceptance_criteria:
+  - A new user role, "Read-Only Admin", must be created in the authentication system.
+  - The `admin-panel` must be updated to check a user's role.
+  - If a user has the "Read-Only" role, all buttons and form fields for creating, editing, or deleting data must be disabled or hidden.
+  - The backend APIs must also enforce this, rejecting any state-changing requests from users with this role.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - The authentication provider configuration.
+  - All pages in `apps/admin-panel` to conditionally disable controls.
+
+dev_notes: >
+  This is the first story for a new `admin-and-permissions` epic. It's a foundational security feature for safely scaling up our internal operations team.

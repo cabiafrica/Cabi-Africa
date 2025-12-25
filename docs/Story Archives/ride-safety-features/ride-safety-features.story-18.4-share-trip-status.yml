@@ -1,0 +1,25 @@
+id: story-18.4
+epic: ride-safety-features
+slug: share-trip-status
+title: Implement "Share Trip Status" Feature
+status: Done
+author: Bob (sm)
+date: '2024-08-09T12:10:00Z'
+
+description: >
+  As a user (passenger or driver), I want to share my live trip status with a
+  trusted contact, so they can follow my journey in real-time for my safety.
+
+acceptance_criteria:
+  - During an active trip, a "Share Trip" button must be available in the UI for both `passenger-app` and `driver-app`.
+  - Tapping the button must present the user with their list of Trusted Contacts (from `story-18.3`).
+  - Upon selecting a contact, the system must generate a unique, temporary web URL for viewing the live trip.
+  - The app must use the native device sharing functionality to send this URL to the selected contact via SMS, WhatsApp, etc.
+  - The web page must display a map with the vehicle's current location, the driver and passenger details, and the destination.
+  - The web page must be publicly accessible without a login but expire after the trip ends.
+
+files_to_be_created:
+  - apps/trip-sharing-web/src/app/[tripId]/page.tsx # A new web app for the public trip tracking view
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To generate and manage sharing links

@@ -1,0 +1,42 @@
+id: story-120.3
+epic: driver-organization-management
+slug: leader-send-announcements
+title: Allow Organization Leaders to Send Announcements to Members
+status: Done
+author: Bob (sm)
+date: '2025-12-02T16:30:00Z'
+
+description: >
+  As an organization leader, I want to send announcements to all members of my organization or to specific subgroups,
+  so that I can communicate important information, updates, or opportunities efficiently.
+
+acceptance_criteria:
+  - A new "Send Announcement" option must be available in the "Manage Organization" section of the `driver-app`, visible only to organization leaders.
+  - The UI must allow the leader to compose a message (title and body).
+  - The leader must be able to select the audience for the announcement: either the entire organization or one or more specific subgroups they manage.
+  - When sent, the `notification-service` must deliver the announcement to all targeted members.
+  - The announcement should appear in the members' "Organization Announcements" screen in the `driver-app` (from `story-120.1`).
+  - The `notification-service` must have a new endpoint for broadcasting announcements, protected to ensure only authorized leaders can use it.
+  - The `user-service` must provide a way for the `notification-service` to resolve an organization or subgroup ID into a list of member user IDs.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/send_announcement_screen.dart # UI for composing and sending the announcement.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/manage_organization_screen.dart # To add a link to the new announcement screen.
+  - libs/backend/notification-service/src/lib/notification.controller.ts # To add a new endpoint for broadcasting announcements.
+  - libs/backend/notification-service/src/lib/notification.service.ts # To add the logic for sending announcements to a list of users.
+  - libs/backend/user-service/src/lib/user.service.ts # To add logic to get members of an organization/subgroup.
+
+dev_notes: >
+  This story empowers organization leaders with communication tools, making the organizations more functional and reducing the need for admins to send bulk messages. The backend security is critical here; the `notification-service` must validate with the `user-service` that the sender is indeed a leader of the target organization/subgroups before sending any message. This feature will deliver content to be displayed by the UI created in `story-120.1`.
+
+tasks:
+  - id: task-1
+    description: "Implement backend logic in `user-service` to retrieve members of an organization or specific subgroups."
+  - id: task-2
+    description: "Implement the broadcast endpoint and logic in `notification-service`, including authorization checks."
+  - id: task-3
+    description: "Create the 'Send Announcement' screen in the `driver-app` for leaders to compose and send messages."
+  - id: task-4
+    description: "Integrate the new screen into the 'Manage Organization' flow."

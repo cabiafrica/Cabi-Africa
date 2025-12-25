@@ -1,0 +1,36 @@
+id: story-104.8
+epic: web-booking-experience
+slug: web-booking-rate-driver
+title: Allow Web User to Rate Driver After Ride
+status: DONE
+author: Bob (sm)
+date: '2025-12-02T15:15:00Z'
+
+description: >
+  As a website user who has completed a ride, I want to rate my driver and provide optional feedback,
+  so that I can share my experience and contribute to the quality and safety of the platform.
+
+acceptance_criteria:
+  - After a ride is successfully paid for on the trip status page (`/trip/[tripId]`), the UI must update to present a rating and review interface.
+  - The interface must allow the user to give a star rating (1-5 stars).
+  - The interface must include an optional text field for a written review.
+  - Submitting the rating must call the existing `rating-service`'s endpoint for creating a new rating.
+  - The `rating-service` must store the rating and review, associating it with the correct driver and trip ID.
+  - The `rating-service` must update the driver's average rating based on the new submission.
+  - Upon successful submission, the UI must display a confirmation message to the user.
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/app/trip/[tripId]/page.tsx # To add the rating UI after payment is complete.
+  - libs/backend/rating-service/src/lib/rating.service.ts # To ensure it can handle ratings from web users (guests or logged-in).
+  - libs/backend/rating-service/src/lib/rating.controller.ts # To ensure the endpoint is accessible to the web client.
+
+dev_notes: >
+  This story adds the final piece of the post-ride user journey for the web booking experience, mirroring the functionality of `story-42.1` from the passenger app. It follows the payment flow in `story-104.3`. The implementation should reuse the existing `rating-service` as the single source of truth for all ratings. The main consideration will be handling the context of a web user, who may be a guest without a persistent account, when submitting the rating.
+
+tasks:
+  - id: task-1
+    description: "Verify and, if necessary, adapt the `rating-service` to accept rating submissions from the web client."
+  - id: task-2
+    description: "Implement the rating and review UI on the trip status page, which appears after successful payment."
+  - id: task-3
+    description: "Connect the frontend rating UI to the `rating-service` endpoint and handle the success response."

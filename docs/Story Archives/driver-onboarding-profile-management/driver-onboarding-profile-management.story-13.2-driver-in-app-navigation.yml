@@ -1,0 +1,28 @@
+id: story-13.2
+epic: driver-onboarding-profile-management
+slug: driver-in-app-navigation
+title: "Driver App: Implement In-App Navigation"
+status: Done
+author: Gemini Code Assist
+date: '2025-12-06T18:30:00Z'
+
+description: >
+  As a driver, I want turn-by-turn navigation directly within the Cabi app,
+  so I don't have to switch between different applications while driving to a pickup or destination.
+
+acceptance_criteria:
+  - When a driver accepts a ride, the app must display a map view with the calculated route to the pickup location.
+  - The app must provide audible, turn-by-turn instructions for the route.
+  - The map must update in real-time to show the driver's current position along the route.
+  - After picking up the passenger, the navigation must automatically update to show the route to the destination.
+  - The implementation must use a map provider's Directions API (e.g., Google Maps, Mapbox) to get the route and turn instructions.
+
+files_to_be_created:
+  # No new screens, this enhances the in-trip map view.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/in_trip_screen.dart # Or similar, to integrate the navigation UI.
+
+dev_notes: >
+  This story implements a core driver experience feature from the PRD (section 2.2). It requires integrating a third-party mapping service's SDK and Directions API. The main work will be fetching the route polyline and maneuver instructions from the API and rendering them on the map, as well as using a text-to-speech plugin for audible directions. This significantly improves the driver's workflow and safety by keeping them within our app.
+  PRD Reference: 2.2. Driver App -> Core Trip Management & Navigation -> In-App Navigation

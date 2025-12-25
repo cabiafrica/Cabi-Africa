@@ -1,0 +1,30 @@
+id: story-10.3
+epic: driver-profile-and-settings
+slug: driver-app-settings
+title: Manage Driver App Settings
+status: DONE
+author: Sarah (po)
+date: '2024-06-01T10:00:00Z'
+
+description: >
+  As a driver, I want to be able to configure my application settings, specifically
+  choosing my preferred navigation provider and managing notification preferences,
+  so that the app integrates smoothly with my workflow.
+
+acceptance_criteria:
+  - Create a `SettingsScreen` accessible from the `ProfileScreen`.
+  - Include a section for "Navigation Provider" allowing selection between "Google Maps" and "Waze".
+  - Include a toggle switch for "Push Notifications".
+  - Display the current "App Version" at the bottom of the screen (hardcoded or fetched from package info).
+  - Persist these settings locally on the device so they are remembered across sessions.
+  - Add a "Settings" entry point (e.g., ListTile) to the `ProfileScreen`.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/settings_screen.dart
+  - apps/driver-app/test/screens/settings_screen_test.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/profile_screen.dart
+
+dev_notes: >
+  Use `shared_preferences` or a similar lightweight local storage solution for persisting the user's choices. For the navigation provider, we are just storing the preference string for now; the actual launching logic will be handled in the ride execution flow.

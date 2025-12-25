@@ -1,0 +1,25 @@
+id: story-58.1
+epic: promotions-and-discounts
+slug: admin-create-promo-codes
+title: Allow Admins to Create and Manage Promo Codes
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T16:55:00Z'
+
+description: >
+  As a marketing manager, I need an interface to create and manage promotional
+  codes (e.g., "NAIROBI20" for 20% off), so that I can run marketing campaigns.
+
+acceptance_criteria:
+  - A new "Promo Codes" section must be added to the `admin-panel`.
+  - Admins must be able to define a promo code, its discount type (percentage or fixed amount), its value, and usage rules (e.g., expiry date, max number of uses).
+  - The `incentive-service` must store and manage these promo codes.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/promotions/page.tsx
+
+files_to_be_modified:
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To add promo code management logic
+
+dev_notes: >
+  This is the foundational story for the `promotions-and-discounts` epic. The promo code model needs to be flexible to support various campaign types.

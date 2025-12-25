@@ -1,0 +1,28 @@
+id: story-47.2
+epic: advanced-booking-options
+slug: hourly-booking
+title: Implement Hourly Booking
+status: DONE
+author: Bob (sm)
+date: '2024-08-01T09:11:00Z'
+
+description: >
+  As a passenger, I want to book a driver for a specific number of hours, so
+  that I can have a car at my disposal for multiple stops or events without a
+  fixed itinerary.
+
+acceptance_criteria:
+  - A new "Book by the Hour" option must be available in the `passenger-app`.
+  - The user selects a duration (e.g., 2 hours, 4 hours) and a vehicle type.
+  - The `pricing-service` must have a specific hourly rate for each vehicle type.
+  - The user is charged for the block of time upfront.
+  - The driver who accepts is committed for the entire duration.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/widgets/ride_booking_panel.dart # To add the hourly option
+  - libs/backend/ride-service/src/lib/fare.service.ts # To handle hourly pricing
+
+dev_notes: >
+  This feature serves a different use case than A-to-B trips, catering to tourists, business roadshows, or special events. It simplifies the trip model for the duration of the booking.

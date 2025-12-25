@@ -1,0 +1,26 @@
+id: story-50.2
+epic: new-verticals
+slug: public-transit
+title: Implement "Public Transit" Directions
+status: DONE
+author: Bob (sm)
+date: '2024-08-02T10:14:00Z'
+
+description: >
+  As a user, when I enter a destination, I want to see public transit
+  options alongside the ride-sharing options, so that I can compare cost and
+  time and make the best choice for my journey.
+
+acceptance_criteria:
+  - The `passenger-app` must integrate with a public transit data provider (e.g., Google Maps Directions API).
+  - When a destination is entered, a "Transit" tab must appear next to the vehicle type options.
+  - This tab will display available bus/train routes, including walking directions, travel time, and cost.
+  - This is purely an informational feature and does not involve booking or payment for public transit.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/widgets/ride_booking_panel.dart # To add the "Transit" tab and display the data
+
+dev_notes: >
+  This feature positions our app as a multi-modal transportation tool, not just a ride-sharing app. It's an API integration project that can increase user engagement even when they don't book a ride with us.

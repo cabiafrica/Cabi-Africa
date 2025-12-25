@@ -1,0 +1,24 @@
+id: story-79.9
+epic: admin-experience
+slug: admin-bulk-messaging
+title: Enable Bulk Messaging via User ID Upload
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T03:40:00Z'
+
+description: >
+  As a marketing or operations manager, I want to be able to upload a list of
+  user IDs (e.g., from a CSV) and send a specific message or grant a credit to
+  just that group of users.
+
+acceptance_criteria:
+  - The admin communications interface (`story-61.1`) must be enhanced with an option to "Upload User List".
+  - The admin can upload a CSV file of user IDs to define the target audience for a message or credit.
+  - The `notification-service` or `incentive-service` must process this list and deliver the message/credit only to the specified users.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/communications/page.tsx # To add the upload UI
+  - libs/backend/notification-service/src/lib/notification.service.ts # To handle targeting based on an uploaded list
+
+dev_notes: >
+  This provides a powerful tool for hyper-targeted campaigns that may be based on analysis done outside of our own analytics tools.

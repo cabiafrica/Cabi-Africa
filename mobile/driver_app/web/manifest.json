@@ -1,0 +1,11 @@
+{
+    "name": "Cabi Driver",
+    "short_name": "Cabi Driver",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "Cabi Driver App",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false
+}

@@ -1,0 +1,77 @@
+# Cabi Ecosystem Combined Overview
+
+This document provides a consolidated overview and navigation for the core architectural and product requirements documentation of the Cabi Ecosystem.
+
+## Architecture Document Index
+
+### Cabi Marketing Website Architecture Document
+
+- [1. Introduction](./architecture/1-introduction.md)
+  - [1.1. Starter Template or Existing Project](./architecture/1-introduction.md#11-starter-template-or-existing-project)
+  - [1.2. Change Log](./architecture/1-introduction.md#12-change-log)
+- [2. High Level Architecture](./architecture/2-high-level-architecture.md)
+  - [2.1. Technical Summary](./architecture/2-high-level-architecture.md#21-technical-summary)
+  - [2.2. High Level Overview](./architecture/2-high-level-architecture.md#22-high-level-overview)
+  - [2.3. High Level Project Diagram](./architecture/2-high-level-architecture.md#23-high-level-project-diagram)
+  - [2.4. Architectural and Design Patterns](./architecture/2-high-level-architecture.md#24-architectural-and-design-patterns)
+- [3. Tech Stack](./architecture/3-tech-stack.md)
+  - [3.1. Cloud Infrastructure](./architecture/3-tech-stack.md#31-cloud-infrastructure)
+  - [3.2. Technology Stack Table](./architecture/3-tech-stack.md#32-technology-stack-table)
+- [4. Data Models](./architecture/4-data-models.md)
+  - [4.1. User](./architecture/4-data-models.md#41-user)
+  - [4.2. DriverProfile](./architecture/4-data-models.md#42-driverprofile)
+- [5. Components](./architecture/5-components.md)
+  - [5.1. Component List](./architecture/5-components.md#51-component-list)
+  - [5.2. Component Diagrams](./architecture/5-components.md#52-component-diagrams)
+- [6. External APIs](./architecture/6-external-apis.md)
+  - [6.1. Google reCAPTCHA (for Bot Protection)](./architecture/6-external-apis.md#61-google-recaptcha-for-bot-protection)
+- [7. Core Workflows](./architecture/7-core-workflows.md)
+  - [7.1. Driver Registration & Commission Workflow](./architecture/7-core-workflows.md#71-driver-registration-commission-workflow)
+- [8. REST API Spec](./architecture/8-rest-api-spec.md)
+- [9. Database Schema](./architecture/9-database-schema.md)
+- [10. Source Tree](./architecture/10-source-tree.md)
+- [11. Infrastructure and Deployment](./architecture/11-infrastructure-and-deployment.md)
+- [12. Error Handling Strategy](./architecture/12-error-handling-strategy.md)
+- [13. Coding Standards](./architecture/13-coding-standards.md)
+- [14. Test Strategy and Standards](./architecture/14-test-strategy-and-standards.md)
+- [15. Security](./architecture/15-security.md)
+- [16. Checklist Results Report](./architecture/16-checklist-results-report.md)
+- [17. Next Steps](./architecture/17-next-steps.md)
+- [18. Related Documents](./architecture/18-related-documents.md)
+
+
+## Product Requirements Document Index
+
+### Unified Product Requirements Document: Cabi Ecosystem
+
+- [1. Introduction](./prd-unified/1-introduction.md)
+  - [1.1. Purpose of the Document](./prd-unified/1-introduction.md#11-purpose-of-the-document)
+  - [1.2. Scope of the Project](./prd-unified/1-introduction.md#12-scope-of-the-project)
+  - [1.3. Overall Vision & Goals](./prd-unified/1-introduction.md#13-overall-vision-goals)
+  - [1.4. Key Stakeholders](./prd-unified/1-introduction.md#14-key-stakeholders)
+- [2. Functional Requirements](./prd-unified/2-functional-requirements.md)
+  - [2.1. Passenger App](./prd-unified/2-functional-requirements.md#21-passenger-app)
+  - [2.2. Driver App](./prd-unified/2-functional-requirements.md#22-driver-app)
+  - [2.3. Admin Panel](./prd-unified/2-functional-requirements.md#23-admin-panel)
+  - [2.4. User Management](./prd-unified/2-functional-requirements.md#24-user-management)
+  - [2.5. Dispatch System](./prd-unified/2-functional-requirements.md#25-dispatch-system)
+  - [2.6. Marketing Website](./prd-unified/2-functional-requirements.md#26-marketing-website)
+- [3. Non-Functional Requirements (NFRs)](./prd-unified/3-non-functional-requirements-nfrs.md)
+  - [3.1. Performance](./prd-unified/3-non-functional-requirements-nfrs.md#31-performance)
+  - [3.2. Security](./prd-unified/3-non-functional-requirements-nfrs.md#32-security)
+  - [3.3. Reliability & Availability](./prd-unified/3-non-functional-requirements-nfrs.md#33-reliability-availability)
+  - [3.4. Usability (UX)](./prd-unified/3-non-functional-requirements-nfrs.md#34-usability-ux)
+  - [3.5. Accessibility](./prd-unified/3-non-functional-requirements-nfrs.md#35-accessibility)
+  - [3.6. Maintainability & Extensibility](./prd-unified/3-non-functional-requirements-nfrs.md#36-maintainability-extensibility)
+  - [3.7. Compliance](./prd-unified/3-non-functional-requirements-nfrs.md#37-compliance)
+- [4. High-Level Data Models](./prd-unified/4-high-level-data-models.md)
+  - [4.1. User (Core Identity)](./prd-unified/4-high-level-data-models.md#41-user-core-identity)
+  - [4.2. PassengerProfile](./prd-unified/4-high-level-data-models.md#42-passengerprofile)
+  - [4.3. DriverProfile](./prd-unified/4-high-level-data-models.md#43-driverprofile)
+  - [4.4. Ride](./prd-unified/4-high-level-data-models.md#44-ride)
+  - [4.5. Organization (e.g., Driver Union, Fleet)](./prd-unified/4-high-level-data-models.md#45-organization-eg-driver-union-fleet)
+  - [4.6. Subgroup](./prd-unified/4-high-level-data-models.md#46-subgroup)
+  - [4.7. PaymentMethod](./prd-unified/4-high-level-data-models.md#47-paymentmethod)
+  - [4.8. Document](./prd-unified/4-high-level-data-models.md#48-document)
+  - [4.9. Referral](./prd-unified/4-high-level-data-models.md#49-referral)
+  - [4.10. MLMFeeFormula & RegistrationFeeLedger](./prd-unified/4-high-level-data-models.md#410-mlmfeeformula-registrationfeeledger)

@@ -1,0 +1,27 @@
+id: story-45.2
+epic: driver-financial-tools
+slug: detailed-earnings-breakdown
+title: Provide Detailed Earnings Breakdown per Trip
+status: Done
+author: Bob (sm)
+date: '2024-08-09T14:30:00Z'
+
+description: >
+  As a driver, I want to see a detailed breakdown of my earnings for each
+  completed trip, so that I can understand exactly how my pay is calculated.
+
+acceptance_criteria:
+  - In the driver's trip history, tapping a trip must navigate to a detailed earnings view.
+  - This view must itemize all components of the payout: Base Fare, Distance & Time rates, Tip, Bonuses, Tolls, and any deductions (e.g., platform commission).
+  - The `payment-service` must expose an endpoint that provides this detailed breakdown for a given `tripId`.
+  - The sum of all components must match the final amount credited to the driver's earnings for that trip.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/trip_earnings_detail_screen.dart
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To expose detailed transaction components
+  - libs/backend/payment-service/src/lib/payment.controller.ts # To add the new endpoint
+
+dev_notes: >
+  This feature is crucial for driver trust and transparency. The backend `payment-service` already records these individual transaction components as part of `story-5.2`; this story is about exposing that data to the driver in a clear, understandable format.

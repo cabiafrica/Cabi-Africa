@@ -1,0 +1,32 @@
+id: story-34.3
+epic: user-management
+slug: user-manage-profile-picture
+title: "User: Upload and Manage Profile Picture"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-06T19:00:00Z'
+
+description: >
+  As a user (passenger or driver), I want to upload, change, and remove my profile picture,
+  so I can personalize my account and be easily recognizable to others on the platform.
+
+acceptance_criteria:
+  - On the user's profile editing screen in both the passenger and driver apps, an option to change the profile picture must be available.
+  - Tapping this option must allow the user to either take a new photo with the camera or select an existing one from their device's gallery.
+  - After selecting an image, the user should be able to crop it to a square aspect ratio.
+  - The cropped image must be uploaded to a secure file storage service (e.g., AWS S3).
+  - The backend `user-service` must be updated with an endpoint to save the returned image URL to the user's profile.
+  - The user's new profile picture must be displayed in the app (e.g., in the navigation header, on their profile screen).
+
+files_to_be_created:
+  - # A new backend service for file uploads might be needed if not already present.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/profile_screen.dart # To add the picture upload UI.
+  - Cabi Alpha/mobile/driver_app/lib/screens/profile_screen.dart # To add the picture upload UI.
+  - libs/backend/user-service/src/lib/user.service.ts # To add a method to update the profile picture URL.
+  - libs/backend/user-service/src/lib/user.controller.ts # To expose the endpoint for updating the profile picture.
+
+dev_notes: >
+  This story implements a standard user profile feature from the PRD (section 2.4). The frontend will require plugins for image picking (`image_picker`) and image cropping (`image_cropper`). The backend will need a robust file upload mechanism. It's recommended to upload directly from the client to a pre-signed S3 URL to avoid proxying large files through our main backend service. The `user-service` would then just handle a request containing the final image URL.
+  PRD Reference: 2.4. User Management -> Core User Accounts & Profiles -> User Profile Picture

@@ -1,0 +1,30 @@
+id: story-34.2
+epic: business-travel
+slug: monthly-business-summaries
+title: Implement Monthly Business Travel Summaries
+status: Done
+author: Bob (sm)
+date: '2024-07-29T14:00:00Z'
+
+description: >
+  As a passenger using a business profile, I want to receive an automated
+  monthly summary of all my business trips to my work email, so that I can
+  easily file my expense reports.
+
+acceptance_criteria:
+  - A new scheduled job must be created in the `analytics-service` or `notification-service`.
+  - The job must run on the first day of each month.
+  - It must identify all users who have taken at least one "Business" trip in the previous month.
+  - For each of these users, it must generate a summary (e.g., a PDF or formatted email) of all their business trips.
+  - The summary must include the date, route, and cost of each trip, along with a monthly total.
+  - The summary must be sent to the user's registered work email from their business profile (`story-34.1`).
+
+files_to_be_created:
+  - libs/backend/analytics-service/src/lib/reporting.scheduler.ts
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To generate the summary content
+  - libs/backend/notification-service/src/lib/notification.service.ts # To email the summary
+
+dev_notes: >
+  This is a key retention feature for business travelers. The main work is in the backend, creating a scheduled job that can query trips, filter by profile, aggregate the data into a clean format, and email it.

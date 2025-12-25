@@ -1,0 +1,34 @@
+id: story-25.3
+epic: app-analytics
+slug: track-onboarding-funnel
+title: Track Driver Onboarding Funnel Events
+status: Done
+author: Bob (sm)
+date: '2024-07-19T09:00:00Z'
+
+description: >
+  As a product manager, I want to track key events in the driver onboarding
+  funnel, so that we can identify drop-off points, measure time-to-completion,
+  and optimize the sign-up process.
+
+acceptance_criteria:
+  - The `document-service` must publish events when a driver's document status changes:
+    - `DocumentSubmitted`: When a driver uploads a document.
+    - `DocumentApproved`: When an admin approves a document.
+    - `DocumentRejected`: When an admin rejects a document.
+  - The `user-service` already publishes an `AccountActivated` event (`story-12.5`) when a driver is fully verified.
+  - The `analytics-service` must subscribe to these new document-related events and the existing `AccountActivated` event.
+  - Event payloads must include relevant, non-PII properties like `driverId`, `documentType` (for document events), and `rejectionReason` (for rejection events).
+  - Upon receiving these events, the `analytics-service` must send corresponding events to the configured third-party analytics provider (e.g., Mixpanel, Amplitude).
+
+files_to_be_created:
+  - libs/backend/analytics-service/src/lib/listeners/document.listener.ts
+
+files_to_be_modified:
+  - libs/backend/document-service/src/lib/document.service.ts # To publish the new document status events
+  - libs/backend/analytics-service/src/lib/analytics.module.ts # To register the new listener
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To handle the new events
+  - libs/backend/analytics-service/src/lib/listeners/user.listener.ts # To handle the existing AccountActivated event
+
+dev_notes: >
+  This story provides critical data for analyzing and improving our driver acquisition funnel. It leverages our event-driven architecture by having source services (`document-service`, `user-service`) publish key business events. The `analytics-service` acts as a centralized consumer that forwards this data to our analytics platform. This will allow us to build funnels and ask questions like, "What percentage of drivers who submit documents get successfully activated?" or "Which document rejection reason is most common?".

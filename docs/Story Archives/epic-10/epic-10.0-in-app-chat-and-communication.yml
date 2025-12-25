@@ -1,0 +1,18 @@
+id: epic-10.0
+slug: in-app-chat-and-communication
+title: In-App Chat & Communication
+status: 'In Progress'
+author: Sarah (po)
+date: '2024-06-28T14:30:00Z'
+
+description: >
+  This epic focuses on building a real-time, in-app communication platform.
+  The primary goal is to enable seamless chat functionality between drivers
+  and passengers to coordinate pickups and resolve trip-related issues. This
+  will also lay the foundation for future communication features, such as
+  in-app support chat.
+
+child_stories:
+  - story-10.1-chat-backend-setup
+  - story-10.2-driver-passenger-chat
+  - story-10.3-chat-with-support

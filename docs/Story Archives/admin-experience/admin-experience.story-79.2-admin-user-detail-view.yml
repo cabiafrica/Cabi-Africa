@@ -1,0 +1,82 @@
+id: story-79.2
+epic: admin-experience
+slug: admin-user-detail-view
+title: Implement User Detail View in Admin Panel
+status: Done
+author: Bob (sm)
+date: '2024-08-15T10:00:00Z'
+
+description: >
+  As an administrator, I want to view the detailed profile of a specific user,
+  so that I can access all their relevant information, manage their account,
+  and provide effective support.
+
+acceptance_criteria:
+  - This story builds upon the user list from `story-79.1`.
+  - Clicking a user in the user list must navigate to the user detail page (`/users/[userId]`).
+  - The detail page must display key user information: Full Name, Email, Phone, Role (Driver/Passenger), and Status (e.g., 'Active', 'Pending Onboarding', 'Suspended').
+  - For drivers, the page must also display their current average rating.
+  - A section on the page must list the user's recent ride history (e.g., last 10 trips, with date and status).
+  - The page must include placeholder buttons for administrative actions like "Suspend Account" and "Reset Password".
+  - The `user-service` must be updated with a new endpoint to fetch all details for a single user, including their recent rides.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/users/[userId]/page.tsx # To replace the placeholder with a full detail view
+  - libs/backend/user-service/src/lib/user.service.ts # To add logic for fetching detailed user data
+  - libs/backend/user-service/src/lib/user.controller.ts # To expose the new endpoint
+
+dev_notes: >
+  This story fleshes out the core user management capabilities of the admin panel, turning the placeholder from `story-79.1` into a useful view. This will be a central screen for support and operations staff. The administrative actions (Suspend, etc.) are introduced here as UI elements, but their backend implementation can be deferred to separate, more focused stories to manage complexity.
+
+tasks:
+  - id: task-1
+    description: Implement backend endpoint to fetch a user's detailed profile, including recent rides.
+    subtasks:
+      - "[x] Add a `getUserDetails` method to `user.service.ts` that returns a user's profile and mock ride history."
+      - "[x] Create `user.controller.ts` and expose the method via a `GET /users/:id` endpoint."
+  - id: task-2
+    description: Build the frontend user detail page in the admin panel to display all required information.
+    subtasks:
+      - "[x] Create `apps/admin-panel/src/app/users/[userId]/page.tsx`."
+      - "[x] The page should fetch data from the new endpoint."
+      - "[x] Display user's core info, rating (if driver), and recent ride history."
+      - "[x] Add placeholder buttons for 'Suspend Account' and 'Reset Password'."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  completion_notes:
+    - >-
+      All tasks are complete. I have implemented the backend endpoint to fetch
+      detailed user data and built the corresponding frontend page in the admin
+      panel. The view now displays all required user information, recent ride
+      history, and placeholder admin action buttons.
+  file_list:
+    - c:/Users/User/Desktop/Cabi-Flutter/user.service.ts
+    - libs/backend/user-service/src/lib/user.controller.ts
+    - apps/admin-panel/src/app/users/[userId]/page.tsx
+  change_log:
+    - file: c:/Users/User/Desktop/Cabi-Flutter/user.service.ts
+      change: Added a `getUserDetails` method to fetch a user's full profile along with mock recent ride history.
+    - file: apps/admin-panel/src/app/users/[userId]/page.tsx
+      change: Created the user detail page to display all user information, recent rides, and placeholder admin buttons.
+
+qa_results:
+  - id: qa-1
+    date: '2024-08-15T11:40:00Z'
+    agent: Quinn (qa)
+    summary: >-
+      The implementation is excellent. The new user detail view in the admin
+      panel provides a comprehensive overview of a user's profile and activity
+      as required. The backend endpoint correctly supplies the necessary data,
+      and the frontend visualizes it effectively.
+    requirements_traceability:
+      - criteria: "The detail page must display key user information... For drivers, the page must also display their current average rating."
+        test_case: "Given an admin navigates to a driver's detail page, when the page loads, then it displays the driver's name, email, role, status, and average rating."
+        status: PASS
+      - criteria: "A section on the page must list the user's recent ride history..."
+        test_case: "Given an admin is viewing a user's detail page, when the page loads, then a table of the user's recent rides is displayed."
+        status: PASS
+      - criteria: "The page must include placeholder buttons for administrative actions..."
+        test_case: "Given an admin is viewing a user's detail page, when the page loads, then placeholder buttons for 'Suspend Account' and 'Reset Password' are visible."
+        status: PASS
+    gate_decision: PASS

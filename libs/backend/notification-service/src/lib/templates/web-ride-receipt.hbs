@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+
+        .header {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #fbbf24;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .trip-details {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .fare-total {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .footer {
+            background-color: #f4f4f4;
+            color: #888888;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #000000;
+            color: #fbbf24;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cabi</h1>
+        </div>
+        <div class="content">
+            <h2>Your Ride Receipt</h2>
+            <p>Hi {{userName}},</p>
+            <p>Thanks for riding with Cabi. Here's a receipt for your trip on {{rideDate}}.</p>
+
+            <div class="fare-total">
+                Total: ${{totalFare}}
+            </div>
+
+            <div class="trip-details">
+                <p><strong>Pickup:</strong> {{pickupAddress}}</p>
+                <p><strong>Dropoff:</strong> {{dropoffAddress}}</p>
+                <p><strong>Driver:</strong> {{driverName}}</p>
+                <p><strong>Vehicle:</strong> {{vehicleModel}} ({{licensePlate}})</p>
+            </div>
+
+            <p style="text-align: center;">
+                <img src="{{mapImageUrl}}" alt="Route Map" style="max-width: 100%; border-radius: 8px;">
+            </p>
+
+            <p style="text-align: center; margin-top: 30px;">
+                <a href="{{supportUrl}}" class="button">Get Support</a>
+            </p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2025 Cabi Inc. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+
+</html>

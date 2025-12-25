@@ -1,0 +1,28 @@
+id: story-40.1
+epic: referrals
+slug: passenger-referrals
+title: Implement Passenger Referral Program
+status: Done
+author: Bob (sm)
+date: '2024-08-09T16:25:00Z'
+
+description: >
+  As a passenger, I want to share a unique referral code with friends, so that
+  we both receive a credit when they take their first ride.
+
+acceptance_criteria:
+  - Each passenger must have a unique, shareable referral code available in their app profile.
+  - A new user must be able to enter a referral code during the sign-up process.
+  - When a referred user completes their first trip, a pre-defined credit must be automatically applied to both the referrer's and the new user's accounts.
+  - The `incentive-service` must be responsible for generating codes, tracking referrals, and applying credits.
+  - The passenger must be able to see a history of their successful referrals and earned credits.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/referral_screen.dart
+
+files_to_be_modified:
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To manage referral logic
+  - Cabi Alpha/mobile/passenger_app/lib/screens/signup_screen.dart # To add referral code input
+
+dev_notes: >
+  This is the first story for the `referrals` epic. It's a key growth-hacking feature. The logic for applying credits must be robust and transactional.

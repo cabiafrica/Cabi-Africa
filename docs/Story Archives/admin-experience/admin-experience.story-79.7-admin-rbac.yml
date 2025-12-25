@@ -1,0 +1,25 @@
+id: story-79.7
+epic: admin-experience
+slug: admin-role-based-access-control
+title: Implement Role-Based Access Control (RBAC) for Admin Panel
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T02:00:00Z'
+
+description: >
+  As a system administrator, I need to define different roles for admin users
+  (e.g., "Support Agent," "Marketing," "Super Admin") and assign specific
+  permissions to each role, so we can securely control access to sensitive features.
+
+acceptance_criteria:
+  - A new "Roles & Permissions" section must be added to the `admin-panel`.
+  - A Super Admin must be able to create roles and assign granular permissions to them (e.g., "can_refund_trip," "can_suspend_user," "can_impersonate").
+  - Each admin user must be assigned a role.
+  - The `admin-panel` UI and backend APIs must enforce these permissions, hiding or disabling functionality for users without the required permission.
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/auth.service.ts # To manage roles and permissions
+  - All pages and components in `apps/admin-panel` to check for permissions before rendering UI or making API calls.
+
+dev_notes: >
+  This is a critical security and scalability feature for any enterprise-grade application. It's essential as the internal team grows.

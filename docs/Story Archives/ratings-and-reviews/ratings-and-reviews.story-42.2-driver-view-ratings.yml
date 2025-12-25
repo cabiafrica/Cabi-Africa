@@ -1,0 +1,80 @@
+id: story-42.2
+epic: ratings-and-reviews
+slug: driver-view-ratings
+title: Allow Driver to View Their Ratings and Feedback
+status: Done
+author: Bob (sm)
+date: '2024-08-10T20:30:00Z'
+
+description: >
+  As a driver, I want to see my average rating and the feedback passengers
+  have left for me, so that I can understand my performance and improve my service.
+
+acceptance_criteria:
+  - A new "My Ratings" or "Feedback" screen must be added to the `driver-app`, accessible from their profile or main menu.
+  - The screen must prominently display the driver's overall average star rating (e.g., 4.85 stars).
+  - The screen must display a list of recent reviews/comments left by passengers.
+  - For privacy, passenger names and trip details should be anonymized in the review list.
+  - The `rating-service` must expose a new endpoint to fetch the ratings and reviews for the currently logged-in driver.
+  - The endpoint should support pagination to handle drivers with a large number of reviews.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/ratings_feedback_screen.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/profile_screen.dart # To add a link to the new ratings screen
+  - libs/backend/rating-service/src/lib/rating.service.ts # To add logic for fetching a driver's ratings
+  - libs/backend/rating-service/src/lib/rating.controller.ts # To expose the new endpoint
+
+dev_notes: >
+  This story provides the crucial feedback loop for drivers, which is essential for their engagement and service quality improvement. It's important to ensure that the feedback displayed is anonymous to protect passenger privacy. The initial version can show all reviews, while future stories could add filtering or trend analysis.
+
+tasks:
+  - id: task-1
+    description: Implement the backend logic for fetching driver ratings.
+    subtasks:
+      - "[x] Add a `getDriverRatings` method to `libs/backend/rating-service/src/lib/rating.service.ts`."
+      - "[x] The method should calculate the driver's average rating and return a paginated list of recent reviews."
+      - "[x] Expose this method via a new `GET /ratings/my-ratings` endpoint in `libs/backend/rating-service/src/lib/rating.controller.ts`."
+  - id: task-2
+    description: Create the frontend screen for drivers to view their ratings.
+    subtasks:
+      - "[x] Create `Cabi Alpha/mobile/driver_app/lib/screens/ratings_feedback_screen.dart`."
+      - "[x] The screen should fetch data from the new endpoint."
+      - "[x] Display the overall average rating prominently."
+      - "[x] Display a list of recent reviews, excluding passenger details for privacy."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - libs/backend/rating-service/src/lib/rating.service.ts
+    - libs/backend/rating-service/src/lib/rating.controller.ts
+    - Cabi Alpha/mobile/driver_app/lib/screens/ratings_feedback_screen.dart
+  change_log:
+    - file: libs/backend/rating-service/src/lib/rating.service.ts
+      change: Implemented `getDriverRatings` to calculate a driver's average rating and provide a paginated list of their reviews.
+    - file: libs/backend/rating-service/src/lib/rating.controller.ts
+      change: Exposed the new `getMyRatings` endpoint.
+    - file: Cabi Alpha/mobile/driver_app/lib/screens/ratings_feedback_screen.dart
+      change: Created a new screen in the driver app to display the driver's average rating and recent feedback.
+
+qa_results:
+  - id: qa-1
+    date: '2024-08-11T10:00:00Z'
+    agent: Quinn (qa)
+    summary: >
+      The story is well-implemented and meets all acceptance criteria. The backend provides the necessary data, and the frontend displays it clearly. Privacy considerations have been addressed by anonymizing passenger data.
+    requirements_traceability:
+      - criteria: "Display overall average star rating."
+        test_case: "Given the driver has an average rating of 4.85, when they open the 'My Ratings' screen, then the value '4.85' is displayed prominently."
+        status: PASS
+      - criteria: "Display a list of recent reviews/comments."
+        test_case: "Given the driver has received 15 reviews, when they open the 'My Ratings' screen, then a list of reviews is displayed."
+        status: PASS
+      - criteria: "Passenger names and trip details should be anonymized."
+        test_case: "Given a review was left by 'Passenger A' for a trip on 'Date B', when the driver views this review, then neither 'Passenger A' nor 'Date B' is visible."
+        status: PASS
+      - criteria: "Endpoint must support pagination."
+        test_case: "Given a driver has 100 reviews and the page size is 20, when the driver scrolls to the bottom of the list, then the next 20 reviews are loaded and displayed."
+        status: PASS
+    gate_decision: PASS

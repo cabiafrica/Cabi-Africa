@@ -1,0 +1,34 @@
+id: story-17.5
+epic: passenger-payments
+slug: passenger-cancellation-fees
+title: Implement Cancellation Fees for Passengers
+status: DONE
+author: Bob (sm)
+date: '2024-08-11T14:00:00Z'
+
+description: >
+  As a platform operator, I want to apply a cancellation fee to passengers who
+  cancel a ride shortly before pickup, so that drivers are compensated for
+  their time and travel, and to discourage last-minute cancellations.
+
+acceptance_criteria:
+  - The business rules for cancellation fees (e.g., fee amount, time threshold) must be stored in a configuration file, not hardcoded.
+  - The rule should state that a fee is applied if a passenger cancels more than X minutes after a driver has accepted the ride.
+  - When a passenger initiates a cancellation, the confirmation dialog in the `passenger-app` must be updated to conditionally display the fee amount (e.g., "A cancellation fee of KES 200 will apply. Do you want to continue?").
+  - The `ride-service` logic for cancellation (e.g., in `scheduled_ride.service.ts`) must be updated to check if a fee is applicable based on the business rule.
+  - If a fee applies, the `ride-service` must trigger the `payment-service` to charge the passenger's default payment method.
+  - The `payment-service` must be updated with a new method to handle a standalone charge for a cancellation fee.
+  - Upon successful charge, the `notification-service` must inform the passenger that they have been charged.
+  - The driver assigned to the ride must be notified that the ride was cancelled and that they have been credited with the cancellation fee.
+  - The `payout-service` must be triggered to record the cancellation fee as a credit in the driver's earnings statement.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/ride_cancellation_dialog.dart # Or the component handling cancellation confirmation
+  - libs/backend/ride-service/src/lib/scheduled_ride.service.ts # To add the fee logic
+  - libs/backend/payment-service/src/lib/payment.service.ts # To add a method for charging the fee
+  - libs/backend/payment-service/src/lib/payment.controller.ts # To expose the new charging endpoint
+  - libs/backend/notification-service/src/lib/notification.service.ts # To notify passenger and driver
+  - libs/backend/payout-service/src/lib/payout.service.ts # To credit the driver's earnings
+
+dev_notes: >
+  This story introduces financial consequences to the cancellation flow established in `story-22.5`. The core of the work is in the backend services to coordinate the check-charge-notify workflow. The fee amount and the specific rules (e.g., time threshold) should be managed in a configuration file to allow for easy adjustments in the future.

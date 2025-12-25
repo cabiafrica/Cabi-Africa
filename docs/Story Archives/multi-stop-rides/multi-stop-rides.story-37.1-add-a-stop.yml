@@ -1,0 +1,29 @@
+id: story-37.1
+epic: multi-stop-rides
+slug: add-a-stop
+title: Implement "Add a Stop" Feature
+status: Done
+author: Bob (sm)
+date: '2024-07-30T10:07:00Z'
+
+description: >
+  As a passenger, I want to add an extra stop to my journey before confirming
+  the ride, so that I can pick up a friend or run a quick errand along the way.
+
+acceptance_criteria:
+  - The `RideBookingPanel` must be updated to allow adding one or more intermediate stops between the pickup and final destination.
+  - The UI must allow reordering of stops.
+  - The `ride-service` must be updated to calculate an estimated fare for a multi-stop route.
+  - The route displayed on the map must show the full path through all stops.
+  - The `driver-app` must be updated to display the multi-stop itinerary to the driver.
+  - The driver's in-trip UI must guide them to each stop in sequence, with the ability to confirm arrival at each stop.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/widgets/ride_booking_panel.dart # To add multi-stop UI
+  - libs/backend/ride-service/src/lib/fare.service.ts # To update fare calculation
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To display multi-stop itinerary
+
+dev_notes: >
+  This is the first story for a new `multi-stop-rides` epic. It's a complex feature that significantly changes the concept of a "trip" from a simple A-to-B journey to a multi-point itinerary. It impacts fare calculation, routing, and the driver's in-trip workflow.

@@ -1,0 +1,31 @@
+id: story-20.6
+epic: ratings-and-reviews
+slug: driver-rates-passenger
+title: Allow Driver to Rate Passenger After Trip
+status: Done
+author: Bob (sm)
+date: '2024-07-26T10:03:00Z'
+
+description: >
+  As a driver, after I complete a trip, I want to rate the passenger and
+  provide optional feedback, so that I can share my experience and help
+  identify problematic passengers.
+
+acceptance_criteria:
+  - After completing a trip in the `driver-app`, a "Rate Passenger" screen must be displayed.
+  - This screen must show the passenger's name.
+  - It must feature a simple rating system (e.g., Thumbs Up/Down, or 1-5 stars).
+  - It must include an optional text field for comments or pre-defined tags (e.g., "Polite", "Clean", "Late").
+  - The `rating-service` must be updated with a new endpoint to accept passenger ratings.
+  - The service must store this rating, associating it with the `rideId`, `passengerId`, and `driverId`.
+  - The `user-service` must be updated to store an `averageRating` for passengers.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/rate_passenger_screen.dart
+
+files_to_be_modified:
+  - libs/backend/rating-service/src/lib/rating.service.ts # To handle passenger ratings
+  - libs/backend/user-service/src/lib/user.model.ts # To add rating fields to passenger model
+
+dev_notes: >
+  This is the counterpart to `story-20.2` and completes the two-way rating system, which is essential for a healthy marketplace. The passenger rating can be used in the future to inform drivers or for automated warnings.

@@ -1,0 +1,28 @@
+id: story-16.8
+epic: driver-payouts
+slug: instant-payout
+title: Implement Instant Payout Option for Drivers
+status: Done
+author: Bob (sm)
+date: '2024-07-30T10:06:00Z'
+
+description: >
+  As a driver, I want the option to cash out my earnings instantly, even if
+  it's outside the regular weekly payout schedule, so that I can have immediate
+  access to my funds when I need them.
+
+acceptance_criteria:
+  - An "Instant Cash Out" button must be added to the `WalletScreen` in the `driver-app`.
+  - This option may only be available if the payment gateway supports it (e.g., Stripe Instant Payouts).
+  - A small, configurable fee may be charged for this service, which must be clearly displayed to the driver before they confirm.
+  - The payout logic from `story-16.3` must be reused, but with a flag indicating it's an instant transfer.
+  - The `payment-service` must be able to handle both regular and instant payout requests.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/wallet_screen.dart # To add the new button and flow
+  - libs/backend/payment-service/src/lib/payment.service.ts # To differentiate between regular and instant payouts
+
+dev_notes: >
+  A high-value feature for driver satisfaction and retention. It requires that our payment gateway partner supports this functionality. The business model for the associated fee needs to be defined.

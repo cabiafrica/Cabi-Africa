@@ -1,0 +1,44 @@
+id: story-13.1
+epic: driver-availability
+slug: driver-toggle-online-offline
+title: Driver Toggle Online/Offline Status
+status: DONE
+author: Sarah (po)
+date: '2024-08-10T19:00:00Z'
+
+description: >
+  As a driver, I want to be able to toggle my status between Online and Offline
+  so that I can control when I receive ride requests and when I am off duty.
+
+acceptance_criteria:
+  - The Driver App Home Screen must display a prominent toggle/button for availability.
+  - Tapping the button should toggle the state between "Online" and "Offline".
+  - Visual feedback (color change, text update) must clearly indicate the current state.
+  - The app must communicate this status change to the `driver-service`.
+  - When "Offline", the driver should not receive ride requests (handled by dispatch logic).
+  - When "Online", the driver is eligible for ride dispatch.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/home_screen.dart
+  - libs/backend/driver-service/src/lib/driver.service.ts
+  - libs/backend/driver-service/src/lib/driver.controller.ts
+
+dev_notes: >
+  This is the primary switch for the driver's workflow. The backend state stored here
+  will be heavily queried by the `ride-dispatch` service.
+
+tasks:
+  - id: task-1
+    description: Implement backend availability logic.
+    subtasks:
+      - "[x] Create `driver.service.ts` to manage in-memory status."
+      - "[x] Create `driver.controller.ts` to expose `PUT /drivers/availability`."
+  - id: task-2
+    description: Implement frontend toggle.
+    subtasks:
+      - "[x] Create `home_screen.dart` with a large toggle button."
+      - "[x] Connect button to backend API."
+      - "[x] Add visual indicators for Online/Offline states."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro

@@ -1,0 +1,28 @@
+id: story-48.3
+epic: driver-community
+slug: driver-mentorship
+title: Implement Driver Mentorship Program
+status: Done
+author: Bob (sm)
+date: '2024-08-02T10:04:00Z'
+
+description: >
+  As a new driver, I want to be paired with an experienced, high-rated driver
+  (a mentor), so that I can ask questions and get advice during my first few weeks.
+
+acceptance_criteria:
+  - Experienced drivers (e.g., Gold Tier) can opt-in to be mentors.
+  - New drivers can request a mentor during their onboarding.
+  - The system will automatically pair a new driver with a nearby mentor.
+  - A private, temporary chat channel will be opened between the mentor and mentee for a limited time (e.g., 30 days).
+  - Mentors may receive a small bonus for each mentee who reaches a certain milestone (e.g., 50 trips).
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To manage mentor/mentee relationships
+  - libs/backend/support-service/src/lib/support.service.ts # To create the private chat channels
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To handle mentor bonuses
+
+dev_notes: >
+  A feature focused on improving new driver retention and success. It formalizes community support and leverages our best drivers to train new ones.

@@ -1,0 +1,45 @@
+id: story-16.4
+epic: driver-payouts
+slug: driver-view-payout-history
+title: Driver View Payout History and Earnings
+status: DONE
+author: Sarah (po)
+date: '2024-08-10T20:00:00Z'
+
+description: >
+  As a driver, I want to view a history of my payouts and a summary of my earnings
+  so that I can track my income and verify that payments have been processed.
+
+acceptance_criteria:
+  - The Driver App must have a `PayoutHistoryScreen`.
+  - The screen must display a summary header showing Total Earnings.
+  - The screen must display a list of past payouts sorted by date (newest first).
+  - Each list item must show the Date, Amount, and Status (Processed, Pending, Failed).
+  - Statuses should be visually distinct (e.g., Green for Processed, Orange for Pending).
+  - The app must fetch this data from the `payout-service`.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/payout_history_screen.dart
+  - libs/backend/payout-service/src/lib/payout.service.ts
+  - libs/backend/payout-service/src/lib/payout.controller.ts
+
+dev_notes: >
+  This implementation focuses on the read-only view for the driver. The actual processing
+  of payments (Stripe/PayPal integration) is handled in a separate backend worker story.
+  This story ensures the driver has visibility into that process.
+
+tasks:
+  - id: task-1
+    description: Implement backend payout retrieval logic.
+    subtasks:
+      - "[x] Create `payout.service.ts` with mock data and sorting logic."
+      - "[x] Create `payout.controller.ts` to expose `GET /payouts` and `GET /payouts/summary`."
+  - id: task-2
+    description: Implement frontend history screen.
+    subtasks:
+      - "[x] Create `payout_history_screen.dart`."
+      - "[x] Implement summary header widget."
+      - "[x] Implement list view with status color coding."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro

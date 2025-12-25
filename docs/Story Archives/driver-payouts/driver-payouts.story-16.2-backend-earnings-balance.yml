@@ -1,0 +1,30 @@
+id: story-16.2
+epic: driver-payouts
+slug: backend-earnings-balance
+title: Implement Backend for Driver Earnings Balance
+status: Done
+author: Bob (sm)
+date: '2024-07-19T12:00:00Z'
+
+description: >
+  As the system, I need to calculate a driver's current earnings balance by
+  aggregating all their unpaid transactions, so that an accurate, real-time
+  balance can be displayed in their in-app wallet.
+
+acceptance_criteria:
+  - The `payment-service` must expose a new, secure endpoint (e.g., GET `/wallet/balance`) for drivers to fetch their wallet details.
+  - This endpoint must query all transactions associated with the authenticated driver that are marked as 'unpaid' or 'pending payout'.
+  - This includes earnings from fares, tips (from `story-5.2`), and any commissions earned (from `story-16.3`).
+  - The service must sum these transactions to calculate the driver's "Current Balance".
+  - The endpoint should also return a list of recent transactions (e.g., last 20) to populate the transaction history on the `WalletScreen`.
+  - The `getWalletDetails()` method in the `driver-app`'s `RideService` (or a new `WalletService`) must be updated to call this new backend endpoint instead of returning mock data.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To add logic for calculating balance and fetching transactions
+  - libs/backend/payment-service/src/lib/payment.controller.ts # To expose the new /wallet/balance endpoint
+  - Cabi Alpha/mobile/driver_app/lib/api/ride_service.dart # Or a new wallet service, to call the real endpoint
+
+dev_notes: >
+  This story replaces the mock data implementation from `story-16.1` with a real backend service. It acts as the data source for the driver's wallet UI. The logic will read from the transaction records created by other features (like trip payments and MLM commissions). This story focuses on *calculating and displaying* the balance; the actual process of initiating and processing a payout will be handled in a subsequent story.

@@ -1,0 +1,35 @@
+id: story-79.8
+epic: admin-experience
+slug: admin-review-reported-logins
+title: Admin Dashboard for Reviewing Reported Logins
+status: DONE
+author: Sarah (po)
+date: '2024-08-23T11:00:00Z'
+
+description: >
+  As an administrator or security officer, I need a centralized dashboard to
+  view all login activities that users have reported as suspicious, so that I
+  can efficiently investigate potential account compromises and take immediate
+  action to secure the platform.
+
+acceptance_criteria:
+  - A new "Reported Logins" page must be added to the `admin-panel`, likely under a "Security" section.
+  - The page must display a paginated and sortable list of all `LoginHistory` entries where `reportedAt` is not null.
+  - The list should be filterable by user email, IP address, and date range.
+  - Each entry in the list must display: User Email, Login Time, IP Address, Location, and the time it was reported.
+  - Each entry must have a direct link to the corresponding user's detail page.
+  - Admins must be able to perform actions on a report, such as:
+    - "Dismiss": Mark the report as reviewed and hide it from the default view (e.g., via a "Reviewed" status).
+    - "Force Password Reset": Trigger a password reset for the affected user.
+  - The backend must expose a new, admin-protected endpoint to fetch all reported login activities.
+  - The backend must expose new, admin-protected endpoints for the "Dismiss" and "Force Password Reset" actions.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/security/reported-logins/page.tsx
+
+files_to_be_modified:
+  - apps/driver-lead-service/src/driver-leads/auth.controller.ts # Or a new admin-security controller
+  - c:/Users/User/Desktop/Cabi-Flutter/docs/user-management.service.ts
+
+dev_notes: >
+  This feature closes the loop on the "Report Suspicious Login" functionality. It provides the necessary tools for the security/ops team to act on user-provided intelligence. The ability to filter and take direct action from the dashboard is key to making this an efficient process. The "Force Password Reset" action can leverage the existing `generatePasswordResetToken` logic in the `UserManagementService`.

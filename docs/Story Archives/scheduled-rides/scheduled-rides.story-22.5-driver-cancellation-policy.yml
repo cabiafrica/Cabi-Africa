@@ -1,0 +1,33 @@
+id: story-22.5
+epic: scheduled-rides
+slug: driver-scheduled-ride-cancellation-policy
+title: Define Cancellation Policy for Driver-Accepted Scheduled Rides
+status: DONE
+author: Bob (sm)
+date: '2024-07-06T09:00:00Z'
+
+description: >
+  As a system administrator, I want to enforce a cancellation policy for
+  drivers who cancel a pre-accepted scheduled ride, so that we can maintain
+  service reliability and discourage last-minute cancellations that negatively
+  impact passengers.
+
+acceptance_criteria:
+  - A "Cancel" button must be available for each ride in the driver's "My Schedule" list.
+  - Tapping "Cancel" must show a confirmation dialog explaining the potential consequences based on the timing.
+  - "**Cancellation with sufficient notice** (e.g., > 1 hour before pickup): The driver can cancel without penalty. The ride's status is reverted to 'Available' and it re-appears in the "Ride Opportunities" list for other drivers."
+  - "**Late cancellation** (e.g., < 1 hour before pickup): The driver can cancel, but a penalty is recorded. The `ride-service` must log a "late cancellation" infraction against the driver's record in the `user-service`."
+  - Upon any cancellation, the `ride-service` must immediately attempt to reassign the ride. It should first be made available in the marketplace (`story-22.4`). If it's too close to the pickup time, the system should fall back to the automatic dispatch process (`story-22.2`).
+  - The passenger is NOT notified of the cancellation unless the system fails to find a replacement driver.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/scheduled_rides_screen.dart # To add the cancel button and confirmation logic
+  - libs/backend/ride-service/src/lib/scheduled_ride.controller.ts # To add a 'cancel' endpoint
+  - libs/backend/ride-service/src/lib/scheduled_ride.service.ts # To implement the cancellation policy logic and re-assignment flow
+  - libs/backend/user-service/src/lib/user.service.ts # To add a method for recording cancellation infractions
+  - The database schema for the `user-service` to add a table or field for tracking driver infractions.
+
+dev_notes: >
+  This story introduces important business rules to ensure the scheduled ride feature is reliable. The time thresholds for penalties must be configurable. This story focuses on the act of cancellation and the recording of an infraction. The actual consequences of accumulating infractions (e.g., temporary suspension from the scheduled ride marketplace) will be defined in a future story. The primary goal is to ensure a seamless experience for the passenger by re-assigning the ride automatically.

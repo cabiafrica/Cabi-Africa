@@ -1,0 +1,43 @@
+id: story-5.4
+epic: tipping
+slug: real-time-tip-notification
+title: Notify Driver in Real-Time of Received Tip
+status: Done
+author: Bob (sm)
+date: '2024-08-11T14:00:00Z'
+
+description: >
+  As a driver, I want to receive an immediate notification when a passenger
+  adds a tip, so I can feel appreciated and thank them if they are still in
+  the vehicle.
+
+acceptance_criteria:
+  - When a passenger adds a tip to a completed ride, a real-time notification must be sent to the driver.
+  - The notification should display the tip amount and the ride it was for.
+  - This will likely involve an event published by the `payment-service` when a tip is processed.
+  - The `notification-service` will need to listen for this event and send a push notification to the driver.
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To publish a tip event
+  - libs/backend/notification-service/src/lib/notification.service.ts # To listen for the event and send the notification
+
+dev_notes: >
+  This feature enhances driver satisfaction by providing immediate positive feedback. The implementation will simulate an event-driven architecture where the payment service emits an event that the notification service consumes.
+
+tasks:
+  - id: task-1
+    description: Implement backend services to handle and notify of real-time tips.
+    subtasks:
+      - "[x] Modify `payment-service` to emit a `tip.received` event after processing a tip."
+      - "[x] Modify `notification-service` to listen for this event and send a formatted push notification to the driver."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - libs/backend/payment-service/src/lib/payment.service.ts
+    - libs/backend/notification-service/src/lib/notification.service.ts
+  change_log:
+    - file: libs/backend/payment-service/src/lib/payment.service.ts
+      change: Created a service that processes a tip and emits a `tip.received` event via a shared event bus.
+    - file: libs/backend/notification-service/src/lib/notification.service.ts
+      change: Created a service that listens for the `tip.received` event and simulates sending a real-time push notification to the driver.

@@ -1,0 +1,40 @@
+id: story-103.2
+epic: driver-mlm-experience
+slug: driver-view-downline
+title: Allow Driver to View Their Referral Hierarchy (Downline)
+status: Done
+author: Bob (sm)
+date: '2025-12-02T12:30:00Z'
+
+description: >
+  As a driver, I want to see a list of the drivers I have directly and indirectly referred,
+  so that I can track the growth of my network and understand my potential for future commission earnings.
+
+acceptance_criteria:
+  - A new "My Network" or "Downline" screen must be created in the `driver-app`.
+  - The screen must be accessible from the "Commissions" screen or main menu.
+  - The screen must display a hierarchical or nested list of referred drivers, showing at least two levels deep (direct referrals and their referrals).
+  - For each driver in the downline, the list must display their name (partially anonymized for privacy, e.g., "Jane D.") and their current status (e.g., "Prospect", "Active").
+  - The `user-service` must be updated to expose a new endpoint (e.g., `GET /users/my-downline`) that can retrieve the referral hierarchy for the logged-in user.
+  - The backend logic must recursively fetch driver profiles based on the `referrerId` field to build the hierarchy.
+
+files_to_be_created:
+  - apps/driver-app/src/screens/downline_screen.dart
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/mlm_commissions_screen.dart # To add a link to the new "My Network" screen.
+  - libs/backend/user-service/src/lib/user.controller.ts # To add the new GET /users/my-downline endpoint.
+  - libs/backend/user-service/src/lib/user.service.ts # To add the logic for recursively fetching the downline.
+
+dev_notes: >
+  This story builds on the MLM features by giving drivers visibility into their referral network structure. This is a powerful engagement tool. The backend logic should live in the `user-service` as it's fundamentally about user relationships. The implementation should be careful to avoid infinite loops in case of data anomalies and should be optimized to prevent excessive database queries when fetching the hierarchy.
+
+tasks:
+  - id: task-1
+    description: "Implement the backend endpoint in `user-service` to recursively fetch a driver's downline."
+  - id: task-2
+    description: "Create the 'My Network' screen in the `driver-app`."
+  - id: task-3
+    description: "Implement the UI to display the downline in a nested list, showing the anonymized name and status for each referred driver."
+  - id: task-4
+    description: "Link the new screen from the existing 'Commissions' screen."

@@ -1,0 +1,24 @@
+id: story-58.2
+epic: driver-privacy
+slug: data-anonymization
+title: Data Anonymization in Analytics
+status: Done
+author: Bob (sm)
+date: '2024-08-05T09:12:00Z'
+
+description: >
+  As a system administrator, I want to ensure that all data used for general
+  analytics and reporting is anonymized or pseudonymized to protect user privacy.
+
+acceptance_criteria:
+  - The `analytics-service` must implement a process to strip personally identifiable information (PII) from event data before it's used in aggregate reports.
+  - For example, user IDs should be replaced with a non-reversible hash, and exact GPS coordinates should be snapped to a grid.
+  - This does not apply to reports on specific users (e.g., a driver performance report), which are protected by admin permissions.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To add the anonymization layer
+
+dev_notes: >
+  A foundational privacy and data protection story. It ensures that our large-scale analytics do not pose a privacy risk.

@@ -1,0 +1,30 @@
+id: story-35.1
+epic: passenger-personalization
+slug: favorite-driver
+title: Implement "Favorite Driver" Feature
+status: Done
+author: Bob (sm)
+date: '2024-07-29T14:05:00Z'
+
+description: >
+  As a passenger, I want to mark a driver as a "Favorite" after a great
+  trip, so that the system can try to match me with them for future
+  scheduled rides.
+
+acceptance_criteria:
+  - On the `RateDriverScreen` (`story-20.2`), a "Mark as Favorite" option must be available.
+  - The `user-service` must be updated to store a list of favorite drivers for each passenger.
+  - When a passenger schedules a ride (`story-22.1`), the matching algorithm (`story-22.4`) must be updated.
+  - The algorithm should prioritize notifying and assigning the ride to available favorite drivers before broadcasting it to the wider network.
+  - A passenger must be able to view and manage their list of favorite drivers in their profile.
+
+files_to_be_created:
+  - apps/passenger-app/src/screens/favorite_drivers_screen.dart
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/rate_driver_screen.dart # To add the favorite button
+  - libs/backend/user-service/src/lib/user.service.ts # To store the passenger-driver relationship
+  - libs/backend/ride-service/src/lib/scheduled_ride.service.ts # To update the matching algorithm
+
+dev_notes: >
+  This is the first story for a new `passenger-personalization` epic. It enhances passenger loyalty and provides top-rated drivers with more consistent business. The main complexity is in modifying the scheduled ride matching logic to incorporate this preference.

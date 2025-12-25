@@ -1,0 +1,25 @@
+id: story-63.6
+epic: map-and-navigation
+slug: lane-guidance
+title: Implement Lane Guidance in In-App Navigation
+status: DONE
+author: Bob (sm)
+date: '2024-08-08T11:05:00Z'
+
+description: >
+  As a driver using in-app navigation, I want to see lane guidance visuals as
+  I approach complex highway interchanges or turns, so that I know which lane
+  to be in.
+
+acceptance_criteria:
+  - The in-app navigation UI (`story-63.3`) must be enhanced to display lane information.
+  - This should visually indicate the correct lanes for an upcoming maneuver.
+  - This feature is dependent on the navigation SDK providing detailed lane data for the road network.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To add the lane guidance UI
+
+dev_notes: >
+  A key feature for improving navigation clarity and reducing driver stress. Feasibility depends entirely on the capabilities of the chosen navigation SDK.

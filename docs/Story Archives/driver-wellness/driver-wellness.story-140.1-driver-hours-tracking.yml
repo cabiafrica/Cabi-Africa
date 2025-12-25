@@ -1,0 +1,26 @@
+id: story-140.1
+epic: driver-wellness
+slug: driver-hours-tracking
+title: Implement Driver Hours Tracking and Mandatory Breaks
+status: Done
+author: Sarah (po)
+date: '2024-06-12T12:00:00Z'
+
+description: >
+  As a platform operator, I want to track the number of consecutive hours a
+  driver is online and enforce mandatory breaks, to ensure driver safety and
+  comply with potential regulations.
+
+acceptance_criteria:
+  - The `analytics-service` must track the cumulative online time for each driver in a single session.
+  - A configurable "maximum online time" must be established in the admin panel (e.g., 12 hours).
+  - When a driver reaches the maximum online time, they must be automatically put into a mandatory "offline" state for a configurable duration (e.g., 8 hours).
+  - The driver must be notified before they reach the limit (e.g., 1 hour before).
+  - The `driver-app` must clearly display the mandatory offline status and the time remaining until they can go online again.
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To track session time and enforce limits.
+  - apps/driver-app/src/screens/home_screen.dart # To display status and lockout timer.
+
+dev_notes: >
+  This is a foundational safety and compliance feature for the `driver-wellness` epic. It prevents driver fatigue by enforcing regulated driving limits. This story provides the core mechanism that features like `story-140.5` (Enhanced Break Reminders) can build upon.

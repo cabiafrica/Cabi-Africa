@@ -1,0 +1,26 @@
+id: story-62.3
+epic: customer-support
+slug: in-app-help-center
+title: Implement In-App Help Center / FAQ
+status: Done
+author: Bob (sm)
+date: '2024-08-09T21:45:00Z'
+
+description: >
+  As a user, I want a searchable Help Center within the app with answers to
+  frequently asked questions, so I can find solutions to common problems
+  without having to contact support.
+
+acceptance_criteria:
+  - A new "Help Center" screen must be added to the settings menu of both the `passenger-app` and `driver-app`.
+  - The screen must display a list of help articles organized by category (e.g., "Payments," "Account," "Ride Issues").
+  - The articles must be searchable.
+  - The content for these articles (text, images) must be manageable from the `admin-panel` without requiring an app update.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/help_center_screen.dart
+  - Cabi Alpha/mobile/driver_app/lib/screens/help_center_screen.dart
+  - apps/admin-panel/src/app/help-content/page.tsx
+
+dev_notes: >
+  A robust help center can significantly reduce the load on the customer support team. The content should be managed via a simple CMS-like interface in the admin panel.

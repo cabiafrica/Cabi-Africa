@@ -1,0 +1,27 @@
+id: story-55.1
+epic: payment-methods
+slug: manage-credit-cards
+title: Allow Passengers to Add and Manage Credit Cards
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T16:45:00Z'
+
+description: >
+  As a passenger, I want to add, remove, and select a default credit card for
+  payment, so that I can manage how I pay for rides.
+
+acceptance_criteria:
+  - A new "Payment" or "Wallet" section must be added to the `passenger-app`.
+  - Users must be able to securely add a new credit/debit card using a form integrated with our payment processor (e.g., Stripe Elements).
+  - The app must not store raw card details; it should only handle payment tokens.
+  - Users must be able to see a list of their saved cards (showing last 4 digits and expiry).
+  - Users must be able to set one card as the default and delete saved cards.
+
+files_to_be_created:
+  - apps/passenger-app/src/screens/wallet_screen.dart
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To manage payment methods via the payment processor
+
+dev_notes: >
+  This is a foundational story for payments. Secure integration with the payment processor is the highest priority.

@@ -1,0 +1,38 @@
+id: story-9.5
+epic: refactoring-and-architecture
+slug: shared-base-panel
+title: Create a Shared BasePanel Widget for Consistent Bottom Sheets
+status: 'Ready for Review'
+author: Bob (sm)
+date: '2024-05-29T22:00:00Z'
+
+description: >
+  As a developer, I want to create a reusable `BasePanel` widget within the
+  `core_ui` package, so that all bottom sheet-style panels in both the
+  passenger and driver apps have a consistent appearance and positioning,
+  reducing code duplication.
+
+acceptance_criteria:
+  - The `core_ui` package is updated to include a new `BasePanel` widget.
+  - The `BasePanel` widget should handle the common `Positioned` and `Material`
+    properties (e.g., `bottom: 0`, `left: 0`, `right: 0`, `elevation`,
+    `borderRadius` for top corners).
+  - The `BasePanel` must accept a `child` widget to render its specific content.
+  - At least one existing panel widget in the `passenger-app` (e.g., `RideConfirmationPanel`)
+    is refactored to use the new `BasePanel`.
+  - At least one existing panel widget in the `driver-app` (e.g., `WaitingForPassengerPanel`)
+    is refactored to use the new `BasePanel`.
+  - All imports are updated to reflect the use of the new `BasePanel`.
+  - Both applications must build and run without errors after the refactoring.
+  - All existing tests for the refactored panels must pass.
+
+files_to_be_created:
+  - packages/core_ui/lib/src/widgets/base_panel.dart
+
+files_to_modified:
+  - packages/core_ui/lib/core_ui.dart
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/ride_confirmation_panel.dart
+  - Cabi Alpha/mobile/driver_app/lib/widgets/waiting_for_passenger_panel.dart
+
+dev_notes: >
+  This story is a direct follow-up to the `core_ui` package creation. It will significantly clean up the UI code for many panels by abstracting common styling and positioning. The `BasePanel` should be flexible enough to allow for internal padding and other customizations via its child.

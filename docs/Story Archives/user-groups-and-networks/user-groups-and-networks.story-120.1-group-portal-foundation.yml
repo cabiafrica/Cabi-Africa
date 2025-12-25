@@ -1,0 +1,52 @@
+id: story-120.1
+epic: user-groups-and-networks
+slug: group-portal-foundation
+title: Implement Foundational Portal for Driver Organizations
+status: DONE
+author: Mary (analyst)
+date: '2024-08-10T10:00:00Z'
+
+description: >
+  As a driver organization manager (e.g., a fleet owner, head of a driver
+  association, or a union leader), I need a standalone web portal where I can register my
+  organization (which can include unions), so that I can get a dedicated webpage to manage our members,
+  activities, announcements, and internal subgroups.
+
+acceptance_criteria:
+  - A new standalone web application or PWA is created for the "Driver Organization Portal".
+  - The portal allows a user (the "founder") to register a new "Driver Organization" (e.g., a union) by uploading a government certificate of registration.
+  - Upon submission, the organization is created with a "Pending Verification" status.
+  - A platform administrator must be able to review the certificate in the `admin-panel` and approve or reject the organization.
+  - Once approved, the organization becomes "Active" and is assigned a unique dashboard. The dashboard must initially display the organization's name, status, and a section for announcements.
+  - The organization data model must support a "founder" and a "leadership team" of up to 5 members.
+  - The founder can use the portal to appoint/manage the members of the leadership team.
+  - All leadership team members (including the founder) can perform administrative actions like posting announcements. The ability to approve members will be handled in `story-120.4`.
+  - The ability to appoint or remove members of the leadership team is a permission exclusive to the founder.
+  - The data model must enforce that a driver can only be a member of one organization at a time (e.g., by adding an `organizationId` to the driver's user profile).
+  - The system must support a user holding multiple roles (e.g., a user can be a founder, a leadership team member, and an active driver simultaneously).
+  - Leadership team members must be able to post, edit, and delete announcements from the portal dashboard.
+  - Drivers who are members of the organization must be able to see these announcements within their `driver-app` (e.g., in a new "My Organization" screen).
+  - Leadership team members of an active organization can create, name, and manage subgroups within their organization.
+  - The system must support assigning individual members to specific subgroups.
+
+files_to_be_created:
+  - apps/group-portal-web/src/app/page.tsx # Main landing/registration page for groups
+  - apps/group-portal-web/src/app/dashboard/[groupId]/page.tsx # The main dashboard for a group
+  - apps/group-portal-web/src/app/dashboard/[groupId]/management/page.tsx # UI for the founder to manage the leader board
+  - libs/backend/user-service/src/lib/organization-subgroup.model.ts # New data model for subgroups
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To add data models for Driver Organizations, subgroups, and the one-to-many link between an organization and its drivers.
+  - apps/admin-panel/src/app/organizations/page.tsx # New admin UI to review and approve pending organizations
+  - apps/group-portal-web/src/app/dashboard/[groupId]/page.tsx # To include subgroup management UI.
+
+dev_notes: >-
+  This is the foundational story for a new `user-groups-and-networks` epic. It establishes the core concept of a "Driver Organization" entity, now explicitly encompassing "unions," and a dedicated portal for them. This will serve as the base for more advanced features like managing driver activities and projects. The initial focus is on creating the container (the organization and its portal) and a basic announcements feature. The proposed multi-level referral program will be handled in a separate story (`story-120.11`).
+
+  A critical part of this story is the verification flow. Organizations are not active until a platform admin verifies their government registration certificate. The data model must also support a specific governance structure: a single "founder" who creates the organization and appoints a "leader board" of up to 5 members who act as administrators.
+
+  The business rule that a driver can only belong to one organization at a time is critical. This will be enforced by adding a singular `organizationId` field to the driver's user record. Any logic for joining an organization must check this field first.
+
+  **Permissions distinction:** The founder is the only role that can manage the leader board itself. Other leader board members have operational permissions (approving members, managing activities, creating and managing subgroups, etc.) but cannot alter the leadership structure.
+
+  **Role Combination:** A user's roles are not mutually exclusive. A user who is a founder or a leader board member can also be an active driver who takes trips. The system must allow a single user account to hold multiple roles. The introduction of subgroups will require careful design of permissions and data structures to ensure scalability and clarity.

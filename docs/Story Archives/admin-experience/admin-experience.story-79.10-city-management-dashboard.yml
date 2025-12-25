@@ -1,0 +1,23 @@
+id: story-79.10
+epic: admin-experience
+slug: city-management-dashboard
+title: Create City Management Dashboard
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T04:30:00Z'
+
+description: >
+  As a city manager, I need a dedicated dashboard to manage settings and view
+  KPIs specific to my city, so I can run local operations effectively.
+
+acceptance_criteria:
+  - This enhances the BI Dashboard (`story-79.4`) and other admin tools.
+  - A city manager's view of the `admin-panel` should be scoped to their assigned city.
+  - They should be able to manage city-specific settings, such as local promotions, airport zones, and driver incentive campaigns.
+  - The BI dashboard they see should default to showing data only for their city.
+
+files_to_be_modified:
+  - The entire `apps/admin-panel` to be refactored to support city-level scoping based on the logged-in admin's role.
+
+dev_notes: >
+  This is a key scalability feature as the business expands to new cities. It empowers local teams by giving them the tools they need without exposing them to global data or settings.

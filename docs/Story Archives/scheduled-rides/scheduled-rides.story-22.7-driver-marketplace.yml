@@ -1,0 +1,24 @@
+id: story-22.7
+epic: scheduled-rides
+slug: driver-scheduled-ride-marketplace
+title: Create Driver Marketplace for Scheduled Rides
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T19:25:00Z'
+
+description: >
+  As a driver, I want a section in the app where I can browse and accept
+  available scheduled rides for the future, so I can plan my work ahead of time.
+
+acceptance_criteria:
+  - A new "Scheduled Trips" or "Opportunities" tab must be added to the `driver-app`.
+  - This screen must list upcoming scheduled rides available in the driver's city.
+  - Each entry should show the pickup time, estimated duration, and estimated earnings. Pickup and dropoff locations should be shown at a certain zoom level to protect passenger privacy.
+  - A driver can tap to view details and "accept" a scheduled ride, committing them to it.
+  - The `ride-service` must handle the assignment of the ride to the driver and remove it from the marketplace.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/scheduled_rides_marketplace_screen.dart
+
+dev_notes: >
+  This creates a proactive way for drivers to engage with scheduled rides, rather than just waiting for the system to assign one. Privacy is key; we should not show exact addresses until a ride is accepted.

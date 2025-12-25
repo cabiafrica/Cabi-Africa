@@ -1,0 +1,27 @@
+id: story-50.1
+epic: dispatch-system
+slug: driver-scoring-for-assignments
+title: "Dispatch: Implement Driver Scoring for Assignments"
+status: Done
+author: Gemini Code Assist
+date: '2025-12-05T11:45:00Z'
+
+description: >
+  As a platform operator, I want the dispatch system to use a scoring mechanism for drivers
+  (based on rating, acceptance rate, etc.) when automatically assigning ride requests, so that we can prioritize reliability and quality of service.
+
+acceptance_criteria:
+  - The backend dispatch service's ride matching algorithm must be updated to incorporate a driver "score".
+  - The score should be calculated based on factors such as driver rating, ride acceptance rate, and recent activity.
+  - When multiple drivers are eligible for a ride, the one with the highest score should be prioritized.
+  - The system must penalize drivers in their score for timing out on job offers.
+
+files_to_be_created:
+  # No new files, modifies existing services.
+
+files_to_be_modified:
+  - # The core logic of the backend dispatch service.
+
+dev_notes: >
+  This story implements a core requirement for the dispatch system from the PRD (section 2.5). It moves the system from a simple "closest driver" model to a more sophisticated, quality-based matching algorithm. This is a purely backend story and will require significant changes to the heart of the dispatching logic. The specific weights for each factor in the score should be configurable.
+  PRD Reference: 2.5. Dispatch System -> Ride Matching & Assignment -> Driver Scoring for Assignments

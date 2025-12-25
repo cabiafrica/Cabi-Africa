@@ -1,0 +1,52 @@
+{
+  "npmScope": "cabi",
+  "affected": {
+    "defaultBase": "main"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nx/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
+      }
+    }
+  },
+  "targetDefaults": {
+    "build": {
+      "cache": true,
+      "dependsOn": ["^build"]
+    },
+    "lint": {
+      "cache": true,
+      "dependsOn": ["^lint"]
+    },
+    "test": {
+      "cache": true,
+      "dependsOn": ["^test"]
+    },
+    "e2e": {
+      "cache": true,
+      "dependsOn": ["^e2e"]
+    }
+  },
+  "generators": {
+    "@nx/react": {
+      "application": {
+        "style": "css",
+        "linter": "eslint",
+        "bundler": "vite"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nx/nest": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    }
+  }
+}

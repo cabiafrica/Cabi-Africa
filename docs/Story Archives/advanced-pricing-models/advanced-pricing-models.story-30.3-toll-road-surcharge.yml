@@ -1,0 +1,28 @@
+id: story-30.3
+epic: advanced-pricing-models
+slug: toll-road-surcharge
+title: Implement "Toll Roads" Surcharge
+status: DONE
+author: Bob (sm)
+date: '2024-07-28T10:07:00Z'
+
+description: >
+  As a driver, I want the system to automatically detect when I use a toll
+  road during a trip and add the cost of the toll to the passenger's fare, so
+  that I am reimbursed for the expense.
+
+acceptance_criteria:
+  - The `ride-service` must integrate with a mapping provider's API (e.g., Google Maps, Mapbox) that can identify tolls along a given route.
+  - When a trip is completed, the `ride-service` must analyze the actual route taken.
+  - If the route included tolls, the total cost of the tolls must be calculated.
+  - This toll cost must be added to the passenger's final fare in the `payment-service`.
+  - The passenger's receipt must itemize the toll charges separately.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To integrate with mapping API for toll calculation
+  - libs/backend/payment-service/src/lib/payment.service.ts # To add tolls to the final charge
+
+dev_notes: >
+  This feature improves fare accuracy and driver satisfaction. It relies on a third-party mapping service that can provide toll data. The implementation needs to be robust to handle trips with multiple tolls.

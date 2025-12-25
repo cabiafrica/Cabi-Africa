@@ -1,0 +1,26 @@
+id: story-59.4
+epic: driver-payments-and-reimbursements
+slug: toll-pass-integration
+title: Driver Toll Pass Integration
+status: Done
+author: Bob (sm)
+date: '2024-08-06T09:08:00Z'
+
+description: >
+  As a driver, I want to link my personal toll pass account to the app, so
+  that the system can use my actual toll charges for reimbursement instead of
+  estimates.
+
+acceptance_criteria:
+  - In the `driver-app` settings, a new section allows drivers to link their toll pass account (e.g., E-ZPass).
+  - This requires an integration with the toll authority's API.
+  - When a trip is completed, the `ride-service` can query the toll API for any charges incurred by that driver's pass during the trip's timeframe.
+  - This provides the exact toll amount for reimbursement.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To integrate with toll APIs
+
+dev_notes: >
+  This makes toll reimbursement (`story-59.1`) much more accurate. It's a complex integration project that varies by region and toll authority.

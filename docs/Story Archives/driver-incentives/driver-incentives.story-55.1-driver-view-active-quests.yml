@@ -1,0 +1,53 @@
+id: story-55.1
+epic: driver-incentives
+slug: driver-view-active-quests
+title: Driver View Active Quests and Promotions
+status: DONE
+author: Sarah (po)
+date: '2024-08-12T10:00:00Z'
+
+description: >
+  As a driver, I want to view a list of active "Quests" (e.g., "Complete 10 rides this weekend")
+  and my current progress toward them, so that I am motivated to drive more and earn
+  specific bonuses.
+
+acceptance_criteria:
+  - The Driver App must have a new `QuestsScreen` or `PromotionsScreen`.
+  - The screen must display a list of active quests assigned to the driver.
+  - Each quest card must show:
+    - Title (e.g., "Weekend Warrior").
+    - Description/Goal (e.g., "Complete 20 trips").
+    - Reward Amount (e.g., "$50 Bonus").
+    - Expiry/Deadline (e.g., "Ends Sunday 11:59 PM").
+  - A visual progress bar must indicate current completion status (e.g., "12/20 trips").
+  - Completed quests should move to a "Completed" tab or section history.
+  - The app must fetch this data from a new `incentive-service`.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/quests_screen.dart
+  - libs/backend/incentive-service/src/lib/incentive.service.ts
+  - libs/backend/incentive-service/src/lib/incentive.controller.ts
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/home_screen.dart # Add entry point/widget for active quest summary
+
+dev_notes: >
+  This is the frontend visualization for the incentives engine. The backend logic for *tracking*
+  rides against quests will be complex (event-driven), but for this story, we focus on
+  fetching and displaying the *current state* of the quests.
+  Mock the `incentive-service` response with a few sample quests (one in progress, one new).
+
+tasks:
+  - id: task-1
+    description: Implement backend incentive retrieval.
+    subtasks:
+      - "[x] Create `incentive.service.ts` with mock quest data."
+      - "[x] Create `incentive.controller.ts` exposing `GET /incentives/quests`."
+  - id: task-2
+    description: Implement frontend quests screen.
+    subtasks:
+      - "[x] Create `quests_screen.dart` with progress bars."
+      - "[x] Add navigation from the Home screen."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro

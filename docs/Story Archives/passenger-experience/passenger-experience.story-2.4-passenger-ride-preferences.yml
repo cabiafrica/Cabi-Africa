@@ -1,0 +1,30 @@
+id: story-2.4
+epic: passenger-experience
+slug: passenger-ride-preferences
+title: "Passenger: Set Ride Preferences"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-06T16:10:00Z'
+
+description: >
+  As a passenger, I want to set preferences for my rides (e.g., "Quiet Ride", "Cool Temperature"),
+  so the driver is aware of my preferences for a more comfortable journey.
+
+acceptance_criteria:
+  - A new "Ride Preferences" section must be added to the passenger's profile/settings screen.
+  - The user must be able to select from a predefined list of preferences (e.g., "Quiet Ride", "No Music", "Cool Temperature").
+  - The selected preferences must be saved to the user's profile via the `user-service`.
+  - When a ride is booked, the passenger's saved preferences must be transmitted with the ride request.
+  - The driver app must display the passenger's ride preferences clearly when they accept a ride or on the way to pickup.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/ride_preferences_screen.dart
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To store preferences on the user profile.
+  - libs/backend/ride-service/src/lib/ride.service.ts # To include preferences in the ride data payload.
+  - Cabi Alpha/mobile/driver_app/lib/screens/ride_request_modal.dart # Or similar, to display preferences to the driver.
+
+dev_notes: >
+  This story introduces a key personalization feature from the PRD (section 2.1). The list of available preferences should be managed by admins and fetched from a configuration service. The backend `user-service` will store the user's selections. The `ride-service` will then pass this information along with the ride details to the `driver-app`, which needs a UI update to display these preferences to the driver at an appropriate time.
+  PRD Reference: 2.1. Passenger App -> Convenience & Personalization -> Ride Preferences

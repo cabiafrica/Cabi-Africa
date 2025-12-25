@@ -1,0 +1,29 @@
+id: story-47.1
+epic: advanced-booking-options
+slug: round-trip
+title: Implement "Round Trip" Booking
+status: DONE
+author: Bob (sm)
+date: '2024-08-01T09:07:00Z'
+
+description: >
+  As a passenger, I want to book a round trip, including a specified wait
+  time at the destination, so that I can secure my ride back without having
+  to book again.
+
+acceptance_criteria:
+  - In the `RideBookingPanel`, a "Round Trip" option must be available.
+  - When selected, the user can specify a wait time at the destination (e.g., 15 minutes, 1 hour).
+  - The `ride-service` must calculate a single fare for the entire round trip, including the cost of waiting.
+  - The same driver is assigned for the entire duration.
+  - The driver's app must clearly show the full round-trip itinerary.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/widgets/ride_booking_panel.dart # To add the round trip UI
+  - libs/backend/ride-service/src/lib/fare.service.ts # To calculate round trip fares
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To display the full itinerary
+
+dev_notes: >
+  This is the first story for a new `advanced-booking-options` epic. It's a form of hourly booking and requires significant changes to fare calculation and the trip state model.

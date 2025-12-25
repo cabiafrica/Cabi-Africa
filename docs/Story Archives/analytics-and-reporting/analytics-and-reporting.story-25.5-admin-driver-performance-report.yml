@@ -1,0 +1,35 @@
+id: story-25.5
+epic: analytics-and-reporting
+slug: admin-driver-performance-report
+title: Implement Admin Driver Performance Report
+status: Done
+author: Bob (sm)
+date: '2024-07-23T14:04:00Z'
+
+description: >
+  As an administrator, I want to view a detailed performance report for
+  individual drivers over a specified time period, so that I can make
+  data-driven decisions about driver quality, incentives, and potential deactivation.
+
+acceptance_criteria:
+  - A new "Reports" section must be added to the `admin-panel`.
+  - Inside, there should be a "Driver Performance" report page.
+  - The page must allow an admin to select a driver and a date range.
+  - Upon generating the report, it must display key metrics for that driver in that period, including:
+    - Total trips completed
+    - Total online hours
+    - Acceptance rate (%)
+    - Driver-cancellation rate (%)
+    - Average rating for the period
+    - Total earnings (fare, tips, bonuses)
+  - The `analytics-service` must expose an endpoint to generate this report, aggregating data from the `ride-service`, `payment-service`, and `rating-service`.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/reports/driver-performance/page.tsx
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.controller.ts # To add the report endpoint
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To implement the data aggregation logic for the report
+
+dev_notes: >
+  This story moves beyond the real-time dashboard (`story-25.4`) to provide deep, historical analysis. The `analytics-service` will need to perform complex queries across multiple services' data stores to generate these reports. This is a data-heavy feature that is critical for operational management.

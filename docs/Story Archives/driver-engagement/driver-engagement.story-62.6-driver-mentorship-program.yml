@@ -1,0 +1,30 @@
+id: story-62.6
+epic: driver-engagement
+slug: driver-mentorship-program
+title: Implement Driver Mentorship Program
+status: Done
+author: Bob (sm)
+date: '2024-08-09T20:35:00Z'
+
+description: >
+  As an experienced driver, I want to become a mentor to new drivers to share
+  my knowledge and earn a bonus. As a new driver, I want to be connected with
+  a mentor to get advice and support.
+
+acceptance_criteria:
+  - Experienced drivers (based on configurable criteria like rating, trip count) can apply to be mentors via the `driver-app`.
+  - Admins must be able to review and approve mentor applications in the `admin-panel`.
+  - Once a new driver is verified, the system automatically matches them with an approved mentor in their city.
+  - A private, persistent chat channel is opened between the mentor and their mentee(s) in the `driver-app`.
+  - Mentors receive a bonus from the `incentive-service` when their mentee reaches specific, configurable milestones (e.g., "100 trips completed").
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/mentorship_screen.dart
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To store mentor/mentee relationships
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To handle mentor bonuses
+  - apps/admin-panel/src/app/users/[userId]/page.tsx # To add mentor approval UI
+
+dev_notes: >
+  This is a powerful community-building and driver retention feature. It helps new drivers feel supported, improving their early performance and reducing churn.

@@ -1,0 +1,25 @@
+id: story-120.8
+epic: user-groups-and-networks
+slug: organization-audit-log
+title: Implement Audit Log for Leader Board Actions
+status: DONE
+author: Mary (analyst)
+date: '2024-08-10T10:50:00Z'
+
+description: >
+  As a founder or leader board member of an organization, I need to see a log
+  of all administrative actions taken by the leader board, so we have
+  transparency and accountability for managing our organization.
+
+acceptance_criteria:
+  - A new "Audit Log" or "History" section must be added to the `group-portal-web` dashboard, accessible to the founder and leader board members.
+  - Every significant action taken by a leader board member must generate a log entry.
+  - Actions to be logged include: approving/rejecting a join request, removing a member, posting an announcement, creating/editing an activity, and changing leader board appointments.
+  - Each log entry must contain: the leader who performed the action, the action taken, the target (if any), and a timestamp.
+  - The log should be read-only and presented in reverse chronological order.
+
+files_to_be_created:
+  - apps/group-portal-web/src/app/dashboard/[groupId]/audit-log/page.tsx # UI to display the organization's audit log.
+
+dev_notes: >
+  This feature provides crucial governance for driver organizations. The logging mechanism should be implemented on the backend whenever a privileged action is performed by a leader board member. This mirrors the functionality of the main admin audit log (`story-79.6`) but is scoped to each individual organization.

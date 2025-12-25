@@ -1,0 +1,42 @@
+id: story-104.2
+epic: web-booking-experience
+slug: web-booking-real-time-tracking
+title: Show Real-Time Driver Location on Web After Booking
+status: Done
+author: Bob (sm)
+date: '2025-12-02T12:15:00Z'
+
+description: >
+  As a website user who has just booked a ride, I want to see my assigned driver's real-time location on a map on the website,
+  so that I know their ETA and can prepare for my pickup without needing the mobile app.
+
+acceptance_criteria:
+  - After a ride is successfully booked via the `WebBookingWidget`, the user must be redirected to a unique trip status page (e.g., `/trip/[tripId]`).
+  - The trip status page must display a map showing the pickup location and the driver's current position.
+  - The driver's vehicle icon must move on the map in real-time as their location updates are received.
+  - The page must display the driver's name, vehicle model, color, and license plate number.
+  - The driver's Estimated Time of Arrival (ETA) must be displayed and should update dynamically.
+  - A real-time communication channel (e.g., WebSockets or Server-Sent Events) must be established between the web client and the backend to push location updates.
+  - The backend (e.g., `dispatch-system` or a new `web-booking-service`) must be capable of broadcasting driver location updates to the web client for the specific trip.
+  - The page must include a "Cancel Ride" button.
+
+files_to_be_created:
+  - Cabi Alpha/web/user_portal/src/pages/tracking/[tripId].tsx # The live tracking page for a web-booked ride.
+  - # A new backend gateway/service for real-time communication, e.g., apps/web-booking-service/src/app/trip-tracking.gateway.ts
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/src/components/marketing/WebBookingWidget.tsx # To redirect to the trip page after a successful booking.
+  - # The backend service responsible for driver location (e.g., dispatch-system) will need to be modified to publish location events to the web-booking channel.
+
+dev_notes: >
+  This story is the direct follow-up to `story-104.1` and completes the web booking user journey. The most complex part of this story is establishing the real-time communication infrastructure. A WebSocket gateway in a dedicated `web-booking-service` or similar is the recommended approach. This service would subscribe to location updates from the core dispatch system and push them to the correct web client. This mirrors the functionality of the native passenger app for a consistent user experience, as per PRD requirement R2.6.
+
+tasks:
+  - id: task-1
+    description: "Implement the backend infrastructure for real-time location updates (e.g., WebSocket gateway)."
+  - id: task-2
+    description: "Create the dynamic trip status page `/trip/[tripId]` in the `marketing-website` app."
+  - id: task-3
+    description: "Integrate the trip status page with the real-time backend to display the moving driver, ETA, and driver details."
+  - id: task-4
+    description: "Update the `WebBookingWidget` to redirect to the new page upon successful ride creation."

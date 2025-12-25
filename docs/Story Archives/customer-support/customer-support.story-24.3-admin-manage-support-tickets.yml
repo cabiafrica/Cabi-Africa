@@ -1,0 +1,38 @@
+id: story-24.3
+epic: customer-support
+slug: admin-manage-support-tickets
+title: Implement Admin Panel for Support Ticket Management
+status: Done
+author: Bob (sm)
+date: '2024-07-13T09:00:00Z'
+
+description: >
+  As a customer support agent, I want to view, manage, and respond to support
+  tickets submitted by users, so that I can resolve their issues efficiently
+  and maintain a record of our communication.
+
+acceptance_criteria:
+  - A new "Support Tickets" page must be added to the `admin-panel`.
+  - This page must fetch and display a list of all support tickets from the `support-service`.
+  - The list should be filterable by status (e.g., 'New', 'In Progress', 'Resolved') and searchable by user ID or ticket ID.
+  - Each ticket in the list must show key information: Ticket ID, Subject, User Name, Status, and Date Submitted.
+  - Clicking on a ticket must navigate to a detailed `TicketView` page.
+  - The `TicketView` page must display the full conversation history, including the user's initial report and all subsequent replies.
+  - An admin must be able to change the status of a ticket (e.g., from 'New' to 'In Progress').
+  - An admin must be able to post a reply to the ticket via a text input field.
+  - When an admin posts a reply, the `support-service` must trigger the `notification-service` to send a push notification to the user, informing them of the new reply.
+  - The `support-service` must expose new, secure, admin-only endpoints for fetching tickets, viewing a ticket, and updating/replying to a ticket.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/support/page.tsx
+  - apps/admin-panel/src/app/support/[ticketId]/page.tsx
+
+files_to_be_modified:
+  - apps/admin-panel/src/components/layout/sidebar.tsx # To add the link to the new page
+  - libs/backend/support-service/src/lib/support.controller.ts # To add admin endpoints
+  - libs/backend/support-service/src/lib/support.service.ts # To implement admin logic
+  - libs/backend/notification-service/src/lib/notification.service.ts # To handle sending reply notifications
+  - The database schema for the `support-service` to add a `status` field and a model for replies.
+
+dev_notes: >
+  This story provides the essential tools for our customer support team. It's the administrative counterpart to `story-24.2`. The new endpoints in the `support-service` must be secured for admin-only access. The interaction with the `notification-service` is critical for closing the communication loop with the user. A future enhancement could involve using WebSockets to provide real-time updates to the admin dashboard as new tickets or replies come in.

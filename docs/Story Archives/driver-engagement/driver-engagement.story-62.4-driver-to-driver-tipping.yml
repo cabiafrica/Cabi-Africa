@@ -1,0 +1,27 @@
+id: story-62.4
+epic: driver-engagement
+slug: driver-to-driver-tipping
+title: Implement Driver-to-Driver Tipping
+status: Done
+author: Bob (sm)
+date: '2024-08-06T09:09:00Z'
+
+description: >
+  As a driver in the community chat, if another driver provides helpful
+  advice, I want to be able to send them a small tip from my earnings wallet
+  as a thank you.
+
+acceptance_criteria:
+  - In the driver community chat (`story-48.1`), tapping on another driver's profile should reveal a "Send Tip" button.
+  - The driver can select a small, pre-defined tip amount (e.g., KES 50, KES 100).
+  - The `payment-service` must process a wallet-to-wallet transfer from the sender to the recipient.
+  - Both drivers must be notified of the transaction.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/community_chat_screen.dart # To add the tipping UI
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle wallet-to-wallet transfers
+
+dev_notes: >
+  This feature further enhances the driver community by adding a financial "thank you" mechanism, fostering a more supportive and collaborative environment.

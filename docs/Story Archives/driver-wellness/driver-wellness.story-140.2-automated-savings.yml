@@ -1,0 +1,31 @@
+id: story-140.2
+epic: driver-wellness
+slug: automated-savings
+title: Implement Automated Savings Feature for Drivers
+status: Done
+author: Mary (analyst)
+date: '2024-08-10T12:20:00Z'
+
+description: >
+  As a driver, I want to automatically set aside a small portion of my earnings
+  from each trip, so I can effortlessly build up savings for car maintenance,
+  taxes, or a rainy day.
+
+acceptance_criteria:
+  - A new "Automated Savings" or "Savings Pot" feature must be added to the driver's Wallet screen.
+  - The driver must be able to opt-in to the feature and connect to a partner savings provider.
+  - Upon opting in, the driver can choose a savings method (e.g., "Round-up to the nearest dollar" or "Save a fixed percentage of each trip").
+  - After each payout, the `payment-service` must calculate the savings amount and initiate a transfer to the driver's savings pot via the partner API.
+  - The driver's Wallet screen must display the current balance of their savings pot.
+  - The driver must be able to pause, resume, or change the settings of the savings feature at any time.
+  - The driver must be able to initiate a withdrawal from their savings pot back to their primary payout account.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/automated_savings_screen.dart # For setup and management of the feature.
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/wallet_screen.dart # To add the entry point and display the savings balance.
+  - libs/backend/payment-service/src/lib/payment.service.ts # To integrate with a fintech partner and handle the savings transfers.
+
+dev_notes: >
+  This feature provides a significant financial wellness benefit. It will require a partnership and API integration with a third-party fintech provider that can hold the savings. The user experience should be seamless, making it feel like an integrated part of our wallet.

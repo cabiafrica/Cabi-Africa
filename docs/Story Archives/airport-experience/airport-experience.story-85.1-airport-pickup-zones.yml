@@ -1,0 +1,24 @@
+id: story-85.1
+epic: airport-experience
+slug: airport-pickup-zones
+title: Implement Airport-Specific Pickup Zone Guidance
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T22:00:00Z'
+
+description: >
+  As a passenger at an airport, I want the app to guide me to the designated
+  ride-share pickup area, so I can find my driver easily.
+
+acceptance_criteria:
+  - The `admin-panel` must allow operations teams to define specific pickup zones for airports, including terminal and door numbers.
+  - When a passenger requests a ride from a location geofenced as an airport, the app must prompt them to select their terminal and guide them to the correct pickup spot.
+  - The driver must also be shown these specific instructions (e.g., "Pickup at Terminal 2, Arrivals, Door 4").
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/pricing/page.tsx # To add airport zone management
+  - Cabi Alpha/mobile/passenger_app/lib/screens/home_screen.dart # To add airport pickup flow
+  - Cabi Alpha/mobile/driver_app/lib/widgets/trip_in_progress_panel.dart # To display airport instructions
+
+dev_notes: >
+  This is the foundational story for the `airport-experience` epic. Getting airport pickups right is critical for user experience and requires clear, specific instructions for both parties.

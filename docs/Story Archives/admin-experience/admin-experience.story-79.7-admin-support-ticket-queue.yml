@@ -1,0 +1,75 @@
+id: story-79.7
+epic: admin-experience
+slug: admin-support-ticket-queue
+title: Admin Panel for Support Ticket Management
+status: IN_PROGRESS
+author: Bob (sm)
+date: '2024-08-11T14:00:00Z'
+
+description: >
+  As a support agent, I need a centralized queue in the admin panel to view,
+  assign, and manage all support tickets, so that I can efficiently address
+  user issues and inquiries.
+
+acceptance_criteria:
+  - A new "Support" or "Tickets" section must be added to the `admin-panel`.
+  - This section must display a paginated list of all support tickets from the `support-service`.
+  - The list should be filterable by status (e.g., "New", "Open", "Closed") and category (e.g., "Lost Item", "Suggestion", "Payment Dispute").
+  - Each ticket in the list must show the ticket ID, subject, user who created it, status, and creation date.
+  - Clicking a ticket must navigate to a detailed ticket view page.
+  - In the detail view, an admin must be able to:
+    - View the full conversation history.
+    - Add internal notes.
+    - Reply to the user.
+    - Change the ticket's status.
+  - The `support-service` must expose new admin-protected endpoints for listing, viewing, and updating tickets.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/support/page.tsx # The main ticket queue page
+  - apps/admin-panel/src/app/support/[ticketId]/page.tsx # The detailed ticket view page
+
+files_to_be_modified:
+  - libs/backend/support-service/src/lib/support.service.ts # To add admin-level ticket management logic
+  - libs/backend/support-service/src/lib/support.controller.ts # To expose the new admin endpoints
+
+dev_notes: >
+  This story provides the core interface for the customer support team. It aggregates tickets created from various parts of the user-facing apps into a single, manageable queue. This is a foundational feature for platform operations and support.
+
+tasks:
+  - id: task-1
+    description: Create the main ticket queue page in the admin panel.
+    subtasks:
+      - "[x] Create `apps/admin-panel/src/app/support/page.tsx`."
+      - "[x] Implement a table to list support tickets with key information."
+      - "[x] Add placeholder filtering controls."
+      - "[x] Add a 'View' button linking to the detail page."
+  - id: task-2
+    description: Create the detailed ticket view page.
+    subtasks:
+      - "[x] Create `apps/admin-panel/src/app/support/[ticketId]/page.tsx`."
+      - "[x] Display detailed ticket information, including conversation history."
+      - "[x] Add UI elements for replying, adding internal notes, and changing status."
+  - id: task-3
+    description: Implement backend endpoints in the support-service for admin ticket management.
+    subtasks:
+      - "[x] Create `libs/backend/support-service/src/lib/support.controller.ts` and `support.service.ts`."
+      - "[x] Implement a `findAll` method in the service with mock data, pagination, and filtering."
+      - "[x] Implement `findById`, `addReply`, `addInternalNote`, and `updateStatus` methods in the service."
+      - "[x] Expose these service methods via new endpoints in the controller (e.g., `/admin/tickets`)."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  completion_notes: []
+  debug_log_references: []
+  file_list:
+    - apps/admin-panel/src/app/support/page.tsx
+    - apps/admin-panel/src/app/support/[ticketId]/page.tsx
+  change_log:
+    - file: apps/admin-panel/src/app/support/page.tsx
+      change: Updated the main ticket queue page to fetch data from the backend support-service API, replacing mock data. Added loading and error states. Implemented filtering by status and category using URL search parameters. Added pagination controls to navigate through the ticket list.
+    - file: apps/admin-panel/src/app/support/[ticketId]/page.tsx
+      change: Updated the detailed ticket view page to fetch data from the backend support-service API. Implemented functionality for replying, adding internal notes, and changing ticket status, with corresponding API calls. Added loading and error states. (Previous session)
+    - file: libs/backend/support-service/src/lib/support.controller.ts
+      change: Created a new controller to expose admin-level endpoints for managing support tickets. (Previous session)
+    - file: libs/backend/support-service/src/lib/support.service.ts
+      change: Implemented the business logic for finding, viewing, and updating support tickets using mock data. (Previous session)

@@ -1,0 +1,25 @@
+id: story-55.5
+epic: data-and-privacy
+slug: user-privacy-center
+title: Create User Privacy Center
+status: Done
+author: Bob (sm)
+date: '2024-08-09T20:10:00Z'
+
+description: >
+  As a user, I want a single, clear "Privacy Center" in the app where I can
+  find all settings related to my data and privacy, so I can easily manage
+  my preferences.
+
+acceptance_criteria:
+  - A new "Privacy Center" screen must be created in the settings menu of both the `passenger-app` and `driver-app`.
+  - This screen will serve as a container for other privacy-related features.
+  - It should include links to the Privacy Policy and Terms of Service.
+  - It will house the entry points for features like "Download My Data" and "Delete Account".
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/privacy_center_screen.dart
+  - Cabi Alpha/mobile/driver_app/lib/screens/privacy_center_screen.dart
+
+dev_notes: >
+  This is a foundational story that creates the main user interface for all subsequent privacy features. It consolidates scattered settings into one discoverable location.

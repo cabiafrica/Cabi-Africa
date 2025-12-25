@@ -1,0 +1,25 @@
+id: story-40.7
+epic: referrals
+slug: admin-referral-analytics-dashboard
+title: Create Admin Dashboard for Referral Analytics
+status: Done
+author: Bob (sm)
+date: '2024-08-09T17:55:00Z'
+
+description: >
+  As a marketing manager, I need a dashboard with key metrics and analytics
+  for our referral programs, so I can measure their ROI and effectiveness.
+
+acceptance_criteria:
+  - A new "Analytics" tab must be added to the "Referral Programs" section of the `admin-panel`.
+  - The dashboard must display key metrics: total referrals sent, sign-ups from referrals, conversion rate, and total credits/bonuses paid out.
+  - The data must be filterable by date range and by program (passenger vs. driver).
+  - It should include charts showing referral trends over time.
+  - The `analytics-service` must be responsible for collecting and aggregating this data.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/promotions/page.tsx # Or a new /referrals page to add the analytics tab
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To process and expose referral analytics
+
+dev_notes: >
+  This is a critical story for the business to understand the impact of the referral programs. The data should be presented in a clear, visual way to facilitate decision-making.

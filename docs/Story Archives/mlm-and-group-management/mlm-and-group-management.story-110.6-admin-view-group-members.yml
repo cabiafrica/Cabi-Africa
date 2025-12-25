@@ -1,0 +1,28 @@
+id: story-110.6
+epic: mlm-and-group-management
+slug: admin-view-group-members
+title: "Admin: View Members of a Driver Group"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-06T15:15:00Z'
+
+description: >
+  As an administrator, when viewing the details of a specific driver group, I want to see a list of all the drivers
+  who are members of that group, so I can understand its composition and size.
+
+acceptance_criteria:
+  - On the "Driver Groups" management page (from story-110.2), clicking on a group must navigate to a group detail view.
+  - The group detail view must display a paginated and searchable list of all its driver members.
+  - Each member in the list should display their name, email, and application status.
+  - The UI must call a new backend endpoint (e.g., `GET /admin/driver-groups/:groupId/members`) to fetch the member list.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/driver-groups/[groupId]/page.tsx
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/driver-groups/page.tsx # To add navigation to the new detail page.
+  - # The backend service managing DriverGroups needs a new endpoint to fetch members of a specific group.
+
+dev_notes: >
+  This story builds upon `story-110.2` (Admin: Manage Driver Groups) by adding a drill-down capability. It provides admins with the necessary visibility into the structure of the driver community, as required by the PRD (section 2.3). The backend will need a new endpoint that can query for all `DriverProfile` records associated with a specific `groupId`. The frontend will involve creating a new detail page that presents this list of members.
+  PRD Reference: 2.3. Admin Panel -> Organization Management

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; }
+        .header { background-color: #0044cc; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; }
+        .footer { background-color: #f0f0f0; padding: 10px; text-align: center; font-size: 12px; }
+        .amount { font-size: 24px; font-weight: bold; color: #00aa00; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Weekly Commission Summary</h1>
+    </div>
+    <div class="content">
+        <p>Hello {{name}},</p>
+        <p>Great news! Here is your commission summary for the last week:</p>
+        <p>Total Earned: <span class="amount">KES {{amount}}</span></p>
+        <p>New Referrals: {{referralCount}}</p>
+        <p>Keep growing your network to earn more!</p>
+        <a href="https://driver.cabi.app/commissions">View Details</a>
+    </div>
+    <div class="footer">
+        &copy; 2025 Cabi Inc.
+    </div>
+</body>
+</html>

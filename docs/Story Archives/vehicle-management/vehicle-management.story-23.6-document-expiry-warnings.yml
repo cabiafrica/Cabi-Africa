@@ -1,0 +1,24 @@
+id: story-23.6
+epic: vehicle-management
+slug: document-expiry-warnings
+title: Implement Vehicle Document Expiry Warnings
+status: Done
+author: Bob (sm)
+date: '2024-08-10T02:15:00Z'
+
+description: >
+  As a driver, I want to receive proactive warnings when my vehicle's
+  documents (e.g., insurance, registration) are about to expire, so I can
+  renew them in time and avoid being deactivated.
+
+acceptance_criteria:
+  - When a driver uploads a document, they must also enter its expiry date.
+  - A scheduled job runs daily to check for documents that will expire soon (e.g., within 30 days).
+  - The system sends a series of reminder notifications (e.g., at 30, 15, and 7 days) to the driver.
+  - If a document expires, the driver is temporarily blocked from going online until a new, valid document is uploaded and approved.
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To store expiry dates and run the check
+
+dev_notes: >
+  This proactive feature prevents driver downtime and ensures all vehicles on the platform are compliant. It's a win-win for drivers and the company.

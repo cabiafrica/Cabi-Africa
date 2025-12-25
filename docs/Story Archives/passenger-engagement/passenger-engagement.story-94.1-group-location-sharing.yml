@@ -1,0 +1,26 @@
+id: story-94.1
+epic: passenger-engagement
+slug: group-location-sharing
+title: Implement "Live Location Sharing" for Groups
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T10:18:00Z'
+
+description: >
+  As a passenger meeting up with friends, I want to create a temporary group
+  where we can all see each other's live location on the map as we travel to
+  a common destination, so we can coordinate our arrival.
+
+acceptance_criteria:
+  - A passenger can create a "Group Session" and invite friends (who are also users).
+  - Once friends accept, they all appear on a shared map view within the app.
+  - The session is temporary and automatically dissolves after a set time or when everyone arrives at the destination.
+  - This requires a new real-time feature in the `ride-service` or `chat-service` to manage group location data.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To handle group session logic
+
+dev_notes: >
+  A social feature that adds value outside of just booking a ride. It encourages groups of friends to use the app as a coordination tool.

@@ -1,0 +1,29 @@
+id: story-10.7
+epic: user-profile-and-settings
+slug: user-profile-picture
+title: Implement User Profile Picture Management
+status: Done
+author: Bob (sm)
+date: '2024-07-25T09:03:00Z'
+
+description: >
+  As a user (passenger or driver), I want to upload and change my profile
+  picture, so that other users can identify me and to personalize my account.
+
+acceptance_criteria:
+  - On the `ProfileScreen` of both the `passenger-app` and `driver-app`, the user must be able to tap on their profile picture placeholder.
+  - Tapping must give the option to take a new photo with the camera or select an existing one from the gallery.
+  - After a picture is selected, it should be uploaded to a secure storage service (e.g., S3).
+  - The `user-service` must be updated to store the URL of the user's profile picture.
+  - The uploaded picture must be displayed on the user's profile screen and wherever their profile is shown (e.g., in-trip screen for passengers/drivers).
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/profile_screen.dart
+  - Cabi Alpha/mobile/driver_app/lib/screens/profile_screen.dart
+  - libs/backend/user-service/src/lib/user.service.ts # To handle picture URL updates
+  - libs/backend/user-service/src/lib/user.model.ts # To add profile picture field
+
+dev_notes: >
+  A simple but important feature for building trust and community on the platform. The implementation should use a common image picker library. The backend will need a mechanism (e.g., a pre-signed S3 URL) to allow the client to upload the image directly and securely to cloud storage.

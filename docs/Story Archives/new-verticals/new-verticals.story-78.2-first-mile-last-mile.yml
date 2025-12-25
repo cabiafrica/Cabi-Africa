@@ -1,0 +1,26 @@
+id: story-78.2
+epic: new-verticals
+slug: first-mile-last-mile
+title: Implement "First-Mile/Last-Mile" Ride Suggestions
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T10:07:00Z'
+
+description: >
+  As a user planning a public transit journey, I want the app to
+  automatically suggest a ride-share trip for the "first mile" (from my
+  location to the station) and "last mile" (from the station to my final
+  destination).
+
+acceptance_criteria:
+  - This builds on `story-50.2` (Public Transit Directions).
+  - When displaying a public transit route, the UI should also show an option to "Book a ride to the station" and "Book a ride from the station".
+  - Tapping these options pre-fills the ride booking panel with the correct pickup/destination.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/widgets/ride_booking_panel.dart # To add the integrated suggestions
+
+dev_notes: >
+  This feature creates a seamless multi-modal experience, using our core ride-sharing service to complement public transit and capture more parts of a user's total journey.

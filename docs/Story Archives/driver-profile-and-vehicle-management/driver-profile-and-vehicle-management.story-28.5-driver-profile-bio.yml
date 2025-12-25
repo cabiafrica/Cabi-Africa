@@ -1,0 +1,27 @@
+id: story-28.5
+epic: driver-profile-and-vehicle-management
+slug: driver-profile-bio
+title: Implement Driver Profile Bio and Interests
+status: Done
+author: Bob (sm)
+date: '2024-07-28T10:08:00Z'
+
+description: >
+  As a driver, I want to add a short bio, languages I speak, and my
+  interests to my profile, so that I can personalize my profile and build a
+  better rapport with passengers.
+
+acceptance_criteria:
+  - The `driver-app`'s `ProfileScreen` must be updated to allow drivers to edit new fields: "About Me" (bio), "Languages", and "Interests".
+  - The `user-service` must be updated to store these new text fields on the driver's user model.
+  - This information must be visible to passengers on the in-trip screen, where the driver's details are shown.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/profile_screen.dart # To add editing UI
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/trip_in_progress_view.dart # To display the info
+  - libs/backend/user-service/src/lib/user.model.ts # To add new fields
+
+dev_notes: >
+  This is a "soft" feature aimed at humanizing the experience and improving the connection between drivers and passengers, which can lead to better ratings and tips.

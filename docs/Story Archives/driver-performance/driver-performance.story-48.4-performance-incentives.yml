@@ -1,0 +1,25 @@
+id: story-48.4
+epic: driver-performance
+slug: performance-based-incentives
+title: Implement Performance-Based Incentives
+status: Done
+author: Bob (sm)
+date: '2024-08-09T17:40:00Z'
+
+description: >
+  As a driver, I want to be eligible for bonuses based on maintaining high
+  performance metrics (e.g., high rating, low cancellation rate), so I am
+  rewarded for providing excellent service.
+
+acceptance_criteria:
+  - The `incentive-service` must be able to define performance-based bonus rules (e.g., "Maintain a 4.9+ rating for 50 consecutive trips to earn a $50 bonus").
+  - The `driver-app` must display these available incentives and the driver's progress towards them.
+  - When a driver meets the criteria, the bonus must be automatically calculated and added to their earnings.
+  - The rules for these incentives must be configurable in the `admin-panel`.
+
+files_to_be_modified:
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To process performance bonuses
+  - Cabi Alpha/mobile/driver_app/lib/screens/performance_screen.dart # To show progress towards bonuses
+
+dev_notes: >
+  This feature gamifies good performance and directly ties quality to earnings. The rules engine in the `incentive-service` needs to be robust enough to handle various types of performance conditions.

@@ -1,0 +1,40 @@
+id: story-24.2
+epic: customer-support
+slug: create-support-ticket
+title: Allow User to Create Support Ticket from Help Center
+status: Done
+author: Bob (sm)
+date: '2024-07-12T09:00:00Z'
+
+description: >
+  As a user (driver or passenger), if I cannot find an answer in the help
+  center, I want to be able to create a support ticket directly from the app,
+  so that I can get personalized assistance for my issue.
+
+acceptance_criteria:
+  - A "Contact Support" or "Submit a Ticket" button/option must be added to the `HelpCenterScreen` in both the `passenger-app` and `driver-app`.
+  - Tapping this option must navigate to a new `CreateTicketScreen`.
+  - The `CreateTicketScreen` must include fields for:
+    - Subject/Topic of the issue.
+    - Detailed description of the issue.
+    - Optional attachment upload (e.g., screenshot).
+    - Automatically pre-fill user ID and type (driver/passenger).
+    - Optionally allow linking to a specific `rideId` if the user is currently on a trip or viewing a past trip.
+  - A new backend `support-service` must be created to receive, store, and manage these support tickets.
+  - The `support-service` must expose a secure endpoint for mobile apps to submit new tickets.
+  - Upon successful submission, the user must receive an in-app confirmation message (e.g., "Your ticket #12345 has been submitted. We'll get back to you soon.").
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/create_ticket_screen.dart
+  - Cabi Alpha/mobile/driver_app/lib/screens/create_ticket_screen.dart
+  - libs/backend/support-service/src/lib/support.service.ts
+  - libs/backend/support-service/src/lib/support.controller.ts
+  - libs/backend/support-service/src/lib/support.module.ts
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/help_center_screen.dart # To add the "Contact Support" button
+  - Cabi Alpha/mobile/driver_app/lib/screens/help_center_screen.dart # To add the "Contact Support" button
+  - The database schema for the new `support-service` to store tickets.
+
+dev_notes: >
+  This story introduces a new `support-service` which will be the central hub for all customer support interactions. The ticket submission form should be intuitive and capture all necessary information. The optional attachment feature will require integration with a file storage solution (e.g., S3). This story focuses on ticket creation; the administrative interface for viewing and responding to these tickets will be covered in a subsequent story (`story-24.3`).

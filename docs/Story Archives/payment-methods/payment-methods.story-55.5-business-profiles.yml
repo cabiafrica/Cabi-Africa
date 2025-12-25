@@ -1,0 +1,29 @@
+id: story-55.5
+epic: payment-methods
+slug: business-profiles
+title: Implement Business Profiles for Passengers
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T18:25:00Z'
+
+description: >
+  As a passenger who travels for work, I want to create a business profile
+  with a separate payment method and email for receipts, so I can easily
+  expense my work-related rides.
+
+acceptance_criteria:
+  - Passengers must be able to create a "Business Profile" in the app settings.
+  - A business profile allows the user to add a specific corporate credit card and a work email address.
+  - When requesting a ride, the user can choose whether to charge it to their "Personal" or "Business" profile.
+  - If "Business" is selected, the ride is charged to the corporate card and the receipt (`story-55.4`) is sent to the work email.
+  - The `user-service` must be updated to store this additional profile information.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/business_profile_setup_screen.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/home_screen.dart # To add the profile switcher
+  - libs/backend/user-service/src/lib/user.service.ts # To store business profile data
+
+dev_notes: >
+  This is the first step towards a full corporate travel solution. It enhances the experience for a valuable user segment.

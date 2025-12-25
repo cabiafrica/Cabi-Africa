@@ -1,0 +1,35 @@
+id: story-79.9
+epic: admin-experience
+slug: admin-view-driver-downline
+title: Admin Panel View of Driver's Full Downline Hierarchy
+status: DONE
+author: Bob (sm)
+date: '2025-12-02T13:00:00Z'
+
+description: >
+  As an administrator, I want to view the complete downline hierarchy for any given driver,
+  so that I can investigate referral chain issues, verify commission calculations, and understand the structure of our driver network.
+
+acceptance_criteria:
+  - A new "Downline" or "Referral Network" section must be added to the driver's detail page in the `admin-panel`.
+  - This section must display the selected driver's complete downline hierarchy in a tree or nested list format.
+  - The view must show the full hierarchy with no depth limit, unlike the driver's view.
+  - For each driver in the hierarchy, the view must display their full name, user ID, and current status (e.g., "Active", "Prospect").
+  - The `user-service` must be updated to expose a new, admin-protected endpoint (e.g., `GET /admin/users/:userId/downline`) to retrieve the full hierarchy for any user.
+  - The UI must handle potentially large hierarchies gracefully, for instance, with collapsible/expandable nodes in the tree view.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/users/[userId]/page.tsx # Or similar driver detail page, to add the new Downline view.
+  - libs/backend/user-service/src/lib/user.controller.ts # To add a new admin-protected endpoint for fetching any user's downline.
+  - libs/backend/user-service/src/lib/user.service.ts # To enhance the downline-fetching logic to work for a specified user ID.
+
+dev_notes: >
+  This story provides a critical administrative tool for managing and auditing the MLM system, acting as the admin counterpart to `story-103.2`. The main technical challenge will be efficiently fetching and rendering potentially large and deeply nested hierarchies. The backend service must be optimized to prevent performance degradation, and the frontend should use a component capable of rendering a tree structure without freezing the UI.
+
+tasks:
+  - id: task-1
+    description: "Implement the new admin-protected backend endpoint in `user-service` to fetch the full downline for a specific user."
+  - id: task-2
+    description: "Create a reusable tree-view component in the `admin-panel` to display the hierarchical data."
+  - id: task-3
+    description: "Integrate the new downline view into the driver detail page, fetching data from the new endpoint and rendering it with the tree-view component."

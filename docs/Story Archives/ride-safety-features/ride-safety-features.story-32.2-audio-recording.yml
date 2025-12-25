@@ -1,0 +1,32 @@
+id: story-32.2
+epic: ride-safety-features
+slug: audio-recording
+title: Implement Opt-In Audio Recording During Trip
+status: DONE
+author: Bob (sm)
+date: '2024-07-29T14:03:00Z'
+
+description: >
+  As a user (driver or passenger), I want the option to enable audio
+  recording for my trips, so that there is a record in case of a safety
+  incident or dispute.
+
+acceptance_criteria:
+  - Both passenger and driver apps must have a setting to opt-in to audio recording.
+  - If either party in a trip has opted in, a "Recording in progress" indicator must be visible to both users during the trip.
+  - The audio must be recorded on the device of the user who initiated the recording (or both).
+  - The recording must be encrypted and stored locally on the device.
+  - The recording must not be accessible to the user directly.
+  - The app must provide an option within the trip history to "Report an issue and share recording" with customer support.
+  - Only when a user chooses to share it will the encrypted audio file be uploaded to a secure, private location for the support team to review.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/settings_screen.dart # To add opt-in
+  - Cabi Alpha/mobile/driver_app/lib/screens/settings_screen.dart # To add opt-in
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/trip_in_progress_view.dart # To show indicator and manage recording
+  - Cabi Alpha/mobile/driver_app/lib/widgets/trip_in_progress_panel.dart # To show indicator and manage recording
+
+dev_notes: >
+  This is a very sensitive feature with significant privacy and legal implications. The implementation must prioritize security. Audio must be encrypted, stored locally, and only uploaded upon explicit user action for a specific support ticket. The UI must be crystal clear to both parties when a recording is active.

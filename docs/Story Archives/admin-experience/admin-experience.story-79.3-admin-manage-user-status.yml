@@ -1,0 +1,72 @@
+id: story-79.3
+epic: admin-experience
+slug: admin-manage-user-status
+title: Admin Ability to Suspend and Reactivate Users
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T21:00:00Z'
+
+description: >
+  As an administrator, I want to be able to suspend and reactivate a user's
+  account from their detail page, so that I can manage access for users who
+  violate terms of service or resolve issues for previously suspended users.
+
+acceptance_criteria:
+  - On the user detail page (`story-79.2`), new action buttons for "Suspend Account" and "Reactivate Account" must be present.
+  - The visibility of these buttons must be conditional based on the user's current status (e.g., show "Suspend" for 'active' users, "Reactivate" for 'suspended' users).
+  - Clicking "Suspend" should prompt the admin for a confirmation.
+  - The action must call a new endpoint in the `user-service` to update the user's status (e.g., to 'suspended' or 'active').
+  - If a user is suspended, their active sessions should be invalidated, preventing them from using the app until reactivated.
+  - The user detail page UI must update to reflect the new account status immediately after the action is completed.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/users/[userId]/page.tsx # To add the status management buttons and logic
+  - libs/backend/user-service/src/lib/user.service.ts # To implement the logic for changing a user's status
+  - libs/backend/user-service/src/lib/user.controller.ts # To expose the new endpoint for status changes
+  - libs/backend/auth-service/src/lib/auth.service.ts # To handle session invalidation for suspended users
+
+dev_notes: >
+  This story introduces the first major administrative action on the user detail page, building on `story-79.2`. The interaction between the `user-service` and `auth-service` is critical to ensure that suspending a user immediately revokes their access. This is a key moderation tool for the platform.
+
+tasks:
+  - id: task-1
+    description: Implement the backend logic for updating user status.
+    subtasks:
+      - "[x] Add an `updateStatus` method to `libs/backend/user-service/src/lib/user.service.ts`."
+      - "[x] The method should call the `auth-service` to invalidate sessions when a user is suspended."
+      - "[x] Expose this method via a new `PUT /users/:id/status` endpoint in `libs/backend/user-service/src/lib/user.controller.ts`."
+      - "[x] Add a placeholder `invalidateUserSessions` method to `libs/backend/auth-service/src/lib/auth.service.ts`."
+  - id: task-2
+    description: Implement the frontend UI for status management.
+    subtasks:
+      - "[x] Convert `apps/admin-panel/src/app/users/[userId]/page.tsx` to a client component."
+      - "[x] Fetch user data client-side instead of with a server component."
+      - "[x] Add 'Suspend Account' and 'Reactivate Account' buttons to the page."
+      - "[x] Button visibility should be conditional based on the user's current status."
+      - "[x] Implement the `onClick` handlers to call the new backend endpoint and refresh the user data."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+  change_log:
+    - file: libs/backend/auth-service/src/lib/auth.service.ts
+      change: Added a placeholder `invalidateUserSessions` method to simulate revoking user access.
+    - file: libs/backend/user-service/src/lib/user.service.ts
+      change: Implemented the `updateStatus` method, which changes a user's status and calls the auth service to invalidate sessions on suspension.
+    - file: libs/backend/user-service/src/lib/user.controller.ts
+      change: Exposed the new `updateStatus` endpoint.
+    - file: apps/admin-panel/src/app/users/[userId]/page.tsx
+      change: Converted the page to a client component, added state management, and implemented buttons to suspend/reactivate users by calling the new backend endpoint.
+    - apps/admin-panel/src/app/users/[userId]/page.tsx
+    - libs/backend/user-service/src/lib/user.service.ts
+    - libs/backend/user-service/src/lib/user.controller.ts
+    - libs/backend/auth-service/src/lib/auth.service.ts
+  change_log:
+    - file: libs/backend/auth-service/src/lib/auth.service.ts
+      change: Added a placeholder `invalidateUserSessions` method to simulate revoking user access.
+    - file: libs/backend/user-service/src/lib/user.service.ts
+      change: Implemented the `updateStatus` method, which changes a user's status and calls the auth service to invalidate sessions on suspension.
+    - file: libs/backend/user-service/src/lib/user.controller.ts
+      change: Exposed the new `updateStatus` endpoint.
+    - file: apps/admin-panel/src/app/users/[userId]/page.tsx
+      change: Converted the page to a client component, added state management, and implemented buttons to suspend/reactivate users by calling the new backend endpoint.

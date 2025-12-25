@@ -1,0 +1,27 @@
+id: story-52.2
+epic: platform-integrity
+slug: detect-off-platform-activity
+title: Detect and Flag Off-Platform Activity
+status: DONE
+author: Bob (sm)
+date: '2024-08-02T10:11:00Z'
+
+description: >
+  As a system administrator, I want the system to automatically detect and
+  flag patterns of behavior that suggest drivers are taking passengers off-platform.
+
+acceptance_criteria:
+  - The `analytics-service` must run a job to analyze driver behavior.
+  - The job should look for suspicious patterns, such as:
+    - A driver accepting a ride and then cancelling shortly after arriving at the pickup location.
+    - A driver's GPS showing they completed a trip similar to the requested one, even after cancelling.
+    - High rates of passenger-initiated cancellations with the reason "Driver asked to cancel".
+  - Drivers who exhibit these patterns should be flagged for manual review by the operations team.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To implement the detection algorithm
+
+dev_notes: >
+  The backend counterpart to `story-52.1`. This proactive detection helps maintain the integrity of the marketplace at scale. The detection algorithm will require careful tuning to avoid false positives.

@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  phone     String   @unique
+  password  String
+  fullName  String
+  role      Role     @default(PASSENGER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  ridesAsPassenger Ride[] @relation("PassengerRides")
+  driverProfile    DriverProfile?
+
+  @@map("users")
+}
+
+model DriverProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  licenseNumber   String   @unique
+  isOnline        Boolean  @default(false)
+  currentLocation Json?    // { lat: number, lng: number }
+  
+  // Relations
+  vehicle         Vehicle?
+  ridesAsDriver   Ride[]   @relation("DriverRides")
+
+  @@map("driver_profiles")
+}
+
+model Vehicle {
+  id              String        @id @default(uuid())
+  driverProfileId String        @unique
+  driverProfile   DriverProfile @relation(fields: [driverProfileId], references: [id])
+  make            String
+  model           String
+  year            Int
+  plateNumber     String        @unique
+  type            VehicleType   @default(STANDARD)
+
+  @@map("vehicles")
+}
+
+model Ride {
+  id              String      @id @default(uuid())
+  passengerId     String
+  passenger       User        @relation("PassengerRides", fields: [passengerId], references: [id])
+  driverId        String?
+  driver          DriverProfile? @relation("DriverRides", fields: [driverId], references: [id])
+  
+  status          RideStatus  @default(REQUESTED)
+  
+  pickupLocation  Json        // { lat, lng, address }
+  dropoffLocation Json        // { lat, lng, address }
+  
+  fare            Decimal?     @db.Decimal(10, 2)
+  distance        Float?      // In km
+  duration        Int?        // In minutes
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@map("rides")
+}
+
+enum Role {
+  PASSENGER
+  DRIVER
+  ADMIN
+  DISPATCHER
+}
+
+enum VehicleType {
+  STANDARD
+  PREMIUM
+  XL
+  BODA
+}
+
+enum RideStatus {
+  REQUESTED
+  MATCHING
+  DRIVER_ASSIGNED
+  DRIVER_ARRIVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}

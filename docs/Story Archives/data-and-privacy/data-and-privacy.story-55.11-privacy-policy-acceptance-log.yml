@@ -1,0 +1,23 @@
+id: story-55.11
+epic: data-and-privacy
+slug: privacy-policy-acceptance-log
+title: Log User Acceptance of Privacy Policies
+status: Done
+author: Bob (sm)
+date: '2024-08-10T01:20:00Z'
+
+description: >
+  As a compliance officer, I need the system to log every time a user accepts
+  a specific version of the Privacy Policy or Terms of Service, so we have a
+  clear audit trail for legal purposes.
+
+acceptance_criteria:
+  - When a user accepts a new or updated legal document (e.g., via `story-55.4-privacy-policy-versioning.yml`), an immutable record is created.
+  - The record must contain the user ID, the document ID, the document version, and the timestamp of acceptance.
+  - This log must be accessible to admins for compliance checks.
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To store the acceptance record
+
+dev_notes: >
+  This is a non-negotiable legal and compliance requirement. The data must be stored securely and be easily retrievable for audits.

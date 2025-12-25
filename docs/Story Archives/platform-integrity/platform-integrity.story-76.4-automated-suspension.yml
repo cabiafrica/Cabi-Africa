@@ -1,0 +1,26 @@
+id: story-76.4
+epic: platform-integrity
+slug: automated-suspension
+title: Implement Automated Account Suspension for Severe Safety Issues
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T10:15:00Z'
+
+description: >
+  As a system administrator, I want the system to automatically suspend the
+  account of a driver who has been flagged for multiple, severe safety
+  infractions, so that we can act immediately to protect the platform.
+
+acceptance_criteria:
+  - The `analytics-service` will have a job that identifies drivers who cross a critical threshold.
+  - This threshold could be based on a combination of a very low Safety Score (`story-76.1`), multiple reports of off-platform activity (`story-52.2`), or severe speeding events (`story-52.4`).
+  - When the threshold is crossed, the service must automatically call the `user-service` to suspend the account.
+  - The suspension triggers a notification to the driver and creates a high-priority ticket for an admin to review the case.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To implement the suspension trigger logic
+
+dev_notes: >
+  This automates the enforcement of our most critical safety policies, allowing the system to react faster than a human-only review process. The thresholds for automated action must be set very carefully.

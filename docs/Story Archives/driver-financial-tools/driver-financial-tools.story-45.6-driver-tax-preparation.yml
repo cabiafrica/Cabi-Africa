@@ -1,0 +1,23 @@
+id: story-45.6
+epic: driver-financial-tools
+slug: driver-tax-preparation
+title: Provide Tools for Driver Tax Preparation
+status: Done
+author: Bob (sm)
+date: '2024-08-10T07:10:00Z'
+
+description: >
+  As a driver, I want the app to provide me with an annual summary of my
+  earnings and mileage, so I can easily prepare my taxes.
+
+acceptance_criteria:
+  - The `driver-app` must have a section to download an annual summary.
+  - The summary must include total earnings, total platform commissions paid, and total miles driven (both on-trip and on the way to pickup).
+  - The `analytics-service` must be able to generate this summary for a given driver and calendar year.
+  - The app can also offer an integration to export this data directly to tax preparation software.
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To generate the tax summary
+
+dev_notes: >
+  Taxes are a major pain point for independent contractors. Providing this summary is a huge value-add that helps drivers manage their business.

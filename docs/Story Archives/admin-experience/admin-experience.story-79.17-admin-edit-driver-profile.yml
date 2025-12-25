@@ -1,0 +1,45 @@
+id: story-79.14
+epic: admin-experience
+slug: admin-edit-driver-profile
+title: "Admin: Edit Driver's Core Profile Information"
+status: Done
+author: Bob (sm)
+date: '2024-08-20T16:00:00Z'
+
+description: >
+  As an administrator, I need to be able to edit a driver's core profile
+  information (such as their name, email, and phone number) so that I can
+  correct errors or update details on their behalf.
+
+acceptance_criteria:
+  - On a driver's detail or review page in the admin panel, there must be an "Edit Profile" button.
+  - Clicking this button must open a modal or form pre-filled with the driver's current information (e.g., Name, Email, Phone Number).
+  - The admin must be able to modify these fields and save the changes.
+  - Saving the changes must call a new, admin-protected backend endpoint to persist the updates.
+  - The `user-service` must be updated with an admin-specific endpoint (e.g., `PATCH /admin/users/:userId`) to handle these updates.
+
+files_to_be_created:
+  - apps/admin-panel/src/components/admin/EditDriverProfileModal.tsx
+
+files_to_be_modified:
+  - apps/admin-panel/src/components/drivers/DriverApplicationDetail.tsx # To add the "Edit Profile" button and modal.
+  - apps/admin-panel/src/services/adminService.ts # Mock implementation
+
+dev_notes: >
+  This feature provides essential administrative control over user data. The backend endpoint must be strictly protected to ensure only admins can perform these edits. The frontend should provide a seamless editing experience, likely within a modal to avoid a full page reload. This is distinct from a user editing their own profile, as it's a privileged administrative action.
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - apps/admin-panel/src/components/admin/EditDriverProfileModal.tsx
+    - apps/admin-panel/src/components/drivers/DriverApplicationDetail.tsx
+    - apps/admin-panel/src/services/adminService.ts
+  change_log:
+    - file: apps/admin-panel/src/components/admin/EditDriverProfileModal.tsx
+      change: Created modal for editing driver name, phone, email.
+    - file: apps/admin-panel/src/components/drivers/DriverApplicationDetail.tsx
+      change: Integated Edit Profile modal into applicant details view.
+    - file: apps/admin-panel/src/services/adminService.ts
+      change: Added mock updateDriverProfile method.
+  completion_notes:
+    - Frontend implementation complete with mock backend. Modal updates local state upon save.

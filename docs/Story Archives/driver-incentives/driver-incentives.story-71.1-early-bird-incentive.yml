@@ -1,0 +1,26 @@
+id: story-71.1
+epic: driver-incentives
+slug: early-bird-incentive
+title: Implement "Early Bird" Driver Incentive
+status: Done
+author: Bob (sm)
+date: '2024-08-07T09:16:00Z'
+
+description: >
+  As an operations manager, I want to offer a special bonus for drivers who
+  go online during the early morning commute hours, so that we can ensure
+  good supply for the first peak of the day.
+
+acceptance_criteria:
+  - This is a new incentive type in the `incentive-service`.
+  - An admin can define an "Early Bird" bonus: a time window (e.g., Mon-Fri, 5-7 AM) and a fixed bonus amount.
+  - Any driver who completes at least one trip within this window receives the bonus.
+  - The bonus is a one-time award per day.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To add the new incentive logic
+
+dev_notes: >
+  A simple, targeted incentive to shape driver supply at the beginning of the day, a common pain point for ride-sharing platforms.

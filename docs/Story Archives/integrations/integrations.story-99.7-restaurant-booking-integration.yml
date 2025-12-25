@@ -1,0 +1,23 @@
+id: story-99.7
+epic: integrations
+slug: restaurant-booking-integration
+title: Implement Restaurant Booking Integration
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T03:25:00Z'
+
+description: >
+  As a user making a dinner reservation in a third-party app (e.g.,
+  OpenTable), I want to see a "Book a Ride with Cabi" option that schedules a
+  ride to get me to the restaurant on time.
+
+acceptance_criteria:
+  - We must provide an API or SDK for third-party partners to integrate our ride-booking functionality.
+  - The integration should allow the partner app to pass destination, desired arrival time, and user information to our app.
+  - This can pre-fill a scheduled ride request in our app for the user to confirm.
+
+files_to_be_created:
+  - A new API documentation site for partners.
+
+dev_notes: >
+  This is a business development and API platform story. It opens up a new user acquisition channel by embedding our service in other apps where users are planning to go somewhere.

@@ -1,0 +1,22 @@
+id: story-58.2
+epic: promotions-and-discounts
+slug: passenger-apply-promo
+title: Allow Passengers to Apply Promo Codes
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T17:00:00Z'
+
+description: >
+  As a passenger, I want to apply a promo code to my ride, so that I can
+  receive a discount on the fare.
+
+acceptance_criteria:
+  - In the `passenger-app`, there must be an input field to apply a promo code (e.g., in the Wallet or on the ride confirmation screen).
+  - The `incentive-service` must validate the code.
+  - If valid, the discount is applied to the user's next ride. The estimated fare must reflect the discount.
+  - The `payment-service` must take the applied discount into account when calculating the final charge.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/wallet_screen.dart # To add promo code input
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To validate codes
+  - libs/backend/payment-service/src/lib/payment.service.ts # To apply discounts to fares

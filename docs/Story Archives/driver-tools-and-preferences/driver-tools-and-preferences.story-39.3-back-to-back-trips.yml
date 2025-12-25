@@ -1,0 +1,53 @@
+id: story-39.3
+epic: driver-tools-and-preferences
+slug: back-to-back-trips
+title: Implement Back-to-Back Trips
+status: Done for Review
+author: Bob (sm)
+date: '2024-07-31T11:06:00Z'
+
+description: >
+  As a driver nearing the end of my current trip, I want to be offered my
+  next ride before my current one is finished, so that I can minimize my
+  downtime between trips.
+
+acceptance_criteria:
+  - When a driver is close to the destination of their current trip, the `ride-service` can proactively assign them a new ride request.
+  - The new ride's pickup location must be near the current trip's destination.
+  - The `driver-app` must display a special UI that allows the driver to accept the next ride without interrupting navigation for the current one.
+  - Once the current trip is completed, the app automatically transitions to navigating to the next pickup.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To implement the proactive matching logic
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To handle the "next trip" UI overlay
+
+dev_notes: >
+  This feature is a major driver efficiency and earnings booster. It requires the matching algorithm to be aware of drivers' in-trip status and upcoming destinations.
+
+tasks:
+  - id: task-1
+    description: Implement backend logic for proactive ride matching.
+    subtasks:
+      - "[x] Modify the ride matching algorithm in `ride.service.ts` to consider drivers who are nearing the end of their current trip."
+      - "[x] The algorithm must check if the new ride's pickup location is near the current trip's destination."
+      - "[x] Add logic to send a special 'back-to-back' ride offer to the driver."
+  - id: task-2
+    description: Implement the frontend UI for accepting back-to-back trips.
+    subtasks:
+      - "[x] Update `apps/driver-app/src/widgets/trip_in_progress_panel.dart` to display an overlay for the next ride offer."
+      - "[x] The overlay must not interfere with the current trip's navigation."
+      - "[x] Implement 'Accept'/'Decline' actions for the driver."
+      - "[x] On acceptance, the app should automatically transition to the new trip's navigation after the current one is completed."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - libs/backend/ride-service/src/lib/ride.service.ts
+    - apps/driver-app/src/widgets/trip_in_progress_panel.dart
+  change_log:
+    - file: libs/backend/ride-service/src/lib/ride.service.ts
+      change: Implemented the `findAndOfferBackToBackRide` method. This simulates the ride-matching logic by finding a pending ride request near the destination of a driver's current trip and sending a notification to the driver with the offer.
+    - file: apps/driver-app/src/widgets/trip_in_progress_panel.dart
+      change: Updated the widget to handle and display back-to-back ride offers. A new overlay card appears on top of the current trip UI, allowing the driver to accept or decline the next ride without being fully interrupted.

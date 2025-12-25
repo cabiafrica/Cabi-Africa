@@ -1,0 +1,41 @@
+id: story-104.7
+epic: web-booking-experience
+slug: web-manage-saved-payments
+title: Allow Web User to Manage Their Saved Payment Methods
+status: Done
+author: Bob (sm)
+date: '2025-12-02T14:45:00Z'
+
+description: >
+  As a returning website user, I want to view, set a default, and delete my saved payment methods,
+  so that I have full control over my payment information and can keep it up to date.
+
+acceptance_criteria:
+  - A new "Payment Methods" page must be created in the `marketing-website` app (e.g., at `/account/payments`), accessible only to logged-in users.
+  - The page must fetch and display a list of the user's saved payment methods from the `payment-service`.
+  - The UI must clearly indicate which payment method is the default.
+  - Each payment method in the list must have a "Delete" option, which calls the `payment-service` to remove it after confirmation.
+  - Each non-default payment method must have a "Set as Default" option, which calls the `payment-service` to update the user's default.
+  - The `payment-service` must be updated with new endpoints to handle deleting a payment method and setting a default payment method.
+  - A link to the "Payment Methods" page must be available in the user's account dropdown or profile section.
+
+files_to_be_created:
+  - Cabi Alpha/web/user_portal/app/account/payments/page.tsx # The page for managing saved payment methods.
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/components/Header.tsx # Or similar navigation component to add a link to the new page.
+  - libs/backend/payment-service/src/lib/payment.service.ts # To add logic for deleting and setting a default payment method.
+  - libs/backend/payment-service/src/lib/payment.controller.ts # To expose endpoints for these new actions.
+
+dev_notes: >
+  This story provides essential account management functionality for web users, making the website a more complete and self-service platform. It directly builds on the foundation of `story-104.5`. The backend logic will be very similar to the functionality already implemented for the passenger app in `story-17.4`. The focus is on secure interactions with the payment gateway to manage payment methods tied to a user's customer profile.
+
+tasks:
+  - id: task-1
+    description: "Implement the backend endpoints in `payment-service` to delete and set a default payment method."
+  - id: task-2
+    description: "Create the 'Payment Methods' page in the `marketing-website` app."
+  - id: task-3
+    description: "Implement the UI to list saved payment methods and provide 'Delete' and 'Set as Default' actions, calling the backend on user interaction."
+  - id: task-4
+    description: "Add a link to the new management page from the user's account section in the site header."

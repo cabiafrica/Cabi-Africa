@@ -1,0 +1,51 @@
+id: story-37.4
+epic: multi-stop-rides
+slug: driver-confirm-mid-trip-change
+title: Driver Confirmation for Mid-Trip Changes
+status: DONE for Review
+author: Bob (sm)
+date: '2024-07-31T11:16:00Z'
+
+description: >
+  As a driver, if a passenger adds a stop or changes the destination
+  mid-trip, I want to be able to accept or decline the change, so that I have
+  control over my route and time.
+
+acceptance_criteria:
+  - When a passenger confirms a mid-trip change (`story-37.2`), the request must be sent to the driver's app.
+  - The `driver-app` must display a non-blocking notification with the proposed new route and fare, with "Accept" and "Decline" buttons.
+  - If the driver accepts, the itinerary is updated.
+  - If the driver declines, the passenger is notified, and the original itinerary remains in effect.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/ride.service.ts # To manage the state of a pending itinerary change
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To display the confirmation UI
+
+dev_notes: >
+  This story adds a layer of fairness to the mid-trip change feature, giving drivers agency over significant changes to their agreed-upon trip.
+
+tasks:
+  - id: task-1
+    description: Implement backend logic to manage pending trip changes.
+    subtasks:
+      - "[x] Modify `ride-service` to hold a change request in a 'pending' state."
+      - "[x] Implement `respondToChange` method to allow drivers to accept or decline."
+      - "[x] If accepted, apply the change; if declined, clear the pending change and notify the passenger."
+  - id: task-2
+    description: Implement frontend UI for driver confirmation.
+    subtasks:
+      - "[x] Modify `trip_in_progress_panel.dart` to display the pending change request."
+      - "[x] Add 'Accept' and 'Decline' buttons that call the backend service."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - libs/backend/ride-service/src/lib/ride.service.ts
+    - apps/driver-app/src/widgets/trip_in_progress_panel.dart
+  change_log:
+    - file: libs/backend/ride-service/src/lib/ride.service.ts
+      change: Implemented logic to handle pending mid-trip changes, allowing drivers to accept or decline them.
+    - file: apps/driver-app/src/widgets/trip_in_progress_panel.dart
+      change: Created a widget for the driver app that displays a confirmation overlay for mid-trip change requests.

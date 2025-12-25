@@ -1,0 +1,23 @@
+id: story-62.10
+epic: customer-support
+slug: agent-performance-dashboard
+title: Create Support Agent Performance Dashboard
+status: Done
+author: Bob (sm)
+date: '2024-08-10T04:55:00Z'
+
+description: >
+  As a support agent, I want to see my own performance statistics, such as my
+  average response time and customer satisfaction (CSAT) score, so I can track
+  my performance and improve.
+
+acceptance_criteria:
+  - A new "My Performance" dashboard must be available to agents within the `admin-panel`.
+  - It must display key metrics: tickets solved, average first response time, average resolution time, and CSAT score (`story-62.4`).
+  - The agent should be able to see their trends over time.
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/support/page.tsx # To add the agent-specific dashboard
+
+dev_notes: >
+  This empowers agents by giving them direct visibility into their performance. It can foster a sense of ownership and healthy competition.

@@ -1,0 +1,26 @@
+id: story-39.6
+epic: driver-tools-and-preferences
+slug: area-preference
+title: Implement Driver "Area Preference"
+status: Done
+author: Bob (sm)
+date: '2024-08-01T09:06:00Z'
+
+description: >
+  As a driver, I want to define a preferred geographical area where I'd like
+  to receive trips, so I can stay in neighborhoods I know well.
+
+acceptance_criteria:
+  - In the `driver-app` settings, a driver can draw a polygon on a map to define their preferred work zone.
+  - When this preference is active, the matching algorithm should give the driver a higher priority for trips that start within this zone.
+  - This does not strictly prevent them from getting trips outside the zone, but prioritizes in-zone trips.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/screens/settings_screen.dart # To add the zone drawing UI
+  - libs/backend/user-service/src/lib/user.service.ts # To store the preferred zone polygon
+  - libs/backend/ride-service/src/lib/ride.service.ts # To use the zone in the matching algorithm
+
+dev_notes: >
+  This gives drivers more control over their work, potentially increasing satisfaction. It adds another layer of complexity to the matching algorithm's scoring system.

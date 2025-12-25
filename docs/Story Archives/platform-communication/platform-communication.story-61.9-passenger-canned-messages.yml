@@ -1,0 +1,25 @@
+id: story-61.9
+epic: platform-communication
+slug: passenger-canned-messages
+title: Enable Passenger-to-Driver Canned Messages
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T15:35:00Z'
+
+description: >
+  As a passenger waiting for my ride, I want to send quick, pre-defined
+  messages (e.g., "I'm running a minute late," "I'm at the front door") to the
+  driver, so I can provide helpful pickup information.
+
+acceptance_criteria:
+  - A "Message Driver" button must be available in the `passenger-app` while waiting for pickup.
+  - Tapping it reveals a list of pre-defined messages relevant to a passenger.
+  - Sending a message triggers a push notification and an in-app message to the `driver-app`.
+  - This uses the same peer-to-peer messaging infrastructure as `story-61.5`.
+
+files_to_be_modified:
+  - apps/passenger-app/src/widgets/driver_details_panel.dart # To add the message button
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To display received messages
+
+dev_notes: >
+  This story mirrors `story-61.5` for the passenger, completing the two-way canned message functionality. The message lists for drivers and passengers should be distinct and tailored to their respective needs.

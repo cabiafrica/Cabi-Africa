@@ -1,0 +1,24 @@
+id: story-79.8
+epic: admin-experience
+slug: admin-live-map
+title: Create Admin Live Map (God View)
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T02:50:00Z'
+
+description: >
+  As an operations manager, I want a live map view of my city that shows all
+  active drivers and ongoing trips, so I can monitor the real-time state of the marketplace.
+
+acceptance_criteria:
+  - A new "Live Map" page must be created in the `admin-panel`.
+  - The map must display real-time locations of all drivers who are online.
+  - The map should use different icons for drivers who are available, on their way to pickup, or on a trip.
+  - An admin should be able to click on a driver or trip to get more details.
+  - The data must be streamed from the backend in a highly efficient manner (e.g., via WebSockets).
+
+files_to_be_created:
+  - apps/admin-panel/src/app/live-map/page.tsx
+
+dev_notes: >
+  This is a classic "God View" feature. It's invaluable for real-time operations management, especially during major events or incidents. Performance is a key concern due to the volume of data.

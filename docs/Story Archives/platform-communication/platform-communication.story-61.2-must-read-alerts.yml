@@ -1,0 +1,27 @@
+id: story-61.2
+epic: platform-communication
+slug: must-read-alerts
+title: Implement "Must-Read" Alerts for Drivers
+status: DONE
+author: Bob (sm)
+date: '2024-08-05T09:14:00Z'
+
+description: >
+  As an administrator, for critical updates (e.g., changes to terms of
+  service), I want to send a "must-read" alert that drivers must acknowledge
+  before they can go online.
+
+acceptance_criteria:
+  - In the admin communication tool (`story-61.1`), an option to mark a message as "must-read" must be available.
+  - When a driver has an unread "must-read" message, the "Go Online" button in their app is disabled.
+  - A modal or full-screen message is displayed, and the driver must tap an "I Understand" or "Acknowledge" button to proceed.
+  - The system must log the driver's acknowledgement.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/home_screen.dart # To implement the blocking logic
+  - libs/backend/notification-service/src/lib/notification.service.ts # To handle the acknowledgement state
+
+dev_notes: >
+  This feature ensures that critical information is seen and acknowledged by drivers, which is important for legal and compliance reasons.

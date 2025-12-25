@@ -1,0 +1,27 @@
+id: story-78.1
+epic: new-verticals
+slug: public-transport-ticketing
+title: Implement "Public Transport Ticketing"
+status: DONE
+author: Bob (sm)
+date: '2024-08-08T11:03:00Z'
+
+description: >
+  As a passenger, after viewing public transit options, I want to be able to
+  purchase the ticket directly within the app, so that I have a seamless
+  multi-modal journey.
+
+acceptance_criteria:
+  - This builds on `story-50.2` (Public Transit Directions).
+  - The app must integrate with public transit authorities' APIs for ticketing.
+  - The user can purchase a ticket, and the `payment-service` handles the transaction.
+  - The app must display a valid, scannable QR code or ticket that can be used to board the bus/train.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/widgets/ride_booking_panel.dart # To add a "Buy Ticket" button
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle transit authority payments
+
+dev_notes: >
+  A very complex integration that turns our app into a true Mobility as a Service (MaaS) platform. This requires deep partnerships with local transit authorities.

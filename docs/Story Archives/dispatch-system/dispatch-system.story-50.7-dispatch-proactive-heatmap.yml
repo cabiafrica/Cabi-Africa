@@ -1,0 +1,29 @@
+id: story-50.7
+epic: dispatch-system
+slug: dispatch-proactive-heatmap
+title: "Dispatch: Utilize Heatmap Data for Proactive Driver Dispatch"
+status: Done
+author: Gemini Code Assist
+date: '2025-12-06T20:05:00Z'
+
+description: >
+  As a platform operator, I want the dispatch system to analyze heatmap data to identify areas of high predicted demand
+  and suggest that idle drivers move towards those areas, so we can reduce future passenger wait times and optimize fleet distribution.
+
+acceptance_criteria:
+  - The `dispatch-service` must periodically consume demand data from the `analytics-service` (from story-79.25).
+  - The system must have a configurable threshold to identify "cold spots" (areas with high demand and low driver supply).
+  - When a cold spot is identified, the system must find a pool of idle drivers in nearby areas with lower demand.
+  - The `notification-service` must be triggered to send a push notification to these selected drivers.
+  - The notification should suggest moving towards the high-demand area and may include information about potential incentives (e.g., "High demand near Downtown! Drive now for higher earnings.").
+
+files_to_be_created:
+  # No new files are expected; this modifies existing services.
+
+files_to_be_modified:
+  - # The core logic of the backend dispatch service to add the proactive suggestion algorithm.
+  - libs/backend/notification-service/src/lib/notification.service.ts # To handle the new proactive dispatch notification type.
+
+dev_notes: >
+  This story introduces an intelligence layer to the dispatch system, as envisioned in the PRD (section 2.5). This is a backend-heavy feature. It requires inter-service communication between the `dispatch-service` and the `analytics-service` (which generates the heatmap data). The algorithm for identifying cold spots and selecting which drivers to notify will be the core challenge. The messaging should be framed as a suggestion to avoid being overly prescriptive to drivers.
+  PRD Reference: 2.5. Dispatch System -> Operational Efficiency & Optimization -> Heatmap Data Utilization

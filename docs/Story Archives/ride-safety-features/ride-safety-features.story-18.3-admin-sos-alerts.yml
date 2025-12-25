@@ -1,0 +1,39 @@
+id: story-18.3
+epic: ride-safety-features
+slug: admin-sos-alerts
+title: Implement Admin Panel for SOS Alert Monitoring
+status: Done
+author: Bob (sm)
+date: '2024-06-14T09:00:00Z'
+
+description: >
+  As an administrator or support staff, I want to receive and view real-time
+  alerts in the admin panel whenever a driver or passenger uses the SOS button,
+  so that we can immediately respond to potential emergencies and provide
+  assistance.
+
+acceptance_criteria:
+  - When a user confirms the SOS action in their app, the app must make a backend call to a new `sos-service` to log the event *before* launching the native dialer.
+  - The SOS event payload must include the user's ID, user type (driver/passenger), current GPS location, and the active trip ID.
+  - A new backend `sos-service` must be created to receive and persist these SOS alerts.
+  - A new "SOS Alerts" dashboard page must be created in the `admin-panel`.
+  - This dashboard must display a live-updating list of SOS alerts, with the newest alerts at the top. A real-time mechanism like WebSockets is recommended.
+  - Each alert in the list must show key information: User Name/ID, User Type, Time of Alert, and a button to "View Details".
+  - New, unacknowledged alerts should be visually highlighted.
+  - Clicking "View Details" should show the trip details (pickup, destination) and a map displaying the user's location when the SOS was triggered.
+  - An admin must be able to "Acknowledge" an alert to indicate it is being handled, which should update its status in the UI for all admins.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/sos-alerts/page.tsx
+  - libs/backend/sos-service/src/lib/sos.service.ts
+  - libs/backend/sos-service/src/lib/sos.controller.ts
+  - libs/backend/sos-service/src/lib/sos.gateway.ts # For WebSocket communication
+  - libs/backend/sos-service/src/lib/sos.module.ts
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/widgets/trip_in_progress_panel.dart # To call the sos-service
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/driver_details_panel.dart # To call the sos-service
+  - apps/admin-panel/src/components/layout/sidebar.tsx # To add a link to the new page
+
+dev_notes: >
+  This story introduces a critical real-time monitoring feature and a new `sos-service`. The service will be responsible for logging emergency events and pushing them to the admin panel. The frontend of the mobile apps must be modified to send this alert to the backend *before* launching the dialer to ensure the event is captured. The admin panel should use a real-time connection (e.g., Socket.IO) to the `sos-service` to provide immediate alerts without needing to refresh the page.

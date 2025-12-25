@@ -1,0 +1,29 @@
+id: story-34.4
+epic: business-travel
+slug: business-account-policies
+title: Set Spending Limits and Policies on Business Accounts
+status: Done
+author: Bob (sm)
+date: '2024-07-30T10:15:00Z'
+
+description: >
+  As a corporate administrator, I want to set travel policies for my
+  employees, such as monthly spending limits or restrictions on vehicle
+  type, so that I can control company travel expenses.
+
+acceptance_criteria:
+  - In the `corporate-portal` (`story-33.2`), an admin must be able to set policies for their company account.
+  - Policies should include: monthly spending cap per employee, allowed vehicle types, and time-of-day restrictions.
+  - When an employee attempts to book a ride on their business profile, the `ride-service` must validate the request against these policies.
+  - If a policy is violated (e.g., budget exceeded), the booking must be denied, and the user must be shown an informative message.
+  - The `user-service` or a new `policy-service` must store and serve these corporate policies.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/corporate-portal/src/app/settings/page.tsx # To add policy management UI
+  - libs/backend/ride-service/src/lib/ride.service.ts # To enforce policies during booking
+  - libs/backend/user-service/src/lib/user.service.ts # To store policies
+
+dev_notes: >
+  This feature is essential for winning large corporate clients. It gives them the control they need to manage their travel programs. It requires a robust policy engine in the backend.

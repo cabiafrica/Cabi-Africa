@@ -1,0 +1,35 @@
+id: story-12.4
+epic: driver-onboarding
+slug: document-status-notification
+title: Notify Driver of Document Approval or Rejection
+status: Done
+author: Bob (sm)
+date: '2024-06-10T09:00:00Z'
+
+description: >
+  As a prospective driver, I want to receive a push notification when one of
+  my documents is approved or rejected, so that I am immediately aware of my
+  application's progress and can take action if necessary.
+
+acceptance_criteria:
+  - When an admin approves or rejects a document in the `admin-panel` (`story-12.2`), the `document-service` must publish a `DocumentStatusUpdated` event.
+  - The event must include the driver's user ID, the document type, the new status ('Approved' or 'Rejected'), and the rejection reason if applicable.
+  - The `notification-service` must subscribe to the `DocumentStatusUpdated` event.
+  - Upon receiving the event, the `notification-service` must generate a user-facing message.
+    - For approval: "Your Driver's License has been approved."
+    - For rejection: "Your Vehicle Logbook was rejected. Reason: Image is blurry."
+  - The `notification-service` must send the message as a push notification to the driver's registered device(s).
+  - The `driver-app` must be able to receive and display this notification.
+  - Tapping on the notification should deep-link the user directly to the "Documents" screen within the `driver-app`.
+
+files_to_be_created:
+  - libs/backend/notification-service/src/lib/listeners/document.listener.ts
+
+files_to_be_modified:
+  - libs/backend/document-service/src/lib/document.service.ts # To publish the 'DocumentStatusUpdated' event
+  - libs/backend/notification-service/src/lib/notification.service.ts # To add logic for constructing and sending document notifications
+  - Cabi Alpha/mobile/driver_app/lib/main.dart # Or notification handler, to process the incoming notification payload
+  - Cabi Alpha/mobile/driver_app/lib/navigation/app_router.dart # To handle deep linking from the notification
+
+dev_notes: >
+  This story creates the feedback loop for the document submission process. It depends on the event-driven communication between the `document-service` and `notification-service`. The `document-service` emits an event, and the `notification-service` consumes it to act. The implementation in the `driver-app` should handle the case where the app is in the foreground, background, or terminated when the notification arrives, and correctly navigate the user upon interaction.

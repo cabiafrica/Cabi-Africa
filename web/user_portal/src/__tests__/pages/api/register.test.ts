@@ -1,0 +1,162 @@
+import { POST } from './route';
+import { PrismaClient, ApplicationStatus } from '@prisma/client';
+import { NextRequest } from 'next/server';
+
+// Mock Prisma Client
+const mockPrisma = {
+  user: {
+    findUnique: jest.fn(),
+    create: jest.fn(),
+  },
+  driverProfile: {
+    findUnique: jest.fn(),
+  },
+};
+
+jest.mock('@prisma/client', () => ({
+  PrismaClient: jest.fn(() => mockPrisma),
+  ApplicationStatus: {
+    PROSPECT: 'PROSPECT',
+  },
+}));
+
+// Mock global fetch for reCAPTCHA
+global.fetch = jest.fn();
+
+function createMockRequest(body: any): NextRequest {
+  const req = new NextRequest('http://localhost/api/register', {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return req;
+}
+
+describe('POST /api/register', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    process.env.RECAPTCHA_SECRET_KEY = 'test-secret-key';
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ success: true }),
+    });
+  });
+
+  const validRequestBody = {
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    phone: '1234567890',
+    city: 'New York',
+    recaptchaToken: 'valid-token',
+  };
+
+  it('should register a new user successfully and return 201', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue(null);
+    mockPrisma.user.create.mockResolvedValue({
+      id: 'new-user-id',
+      email: validRequestBody.email,
+    });
+
+    const request = createMockRequest(validRequestBody);
+    const response = await POST(request);
+    const responseBody = await response.json();
+
+    expect(response.status).toBe(201);
+    expect(responseBody.message).toBe('Registration successful!');
+    expect(responseBody.userId).toBe('new-user-id');
+
+    expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({ where: { email: validRequestBody.email } });
+    expect(mockPrisma.user.create).toHaveBeenCalledWith({
+      data: {
+        email: validRequestBody.email,
+        driverProfile: {
+          create: {
+            firstName: validRequestBody.firstName,
+            lastName: validRequestBody.lastName,
+            phone: validRequestBody.phone,
+            city: validRequestBody.city,
+            applicationStatus: ApplicationStatus.PROSPECT,
+            referrerId: undefined,
+          },
+        },
+      },
+      include: { driverProfile: true },
+    });
+  });
+
+  it('should register a user with a valid referral code', async () => {
+    const referrerProfile = { userId: 'referrer-user-id', referralCode: 'REF123' };
+    mockPrisma.user.findUnique.mockResolvedValue(null);
+    mockPrisma.driverProfile.findUnique.mockResolvedValue(referrerProfile);
+    mockPrisma.user.create.mockResolvedValue({ id: 'new-user-id' });
+
+    const requestBodyWithReferral = { ...validRequestBody, referralCode: 'REF123' };
+    const request = createMockRequest(requestBodyWithReferral);
+    await POST(request);
+
+    expect(mockPrisma.driverProfile.findUnique).toHaveBeenCalledWith({ where: { referralCode: 'REF123' } });
+    expect(mockPrisma.user.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          driverProfile: expect.objectContaining({
+            create: expect.objectContaining({
+              referrerId: referrerProfile.userId,
+            }),
+          }),
+        }),
+      })
+    );
+  });
+
+  it('should return 400 for invalid input', async () => {
+    const invalidBody = { ...validRequestBody, email: 'not-an-email' };
+    const request = createMockRequest(invalidBody);
+    const response = await POST(request);
+    const responseBody = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(responseBody.message).toBe('Invalid input.');
+    expect(responseBody.errors.email).toBeDefined();
+  });
+
+  it('should return 403 for failed reCAPTCHA verification', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ success: false }),
+    });
+
+    const request = createMockRequest(validRequestBody);
+    const response = await POST(request);
+    const responseBody = await response.json();
+
+    expect(response.status).toBe(403);
+    expect(responseBody.message).toBe('reCAPTCHA validation failed. Are you a robot?');
+  });
+
+  it('should return 409 if the user already exists', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({ id: 'existing-user-id', email: validRequestBody.email });
+
+    const request = createMockRequest(validRequestBody);
+    const response = await POST(request);
+    const responseBody = await response.json();
+
+    expect(response.status).toBe(409);
+    expect(responseBody.message).toBe('A user with this email already exists.');
+    expect(mockPrisma.user.create).not.toHaveBeenCalled();
+  });
+
+  it('should return 500 if the database create operation fails', async () => {
+    mockPrisma.user.findUnique.mockResolvedValue(null);
+    mockPrisma.user.create.mockRejectedValue(new Error('Database connection failed'));
+
+    const request = createMockRequest(validRequestBody);
+    const response = await POST(request);
+    const responseBody = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(responseBody.message).toBe('An unexpected error occurred.');
+  });
+});

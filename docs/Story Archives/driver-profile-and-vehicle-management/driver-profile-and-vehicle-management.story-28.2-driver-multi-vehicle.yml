@@ -1,0 +1,30 @@
+id: story-28.2
+epic: driver-profile-and-vehicle-management
+slug: driver-multi-vehicle
+title: Allow Drivers to Manage and Switch Between Multiple Vehicles
+status: Done
+author: Bob (sm)
+date: '2024-07-26T10:02:00Z'
+
+description: >
+  As a driver who uses more than one car, I want to register all my vehicles
+  in the app and select which one I am using before I go online, so that
+  passengers receive the correct vehicle information for their ride.
+
+acceptance_criteria:
+  - The `VehicleManagementScreen` (`story-28.1`) must allow a driver to add multiple vehicles to their profile.
+  - Before a driver can "Go Online" from the `HomeScreen`, if they have more than one vehicle, they must be prompted to select which vehicle they are using for this session.
+  - The selected vehicle's information must be sent with any ride requests they accept.
+  - The `ride-service` must store the `vehicleId` for each trip.
+  - The `vehicle-service` must support listing all vehicles for a driver and setting one as 'active'.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/vehicle_management_screen.dart # To support a list of vehicles
+  - apps/driver-app/src/screens/home_screen.dart # To implement the vehicle selection prompt
+  - libs/backend/vehicle-service/src/lib/vehicle.service.ts # To handle multiple vehicles per driver
+  - libs/backend/ride-service/src/lib/ride.service.ts # To associate a specific vehicle with a trip
+
+dev_notes: >
+  This feature is important for drivers who may share or switch vehicles. The key implementation detail is the pre-online check to ensure the correct vehicle is selected, which is critical for passenger safety and identification.

@@ -1,0 +1,36 @@
+id: story-79.31
+epic: admin-experience
+slug: admin-manage-rbac
+title: "Admin: Manage Roles and Permissions"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-06T22:00:00Z'
+
+description: >
+  As a super-administrator, I need an interface to create, edit, and assign permissions to different admin roles,
+  so I can have granular control over what different types of administrators can see and do on the platform.
+
+acceptance_criteria:
+  - A new "Roles & Permissions" page must be created in the `admin-panel`, accessible only to super-admins.
+  - The page must allow a super-admin to create, view, and edit roles (e.g., "Support Agent", "Marketing Manager").
+  - The UI must display a predefined list of system permissions (e.g., "can_suspend_user", "can_edit_faq", "can_view_financials").
+  - When editing a role, the super-admin must be able to associate specific permissions with that role using a checklist or similar UI.
+  - The backend `auth-service` must be updated to store roles and their associated permissions.
+  - The `RolesGuard` (from story-79.21) must be refactored to check for specific permissions based on the endpoint, rather than just a generic "ReadOnly" role.
+  - On the user management page, a super-admin must be able to assign one or more roles to another admin user.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/settings/roles/page.tsx
+
+files_to_be_modified:
+  - libs/backend/auth/src/guards/roles.guard.ts # To be refactored to check for granular permissions.
+  - # The Prisma schema will need new `Role` and `Permission` models, and a join table between them.
+  - # The backend auth-service will need CRUD endpoints for managing roles and permissions.
+
+dev_notes: >
+  This story implements the full vision for Role-Based Access Control from the PRD (section 2.3). It moves beyond the simple "read-only" role to a fully configurable system.
+
+  The backend work is significant. It involves creating new data models for `Role` and `Permission` and refactoring the existing `RolesGuard` to be more powerful. Instead of a simple role check, the guard will now need to accept a specific permission (e.g., `@UseGuards(new PermissionGuard('can_suspend_user'))`) and validate if the calling user's role grants that permission.
+
+  The frontend will involve creating a new settings page for managing these roles and permissions.
+  PRD Reference: 2.3. Admin Panel -> User & Permissions Management -> Role-Based Access Control (RBAC)

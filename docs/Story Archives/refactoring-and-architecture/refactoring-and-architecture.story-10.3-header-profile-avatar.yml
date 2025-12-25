@@ -1,0 +1,33 @@
+id: story-10.3
+epic: refactoring-and-architecture
+slug: header-profile-avatar
+title: Display User Profile Avatar in App Header
+status: DONE
+author: Bob (sm)
+date: '2024-05-30T14:00:00Z'
+
+description: >
+  As a user (passenger or driver), I want to see my profile picture in the
+  app's main header, so that the app feels more personalized and I have a
+  quick way to access my profile.
+
+acceptance_criteria:
+  - A new reusable `UserProfileAvatar` widget is created in the `packages/core_ui` package.
+  - The `UserProfileAvatar` widget must fetch the current user's `picture` attribute via the shared `AuthService`.
+  - It must then use the `getProfilePictureUrl` method to get a downloadable URL from S3.
+  - The widget should display the image in a `CircleAvatar`. It should show a placeholder icon (e.g., `Icons.person`) if no picture is available or while loading.
+  - The `HomeScreen` `AppBar` in both the `passenger-app` and `driver-app` should be updated to display this `UserProfileAvatar` widget in their `actions`.
+  - Tapping the avatar in either app should navigate the user to their respective `ProfileScreen`.
+  - A basic widget test should be created for the `UserProfileAvatar` widget.
+
+files_to_be_created:
+  - packages/core_ui/lib/src/widgets/user_profile_avatar.dart
+  - packages/core_ui/test/widgets/user_profile_avatar_test.dart
+
+files_to_be_modified:
+  - packages/core_ui/lib/core_ui.dart
+  - Cabi Alpha/mobile/passenger_app/lib/screens/home_screen.dart
+  - Cabi Alpha/mobile/driver_app/lib/screens/home_screen.dart
+
+dev_notes: >
+  This story enhances the user experience by making the app more personal. It leverages our shared `core_auth` and `core_ui` packages, promoting code reuse. The `UserProfileAvatar` should be a self-contained, stateful widget that manages its own data fetching lifecycle.

@@ -1,0 +1,11 @@
+name: core_ride_service
+description: Core ride/trip services for the Cabi platform
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter

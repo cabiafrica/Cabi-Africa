@@ -1,0 +1,64 @@
+id: story-18.3
+epic: safety-and-security
+slug: share-my-trip
+title: Implement "Share My Trip" Feature
+status: DONE
+author: Bob (sm)
+date: '2024-08-11T11:30:00Z'
+
+description: >
+  As a passenger, I want to share my live trip status with a friend or family
+  member, so they can follow my journey in real-time for my safety and peace of mind.
+
+acceptance_criteria:
+  - A "Share My Trip" button must be available on the in-trip screen in the `passenger-app`.
+  - Tapping the button must open the native device sharing sheet (e.g., to share via SMS, WhatsApp, etc.).
+  - The content shared must be a unique, publicly accessible URL.
+  - This URL must lead to a simple, mobile-friendly web page that does not require a login.
+  - The web page must display a map showing the car's live location, the driver's name, vehicle details, and the estimated time of arrival (ETA).
+  - The `ride-service` must generate a secure, temporary token for each shared trip to authorize viewing the live data.
+  - The tracking link must become inactive a short time after the trip is completed to protect privacy.
+
+files_to_be_created:
+  - apps/web/src/app/track/[tripId]/page.tsx # The public, mobile-friendly tracking page
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/widgets/in_trip_panel.dart # To add the "Share My Trip" button
+  - libs/backend/ride-service/src/lib/ride.service.ts # To generate tracking tokens and serve live trip data
+  - libs/backend/ride-service/src/lib/ride.controller.ts # To expose an endpoint for the public tracking page
+
+dev_notes: >
+  This is a key safety feature that provides peace of mind for both the user and their contacts. The public tracking page should be lightweight and server-rendered for fast loading. The security of the temporary token is important; it should be unguessable and have a short expiry time after the trip ends. This feature will be enhanced by `story-32.1` (Emergency Contacts) to make sharing even easier.
+
+tasks:
+  - id: task-1
+    description: Implement the backend logic and public tracking page.
+    subtasks:
+      - "[x] Create `apps/web/src/app/track/[tripId]/page.tsx` for the public tracking view."
+      - "[x] Add a method to `ride.service.ts` to generate a secure, temporary token for sharing."
+      - "[x] Add a public endpoint to `ride.controller.ts` to serve live trip data for a valid token."
+      - "[x] Implement logic to expire the token after the trip is complete."
+  - id: task-2
+    description: Implement the frontend "Share My Trip" button.
+    subtasks:
+      - "[x] Add a 'Share My Trip' button to `Cabi Alpha/mobile/passenger_app/lib/widgets/in_trip_panel.dart`."
+      - "[x] On tap, the button should call the backend to get the tracking URL."
+      - "[x] Use a Flutter plugin (e.g., `share_plus`) to open the native sharing sheet with the URL."
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - apps/web/src/app/track/[tripId]/page.tsx
+    - libs/backend/ride-service/src/lib/ride.service.ts
+    - libs/backend/ride-service/src/lib/ride.controller.ts
+  change_log:
+    - file: apps/web/src/app/track/[tripId]/page.tsx
+      change: Created the public-facing, mobile-friendly web page to display live trip tracking information.
+    - file: libs/backend/ride-service/src/lib/ride.service.ts
+      change: Implemented `generateShareToken` to create a unique token and `getLiveTripData` to serve public trip details. Also updated `completeRide` to handle token expiry.
+    - file: libs/backend/ride-service/src/lib/ride.controller.ts
+      change: Exposed a `POST /rides/:id/share` endpoint for the app to get a shareable URL and a public `GET /rides/track/:shareToken` endpoint for the tracking webpage.
+    - file: apps/passenger-app/pubspec.yaml
+      change: Added the `share_plus` dependency to enable the native sharing feature.
+    - file: Cabi Alpha/mobile/passenger_app/lib/widgets/in_trip_panel.dart
+      change: Added a "Share My Trip" button, a mock service to get the tracking URL, and implemented the call to the `share_plus` plugin to open the native sharing sheet.

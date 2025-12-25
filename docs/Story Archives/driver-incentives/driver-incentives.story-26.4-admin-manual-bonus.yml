@@ -1,0 +1,35 @@
+id: story-26.4
+epic: driver-incentives
+slug: admin-manual-bonus
+title: Allow Admin to Send a One-Time Bonus to a Specific Driver
+status: Done
+author: Bob (sm)
+date: '2024-07-30T09:00:00Z'
+
+description: >
+  As an administrator, I want to send a one-time bonus to a specific driver,
+  so I can reward exceptional service, resolve a payment dispute, or provide a
+  manual incentive.
+
+acceptance_criteria:
+  - A "Send Bonus" button must be added to the user detail page in the `admin-panel`.
+  - Clicking this button must open a modal or form with fields for "Amount" and "Reason".
+  - Submitting the form must call a new, secure, admin-only endpoint in the `incentive-service`.
+  - The `incentive-service` must validate the request and then call the `payment-service` to create a bonus transaction in the driver's earnings ledger.
+  - The transaction created in the `payment-service` must be clearly marked as a "Manual Bonus" and must include the reason provided by the admin.
+  - After successfully instructing the `payment-service`, the `incentive-service` must publish a `BonusAwarded` event.
+  - The `notification-service` must listen for this event and send a notification to the driver, including the bonus amount and the reason (e.g., "You've received a bonus of KES 500. Reason: Thank you for your excellent service.").
+
+files_to_be_created:
+  - apps/admin-panel/src/components/users/send_bonus_modal.tsx # Or similar component
+
+files_to_be_modified:
+  - apps/admin-panel/src/app/users/[userId]/page.tsx # To add the "Send Bonus" button and integrate the modal
+  - libs/backend/incentive-service/src/lib/incentive.controller.ts # To add the new admin endpoint
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To handle the manual bonus logic
+  - libs/backend/payment-service/src/lib/payment.service.ts # To ensure the transaction can be created with a custom reason
+  - The database schema for the `payment-service`'s transactions table to ensure it can store a free-text reason.
+  - libs/backend/notification-service/src/lib/notification.service.ts # To ensure the notification can display the custom reason
+
+dev_notes: >
+  This story provides a crucial tool for the operations and support teams. The flow (`admin-panel` -> `incentive-service` -> `payment-service` -> `notification-service`) keeps concerns separated. The endpoint in the `incentive-service` must be strictly secured for admin access. Storing the reason for the bonus is critical for both driver transparency and internal auditing.

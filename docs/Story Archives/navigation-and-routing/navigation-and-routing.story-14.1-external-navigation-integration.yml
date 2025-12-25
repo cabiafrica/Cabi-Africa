@@ -1,0 +1,32 @@
+id: story-14.1
+epic: navigation-and-routing
+slug: external-navigation-integration
+title: Integrate External Turn-by-Turn Navigation
+status: 'Ready for Review'
+author: Bob (sm)
+date: '2024-06-01T14:00:00Z'
+
+description: >
+  As a driver, when I am en route to a passenger or on a trip to the
+  destination, I want a "Navigate" button that opens my preferred navigation
+  app (like Google Maps or Waze) with the route pre-filled, so I can get
+  real-time, turn-by-turn directions.
+
+acceptance_criteria:
+  - A "Navigate" button is added to the `WaitingForPassengerPanel`.
+  - A "Navigate" button is added to the `TripInProgressPanel`.
+  - Tapping the "Navigate" button on the `WaitingForPassengerPanel` should launch an external navigation app with the passenger's pickup location as the destination.
+  - Tapping the "Navigate" button on the `TripInProgressPanel` should launch an external navigation app with the trip's final destination as the destination.
+  - The implementation should use a library like `url_launcher` to construct and launch the appropriate navigation URL for both iOS (Apple Maps) and Android (Google Maps).
+  - The existing tests for the modified panels should be updated to verify the presence of the new "Navigate" button.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/widgets/waiting_for_passenger_panel.dart
+  - Cabi Alpha/mobile/driver_app/lib/widgets/trip_in_progress_panel.dart
+  - apps/driver-app/test/widgets/waiting_for_passenger_panel_test.dart
+  - apps/driver-app/test/widgets/trip_in_progress_panel_test.dart
+
+dev_notes: >
+  This is a critical feature for the driver's core workflow. It bridges the gap between our in-app map display and the need for actual turn-by-turn directions. We will need to construct the correct cross-platform URL schemes to launch the external maps applications with the destination pre-set. This story does not require a new screen, only modifications to existing widgets.

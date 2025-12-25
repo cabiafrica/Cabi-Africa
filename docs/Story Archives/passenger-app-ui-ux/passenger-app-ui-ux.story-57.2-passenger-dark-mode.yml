@@ -1,0 +1,25 @@
+id: story-57.2
+epic: passenger-app-ui-ux
+slug: passenger-dark-mode
+title: Implement Passenger App Dark Mode
+status: DONE
+author: Bob (sm)
+date: '2024-08-06T09:03:00Z'
+
+description: >
+  As a passenger, I want a "dark mode" for the app, so that it's more
+  comfortable to use at night or in low-light environments.
+
+acceptance_criteria:
+  - A dark mode toggle must be available in the `passenger-app` settings.
+  - The app should also be able to automatically follow the OS's dark mode setting.
+  - All screens, widgets, and the map style must have a corresponding dark theme version.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/theme/dark_theme.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/main.dart # To manage theme switching
+
+dev_notes: >
+  The passenger-side counterpart to `story-56.1`. This is a standard feature in modern apps and greatly improves user experience.

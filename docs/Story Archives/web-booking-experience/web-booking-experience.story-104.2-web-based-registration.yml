@@ -1,0 +1,36 @@
+id: story-104.2
+epic: web-booking-experience
+slug: web-based-registration
+title: "Website: Implement Multi-Step Driver Registration Form"
+status: Done
+author: Gemini Code Assist
+date: '2025-12-03T14:00:00Z'
+
+description: >
+  As a prospective driver visiting the marketing website, I want to complete an initial registration form,
+  so that I can create a 'Prospect' account and begin the onboarding process.
+
+acceptance_criteria:
+  - A new registration page (e.g., `/register`) must be created in the `marketing-website` app.
+  - The registration form must collect the user's First Name, Last Name, Email, Phone, and City.
+  - The form must include an optional field for a `referralCode`.
+  - The form must be protected by Google reCAPTCHA, as specified in the architecture document.
+  - On submission, the form must send the data to the `POST /driver-leads/register` endpoint defined in the `architecture.md`.
+  - The request body must match the `RegistrationRequest` schema (including the `recaptchaToken`).
+  - Upon a successful response from the backend, the user must be shown a success message.
+  - The success message should instruct the user to download the driver app to continue their onboarding, providing a clear call-to-action with app store links.
+  - The backend `Driver Lead Service` is responsible for creating the `User` and `DriverProfile` with a status of `PROSPECT`.
+
+files_to_be_created:
+  - Cabi Alpha/web/user_portal/src/pages/register.tsx # Or a similar route for the registration form.
+
+files_to_be_modified:
+  - # The backend `Driver Lead Service` will implement the `/driver-leads/register` endpoint. This is defined in the architecture but no file exists yet.
+  - # A shared component like a Header or Footer might be modified to add a "Sign Up to Drive" link.
+
+dev_notes: >
+  This story implements the primary driver acquisition funnel on the marketing website, as detailed in both the PRD (section 2.6) and the architecture document (section 7.1).
+  The frontend work involves creating a new page with a form that captures all required fields. It's crucial to integrate reCAPTCHA for bot protection.
+  The backend counterpart for this story is the implementation of the `Driver Lead Service` and its `/driver-leads/register` endpoint, which will handle the creation of a `User` and a `DriverProfile` with an `applicationStatus` of `PROSPECT`.
+  This story focuses on the initial capture of information. The seamless hand-off to the app (e.g., via deep link with a session token) can be handled in a subsequent story.
+  PRD Reference: 2.6. Marketing Website -> Multi-Step Web Registration

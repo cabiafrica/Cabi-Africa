@@ -1,0 +1,26 @@
+id: story-84.1
+epic: platform-communication
+slug: report-a-bug
+title: Implement "Report a Bug" In-App
+status: DONE
+author: Bob (sm)
+date: '2024-08-08T11:15:00Z'
+
+description: >
+  As a user, I want an easy way to report a technical bug or issue from
+  within the app, including the option to attach a screenshot.
+
+acceptance_criteria:
+  - A "Report a Bug" option must be added to the Help Center in both apps.
+  - This opens a form where the user can describe the issue.
+  - The app should automatically attach useful diagnostic information (app version, OS version, device type).
+  - The user should be able to attach a screenshot.
+  - The report should create a ticket in a developer-focused issue tracker (e.g., Jira, GitHub Issues), not the customer support queue.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/help_center_screen.dart # To add the bug report option
+
+dev_notes: >
+  This creates a direct feedback channel from users to the engineering team, which can be invaluable for finding and fixing bugs quickly.

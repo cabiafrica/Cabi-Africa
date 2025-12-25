@@ -1,0 +1,25 @@
+id: story-40.9
+epic: referrals
+slug: referral-progress-notifications
+title: Send Notifications for Referral Milestones
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T18:05:00Z'
+
+description: >
+  As a referrer, I want to receive push notifications when a friend I referred
+  signs up and when I receive my bonus, so I'm kept informed and encouraged
+  to refer more people.
+
+acceptance_criteria:
+  - The `incentive-service` must trigger an event when a referred user successfully signs up.
+  - The `notification-service` must consume this event and send a push notification to the referrer (e.g., "Your friend, Jane D., has joined Cabi!").
+  - When a bonus is successfully paid out, the `incentive-service` must trigger another event.
+  - The `notification-service` must send a notification for this as well (e.g., "You've earned a $10 credit! Your friend just took their first ride.").
+
+files_to_be_modified:
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To emit events for referral milestones
+  - libs/backend/notification-service/src/lib/notification.service.ts # To handle the new notification types
+
+dev_notes: >
+  These notifications create a positive feedback loop that can significantly boost engagement with the referral program.

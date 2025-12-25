@@ -1,0 +1,31 @@
+id: story-5.4
+epic: payments-and-trip-finalization
+slug: driver-tip-notification
+title: Notify Driver in Real-Time of Received Tip
+status: DONE
+author: Bob (sm)
+date: '2024-06-23T10:00:00Z'
+
+description: >
+  As a driver, I want to receive an immediate in-app notification when a
+  passenger gives me a tip, so that I feel appreciated and have timely
+  visibility into my earnings.
+
+acceptance_criteria:
+  - When the `payment-service` successfully processes a tip as part of a payment (`story-5.3`), it must publish a `TipReceived` event.
+  - The event must contain the `driverId`, `rideId`, and the `tipAmount`.
+  - The `notification-service` must subscribe to and listen for the `TipReceived` event.
+  - Upon receiving the event, the `notification-service` must construct a notification message (e.g., "Great service! You received a tip of KES 100.00.").
+  - The `notification-service` must send this message as a push notification to the driver's registered device(s).
+  - The `driver-app` must be able to receive and display this notification to the user.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To publish the 'TipReceived' event
+  - libs/backend/notification-service/src/lib/listeners/payment.listener.ts # To handle the new tip event
+  - libs/backend/notification-service/src/lib/notification.service.ts # To add logic for sending tip notifications
+  - Cabi Alpha/mobile/driver_app/lib/main.dart # Or equivalent to handle the incoming notification
+
+dev_notes: >
+  This story provides a positive feedback loop for drivers, enhancing their experience on the platform. It relies on the event-driven architecture between the `payment-service` and `notification-service`. The `payment-service` acts as the source of truth, emitting an event upon successful tip processing, which the `notification-service` then consumes to inform the driver.

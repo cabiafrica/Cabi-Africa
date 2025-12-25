@@ -1,0 +1,69 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:passenger_app/api/ride_service.dart';
+import 'package:passenger_app/screens/rating_screen.dart';
+import 'package:passenger_app/widgets/payment_prompt_modal.dart';
+
+import 'payment_prompt_modal_test.mocks.dart';
+
+@GenerateMocks([RideService])
+void main() {
+  late MockRideService mockRideService;
+
+  setUp(() {
+    mockRideService = MockRideService();
+  });
+
+  Widget createWidgetUnderTest({required VoidCallback onFinalized}) {
+    return MaterialApp(
+      home: Scaffold(
+        body: PaymentPromptModal(
+          rideService: mockRideService,
+          tripData: const {
+            'rideId': 'trip-123',
+            'finalFare': 250.0,
+            'driverName': 'John',
+          },
+          onPaymentFinalized: onFinalized,
+        ),
+      ),
+    );
+  }
+
+  testWidgets('PaymentPromptModal displays fare and payment options', (widgetTester) async {
+    // Arrange
+    await widgetTester.pumpWidget(createWidgetUnderTest(onFinalized: () {}));
+
+    // Assert
+    expect(find.text('Final Fare: KES 250.0'), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, 'Pay with Cash'), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, 'Pay with M-Pesa'), findsOneWidget);
+  });
+
+  testWidgets('tapping cash payment calls service, callback, and navigates to rating screen', (widgetTester) async {
+    // Arrange
+    bool onFinalizedCalled = false;
+    when(mockRideService.confirmCashPayment(any)).thenAnswer((_) async => {});
+
+    await widgetTester.pumpWidget(createWidgetUnderTest(onFinalized: () {
+      onFinalizedCalled = true;
+    }));
+
+    // Act
+    await widgetTester.tap(find.widgetWithText(ElevatedButton, 'Pay with Cash'));
+    // The first pump shows the loading dialog
+    await widgetTester.pump();
+    // The second pump (after the future completes) dismisses it and navigates
+    await widgetTester.pumpAndSettle();
+
+    // Assert
+    verify(mockRideService.confirmCashPayment('trip-123')).called(1);
+    expect(onFinalizedCalled, isTrue);
+
+    // Verify navigation to RatingScreen
+    expect(find.byType(RatingScreen), findsOneWidget);
+    expect(find.text('How was your trip with John?'), findsOneWidget);
+  });
+}

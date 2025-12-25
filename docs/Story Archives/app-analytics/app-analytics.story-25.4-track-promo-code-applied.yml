@@ -1,0 +1,31 @@
+id: story-25.4
+epic: app-analytics
+slug: track-promo-code-applied
+title: Track Promo Code Application Events
+status: Done
+author: Bob (sm)
+date: '2024-07-21T09:00:00Z'
+
+description: >
+  As a product manager, I want to track every time a user attempts to apply a
+  promotion code, so that I can analyze user engagement with our campaigns,
+  understand the success rate of codes, and measure overall campaign reach.
+
+acceptance_criteria:
+  - When a passenger enters a promo code and the app calls the validation endpoint in the `promotion-service` (as per `story-21.2`), the `promotion-service` must publish a `PromoCodeApplied` event.
+  - This event must be published for every attempt, regardless of whether the code is valid or invalid.
+  - The event payload must include relevant, non-PII properties: `userId`, the `promoCode` string entered by the user, and a `wasValid` boolean indicating the outcome of the validation.
+  - The `analytics-service` must subscribe to the `PromoCodeApplied` event.
+  - Upon receiving the event, the `analytics-service` must send a corresponding event to the configured third-party analytics provider (e.g., Mixpanel, Amplitude).
+  - The event sent to the analytics provider must include the properties from the original event to allow for detailed analysis.
+
+files_to_be_created:
+  - libs/backend/analytics-service/src/lib/listeners/promotion.listener.ts
+
+files_to_be_modified:
+  - libs/backend/promotion-service/src/lib/promotion.service.ts # To publish the PromoCodeApplied event during validation
+  - libs/backend/analytics-service/src/lib/analytics.module.ts # To register the new listener
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To handle the new event
+
+dev_notes: >
+  This story provides top-of-the-funnel analytics for our promotions feature. It allows us to measure user intent and engagement with promo codes, which is different from tracking successful redemptions (covered by `story-21.3`). By tracking both successful and failed attempts, we can identify issues like frequently mistyped codes or user confusion. This event should be triggered within the `promotion-service`'s validation logic.

@@ -1,0 +1,28 @@
+id: story-65.1
+epic: new-verticals
+slug: vehicle-marketplace
+title: Implement "Vehicle Marketplace" for Drivers
+status: DONE
+author: Bob (sm)
+date: '2024-08-06T09:10:00Z'
+
+description: >
+  As a fleet owner or a driver looking to sell my vehicle, I want a
+  marketplace within the app to list my compliant vehicle for sale or rent
+  to other drivers on the platform.
+
+acceptance_criteria:
+  - A new "Vehicle Marketplace" must be added to the `driver-app`.
+  - Drivers can list their approved vehicles, setting a price for sale or daily/weekly rental.
+  - Other drivers can browse listings and contact the owner through an anonymized chat/call.
+  - The platform can facilitate the payment for a rental, taking a small commission.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/vehicle_marketplace_screen.dart
+
+files_to_be_modified:
+  - libs/backend/vehicle-service/src/lib/vehicle.service.ts # To manage listings
+  - libs/backend/payment-service/src/lib/payment.service.ts # To handle rental payments
+
+dev_notes: >
+  This creates a powerful internal economy and helps solve vehicle supply issues by allowing the driver community to self-serve.

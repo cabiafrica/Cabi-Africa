@@ -1,0 +1,25 @@
+id: story-47.3
+epic: advanced-booking-options
+slug: reserve-hourly
+title: Implement "Reserve for Later" Hourly Booking
+status: DONE
+author: Bob (sm)
+date: '2024-08-01T09:17:00Z'
+
+description: >
+  As a passenger, I want to schedule an hourly booking for a future date and
+  time, so that I can plan for events in advance.
+
+acceptance_criteria:
+  - This story combines the functionality of scheduled rides (`story-22.1`) with hourly bookings (`story-47.2`).
+  - The user can select a future date and time when making an hourly booking.
+  - The `ride-service` must be updated to handle scheduled jobs for this new booking type.
+  - The driver matching algorithm for scheduled rides must be adapted to consider the entire duration of the hourly booking.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/ride-service/src/lib/scheduled_ride.service.ts # To handle scheduled hourly bookings
+
+dev_notes: >
+  This combines two complex features. The main challenge is in the matching algorithm, which needs to find a driver who is available for the entire requested block of time.

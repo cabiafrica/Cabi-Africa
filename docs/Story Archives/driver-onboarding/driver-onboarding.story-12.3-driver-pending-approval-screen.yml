@@ -1,0 +1,33 @@
+id: story-12.3
+epic: driver-onboarding
+slug: driver-pending-approval-screen
+title: Display Pending Approval Screen in Driver App
+status: Done
+author: Bob (sm)
+date: '2024-06-09T12:00:00Z'
+
+description: >
+  As a prospective driver who has submitted my documents, I want to see a
+  clear "Pending Approval" screen when I open the app, so that I understand
+  the status of my application and know that I need to wait for the review
+  process to complete.
+
+acceptance_criteria:
+  - A new `PendingApprovalScreen` widget must be created in the `driver-app`.
+  - The application's main router/wrapper (e.g., `AuthWrapper`) must be updated to check the driver's verification status upon login.
+  - If a logged-in driver's verification status is "pending", they must be directed to the `PendingApprovalScreen`.
+  - This screen should prevent access to the main application features (e.g., home screen map, going online).
+  - The screen must display a clear message informing the driver that their documents are under review (e.g., "Thanks for submitting your documents! We're currently reviewing them and will notify you of the outcome.").
+  - The screen should include a button or link that allows the driver to navigate to the document list screen to check the status of individual documents.
+  - The app should automatically navigate the user away from this screen (e.g., to the home screen or back to the document screen) if their verification status changes to "Verified" or "Rejected" while the app is open.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/pending_approval_screen.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/auth_wrapper.dart # To add routing logic for the 'pending' verification status
+  - libs/backend/user-service/src/lib/user.service.ts # To ensure the user's verification status is easily queryable
+  - Cabi Alpha/mobile/driver_app/lib/api/providers.dart # To fetch and expose the user's verification status to the UI
+
+dev_notes: >
+  This story introduces a new state into the user's journey within the `driver-app`. The `AuthWrapper` will need to be enhanced to handle a three-state check: Unauthenticated, Authenticated & Unverified/Pending, and Authenticated & Verified. This screen acts as a waiting room for the driver. The logic for automatically navigating away upon status change can be implemented via periodic polling of the user's status or, more efficiently, by listening for a push notification that triggers a state refresh.

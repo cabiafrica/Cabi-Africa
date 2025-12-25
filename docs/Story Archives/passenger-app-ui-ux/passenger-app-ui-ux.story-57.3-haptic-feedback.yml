@@ -1,0 +1,27 @@
+id: story-57.3
+epic: passenger-app-ui-ux
+slug: haptic-feedback
+title: Implement Haptic Feedback for Key Events
+status: Done
+author: Bob (sm)
+date: '2024-08-06T09:11:00Z'
+
+description: >
+  As a passenger, I want to feel a subtle vibration for key events like when a
+  driver is found or when my ride arrives, so I get confirmation without
+  having to look at my screen.
+
+acceptance_criteria:
+  - The `passenger-app` must use the device's haptic feedback engine.
+  - A short vibration should occur when:
+    - The ride is confirmed and a driver is matched.
+    - The driver arrives at the pickup location.
+    - A new chat message is received.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - Various widgets in `apps/passenger-app` to trigger haptic feedback.
+
+dev_notes: >
+  A small "delight" feature that makes the app feel more responsive and polished. It requires using a simple haptics plugin.

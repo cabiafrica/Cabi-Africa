@@ -1,0 +1,34 @@
+id: epic-2.0
+slug: marketing-site-enhancements
+title: Marketing Website Phase 2 Enhancements
+status: Done
+author: Sarah (po)
+date: '2024-06-05T10:00:00Z'
+
+description: >
+  This epic covers the next phase of development for the public-facing
+  marketing website (user-portal). The goal is to enhance our online
+  presence, improve user engagement, and provide more valuable content
+  to prospective drivers and passengers.
+
+child_stories:
+  - story-2.1-blog-and-content-hub
+  - story-2.2-for-drivers-landing-page
+  - story-2.3-for-passengers-landing-page
+  - story-2.4-update-main-navigation
+  - story-2.5-about-us-page
+
+completion_summary:
+  total_stories: 5
+  completed_stories: 5
+  completion_percentage: 100
+  completion_date: '2024-12-16T03:45:00Z'
+
+key_deliverables:
+  - Blog and content hub with dynamic routing
+  - Dedicated landing page for drivers
+  - Dedicated landing page for passengers
+  - Enhanced main navigation
+  - Comprehensive About Us page
+  - Responsive design across all pages
+  - SEO-optimized content

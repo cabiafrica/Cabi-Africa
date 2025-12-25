@@ -1,0 +1,28 @@
+id: story-81.1
+epic: driver-engagement
+slug: driver-challenges-vs-friends
+title: Implement "Driver Challenges" vs Friends
+status: Done
+author: Bob (sm)
+date: '2024-08-08T11:11:00Z'
+
+description: >
+  As a driver, I want to create or join small, private leaderboards or
+  challenges with a few friends who also drive on the platform, so we can
+  compete directly with each other.
+
+acceptance_criteria:
+  - This is the first story for a new `driver-engagement` epic.
+  - In the `driver-app`, a driver can create a "Friend Challenge" for the week.
+  - They can invite other drivers (e.g., from their contacts) to join.
+  - The challenge creates a mini-leaderboard, visible only to participants, for a specific metric like "Trips Completed".
+  - This is purely for social competition and may not have a monetary prize.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/leaderboard_screen.dart # To add private challenges
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To manage private leaderboards
+
+dev_notes: >
+  This adds a social layer to the leaderboard feature, making it more personal and engaging than competing against an entire city.

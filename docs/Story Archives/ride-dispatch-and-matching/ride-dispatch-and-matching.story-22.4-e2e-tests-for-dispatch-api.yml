@@ -1,0 +1,24 @@
+id: story-22.4
+epic: ride-dispatch-and-matching
+slug: e2e-tests-for-dispatch-api
+title: Implement E2E Tests for Ride Request Endpoint
+status: DONE
+author: Sarah (po)
+date: '2024-07-24T19:00:00Z'
+
+description: >
+  As a developer, I need to create end-to-end tests for the initial ride request
+  endpoint (`POST /dispatch/requests`), so that we can ensure its reliability,
+  validate request handling, and prevent future regressions.
+
+acceptance_criteria:
+  - An e2e test file must be created for the `Dispatch Service`.
+  - A test case must verify that a `POST` request to `/dispatch/requests` with a valid `RideRequest` body returns a `201 Created` status.
+  - The response body for a successful request must contain a `rideId` and a `status` of `SEARCHING`.
+  - A test case must verify that a request with missing required fields (e.g., `passengerId`) returns a `400 Bad Request` error.
+  - A test case must verify that a request with invalid data types (e.g., non-numeric coordinates) returns a `400 Bad Request` error.
+  - The test setup should mock any external dependencies, like the database, to ensure the test focuses on the API contract and request/response cycle.
+  - The tests must be added to the `dispatch-service` e2e test suite.
+
+files_to_be_created:
+  - apps/dispatch-service/test/dispatch.e2e-spec.ts

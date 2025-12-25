@@ -1,0 +1,31 @@
+id: story-140.6
+epic: driver-wellness
+slug: positive-feedback-feed
+title: Create a Positive Feedback Feed for Drivers
+status: Done
+author: Mary (analyst)
+date: '2024-08-10T12:40:00Z'
+
+description: >
+  As a driver, I want a dedicated section in my app that shows a continuous
+  feed of all the positive feedback I've received, so I can feel recognized
+  for my good service and stay motivated.
+
+acceptance_criteria:
+  - A new "Your Feedback" or "Compliments" screen must be added to the driver's Performance or Profile section in the `driver-app`.
+  - This screen must display a chronological list of positive feedback events.
+  - The feed must include items such as:
+    - Compliments selected by passengers (e.g., "Great Conversation," "Clean Car").
+    - Positive written comments left with 5-star ratings.
+  - Feedback from trips that are currently under dispute or have been flagged as problematic by the system must be excluded from the feed.
+  - If a passenger later retracts their positive feedback (e.g., by changing a rating or unselecting a compliment), the corresponding item must be removed from the driver's feed.
+  - The `analytics-service` must provide a new endpoint to fetch this curated positive feedback feed for a driver.
+
+files_to_be_created:
+  - apps/driver-app/src/screens/positive_feedback_screen.dart
+
+files_to_be_modified:
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To add an endpoint to serve the curated feedback feed.
+
+dev_notes: >
+  This is a high-impact, low-complexity morale feature. It focuses on re-surfacing existing data in a positive and motivating way. The key is to ensure the feed is strictly positive, filtering out any constructive or negative comments to maintain its encouraging purpose.

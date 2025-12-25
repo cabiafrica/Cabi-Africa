@@ -1,0 +1,28 @@
+id: story-45.6
+epic: driver-financial-tools
+slug: cash-advance
+title: Implement "Cash Advance" for Drivers
+status: Done
+author: Bob (sm)
+date: '2024-08-02T10:17:00Z'
+
+description: >
+  As a loyal driver with a strong earnings history, I want the ability to
+  request a small cash advance against my future earnings, so that I can
+  handle unexpected expenses.
+
+acceptance_criteria:
+  - A "Cash Advance" option will be available in the driver's wallet for eligible drivers.
+  - Eligibility will be determined by the `analytics-service` based on tenure, rating, and earnings consistency.
+  - The `payment-service` will disburse the advance.
+  - The advance amount will be automatically repaid via deductions from the driver's future earnings over a set period.
+  - The `payment-service` must manage this repayment schedule.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To manage advance and repayment logic
+  - libs/backend/analytics-service/src/lib/analytics.service.ts # To determine eligibility
+
+dev_notes: >
+  A complex financial product that can be a powerful retention tool. It requires sophisticated risk assessment to determine eligibility and advance limits.

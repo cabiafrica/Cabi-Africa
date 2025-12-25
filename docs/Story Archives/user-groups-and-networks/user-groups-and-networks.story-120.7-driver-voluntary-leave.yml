@@ -1,0 +1,25 @@
+id: story-120.7
+epic: user-groups-and-networks
+slug: driver-voluntary-leave
+title: Allow a Driver to Voluntarily Leave an Organization
+status: DONE
+author: Mary (analyst)
+date: '2024-08-10T10:45:00Z'
+
+description: >
+  As a driver who is a member of an organization, I want to be able to leave
+  the organization at any time through my app, so I have the freedom to be an
+  independent driver or switch to another organization.
+
+acceptance_criteria:
+  - In the `driver-app`, within a new "My Organization" section, there must be a "Leave Organization" button.
+  - Tapping the button must show a confirmation dialog explaining that they will lose any organization-specific benefits.
+  - Upon confirmation, the driver's `organizationId` is set to null on the backend.
+  - The organization's leader board must be notified that the driver has left.
+  - The driver immediately reverts to being an independent driver on the platform.
+
+files_to_be_created:
+  - apps/driver-app/src/screens/my_organization_screen.dart # To show organization details and the leave button.
+
+dev_notes: >
+  This feature ensures driver autonomy. A driver who leaves can immediately request to join another organization using the flow from `story-120.4`. This provides a clear and simple mechanism for "switching" organizations: leave first, then join another.

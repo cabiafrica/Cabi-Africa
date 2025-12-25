@@ -1,0 +1,26 @@
+id: story-62.14
+epic: platform-feedback-and-suggestions
+slug: admin-view-user-suggestions
+title: Admin Panel for Viewing and Managing User Suggestions
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T14:30:00Z'
+
+description: >
+  As an administrator, I want a dedicated section in the admin panel to view,
+  filter, and manage all user-submitted feedback and suggestions, so that I
+  can analyze user needs and inform the product roadmap.
+
+acceptance_criteria:
+  - A new "User Suggestions" page must be added to the `admin-panel`.
+  - This page must fetch and display all support tickets with the "Suggestion" category from the `support-service`.
+  - The list should display the suggestion content, submission date, and the user ID of the submitter.
+  - An administrator must be able to update the status of a suggestion (e.g., "New", "Under Review", "Planned", "Implemented", "Closed").
+  - The `support-service` must be updated to allow for these new statuses on suggestion tickets.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/suggestions/page.tsx # The main view for listing suggestions
+
+files_to_be_modified:
+  - apps/admin-panel/src/components/layout/sidebar.tsx # To add the "User Suggestions" link to the navigation
+  - libs/backend/support-service/src/lib/support.service.ts # To add logic for managing suggestion statuses

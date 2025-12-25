@@ -1,0 +1,36 @@
+id: story-20.2
+epic: ratings-and-reviews
+slug: driver-rates-passenger
+title: Allow Driver to Rate Passenger After Trip
+status: Done
+author: Bob (sm)
+date: '2024-06-22T10:00:00Z'
+
+description: >
+  As a driver, after I have completed a trip, I want to rate my passenger on a
+  scale of 1 to 5 stars and provide optional feedback, so that I can share my
+  experience and help maintain a safe and respectful community.
+
+acceptance_criteria:
+  - After the driver taps "End Trip" on the `TripInProgressPanel`, the `driver-app` must display a new "Rate Your Passenger" screen.
+  - This screen must show the passenger's name.
+  - It must feature a 1-5 star rating selector.
+  - It must include an optional text field for comments.
+  - A "Submit Rating" button sends the rating data to the `rating-service`.
+  - The `rating-service` must be updated to accept ratings submitted by drivers against passengers.
+  - The service must store the star rating and comment, associating it with the `rideId`, `passengerId`, and `driverId`.
+  - After storing the rating, the `rating-service` must trigger an update of the passenger's average rating in the `user-service`.
+  - The `user-service`'s user model must be updated to support storing `averageRating` and `ratingCount` for passengers.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/driver_app/lib/screens/rate_passenger_screen.dart
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/driver_app/lib/widgets/trip_in_progress_panel.dart # To navigate to rating screen after ending trip
+  - libs/backend/rating-service/src/lib/rating.controller.ts # To handle rating submissions from drivers
+  - libs/backend/rating-service/src/lib/rating.service.ts # To process and store passenger ratings
+  - libs/backend/user-service/src/lib/user.service.ts # To update passenger average ratings
+  - The database schema for the `user-service` to ensure the user model can store ratings for passengers.
+
+dev_notes: >
+  This story completes the mutual rating system by implementing the driver-to-passenger flow. It mirrors the functionality of `story-20.1`. The backend services (`rating-service`, `user-service`) should be generalized to handle ratings for any user type, not just drivers. This ensures the system is scalable for future rating needs.

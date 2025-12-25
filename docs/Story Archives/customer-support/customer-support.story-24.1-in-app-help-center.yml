@@ -1,0 +1,39 @@
+id: story-24.1
+epic: customer-support
+slug: in-app-help-center
+title: Implement In-App Help Center with FAQs
+status: Done
+author: Bob (sm)
+date: '2024-07-11T09:00:00Z'
+
+description: >
+  As a user (driver or passenger), I want to access a help center within the
+  app to find answers to common questions, so that I can resolve issues on my
+  own without needing to contact support directly.
+
+acceptance_criteria:
+  - A new "Help" or "Support" option must be added to the main navigation or profile screen in both the `passenger-app` and `driver-app`.
+  - This option navigates to a new `HelpCenterScreen`.
+  - The `HelpCenterScreen` must display a list of help articles organized by category (e.g., "Account & Profile", "Payments & Pricing", "Using the App").
+  - Tapping a category should show the articles within it. Tapping an article title should expand to show the answer.
+  - A new backend `content-service` must be created to manage and serve help content.
+  - The `content-service` must have a database model for articles (e.g., title, content, category).
+  - The `content-service` must expose public endpoints for the mobile apps to fetch the help articles.
+  - A new "Content Management" section must be added to the `admin-panel` for creating, editing, and organizing help articles.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/help_center_screen.dart
+  - Cabi Alpha/mobile/driver_app/lib/screens/help_center_screen.dart
+  - libs/backend/content-service/src/lib/content.service.ts
+  - libs/backend/content-service/src/lib/content.controller.ts
+  - libs/backend/content-service/src/lib/content.module.ts
+  - apps/admin-panel/src/app/content/page.tsx
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/screens/profile_screen.dart # To add link to help center
+  - Cabi Alpha/mobile/driver_app/lib/screens/profile_screen.dart # To add link to help center
+  - apps/admin-panel/src/components/layout/sidebar.tsx # To add link to content management
+  - The database schema for the new `content-service`.
+
+dev_notes: >
+  This is the foundational story for the new "Customer Support" epic. It introduces a new `content-service` which is a strategic asset for managing any user-facing static content (FAQs, announcements, etc.) in a centralized way. The content itself could be stored as Markdown to allow for simple formatting. This story focuses on self-service support; live chat or ticket submission will be handled in subsequent stories.

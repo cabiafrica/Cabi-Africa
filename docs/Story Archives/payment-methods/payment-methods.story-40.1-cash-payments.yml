@@ -1,0 +1,30 @@
+id: story-40.1
+epic: payment-methods
+slug: cash-payments
+title: Implement In-App Wallet and Cash Payments
+status: Done
+author: Bob (sm)
+date: '2024-07-30T10:12:00Z'
+
+description: >
+  As a passenger, I want the option to pay for my ride with cash or with a
+  pre-loaded balance in an in-app wallet, so that I can use the service
+  without a credit card.
+
+acceptance_criteria:
+  - A new "Wallet" screen must be added to the `passenger-app`, showing a user's balance.
+  - Passengers must be able to top up their wallet balance using a credit card or other payment methods.
+  - When booking a ride, "Cash" and "Wallet Balance" must appear as payment options alongside credit cards.
+  - If "Cash" is selected, the driver must be notified. At the end of the trip, the driver's app must have a screen to confirm the cash amount received.
+  - The platform commission for a cash trip must be deducted from the driver's earnings wallet.
+  - If "Wallet Balance" is selected, the fare must be deducted from the passenger's wallet balance in the `payment-service`.
+
+files_to_be_created:
+  - apps/passenger-app/src/screens/wallet_screen.dart
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To manage user wallets and cash transaction logic
+  - apps/driver-app/src/widgets/trip_in_progress_panel.dart # To handle cash payment confirmation
+
+dev_notes: >
+  This is the first story for a new `payment-methods` epic. It's a major feature that opens the platform to unbanked users. It introduces significant complexity in the `payment-service`, which now has to manage user balances and a "debt" system for driver commissions on cash trips.

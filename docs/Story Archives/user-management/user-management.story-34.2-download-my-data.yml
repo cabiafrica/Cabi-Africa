@@ -1,0 +1,28 @@
+id: story-34.2
+epic: user-management
+slug: download-my-data
+title: "User Management: Implement Download My Data"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-05T11:40:00Z'
+
+description: >
+  As a user, I want to request a download of all my personal data in a machine-readable format (like JSON),
+  so I can review the information the platform has stored about me.
+
+acceptance_criteria:
+  - A "Download My Data" option must be available in the user's privacy settings in both apps.
+  - Tapping the option must call a backend endpoint `POST /users/me/request-data-export`.
+  - The backend must acknowledge the request and queue a background job to compile the user's data from all microservices.
+  - Once the data export is ready, the user must receive an email with a secure, time-limited link to download the data archive (e.g., a ZIP file containing JSON files).
+
+files_to_be_created:
+  # No new files, modifies existing screens and services.
+
+files_to_be_modified:
+  - # The user's privacy settings screen in both apps.
+  - # The backend User Management Service will need a new controller/service to handle the export request and orchestrate the data gathering job.
+
+dev_notes: >
+  This story implements the "Download My Data" requirement from the PRD (section 2.4), a key part of GDPR/CCPA compliance. This is an asynchronous process. The `User Management Service` will trigger a background worker that queries all other services for data related to the user, compiles it into a structured format, and stores it temporarily for download.
+  PRD Reference: 2.4. User Management -> Data Privacy & Compliance -> Download My Data

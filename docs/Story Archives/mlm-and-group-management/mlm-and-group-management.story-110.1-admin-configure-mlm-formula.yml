@@ -1,0 +1,33 @@
+id: story-110.1
+epic: mlm-and-group-management
+slug: admin-configure-mlm-formula
+title: "Admin: Configure MLM Fee Distribution Formula"
+status: DONE
+author: Gemini Code Assist
+date: '2025-12-05T10:00:00Z'
+
+description: >
+  As an administrator, I need an interface to view and update the Multi-Level Marketing (MLM) fee distribution formula,
+  so I can control how driver registration fees are allocated to the company, the sponsor, and the upline.
+
+acceptance_criteria:
+  - A new page, "MLM Configuration," must be created in the `admin-panel`.
+  - The page must call `GET /admin/mlm/formula` to fetch and display the current fee distribution rules.
+  - The UI must allow an admin to add, edit, or remove rules (e.g., a rule for 'sponsor', a rule for 'upline level 1', a rule for 'company').
+  - Each rule must specify the recipient, the value, and the type (fixed or percentage).
+  - Saving the changes must call `PUT /admin/mlm/formula` with the updated formula structure.
+  - The backend `MLM Service` must implement these endpoints as defined in the `architecture.md`.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/mlm/configuration/page.tsx
+
+files_to_be_modified:
+  - # The backend MLM Service controller/service will need to be created to implement the GET and PUT endpoints for the formula.
+  - # The main navigation in `admin-panel` will need a link to this new page.
+
+dev_notes: >
+  This story implements the administrative control for a core piece of the business logic defined in `architecture.md` (sections 5.1.3 and 8). The `MLM Service` is responsible for the backend logic.
+
+  The frontend work involves creating a dynamic form that allows an administrator to manage a list of rules. This interface will directly interact with the new API endpoints on the `MLM Service`. This feature is critical for launching the driver referral program.
+  PRD Reference: 2.3. Admin Panel -> Admin Configure MLM Fee Distribution
+  Architecture Reference: 5.1.3. MLM Service, 8. REST API Spec

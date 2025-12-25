@@ -1,0 +1,39 @@
+id: story-104.3
+epic: web-booking-experience
+slug: web-booking-payment
+title: Handle Payments for Web-Booked Rides
+status: Done
+author: Bob (sm)
+date: '2025-12-02T12:45:00Z'
+
+description: >
+  As a website user who has completed a ride, I want to securely pay for my trip using my credit card directly on the website,
+  so that I can finalize my transaction without needing the mobile app.
+
+acceptance_criteria:
+  - When a web-booked ride is marked as 'completed' by the driver, the trip status page (`/trip/[tripId]`) must update to show the final fare breakdown.
+  - The page must display a secure payment form for entering credit card details (Card Number, Expiry, CVC).
+  - The payment form must be integrated with a third-party payment gateway (e.g., Stripe Elements) to ensure PCI compliance and avoid handling raw card data.
+  - The `payment-service` must be updated to handle one-time charges for guest users from the web.
+  - When the user submits the payment form, the frontend must securely send a payment token to the backend.
+  - The backend service must process the charge using the payment token.
+  - Upon successful payment, the trip status page must display a confirmation message and a simple receipt. The ride status should be updated to 'completed_and_paid'.
+  - If payment fails, the user must be shown a clear error message and be allowed to re-enter their payment details. The ride status should be 'payment_failed'.
+
+files_to_be_modified:
+  - Cabi Alpha/web/user_portal/app/trip/[tripId]/page.tsx # To add the payment form and logic when the ride is complete.
+  - libs/backend/payment-service/src/lib/payment.service.ts # To add logic for handling one-time, unauthenticated charges.
+  - libs/backend/ride-service/src/lib/ride.service.ts # To update ride status based on payment outcome for web-booked rides.
+
+dev_notes: >
+  This story completes the web booking user journey, following `story-104.2`. The highest priority is security. The implementation must use a client-side library from a payment provider like Stripe to tokenize card information, ensuring sensitive data never touches our servers. This story focuses on one-time guest payments. Saving payment methods for web users could be a future enhancement. This flow is similar to `story-17.3` but adapted for unauthenticated web users.
+
+tasks:
+  - id: task-1
+    description: "Extend the `payment-service` to handle one-time charges using payment tokens from the frontend."
+  - id: task-2
+    description: "Integrate a payment provider's client-side library (e.g., Stripe Elements) into the trip status page."
+  - id: task-3
+    description: "Implement the UI on the trip status page to show the final fare and the payment form after a ride is completed."
+  - id: task-4
+    description: "Connect the frontend form to the backend to process the payment and handle success/error states."

@@ -1,0 +1,24 @@
+id: story-96.3
+epic: map-and-navigation
+slug: in-app-navigation-driver
+title: Implement In-App Turn-by-Turn Navigation for Drivers
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T21:30:00Z'
+
+description: >
+  As a driver, I want integrated turn-by-turn navigation within the driver
+  app, so I don't have to switch back and forth between Cabi and another navigation app.
+
+acceptance_criteria:
+  - After accepting a trip, the `driver-app` must display an integrated map view with turn-by-turn directions to the pickup location and then to the destination.
+  - The navigation must provide voice-guided instructions.
+  - The route should update in real-time based on traffic conditions.
+  - This will be implemented by integrating a third-party map SDK (e.g., Google Maps SDK, Mapbox Navigation SDK) into the driver app.
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/trip_in_progress_screen.dart # A new or updated screen for navigation
+  - apps/driver-app/pubspec.yaml # To add the map SDK dependency
+
+dev_notes: >
+  This is a major driver-side feature that improves safety and convenience. It requires a commercial license and deep integration with a third-party navigation SDK.

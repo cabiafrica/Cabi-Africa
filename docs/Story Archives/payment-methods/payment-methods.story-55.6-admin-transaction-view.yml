@@ -1,0 +1,24 @@
+id: story-55.6
+epic: payment-methods
+slug: admin-transaction-view
+title: Create Admin View for Payment Transactions
+status: DONE
+author: Bob (sm)
+date: '2024-08-09T18:30:00Z'
+
+description: >
+  As a support agent, I need to be able to view a log of all payment
+  transactions, so that I can investigate and resolve payment-related issues
+  for passengers and drivers.
+
+acceptance_criteria:
+  - A new "Transactions" section must be added to the `admin-panel`.
+  - It must display a searchable and filterable list of all payment transactions processed by the `payment-service`.
+  - Each entry should show the amount, date, user, payment method (last 4 digits), status (succeeded/failed), and associated trip ID.
+  - Admins must be able to initiate actions like refunds from this interface.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/transactions/page.tsx
+
+files_to_be_modified:
+  - libs/backend/payment-service/src/lib/payment.service.ts # To expose transaction logs and refund capabilities to admins

@@ -1,0 +1,52 @@
+id: story-23.1
+epic: passenger-app-features
+slug: implement-dark-mode
+title: "Passenger App: Implement Dark Mode"
+status: DONE for Review
+author: Gemini Code Assist
+date: '2025-12-07T13:00:00Z'
+
+description: >
+  As a passenger, I want to be able to switch the app to a dark mode theme,
+  so that it's more comfortable to use in low-light environments and can help conserve battery life.
+
+acceptance_criteria:
+  - The app must define distinct color palettes for both light and dark themes.
+  - A theme provider must be implemented to manage the current theme state.
+  - A new "Settings" screen must be created in the `passenger-app`.
+  - The "Settings" screen must contain a toggle switch to enable/disable dark mode.
+  - The selected theme preference must be persisted across app restarts (e.g., using `shared_preferences`).
+  - All existing and future screens must correctly adapt to the selected theme.
+
+files_to_be_created:
+  - Cabi Alpha/mobile/passenger_app/lib/theme/app_theme.dart
+  - Cabi Alpha/mobile/passenger_app/lib/providers/theme_provider.dart
+  - Cabi Alpha/mobile/passenger_app/lib/screens/settings_screen.dart
+  - docs/passenger-app-features.story-23.1-dark-mode.yml
+
+files_to_be_modified:
+  - Cabi Alpha/mobile/passenger_app/lib/main.dart # To integrate the theme provider.
+
+dev_notes: >
+  This is a common user experience feature that improves usability. We'll use Flutter's built-in theming capabilities and a `ChangeNotifier` with `provider` for state management. `shared_preferences` will be used for persistence.
+
+dev_agent_record:
+  agent_model_used: gemini-1.5-pro
+  file_list:
+    - Cabi Alpha/mobile/passenger_app/lib/theme/app_theme.dart
+    - Cabi Alpha/mobile/passenger_app/lib/providers/theme_provider.dart
+    - Cabi Alpha/mobile/passenger_app/lib/screens/settings_screen.dart
+    - Cabi Alpha/mobile/passenger_app/lib/main.dart
+    - docs/passenger-app-features.story-23.1-dark-mode.yml
+  change_log:
+    - file: Cabi Alpha/mobile/passenger_app/lib/theme/app_theme.dart
+      change: Created a dedicated file to define the `ThemeData` for both light and dark modes.
+    - file: Cabi Alpha/mobile/passenger_app/lib/providers/theme_provider.dart
+      change: Implemented a `ThemeProvider` using `ChangeNotifier` to manage the app's theme state and persist the user's choice using `shared_preferences`.
+    - file: Cabi Alpha/mobile/passenger_app/lib/screens/settings_screen.dart
+      change: Created a new settings screen with a `SwitchListTile` that allows the user to toggle dark mode.
+    - file: Cabi Alpha/mobile/passenger_app/lib/main.dart
+      change: Wrapped the root `MyApp` widget with a `ChangeNotifierProvider` and configured the `MaterialApp` to consume the theme state from the `ThemeProvider`.
+  completion_notes:
+    - >
+      I have successfully implemented the dark mode feature for the passenger app. This includes creating separate theme data, a provider to manage the state, and a new settings screen with a toggle. The user's preference is now persisted across app sessions. This completes all requirements for the story.

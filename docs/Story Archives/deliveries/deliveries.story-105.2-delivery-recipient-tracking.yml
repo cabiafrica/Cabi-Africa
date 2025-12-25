@@ -1,0 +1,23 @@
+id: story-105.2
+epic: deliveries
+slug: delivery-recipient-tracking
+title: Enable Recipient Tracking for Deliveries
+status: Done
+author: Bob (sm)
+date: '2024-08-10T06:45:00Z'
+
+description: >
+  As the recipient of a package, I want to receive a notification and be able
+  to track the delivery in real-time, so I know when to expect it.
+
+acceptance_criteria:
+  - When a sender books a delivery (`story-105.1`), the recipient receives an SMS with a link to a web-based live tracking view.
+  - This web view is similar to the "Share Trip Status" page (`story-18.4`) and shows the driver's real-time location and ETA.
+  - The recipient should also receive a notification when the driver is arriving.
+
+files_to_be_modified:
+  - libs/backend/notification-service/src/lib/notification.service.ts # To send SMS to the recipient
+  - apps/trip-sharing-web/src/app/[tripId]/page.tsx # To be adapted for delivery tracking
+
+dev_notes: >
+  This provides a good experience for the other side of the delivery transaction, the recipient. It reduces uncertainty and the need for the sender to act as a middleman for status updates.

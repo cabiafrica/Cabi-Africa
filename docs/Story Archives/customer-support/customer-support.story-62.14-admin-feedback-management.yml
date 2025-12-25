@@ -1,0 +1,28 @@
+id: story-62.14
+epic: platform-feedback-and-suggestions
+slug: admin-feedback-management
+title: Create Admin Interface for Managing User Feedback
+status: Done
+author: Sarah (po)
+date: '2024-06-12T12:00:00Z'
+
+description: >
+  As a product manager or support lead, I need an interface in the admin panel
+  to review, categorize, and update the status of user-submitted feedback, so
+  I can manage the lifecycle of ideas and close the loop with users.
+
+acceptance_criteria:
+  - A new "Feedback" section must be added to the `admin-panel`, separate from the main support ticket queue.
+  - This section must display a list of all tickets categorized as "Suggestion" or "Feedback" from `story-62.13`.
+  - An admin must be able to change the status of a feedback item (e.g., "Received," "Under Review," "Planned," "Shipped," "Not Planned").
+  - An admin must be able to merge duplicate suggestions into a single master feedback item.
+  - The interface should allow for filtering and searching by status or keywords.
+
+files_to_be_created:
+  - apps/admin-panel/src/app/feedback/page.tsx # The main feedback management dashboard.
+
+files_to_be_modified:
+  - libs/backend/support-service/src/lib/support.service.ts # To add methods for updating status and merging items.
+
+dev_notes: >
+  This story creates the internal tool for managing the feedback lifecycle. It's the crucial link between the user submission (`story-62.13`) and the user-facing status view (`story-62.16`). The ability to change statuses and merge duplicates is key to managing a high volume of suggestions effectively.

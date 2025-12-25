@@ -1,0 +1,22 @@
+id: story-22.8
+epic: scheduled-rides
+slug: passenger-reminder-notifications
+title: Send Reminder Notifications for Scheduled Rides
+status: Done
+author: Bob (sm)
+date: '2024-08-09T19:30:00Z'
+
+description: >
+  As a passenger, I want to receive a reminder notification before my
+  scheduled ride, so I don't forget about it and am ready for pickup.
+
+acceptance_criteria:
+  - The `notification-service` must send a push notification to the passenger at a configurable time before the pickup window (e.g., 30 minutes prior).
+  - The notification should remind them of their upcoming trip and the pickup time.
+  - A second notification should be sent when the system starts actively searching for their driver (`story-22.4`).
+
+files_to_be_modified:
+  - libs/backend/notification-service/src/lib/notification.service.ts # To handle the scheduled reminder logic
+
+dev_notes: >
+  This is a simple but important feature for user experience and service reliability. The timing of the reminders should be chosen carefully to be helpful but not annoying.

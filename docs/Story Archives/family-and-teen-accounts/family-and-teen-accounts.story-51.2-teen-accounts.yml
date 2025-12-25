@@ -1,0 +1,27 @@
+id: story-51.2
+epic: family-and-teen-accounts
+slug: teen-accounts
+title: Implement Teen Accounts with Safety Features
+status: Done
+author: Bob (sm)
+date: '2024-08-02T10:07:00Z'
+
+description: >
+  As a parent, I want my teenager (e.g., 13-17) to have their own account
+  under my family profile, but with enhanced safety features and restrictions.
+
+acceptance_criteria:
+  - When adding a family member, the organizer can designate them as a "Teen".
+  - Teen accounts can only be matched with the most experienced, highest-rated drivers.
+  - The "Share My Trip" feature is automatically enabled and sent to the family organizer for every trip.
+  - The `ride-service` matching algorithm must be updated to enforce the driver restrictions for teen riders.
+  - The UI for the teen user may be simplified.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - libs/backend/user-service/src/lib/user.service.ts # To flag teen accounts
+  - libs/backend/ride-service/src/lib/ride.service.ts # To implement teen-specific matching rules
+
+dev_notes: >
+  This builds on `story-51.1` and is critical for gaining parental trust. The safety-related matching rules are the most important and complex part of this feature.

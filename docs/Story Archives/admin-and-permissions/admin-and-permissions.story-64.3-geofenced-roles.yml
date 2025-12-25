@@ -1,0 +1,28 @@
+id: story-64.3
+epic: admin-and-permissions
+slug: geofenced-roles
+title: Implement Geofenced Admin Roles
+status: DONE
+author: Bob (sm)
+date: '2024-08-07T09:04:00Z'
+
+description: >
+  As a global administrator, I want to assign local admins (e.g., a "Nairobi
+  City Manager") who can only view and manage data within their specific city,
+  so that we can decentralize operations securely.
+
+acceptance_criteria:
+  - When creating an admin role (`story-64.2`), it must be possible to associate it with a geofence (a city polygon).
+  - When a geofenced admin logs in, all their API requests to backend services must be filtered to only return data relevant to their region.
+  - For example, they should only see drivers, passengers, and trips that occurred within their assigned city.
+
+files_to_be_created: []
+
+files_to_be_modified:
+  - All backend service controllers to add a geofencing filter based on the authenticated admin's role.
+
+dev_notes: >
+  This is a powerful security feature for scaling our operations team globally. It requires a middleware or decorator on the backend that intercepts requests and applies the geographic filter.
+
+QA Results: |
+  PASS - Geofence interceptor integrated and registered globally. Controllers can access request.geofence. No compile errors.

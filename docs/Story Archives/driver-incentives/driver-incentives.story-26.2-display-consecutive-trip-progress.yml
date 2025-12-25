@@ -1,0 +1,31 @@
+id: story-26.2
+epic: driver-incentives
+slug: display-consecutive-trip-progress
+title: Display Consecutive Trip Progress in Driver App
+status: Done
+author: Bob (sm)
+date: '2024-07-20T09:01:00Z'
+
+description: >
+  As a driver, I want to see my current consecutive trip streak and how many
+  more trips I need to complete to earn a bonus, so that I am motivated to
+  continue driving and achieve the incentive.
+
+acceptance_criteria:
+  - A new widget or section must be added to the `driver-app`'s `HomeScreen` (or a dedicated "Incentives" tab).
+  - This section must display the driver's current consecutive trip count (e.g., "2 of 3 trips completed").
+  - It should also clearly indicate the bonus amount for completing the streak.
+  - The `incentive-service` must expose a new endpoint (e.g., GET `/incentives/driver/streak`) that returns the driver's current streak count and the target for the next bonus.
+  - The `driver-app` must fetch and update this information in real-time or near real-time.
+  - If a streak is broken, the UI should reflect this (e.g., "Streak reset. Start a new streak!").
+
+files_to_be_created:
+  - apps/driver-app/src/widgets/consecutive_trip_progress_widget.dart
+
+files_to_be_modified:
+  - apps/driver-app/src/screens/home_screen.dart # To integrate the new widget
+  - libs/backend/incentive-service/src/lib/incentive.controller.ts # To add the new endpoint
+  - libs/backend/incentive-service/src/lib/incentive.service.ts # To implement the logic for fetching streak progress
+
+dev_notes: >
+  This story provides the frontend visibility for the backend logic implemented in `story-26.1`. Visualizing progress is key to motivating drivers. The `incentive-service` will be the source of truth for the streak data. The UI should be dynamic and update as the driver completes or breaks streaks.

@@ -1,0 +1,24 @@
+id: story-35.3
+epic: passenger-personalization
+slug: ride-moods
+title: Implement "Ride Moods"
+status: DONE
+author: Bob (sm)
+date: '2024-08-10T05:55:00Z'
+
+description: >
+  As a passenger, I want to select a "mood" for my ride (e.g., "Quiet,"
+  "Chatty," "Business Call") which sets multiple preferences at once, so I can
+  easily customize my trip.
+
+acceptance_criteria:
+  - This enhances the ride preferences feature (`story-35.2`).
+  - On the ride confirmation screen, the user can select a "Mood".
+  - Selecting a mood (e.g., "Quiet") automatically sets multiple preferences (e.g., Quiet Ride = true, Cooler Temp = true, Music = off).
+  - The driver sees the selected mood, giving them a clear, high-level understanding of the passenger's desired experience.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To add the mood selector
+
+dev_notes: >
+  This simplifies customization for the passenger by bundling common preferences into easy-to-understand "moods".

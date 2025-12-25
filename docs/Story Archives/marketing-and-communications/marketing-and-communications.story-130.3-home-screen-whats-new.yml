@@ -1,0 +1,27 @@
+id: story-130.3
+epic: marketing-and-communications
+slug: home-screen-whats-new
+title: Implement Dynamic "What's New" Home Screen Component
+status: Done
+author: Mary (analyst)
+date: '2024-08-10T11:50:00Z'
+
+description: >
+  As a user, I want to see a section on the home screen that highlights the
+  most important current news, feature, or content, so I can easily discover
+  what's new on the platform.
+
+acceptance_criteria:
+  - A new UI component (e.g., a banner or card) must be added to the home screen of both the `passenger-app` and `driver-app`.
+  - The content of this component (title, image, link) must be driven by a new backend configuration, not hardcoded to only show blog posts.
+  - Tapping the component must navigate to the configured destination (e.g., open a URL, deep-link to a specific screen in the app).
+  - The component should be dismissible by the user for their current session.
+  - If there is no content currently "featured," the component should not be visible.
+  - The backend logic for serving this content will be provided by the `notification-service`.
+
+files_to_be_modified:
+  - apps/passenger-app/src/screens/home_screen.dart # To add the "What's New" component.
+  - apps/driver-app/src/screens/home_screen.dart # To add the "What's New" component.
+
+dev_notes: >
+  This feature provides a flexible, admin-controlled discovery channel on the home screen. The design must be unobtrusive and not interfere with primary user flows. This story focuses on the client-side implementation of the component. The admin UI for managing the content is defined in `story-130.5`.
