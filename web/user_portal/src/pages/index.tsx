@@ -4,7 +4,7 @@ import Head from 'next/head';
 import WebBookingWidget from '../components/marketing/WebBookingWidget';
 import DynamicStats from '../components/marketing/DynamicStats';
 import PostSummaryCard from '../components/PostSummaryCard';
-import AuthWidget from '../components/auth/AuthWidget';
+
 import { getPostSummaries, BlogPostSummary } from '../../backend/services/cms';
 import { FaBuilding, FaCar, FaUser, FaArrowRight, FaShieldAlt, FaRocket, FaGlobe } from 'react-icons/fa';
 
@@ -66,7 +66,7 @@ export default function HomePage({ posts }: HomePageProps) {
 
                 {/* Auth Widget embedded in Hero Left (or Center on mobile) */}
                 <div className="w-full max-w-md animate-slide-up" style={{ animationDelay: '0.2s' }}>
-                  <AuthWidget />
+                  {/* Auth Widget removed as per user request */}
                 </div>
               </div>
 

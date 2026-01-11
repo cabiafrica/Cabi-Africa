@@ -18,6 +18,8 @@ function WebBookingWidget() {
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(false);
     const [selectedVehicle, setSelectedVehicle] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(null);
     const [bookingConfirmed, setBookingConfirmed] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(false);
+    const [showAuth, setShowAuth] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(false);
+    const [authMode, setAuthMode] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])('login');
     // Mock fare estimation
     const handleGetEstimates = async ()=>{
         if (!pickup || !destination) return;
@@ -58,13 +60,19 @@ function WebBookingWidget() {
     };
     const handleBookRide = async ()=>{
         if (!selectedVehicle) return;
+        // Prompt for login/register
+        setShowAuth(true);
+    };
+    const handleAuthSubmit = async (e)=>{
+        e.preventDefault();
         setLoading(true);
-        // Simulate API call
+        // Simulate Auth API call
         await new Promise((resolve)=>setTimeout(resolve, 1500));
         setLoading(false);
-        // Redirect to trip tracking page
-        const mockTripId = `trip_${Date.now()}`;
-        window.location.href = `/trip/${mockTripId}`;
+        setBookingConfirmed(true);
+    // In a real app, we would redirect here or after a delay
+    // const mockTripId = `trip_${Date.now()}`;
+    // window.location.href = `/trip/${mockTripId}`;
     };
     if (bookingConfirmed) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -74,7 +82,7 @@ function WebBookingWidget() {
                     className: "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-yellow to-brand-accent"
                 }, void 0, false, {
                     fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                    lineNumber: 54,
+                    lineNumber: 64,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -87,12 +95,12 @@ function WebBookingWidget() {
                                 children: "✅"
                             }, void 0, false, {
                                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                lineNumber: 57,
+                                lineNumber: 67,
                                 columnNumber: 25
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                            lineNumber: 56,
+                            lineNumber: 66,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("h2", {
@@ -100,7 +108,7 @@ function WebBookingWidget() {
                             children: "Ride Booked!"
                         }, void 0, false, {
                             fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                            lineNumber: 59,
+                            lineNumber: 69,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -108,7 +116,7 @@ function WebBookingWidget() {
                             children: "Your driver is on the way. We've sent the details to your device."
                         }, void 0, false, {
                             fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                            lineNumber: 60,
+                            lineNumber: 70,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
@@ -118,24 +126,139 @@ function WebBookingWidget() {
                                 setDestination('');
                                 setVehicleOptions([]);
                                 setSelectedVehicle(null);
+                                setShowAuth(false);
                             },
                             className: "text-brand-yellow font-bold hover:text-white transition-colors uppercase tracking-wider text-sm",
                             children: "Book another ride"
                         }, void 0, false, {
                             fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                            lineNumber: 61,
+                            lineNumber: 71,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                    lineNumber: 55,
+                    lineNumber: 65,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-            lineNumber: 53,
+            lineNumber: 63,
+            columnNumber: 13
+        }, this);
+    }
+    if (showAuth) {
+        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+            className: "glass p-8 rounded-3xl shadow-2xl max-w-md w-full relative overflow-hidden backdrop-blur-xl border border-white/10",
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+                    className: "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-yellow to-brand-accent"
+                }, void 0, false, {
+                    fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
+                    lineNumber: 92,
+                    columnNumber: 17
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("h2", {
+                    className: "text-2xl font-bold mb-6 text-white text-center",
+                    children: authMode === 'login' ? 'Welcome Back' : 'Create Account'
+                }, void 0, false, {
+                    fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
+                    lineNumber: 94,
+                    columnNumber: 17
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+                    className: "flex bg-brand-dark/50 rounded-lg p-1 mb-6",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
+                            onClick: ()=>setAuthMode('login'),
+                            className: `flex-1 py-2 rounded-md text-sm font-medium transition-all ${authMode === 'login' ? 'bg-brand-gray text-white shadow' : 'text-gray-400 hover:text-white'}`,
+                            children: "Log In"
+                        }, void 0, false, {
+                            fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
+                            lineNumber: 99,
+                            columnNumber: 21
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
+                            onClick: ()=>setAuthMode('register'),
+                            className: `flex-1 py-2 rounded-md text-sm font-medium transition-all ${authMode === 'register' ? 'bg-brand-gray text-white shadow' : 'text-gray-400 hover:text-white'}`,
+                            children: "Sign Up"
+                        }, void 0, false, {
+                            fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
+                            lineNumber: 105,
+                            columnNumber: 21
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
+                    lineNumber: 98,
+                    columnNumber: 17
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("form", {
+                    onSubmit: handleAuthSubmit,
+                    className: "space-y-4",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("input", {
+                                type: "text",
+                                placeholder: "Email or Phone number",
+                                required: true,
+                                className: "w-full px-4 py-3 bg-brand-dark/50 border border-gray-700 rounded-xl focus:border-brand-yellow outline-none text-white placeholder-gray-500"
+                            }, void 0, false, {
+                                fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
+                                lineNumber: 115,
+                                columnNumber: 25
+                            }, this)
+                        }, void 0, false, {
+                            fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
+                            lineNumber: 114,
+                            columnNumber: 21
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("input", {
+                                type: "password",
+                                placeholder: "Password",
+                                required: true,
+                                className: "w-full px-4 py-3 bg-brand-dark/50 border border-gray-700 rounded-xl focus:border-brand-yellow outline-none text-white placeholder-gray-500"
+                            }, void 0, false, {
+                                fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
+                                lineNumber: 118,
+                                columnNumber: 25
+                            }, this)
+                        }, void 0, false, {
+                            fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
+                            lineNumber: 117,
+                            columnNumber: 21
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
+                            type: "submit",
+                            disabled: loading,
+                            className: "w-full py-3.5 rounded-xl font-bold text-black bg-brand-yellow hover:bg-brand-yellowHover transition-colors mt-2",
+                            children: loading ? 'Processing...' : authMode === 'login' ? 'Log In & Book' : 'Sign Up & Book'
+                        }, void 0, false, {
+                            fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
+                            lineNumber: 121,
+                            columnNumber: 21
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
+                    lineNumber: 113,
+                    columnNumber: 17
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
+                    onClick: ()=>setShowAuth(false),
+                    className: "w-full mt-4 text-sm text-gray-400 hover:text-white transition-colors",
+                    children: "Back to vehicle selection"
+                }, void 0, false, {
+                    fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
+                    lineNumber: 130,
+                    columnNumber: 17
+                }, this)
+            ]
+        }, void 0, true, {
+            fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
+            lineNumber: 91,
             columnNumber: 13
         }, this);
     }
@@ -146,7 +269,7 @@ function WebBookingWidget() {
                 className: "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-yellow to-brand-accent"
             }, void 0, false, {
                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                lineNumber: 80,
+                lineNumber: 142,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("h2", {
@@ -154,7 +277,7 @@ function WebBookingWidget() {
                 children: "Where to?"
             }, void 0, false, {
                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                lineNumber: 82,
+                lineNumber: 144,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -167,14 +290,14 @@ function WebBookingWidget() {
                                 className: "absolute left-4 top-3.5 w-3 h-3 bg-brand-yellow rounded-full shadow-[0_0_10px_#FFD700]"
                             }, void 0, false, {
                                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                lineNumber: 86,
+                                lineNumber: 148,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                                 className: "absolute left-5.5 top-7 w-0.5 h-10 bg-gray-700"
                             }, void 0, false, {
                                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                lineNumber: 87,
+                                lineNumber: 149,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("input", {
@@ -185,13 +308,13 @@ function WebBookingWidget() {
                                 onChange: (e)=>setPickup(e.target.value)
                             }, void 0, false, {
                                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                lineNumber: 88,
+                                lineNumber: 150,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                        lineNumber: 85,
+                        lineNumber: 147,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -201,7 +324,7 @@ function WebBookingWidget() {
                                 className: "absolute left-4 top-3.5 w-3 h-3 bg-brand-accent border-2 border-brand-black shadow-[0_0_10px_#00f2fe]"
                             }, void 0, false, {
                                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                lineNumber: 98,
+                                lineNumber: 160,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("input", {
@@ -212,19 +335,19 @@ function WebBookingWidget() {
                                 onChange: (e)=>setDestination(e.target.value)
                             }, void 0, false, {
                                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                lineNumber: 99,
+                                lineNumber: 161,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                        lineNumber: 97,
+                        lineNumber: 159,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                lineNumber: 84,
+                lineNumber: 146,
                 columnNumber: 13
             }, this),
             vehicleOptions.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
@@ -234,7 +357,7 @@ function WebBookingWidget() {
                 children: loading ? 'Calculating...' : 'See Prices'
             }, void 0, false, {
                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                lineNumber: 110,
+                lineNumber: 172,
                 columnNumber: 17
             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                 className: "space-y-4 animate-fade-in",
@@ -253,7 +376,7 @@ function WebBookingWidget() {
                                                 children: v.icon
                                             }, void 0, false, {
                                                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                                lineNumber: 133,
+                                                lineNumber: 195,
                                                 columnNumber: 37
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -263,7 +386,7 @@ function WebBookingWidget() {
                                                         children: v.name
                                                     }, void 0, false, {
                                                         fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                                        lineNumber: 135,
+                                                        lineNumber: 197,
                                                         columnNumber: 41
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -274,19 +397,19 @@ function WebBookingWidget() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                                        lineNumber: 136,
+                                                        lineNumber: 198,
                                                         columnNumber: 41
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                                lineNumber: 134,
+                                                lineNumber: 196,
                                                 columnNumber: 37
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                        lineNumber: 132,
+                                        lineNumber: 194,
                                         columnNumber: 33
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -297,18 +420,18 @@ function WebBookingWidget() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                        lineNumber: 139,
+                                        lineNumber: 201,
                                         columnNumber: 33
                                     }, this)
                                 ]
                             }, v.id, true, {
                                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                lineNumber: 124,
+                                lineNumber: 186,
                                 columnNumber: 29
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                        lineNumber: 122,
+                        lineNumber: 184,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -323,7 +446,7 @@ function WebBookingWidget() {
                                 children: "Back"
                             }, void 0, false, {
                                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                lineNumber: 145,
+                                lineNumber: 207,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
@@ -333,25 +456,25 @@ function WebBookingWidget() {
                                 children: loading ? 'Booking...' : 'Book Ride'
                             }, void 0, false, {
                                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                                lineNumber: 154,
+                                lineNumber: 216,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                        lineNumber: 144,
+                        lineNumber: 206,
                         columnNumber: 21
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-                lineNumber: 121,
+                lineNumber: 183,
                 columnNumber: 17
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/web/user_portal/src/components/marketing/WebBookingWidget.tsx",
-        lineNumber: 79,
+        lineNumber: 141,
         columnNumber: 9
     }, this);
 }
@@ -705,7 +828,7 @@ function HomePage({ posts }) {
                         children: "Cabi - The Future of Ecosystem Mobility"
                     }, void 0, false, {
                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                        lineNumber: 18,
+                        lineNumber: 19,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("meta", {
@@ -713,13 +836,13 @@ function HomePage({ posts }) {
                         content: "Join the unified mobility ecosystem. For Passengers, Drivers, and Organizations."
                     }, void 0, false, {
                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                        lineNumber: 19,
+                        lineNumber: 20,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                lineNumber: 17,
+                lineNumber: 18,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("header", {
@@ -737,13 +860,13 @@ function HomePage({ posts }) {
                                     children: "."
                                 }, void 0, false, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 25,
+                                    lineNumber: 26,
                                     columnNumber: 18
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                            lineNumber: 24,
+                            lineNumber: 25,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -755,7 +878,7 @@ function HomePage({ posts }) {
                                     children: "About"
                                 }, void 0, false, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 29,
+                                    lineNumber: 30,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$next$2f$link$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -764,7 +887,7 @@ function HomePage({ posts }) {
                                     children: "For Orgs"
                                 }, void 0, false, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 30,
+                                    lineNumber: 31,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$next$2f$link$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -773,7 +896,7 @@ function HomePage({ posts }) {
                                     children: "For Drivers"
                                 }, void 0, false, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 31,
+                                    lineNumber: 32,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$next$2f$link$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -782,7 +905,7 @@ function HomePage({ posts }) {
                                     children: "Log In"
                                 }, void 0, false, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 32,
+                                    lineNumber: 33,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$next$2f$link$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -791,24 +914,24 @@ function HomePage({ posts }) {
                                     children: "Get Started"
                                 }, void 0, false, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 33,
+                                    lineNumber: 34,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                            lineNumber: 28,
+                            lineNumber: 29,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                    lineNumber: 23,
+                    lineNumber: 24,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                lineNumber: 22,
+                lineNumber: 23,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("main", {
@@ -824,34 +947,34 @@ function HomePage({ posts }) {
                                         className: "absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-brand-gray/50 to-transparent"
                                     }, void 0, false, {
                                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                        lineNumber: 45,
+                                        lineNumber: 46,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                                         className: "absolute -top-40 -right-40 w-[800px] h-[800px] bg-brand-accent/5 rounded-full blur-[120px]"
                                     }, void 0, false, {
                                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                        lineNumber: 46,
+                                        lineNumber: 47,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                                         className: "absolute bottom-0 left-0 w-[600px] h-[600px] bg-brand-yellow/5 rounded-full blur-[100px]"
                                     }, void 0, false, {
                                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                        lineNumber: 47,
+                                        lineNumber: 48,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                                         className: "absolute inset-0 bg-[url('/assets/grid.svg')] opacity-10 bg-repeat"
                                     }, void 0, false, {
                                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                        lineNumber: 48,
+                                        lineNumber: 49,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                lineNumber: 44,
+                                lineNumber: 45,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -874,13 +997,13 @@ function HomePage({ posts }) {
                                                                     children: "Beyond"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                                    lineNumber: 58,
+                                                                    lineNumber: 59,
                                                                     columnNumber: 26
                                                                 }, this),
                                                                 " ",
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                                    lineNumber: 58,
+                                                                    lineNumber: 59,
                                                                     columnNumber: 128
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("span", {
@@ -888,13 +1011,13 @@ function HomePage({ posts }) {
                                                                     children: "Expectations."
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                                    lineNumber: 59,
+                                                                    lineNumber: 60,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                            lineNumber: 57,
+                                                            lineNumber: 58,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -905,34 +1028,29 @@ function HomePage({ posts }) {
                                                             children: "The neural network for distributed ecosystem mobility."
                                                         }, void 0, false, {
                                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                            lineNumber: 61,
+                                                            lineNumber: 62,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 56,
+                                                    lineNumber: 57,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                                                     className: "w-full max-w-md animate-slide-up",
                                                     style: {
                                                         animationDelay: '0.2s'
-                                                    },
-                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(AuthWidget, {}, void 0, false, {
-                                                        fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                        lineNumber: 68,
-                                                        columnNumber: 19
-                                                    }, this)
+                                                    }
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 67,
+                                                    lineNumber: 68,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 55,
+                                            lineNumber: 56,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -947,47 +1065,47 @@ function HomePage({ posts }) {
                                                         className: "absolute -inset-1 bg-gradient-to-r from-brand-yellow to-brand-accent rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"
                                                     }, void 0, false, {
                                                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                        lineNumber: 75,
+                                                        lineNumber: 76,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                                                         className: "relative",
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$src$2f$components$2f$marketing$2f$WebBookingWidget$2e$tsx__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                            lineNumber: 77,
+                                                            lineNumber: 78,
                                                             columnNumber: 21
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                        lineNumber: 76,
+                                                        lineNumber: 77,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                lineNumber: 74,
+                                                lineNumber: 75,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 73,
+                                            lineNumber: 74,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 52,
+                                    lineNumber: 53,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                lineNumber: 51,
+                                lineNumber: 52,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                        lineNumber: 42,
+                        lineNumber: 43,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("section", {
@@ -1007,13 +1125,13 @@ function HomePage({ posts }) {
                                                     children: "Unknown Possibilities."
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 90,
+                                                    lineNumber: 91,
                                                     columnNumber: 81
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 90,
+                                            lineNumber: 91,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -1021,13 +1139,13 @@ function HomePage({ posts }) {
                                             children: "We've broken down the walls between fleet management and ride-hailing."
                                         }, void 0, false, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 91,
+                                            lineNumber: 92,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 89,
+                                    lineNumber: 90,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -1040,12 +1158,12 @@ function HomePage({ posts }) {
                                                     className: "h-14 w-14 bg-brand-purple/20 rounded-2xl flex items-center justify-center mb-6 text-brand-purple text-2xl group-hover:scale-110 transition-transform",
                                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$ssr$5d$__$28$ecmascript$29$__["FaBuilding"], {}, void 0, false, {
                                                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                        lineNumber: 98,
+                                                        lineNumber: 99,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 97,
+                                                    lineNumber: 98,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("h3", {
@@ -1053,7 +1171,7 @@ function HomePage({ posts }) {
                                                     children: "For Organizations"
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 100,
+                                                    lineNumber: 101,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -1061,7 +1179,7 @@ function HomePage({ posts }) {
                                                     children: "Manage entire fleets, track real-time analytics, and handle corporate travel with our recursive dashboard system."
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 101,
+                                                    lineNumber: 102,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$next$2f$link$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1071,19 +1189,19 @@ function HomePage({ posts }) {
                                                         "Manage Fleet ",
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$ssr$5d$__$28$ecmascript$29$__["FaArrowRight"], {}, void 0, false, {
                                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                            lineNumber: 103,
+                                                            lineNumber: 104,
                                                             columnNumber: 32
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 102,
+                                                    lineNumber: 103,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 96,
+                                            lineNumber: 97,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -1093,12 +1211,12 @@ function HomePage({ posts }) {
                                                     className: "h-14 w-14 bg-brand-accent/20 rounded-2xl flex items-center justify-center mb-6 text-brand-accent text-2xl group-hover:scale-110 transition-transform",
                                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$ssr$5d$__$28$ecmascript$29$__["FaCar"], {}, void 0, false, {
                                                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                        lineNumber: 110,
+                                                        lineNumber: 111,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 109,
+                                                    lineNumber: 110,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("h3", {
@@ -1106,7 +1224,7 @@ function HomePage({ posts }) {
                                                     children: "For Drivers"
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 112,
+                                                    lineNumber: 113,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -1114,7 +1232,7 @@ function HomePage({ posts }) {
                                                     children: "Keep more earnings with transparent commissions. Join a Sacco or drive independently with instant payouts."
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 113,
+                                                    lineNumber: 114,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$next$2f$link$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1124,19 +1242,19 @@ function HomePage({ posts }) {
                                                         "Start Driving ",
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$ssr$5d$__$28$ecmascript$29$__["FaArrowRight"], {}, void 0, false, {
                                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                            lineNumber: 115,
+                                                            lineNumber: 116,
                                                             columnNumber: 33
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 114,
+                                                    lineNumber: 115,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 108,
+                                            lineNumber: 109,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -1146,12 +1264,12 @@ function HomePage({ posts }) {
                                                     className: "h-14 w-14 bg-brand-yellow/20 rounded-2xl flex items-center justify-center mb-6 text-brand-yellow text-2xl group-hover:scale-110 transition-transform",
                                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$ssr$5d$__$28$ecmascript$29$__["FaUser"], {}, void 0, false, {
                                                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                        lineNumber: 122,
+                                                        lineNumber: 123,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 121,
+                                                    lineNumber: 122,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("h3", {
@@ -1159,7 +1277,7 @@ function HomePage({ posts }) {
                                                     children: "For Passengers"
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 124,
+                                                    lineNumber: 125,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -1167,7 +1285,7 @@ function HomePage({ posts }) {
                                                     children: "Experience premium rides at fair prices. Track your trips and rate your drivers in real-time."
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 125,
+                                                    lineNumber: 126,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$next$2f$link$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1177,36 +1295,36 @@ function HomePage({ posts }) {
                                                         "Book a Ride ",
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$ssr$5d$__$28$ecmascript$29$__["FaArrowRight"], {}, void 0, false, {
                                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                            lineNumber: 127,
+                                                            lineNumber: 128,
                                                             columnNumber: 31
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 126,
+                                                    lineNumber: 127,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 120,
+                                            lineNumber: 121,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 94,
+                                    lineNumber: 95,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                            lineNumber: 88,
+                            lineNumber: 89,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                        lineNumber: 87,
+                        lineNumber: 88,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("section", {
@@ -1216,25 +1334,25 @@ function HomePage({ posts }) {
                                 className: "absolute inset-0 bg-brand-accent/5"
                             }, void 0, false, {
                                 fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                lineNumber: 136,
+                                lineNumber: 137,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
                                 className: "container mx-auto px-6 relative z-10",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$src$2f$components$2f$marketing$2f$DynamicStats$2e$tsx__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 138,
+                                    lineNumber: 139,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                lineNumber: 137,
+                                lineNumber: 138,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                        lineNumber: 135,
+                        lineNumber: 136,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("section", {
@@ -1252,7 +1370,7 @@ function HomePage({ posts }) {
                                                     children: "Latest Intel"
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 147,
+                                                    lineNumber: 148,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -1260,13 +1378,13 @@ function HomePage({ posts }) {
                                                     children: "Updates from the Cabi network."
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 148,
+                                                    lineNumber: 149,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 146,
+                                            lineNumber: 147,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$next$2f$link$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1275,13 +1393,13 @@ function HomePage({ posts }) {
                                             children: "View All Posts →"
                                         }, void 0, false, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 150,
+                                            lineNumber: 151,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 145,
+                                    lineNumber: 146,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -1296,7 +1414,7 @@ function HomePage({ posts }) {
                                                             className: "absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60"
                                                         }, void 0, false, {
                                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                            lineNumber: 159,
+                                                            lineNumber: 160,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -1306,18 +1424,18 @@ function HomePage({ posts }) {
                                                                 children: "NEWS"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                                lineNumber: 161,
+                                                                lineNumber: 162,
                                                                 columnNumber: 23
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                            lineNumber: 160,
+                                                            lineNumber: 161,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 157,
+                                                    lineNumber: 158,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -1328,7 +1446,7 @@ function HomePage({ posts }) {
                                                             children: post.title
                                                         }, void 0, false, {
                                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                            lineNumber: 165,
+                                                            lineNumber: 166,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -1336,42 +1454,42 @@ function HomePage({ posts }) {
                                                             children: post.slug
                                                         }, void 0, false, {
                                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                            lineNumber: 166,
+                                                            lineNumber: 167,
                                                             columnNumber: 21
                                                         }, this),
                                                         " "
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 164,
+                                                    lineNumber: 165,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, post.id, true, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 156,
+                                            lineNumber: 157,
                                             columnNumber: 17
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 154,
+                                    lineNumber: 155,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                            lineNumber: 144,
+                            lineNumber: 145,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                        lineNumber: 143,
+                        lineNumber: 144,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                lineNumber: 40,
+                lineNumber: 41,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("footer", {
@@ -1393,13 +1511,13 @@ function HomePage({ posts }) {
                                                     children: "."
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 180,
+                                                    lineNumber: 181,
                                                     columnNumber: 77
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 180,
+                                            lineNumber: 181,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
@@ -1407,13 +1525,13 @@ function HomePage({ posts }) {
                                             children: "The future of distributed mobility. Powered by Antigravity."
                                         }, void 0, false, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 181,
+                                            lineNumber: 182,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 179,
+                                    lineNumber: 180,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -1423,7 +1541,7 @@ function HomePage({ posts }) {
                                             children: "Platform"
                                         }, void 0, false, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 184,
+                                            lineNumber: 185,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("ul", {
@@ -1436,21 +1554,6 @@ function HomePage({ posts }) {
                                                         children: "Organizations"
                                                     }, void 0, false, {
                                                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                        lineNumber: 186,
-                                                        columnNumber: 21
-                                                    }, this)
-                                                }, void 0, false, {
-                                                    fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 186,
-                                                    columnNumber: 17
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("li", {
-                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$next$2f$link$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                                        href: "/drivers",
-                                                        className: "hover:text-brand-accent transition-colors",
-                                                        children: "Driver Network"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/web/user_portal/src/pages/index.tsx",
                                                         lineNumber: 187,
                                                         columnNumber: 21
                                                     }, this)
@@ -1461,9 +1564,9 @@ function HomePage({ posts }) {
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("li", {
                                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$next$2f$link$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                                        href: "/api",
+                                                        href: "/drivers",
                                                         className: "hover:text-brand-accent transition-colors",
-                                                        children: "API Access"
+                                                        children: "Driver Network"
                                                     }, void 0, false, {
                                                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
                                                         lineNumber: 188,
@@ -1473,17 +1576,32 @@ function HomePage({ posts }) {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
                                                     lineNumber: 188,
                                                     columnNumber: 17
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("li", {
+                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$next$2f$link$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__["default"], {
+                                                        href: "/api",
+                                                        className: "hover:text-brand-accent transition-colors",
+                                                        children: "API Access"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/web/user_portal/src/pages/index.tsx",
+                                                        lineNumber: 189,
+                                                        columnNumber: 21
+                                                    }, this)
+                                                }, void 0, false, {
+                                                    fileName: "[project]/web/user_portal/src/pages/index.tsx",
+                                                    lineNumber: 189,
+                                                    columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 185,
+                                            lineNumber: 186,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 183,
+                                    lineNumber: 184,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -1493,7 +1611,7 @@ function HomePage({ posts }) {
                                             children: "Company"
                                         }, void 0, false, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 192,
+                                            lineNumber: 193,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("ul", {
@@ -1506,12 +1624,12 @@ function HomePage({ posts }) {
                                                         children: "About"
                                                     }, void 0, false, {
                                                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                        lineNumber: 194,
+                                                        lineNumber: 195,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 194,
+                                                    lineNumber: 195,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("li", {
@@ -1521,24 +1639,24 @@ function HomePage({ posts }) {
                                                         children: "Careers"
                                                     }, void 0, false, {
                                                         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                        lineNumber: 195,
+                                                        lineNumber: 196,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 195,
+                                                    lineNumber: 196,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 193,
+                                            lineNumber: 194,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 191,
+                                    lineNumber: 192,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -1548,7 +1666,7 @@ function HomePage({ posts }) {
                                             children: "Connect"
                                         }, void 0, false, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 199,
+                                            lineNumber: 200,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("ul", {
@@ -1559,14 +1677,14 @@ function HomePage({ posts }) {
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$ssr$5d$__$28$ecmascript$29$__["FaGlobe"], {}, void 0, false, {
                                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                            lineNumber: 201,
+                                                            lineNumber: 202,
                                                             columnNumber: 57
                                                         }, this),
                                                         " Global"
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 201,
+                                                    lineNumber: 202,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("li", {
@@ -1574,32 +1692,32 @@ function HomePage({ posts }) {
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$web$2f$user_portal$2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$ssr$5d$__$28$ecmascript$29$__["FaShieldAlt"], {}, void 0, false, {
                                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                            lineNumber: 202,
+                                                            lineNumber: 203,
                                                             columnNumber: 57
                                                         }, this),
                                                         " Secure"
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                                    lineNumber: 202,
+                                                    lineNumber: 203,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                            lineNumber: 200,
+                                            lineNumber: 201,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                    lineNumber: 198,
+                                    lineNumber: 199,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                            lineNumber: 178,
+                            lineNumber: 179,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
@@ -1612,29 +1730,29 @@ function HomePage({ posts }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                                lineNumber: 207,
+                                lineNumber: 208,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                            lineNumber: 206,
+                            lineNumber: 207,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                    lineNumber: 177,
+                    lineNumber: 178,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/web/user_portal/src/pages/index.tsx",
-                lineNumber: 176,
+                lineNumber: 177,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/web/user_portal/src/pages/index.tsx",
-        lineNumber: 16,
+        lineNumber: 17,
         columnNumber: 5
     }, this);
 }

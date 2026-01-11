@@ -229,6 +229,15 @@ type ApiRouteConfig = {
   type __Unused = __Check
 }
 
+// Validate ../../../src/pages/organizations/register.tsx
+{
+  type __IsExpected<Specific extends PagesPageConfig> = Specific
+  const handler = {} as typeof import("../../../src/pages/organizations/register.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../src/pages/passenger.tsx
 {
   type __IsExpected<Specific extends PagesPageConfig> = Specific

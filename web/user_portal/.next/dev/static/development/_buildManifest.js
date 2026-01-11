@@ -1,4 +1,19 @@
 self.__BUILD_MANIFEST = {
+  "/": [
+    "static/chunks/pages/index.js"
+  ],
+  "/_error": [
+    "static/chunks/pages/_error.js"
+  ],
+  "/dashboard": [
+    "static/chunks/pages/dashboard.js"
+  ],
+  "/login": [
+    "static/chunks/pages/login.js"
+  ],
+  "/organizations/register": [
+    "static/chunks/pages/organizations/register.js"
+  ],
   "__rewrites": {
     "afterFiles": [],
     "beforeFiles": [],
@@ -31,6 +46,7 @@ self.__BUILD_MANIFEST = {
     "/help",
     "/login",
     "/mlm-details",
+    "/organizations/register",
     "/passenger",
     "/passengers",
     "/privacy-policy",

@@ -19,6 +19,9 @@ export default function WebBookingWidget() {
     const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
     const [bookingConfirmed, setBookingConfirmed] = useState(false);
 
+    const [showAuth, setShowAuth] = useState(false);
+    const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+
     // Mock fare estimation
     const handleGetEstimates = async () => {
         if (!pickup || !destination) return;
@@ -38,14 +41,21 @@ export default function WebBookingWidget() {
 
     const handleBookRide = async () => {
         if (!selectedVehicle) return;
+        // Prompt for login/register
+        setShowAuth(true);
+    };
 
+    const handleAuthSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         setLoading(true);
-        // Simulate API call
+        // Simulate Auth API call
         await new Promise(resolve => setTimeout(resolve, 1500));
         setLoading(false);
-        // Redirect to trip tracking page
-        const mockTripId = `trip_${Date.now()}`;
-        window.location.href = `/trip/${mockTripId}`;
+        setBookingConfirmed(true);
+
+        // In a real app, we would redirect here or after a delay
+        // const mockTripId = `trip_${Date.now()}`;
+        // window.location.href = `/trip/${mockTripId}`;
     };
 
     if (bookingConfirmed) {
@@ -65,12 +75,64 @@ export default function WebBookingWidget() {
                             setDestination('');
                             setVehicleOptions([]);
                             setSelectedVehicle(null);
+                            setShowAuth(false);
                         }}
                         className="text-brand-yellow font-bold hover:text-white transition-colors uppercase tracking-wider text-sm"
                     >
                         Book another ride
                     </button>
                 </div>
+            </div>
+        );
+    }
+
+    if (showAuth) {
+        return (
+            <div className="glass p-8 rounded-3xl shadow-2xl max-w-md w-full relative overflow-hidden backdrop-blur-xl border border-white/10">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-yellow to-brand-accent"></div>
+
+                <h2 className="text-2xl font-bold mb-6 text-white text-center">
+                    {authMode === 'login' ? 'Welcome Back' : 'Create Account'}
+                </h2>
+
+                <div className="flex bg-brand-dark/50 rounded-lg p-1 mb-6">
+                    <button
+                        onClick={() => setAuthMode('login')}
+                        className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${authMode === 'login' ? 'bg-brand-gray text-white shadow' : 'text-gray-400 hover:text-white'}`}
+                    >
+                        Log In
+                    </button>
+                    <button
+                        onClick={() => setAuthMode('register')}
+                        className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${authMode === 'register' ? 'bg-brand-gray text-white shadow' : 'text-gray-400 hover:text-white'}`}
+                    >
+                        Sign Up
+                    </button>
+                </div>
+
+                <form onSubmit={handleAuthSubmit} className="space-y-4">
+                    <div>
+                        <input type="text" placeholder="Email or Phone number" required className="w-full px-4 py-3 bg-brand-dark/50 border border-gray-700 rounded-xl focus:border-brand-yellow outline-none text-white placeholder-gray-500" />
+                    </div>
+                    <div>
+                        <input type="password" placeholder="Password" required className="w-full px-4 py-3 bg-brand-dark/50 border border-gray-700 rounded-xl focus:border-brand-yellow outline-none text-white placeholder-gray-500" />
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-3.5 rounded-xl font-bold text-black bg-brand-yellow hover:bg-brand-yellowHover transition-colors mt-2"
+                    >
+                        {loading ? 'Processing...' : (authMode === 'login' ? 'Log In & Book' : 'Sign Up & Book')}
+                    </button>
+                </form>
+
+                <button
+                    onClick={() => setShowAuth(false)}
+                    className="w-full mt-4 text-sm text-gray-400 hover:text-white transition-colors"
+                >
+                    Back to vehicle selection
+                </button>
             </div>
         );
     }
