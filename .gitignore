@@ -1,53 +1,195 @@
-# Node
+# ===================================
+# Node.js & Package Managers
+# ===================================
 node_modules/
-dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+.yarn/
+.pnp.*
+package-lock.json
+pnpm-lock.yaml
 
-# Next.js
-.next/
+# ===================================
+# Build Outputs
+# ===================================
+dist/
+build/
 out/
+.next/
+.expo/
+.expo-shared/
+
+# ===================================
+# Next.js
+# ===================================
 *.tsbuildinfo
 next-env.d.ts
+.vercel
 
-# Nx
+# ===================================
+# Nx Monorepo
+# ===================================
 .nx/
+.nx/cache
+tmp/
+graph.json
+project-graph.json
 
+# ===================================
 # Flutter/Dart
+# ===================================
 .dart_tool/
 .packages
 .pub/
-build/
+.pub-cache/
 .flutter-plugins
 .flutter-plugins-dependencies
+.fvm/
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+# Keep build/ for Flutter but exclude for other projects
+**/mobile/**/build/
+**/flutter/**/build/
 
-# Environment variables
+# ===================================
+# React Native / Expo
+# ===================================
+.expo/
+.expo-shared/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+android/app/build/
+android/.gradle/
+android/gradle/
+android/gradlew
+android/gradlew.bat
+ios/Pods/
+ios/build/
+*.xcworkspace
+!default.xcworkspace
+
+# ===================================
+# NestJS
+# ===================================
+dist/
+.webpack/
+.turbo/
+
+# ===================================
+# Environment Variables
+# ===================================
 .env
 .env.local
+.env.*.local
 .env.development.local
 .env.test.local
 .env.production.local
+**/.env
 
-# IDEs
+# ===================================
+# IDEs & Editors
+# ===================================
 .idea/
-.vscode/launch.json
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 *.iml
 *.ipr
 *.iws
 
-# OS
+# ===================================
+# OS Files
+# ===================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+Desktop.ini
 
+# ===================================
 # Logs
-logs
+# ===================================
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
 
-# Coverage
+# ===================================
+# Testing & Coverage
+# ===================================
 coverage/
+.nyc_output/
+*.lcov
+.jest/
+test-results/
+e2e-results/
+
+# ===================================
+# Temporary & Cache Files
+# ===================================
+.cache/
+.temp/
+.tmp/
+*.tmp
+*.bak
+*.swp
+.eslintcache
+.stylelintcache
+
+# ===================================
+# Project Specific
+# ===================================
 TRASH/
+_archive/
+.gemini/
+.bmad-core/
+docs/
+
+# ===================================
+# Database & Secrets
+# ===================================
+*.sqlite
+*.sqlite3
+*.db
+secrets/
+*.pem
+*.key
+*.cert
+
+# ===================================
+# Storybook
+# ===================================
+storybook-static/
+.storybook-out/
+
+# ===================================
+# Misc
+# ===================================
+*.tgz
+.npmrc
+.yarnrc
