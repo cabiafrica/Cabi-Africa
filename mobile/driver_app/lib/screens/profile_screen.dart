@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:driver_app/theme/app_theme.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'positive_feedback_screen.dart';
 
 // --- MOCK MODELS AND SERVICES FOR DEMONSTRATION ---
@@ -14,7 +16,8 @@ class DriverProfile {
   final double averageRating;
   final List<String> badges;
   final String tier;
-  final Map<String, int> compliments; // Story 44.4
+  final String? coverImageUrl;
+  final Map<String, int> compliments;
 
   DriverProfile({
     required this.id,
@@ -27,6 +30,7 @@ class DriverProfile {
     required this.averageRating,
     required this.badges,
     required this.tier,
+    this.coverImageUrl,
     required this.compliments,
   });
 
@@ -42,6 +46,7 @@ class DriverProfile {
       averageRating: (json['averageRating'] as num).toDouble(),
       badges: List<String>.from(json['badges'] ?? []),
       tier: json['tier'] ?? 'Silver',
+      coverImageUrl: json['coverImageUrl'],
       compliments: Map<String, int>.from(json['compliments'] ?? {}),
     );
   }
@@ -51,9 +56,8 @@ class ProfileService {
   const ProfileService();
 
   Future<DriverProfile> fetchMyProfile() async {
-    print("Fetching driver profile from mock service...");
+    debugPrint("Fetching driver profile from mock service...");
     await Future.delayed(const Duration(seconds: 1));
-    // In a real app, this would make an HTTP GET request to `/api/profile/me`
     final mockApiResponse = {
       "id": "driver-123",
       "name": "John Doe",
@@ -69,10 +73,11 @@ class ProfileService {
         "Early Bird",
         "Safety Star",
         "Driver of the Month"
-      ], // Story 44.6
+      ],
       "tier": "Gold",
+      "coverImageUrl":
+          "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&q=80&w=1000",
       "compliments": {
-        // Story 44.4
         "Excellent Service": 25,
         "Great Conversation": 12,
         "Clean Car": 8,
@@ -88,11 +93,11 @@ class ProfileService {
 class ProfileScreen extends StatefulWidget {
   final ProfileService profileService;
 
-  const ProfileScreen({Key? key, this.profileService = const ProfileService()})
-      : super(key: key);
+  const ProfileScreen(
+      {super.key, this.profileService = const ProfileService()});
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
@@ -104,11 +109,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _profileFuture = widget.profileService.fetchMyProfile();
   }
 
+  void _showQrDialog(BuildContext context, DriverProfile profile) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'My QR Code',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                height: 250,
+                width: 250,
+                child: QrImageView(
+                  data: 'driver:${profile.id}', // Use actual ID
+                  version: QrVersions.auto,
+                  eyeStyle: const QrEyeStyle(
+                    eyeShape: QrEyeShape.square,
+                    color: Colors.black,
+                  ),
+                  dataModuleStyle: const QrDataModuleStyle(
+                    dataModuleShape: QrDataModuleShape.square,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'driver:${profile.id}',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey,
+                    ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Scan to verify identity',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: const Text('My Profile', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -138,27 +201,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
           final profile = snapshot.data!;
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.zero,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildProfileHeader(context, profile),
-                const SizedBox(height: 24),
-                _buildProfileDetailsCard(profile),
-                const SizedBox(height: 24),
-                _buildOrganizationCard(context),
-                const SizedBox(height: 24),
-                const Text("Achievements",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                _buildAchievementsCard(profile),
-                const SizedBox(height: 24),
-                const Text("Passenger Compliments",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                _buildComplimentsCard(profile),
+                _buildModernHeader(context, profile),
+                Transform.translate(
+                  offset: const Offset(0, -40),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildStatsRow(profile),
+                        const SizedBox(height: 16),
+                        _buildSectionTitle("Account Info"),
+                        _buildProfileDetailsCard(profile),
+                        const SizedBox(height: 24),
+                        _buildSectionTitle("My Career"),
+                        _buildOrganizationCard(context),
+                        const SizedBox(height: 24),
+                        _buildSectionTitle("Achievements"),
+                        _buildAchievementsCard(profile),
+                        const SizedBox(height: 24),
+                        _buildSectionTitle("Passenger Compliments"),
+                        _buildComplimentsCard(profile),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           );
@@ -167,37 +238,176 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context, DriverProfile profile) {
-    return Center(
-      // Centered header
-      child: Column(
-        children: [
-          const CircleAvatar(radius: 50, child: Icon(Icons.person, size: 50)),
-          const SizedBox(height: 16),
-          Text(profile.name, style: Theme.of(context).textTheme.headlineSmall),
-          Text(profile.email, style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Chip(
-                label: Text(
-                  '${profile.averageRating.toStringAsFixed(2)} ★',
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0, left: 4),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernHeader(BuildContext context, DriverProfile profile) {
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        Container(
+          height: 280,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: profile.coverImageUrl == null
+                ? const LinearGradient(
+                    colors: [Color(0xFF1F1F1F), Color(0xFF333333)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  )
+                : null,
+            image: profile.coverImageUrl != null
+                ? DecorationImage(
+                    image: NetworkImage(profile.coverImageUrl!),
+                    fit: BoxFit.cover,
+                    colorFilter: ColorFilter.mode(
+                        Colors.black.withValues(alpha: 0.3), BlendMode.darken),
+                  )
+                : null,
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                Hero(
+                  tag: 'profile_pic',
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border:
+                          Border.all(color: AppTheme.primaryColor, width: 3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        )
+                      ],
+                    ),
+                    child: const CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.white,
+                      backgroundImage:
+                          NetworkImage('https://i.pravatar.cc/150?u=driver'),
+                    ),
+                  ),
                 ),
-                backgroundColor: Colors.amber.shade100,
+                const SizedBox(height: 12),
+                Text(
+                  profile.name,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  profile.email,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ),
+                ),
+                const SizedBox(height: 60), // Space for stats row
+              ],
+            ),
+          ),
+        ),
+        // Decorative bottom curve
+        Positioned(
+          top: 40,
+          right: 16,
+          child: SafeArea(
+            child: GestureDetector(
+              onTap: () => _showQrDialog(context, profile),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                  border:
+                      Border.all(color: Colors.white.withValues(alpha: 0.3)),
+                ),
+                child: const Icon(Icons.qr_code, color: Colors.white),
               ),
-              const SizedBox(width: 8),
-              Chip(
-                avatar: const Icon(Icons.shield, size: 16, color: Colors.white),
-                label: Text(profile.tier,
-                    style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold)),
-                backgroundColor: _getTierColor(profile.tier),
-              ),
-            ],
-          )
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatsRow(DriverProfile profile) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
         ],
       ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildStatItem(
+            '${profile.averageRating.toStringAsFixed(1)} ★',
+            'Rating',
+            Colors.amber.shade800,
+          ),
+          Container(height: 40, width: 1, color: Colors.grey.shade200),
+          _buildStatItem(
+            profile.tier,
+            'Tier',
+            _getTierColor(profile.tier),
+          ),
+          Container(height: 40, width: 1, color: Colors.grey.shade200),
+          _buildStatItem(
+            '2.5k', // Mock
+            'Trips',
+            Colors.blue.shade700,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String value, String label, Color color) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey.shade500,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 
@@ -215,27 +425,90 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildProfileDetailsCard(DriverProfile profile) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+          ),
+        ],
+      ),
       child: Column(
         children: [
           ListTile(
-            leading: const Icon(Icons.phone),
-            title: Text(profile.phone),
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(Icons.phone, color: Colors.blue.shade700, size: 20),
+            ),
+            title: const Text('Phone Number',
+                style: TextStyle(fontSize: 14, color: Colors.grey)),
+            subtitle: Text(profile.phone,
+                style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87)),
           ),
-          const Divider(height: 1),
+          Divider(height: 1, color: Colors.grey.shade100),
           ListTile(
-            leading: const Icon(Icons.badge),
-            title: const Text('Account Status'),
-            trailing: Text(
-              profile.accountStatus,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.purple.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(Icons.badge, color: Colors.purple.shade700, size: 20),
+            ),
+            title: const Text('Account Status',
+                style: TextStyle(fontSize: 14, color: Colors.grey)),
+            subtitle: Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.green.shade200),
+                  ),
+                  child: Text(
+                    profile.accountStatus.toUpperCase(),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                        color: Colors.green.shade700),
+                  ),
+                ),
+              ],
             ),
           ),
-          const Divider(height: 1),
+          Divider(height: 1, color: Colors.grey.shade100),
           ListTile(
-            leading: const Icon(Icons.calendar_today),
-            title: Text(
-              'Member since ${profile.registrationDate.substring(0, 10)}',
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.orange.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(Icons.calendar_today,
+                  color: Colors.orange.shade700, size: 20),
+            ),
+            title: const Text('Member Since',
+                style: TextStyle(fontSize: 14, color: Colors.grey)),
+            subtitle: Text(
+              profile.registrationDate.substring(0, 10),
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87),
             ),
           ),
         ],
@@ -244,65 +517,111 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildOrganizationCard(BuildContext context) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+          ),
+        ],
+      ),
       child: Column(
         children: [
-          ListTile(
-            leading: const Icon(Icons.groups, color: Colors.indigo),
-            title: const Text('My Organization'),
-            subtitle: const Text('Manage union membership'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              // Navigate to Organization Screen
-              Navigator.pushNamed(context, '/my_organization');
-            },
+          _buildActionTile(
+            context,
+            icon: Icons.groups,
+            color: Colors.indigo,
+            title: 'My Organization',
+            subtitle: 'Manage union membership',
+            onTap: () => Navigator.pushNamed(context, '/my_organization'),
           ),
-          const Divider(height: 1),
-          ListTile(
-            leading: const Icon(Icons.share, color: Colors.green),
-            title: const Text('Referrals & Earnings'),
-            subtitle: const Text('Expand your network'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              // Navigate to MLM/Referrals Screen
-              Navigator.pushNamed(context, '/referral_program');
-            },
+          Divider(height: 1, color: Colors.grey.shade100),
+          _buildActionTile(
+            context,
+            icon: Icons.share,
+            color: Colors.green,
+            title: 'Referrals & Earnings',
+            subtitle: 'Expand your network',
+            onTap: () => Navigator.pushNamed(context, '/referral_program'),
           ),
         ],
       ),
     );
   }
 
+  Widget _buildActionTile(BuildContext context,
+      {required IconData icon,
+      required Color color,
+      required String title,
+      required String subtitle,
+      required VoidCallback onTap}) {
+    return ListTile(
+      onTap: onTap,
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: color, size: 20),
+      ),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+      subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
+      trailing:
+          Icon(Icons.chevron_right, color: Colors.grey.shade400, size: 20),
+    );
+  }
+
   Widget _buildAchievementsCard(DriverProfile profile) {
     if (profile.badges.isEmpty) {
-      return const Card(
-          child: Padding(
+      return Card(
+          elevation: 0,
+          color: Colors.grey.shade100,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: const Padding(
               padding: EdgeInsets.all(16),
               child: Text("No badges earned yet.")));
     }
 
     return SizedBox(
-      height: 100,
+      height: 110,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: profile.badges.length,
         itemBuilder: (ctx, index) {
-          return Card(
-            margin: const EdgeInsets.only(right: 8),
-            child: Container(
-              width: 100,
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.emoji_events, color: Colors.amber, size: 30),
-                  const SizedBox(height: 4),
-                  Text(profile.badges[index],
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontSize: 10, fontWeight: FontWeight.bold)),
-                ],
-              ),
+          return Container(
+            margin: const EdgeInsets.only(right: 12),
+            width: 90,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.amber.withValues(alpha: 0.2)),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.amber.withValues(alpha: 0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3))
+                ]),
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.emoji_events, color: Colors.amber, size: 32),
+                const SizedBox(height: 8),
+                Text(
+                  profile.badges[index],
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      fontSize: 10, fontWeight: FontWeight.bold, height: 1.1),
+                ),
+              ],
             ),
           );
         },
@@ -317,37 +636,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: EdgeInsets.all(16), child: Text("No compliments yet.")));
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: profile.compliments.entries.map((entry) {
-            return Chip(
-              avatar: CircleAvatar(
-                backgroundColor: Colors.deepPurple,
-                child: Text('${entry.value}',
-                    style: const TextStyle(fontSize: 10, color: Colors.white)),
-              ),
-              label: Text(entry.key),
-              backgroundColor: Colors.deepPurple.shade50,
-              side: BorderSide.none,
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 8),
-        OutlinedButton.icon(
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const PositiveFeedbackScreen()));
-          },
-          icon: const Icon(Icons.favorite_border),
-          label: const Text('VIEW ALL FEEDBACK'),
-        ),
-      ],
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2D2D2D), // Dark card for contrast
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: profile.compliments.entries.map((entry) {
+              return Chip(
+                avatar: CircleAvatar(
+                  backgroundColor: AppTheme.primaryColor,
+                  radius: 10,
+                  child: Text('${entry.value}',
+                      style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold)),
+                ),
+                label: Text(entry.key,
+                    style: const TextStyle(color: Colors.white, fontSize: 12)),
+                backgroundColor: Colors.white.withValues(alpha: 0.1),
+                side: BorderSide.none,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PositiveFeedbackScreen()));
+            },
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppTheme.primaryColor,
+              side: const BorderSide(color: AppTheme.primaryColor),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+            ),
+            child: const Text('VIEW ALL FEEDBACK'),
+          ),
+        ],
+      ),
     );
   }
 }

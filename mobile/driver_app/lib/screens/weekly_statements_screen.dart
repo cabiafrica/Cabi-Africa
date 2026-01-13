@@ -29,7 +29,7 @@ class WeeklyStatementsService {
   const WeeklyStatementsService();
 
   Future<List<WeeklyStatement>> fetchWeeklyStatements() async {
-    print("Fetching weekly statements from mock service...");
+    debugPrint("Fetching weekly statements from mock service...");
     await Future.delayed(const Duration(seconds: 1));
     // In a real app, this would make an HTTP GET request to `/api/earnings/weekly-statements`
     final mockApiResponse = [
@@ -64,13 +64,13 @@ class WeeklyStatementsScreen extends StatefulWidget {
   final WeeklyStatementsService statementsService;
 
   const WeeklyStatementsScreen({
-    Key? key,
+    super.key,
     this.statementsService =
         const WeeklyStatementsService(), // Default to real service
-  }) : super(key: key);
+  });
 
   @override
-  _WeeklyStatementsScreenState createState() => _WeeklyStatementsScreenState();
+  State<WeeklyStatementsScreen> createState() => _WeeklyStatementsScreenState();
 }
 
 class _WeeklyStatementsScreenState extends State<WeeklyStatementsScreen> {

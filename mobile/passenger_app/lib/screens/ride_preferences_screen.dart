@@ -1,7 +1,8 @@
+// ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 
 // Mock DTOs - In a real app, these would be generated.
-enum TemperaturePreference { Cool, Warm, NoPreference }
+enum TemperaturePreference { cool, warm, noPreference }
 
 class RidePreferencesDto {
   bool isQuietRide;
@@ -32,7 +33,7 @@ class _RidePreferencesScreenState extends State<RidePreferencesScreen> {
     await Future.delayed(const Duration(seconds: 1));
     final prefs = RidePreferencesDto(
       isQuietRide: false,
-      temperature: TemperaturePreference.NoPreference,
+      temperature: TemperaturePreference.noPreference,
     );
     _currentPreferences = prefs;
     return prefs;
@@ -41,13 +42,16 @@ class _RidePreferencesScreenState extends State<RidePreferencesScreen> {
   Future<void> _updatePreference() async {
     if (_currentPreferences == null) return;
     // Mock API call
-    print(
-      'Updating preferences: Quiet Ride=${_currentPreferences!.isQuietRide}, Temp=${_currentPreferences!.temperature}',
-    );
+    // Mock API call
+    // debugPrint(
+    //   'Updating preferences: Quiet Ride=${_currentPreferences!.isQuietRide}, Temp=${_currentPreferences!.temperature}',
+    // );
     await Future.delayed(const Duration(milliseconds: 500));
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Preferences saved!')));
+    if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Preferences saved!')));
+    }
   }
 
   @override
@@ -78,28 +82,36 @@ class _RidePreferencesScreenState extends State<RidePreferencesScreen> {
               ),
               const Divider(),
               const ListTile(title: Text('Temperature')),
-              RadioGroup<TemperaturePreference>(
-                groupValue: _currentPreferences!.temperature,
-                onChanged: (value) {
-                  setState(() => _currentPreferences!.temperature = value!);
-                  _updatePreference();
-                },
-                child: Column(
-                  children: [
-                    RadioListTile<TemperaturePreference>(
-                      title: const Text('Cool'),
-                      value: TemperaturePreference.Cool,
-                    ),
-                    RadioListTile<TemperaturePreference>(
-                      title: const Text('Warm'),
-                      value: TemperaturePreference.Warm,
-                    ),
-                    RadioListTile<TemperaturePreference>(
-                      title: const Text('No Preference'),
-                      value: TemperaturePreference.NoPreference,
-                    ),
-                  ],
-                ),
+              Column(
+                children: [
+                  RadioListTile<TemperaturePreference>(
+                    title: const Text('Cool'),
+                    value: TemperaturePreference.cool,
+                    groupValue: _currentPreferences!.temperature,
+                    onChanged: (value) {
+                      setState(() => _currentPreferences!.temperature = value!);
+                      _updatePreference();
+                    },
+                  ),
+                  RadioListTile<TemperaturePreference>(
+                    title: const Text('Warm'),
+                    value: TemperaturePreference.warm,
+                    groupValue: _currentPreferences!.temperature,
+                    onChanged: (value) {
+                      setState(() => _currentPreferences!.temperature = value!);
+                      _updatePreference();
+                    },
+                  ),
+                  RadioListTile<TemperaturePreference>(
+                    title: const Text('No Preference'),
+                    value: TemperaturePreference.noPreference,
+                    groupValue: _currentPreferences!.temperature,
+                    onChanged: (value) {
+                      setState(() => _currentPreferences!.temperature = value!);
+                      _updatePreference();
+                    },
+                  ),
+                ],
               ),
             ],
           );

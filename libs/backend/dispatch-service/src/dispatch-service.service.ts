@@ -44,6 +44,16 @@ export class DispatchService {
     console.log(`Driver found for ride ${ride.id}: ${ride.driverName}`);
   }
 
+  async assignDriver(rideId: string, driverId: string) {
+    const ride = this.rideQueue.find(r => r.id === rideId);
+    if (!ride) throw new Error('Ride not found');
+
+    ride.status = 'DRIVER_ASSIGNED';
+    ride.driverId = driverId;
+    console.log(`Driver ${driverId} manually assigned to ride ${rideId}`);
+    return ride;
+  }
+
   async getRideStatus(rideId: string) {
     const ride = this.rideQueue.find(r => r.id === rideId);
     if (!ride) throw new Error('Ride not found');

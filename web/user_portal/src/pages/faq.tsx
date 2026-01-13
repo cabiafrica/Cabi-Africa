@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Accordion from '../components/ui/Accordion';
-import MainLayout from '@/src/components/layout/MainLayout';
+import MainLayout from '@/components/layout/MainLayout';
 
 interface FAQItem {
   q: string;
@@ -39,7 +39,7 @@ const faqData: FAQItem[] = [
   {
     category: 'Earnings & Payments',
     q: 'How much can I earn as a Cabi driver?',
-    a: 'Earnings vary based on location, hours worked, and demand. On average, Cabi drivers earn $15-$25 per hour after expenses. Peak hours (morning/evening rush, weekends, events) typically offer higher earnings due to surge pricing. You can also earn additional income through our MLM referral program.',
+    a: 'Earnings vary based on location, hours worked, and demand. On average, Cabi drivers earn $15-$25 per hour after expenses. Peak hours (morning/evening rush, weekends, events) typically offer higher earnings due to surge pricing. You can also earn additional income through our referral program.',
   },
   {
     category: 'Earnings & Payments',
@@ -48,8 +48,8 @@ const faqData: FAQItem[] = [
   },
   {
     category: 'Earnings & Payments',
-    q: 'What is the MLM referral program?',
-    a: 'Our Multi-Level Marketing (MLM) program rewards you for recruiting new drivers. When someone registers using your referral code and pays the registration fee, you earn a commission. You also earn from drivers recruited by your referrals (up to 3 levels deep). Default commission: 30% for direct referrals, 15% for level 2, and 5% for level 3.',
+    q: 'What is the referral program?',
+    a: 'Our referral program rewards you for recruiting new drivers. When someone registers using your referral code and pays the registration fee, you earn a commission. You also earn from drivers recruited by your referrals (up to 3 levels deep). Default commission: 30% for direct referrals, 15% for level 2, and 5% for level 3.',
   },
   {
     category: 'Earnings & Payments',
@@ -223,8 +223,8 @@ export default function FaqPage() {
                   key={category}
                   onClick={() => setSelectedCategory(category)}
                   className={`px-4 py-2 rounded-full font-medium transition-colors ${selectedCategory === category
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
                     }`}
                 >
                   {category}

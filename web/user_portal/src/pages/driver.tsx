@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import MainLayout from '@/src/components/layout/MainLayout';
+import MainLayout from '@/components/layout/MainLayout';
 
 export default function DriverAppDownloadPage() {
   // In a real application, these would be environment variables

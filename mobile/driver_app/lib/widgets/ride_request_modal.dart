@@ -2,13 +2,18 @@ import 'package:driver_app/services/ride_service.dart';
 import 'package:driver_app/providers/ride_request_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../screens/trip_in_progress_screen.dart';
 
 class RideRequestModal extends StatelessWidget {
   final Map<String, dynamic> requestData;
   final RideService? rideService;
+  final String driverId; // Added
 
   const RideRequestModal(
-      {super.key, required this.requestData, this.rideService});
+      {super.key,
+      required this.requestData,
+      this.rideService,
+      required this.driverId});
 
   @override
   Widget build(BuildContext context) {
@@ -17,22 +22,33 @@ class RideRequestModal extends StatelessWidget {
 
     void handleAccept() async {
       try {
-        await service.acceptRide(requestData['rideId']);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Ride Accepted! Navigating to pickup...')),
-        );
+        await service.acceptRide(
+            requestData['rideId'], driverId); // Pass driverId
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Ride Accepted! Navigating to pickup...')),
+          );
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) =>
+                  TripInProgressScreen(rideId: requestData['rideId']),
+            ),
+          );
+        }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to accept ride: $e')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to accept ride: $e')),
+          );
+        }
       } finally {
         rideProvider.clearRideRequest();
       }
     }
 
     void handleReject() {
-      service.rejectRide(requestData['rideId']);
+      service.rejectRide(requestData['rideId'], driverId);
       rideProvider.clearRideRequest();
     }
 

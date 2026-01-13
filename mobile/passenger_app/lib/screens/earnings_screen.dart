@@ -4,7 +4,7 @@ import 'payout_methods_screen.dart';
 import '../services/ride_service.dart';
 
 class EarningsScreen extends StatefulWidget {
-  const EarningsScreen({Key? key}) : super(key: key);
+  const EarningsScreen({super.key});
 
   @override
   State<EarningsScreen> createState() => _EarningsScreenState();
@@ -56,6 +56,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
 
   Future<void> _handleWithdrawal(double amount) async {
     await _rideService.requestPayout(amount);
+    if (!mounted) return;
     setState(() {
       _walletBalance -= amount;
     });

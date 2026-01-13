@@ -19,7 +19,7 @@ class RentalPartner {
 }
 
 class VehicleRentalScreen extends StatelessWidget {
-  const VehicleRentalScreen({Key? key}) : super(key: key);
+  const VehicleRentalScreen({super.key});
 
   List<RentalPartner> get _partners => [
         RentalPartner(
@@ -57,7 +57,7 @@ class VehicleRentalScreen extends StatelessWidget {
 
   void _launchUrl(String url) {
     // In a real app, uses url_launcher
-    print('Launching $url');
+    debugPrint('Launching $url');
   }
 
   @override
@@ -120,8 +120,7 @@ class VehicleRentalScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   ..._partners
-                      .map((partner) => _buildPartnerCard(context, partner))
-                      .toList(),
+                      .map((partner) => _buildPartnerCard(context, partner)),
                 ],
               ),
             ),

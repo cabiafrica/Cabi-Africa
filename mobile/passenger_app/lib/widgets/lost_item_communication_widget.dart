@@ -9,14 +9,14 @@ class LostItemCommunicationWidget extends StatelessWidget {
   final VoidCallback onMessage;
 
   const LostItemCommunicationWidget({
-    Key? key,
+    super.key,
     required this.ticketId,
     required this.otherPartyName,
     required this.otherPartyRole,
     required this.channelExpiresAt,
     required this.onCall,
     required this.onMessage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

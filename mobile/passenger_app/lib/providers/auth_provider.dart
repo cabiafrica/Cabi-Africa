@@ -41,7 +41,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> login(String phone, String otp) async {
     try {
       state = const AuthLoading();
-      final token = await _authService.verifyOtp(phone: phone, otp: otp);
+      final result = await _authService.verifyOtp(phone: phone, otp: otp);
+      if (!result.isSignedIn) {
+        throw Exception(result.error ?? 'Verification failed');
+      }
+      final token = result.token!;
 
       await _storage.write(key: 'authToken', value: token);
 
@@ -76,15 +80,23 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
 class AuthProvider extends ChangeNotifier {
   String? _token;
-  bool get isAuthenticated => _token != null;
+  Map<String, dynamic>? _user;
 
-  void login(String token) {
+  bool get isAuthenticated => _token != null;
+  String? get token => _token;
+  Map<String, dynamic>? get user => _user;
+  String? get userId =>
+      _user?['id']?.toString() ?? _user?['userId']?.toString();
+
+  void login(String token, [Map<String, dynamic>? user]) {
     _token = token;
+    _user = user;
     notifyListeners();
   }
 
   void logout() {
     _token = null;
+    _user = null;
     notifyListeners();
   }
 

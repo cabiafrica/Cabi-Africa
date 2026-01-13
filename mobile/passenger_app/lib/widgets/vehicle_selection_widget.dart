@@ -40,19 +40,19 @@ class _VehicleSelectionWidgetState extends State<VehicleSelectionWidget> {
         id: 'cat-1',
         name: 'Standard',
         description: 'Up to 4 seats',
-        estimatedFare: 20.00,
+        estimatedFare: 2000.00,
       ),
       VehicleCategoryDto(
         id: 'cat-2',
         name: 'Premium',
         description: 'Luxury vehicle',
-        estimatedFare: 35.00,
+        estimatedFare: 3500.00,
       ),
       VehicleCategoryDto(
         id: 'cat-3',
         name: 'XL',
         description: 'Up to 6 seats',
-        estimatedFare: 30.00,
+        estimatedFare: 3000.00,
       ),
     ];
     // Set default selection
@@ -87,9 +87,8 @@ class _VehicleSelectionWidgetState extends State<VehicleSelectionWidget> {
               return GestureDetector(
                 onTap: () => setState(() => _selectedCategoryId = category.id),
                 child: Card(
-                  color: isSelected
-                      ? Theme.of(context).primaryColorLight
-                      : null,
+                  color:
+                      isSelected ? Theme.of(context).primaryColorLight : null,
                   child: Container(
                     width: 120,
                     padding: const EdgeInsets.all(8.0),
@@ -101,7 +100,8 @@ class _VehicleSelectionWidgetState extends State<VehicleSelectionWidget> {
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(category.description),
-                        Text('\$${category.estimatedFare.toStringAsFixed(2)}'),
+                        Text(
+                            'KES ${category.estimatedFare.toStringAsFixed(2)}'),
                       ],
                     ),
                   ),

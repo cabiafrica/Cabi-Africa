@@ -33,8 +33,11 @@ class _JoinOrganizationScreenState extends State<JoinOrganizationScreen> {
     );
 
     // Mock API call
-    print('Submitting request to join organization: ${payload.organizationId}');
+    debugPrint(
+        'Submitting request to join organization: ${payload.organizationId}');
     await Future.delayed(const Duration(seconds: 1));
+
+    if (!mounted) return;
 
     setState(() => _isSubmitting = false);
 

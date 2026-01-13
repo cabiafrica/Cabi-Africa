@@ -4,16 +4,18 @@
 
 @layer base {
     body {
-        @apply bg-brand-black text-white antialiased selection:bg-brand-yellow selection:text-brand-black;
+        @apply bg-slate-50 text-slate-900 dark:bg-brand-black dark:text-white antialiased selection:bg-brand-yellow selection:text-brand-black transition-colors duration-300;
     }
-    
+
     /* Custom Scrollbar */
     ::-webkit-scrollbar {
         width: 8px;
     }
+
     ::-webkit-scrollbar-track {
         @apply bg-brand-dark;
     }
+
     ::-webkit-scrollbar-thumb {
         @apply bg-gray-700 rounded-full hover:bg-gray-600;
     }
@@ -21,8 +23,9 @@
 
 @layer utilities {
     .glass {
-        @apply bg-white/5 backdrop-blur-lg border border-white/10;
+        @apply bg-white/70 dark:bg-white/5 backdrop-blur-lg border border-slate-200 dark:border-white/10;
     }
+
     .text-gradient {
         @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-yellow to-brand-accent;
     }

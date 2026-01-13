@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -13,32 +14,172 @@ model User {
   phone     String   @unique
   password  String
   fullName  String
+  username  String?  @unique
+  nickname  String?
+  middleName String?
+  idNumber   String?  @unique
+  passportPhotoUrl String?  @db.Text // Stores compressed image URL or base64
+  privacySettings Json?   @default("{}") // { showEmail: boolean, showPhone: boolean, showRealName: boolean }
   role      Role     @default(PASSENGER)
+  
+  // Verification Status
+  isEmailVerified Boolean @default(false)
+  isPhoneVerified Boolean @default(false)
+  isIdentityVerified Boolean @default(false)
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
   ridesAsPassenger Ride[] @relation("PassengerRides")
   driverProfile    DriverProfile?
+  documentVerifications DocumentVerification[]
+  biometricVerifications BiometricVerification[]
+
+  // Referrals
+  referralCode String? @unique
+  referredById String?
+  referredBy   User?   @relation("UserReferrals", fields: [referredById], references: [id])
+  referrals    User[]  @relation("UserReferrals")
+
+  // Organization Membership
+  orgMemberProfile OrganizationMember?
+
+  // Occurrence Book Relations
+  occurrencesAsPassenger  Occurrence[]          @relation("PassengerOccurrences")
+  registeredOccurrences   Occurrence[]          @relation("RegisteredOccurrences")
+  resolvedOccurrences     Occurrence[]          @relation("ResolvedOccurrences")
+  uploadedMedia           OccurrenceMedia[]     @relation("UploadedOccurrenceMedia")
+  filedObjections         OccurrenceObjection[] @relation("FiledObjections")
+  reviewedObjections      OccurrenceObjection[] @relation("ReviewedObjections")
+  auditActions            OccurrenceAuditLog[]  @relation("OccurrenceAuditActions")
 
   @@map("users")
 }
 
+// ... existing enums
+
+enum OrganizationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+}
+
+model Organization {
+  id                         String               @id @default(uuid())
+  name                       String
+  founderName                String?
+  email                      String               @unique
+  bio                        String?              @db.Text
+  logoUrl                    String?              @db.Text // Compressed logo image
+  bannerUrl                  String?              @db.Text // Compressed banner image
+  primaryColor               String?
+  secondaryColor             String?
+  website                    String?
+  twitter                    String?
+  facebook                   String?
+  instagram                  String?
+  linkedin                   String?
+  registrationNumber         String               @unique
+  registrationCertificateUrl String?              @db.Text // Compressed certificate document
+  status                     OrganizationStatus   @default(UNVERIFIED)
+
+  // Sub-organization hierarchy
+  parentId                   String?
+  parent                     Organization?        @relation("SubOrgs", fields: [parentId], references: [id])
+  children                   Organization[]       @relation("SubOrgs")
+
+  createdAt                  DateTime             @default(now())
+  updatedAt                  DateTime             @updatedAt
+
+  members                    OrganizationMember[]
+  drivers                    DriverProfile[]
+  invitations                Invitation[]
+
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  name           String
+  contact        String
+  position       String
+  duties         String?
+  isBiometricVerified Boolean @default(false)
+
+  // Hunter Features
+  userId         String?      @unique
+  user           User?        @relation(fields: [userId], references: [id])
+  canHunt        Boolean      @default(false)
+  sentInvitations Invitation[] @relation("HunterInvitations")
+
+  @@map("organization_members")
+}
+
+// In DriverProfile - updating existing model
 model DriverProfile {
-  id              String   @id @default(uuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id])
-  licenseNumber   String   @unique
-  isOnline        Boolean  @default(false)
-  currentLocation Json?    // { lat: number, lng: number }
+  id              String        @id @default(uuid())
+  userId          String        @unique
+  user            User          @relation(fields: [userId], references: [id])
+  licenseNumber   String        @unique
+  isOnline        Boolean       @default(false)
+  currentLocation Json?         // { lat: number, lng: number }
+  isBiometricVerified Boolean   @default(false)
+  
+  organizationId  String?
+  organization    Organization? @relation(fields: [organizationId], references: [id])
   
   // Relations
   vehicle         Vehicle?
-  ridesAsDriver   Ride[]   @relation("DriverRides")
+  ridesAsDriver   Ride[]        @relation("DriverRides")
+  receivedInvitations Invitation[]
+  documents       Document[]
+  occurrences     Occurrence[]  @relation("DriverOccurrences")
 
   @@map("driver_profiles")
 }
 
+model Document {
+  id              String         @id @default(uuid())
+  driverProfileId String
+  driverProfile   DriverProfile  @relation(fields: [driverProfileId], references: [id])
+  type            DocumentType
+  url             String         @db.Text // Stores compressed image URL
+  thumbnailUrl    String?        @db.Text // Optional thumbnail
+  fileSize        Int?           // File size in bytes
+  mimeType        String?        // image/jpeg, image/png, etc.
+  status          DocumentStatus @default(PENDING)
+  rejectionReason String?        @db.Text
+  expiresAt       DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@map("documents")
+}
+
+enum DocumentType {
+  LICENSE_FRONT
+  LICENSE_BACK
+  ID_FRONT
+  ID_BACK
+  PROFILE_PHOTO
+  VEHICLE_LOGBOOK
+  VEHICLE_INSURANCE
+  VEHICLE_INSPECTION
+  POLICE_CLEARANCE
+  PSV_BADGE
+}
+
+enum DocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+// ... existing models (User, Vehicle, Ride) and enums
 model Vehicle {
   id              String        @id @default(uuid())
   driverProfileId String        @unique
@@ -46,8 +187,18 @@ model Vehicle {
   make            String
   model           String
   year            Int
+  color           String?
   plateNumber     String        @unique
+  logbookNumber   String?       @unique
+  insurancePolicyNumber String?
+  insuranceExpiry DateTime?
+  insuranceCertificateUrl String? @db.Text // Compressed document URL
+  inspectionReportUrl String?     @db.Text // Compressed document URL
+  frontPhotoUrl   String?         @db.Text // Compressed image URL
+  backPhotoUrl    String?         @db.Text // Compressed image URL
+  sidePhotoUrl    String?         @db.Text // Compressed image URL
   type            VehicleType   @default(STANDARD)
+  occurrences     Occurrence[]  @relation("VehicleOccurrences")
 
   @@map("vehicles")
 }
@@ -70,6 +221,7 @@ model Ride {
   
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+  occurrences     Occurrence[] @relation("RideOccurrences")
 
   @@map("rides")
 }
@@ -97,3 +249,264 @@ enum RideStatus {
   COMPLETED
   CANCELLED
 }
+
+model Invitation {
+  id             String             @id @default(uuid())
+  organizationId String
+  organization   Organization       @relation(fields: [organizationId], references: [id])
+
+  hunterId       String
+  hunter         OrganizationMember @relation("HunterInvitations", fields: [hunterId], references: [id])
+
+  driverId       String
+  driver         DriverProfile      @relation(fields: [driverId], references: [id])
+
+  status         InvitationStatus   @default(PENDING)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@map("invitations")
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+// Document Verification Models
+model DocumentVerification {
+  id              String                    @id @default(uuid())
+  userId          String
+  user            User                      @relation(fields: [userId], references: [id])
+  documentType    VerificationDocumentType
+  documentImageUrl String                   @db.Text // Compressed image URL
+  fileSize        Int?                      // File size in bytes
+  mimeType        String?                   // image/jpeg, image/png
+  
+  // OCR Extracted Data
+  extractedData   Json?                     // Stores OCR results
+  
+  // Validation Results
+  isValid         Boolean                   @default(false)
+  validationErrors Json?                    // Array of validation errors
+  confidenceScore Float?                    // OCR confidence 0-1
+  
+  status          VerificationStatus        @default(PENDING)
+  verifiedAt      DateTime?
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+  
+  // Relation to biometric verification
+  biometricVerifications BiometricVerification[]
+
+  @@map("document_verifications")
+}
+
+model BiometricVerification {
+  id                      String               @id @default(uuid())
+  userId                  String
+  user                    User                 @relation(fields: [userId], references: [id])
+  documentVerificationId  String
+  documentVerification    DocumentVerification @relation(fields: [documentVerificationId], references: [id])
+  
+  selfieImageUrl          String               @db.Text // Compressed selfie URL
+  fileSize                Int?                 // File size in bytes
+  mimeType                String?              // image/jpeg
+  
+  // Verification Results
+  matchScore              Float?               // Face match score 0-1
+  livenessScore           Float?               // Liveness detection 0-1
+  isMatch                 Boolean              @default(false)
+  isLive                  Boolean              @default(false)
+  
+  status                  VerificationStatus   @default(PENDING)
+  verifiedAt              DateTime?
+  createdAt               DateTime             @default(now())
+  updatedAt               DateTime             @updatedAt
+
+  @@map("biometric_verifications")
+}
+
+enum VerificationDocumentType {
+  NATIONAL_ID
+  PASSPORT
+  DRIVERS_LICENSE
+}
+
+enum VerificationStatus {
+  PENDING
+  PROCESSING
+  VERIFIED
+  FAILED
+  EXPIRED
+}
+
+// ============================================
+// OCCURRENCE BOOK SYSTEM
+// ============================================
+
+enum OccurrenceCategory {
+  CRIME
+  TRAFFIC_OFFENSE
+  SAFETY_VIOLATION
+  POLICY_VIOLATION
+  HARASSMENT
+  FRAUD
+  PROPERTY_DAMAGE
+  MEDICAL_EMERGENCY
+  DISPUTE
+  SUSPICIOUS_ACTIVITY
+  VEHICLE_ISSUE
+  ENVIRONMENTAL
+}
+
+enum OccurrenceSeverity {
+  CRITICAL  // SEV-1
+  HIGH      // SEV-2
+  MEDIUM    // SEV-3
+  LOW       // SEV-4
+}
+
+enum OccurrenceStatus {
+  OPEN
+  UNDER_INVESTIGATION
+  RESOLVED
+  DISPUTED
+}
+
+enum ObjectionStatus {
+  PENDING
+  UNDER_REVIEW
+  ACCEPTED
+  REJECTED
+}
+
+model Occurrence {
+  id              String              @id @default(uuid())
+  obNumber        String              @unique @map("ob_number")
+  
+  // Categorization
+  category        OccurrenceCategory
+  severity        OccurrenceSeverity
+  title           String              @db.VarChar(255)
+  description     String              @db.Text
+  
+  // Involved parties
+  driverId        String?             @map("driver_id")
+  driver          DriverProfile?      @relation("DriverOccurrences", fields: [driverId], references: [id])
+  passengerId     String?             @map("passenger_id")
+  passenger       User?               @relation("PassengerOccurrences", fields: [passengerId], references: [id])
+  vehicleId       String?             @map("vehicle_id")
+  vehicle         Vehicle?            @relation("VehicleOccurrences", fields: [vehicleId], references: [id])
+  rideId          String?             @map("ride_id")
+  ride            Ride?               @relation("RideOccurrences", fields: [rideId], references: [id])
+  
+  // TIME, DATE, and PLACE (Critical Fields)
+  occurrenceDate  DateTime            @db.Date @map("occurrence_date")
+  occurrenceTime  DateTime            @db.Time @map("occurrence_time")
+  occurredAt      DateTime            @map("occurred_at")
+  
+  // Location Details
+  locationLat     Decimal?            @db.Decimal(10, 8) @map("location_lat")
+  locationLng     Decimal?            @db.Decimal(11, 8) @map("location_lng")
+  locationAddress String?             @db.Text @map("location_address")
+  locationPlaceName String?           @db.VarChar(255) @map("location_place_name")
+  locationCity    String?             @db.VarChar(100) @map("location_city")
+  locationCountry String              @default("Kenya") @db.VarChar(100) @map("location_country")
+  locationDetails Json?               @map("location_details")
+  
+  // Source
+  source          String              // 'SOS', 'RATING', 'COMMENT', 'MANUAL', 'AUTO'
+  sourceReferenceId String?           @map("source_reference_id")
+  
+  // Registrar
+  registeredById  String              @map("registered_by")
+  registeredBy    User                @relation("RegisteredOccurrences", fields: [registeredById], references: [id])
+  registeredAt    DateTime            @default(now()) @map("registered_at")
+  
+  // Status
+  status          OccurrenceStatus    @default(OPEN)
+  resolvedAt      DateTime?           @map("resolved_at")
+  resolvedById    String?             @map("resolved_by")
+  resolvedBy      User?               @relation("ResolvedOccurrences", fields: [resolvedById], references: [id])
+  resolutionNotes String?             @db.Text @map("resolution_notes")
+  
+  // Metadata
+  tags            String[]
+  isFlagged       Boolean             @default(false) @map("is_flagged")
+  flagReason      String?             @db.Text @map("flag_reason")
+  
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @updatedAt @map("updated_at")
+  
+  // Relations
+  media           OccurrenceMedia[]
+  objections      OccurrenceObjection[]
+  auditLog        OccurrenceAuditLog[]
+  
+  @@map("occurrences")
+}
+
+model OccurrenceMedia {
+  id            String      @id @default(uuid())
+  occurrenceId  String      @map("occurrence_id")
+  occurrence    Occurrence  @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+  
+  mediaType     String      @map("media_type") // 'PHOTO', 'VIDEO', 'AUDIO', 'DOCUMENT'
+  fileUrl       String      @db.Text @map("file_url")
+  thumbnailUrl  String?     @db.Text @map("thumbnail_url")
+  fileSize      Int?        @map("file_size")
+  mimeType      String?     @db.VarChar(100) @map("mime_type")
+  duration      Int?        // For audio/video in seconds
+  
+  uploadedById  String?     @map("uploaded_by")
+  uploadedBy    User?       @relation("UploadedOccurrenceMedia", fields: [uploadedById], references: [id])
+  uploadedAt    DateTime    @default(now()) @map("uploaded_at")
+  
+  description   String?     @db.Text
+  metadata      Json?
+  
+  @@map("occurrence_media")
+}
+
+model OccurrenceObjection {
+  id                String          @id @default(uuid())
+  occurrenceId      String          @map("occurrence_id")
+  occurrence        Occurrence      @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+  
+  objectorId        String          @map("objector_id")
+  objector          User            @relation("FiledObjections", fields: [objectorId], references: [id])
+  objectionText     String          @db.Text @map("objection_text")
+  supportingEvidence Json?          @map("supporting_evidence")
+  
+  status            ObjectionStatus @default(PENDING)
+  
+  reviewedById      String?         @map("reviewed_by")
+  reviewedBy        User?           @relation("ReviewedObjections", fields: [reviewedById], references: [id])
+  reviewedAt        DateTime?       @map("reviewed_at")
+  reviewNotes       String?         @db.Text @map("review_notes")
+  outcome           String?         @db.VarChar(50)
+  
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+  
+  @@map("occurrence_objections")
+}
+
+model OccurrenceAuditLog {
+  id            String      @id @default(uuid())
+  occurrenceId  String      @map("occurrence_id")
+  occurrence    Occurrence  @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+  
+  action        String      @db.VarChar(50)
+  actorId       String?     @map("actor_id")
+  actor         User?       @relation("OccurrenceAuditActions", fields: [actorId], references: [id])
+  changes       Json?
+  notes         String?     @db.Text
+  
+  createdAt     DateTime    @default(now()) @map("created_at")
+  
+  @@map("occurrence_audit_log")
+}
+

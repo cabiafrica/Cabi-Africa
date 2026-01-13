@@ -6,11 +6,11 @@ class WithdrawalRequestSheet extends StatefulWidget {
   final Function(double) onConfirm;
 
   const WithdrawalRequestSheet({
-    Key? key,
+    super.key,
     required this.availableBalance,
     required this.payoutMethodDisplay,
     required this.onConfirm,
-  }) : super(key: key);
+  });
 
   @override
   State<WithdrawalRequestSheet> createState() => _WithdrawalRequestSheetState();

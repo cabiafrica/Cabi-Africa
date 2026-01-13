@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class UserService {
@@ -7,7 +8,7 @@ class UserService {
   Future<Map<String, dynamic>> getUserProfile() async {
     // In a real app, this would fetch the full user profile.
     // We simulate the backend randomly requiring a check.
-    print("Checking user profile for biometric requirement...");
+    debugPrint("Checking user profile for biometric requirement...");
     await Future.delayed(const Duration(seconds: 1));
     return {
       'userId': 'driver-123',
@@ -26,7 +27,7 @@ class UserService {
     if (response.statusCode != 200) {
       throw const HttpException('Failed to confirm biometric verification.');
     }
-    print("Biometric success posted to backend.");
+    debugPrint("Biometric success posted to backend.");
   }
 
   Future<void> postBiometricFailure() async {
@@ -39,6 +40,7 @@ class UserService {
     if (response.statusCode != 200) {
       throw const HttpException('Failed to report biometric failure.');
     }
-    print("Biometric failure posted to backend, user should be suspended.");
+    debugPrint(
+        "Biometric failure posted to backend, user should be suspended.");
   }
 }

@@ -4,61 +4,101 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import MainLayout from '../../components/layout/MainLayout';
-import { getPostBySlug, getAllPosts, BlogPost } from '../../../backend/services/cms';
+import Sidebar from '../../components/blog/sidebar/Sidebar';
+import AppSidebar from '../../components/blog/sidebar/AppSidebar';
+import { getPostBySlug, getAllPosts, getAllCategories, BlogPost, BlogPostSummary } from '@/backend/services/cms';
 
 interface BlogPostPageProps {
     post: BlogPost;
+    recentPosts: BlogPostSummary[];
+    categories: string[];
 }
 
-export default function BlogPostPage({ post }: BlogPostPageProps) {
+export default function BlogPostPage({ post, recentPosts, categories }: BlogPostPageProps) {
     const router = useRouter();
 
     if (router.isFallback) {
-        return <div>Loading...</div>;
+        return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
     }
 
     return (
-        <MainLayout title={`${post.title} - Cabi Blog`} description={post.excerpt}>
+        <MainLayout title={`${post.title} - Cabi Blog`} description={post.summary}>
             <Head>
                 <meta property="og:title" content={post.title} />
-                <meta property="og:description" content={post.excerpt} />
-                {post.coverImage && <meta property="og:image" content={post.coverImage} />}
+                <meta property="og:description" content={post.summary} />
+                {post.imageUrl && <meta property="og:image" content={post.imageUrl} />}
             </Head>
 
-            <div className="bg-white dark:bg-slate-900 py-16 px-6 lg:px-8">
-                <div className="mx-auto max-w-3xl text-base leading-7 text-gray-700 dark:text-gray-300">
-                    <Link href="/blog" className="text-base font-semibold leading-7 text-indigo-600 hover:text-indigo-500 mb-8 inline-block">
-                        &larr; Back to Blog
-                    </Link>
+            <div className="bg-gray-50 dark:bg-slate-900 py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-[1600px]">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
-                    <p className="text-base font-semibold leading-7 text-indigo-600">{post.category}</p>
-                    <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">{post.title}</h1>
-
-                    <div className="mt-6 flex items-center gap-x-4 border-b border-gray-200 dark:border-gray-700 pb-8 mb-8">
-                        <div className="text-sm leading-6">
-                            <p className="font-semibold text-gray-900 dark:text-white">
-                                {post.author}
-                            </p>
-                            <p className="text-gray-600 dark:text-gray-400">
-                                {new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} · {post.readTime}
-                            </p>
+                        {/* LEFT: Blog Sidebar (Hidden on mobile/tablet, shown on lg) */}
+                        <div className="hidden lg:block lg:col-span-3">
+                            <div className="sticky top-24 h-fit overflow-y-auto max-h-[calc(100vh-8rem)] pr-2 scrollbar-hide">
+                                <Sidebar recentPosts={recentPosts} categories={categories} />
+                            </div>
                         </div>
+
+                        {/* CENTER: Main Content Area */}
+                        <div className="lg:col-span-6 w-full">
+                            <article className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm p-6 md:p-10 prose dark:prose-invert prose-lg max-w-none">
+                                <Link href="/blog" className="no-underline text-sm font-semibold leading-7 text-indigo-600 hover:text-indigo-500 mb-6 inline-flex items-center gap-1">
+                                    &larr; Back to Blog
+                                </Link>
+
+                                <div className="mb-8 border-b border-gray-100 dark:border-gray-700 pb-8">
+                                    <span className="inline-flex items-center rounded-md bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-1 text-xs font-semibold text-indigo-700 dark:text-indigo-300 mb-4">
+                                        {post.category || 'General'}
+                                    </span>
+                                    <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-6 leading-tight">{post.title}</h1>
+
+                                    <div className="flex items-center gap-x-4">
+                                        {/* Author avatar placeholder */}
+                                        <div className="h-12 w-12 rounded-full bg-gradient-to-tr from-indigo-400 to-purple-500 flex items-center justify-center font-bold text-white text-lg shadow-sm">
+                                            {post.authorName?.charAt(0)}
+                                        </div>
+                                        <div className="text-sm leading-6">
+                                            <p className="font-bold text-gray-900 dark:text-white m-0">
+                                                {post.authorName}
+                                            </p>
+                                            <p className="text-gray-500 dark:text-gray-400 m-0">
+                                                {new Date(post.publishedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                                                {post.readTime && <> · <span className="text-gray-400">{post.readTime}</span></>}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {post.imageUrl && (
+                                    <figure className="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg mb-10 not-prose bg-gray-100 dark:bg-slate-700">
+                                        <Image
+                                            src={post.imageUrl}
+                                            alt={post.title}
+                                            fill
+                                            className="object-cover transition-transform hover:scale-105 duration-700"
+                                            priority
+                                        />
+                                    </figure>
+                                )}
+
+                                <div className="prose-headings:text-gray-900 dark:prose-headings:text-white prose-a:text-indigo-600 dark:prose-a:text-indigo-400" dangerouslySetInnerHTML={{ __html: post.content }} />
+                            </article>
+                        </div>
+
+                        {/* RIGHT: App Sidebar */}
+                        <div className="lg:col-span-3">
+                            <div className="sticky top-24 h-fit">
+                                <AppSidebar />
+
+                                {/* Mobile-only Blog Sidebar Items (stacked below app sidebar on mobile) */}
+                                <div className="lg:hidden mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+                                    <Sidebar recentPosts={recentPosts} categories={categories} />
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-
-                    {post.coverImage && (
-                        <div className="relative w-full h-96 mb-10 rounded-2xl overflow-hidden shadow-lg">
-                            <Image
-                                src={post.coverImage}
-                                alt={post.title}
-                                fill
-                                className="object-cover"
-                                priority
-                            />
-                        </div>
-                    )}
-
-                    <div className="blog-content prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: post.content }} />
-
                 </div>
             </div>
         </MainLayout>
@@ -67,18 +107,23 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const posts = await getAllPosts();
+    // Assuming slug is optional in mock, fallback to ID if no slug.
+    // In real app, make sure slug is always present.
     const paths = posts.map((post) => ({
-        params: { slug: post.slug },
+        params: { slug: post.id }, // Using ID as slug for now based on previous decisions
     }));
 
     return {
         paths,
-        fallback: false,
+        fallback: true, // Enable fallback for dynamic/new posts
     };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-    const post = await getPostBySlug(params?.slug as string);
+    const slug = params?.slug as string;
+    const post = await getPostBySlug(slug);
+    const recentPosts = await getAllPosts(); // Mock: fetch all as recent
+    const categories = await getAllCategories();
 
     if (!post) {
         return {
@@ -89,6 +134,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     return {
         props: {
             post,
+            recentPosts,
+            categories,
         },
         revalidate: 60,
     };

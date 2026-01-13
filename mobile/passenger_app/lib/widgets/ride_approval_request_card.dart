@@ -9,14 +9,14 @@ class RideApprovalRequestCard extends StatelessWidget {
   final VoidCallback onDeny;
 
   const RideApprovalRequestCard({
-    Key? key,
+    super.key,
     required this.requesterName,
     required this.pickupLocation,
     required this.destinationLocation,
     required this.estimateFare,
     required this.onApprove,
     required this.onDeny,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

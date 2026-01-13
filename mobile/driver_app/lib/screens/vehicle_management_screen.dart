@@ -35,13 +35,13 @@ class VehicleService {
 
   Future<void> setActiveVehicle(String vehicleId) async {
     await Future.delayed(const Duration(milliseconds: 400));
-    print('Setting vehicle $vehicleId as active.');
+    debugPrint('Setting vehicle $vehicleId as active.');
     // In a real app, this would be a PUT request to the vehicle-service
   }
 
   Future<void> deleteVehicle(String vehicleId) async {
     await Future.delayed(const Duration(milliseconds: 500));
-    print('Deleting vehicle: $vehicleId');
+    debugPrint('Deleting vehicle: $vehicleId');
   }
 }
 
@@ -73,6 +73,9 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
     await _service.setActiveVehicle(vehicleId);
     // Refresh the list to show the change
     _refreshVehicles();
+
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Active vehicle has been updated.')),
     );
@@ -94,9 +97,13 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
         ],
       ),
     );
+
     if (confirm == true) {
       await _service.deleteVehicle(vehicleId);
       _refreshVehicles();
+
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Vehicle deleted successfully.')),
       );

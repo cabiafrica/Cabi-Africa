@@ -17,14 +17,14 @@ class UserService {
     required String phone,
   }) async {
     await Future.delayed(const Duration(seconds: 1));
-    print('Updating profile: $fullName, $phone');
+    debugPrint('Updating profile: $fullName, $phone');
     return true;
   }
 
   Future<void> uploadProfilePicture() async {
     // In a real app, this would use image_picker and http to upload a file.
     await Future.delayed(const Duration(seconds: 2));
-    print('Uploading new profile picture...');
+    debugPrint('Uploading new profile picture...');
   }
 }
 
@@ -63,6 +63,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         phone: _phoneController.text,
       );
       setState(() => _isLoading = false);
+
+      if (!mounted) return;
 
       if (success) {
         Navigator.of(context).pop();

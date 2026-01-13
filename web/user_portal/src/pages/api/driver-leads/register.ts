@@ -1,16 +1,15 @@
+
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { prisma } from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
 
 interface RegistrationRequest {
     firstName: string;
     lastName: string;
     email: string;
     phone: string;
-    dateOfBirth: string;
-    street: string;
     city: string;
-    county: string;
     vehicleType: string;
-    vehicleMake?: string;
     vehicleModel?: string;
     vehicleYear?: number;
     licensePlate: string;
@@ -107,9 +106,9 @@ export default async function handler(
         }
 
         // Generate mock IDs
-        const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        const paymentIntentId = `pi_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        const clientSecret = `${paymentIntentId}_secret_${Math.random().toString(36).substr(2, 16)}`;
+        const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)} `;
+        const paymentIntentId = `pi_${Date.now()}_${Math.random().toString(36).substr(2, 9)} `;
+        const clientSecret = `${paymentIntentId}_secret_${Math.random().toString(36).substr(2, 16)} `;
 
         // Add email to "database"
         existingEmails.add(data.email.toLowerCase());
@@ -117,7 +116,7 @@ export default async function handler(
         // Log registration (in production, this would go to database)
         console.log('✅ New driver registration:', {
             userId,
-            name: `${data.firstName} ${data.lastName}`,
+            name: `${data.firstName} ${data.lastName} `,
             email: data.email,
             phone: data.phone,
             city: data.city,

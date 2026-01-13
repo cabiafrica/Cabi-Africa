@@ -5,10 +5,10 @@ class TeenSafetyDashboard extends StatelessWidget {
   final bool isTripActive;
 
   const TeenSafetyDashboard({
-    Key? key,
+    super.key,
     required this.guardianName,
     required this.isTripActive,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

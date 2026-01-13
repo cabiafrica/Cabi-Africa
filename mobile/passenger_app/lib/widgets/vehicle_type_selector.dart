@@ -26,11 +26,11 @@ class VehicleTypeSelector extends StatelessWidget {
   final Function(String) onVehicleTypeSelected;
 
   const VehicleTypeSelector({
-    Key? key,
+    super.key,
     required this.vehicleTypes,
     required this.selectedVehicleTypeId,
     required this.onVehicleTypeSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +157,7 @@ class VehicleTypeSelector extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '\$${vehicleType.estimatedFare.toStringAsFixed(2)}',
+                              'KES ${vehicleType.estimatedFare.toStringAsFixed(2)}',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -193,7 +193,7 @@ class VehicleTypeSelector extends StatelessWidget {
 
 // Example usage with mock data
 class VehicleTypeSelectorExample extends StatefulWidget {
-  const VehicleTypeSelectorExample({Key? key}) : super(key: key);
+  const VehicleTypeSelectorExample({super.key});
 
   @override
   State<VehicleTypeSelectorExample> createState() =>

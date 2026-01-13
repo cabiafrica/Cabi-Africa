@@ -30,15 +30,19 @@ class InTripPanel extends StatelessWidget {
       try {
         await rideService.completeTrip(rideData['rideId']);
         activeRideProvider.updateRideStatus('COMPLETED');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content:
-                  Text('Trip completed. Waiting for passenger payment...')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content:
+                    Text('Trip completed. Waiting for passenger payment...')),
+          );
+        }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to complete trip: $e')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to complete trip: $e')),
+          );
+        }
       }
     }
 
@@ -68,9 +72,11 @@ class InTripPanel extends StatelessWidget {
       var locationStatus = await Permission.location.request();
 
       if (microphoneStatus.isDenied || locationStatus.isDenied) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-                'Microphone and Location permissions are required for SOS.')));
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text(
+                  'Microphone and Location permissions are required for SOS.')));
+        }
         return;
       }
 
@@ -83,15 +89,14 @@ class InTripPanel extends StatelessWidget {
           'lng': position.longitude,
         });
 
-        // This would be where the audio streaming logic is initiated
-        // final audioStream = await AudioStreamService.instance.startStreaming();
-        // final channel = sosService.connectAudioStream(rideData['rideId']);
-        // audioStream.listen((data) => channel.sink.add(data));
+        // ...
 
         sosProvider.activateSOS();
       } catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('SOS Activation Failed: $e')));
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('SOS Activation Failed: $e')));
+        }
       }
     }
 

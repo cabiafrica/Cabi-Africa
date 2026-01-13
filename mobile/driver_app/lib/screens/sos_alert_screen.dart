@@ -9,7 +9,7 @@ class SosAlertScreen extends StatelessWidget {
     // Implement navigation logic (e.g., launch Google Maps)
     final lat = alertData['lat'];
     final lng = alertData['lng'];
-    print('Navigating to $lat, $lng');
+    debugPrint('Navigating to $lat, $lng');
 
     ScaffoldMessenger.of(
       context,

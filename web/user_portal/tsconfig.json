@@ -52,7 +52,6 @@
     "**/*.spec.ts",
     "**/*.test.ts",
     "__e2e__",
-    "backend/src/**/*",
-    "src/pages/api/**/*"
+    "backend/src/**/*"
   ]
 }

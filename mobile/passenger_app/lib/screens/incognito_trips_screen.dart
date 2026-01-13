@@ -17,14 +17,14 @@ class _IncognitoTripsScreenState extends State<IncognitoTripsScreen> {
       'date': DateTime.now().subtract(const Duration(days: 2)),
       'pickup': 'Confidential Location A',
       'dropoff': 'Confidential Location B',
-      'fare': 28.50,
+      'fare': 2850.00,
     },
     {
       'id': 'trip_inc_2',
       'date': DateTime.now().subtract(const Duration(days: 5)),
       'pickup': 'Private Address',
       'dropoff': 'Undisclosed Destination',
-      'fare': 42.00,
+      'fare': 4200.00,
     },
   ];
 
@@ -216,7 +216,7 @@ class _IncognitoTripsScreenState extends State<IncognitoTripsScreen> {
                     style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
                   ),
                   trailing: Text(
-                    '\$${trip['fare'].toStringAsFixed(2)}',
+                    'KES ${trip['fare'].toStringAsFixed(2)}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

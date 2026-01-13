@@ -33,13 +33,18 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       try {
-        final token = await _authService.verifyOtp(
+        final result = await _authService.verifyOtp(
           phone: widget.phone,
           otp: _otpController.text,
         );
         // Use Provider to update auth state and trigger navigation
-        if (mounted) {
-          Provider.of<AuthProvider>(context, listen: false).login(token);
+        if (mounted && result.isSignedIn) {
+          Provider.of<AuthProvider>(context, listen: false)
+              .login(result.token!, result.user);
+        } else if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result.error ?? 'Invalid OTP')),
+          );
         }
       } catch (e) {
         if (mounted) {
@@ -47,7 +52,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             SnackBar(content: Text('OTP Verification Failed: $e')),
           );
         }
-        setState(() => _isLoading = false);
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
       }
     }
   }

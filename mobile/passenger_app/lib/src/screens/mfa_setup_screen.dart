@@ -4,8 +4,10 @@ import 'dart:convert';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class MfaSetupScreen extends StatefulWidget {
+  const MfaSetupScreen({super.key});
+
   @override
-  _MfaSetupScreenState createState() => _MfaSetupScreenState();
+  State<MfaSetupScreen> createState() => _MfaSetupScreenState();
 }
 
 class _MfaSetupScreenState extends State<MfaSetupScreen> {
@@ -65,61 +67,62 @@ class _MfaSetupScreenState extends State<MfaSetupScreen> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : _errorMessage.isNotEmpty
-          ? Center(
-              child: Text(_errorMessage, style: TextStyle(color: Colors.red)),
-            )
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    '1. Scan this QR code with your authenticator app (e.g., Google Authenticator).',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  SizedBox(height: 16),
-                  if (_qrCodeDataUrl != null)
-                    Container(
-                      color: Colors.white,
-                      padding: EdgeInsets.all(10),
-                      child: QrImageView(
-                        data: _qrCodeDataUrl!,
-                        version: QrVersions.auto,
-                        size: 200.0,
+              ? Center(
+                  child:
+                      Text(_errorMessage, style: TextStyle(color: Colors.red)),
+                )
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        '1. Scan this QR code with your authenticator app (e.g., Google Authenticator).',
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
-                    ),
-                  SizedBox(height: 16),
-                  Text('Or manually enter this secret key:'),
-                  SizedBox(height: 8),
-                  SelectableText(
-                    _secret ?? '',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'monospace',
-                    ),
+                      SizedBox(height: 16),
+                      if (_qrCodeDataUrl != null)
+                        Container(
+                          color: Colors.white,
+                          padding: EdgeInsets.all(10),
+                          child: QrImageView(
+                            data: _qrCodeDataUrl!,
+                            version: QrVersions.auto,
+                            size: 200.0,
+                          ),
+                        ),
+                      SizedBox(height: 16),
+                      Text('Or manually enter this secret key:'),
+                      SizedBox(height: 8),
+                      SelectableText(
+                        _secret ?? '',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'monospace',
+                        ),
+                      ),
+                      SizedBox(height: 24),
+                      Text(
+                        '2. Enter the 6-digit code from your app to verify.',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      SizedBox(height: 8),
+                      TextField(
+                        controller: _mfaCodeController,
+                        decoration: InputDecoration(
+                          labelText: 'MFA Code',
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                      SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: _verifyMfa,
+                        child: Text('Verify and Enable MFA'),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 24),
-                  Text(
-                    '2. Enter the 6-digit code from your app to verify.',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  SizedBox(height: 8),
-                  TextField(
-                    controller: _mfaCodeController,
-                    decoration: InputDecoration(
-                      labelText: 'MFA Code',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                  SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _verifyMfa,
-                    child: Text('Verify and Enable MFA'),
-                  ),
-                ],
-              ),
-            ),
+                ),
     );
   }
 }

@@ -30,24 +30,26 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
 
     // Mock API call for upload
     await Future.delayed(const Duration(seconds: 3));
-    print('Uploading image: ${_newImageFile!.path}');
+    debugPrint('Uploading image: ${_newImageFile!.path}');
 
     // On success:
-    setState(() {
-      // In a real app, this URL would come from the API response
-      _currentImageUrl = _newImageFile!.path;
-      _newImageFile = null;
-      _isUploading = false;
-    });
+    if (mounted) {
+      setState(() {
+        // In a real app, this URL would come from the API response
+        _currentImageUrl = _newImageFile!.path;
+        _newImageFile = null;
+        _isUploading = false;
+      });
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Profile picture updated!')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Profile picture updated!')));
+    }
   }
 
   void _removeImage() {
     // Mock API call for removal
-    print('Removing profile picture.');
+    debugPrint('Removing profile picture.');
     setState(() {
       _currentImageUrl = null;
       _newImageFile = null;
@@ -70,9 +72,8 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
               backgroundImage: _newImageFile != null
                   ? FileImage(_newImageFile!)
                   : (_currentImageUrl != null
-                            ? NetworkImage(_currentImageUrl!)
-                            : null)
-                        as ImageProvider,
+                      ? NetworkImage(_currentImageUrl!)
+                      : null) as ImageProvider,
               child: _newImageFile == null && _currentImageUrl == null
                   ? const Icon(Icons.person, size: 80)
                   : null,

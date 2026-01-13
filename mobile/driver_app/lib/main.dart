@@ -1,13 +1,27 @@
+import 'package:flutter/material.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'screens/login_screen.dart';
-import 'package:flutter/material.dart';
+
+import 'package:driver_app/screens/home_screen.dart';
+import 'package:driver_app/screens/dashboard_screen.dart';
+import 'package:driver_app/screens/profile_screen.dart';
+import 'package:driver_app/screens/settings_screen.dart';
+import 'package:driver_app/screens/wallet_screen.dart';
+import 'package:driver_app/screens/vehicle_list_screen.dart';
+import 'package:driver_app/screens/document_history_screen.dart';
+import 'package:driver_app/screens/earnings_goal_screen.dart';
+import 'package:driver_app/screens/my_organization_screen.dart';
+import 'package:driver_app/screens/referral_program_screen.dart';
+import 'package:driver_app/screens/splash_screen.dart';
+import 'package:driver_app/screens/trip_in_progress_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart' as legacy_provider;
 
 import 'config/amplifyconfiguration.dart';
 import 'theme/app_theme.dart';
 import 'providers/theme_provider.dart';
+import 'providers/ride_request_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +31,8 @@ Future<void> main() async {
     safePrint(
       'Amplify was already configured. Looks like app restarted on hot reload.',
     );
+  } catch (e) {
+    safePrint('An error occurred configuring Amplify: $e');
   }
   runApp(const ProviderScope(child: CabiDriverApp()));
 }
@@ -37,12 +53,34 @@ class CabiDriverApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
 
-    return MaterialApp(
-      title: 'Cabi Driver',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode,
-      home: const LoginScreen(),
+    return legacy_provider.MultiProvider(
+      providers: [
+        legacy_provider.ChangeNotifierProvider(
+            create: (_) => RideRequestProvider()),
+      ],
+      child: MaterialApp(
+        title: 'Cabi Africa',
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: themeMode,
+        home: const SplashScreen(),
+        routes: {
+          '/home': (context) => const HomeScreen(),
+          '/dashboard': (context) => const DashboardScreen(),
+          '/profile': (context) =>
+              const ProfileScreen(), // Ensure this file is imported
+          '/settings': (context) => const SettingsScreen(),
+          '/wallet': (context) => const WalletScreen(),
+          '/vehicles': (context) => const VehicleListScreen(),
+          '/document_history': (context) => const DocumentHistoryScreen(
+              docType:
+                  'All'), // Requires args usually, but handling basic route
+          '/earnings_goal': (context) => const EarningsGoalScreen(),
+          '/my_organization': (context) => const MyOrganizationScreen(),
+          '/referral_program': (context) => const ReferralProgramScreen(),
+          '/trip_in_progress': (context) => const TripInProgressScreen(),
+        },
+      ),
     );
   }
 }

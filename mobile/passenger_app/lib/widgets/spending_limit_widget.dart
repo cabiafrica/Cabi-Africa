@@ -7,12 +7,12 @@ class SpendingLimitWidget extends StatefulWidget {
   final ValueChanged<double?> onLimitChanged;
 
   const SpendingLimitWidget({
-    Key? key,
+    super.key,
     required this.memberName,
     required this.currentLimit,
     required this.currentSpending,
     required this.onLimitChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<SpendingLimitWidget> createState() => _SpendingLimitWidgetState();
@@ -107,7 +107,7 @@ class _SpendingLimitWidgetState extends State<SpendingLimitWidget> {
                     const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
                   labelText: 'Monthly Limit Amount',
-                  prefixText: '\$ ',
+                  prefixText: 'KES ',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -133,7 +133,7 @@ class _SpendingLimitWidgetState extends State<SpendingLimitWidget> {
                 children: [
                   const Text('Spent this month:'),
                   Text(
-                    '\$${widget.currentSpending.toStringAsFixed(2)}',
+                    'KES ${widget.currentSpending.toStringAsFixed(2)}',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],

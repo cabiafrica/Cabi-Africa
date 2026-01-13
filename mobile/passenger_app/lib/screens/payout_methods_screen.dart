@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/ride_service.dart';
 
 class PayoutMethodsScreen extends StatefulWidget {
-  const PayoutMethodsScreen({Key? key}) : super(key: key);
+  const PayoutMethodsScreen({super.key});
 
   @override
   State<PayoutMethodsScreen> createState() => _PayoutMethodsScreenState();
@@ -57,10 +57,12 @@ class _PayoutMethodsScreenState extends State<PayoutMethodsScreen> {
                 'bank',
                 'Equity Bank: ***5678',
               );
-              Navigator.pop(context);
-              setState(() {
-                _loadMethods();
-              });
+              if (context.mounted) {
+                Navigator.pop(context);
+                setState(() {
+                  _loadMethods();
+                });
+              }
             },
             child: const Text('Add'),
           ),

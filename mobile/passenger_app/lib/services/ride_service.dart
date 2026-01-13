@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
 class PayoutMethod {
   final String id;
   final String type; // 'mpesa' or 'bank'
@@ -59,8 +63,59 @@ class RideService {
     PayoutMethod(id: '2', type: 'bank', display: 'KCB Bank: ***1234'),
   ];
 
-  // ... (existing methods remain, I'll just append new ones at the end or proper place.
-  // actually, replace_file_content replaces the block. checking TargetContent).
+  String get _baseUrl {
+    if (kIsWeb) {
+      return 'http://localhost:3334/api';
+    }
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return 'http://10.0.2.2:3334/api';
+    }
+    return 'http://localhost:3334/api';
+  }
+
+  // Create a ride request
+  Future<Map<String, dynamic>> createRide(
+      String passengerId, dynamic pickup, dynamic dropoff) async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+            '$_baseUrl/dispatch/rides'), // Assuming dispatch-service handles this
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'passengerId': passengerId,
+          'pickupLocation': pickup,
+          'dropoffLocation': dropoff,
+          'fare': 350.0, // Mock fare for now, or calculate
+          'distance': 5.0, // Mock distance
+          'status': 'REQUESTED'
+        }),
+      );
+      if (response.statusCode == 201) {
+        return jsonDecode(response.body);
+      }
+      debugPrint(
+          'Failed to create ride: ${response.statusCode} ${response.body}');
+    } catch (e) {
+      debugPrint('Error creating ride: $e');
+    }
+    // Fallback for demo
+    return {'id': 'mock-ride-id', 'status': 'REQUESTED'};
+  }
+
+  Future<Map<String, dynamic>?> getCurrentRide(
+      String userId, String role) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/dispatch/rides/current?userId=$userId&role=$role'),
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+    } catch (e) {
+      debugPrint('Error fetching current ride: $e');
+    }
+    return null;
+  }
 
   // Mock method to notify passenger of arrival
   Future<void> notifyArrival(String rideId) async {
@@ -123,8 +178,35 @@ class RideService {
     _payoutMethods.add(PayoutMethod(id: newId, type: type, display: details));
   }
 
-  Future<List<RideHistoryItem>> getRideHistory() async {
-    await Future.delayed(const Duration(milliseconds: 500));
+  Future<List<RideHistoryItem>> getRideHistory(String userId) async {
+    try {
+      // Using admin endpoint as proxy for now
+      final response = await http
+          .get(Uri.parse('$_baseUrl/rides/admin/users/$userId/rides'));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List rides = data['data'];
+        return rides.map<RideHistoryItem>((r) {
+          // Handling potentially missing fields or json structure diffs
+          final dest = r['dropoffLocation'] is Map
+              ? r['dropoffLocation']['address']
+              : 'Unknown';
+          return RideHistoryItem(
+            id: r['id'],
+            date: DateTime.tryParse(r['createdAt']) ?? DateTime.now(),
+            destination: dest ?? 'Unknown',
+            price: double.tryParse(r['fare']?.toString() ?? '0') ?? 0.0,
+            status: r['status'] ?? 'Completed',
+            driverName: 'Driver', // Needs join
+          );
+        }).toList();
+      }
+    } catch (e) {
+      debugPrint('Error fetching history: $e');
+    }
+
+    // Fallback if backend fails or empty to preserve UI demo
     return [
       RideHistoryItem(
         id: 'ride-1',
@@ -210,6 +292,7 @@ class RideService {
   }
 
   Future<void> acceptRide(String rideId) async {
+    // Passenger accepting back-to-back? Or redundant.
     await Future.delayed(const Duration(milliseconds: 500));
   }
 

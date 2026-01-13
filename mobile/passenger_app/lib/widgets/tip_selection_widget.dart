@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class TipSelectionWidget extends StatefulWidget {
   final double fareAmount;
   final Function(double) onTipSelected;
-  
+
   const TipSelectionWidget({
-    super.key, 
+    super.key,
     required this.fareAmount,
     required this.onTipSelected,
   });
@@ -36,7 +36,7 @@ class _TipSelectionWidgetState extends State<TipSelectionWidget> {
           controller: controller,
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(
-            prefixText: '\$',
+            prefixText: 'KES ',
             labelText: 'Tip Amount',
           ),
         ),
@@ -77,7 +77,8 @@ class _TipSelectionWidgetState extends State<TipSelectionWidget> {
             children: [
               Icon(Icons.favorite, color: Colors.pink, size: 20),
               SizedBox(width: 8),
-              Text('Add a tip for your driver', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text('Add a tip for your driver',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             ],
           ),
           const SizedBox(height: 12),
@@ -119,14 +120,16 @@ class _TipSelectionWidgetState extends State<TipSelectionWidget> {
                   onPressed: _showCustomTipDialog,
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(
-                      color: _selectedOption == 'custom' ? Colors.blue : Colors.grey,
+                      color: _selectedOption == 'custom'
+                          ? Colors.blue
+                          : Colors.grey,
                       width: _selectedOption == 'custom' ? 2 : 1,
                     ),
                   ),
                   child: Text(
-                    _selectedOption == 'custom' 
-                      ? '\$${_selectedTip.toStringAsFixed(2)}' 
-                      : 'Custom',
+                    _selectedOption == 'custom'
+                        ? 'KES ${_selectedTip.toStringAsFixed(2)}'
+                        : 'Custom',
                   ),
                 ),
               ),
@@ -136,7 +139,8 @@ class _TipSelectionWidgetState extends State<TipSelectionWidget> {
                   onPressed: () => _selectTip('none', 0.0),
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(
-                      color: _selectedOption == 'none' ? Colors.blue : Colors.grey,
+                      color:
+                          _selectedOption == 'none' ? Colors.blue : Colors.grey,
                       width: _selectedOption == 'none' ? 2 : 1,
                     ),
                   ),
@@ -148,7 +152,7 @@ class _TipSelectionWidgetState extends State<TipSelectionWidget> {
           if (_selectedTip > 0) ...[
             const SizedBox(height: 8),
             Text(
-              'Total: \$${(widget.fareAmount + _selectedTip).toStringAsFixed(2)}',
+              'Total: KES ${(widget.fareAmount + _selectedTip).toStringAsFixed(2)}',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
           ],
@@ -196,7 +200,7 @@ class _TipButton extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              '\$${amount.toStringAsFixed(2)}',
+              'KES ${amount.toStringAsFixed(2)}',
               style: TextStyle(
                 fontSize: 12,
                 color: isSelected ? Colors.white70 : Colors.grey[600],

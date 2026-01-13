@@ -32,7 +32,7 @@ class LostItemService {
 
   Future<void> respondToReport(String ticketId, bool found) async {
     await Future.delayed(const Duration(milliseconds: 800));
-    print('Driver responded for ticket $ticketId. Found: $found');
+    debugPrint('Driver responded for ticket $ticketId. Found: $found');
     // In a real app, this would be a POST request to the support-service
   }
 }
@@ -58,6 +58,9 @@ class _LostItemResponseScreenState extends State<LostItemResponseScreen> {
 
   Future<void> _submitResponse(bool found) async {
     await _service.respondToReport(widget.ticketId, found);
+
+    if (!mounted) return;
+
     Navigator.of(context).pop(); // Go back after responding
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Thank you for your response.')),

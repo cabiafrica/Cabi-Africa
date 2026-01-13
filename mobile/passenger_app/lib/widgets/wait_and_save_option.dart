@@ -9,14 +9,14 @@ class WaitAndSaveOption extends StatelessWidget {
   final int extendedWaitMinutes;
 
   const WaitAndSaveOption({
-    Key? key,
+    super.key,
     required this.isSelected,
     required this.onTap,
     required this.standardFare,
     required this.discountedFare,
     required this.standardWaitMinutes,
     required this.extendedWaitMinutes,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +135,7 @@ class WaitAndSaveOption extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '\$${discountedFare.toStringAsFixed(2)}',
+                      'KES ${discountedFare.toStringAsFixed(2)}',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -143,7 +143,7 @@ class WaitAndSaveOption extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '\$${standardFare.toStringAsFixed(2)}',
+                      'KES ${standardFare.toStringAsFixed(2)}',
                       style: TextStyle(
                         fontSize: 14,
                         decoration: TextDecoration.lineThrough,
@@ -196,7 +196,7 @@ class WaitAndSaveOption extends StatelessWidget {
                   child: _DetailItem(
                     icon: Icons.savings_outlined,
                     label: 'You Save',
-                    value: '\$${savings.toStringAsFixed(2)}',
+                    value: 'KES ${savings.toStringAsFixed(2)}',
                     isSelected: isSelected,
                   ),
                 ),

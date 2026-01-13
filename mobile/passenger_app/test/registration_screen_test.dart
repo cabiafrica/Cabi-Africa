@@ -1,0 +1,106 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:passenger_app/screens/registration_screen.dart';
+import 'package:passenger_app/screens/otp_verification_screen.dart';
+import 'package:passenger_app/services/auth_service.dart';
+import 'package:core_ui/core_ui.dart';
+
+class MockAuthService extends Mock implements AuthService {}
+
+void main() {
+  late MockAuthService mockAuthService;
+
+  setUp(() {
+    mockAuthService = MockAuthService();
+  });
+
+  Widget createWidgetUnderTest() {
+    return MaterialApp(
+      home: RegistrationScreen(authService: mockAuthService),
+    );
+  }
+
+  testWidgets('validates empty fields', (tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+
+    await tester.tap(find.byType(PrimaryButton));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Please enter your name'), findsOneWidget);
+    expect(find.text('Please enter a valid email'), findsOneWidget);
+    expect(find.text('Please enter your phone number'), findsOneWidget);
+    expect(find.text('Password must be at least 8 characters long'),
+        findsOneWidget);
+  });
+
+  testWidgets('validates invalid phone and password', (tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+
+    await tester.enterText(find.byType(TextFormField).at(2), '123'); // Phone
+    await tester.enterText(
+        find.byType(TextFormField).at(3), 'password'); // Password (no numbers)
+
+    await tester.tap(find.byType(PrimaryButton));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Enter a valid Kenyan phone number'), findsOneWidget);
+    expect(
+        find.text('Password must contain letters and numbers'), findsOneWidget);
+  });
+
+  testWidgets('navigates to OtpVerificationScreen on successful registration',
+      (tester) async {
+    when(() => mockAuthService.register(
+              firstName: 'John',
+              lastName: 'Doe',
+              email: 'john@example.com',
+              phone: '0712345678',
+              password: 'Password123',
+              referralCode: '',
+            ))
+        .thenAnswer(
+            (_) async => AuthResult(isSignedIn: true, user: {'id': '1'}));
+
+    await tester.pumpWidget(createWidgetUnderTest());
+
+    await tester.enterText(find.byType(TextFormField).at(0), 'John Doe');
+    await tester.enterText(
+        find.byType(TextFormField).at(1), 'john@example.com');
+    await tester.enterText(find.byType(TextFormField).at(2), '0712345678');
+    await tester.enterText(find.byType(TextFormField).at(3), 'Password123');
+
+    await tester.tap(find.byType(PrimaryButton));
+    await tester.pump(); // Start loading
+    await tester.pump(const Duration(seconds: 1)); // Wait for register call
+
+    expect(find.byType(OtpVerificationScreen), findsOneWidget);
+  });
+
+  testWidgets('shows error message on failed registration', (tester) async {
+    when(() => mockAuthService.register(
+              firstName: 'John',
+              lastName: 'Doe',
+              email: 'john@example.com',
+              phone: '0712345678',
+              password: 'Password123',
+              referralCode: '',
+            ))
+        .thenAnswer((_) async =>
+            AuthResult(isSignedIn: false, error: 'Email already exists'));
+
+    await tester.pumpWidget(createWidgetUnderTest());
+
+    await tester.enterText(find.byType(TextFormField).at(0), 'John Doe');
+    await tester.enterText(
+        find.byType(TextFormField).at(1), 'john@example.com');
+    await tester.enterText(find.byType(TextFormField).at(2), '0712345678');
+    await tester.enterText(find.byType(TextFormField).at(3), 'Password123');
+
+    await tester.tap(find.byType(PrimaryButton));
+    await tester.pumpAndSettle(); // Wait for snackbar
+
+    expect(
+        find.text('Registration Failed: Email already exists'), findsOneWidget);
+  });
+}

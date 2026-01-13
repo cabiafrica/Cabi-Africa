@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart' as legacy_provider;
+import '../providers/auth_provider.dart';
+import '../providers/providers.dart';
 import '../services/ride_service.dart';
 
-class RideHistoryScreen extends StatefulWidget {
-  const RideHistoryScreen({Key? key}) : super(key: key);
+class RideHistoryScreen extends ConsumerStatefulWidget {
+  const RideHistoryScreen({super.key});
 
   @override
-  State<RideHistoryScreen> createState() => _RideHistoryScreenState();
+  ConsumerState<RideHistoryScreen> createState() => _RideHistoryScreenState();
 }
 
-class _RideHistoryScreenState extends State<RideHistoryScreen> {
-  final RideService _rideService = RideService();
+class _RideHistoryScreenState extends ConsumerState<RideHistoryScreen> {
   late Future<List<RideHistoryItem>> _historyFuture;
 
   @override
   void initState() {
     super.initState();
-    _historyFuture = _rideService.getRideHistory();
+    final rideService = ref.read(rideServiceProvider);
+    final authProvider =
+        legacy_provider.Provider.of<AuthProvider>(context, listen: false);
+    final userId = authProvider.userId ?? 'current-user-stub';
+    _historyFuture = rideService.getRideHistory(userId);
   }
 
   @override
@@ -89,7 +96,7 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
 class RideDetailsScreen extends StatelessWidget {
   final RideHistoryItem ride;
 
-  const RideDetailsScreen({Key? key, required this.ride}) : super(key: key);
+  const RideDetailsScreen({super.key, required this.ride});
 
   @override
   Widget build(BuildContext context) {

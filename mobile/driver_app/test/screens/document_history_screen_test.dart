@@ -53,7 +53,7 @@ void main() {
     when(
       () => mockHistoryService.fetchDocumentHistory(
         any(),
-        filter: HistoryFilterStatus.All,
+        filter: HistoryFilterStatus.all,
       ),
     ).thenAnswer((_) => Completer<List<DocumentSubmission>>().future);
 
@@ -69,7 +69,7 @@ void main() {
     when(
       () => mockHistoryService.fetchDocumentHistory(
         any(),
-        filter: HistoryFilterStatus.All,
+        filter: HistoryFilterStatus.all,
       ),
     ).thenThrow(Exception('Failed to load history'));
 
@@ -90,7 +90,7 @@ void main() {
     when(
       () => mockHistoryService.fetchDocumentHistory(
         any(),
-        filter: HistoryFilterStatus.All,
+        filter: HistoryFilterStatus.all,
       ),
     ).thenAnswer((_) async => []);
 
@@ -109,7 +109,7 @@ void main() {
     when(
       () => mockHistoryService.fetchDocumentHistory(
         any(),
-        filter: HistoryFilterStatus.All,
+        filter: HistoryFilterStatus.all,
       ),
     ).thenAnswer((_) async => mockHistory);
 
@@ -154,7 +154,7 @@ void main() {
     when(
       () => mockHistoryService.fetchDocumentHistory(
         any(),
-        filter: HistoryFilterStatus.All,
+        filter: HistoryFilterStatus.all,
       ),
     ).thenAnswer((_) async => mockHistory);
 
@@ -162,7 +162,7 @@ void main() {
     when(
       () => mockHistoryService.fetchDocumentHistory(
         any(),
-        filter: HistoryFilterStatus.Rejected,
+        filter: HistoryFilterStatus.rejected,
       ),
     ).thenAnswer((_) async => [mockHistory[1]]); // Only the rejected item
 
@@ -190,7 +190,7 @@ void main() {
     verify(
       () => mockHistoryService.fetchDocumentHistory(
         any(),
-        filter: HistoryFilterStatus.Rejected,
+        filter: HistoryFilterStatus.rejected,
       ),
     ).called(1);
   });

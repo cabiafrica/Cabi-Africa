@@ -9,14 +9,14 @@ class WhatsNewBanner extends StatefulWidget {
   final VoidCallback? onDismiss;
 
   const WhatsNewBanner({
-    Key? key,
+    super.key,
     this.title,
     this.description,
     this.imageUrl,
     this.actionUrl,
     this.onTap,
     this.onDismiss,
-  }) : super(key: key);
+  });
 
   @override
   State<WhatsNewBanner> createState() => _WhatsNewBannerState();

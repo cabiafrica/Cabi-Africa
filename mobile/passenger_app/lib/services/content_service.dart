@@ -12,15 +12,19 @@ class ContentService {
       {
         'id': 'post-1',
         'title': 'CABI Launches in Nairobi!',
-        'summary': 'We are excited to announce the official launch of our ride-hailing service in Nairobi. Learn more about our mission.',
-        'imageUrl': 'https://plus.unsplash.com/premium_photo-1683121710572-77236b9c391d?q=80&w=2070',
+        'summary':
+            'We are excited to announce the official launch of our ride-hailing service in Nairobi. Learn more about our mission.',
+        'imageUrl':
+            'https://plus.unsplash.com/premium_photo-1683121710572-77236b9c391d?q=80&w=2070',
         'publishedDate': '2024-05-20T10:00:00Z',
       },
       {
         'id': 'post-2',
-        'title': 'Understanding Your Earnings: A Guide to the MLM System',
-        'summary': 'Our unique MLM system is designed to help you earn more. This guide breaks down how commissions and bonuses work.',
-        'imageUrl': 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=1974',
+        'title': 'Understanding Your Earnings: A Guide to the Referral System',
+        'summary':
+            'Our unique Referral system is designed to help you earn more. This guide breaks down how commissions and bonuses work.',
+        'imageUrl':
+            'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=1974',
         'publishedDate': '2024-05-15T14:30:00Z',
       },
     ];
@@ -37,10 +41,11 @@ class ContentService {
       'title': 'CABI Launches in Nairobi!',
       'authorName': 'CABI Team',
       'publishedDate': '2024-05-20T10:00:00Z',
-      'imageUrl': 'https://plus.unsplash.com/premium_photo-1683121710572-77236b9c391d?q=80&w=2070',
+      'imageUrl':
+          'https://plus.unsplash.com/premium_photo-1683121710572-77236b9c391d?q=80&w=2070',
       'content': """
         <h1>Welcome to CABI!</h1>
-        <p>We are thrilled to bring our innovative ride-hailing platform to the vibrant city of Nairobi. Our mission is to provide safe, reliable, and affordable transportation while empowering our drivers through a unique multi-level marketing (MLM) structure.</p>
+        <p>We are thrilled to bring our innovative ride-hailing platform to the vibrant city of Nairobi. Our mission is to provide safe, reliable, and affordable transportation while empowering our drivers through a unique Referral Program structure.</p>
         <p>This is just the beginning of our journey, and we are excited to have you with us. Stay tuned for more updates!</p>
       """,
     };

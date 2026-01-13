@@ -1,3 +1,3 @@
-library core_location;
+library;
 
 export '../services/location_service.dart';

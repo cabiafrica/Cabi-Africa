@@ -9,12 +9,12 @@ class DriverDetailsPanel extends StatelessWidget {
   final String eta;
 
   const DriverDetailsPanel({
-    Key? key,
+    super.key,
     required this.driverName,
     required this.carModel,
     required this.licensePlate,
     required this.eta,
-  }) : super(key: key);
+  });
 
   Future<void> _handleSOS(BuildContext context) async {
     final bool? confirm = await showDialog<bool>(

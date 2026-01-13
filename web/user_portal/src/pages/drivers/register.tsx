@@ -2,74 +2,49 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
-import MainLayout from '@/src/components/layout/MainLayout';
+import { FaYoutube, FaLock, FaCreditCard, FaCheckCircle, FaUserPlus, FaBuilding } from 'react-icons/fa';
+import MainLayout from '@/components/layout/MainLayout';
+import { PaymentReceipt } from '@/components/payment/PaymentReceipt';
+import VideoEmbed from '@/components/VideoEmbed';
 
 interface FormData {
-  // Personal Information
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
-  dateOfBirth: string;
-
-  // Address
-  address: string;
   city: string;
-  county: string;
-
-  // Vehicle Information
   vehicleType: 'car' | 'motorcycle' | 'tuktuk' | '';
-  vehicleMake: string;
-  vehicleModel: string;
-  vehicleYear: string;
-  licensePlate: string;
-
-  // Documents
   nationalId: string;
-  drivingLicenseNumber: string;
-
-  // Referral
-  referralCode: string;
-
-  // Agreement
+  licenseExpiry: string;
   agreeToTerms: boolean;
+  referralCode?: string;
 }
 
 const REGISTRATION_FEE = 2000; // KES
 
 export default function DriverRegistrationPage() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0); // Start at Step 0 (Intro)
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
-    dateOfBirth: '',
-    address: '',
     city: '',
-    county: '',
     vehicleType: '',
-    vehicleMake: '',
-    vehicleModel: '',
-    vehicleYear: '',
-    licensePlate: '',
     nationalId: '',
-    drivingLicenseNumber: '',
-    referralCode: '',
+    licenseExpiry: '',
     agreeToTerms: false,
+    referralCode: '',
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Pre-fill referral code from URL query parameter
-  useEffect(() => {
-    if (router.query.ref) {
-      setFormData(prev => ({ ...prev, referralCode: router.query.ref as string }));
-    }
-  }, [router.query]);
+  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'completed'>('idle');
+  const [receiptNumber, setReceiptNumber] = useState('');
+  const [referralValidation, setReferralValidation] = useState<{ valid: boolean; referrerName?: string } | null>(null);
 
-  const totalSteps = 4;
+  const totalSteps = 3; // Intro (0) -> Info (1) -> Payment (2) -> Receipt (3)
 
   const validateStep = (step: number): boolean => {
     const newErrors: Partial<Record<keyof FormData, string>> = {};
@@ -80,22 +55,11 @@ export default function DriverRegistrationPage() {
       if (!formData.email.trim()) newErrors.email = 'Email is required';
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email format';
       if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
-      else if (!/^(\+254|0)[17]\d{8}$/.test(formData.phone)) newErrors.phone = 'Invalid Kenyan phone number';
-      if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
-    } else if (step === 2) {
-      if (!formData.address.trim()) newErrors.address = 'Address is required';
       if (!formData.city.trim()) newErrors.city = 'City is required';
-      if (!formData.county.trim()) newErrors.county = 'County is required';
-    } else if (step === 3) {
       if (!formData.vehicleType) newErrors.vehicleType = 'Vehicle type is required';
-      if (!formData.vehicleMake.trim()) newErrors.vehicleMake = 'Vehicle make is required';
-      if (!formData.vehicleModel.trim()) newErrors.vehicleModel = 'Vehicle model is required';
-      if (!formData.vehicleYear.trim()) newErrors.vehicleYear = 'Vehicle year is required';
-      if (!formData.licensePlate.trim()) newErrors.licensePlate = 'License plate is required';
-      if (!formData.nationalId.trim()) newErrors.nationalId = 'National ID is required';
-      if (!formData.drivingLicenseNumber.trim()) newErrors.drivingLicenseNumber = 'Driving license number is required';
-    } else if (step === 4) {
-      if (!formData.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms and conditions';
+      if (!formData.nationalId.trim()) newErrors.nationalId = 'National ID/Passport is required';
+      if (!formData.licenseExpiry) newErrors.licenseExpiry = 'License Expiry date is required';
+      if (!formData.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
     }
 
     setErrors(newErrors);
@@ -104,12 +68,17 @@ export default function DriverRegistrationPage() {
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+      if (currentStep === 1) {
+        // Skip validation check logic for payment step for now, just move next
+        setCurrentStep(prev => prev + 1);
+      } else {
+        setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+      }
     }
   };
 
   const handlePrevious = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
+    setCurrentStep(prev => Math.max(prev - 1, 0));
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -137,384 +106,191 @@ export default function DriverRegistrationPage() {
     setIsSubmitting(true);
 
     try {
-      // TODO: Integrate with backend API
-      // const response = await fetch('/api/driver-leads/register', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData),
-      // });
+      const response = await fetch('/api/driver-leads/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const result = await response.json();
 
-      // Redirect to payment page
-      router.push('/drivers/register/payment');
-    } catch (error) {
+      if (!response.ok) {
+        throw new Error(result.error || 'Registration failed');
+      }
+
+      // Redirect to dashboard with query param to simulate new applicant state
+      // Pass the userId if needed, or stick to the session/token flow
+      router.push('/drivers/dashboard?new_applicant=true');
+    } catch (error: any) {
       console.error('Registration error:', error);
-      alert('An error occurred during registration. Please try again.');
+      alert(error.message || 'An error occurred during registration. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const renderStepIndicator = () => (
-    <div className="mb-8">
-      <div className="flex items-center justify-between">
-        {[1, 2, 3, 4].map((step) => (
-          <div key={step} className="flex-1 flex items-center">
-            <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${step <= currentStep
-                ? 'bg-indigo-600 border-indigo-600 text-white'
-                : 'bg-white border-gray-300 text-gray-400'
-              }`}>
-              {step < currentStep ? (
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              ) : (
-                <span className="font-semibold">{step}</span>
-              )}
-            </div>
-            {step < 4 && (
-              <div className={`flex-1 h-1 mx-2 ${step < currentStep ? 'bg-indigo-600' : 'bg-gray-300'
-                }`} />
-            )}
-          </div>
-        ))}
+  const handlePayment = async () => {
+    setPaymentStatus('processing');
+    // Simulate API call
+    setTimeout(() => {
+      setPaymentStatus('completed');
+      setReceiptNumber(`CABI-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000)}`);
+      setCurrentStep(3);
+    }, 2000);
+  };
+
+  const renderIntroStep = () => (
+    <div className="space-y-8 animate-fade-in">
+      <div className="text-center space-y-4">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+          Welcome to the Future of Driving
+        </h2>
+        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          Watch this short video to learn how Cabi helps you earn more, drive safely, and build your own fleet.
+        </p>
       </div>
-      <div className="flex justify-between mt-2">
-        <span className={`text-sm ${currentStep >= 1 ? 'text-indigo-600 font-medium' : 'text-gray-500'}`}>Personal</span>
-        <span className={`text-sm ${currentStep >= 2 ? 'text-indigo-600 font-medium' : 'text-gray-500'}`}>Address</span>
-        <span className={`text-sm ${currentStep >= 3 ? 'text-indigo-600 font-medium' : 'text-gray-500'}`}>Vehicle</span>
-        <span className={`text-sm ${currentStep >= 4 ? 'text-indigo-600 font-medium' : 'text-gray-500'}`}>Review</span>
+
+      <VideoEmbed
+        videoId="dQw4w9WgXcQ"
+        title="Cabi Driver Introduction"
+        showChannelLink={true}
+        channelUrl="https://youtube.com/@cabi_education"
+      />
+
+      <div className="bg-indigo-50 dark:bg-indigo-900/10 p-6 rounded-xl border border-indigo-100 dark:border-indigo-800/30">
+        <h3 className="font-semibold text-indigo-900 dark:text-indigo-100 mb-2 text-center">Ready to get started?</h3>
+        <p className="text-indigo-700 dark:text-indigo-300 text-center mb-6 text-sm">
+          Complete the registration form to join our elite driver community.
+        </p>
+        <button
+          type="button"
+          onClick={handleNext}
+          className="w-full sm:w-auto mx-auto block px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none transition-all hover:translate-y-[-2px]"
+        >
+          Start Registration
+        </button>
       </div>
     </div>
   );
 
   const renderStep1 = () => (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Personal Information</h2>
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Basic Information</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            First Name *
-          </label>
-          <input
-            type="text"
-            id="firstName"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleInputChange}
-            className={`w-full px-4 py-3 rounded-lg border ${errors.firstName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
-          />
-          {errors.firstName && <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>}
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name *</label>
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              className={`w-full px-4 py-3 rounded-lg border ${errors.firstName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+            />
+            {errors.firstName && <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>}
+          </div>
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Name *</label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              className={`w-full px-4 py-3 rounded-lg border ${errors.lastName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+            />
+            {errors.lastName && <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>}
+          </div>
         </div>
 
         <div>
-          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Last Name *
-          </label>
-          <input
-            type="text"
-            id="lastName"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleInputChange}
-            className={`w-full px-4 py-3 rounded-lg border ${errors.lastName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
-          />
-          {errors.lastName && <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Email Address *
-          </label>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address *</label>
           <input
             type="email"
             id="email"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className={`w-full px-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
+            className={`w-full px-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
           />
           {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
         </div>
 
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Phone Number *
-          </label>
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number *</label>
           <input
             type="tel"
             id="phone"
             name="phone"
-            placeholder="+254712345678"
             value={formData.phone}
             onChange={handleInputChange}
-            className={`w-full px-4 py-3 rounded-lg border ${errors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
+            className={`w-full px-4 py-3 rounded-lg border ${errors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
           />
           {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
         </div>
 
-        <div>
-          <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Date of Birth *
-          </label>
-          <input
-            type="date"
-            id="dateOfBirth"
-            name="dateOfBirth"
-            value={formData.dateOfBirth}
-            onChange={handleInputChange}
-            className={`w-full px-4 py-3 rounded-lg border ${errors.dateOfBirth ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
-          />
-          {errors.dateOfBirth && <p className="mt-1 text-sm text-red-500">{errors.dateOfBirth}</p>}
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderStep2 = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Address Information</h2>
-
-      <div className="space-y-6">
-        <div>
-          <label htmlFor="address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Street Address *
-          </label>
-          <input
-            type="text"
-            id="address"
-            name="address"
-            value={formData.address}
-            onChange={handleInputChange}
-            className={`w-full px-4 py-3 rounded-lg border ${errors.address ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
-          />
-          {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address}</p>}
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              City *
-            </label>
+            <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">City *</label>
             <input
               type="text"
               id="city"
               name="city"
               value={formData.city}
               onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
+              className={`w-full px-4 py-3 rounded-lg border ${errors.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
             />
             {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city}</p>}
           </div>
-
           <div>
-            <label htmlFor="county" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              County *
-            </label>
+            <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vehicle Type *</label>
             <select
-              id="county"
-              name="county"
-              value={formData.county}
+              id="vehicleType"
+              name="vehicleType"
+              value={formData.vehicleType}
               onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.county ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
+              className={`w-full px-4 py-3 rounded-lg border ${errors.vehicleType ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
             >
-              <option value="">Select County</option>
-              <option value="Nairobi">Nairobi</option>
-              <option value="Mombasa">Mombasa</option>
-              <option value="Kisumu">Kisumu</option>
-              <option value="Nakuru">Nakuru</option>
-              <option value="Kiambu">Kiambu</option>
-              <option value="Machakos">Machakos</option>
-              <option value="Kajiado">Kajiado</option>
+              <option value="">Select Type</option>
+              <option value="car">Car</option>
+              <option value="motorcycle">Motorcycle</option>
+              <option value="tuktuk">Tuk Tuk</option>
             </select>
-            {errors.county && <p className="mt-1 text-sm text-red-500">{errors.county}</p>}
+            {errors.vehicleType && <p className="mt-1 text-sm text-red-500">{errors.vehicleType}</p>}
           </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderStep3 = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Vehicle & Documents</h2>
-
-      <div className="space-y-6">
-        <div>
-          <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Vehicle Type *
-          </label>
-          <select
-            id="vehicleType"
-            name="vehicleType"
-            value={formData.vehicleType}
-            onChange={handleInputChange}
-            className={`w-full px-4 py-3 rounded-lg border ${errors.vehicleType ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
-          >
-            <option value="">Select Vehicle Type</option>
-            <option value="car">Car</option>
-            <option value="motorcycle">Motorcycle (Boda Boda)</option>
-            <option value="tuktuk">Tuk Tuk</option>
-          </select>
-          {errors.vehicleType && <p className="mt-1 text-sm text-red-500">{errors.vehicleType}</p>}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <label htmlFor="vehicleMake" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Make *
-            </label>
-            <input
-              type="text"
-              id="vehicleMake"
-              name="vehicleMake"
-              placeholder="e.g., Toyota"
-              value={formData.vehicleMake}
-              onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.vehicleMake ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
-            />
-            {errors.vehicleMake && <p className="mt-1 text-sm text-red-500">{errors.vehicleMake}</p>}
-          </div>
-
-          <div>
-            <label htmlFor="vehicleModel" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Model *
-            </label>
-            <input
-              type="text"
-              id="vehicleModel"
-              name="vehicleModel"
-              placeholder="e.g., Corolla"
-              value={formData.vehicleModel}
-              onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.vehicleModel ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
-            />
-            {errors.vehicleModel && <p className="mt-1 text-sm text-red-500">{errors.vehicleModel}</p>}
-          </div>
-
-          <div>
-            <label htmlFor="vehicleYear" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Year *
-            </label>
-            <input
-              type="text"
-              id="vehicleYear"
-              name="vehicleYear"
-              placeholder="e.g., 2020"
-              value={formData.vehicleYear}
-              onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.vehicleYear ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
-            />
-            {errors.vehicleYear && <p className="mt-1 text-sm text-red-500">{errors.vehicleYear}</p>}
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="licensePlate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            License Plate Number *
-          </label>
-          <input
-            type="text"
-            id="licensePlate"
-            name="licensePlate"
-            placeholder="e.g., KAA 123A"
-            value={formData.licensePlate}
-            onChange={handleInputChange}
-            className={`w-full px-4 py-3 rounded-lg border ${errors.licensePlate ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
-          />
-          {errors.licensePlate && <p className="mt-1 text-sm text-red-500">{errors.licensePlate}</p>}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="nationalId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              National ID Number *
-            </label>
+            <label htmlFor="nationalId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">National ID / Passport *</label>
             <input
               type="text"
               id="nationalId"
               name="nationalId"
               value={formData.nationalId}
               onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.nationalId ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
+              className={`w-full px-4 py-3 rounded-lg border ${errors.nationalId ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+              placeholder="ID-12345678"
             />
             {errors.nationalId && <p className="mt-1 text-sm text-red-500">{errors.nationalId}</p>}
           </div>
-
           <div>
-            <label htmlFor="drivingLicenseNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Driving License Number *
-            </label>
+            <label htmlFor="licenseExpiry" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Driver License Expiry *</label>
             <input
-              type="text"
-              id="drivingLicenseNumber"
-              name="drivingLicenseNumber"
-              value={formData.drivingLicenseNumber}
+              type="date"
+              id="licenseExpiry"
+              name="licenseExpiry"
+              value={formData.licenseExpiry}
               onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.drivingLicenseNumber ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                } focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white`}
+              className={`w-full px-4 py-3 rounded-lg border ${errors.licenseExpiry ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
             />
-            {errors.drivingLicenseNumber && <p className="mt-1 text-sm text-red-500">{errors.drivingLicenseNumber}</p>}
+            {errors.licenseExpiry && <p className="mt-1 text-sm text-red-500">{errors.licenseExpiry}</p>}
           </div>
         </div>
-      </div>
-    </div>
-  );
-
-  const renderStep4 = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Review & Submit</h2>
-
-      <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-indigo-900 dark:text-indigo-100 mb-4">Registration Summary</h3>
-
-        <div className="space-y-4 text-sm">
-          <div>
-            <p className="text-gray-600 dark:text-gray-400">Name</p>
-            <p className="font-medium text-gray-900 dark:text-white">{formData.firstName} {formData.lastName}</p>
-          </div>
-
-          <div>
-            <p className="text-gray-600 dark:text-gray-400">Contact</p>
-            <p className="font-medium text-gray-900 dark:text-white">{formData.email}</p>
-            <p className="font-medium text-gray-900 dark:text-white">{formData.phone}</p>
-          </div>
-
-          <div>
-            <p className="text-gray-600 dark:text-gray-400">Vehicle</p>
-            <p className="font-medium text-gray-900 dark:text-white">
-              {formData.vehicleYear} {formData.vehicleMake} {formData.vehicleModel} ({formData.vehicleType})
-            </p>
-            <p className="font-medium text-gray-900 dark:text-white">{formData.licensePlate}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          <span className="inline-flex items-center">
-            <svg className="w-5 h-5 mr-2 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-            </svg>
-            Referral Code
-          </span>
-        </h3>
 
         <div>
           <label htmlFor="referralCode" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -524,53 +300,114 @@ export default function DriverRegistrationPage() {
             type="text"
             id="referralCode"
             name="referralCode"
-            placeholder="Enter referral code"
             value={formData.referralCode}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white"
+            placeholder="Enter referral code if you have one"
           />
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            If you were referred by an existing driver, enter their code to help them earn rewards!
-          </p>
-        </div>
-      </div>
-
-      <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
-        <div className="flex items-start">
-          <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-400 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-          </svg>
-          <div>
-            <h4 className="text-sm font-semibold text-yellow-900 dark:text-yellow-100 mb-1">Registration Fee Required</h4>
-            <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              A one-time registration fee of <strong>KES {REGISTRATION_FEE.toLocaleString()}</strong> is required to complete your application.
-              You'll be redirected to a secure payment page after submitting this form.
+          {referralValidation?.valid && (
+            <p className="mt-1 text-sm text-green-500 flex items-center gap-1">
+              <FaCheckCircle /> Referred by {referralValidation.referrerName}
             </p>
-          </div>
+          )}
+        </div>
+
+        <div className="flex items-start bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg">
+          <input
+            type="checkbox"
+            id="agreeToTerms"
+            name="agreeToTerms"
+            checked={formData.agreeToTerms}
+            onChange={handleInputChange}
+            className="mt-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+          />
+          <label htmlFor="agreeToTerms" className="ml-3 text-sm text-gray-700 dark:text-gray-300">
+            I agree to the <Link href="/terms" className="text-indigo-600 hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-indigo-600 hover:underline">Privacy Policy</Link>.
+          </label>
+        </div>
+        {errors.agreeToTerms && <p className="text-sm text-red-500">{errors.agreeToTerms}</p>}
+      </div>
+    </div>
+
+  );
+
+  const renderPaymentStep = () => (
+    <div className="space-y-6 max-w-lg mx-auto text-center">
+      <div className="mb-8">
+        <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 text-indigo-600">
+          <FaLock className="text-3xl" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Secure Registration Payment</h2>
+        <p className="text-gray-500 mt-2">A one-time registration fee is required to activate your driver account.</p>
+      </div>
+
+      <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 text-left">
+        <div className="flex justify-between items-center mb-4 border-b pb-4">
+          <span className="text-gray-600">Registration Fee</span>
+          <span className="font-bold text-gray-900">KES {REGISTRATION_FEE.toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-gray-600">Tax</span>
+          <span className="font-bold text-gray-900">KES 0</span>
+        </div>
+        <div className="flex justify-between items-center pt-4 border-t mt-4">
+          <span className="text-lg font-bold text-gray-900">Total</span>
+          <span className="text-2xl font-bold text-indigo-600">KES {REGISTRATION_FEE.toLocaleString()}</span>
         </div>
       </div>
 
-      <div className="flex items-start">
-        <input
-          type="checkbox"
-          id="agreeToTerms"
-          name="agreeToTerms"
-          checked={formData.agreeToTerms}
-          onChange={handleInputChange}
-          className="mt-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-        />
-        <label htmlFor="agreeToTerms" className="ml-3 text-sm text-gray-700 dark:text-gray-300">
-          I agree to the{' '}
-          <Link href="/terms" className="text-indigo-600 dark:text-indigo-400 hover:underline">
-            Terms and Conditions
-          </Link>{' '}
-          and{' '}
-          <Link href="/privacy" className="text-indigo-600 dark:text-indigo-400 hover:underline">
-            Privacy Policy
-          </Link>
-        </label>
+      <button
+        type="button"
+        onClick={handlePayment}
+        disabled={paymentStatus === 'processing'}
+        className="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg transition-transform hover:scale-[1.02] flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
+      >
+        {paymentStatus === 'processing' ? (
+          <>Processing Payment...</>
+        ) : (
+          <>
+            <FaCreditCard /> Pay KES {REGISTRATION_FEE.toLocaleString()} Now
+          </>
+        )}
+      </button>
+
+      <p className="text-xs text-gray-400 mt-4">
+        Your payment is securely processed. Funds are held in a verified suspense account until your application is fully approved.
+      </p>
+    </div>
+  );
+
+  const renderReceiptStep = () => (
+    <div className="space-y-6 animate-fade-in">
+      <div className="text-center mb-8">
+        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600 animate-bounce-short">
+          <FaCheckCircle className="text-3xl" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Payment Successful!</h2>
+        <p className="text-gray-600 max-w-md mx-auto mt-2">
+          Your registration fee has been received. Please download your receipt below.
+        </p>
       </div>
-      {errors.agreeToTerms && <p className="text-sm text-red-500">{errors.agreeToTerms}</p>}
+
+      <PaymentReceipt
+        receiptNumber={receiptNumber}
+        date={new Date().toLocaleDateString()}
+        payerName={`${formData.firstName} ${formData.lastName}`}
+        payerPhone={formData.phone}
+        amount={REGISTRATION_FEE}
+        paymentMethod="M-PESA"
+        status="HELD"
+      />
+
+      <div className="text-center mt-8">
+        <button
+          type="button"
+          onClick={() => router.push('/drivers/dashboard?new_applicant=true')}
+          className="text-indigo-600 hover:underline font-medium"
+        >
+          Continue to Dashboard &rarr;
+        </button>
+      </div>
     </div>
   );
 
@@ -591,16 +428,14 @@ export default function DriverRegistrationPage() {
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-            {renderStepIndicator()}
-
             <form onSubmit={handleSubmit}>
+              {currentStep === 0 && renderIntroStep()}
               {currentStep === 1 && renderStep1()}
-              {currentStep === 2 && renderStep2()}
-              {currentStep === 3 && renderStep3()}
-              {currentStep === 4 && renderStep4()}
+              {currentStep === 2 && renderPaymentStep()}
+              {currentStep === 3 && renderReceiptStep()}
 
               <div className="mt-8 flex justify-between">
-                {currentStep > 1 && (
+                {currentStep > 0 && currentStep < 2 && (
                   <button
                     type="button"
                     onClick={handlePrevious}
@@ -610,7 +445,8 @@ export default function DriverRegistrationPage() {
                   </button>
                 )}
 
-                {currentStep < totalSteps ? (
+                {/* Steps with specific next actions */}
+                {currentStep > 0 && currentStep < 1 ? (
                   <button
                     type="button"
                     onClick={handleNext}
@@ -618,25 +454,22 @@ export default function DriverRegistrationPage() {
                   >
                     Next
                   </button>
-                ) : (
+                ) : null}
+
+                {/* Show Create Account (Proceed to Payment) button on Step 1 */}
+                {currentStep === 1 && (
                   <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="ml-auto px-8 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors flex items-center"
+                    type="button" // Changed to button to prevent form submit default, handled by logic
+                    onClick={() => {
+                      if (validateStep(1)) setCurrentStep(2);
+                    }}
+                    className="ml-auto px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center"
                   >
-                    {isSubmitting ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Processing...
-                      </>
-                    ) : (
-                      'Proceed to Payment'
-                    )}
+                    Proceed to Payment &rarr;
                   </button>
                 )}
+
+                {/* Payment Step specific buttons are inside renderPaymentStep */}
               </div>
             </form>
           </div>
@@ -652,6 +485,12 @@ export default function DriverRegistrationPage() {
               Registering multiple drivers?{' '}
               <Link href="/drivers/group-register" className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
                 Use Group Registration
+              </Link>
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Want to create an organization?{' '}
+              <Link href="/organizations/register" className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium flex items-center justify-center gap-2">
+                <FaBuilding /> Register Organization
               </Link>
             </p>
           </div>

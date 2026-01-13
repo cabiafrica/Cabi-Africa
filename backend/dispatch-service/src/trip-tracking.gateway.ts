@@ -8,11 +8,11 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import { MockTripService } from './mock-trip.service';
+import { PrismaService } from '@cabi/backend/database';
 
 @WebSocketGateway({
   cors: {
-    origin: '*', // In production, restrict this to your marketing website's domain
+    origin: '*',
   },
   namespace: '/trip-tracking',
 })
@@ -20,11 +20,8 @@ export class TripTrackingGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('TripTrackingGateway');
-  private clientTripMap = new Map<string, string>();
 
-  constructor(
-    private mockTripService: MockTripService
-  ) {}
+  constructor(private prisma: PrismaService) { }
 
   afterInit(server: Server) {
     this.logger.log('WebSocket Gateway Initialized');
@@ -35,27 +32,53 @@ export class TripTrackingGateway
   }
 
   handleDisconnect(client: Socket) {
-    const tripId = this.clientTripMap.get(client.id);
-    if (tripId) {
-      this.logger.log(`Client ${client.id} for trip ${tripId} disconnected. Stopping simulation.`);
-      this.mockTripService.stopTripSimulation(tripId);
-      this.clientTripMap.delete(client.id);
-    }
     this.logger.log(`Client disconnected: ${client.id}`);
   }
 
-  @SubscribeMessage('joinTripRoom')
-  handleJoinRoom(client: Socket, tripId: string): void {
+  @SubscribeMessage('joinTrip')
+  handleJoinTrip(client: Socket, tripId: string): void {
     this.logger.log(`Client ${client.id} joining room for trip ${tripId}`);
     client.join(tripId);
-    this.clientTripMap.set(client.id, tripId);
-    this.mockTripService.startTripSimulation(tripId);
   }
 
-  // This method is for broadcasting location updates received from other services (e.g., dispatch)
-  // For MVP, we can call this from a mock service to simulate updates.
-  handleLocationUpdate(tripId: string, location: { lat: number; lng: number; eta: number }) {
-    this.server.to(tripId).emit('locationUpdate', location);
-    this.logger.log(`Emitted location update to room ${tripId}`);
+  @SubscribeMessage('updateDriverLocation')
+  async handleUpdateLocation(
+    client: Socket,
+    payload: { driverId: string; tripId?: string; lat: number; lng: number }
+  ): Promise<void> {
+    const { driverId, tripId, lat, lng } = payload;
+
+    try {
+      await this.prisma.driverProfile.update({
+        where: { id: driverId },
+        data: { currentLocation: { lat, lng } as any },
+      });
+    } catch (e) {
+      this.logger.error(`Failed to update driver location: ${e.message}`);
+    }
+
+    if (tripId) {
+      this.server.to(tripId).emit('locationUpdate', { lat, lng });
+    }
+    // Broadcast globally for dispatch map
+    this.server.emit('globalDriverUpdate', { driverId, lat, lng });
+  }
+
+  @SubscribeMessage('driverGoOnline')
+  async handleDriverOnline(client: Socket, driverId: string): Promise<void> {
+    await this.prisma.driverProfile.update({
+      where: { id: driverId },
+      data: { isOnline: true },
+    });
+    this.logger.log(`Driver ${driverId} is now ONLINE`);
+  }
+
+  @SubscribeMessage('driverGoOffline')
+  async handleDriverOffline(client: Socket, driverId: string): Promise<void> {
+    await this.prisma.driverProfile.update({
+      where: { id: driverId },
+      data: { isOnline: false },
+    });
+    this.logger.log(`Driver ${driverId} is now OFFLINE`);
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../screens/redeem_points_screen.dart';
 
 class LoyaltyDashboardScreen extends StatelessWidget {
-  const LoyaltyDashboardScreen({Key? key}) : super(key: key);
+  const LoyaltyDashboardScreen({super.key});
 
   // Mock data for the MVP
   final int cabiPoints = 1250;

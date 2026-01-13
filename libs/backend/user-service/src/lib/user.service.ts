@@ -6,6 +6,29 @@ export class UserService {
     private users = new Map<string, any>();
     private corporateAccounts = new Map<string, any>();
 
+    constructor() {
+        // Seed default admin user
+        this.users.set('admin_1', {
+            id: 'admin_1',
+            firstName: 'Admin',
+            lastName: 'User',
+            email: 'admin@cabi.com',
+            password: 'password123', // Mock password
+            role: 'admin',
+            phoneNumber: '+1234567890',
+            profilePictureUrl: null
+        });
+    }
+
+    async validateUser(email: string, pass: string): Promise<any> {
+        const user = Array.from(this.users.values()).find(u => u.email === email);
+        if (user && user.password === pass) {
+            const { password, ...result } = user;
+            return result;
+        }
+        return null;
+    }
+
     // Story 104.9: Web User Profile View
     async getProfile(userId: string) {
         // Return mock data if not found, for demonstration purposes

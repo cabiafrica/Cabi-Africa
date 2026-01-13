@@ -36,6 +36,7 @@ void main() {
         body: RideRequestModal(
           requestData: mockRideDetails,
           rideService: mockRideService,
+          driverId: 'test-driver-id',
         ),
       ),
     );
@@ -61,8 +62,8 @@ void main() {
     'tapping Accept calls rideService.acceptRide and pops navigator',
     (WidgetTester tester) async {
       // Stub the service method
-      when(() => mockRideService.acceptRide(any()))
-          .thenAnswer((_) async => null);
+      when(() => mockRideService.acceptRide(any(), any()))
+          .thenAnswer((_) async {});
 
       // Use a navigator observer to track navigation events
       final mockObserver = MockNavigatorObserver();
@@ -71,6 +72,7 @@ void main() {
           home: RideRequestModal(
             requestData: mockRideDetails,
             rideService: mockRideService,
+            driverId: 'test-driver-id',
           ),
           navigatorObservers: [mockObserver],
         ),
@@ -83,7 +85,8 @@ void main() {
 
       await tester.pumpAndSettle(); // Wait for future to complete
 
-      verify(() => mockRideService.acceptRide('ride-xyz-789')).called(1);
+      verify(() => mockRideService.acceptRide('ride-xyz-789', 'test-driver-id'))
+          .called(1);
       verify(() => mockObserver.didPop(any(), any())).called(1);
     },
   );
@@ -91,8 +94,8 @@ void main() {
   testWidgets(
     'tapping Reject calls rideService.rejectRide and pops navigator',
     (WidgetTester tester) async {
-      when(() => mockRideService.rejectRide(any()))
-          .thenAnswer((_) async => null);
+      when(() => mockRideService.rejectRide(any(), any()))
+          .thenAnswer((_) async {});
       final mockObserver = MockNavigatorObserver();
 
       await tester.pumpWidget(
@@ -100,6 +103,7 @@ void main() {
           home: RideRequestModal(
             requestData: mockRideDetails,
             rideService: mockRideService,
+            driverId: 'test-driver-id',
           ),
           navigatorObservers: [mockObserver],
         ),
@@ -110,13 +114,14 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       await tester.pumpAndSettle();
 
-      verify(() => mockRideService.rejectRide('ride-xyz-789')).called(1);
+      verify(() => mockRideService.rejectRide('ride-xyz-789', 'test-driver-id'))
+          .called(1);
       verify(() => mockObserver.didPop(any(), any())).called(1);
     },
   );
 
   testWidgets('shows SnackBar on accept failure', (WidgetTester tester) async {
-    when(() => mockRideService.acceptRide(any()))
+    when(() => mockRideService.acceptRide(any(), any()))
         .thenThrow(Exception('Network error'));
 
     await tester.pumpWidget(createWidgetUnderTest());

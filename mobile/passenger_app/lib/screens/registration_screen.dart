@@ -14,6 +14,7 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _referralController = TextEditingController();
@@ -41,7 +42,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (value == null || value.length < 8) {
       return 'Password must be at least 8 characters long';
     }
-    // Example of a more complex validation to meet Cognito-like requirements
+    // Simple validation: must have letters and numbers
     if (!RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$').hasMatch(value)) {
       return 'Password must contain letters and numbers';
     }
@@ -52,13 +53,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       try {
-        await _authService.register(
-          fullName: _nameController.text,
+        final nameParts = _nameController.text.trim().split(' ');
+        final firstName = nameParts[0];
+        final lastName =
+            nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+
+        final result = await _authService.register(
+          firstName: firstName,
+          lastName: lastName,
+          email: _emailController.text,
           phone: _phoneController.text,
           password: _passwordController.text,
           referralCode: _referralController.text,
         );
-        if (mounted) {
+
+        if (result.isSignedIn && mounted) {
           // Pass the authService down to the next screen for testability.
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
@@ -68,14 +77,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             ),
           );
+        } else if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Registration Failed: ${result.error}')),
+          );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text('Registration Failed: $e')));
+          ).showSnackBar(SnackBar(content: Text('Registration Error: $e')));
         }
-        setState(() => _isLoading = false);
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
       }
     }
   }
@@ -100,8 +114,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
               const SizedBox(height: 16),
               TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Email Address'),
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) => (value == null || !value.contains('@'))
+                    ? 'Please enter a valid email'
+                    : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
                 controller: _phoneController,
-                decoration: const InputDecoration(labelText: 'Phone Number'),
+                decoration:
+                    const InputDecoration(labelText: 'Phone Number (+254...)'),
                 keyboardType: TextInputType.phone,
                 validator: _validatePhone,
               ),

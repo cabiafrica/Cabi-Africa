@@ -10,7 +10,7 @@ class PrivacySettingsScreen extends StatefulWidget {
 
 class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
   // Privacy consent flags
-  Map<String, bool> _privacySettings = {
+  final Map<String, bool> _privacySettings = {
     'personalizedAds': true,
     'analyticsResearch': true,
     'marketingEmails': false,

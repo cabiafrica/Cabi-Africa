@@ -2,132 +2,173 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-// Mock component for map
-const LiveMap = ({ driverLocation, pickup, dropoff }: any) => (
-    <div className="bg-gray-200 w-full h-96 rounded-lg relative overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center text-gray-500">
-            <p>Interactive Map View</p>
-        </div>
-        {driverLocation && (
-            <div
-                className="absolute w-4 h-4 bg-blue-600 rounded-full border-2 border-white shadow-lg"
-                style={{ top: '50%', left: '50%' }} // Mock position
-            >
-                <div className="absolute -top-8 -left-4 bg-white px-2 py-1 rounded shadow text-xs font-bold whitespace-nowrap">
-                    Driver
-                </div>
-            </div>
-        )}
-    </div>
-);
+import dynamic from 'next/dynamic';
+
+// Dynamically import CabiMap to avoid SSR issues with Leaflet
+const CabiMap = dynamic(() => import('@/components/maps/CabiMap'), {
+    ssr: false,
+    loading: () => <div className="bg-slate-100 dark:bg-white/5 w-full h-96 rounded-lg animate-pulse flex items-center justify-center">Loading Map...</div>
+});
+
+const MOCK_ROUTE: [number, number][] = [
+    [-1.286389, 36.817223],
+    [-1.285389, 36.818223],
+    [-1.284389, 36.819223],
+    [-1.283389, 36.820223],
+    [-1.282389, 36.821223],
+];
+
+const MOCK_DIRECTIONS = [
+    { instruction: 'Head north on Moi Ave toward Kenyatta Ave', distance: '200m' },
+    { instruction: 'Turn left onto Kenyatta Ave', distance: '1.2km' },
+    { instruction: 'Turn right onto State House Rd', distance: '800m' },
+    { instruction: 'Your destination will be on the left', distance: '150m' }
+];
 
 export default function TrackingPage() {
     const router = useRouter();
     const { tripId } = router.query;
     const [trackingData, setTrackingData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [showTraffic, setShowTraffic] = useState(false);
 
     useEffect(() => {
         if (!tripId) return;
 
-        // Simulate polling for updates
-        const fetchData = () => {
-            // Mock API response
-            setTrackingData({
-                status: 'IN_PROGRESS',
-                eta: '12 mins',
-                driver: {
-                    name: 'Sarah M.',
-                    rating: 4.9,
-                    vehicle: 'Toyota Rav4 • Silver',
-                    plate: 'ABC 123',
-                    phone: '(555) 012-3456'
-                },
-                pickup: { address: '123 Main St', completed: true },
-                dropoff: { address: '456 Office Park', completed: false },
-                currentLocation: { lat: 40.7128, lng: -74.0060 },
-                package: { description: 'Small box' }
-            });
-            setLoading(false);
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`/api/rides/${tripId}`);
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        setTrackingData(null); // Not found
+                    }
+                    throw new Error('Failed to fetch ride status');
+                }
+                const data = await response.json();
+                setTrackingData(data);
+                setLoading(false);
+            } catch (err) {
+                console.error(err);
+                // Only stop loading if we haven't loaded initial data yet? 
+                // Or maybe keep loading state handled more gracefully.
+                if (loading) setLoading(false);
+            }
         };
 
         fetchData();
-        const interval = setInterval(fetchData, 10000);
+        const interval = setInterval(fetchData, 5000); // Poll every 5 seconds
         return () => clearInterval(interval);
     }, [tripId]);
 
-    if (loading) return <div className="p-8 text-center text-gray-600">Loading delivery status...</div>;
+    if (loading) return <div className="p-8 text-center text-gray-600 dark:text-gray-400">Loading delivery status...</div>;
     if (!trackingData) return <div className="p-8 text-center text-red-600">Delivery not found.</div>;
 
+    const markers: any[] = [
+        { id: 'driver', position: [trackingData.currentLocation.lat, trackingData.currentLocation.lng], type: 'driver', popup: 'Sarah M. (Driver)' },
+        { id: 'pickup', position: trackingData.pickup.position, type: 'pickup', popup: 'Pickup Point' },
+        { id: 'dropoff', position: trackingData.dropoff.position, type: 'dropoff', popup: 'Drop-off Point' }
+    ];
+
     return (
-        <div className="min-h-screen bg-gray-50 pb-12">
+        <div className="min-h-screen bg-slate-50 dark:bg-brand-black pb-12 transition-colors duration-300">
             <Head>
                 <title>Track Delivery #{tripId}</title>
             </Head>
 
             {/* Header */}
-            <header className="bg-white shadow px-6 py-4 flex justify-between items-center">
-                <div className="font-bold text-xl text-blue-900">Cabi Delivery</div>
-                <div className="text-sm text-gray-500">Trip #{tripId}</div>
+            <header className="bg-white/70 dark:bg-brand-black/70 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+                <div className="font-black text-2xl tracking-tighter flex items-center gap-2">
+                    <div className="w-8 h-8 bg-brand-yellow rounded-md flex items-center justify-center text-black text-xs font-black">C</div>
+                    <span>Cabi<span className="text-brand-yellow">.</span></span>
+                </div>
+                <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">Trip #{tripId}</div>
             </header>
 
-            <main className="max-w-3xl mx-auto mt-6 px-4">
-                {/* Status Card */}
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
-                    <div className="bg-blue-600 text-white p-6">
-                        <h1 className="text-2xl font-bold mb-1">Arriving in {trackingData.eta}</h1>
-                        <p className="opacity-90">Your package is on the way</p>
+            <main className="max-w-6xl mx-auto mt-8 px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left Column: Status Info */}
+                <div className="lg:col-span-1 space-y-6">
+                    {/* Status Card */}
+                    <div className="glass rounded-2xl overflow-hidden shadow-2xl animate-slide-in">
+                        <div className="bg-gradient-to-r from-brand-yellow to-brand-accent p-6 text-black">
+                            <h1 className="text-3xl font-black tracking-tighter mb-1">Arriving in {trackingData.eta}</h1>
+                            <p className="font-bold opacity-80 text-sm">Your package is on the way</p>
+                        </div>
+
+                        <div className="p-6">
+                            <div className="flex items-center mb-8">
+                                <div className="w-14 h-14 bg-slate-100 dark:bg-white/5 rounded-xl flex items-center justify-center text-2xl border border-slate-200 dark:border-white/10 shadow-inner">
+                                    👤
+                                </div>
+                                <div className="ml-4">
+                                    <h3 className="font-black text-lg text-slate-900 dark:text-white leading-tight">{trackingData.driver.name}</h3>
+                                    <p className="text-slate-500 dark:text-gray-400 text-xs font-bold mt-1">
+                                        {trackingData.driver.vehicle} • <span className="text-brand-yellow">{trackingData.driver.plate}</span>
+                                    </p>
+                                </div>
+                                <div className="ml-auto flex items-center gap-1 bg-brand-yellow/10 px-2 py-1 rounded-lg">
+                                    <span className="text-brand-yellow text-xs">★</span>
+                                    <span className="font-black text-brand-yellow text-sm">{trackingData.driver.rating}</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-6 relative before:absolute before:left-4 before:top-4 before:bottom-4 before:w-[2px] before:bg-slate-200 dark:before:bg-white/5">
+                                <div className="relative pl-10">
+                                    <div className="absolute left-3 top-1 w-2 h-2 rounded-full bg-slate-400"></div>
+                                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1">PICKUP</p>
+                                    <p className="font-bold text-slate-900 dark:text-white leading-tight">
+                                        {trackingData.pickup.address}
+                                    </p>
+                                    <span className="text-green-500 text-[10px] font-black uppercase tracking-widest mt-1 block">✓ COMPLETED</span>
+                                </div>
+                                <div className="relative pl-10">
+                                    <div className="absolute left-2 top-1 w-4 h-4 rounded-full bg-brand-yellow border-4 border-white dark:border-brand-black shadow-lg shadow-brand-yellow/20"></div>
+                                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1">DROPOFF</p>
+                                    <p className="font-extrabold text-slate-900 dark:text-white leading-tight">
+                                        {trackingData.dropoff.address}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-4 bg-slate-50 dark:bg-black/20 border-t border-slate-100 dark:border-white/5 flex gap-4">
+                            <button className="flex-1 py-3 bg-slate-900 dark:bg-white text-white dark:text-black font-black rounded-xl text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">
+                                📞 Call Driver
+                            </button>
+                            <button className="flex-1 py-3 bg-white dark:bg-brand-black border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-black rounded-xl text-xs hover:bg-slate-50 dark:hover:bg-white/5 transition-all">
+                                💬 Message
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="p-6">
-                        <div className="flex items-center mb-6">
-                            <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-xl">
-                                👤
-                            </div>
-                            <div className="ml-4">
-                                <h3 className="font-bold text-lg">{trackingData.driver.name}</h3>
-                                <p className="text-gray-600 text-sm">
-                                    {trackingData.driver.vehicle} • {trackingData.driver.plate}
-                                </p>
-                            </div>
-                            <div className="ml-auto flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded">
-                                <span>⭐</span>
-                                <span className="font-bold text-yellow-700">{trackingData.driver.rating}</span>
-                            </div>
-                        </div>
-
-                        <div className="border-t pt-4 grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <p className="text-gray-500 font-medium mb-1">PICKUP</p>
-                                <p className="font-medium text-gray-900 line-through text-opacity-50">
-                                    {trackingData.pickup.address}
-                                </p>
-                                <span className="text-green-600 text-xs font-bold">✓ COMPLETED</span>
-                            </div>
-                            <div>
-                                <p className="text-gray-500 font-medium mb-1">DROPOFF</p>
-                                <p className="font-medium text-gray-900">{trackingData.dropoff.address}</p>
-                            </div>
-                        </div>
+                    {/* Quick Support */}
+                    <div className="glass p-6 rounded-2xl border-dashed border-2 border-slate-300 dark:border-white/10 opacity-60 hover:opacity-100 transition-opacity">
+                        <p className="text-slate-500 dark:text-gray-400 text-xs font-bold mb-3">Need help with this delivery?</p>
+                        <button className="text-brand-yellow text-sm font-black hover:underline underline-offset-4">
+                            Contact 24/7 Support →
+                        </button>
                     </div>
                 </div>
 
-                {/* Map */}
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
-                    <div className="p-4 border-b font-bold text-gray-700">Live Location</div>
-                    <LiveMap
-                        driverLocation={trackingData.currentLocation}
-                        pickup={trackingData.pickup}
-                        dropoff={trackingData.dropoff}
+                {/* Right Column: Map View */}
+                <div className="lg:col-span-2 relative h-[600px] lg:h-auto rounded-3xl overflow-hidden shadow-3xl animate-fade-in border border-slate-200 dark:border-white/10">
+                    <CabiMap
+                        markers={markers}
+                        route={MOCK_ROUTE}
+                        height="100%"
+                        showTraffic={showTraffic}
+                        directions={MOCK_DIRECTIONS}
                     />
-                </div>
 
-                {/* Help */}
-                <div className="text-center">
-                    <p className="text-gray-600 text-sm mb-2">Need help with this delivery?</p>
-                    <button className="text-blue-600 font-bold hover:underline">
-                        Contact Support
-                    </button>
+                    {/* Floating Controls Overlay */}
+                    <div className="absolute bottom-8 right-8 z-[1000] flex flex-col gap-4">
+                        <button
+                            onClick={() => setShowTraffic(!showTraffic)}
+                            className={`px-6 py-3 rounded-full font-black text-sm shadow-2xl transition-all flex items-center gap-2 ${showTraffic ? 'bg-brand-yellow text-black' : 'bg-white dark:bg-brand-black text-slate-900 dark:text-white border border-slate-200 dark:border-white/10'}`}
+                        >
+                            <span>{showTraffic ? '🟢' : '⚪'}</span>
+                            Traffic updates
+                        </button>
+                    </div>
                 </div>
             </main>
         </div>

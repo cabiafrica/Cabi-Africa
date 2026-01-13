@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { adminService } from '../../services/adminService';
+import { CabiMap, MapMarker } from '../CabiMap';
 
 // --- Story 79.8: Live Map (God View) ---
 export const LiveMap: React.FC = () => {
     const [drivers, setDrivers] = useState<any[]>([]);
+    const [markers, setMarkers] = useState<MapMarker[]>([]);
 
     useEffect(() => {
         // Poll every 5 seconds
-        const fetchDrivers = () => adminService.getLiveDrivers().then(setDrivers);
+        const fetchDrivers = () => adminService.getLiveDrivers().then(data => {
+            setDrivers(data);
+            // Convert to MapMarkers
+            const newMarkers: MapMarker[] = data.map((d: any) => ({
+                id: d.id,
+                position: [d.lat, d.lng],
+                type: 'driver', // Can distinguish available/ontrip via icon color if supported by CabiMap or custom logic
+                popup: `Driver: ${d.id}<br/>Status: ${d.status}`
+            }));
+            setMarkers(newMarkers);
+        });
+
         fetchDrivers();
         const interval = setInterval(fetchDrivers, 5000);
         return () => clearInterval(interval);
@@ -22,25 +35,13 @@ export const LiveMap: React.FC = () => {
                 </span>
             </h2>
 
-            <div className="flex-1 bg-slate-200 border rounded relative overflow-hidden">
-                {/* Visual placeholder for MapBox / Google Maps */}
-                <div className="absolute inset-0 flex items-center justify-center text-slate-400 font-bold text-lg select-none pointer-events-none">
-                    [ LIVE MAP VIEW ]
-                </div>
-
-                {/* Simulate Driver Icons moving */}
-                {drivers.map((d: any) => (
-                    <div
-                        key={d.id}
-                        className={`absolute w-4 h-4 rounded-full border-2 border-white shadow-sm transition-all duration-[5000ms] linear
-                            ${d.status === 'AVAILABLE' ? 'bg-green-500' : 'bg-blue-600'}`}
-                        style={{
-                            left: `${(d.lng - 36.8) * 1200 + 50}%`, // Fake projection
-                            top: `${(d.lat + 1.29) * 1200 + 50}%`
-                        }}
-                        title={`Driver ${d.id}`}
-                    />
-                ))}
+            <div className="flex-1 border rounded relative overflow-hidden z-0">
+                <CabiMap
+                    markers={markers}
+                    center={[-1.2921, 36.8219]} // Nairobi
+                    zoom={12}
+                    height="100%"
+                />
             </div>
 
             <div className="mt-4 flex gap-4 text-xs font-medium text-gray-500">

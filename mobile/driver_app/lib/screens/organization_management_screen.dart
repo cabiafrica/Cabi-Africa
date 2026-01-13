@@ -81,7 +81,8 @@ class _OrganizationManagementScreenState
 
   Future<void> _handleRequest(String requestId, bool approve) async {
     // Mock API call
-    print('Handling request $requestId: ${approve ? 'Approving' : 'Denying'}');
+    debugPrint(
+        'Handling request $requestId: ${approve ? 'Approving' : 'Denying'}');
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
       _dashboardFuture = _fetchDashboard(); // Refresh data
@@ -90,7 +91,7 @@ class _OrganizationManagementScreenState
 
   Future<void> _removeDriver(String driverId) async {
     // Mock API call
-    print('Removing driver $driverId');
+    debugPrint('Removing driver $driverId');
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
       _dashboardFuture = _fetchDashboard(); // Refresh data
@@ -145,9 +146,7 @@ class _OrganizationManagementScreenState
               ),
               if (dashboard.pendingRequests.isEmpty)
                 const ListTile(title: Text('No pending requests.')),
-
               const Divider(),
-
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -18,7 +19,7 @@ class AudioStreamService {
   Future<bool> startStreaming(String rideId) async {
     // 1. Request microphone permission
     if (!await permissionRequester()) {
-      print("Microphone permission not granted.");
+      debugPrint("Microphone permission not granted.");
       return false;
     }
 
@@ -30,7 +31,7 @@ class AudioStreamService {
     // 3. Start streaming audio data
     // In a real app, you would use a package like `mic_stream` to get a stream
     // of audio bytes and send them through the channel.
-    print("Simulating audio stream start...");
+    debugPrint("Simulating audio stream start...");
     _channel?.sink.add("...simulated audio chunk 1...");
     _channel?.sink.add("...simulated audio chunk 2...");
 
@@ -39,6 +40,6 @@ class AudioStreamService {
 
   void stopStreaming() {
     _channel?.sink.close();
-    print("Audio stream stopped.");
+    debugPrint("Audio stream stopped.");
   }
 }

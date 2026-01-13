@@ -3,19 +3,157 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useRouter } from 'next/router';
-import { FaBuilding, FaArrowLeft, FaCheck } from 'react-icons/fa';
+import { FaBuilding, FaArrowLeft, FaCheck, FaSearch, FaUser, FaGlobe, FaTwitter, FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import VideoEmbed from '../../components/VideoEmbed';
+
+// Mock list of registered drivers for demonstration
+const mockDrivers = [
+    { id: '1', name: 'John Kamau', contact: '0712345678', email: 'john.k@cabi.com', orgId: null, passportUrl: 'https://i.pravatar.cc/150?u=john' },
+    { id: '2', name: 'Sarah Ochieng', contact: '0722334455', email: 'sarah.o@cabi.com', orgId: null, passportUrl: 'https://i.pravatar.cc/150?u=sarah' },
+    { id: '3', name: 'David Mwangi', contact: '0733445566', email: 'david.m@cabi.com', orgId: 'org_123', passportUrl: 'https://i.pravatar.cc/150?u=david' },
+    { id: '4', name: 'Alice Wanjiku', contact: '0744556677', email: 'alice.w@cabi.com', orgId: null, passportUrl: 'https://i.pravatar.cc/150?u=alice' },
+    { id: '5', name: 'Michael Rotich', contact: '0755667788', email: 'michael.r@cabi.com', orgId: null, passportUrl: 'https://i.pravatar.cc/150?u=michael' }
+];
+
+// Helper Component for Member Row with Search
+const MemberRow = ({ index, register, setValue }: { index: number, register: any, setValue: any }) => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [showResults, setShowResults] = useState(false);
+    const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+
+    const handleSearch = (e: any) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        setShowResults(value.length > 0);
+    };
+
+    const selectDriver = (driver: typeof mockDrivers[0]) => {
+        setValue(`members.${index}.name`, driver.name);
+        setValue(`members.${index}.contact`, driver.contact);
+        setSelectedPhoto(driver.passportUrl);
+
+        // Clear search
+        setSearchTerm('');
+        setShowResults(false);
+    };
+
+    return (
+        <div className="p-4 bg-white/5 rounded-xl border border-white/5 hover:border-brand-purple/30 transition-all relative">
+            <div className="flex justify-between items-start mb-4">
+                <div className="flex items-center gap-3">
+                    {selectedPhoto ? (
+                        <img src={selectedPhoto} alt="Passport" className="w-12 h-12 rounded-lg object-cover border border-white/20" />
+                    ) : (
+                        <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center border border-white/10">
+                            <FaUser className="text-gray-500" />
+                        </div>
+                    )}
+                    <div>
+                        <label className="text-xs uppercase tracking-wider text-gray-500 font-bold block mb-1">Member {index + 1}</label>
+                        <div className="text-[10px] text-brand-purple bg-brand-purple/10 px-2 py-0.5 rounded-full inline-block">Official Member</div>
+                    </div>
+                </div>
+
+                {/* Driver Search Input */}
+                <div className="relative z-20">
+                    <div className="flex items-center bg-brand-black/50 border border-white/10 rounded-lg px-2 py-1 w-64 focus-within:border-brand-purple focus-within:ring-1 focus-within:ring-brand-purple transition-all">
+                        <FaSearch className="text-gray-500 mr-2 text-xs" />
+                        <input
+                            type="text"
+                            placeholder="Search registered driver..."
+                            className="bg-transparent border-none outline-none text-xs w-full text-gray-300 placeholder:text-gray-600"
+                            value={searchTerm}
+                            onChange={handleSearch}
+                            onFocus={() => searchTerm && setShowResults(true)}
+                            onBlur={() => setTimeout(() => setShowResults(false), 200)}
+                        />
+                    </div>
+
+                    {/* Search Results Dropdown */}
+                    {showResults && (
+                        <div className="absolute top-full right-0 mt-2 w-72 bg-brand-black border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 max-h-64 overflow-y-auto backdrop-blur-xl">
+                            {mockDrivers.filter(d => d.name.toLowerCase().includes(searchTerm.toLowerCase())).length > 0 ? (
+                                mockDrivers.filter(d => d.name.toLowerCase().includes(searchTerm.toLowerCase())).map(driver => (
+                                    <button
+                                        key={driver.id}
+                                        type="button"
+                                        disabled={!!driver.orgId}
+                                        onClick={() => !driver.orgId && selectDriver(driver)}
+                                        className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors border-b border-white/5 last:border-0 ${driver.orgId ? 'opacity-50 cursor-not-allowed bg-red-500/5' : 'hover:bg-white/10'}`}
+                                    >
+                                        <img src={driver.passportUrl} alt={driver.name} className="w-10 h-10 rounded-full object-cover border border-white/10" />
+                                        <div>
+                                            <div className="text-sm font-bold text-white">
+                                                {driver.name}
+                                                {driver.orgId && <span className="ml-2 text-[10px] uppercase bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded border border-red-500/20">Already Member</span>}
+                                            </div>
+                                            <div className="text-xs text-gray-500">{driver.contact}</div>
+                                        </div>
+                                    </button>
+                                ))
+                            ) : (
+                                <div className="p-4 text-center text-xs text-gray-500">No active drivers found</div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold hidden md:block">Name</label>
+                    <input
+                        {...register(`members.${index}.name` as const, { required: true })}
+                        className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-sm"
+                        placeholder="Full Name"
+                    />
+                </div>
+                <div className="space-y-2">
+                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold hidden md:block">Contact</label>
+                    <input
+                        {...register(`members.${index}.contact` as const, { required: true })}
+                        className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-sm"
+                        placeholder="Phone or Email"
+                    />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold hidden md:block">Position</label>
+                    <input
+                        {...register(`members.${index}.position` as const, { required: true })}
+                        className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-sm"
+                        placeholder="e.g. Chairman, Secretary"
+                    />
+                </div>
+            </div>
+
+
+        </div>
+    );
+};
 
 export default function RegisterOrganization() {
     const router = useRouter();
-    const { register, handleSubmit, control, formState: { errors } } = useForm({
+    const { register, handleSubmit, control, setValue, formState: { errors } } = useForm({
         defaultValues: {
             orgName: '',
             email: '',
             bio: '',
+            logo: null,
+            banner: null,
             regNumber: '',
             regCertificate: null,
-            taxPin: '',
-            members: [{ name: '', contact: '' }, { name: '', contact: '' }, { name: '', contact: '' }]
+            website: '',
+            twitter: '',
+            facebook: '',
+            instagram: '',
+            linkedin: '',
+            // Tax PIN removed
+
+            members: [
+                { name: '', contact: '', position: 'Chairman' },
+                { name: '', contact: '', position: 'Secretary' },
+                { name: '', contact: '', position: 'Treasurer' }
+            ]
         }
     });
 
@@ -25,26 +163,72 @@ export default function RegisterOrganization() {
     });
 
     const [isLoading, setIsLoading] = useState(false);
-    const [orgType, setOrgType] = useState<'sacco' | 'fleet' | 'corporate'>('fleet');
+    const [brandColor, setBrandColor] = useState<string>('');
+    // OrgType removed
+
+    // Helper to extract color from image
+    const extractColor = (file: File) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return;
+
+                canvas.width = 1;
+                canvas.height = 1;
+                ctx.drawImage(img, 0, 0, 1, 1);
+
+                const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+                const hex = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+                setBrandColor(hex);
+            };
+            img.src = event.target?.result as string;
+        };
+        reader.readAsDataURL(file);
+    };
 
     const onSubmit = async (data: any) => {
         setIsLoading(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // Check if file was uploaded (mock check)
-        const isVerified = data.regCertificate && data.regCertificate.length > 0;
+        try {
+            const payload = {
+                orgName: data.orgName,
+                email: data.email,
+                bio: data.bio,
+                regNumber: data.regNumber,
+                website: data.website,
+                twitter: data.twitter,
+                facebook: data.facebook,
+                instagram: data.instagram,
+                linkedin: data.linkedin,
+                primaryColor: brandColor,
+                members: data.members
+            };
 
-        console.log("Organization Registration Data:", {
-            ...data,
-            orgType,
-            status: isVerified ? 'Pending Verification' : 'Unverified'
-        });
+            const response = await fetch('/api/organizations/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-        // Mock alert for now
-        alert(`Organization registered successfully! Status: ${isVerified ? 'Verified (Pending Approval)' : 'Unverified'}. You can now switch to your Organization dashboard.`);
-        router.push('/dashboard');
-        setIsLoading(false);
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Registration failed');
+            }
+
+            console.log("Organization Registration Success:", result);
+            alert('Organization registered successfully! You can now access your dashboard.');
+            router.push('/dashboard');
+
+        } catch (error: any) {
+            console.error("Registration failed:", error);
+            alert(`Error: ${error.message}`);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -60,52 +244,77 @@ export default function RegisterOrganization() {
 
                 <div className="max-w-3xl mx-auto">
                     <div className="text-center mb-12">
-                        <div className="inline-flex items-center justify-center h-20 w-20 rounded-full bg-brand-purple/10 text-brand-purple text-4xl mb-6 border border-brand-purple/20">
+                        <div
+                            className="inline-flex items-center justify-center h-20 w-20 rounded-full bg-brand-purple/10 text-brand-purple text-4xl mb-6 border border-brand-purple/20 transition-all duration-500"
+                            style={brandColor ? {
+                                backgroundColor: `${brandColor}20`,
+                                color: brandColor,
+                                borderColor: `${brandColor}40`
+                            } : {}}
+                        >
                             <FaBuilding />
                         </div>
                         <h1 className="text-4xl font-bold mb-4">Register Your Organization</h1>
-                        <p className="text-gray-400 text-lg">Scale your operations. Required for Fleets and Saccos.</p>
+                        <p className="text-gray-400 text-lg mb-8">Scale your operations. Required for Fleets and Saccos.</p>
+
+                        {/* Video Embed */}
+                        <VideoEmbed
+                            videoId="dQw4w9WgXcQ"
+                            title="Organization Registration Guide"
+                            showChannelLink={false}
+                            className="mb-8"
+                        />
                     </div>
 
-                    <div className="glass p-8 md:p-12 rounded-3xl border border-white/10 relative overflow-hidden">
-                        <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-brand-purple to-blue-500 left-0"></div>
+                    <div
+                        className="glass p-8 md:p-12 rounded-3xl border border-white/10 relative overflow-hidden transition-all duration-500"
+                        style={brandColor ? { borderColor: `${brandColor}30` } : {}}
+                    >
+                        <div
+                            className="absolute top-0 w-full h-1 bg-gradient-to-r from-brand-purple to-blue-500 left-0 transition-all duration-500"
+                            style={brandColor ? { backgroundImage: `linear-gradient(to right, ${brandColor}, #3b82f6)` } : {}}
+                        ></div>
 
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
 
-                            {/* Organization Type Selection */}
-                            <div className="space-y-4">
-                                <label className="text-xs uppercase tracking-wider text-gray-500 font-bold block">Organization Type</label>
-                                <div className="grid grid-cols-3 gap-4">
-                                    <button
-                                        type="button"
-                                        onClick={() => setOrgType('fleet')}
-                                        className={`p-4 rounded-xl border text-center transition-all ${orgType === 'fleet' ? 'bg-brand-purple text-white border-brand-purple shadow-lg' : 'border-white/10 hover:border-white/30 text-gray-400'}`}
-                                    >
-                                        <div className="font-bold mb-1">Fleet</div>
-                                        <div className="text-xs opacity-70">Manage vehicles</div>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setOrgType('sacco')}
-                                        className={`p-4 rounded-xl border text-center transition-all ${orgType === 'sacco' ? 'bg-brand-purple text-white border-brand-purple shadow-lg' : 'border-white/10 hover:border-white/30 text-gray-400'}`}
-                                    >
-                                        <div className="font-bold mb-1">Sacco</div>
-                                        <div className="text-xs opacity-70">Cooperative</div>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setOrgType('corporate')}
-                                        className={`p-4 rounded-xl border text-center transition-all ${orgType === 'corporate' ? 'bg-brand-purple text-white border-brand-purple shadow-lg' : 'border-white/10 hover:border-white/30 text-gray-400'}`}
-                                    >
-                                        <div className="font-bold mb-1">Corporate</div>
-                                        <div className="text-xs opacity-70">Business travel</div>
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Basic Details */}
+                            {/* Basic Details & Branding */}
                             <div className="space-y-6">
                                 <h3 className="text-xl font-bold border-b border-white/10 pb-2">Organization Details</h3>
+
+                                {/* Branding */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/5 p-4 rounded-xl border border-white/5">
+                                    <div className="space-y-2">
+                                        <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Profile Photo (Logo)</label>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            {...register('logo', {
+                                                onChange: (e) => {
+                                                    if (e.target.files && e.target.files[0]) {
+                                                        extractColor(e.target.files[0]);
+                                                    }
+                                                }
+                                            })}
+                                            className="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-brand-purple/20 file:text-brand-purple hover:file:bg-brand-purple/30"
+                                            style={brandColor ? {
+                                                // We can't easily style the file input pseudo-element directly with inline styles, 
+                                                // so we'll leave it or user global CSS, but for now standard class is fine.
+                                            } : {}}
+                                        />
+                                        <p className="text-[10px] text-gray-600">Square image, min 200x200px (PNG/JPG)</p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Cover Image (Banner)</label>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            {...register('banner')}
+                                            className="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-brand-purple/20 file:text-brand-purple hover:file:bg-brand-purple/30"
+                                        />
+                                        <p className="text-[10px] text-gray-600">Wide image, min 1200x400px (PNG/JPG)</p>
+                                    </div>
+                                </div>
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Organization Name</label>
@@ -134,6 +343,63 @@ export default function RegisterOrganization() {
                                         placeholder="Describe your organization's mission, goals, or services..."
                                     />
                                 </div>
+
+                                {/* Social Media & Web Links */}
+                                <div className="space-y-6 pt-6 border-t border-white/10">
+                                    <h3 className="text-xl font-bold border-b border-white/10 pb-2">Online Presence</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-2 md:col-span-2">
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold flex items-center gap-2">
+                                                <FaGlobe /> Website
+                                            </label>
+                                            <input
+                                                {...register('website')}
+                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                                placeholder="https://www.yourorganization.com"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold flex items-center gap-2">
+                                                <FaTwitter className="text-blue-400" /> Twitter (X)
+                                            </label>
+                                            <input
+                                                {...register('twitter')}
+                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                                placeholder="@handle"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold flex items-center gap-2">
+                                                <FaFacebook className="text-blue-600" /> Facebook
+                                            </label>
+                                            <input
+                                                {...register('facebook')}
+                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                                placeholder="Page URL or Name"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold flex items-center gap-2">
+                                                <FaInstagram className="text-pink-500" /> Instagram
+                                            </label>
+                                            <input
+                                                {...register('instagram')}
+                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                                placeholder="@handle"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold flex items-center gap-2">
+                                                <FaLinkedin className="text-blue-500" /> LinkedIn
+                                            </label>
+                                            <input
+                                                {...register('linkedin')}
+                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                                placeholder="Profile URL"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Verification */}
@@ -153,23 +419,13 @@ export default function RegisterOrganization() {
                                           hover:file:bg-brand-purple/30"
                                     />
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Registration Number</label>
-                                        <input
-                                            {...register('regNumber', { required: true })}
-                                            className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
-                                            placeholder="REG-12345"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Tax PIN (KRA)</label>
-                                        <input
-                                            {...register('taxPin', { required: true })}
-                                            className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
-                                            placeholder="P05..."
-                                        />
-                                    </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Registration Number</label>
+                                    <input
+                                        {...register('regNumber', { required: true })}
+                                        className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                        placeholder="REG-12345"
+                                    />
                                 </div>
                             </div>
 
@@ -178,24 +434,7 @@ export default function RegisterOrganization() {
                                 <h3 className="text-xl font-bold border-b border-white/10 pb-2">Founding Members (Min. 3)</h3>
                                 <div className="grid gap-4">
                                     {fields.map((field, index) => (
-                                        <div key={field.id} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-white/5 rounded-xl">
-                                            <div className="space-y-2">
-                                                <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Member {index + 1} Name</label>
-                                                <input
-                                                    {...register(`members.${index}.name` as const, { required: true })}
-                                                    className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-sm"
-                                                    placeholder="Full Name"
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Member {index + 1} Contact</label>
-                                                <input
-                                                    {...register(`members.${index}.contact` as const, { required: true })}
-                                                    className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-sm"
-                                                    placeholder="Phone or Email"
-                                                />
-                                            </div>
-                                        </div>
+                                        <MemberRow key={field.id} index={index} register={register} setValue={setValue} />
                                     ))}
                                 </div>
                             </div>
@@ -204,6 +443,10 @@ export default function RegisterOrganization() {
                                 type="submit"
                                 disabled={isLoading}
                                 className="w-full py-4 rounded-xl font-bold text-white text-lg bg-brand-purple hover:bg-brand-purple/80 transition-all shadow-lg hover:shadow-brand-purple/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                style={brandColor ? {
+                                    backgroundColor: brandColor,
+                                    boxShadow: `0 10px 15px -3px ${brandColor}40`
+                                } : {}}
                             >
                                 {isLoading ? 'Processing...' : 'Register Organization'}
                             </button>

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RedeemPointsScreen extends StatefulWidget {
-  const RedeemPointsScreen({Key? key}) : super(key: key);
+  const RedeemPointsScreen({super.key});
 
   @override
   State<RedeemPointsScreen> createState() => _RedeemPointsScreenState();

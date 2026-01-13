@@ -15,7 +15,7 @@
     },
     {
       "name": "flutter",
-      "rootUri": "file:///D:/IBN%20KENYA/clone%20flutter/flutter/packages/flutter",
+      "rootUri": "file:///D:/IBN/MAD/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -33,7 +33,7 @@
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///D:/IBN%20KENYA/clone%20flutter/flutter/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///D:/IBN/MAD/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
@@ -52,7 +52,7 @@
   ],
   "generator": "pub",
   "generatorVersion": "3.10.4",
-  "flutterRoot": "file:///D:/IBN%20KENYA/clone%20flutter/flutter",
+  "flutterRoot": "file:///D:/IBN/MAD/flutter",
   "flutterVersion": "3.38.5",
   "pubCache": "file:///C:/Users/User/AppData/Local/Pub/Cache"
 }

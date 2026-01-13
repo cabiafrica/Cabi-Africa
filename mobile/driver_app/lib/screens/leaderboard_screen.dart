@@ -102,18 +102,18 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> with SingleTicker
                       decoration: BoxDecoration(
                           gradient: LinearGradient(colors: [Colors.deepPurple.shade700, Colors.deepPurple.shade400]),
                       ),
-                      child: Column(
+                      child: const Column(
                           children: [
-                              const Text('🏆 Driver of the Month 🏆', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 16)),
-                              const SizedBox(height: 8),
-                              const CircleAvatar(
+                              Text('🏆 Driver of the Month 🏆', style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 16)),
+                              SizedBox(height: 8),
+                              CircleAvatar(
                                   radius: 24,
                                   backgroundColor: Colors.white,
                                   child: Text('JD', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepPurple)),
                               ),
-                              const SizedBox(height: 4),
-                              const Text('John Doe (You!)', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                              const Text('Outstanding Service & Safety', style: TextStyle(color: Colors.white70, fontSize: 10)),
+                              SizedBox(height: 4),
+                              Text('John Doe (You!)', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                              Text('Outstanding Service & Safety', style: TextStyle(color: Colors.white70, fontSize: 10)),
                           ],
                       ),
                   ),

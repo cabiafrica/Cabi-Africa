@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
 
   // Ensure Next.js correctly traces files in a monorepo setup
-  outputFileTracingRoot: require('path').resolve(__dirname, '../../'),
+  // outputFileTracingRoot: require('path').resolve(__dirname, '../../'),
 
   // Enable compression
   compress: true,
@@ -37,9 +37,9 @@ const nextConfig = {
   generateEtags: true,
 
   // Turbopack configuration (Next.js 16+)
-  turbopack: {
+  // turbopack: {
     // Enable optimizations
-  },
+  // },
 };
 
 module.exports = nextConfig;

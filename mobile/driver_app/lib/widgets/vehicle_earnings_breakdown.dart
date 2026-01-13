@@ -5,10 +5,10 @@ class VehicleEarningsBreakdown extends StatefulWidget {
   final String currencySymbol;
 
   const VehicleEarningsBreakdown({
-    Key? key,
+    super.key,
     required this.vehicleData,
     this.currencySymbol = '\$',
-  }) : super(key: key);
+  });
 
   @override
   State<VehicleEarningsBreakdown> createState() =>

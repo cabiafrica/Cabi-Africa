@@ -24,7 +24,7 @@ class LocationTrackingService {
   Future<void> _publishLocation() async {
     // In real impl: Get GPS location
     final mockLat = -1.2921 + (DateTime.now().second * 0.0001); // Moving slightly
-    final mockLng = 36.8219;
+    const mockLng = 36.8219;
 
     final payload = {
       'driverId': driverId,

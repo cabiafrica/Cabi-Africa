@@ -23,10 +23,10 @@ class CategorySelectionSheet extends StatefulWidget {
   final ValueChanged<List<String>> onSave;
 
   const CategorySelectionSheet({
-    Key? key,
+    super.key,
     required this.categories,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   State<CategorySelectionSheet> createState() => _CategorySelectionSheetState();

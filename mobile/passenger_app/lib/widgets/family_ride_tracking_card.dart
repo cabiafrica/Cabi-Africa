@@ -11,7 +11,7 @@ class FamilyRideTrackingCard extends StatelessWidget {
   final VoidCallback onViewMap;
 
   const FamilyRideTrackingCard({
-    Key? key,
+    super.key,
     required this.memberName,
     required this.driverName,
     required this.vehicleInfo,
@@ -20,7 +20,7 @@ class FamilyRideTrackingCard extends StatelessWidget {
     required this.currentLocation,
     required this.destination,
     required this.onViewMap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

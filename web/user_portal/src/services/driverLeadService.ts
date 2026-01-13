@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 
-export type ApplicationStatus = 'WEB_REGISTERED' | 'DOCUMENTS_PENDING' | 'BACKGROUND_CHECK_PENDING' | 'APPROVED' | 'REJECTED';
+export type ApplicationStatus = 'WEB_REGISTERED' | 'DOCUMENTS_PENDING' | 'BACKGROUND_CHECK_PENDING' | 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED';
 
 export interface ProspectStatus {
     id: string;
     email: string;
+    phone?: string;
     firstName: string;
-    lastName: string;
+    lastName?: string;
     status: ApplicationStatus;
     nextAction: string;
     submittedDate: string;
+    documents?: any[];
 }
 
 // Mock service

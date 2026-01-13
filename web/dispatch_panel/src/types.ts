@@ -87,3 +87,46 @@ export interface TripAnalytics {
     cancellationReasons: CancellationReason[];
     recentCancellations: CancellationData[];
 }
+
+export interface Passenger {
+    id: string;
+    name: string;
+    phone: string;
+    email: string;
+    rating: number;
+    totalRides: number;
+    completedRides: number;
+    cancelledRides: number;
+    totalSpent: number;
+    joinedDate: string;
+    lastRideDate: string;
+    preferredPaymentMethod: 'cash' | 'card' | 'mobile-money';
+    status: 'active' | 'inactive' | 'suspended';
+    profileImage?: string;
+}
+
+export interface TripHistory extends RideRequest {
+    completedAt?: string;
+    actualFare: number;
+    paymentMethod: 'cash' | 'card' | 'mobile-money';
+    paymentStatus: 'pending' | 'completed' | 'failed';
+    rating?: number;
+    feedback?: string;
+    duration: number; // in minutes
+}
+
+export interface DriverHistory extends Driver {
+    totalEarnings: number;
+    todayEarnings: number;
+    weekEarnings: number;
+    monthEarnings: number;
+    averageRating: number;
+    totalRatings: number;
+    joinedDate: string;
+    lastActiveDate: string;
+    vehicleModel: string;
+    vehicleYear: number;
+    vehicleColor: string;
+    licenseNumber: string;
+    licenseExpiry: string;
+}

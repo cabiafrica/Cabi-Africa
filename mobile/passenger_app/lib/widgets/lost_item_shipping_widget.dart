@@ -5,10 +5,10 @@ class LostItemShippingWidget extends StatefulWidget {
   final String itemDescription;
 
   const LostItemShippingWidget({
-    Key? key,
+    super.key,
     required this.ticketId,
     required this.itemDescription,
-  }) : super(key: key);
+  });
 
   @override
   State<LostItemShippingWidget> createState() => _LostItemShippingWidgetState();
@@ -28,21 +28,21 @@ class _LostItemShippingWidgetState extends State<LostItemShippingWidget> {
     'standard': {
       'name': 'Standard Shipping',
       'days': '5-7 business days',
-      'price': 8.99,
+      'price': 899.00,
     },
     'express': {
       'name': 'Express Shipping',
       'days': '2-3 business days',
-      'price': 15.99,
+      'price': 1599.00,
     },
     'overnight': {
       'name': 'Overnight Shipping',
       'days': '1 business day',
-      'price': 24.99,
+      'price': 2499.00,
     },
   };
 
-  double get serviceFee => 5.00;
+  double get serviceFee => 500.00;
   double get shippingCost => shippingOptions[selectedShippingMethod]!['price'];
   double get totalCost => shippingCost + serviceFee;
 
@@ -248,7 +248,7 @@ class _LostItemShippingWidgetState extends State<LostItemShippingWidget> {
                         ),
                       ),
                       Text(
-                        '\$${entry.value['price'].toStringAsFixed(2)}',
+                        'KES ${entry.value['price'].toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -287,7 +287,7 @@ class _LostItemShippingWidgetState extends State<LostItemShippingWidget> {
                         ),
                       ),
                       Text(
-                        '\$${totalCost.toStringAsFixed(2)}',
+                        'KES ${totalCost.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -370,7 +370,7 @@ class _LostItemShippingWidgetState extends State<LostItemShippingWidget> {
                         const Icon(Icons.check_circle),
                         const SizedBox(width: 8),
                         Text(
-                          'Request Shipping (\$${totalCost.toStringAsFixed(2)})',
+                          'Request Shipping (KES ${totalCost.toStringAsFixed(2)})',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -433,7 +433,7 @@ class _LostItemShippingWidgetState extends State<LostItemShippingWidget> {
           ),
         ),
         Text(
-          '\$${amount.toStringAsFixed(2)}',
+          'KES ${amount.toStringAsFixed(2)}',
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,

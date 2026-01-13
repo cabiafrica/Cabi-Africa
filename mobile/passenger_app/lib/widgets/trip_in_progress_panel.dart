@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class DriverRideService {
   Future<void> respondToChange(String rideId, String response) async {
     await Future.delayed(const Duration(seconds: 1));
-    print('Driver responding to change for ride $rideId: $response');
+    debugPrint('Driver responding to change for ride $rideId: $response');
     // In a real app, this would call POST /rides/:id/respond-to-change
   }
 }

@@ -57,7 +57,7 @@ class _SavedRoutesScreenState extends State<SavedRoutesScreen> {
 
   void _useRoute(SavedRouteDto route) {
     // Mock action to pre-fill booking screen
-    print('Using route: ${route.name}');
+    debugPrint('Using route: ${route.name}');
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Booking screen pre-filled for ${route.name}')),
     );

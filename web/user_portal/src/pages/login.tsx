@@ -12,21 +12,40 @@ export default function LoginPage() {
         e.preventDefault();
         setIsLoading(true);
 
-        // Simulate API call
-        setTimeout(() => {
-            // Mock successful login
-            console.log('Logging in with:', email, password);
-            setIsLoading(false);
-            // In a real app, you'd set auth state/cookie here
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Login failed');
+            }
+
+            // Save user data to localStorage
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('user', JSON.stringify(data.user));
+                localStorage.setItem('token', data.token);
+            }
+
+            console.log('Login successful:', data);
             router.push('/dashboard');
-        }, 1500);
+        } catch (error: any) {
+            console.error('Login error:', error);
+            alert(error.message || 'Failed to login. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl">
                 <div>
-                     <Link href="/" className="flex justify-center mb-6">
+                    <Link href="/" className="flex justify-center mb-6">
                         <span className="text-4xl font-extrabold text-black tracking-tighter">Cabi</span>
                     </Link>
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">

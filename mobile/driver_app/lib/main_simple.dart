@@ -196,12 +196,12 @@ class _DriverMapViewState extends State<DriverMapView> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.star, color: Colors.amber, size: 20),
-                const SizedBox(width: 4),
-                const Text('4.8', style: TextStyle(fontSize: 16)),
+                Icon(Icons.star, color: Colors.amber, size: 20),
+                SizedBox(width: 4),
+                Text('4.8', style: TextStyle(fontSize: 16)),
               ],
             ),
             const SizedBox(height: 16),
@@ -290,19 +290,19 @@ class _DriverMapViewState extends State<DriverMapView> {
                   ],
                 ),
               ),
-            Row(
+            const Row(
               children: [
-                const Icon(Icons.circle, color: Colors.green, size: 12),
-                const SizedBox(width: 8),
-                const Expanded(child: Text('Pickup location')),
+                Icon(Icons.circle, color: Colors.green, size: 12),
+                SizedBox(width: 8),
+                Expanded(child: Text('Pickup location')),
               ],
             ),
             const SizedBox(height: 8),
-            Row(
+            const Row(
               children: [
-                const Icon(Icons.location_on, color: Colors.red, size: 12),
-                const SizedBox(width: 8),
-                const Expanded(child: Text('Dropoff location')),
+                Icon(Icons.location_on, color: Colors.red, size: 12),
+                SizedBox(width: 8),
+                Expanded(child: Text('Dropoff location')),
               ],
             ),
             const SizedBox(height: 20),
@@ -337,7 +337,7 @@ class _DriverMapViewState extends State<DriverMapView> {
 
   void _acceptRide(Map<String, dynamic> request) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Ride accepted! Navigating to pickup...'),
         backgroundColor: Colors.green,
       ),
@@ -364,11 +364,11 @@ class _DriverMapViewState extends State<DriverMapView> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Row(
+        title: const Row(
           children: [
-            const Icon(Icons.coffee, color: Colors.brown),
-            const SizedBox(width: 8),
-            const Text('Time for a Break?'),
+            Icon(Icons.coffee, color: Colors.brown),
+            SizedBox(width: 8),
+            Text('Time for a Break?'),
           ],
         ),
         content: const Column(
@@ -633,9 +633,9 @@ class _DriverMapViewState extends State<DriverMapView> {
               onPressed: _setDestination,
               backgroundColor:
                   _destination != null ? Colors.amber : Colors.deepPurple,
+              tooltip: 'Set Destination',
               child:
                   Icon(_destination != null ? Icons.flag : Icons.flag_outlined),
-              tooltip: 'Set Destination',
             )
           : null,
       body: Stack(
@@ -680,11 +680,11 @@ class _DriverMapViewState extends State<DriverMapView> {
                             horizontal: 4.0, vertical: 4.0),
                         child: Row(
                           children: [
-                            Padding(
+                            const Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 12.0),
+                                  EdgeInsets.symmetric(horizontal: 12.0),
                               child: Text('KSh 3,450',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontWeight: FontWeight.bold)),
                             ),
                             Container(
@@ -715,7 +715,7 @@ class _DriverMapViewState extends State<DriverMapView> {
                   decoration: BoxDecoration(
                       color: Colors.amber.shade100,
                       borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(color: Colors.black12, blurRadius: 4)
                       ]),
                   child: Row(

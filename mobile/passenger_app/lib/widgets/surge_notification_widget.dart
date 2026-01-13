@@ -6,11 +6,11 @@ class SurgeNotificationWidget extends StatelessWidget {
   final bool isSubscribed;
 
   const SurgeNotificationWidget({
-    Key? key,
+    super.key,
     required this.surgeMultiplier,
     required this.onNotifyMe,
     this.isSubscribed = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +181,7 @@ class SurgeNotificationWidget extends StatelessWidget {
 
 // Example usage
 class SurgeNotificationExample extends StatefulWidget {
-  const SurgeNotificationExample({Key? key}) : super(key: key);
+  const SurgeNotificationExample({super.key});
 
   @override
   State<SurgeNotificationExample> createState() =>

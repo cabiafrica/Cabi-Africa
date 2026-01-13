@@ -76,7 +76,7 @@ export default function ForDriversPage(
           </div>
         </section>
 
-        {/* MLM Section */}
+        {/* Business Builder Section */}
         <section className="py-16 bg-gray-100 dark:bg-gray-900">
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -85,13 +85,13 @@ export default function ForDriversPage(
                   More Than Just Driving: Build Your Business
                 </h2>
                 <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-                  Our Multi-Level Marketing (MLM) system is what sets CABI apart. It's not just about earning from rides; it's about building a network and creating a sustainable business. Refer other drivers and earn a commission from their trips. The more your network grows, the more you earn.
+                  Our Business Builder system is what sets CABI apart. It's not just about earning from rides; it's about building a network and creating a sustainable business. Refer other drivers and earn a commission from their trips. The more your network grows, the more you earn.
                 </p>
                 <Link
-                  href="/mlm-details" // Placeholder URL
+                  href="/referral-details" // Updated from /mlm-details
                   className="text-blue-600 dark:text-blue-400 font-semibold hover:underline"
                 >
-                  Learn More About the MLM System &rarr;
+                  Learn More About the Referral System &rarr;
                 </Link>
               </div>
               <div className="relative h-64 md:h-80 rounded-lg overflow-hidden">
@@ -111,7 +111,7 @@ export default function ForDriversPage(
           title="Hear from Our Drivers"
           testimonials={[
             {
-              quote: "Driving with CABI has changed my life. The MLM system provides a second income stream I never thought possible.",
+              quote: "Driving with CABI has changed my life. The Business Builder program provides a second income stream I never thought possible.",
               name: 'James K.',
               role: 'Driver in Nairobi',
               avatarUrl: '/avatars/driver1.png', // Placeholder path

@@ -6,6 +6,8 @@ class ActiveTripScreen extends StatelessWidget {
   final String tripId = 'trip-12345';
   final String currentUserId = 'driver-xyz';
 
+  const ActiveTripScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,24 +1,57 @@
-import { IsString, IsNotEmpty, IsPhoneNumber, MinLength, Matches } from 'class-validator';
+import { IsString, IsNotEmpty, IsPhoneNumber, MinLength, Matches, IsEmail, IsOptional, IsEnum } from 'class-validator';
+
+export enum UserRole {
+  PASSENGER = 'passenger',
+  DRIVER = 'driver',
+  ORGANIZATION = 'organization',
+}
 
 export class RegisterUserDto {
   @IsString()
   @IsNotEmpty()
-  fullName: string;
+  firstName: string;
 
-  @IsPhoneNumber('KE') // Validates against Kenyan phone number format
+  @IsString()
+  @IsNotEmpty()
+  lastName: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsPhoneNumber('KE')
   @IsNotEmpty()
   phone: string;
 
   @IsString()
   @IsNotEmpty()
-  @MinLength(8, { message: 'Password must be at least 8 characters long.' })
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).*$/, {
-    message: 'Password must include uppercase, lowercase, number, and special character.',
-  })
+  @MinLength(8)
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).*$/)
   password: string;
 
-  // As per architecture, referral is part of the user model.
-  // This will be provided if the user was referred.
+  @IsEnum(UserRole)
+  @IsNotEmpty()
+  role: UserRole;
+
   @IsString()
+  @IsOptional()
   referrerId?: string;
+
+  @IsString()
+  @IsOptional()
+  referralCode?: string;
+
+  // Driver specific
+  @IsString()
+  @IsOptional()
+  licenseNumber?: string;
+
+  // Organization specific
+  @IsString()
+  @IsOptional()
+  orgName?: string;
+
+  @IsString()
+  @IsOptional()
+  orgType?: string;
 }

@@ -24,7 +24,12 @@
             "@/*": [
                 "./src/*"
             ]
-        }
+        },
+        "types": [
+            "node",
+            "jest",
+            "uuid"
+        ]
     },
     "include": [
         "src"

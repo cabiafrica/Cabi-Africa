@@ -8,13 +8,13 @@ class ItemReturnConfirmationDialog extends StatefulWidget {
   final VoidCallback onDeny;
 
   const ItemReturnConfirmationDialog({
-    Key? key,
+    super.key,
     required this.ticketId,
     required this.itemDescription,
     required this.driverName,
     required this.onConfirm,
     required this.onDeny,
-  }) : super(key: key);
+  });
 
   @override
   State<ItemReturnConfirmationDialog> createState() => _ItemReturnConfirmationDialogState();
@@ -341,7 +341,7 @@ class _ItemReturnConfirmationDialogState extends State<ItemReturnConfirmationDia
 
 // Example usage widget
 class ItemReturnConfirmationExample extends StatelessWidget {
-  const ItemReturnConfirmationExample({Key? key}) : super(key: key);
+  const ItemReturnConfirmationExample({super.key});
 
   @override
   Widget build(BuildContext context) {

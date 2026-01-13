@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class OrganizationActivitiesScreen extends StatelessWidget {
-  const OrganizationActivitiesScreen({Key? key}) : super(key: key);
+  const OrganizationActivitiesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +46,9 @@ class OrganizationActivitiesScreen extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: const Text(
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
               'Upcoming Activities',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),

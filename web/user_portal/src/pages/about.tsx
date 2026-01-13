@@ -2,7 +2,7 @@ import { GetStaticProps } from 'next';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import MainLayout from '@/src/components/layout/MainLayout';
+import MainLayout from '@/components/layout/MainLayout';
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {
@@ -56,8 +56,8 @@ export default function AboutPage() {
                 </p>
                 <p className="mt-4">
                   We are committed to building a platform that not only serves our passengers but also empowers
-                  our driver-partners to build sustainable businesses. Through our innovative Multi-Level Marketing
-                  (MLM) referral system, drivers can earn additional income by growing the CABI community.
+                  our driver-partners to build sustainable businesses. Through our innovative Business Builder
+                  referral system, drivers can earn additional income by growing the CABI community.
                 </p>
                 <p className="mt-4">
                   Today, we are operating in major cities across Kenya, connecting thousands of people daily.

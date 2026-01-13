@@ -126,10 +126,11 @@ class MockRideService extends _i1.Mock implements _i2.RideService {
       ) as _i3.Future<void>);
 
   @override
-  _i3.Future<List<_i2.RideHistoryItem>> getRideHistory() => (super.noSuchMethod(
+  _i3.Future<List<_i2.RideHistoryItem>> getRideHistory(String? userId) =>
+      (super.noSuchMethod(
         Invocation.method(
           #getRideHistory,
-          [],
+          [userId],
         ),
         returnValue: _i3.Future<List<_i2.RideHistoryItem>>.value(
             <_i2.RideHistoryItem>[]),

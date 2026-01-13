@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../widgets/document_expiry_card.dart';
 
 class VehicleInspectionScreen extends StatefulWidget {
-  const VehicleInspectionScreen({Key? key}) : super(key: key);
+  const VehicleInspectionScreen({super.key});
 
   @override
   State<VehicleInspectionScreen> createState() =>
@@ -131,13 +131,13 @@ class _VehicleInspectionScreenState extends State<VehicleInspectionScreen> {
         elevation: 0.5,
       ),
       body: _isUploading
-          ? Center(
+          ? const Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const CircularProgressIndicator(color: Colors.black),
-                  const SizedBox(height: 16),
-                  const Text('Uploading document...'),
+                  CircularProgressIndicator(color: Colors.black),
+                  SizedBox(height: 16),
+                  Text('Uploading document...'),
                 ],
               ),
             )

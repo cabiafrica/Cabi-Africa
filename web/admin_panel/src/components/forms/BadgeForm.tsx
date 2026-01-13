@@ -10,6 +10,7 @@ interface Props {
 export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
   const [name, setName] = useState(badge?.name || '');
   const [description, setDescription] = useState(badge?.description || '');
+  const [value, setValue] = useState<number | undefined>(badge?.value);
   const [rules, setRules] = useState<BadgeRule[]>(badge?.rules || []);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,7 +31,7 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    const payload = { name, description, icon: '', rules };
+    const payload = { name, description, icon: '', value, rules };
     try {
       if (badge) {
         await adminService.updateBadge(badge.id, payload);
@@ -72,6 +73,18 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
             className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 p-2.5 border text-gray-900"
             placeholder="Describe the criteria and benefits..."
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Badge Value (Optional)</label>
+          <input
+            type="number"
+            value={value || ''}
+            onChange={e => setValue(parseFloat(e.target.value))}
+            className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 p-2.5 border text-gray-900"
+            placeholder="e.g. 100"
+          />
+          <p className="text-xs text-gray-500 mt-1">Numeric value associated with this badge (e.g., points, priority level).</p>
         </div>
 
         <div>

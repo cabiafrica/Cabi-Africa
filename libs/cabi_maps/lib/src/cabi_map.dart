@@ -55,7 +55,7 @@ class _CabiMapState extends State<CabiMap> {
             : null,
         interactionOptions: InteractionOptions(
           flags: widget.enableInteraction
-              ? InteractiveFlag.all
+              ? (InteractiveFlag.all & ~InteractiveFlag.rotate)
               : InteractiveFlag.none,
         ),
       ),
@@ -66,7 +66,7 @@ class _CabiMapState extends State<CabiMap> {
           userAgentPackageName: 'com.cabi.app',
           maxZoom: 19,
         ),
-        
+
         // Route polyline if provided
         if (widget.routePoints != null && widget.routePoints!.isNotEmpty)
           PolylineLayer(
@@ -80,7 +80,7 @@ class _CabiMapState extends State<CabiMap> {
               ),
             ],
           ),
-        
+
         // Markers
         MarkerLayer(
           markers: widget.markers.map((marker) {

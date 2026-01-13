@@ -8,13 +8,13 @@ class SharedRideOption extends StatelessWidget {
   final int estimatedExtraTime;
 
   const SharedRideOption({
-    Key? key,
+    super.key,
     required this.isSelected,
     required this.onTap,
     required this.standardFare,
     required this.sharedFare,
     this.estimatedExtraTime = 5,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +128,7 @@ class SharedRideOption extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '\$${sharedFare.toStringAsFixed(2)}',
+                      'KES ${sharedFare.toStringAsFixed(2)}',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -136,7 +136,7 @@ class SharedRideOption extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '\$${standardFare.toStringAsFixed(2)}',
+                      'KES ${standardFare.toStringAsFixed(2)}',
                       style: TextStyle(
                         fontSize: 14,
                         decoration: TextDecoration.lineThrough,
@@ -191,7 +191,7 @@ class SharedRideOption extends StatelessWidget {
               children: [
                 Expanded(
                   child: _buildBenefitChip(
-                    '💰 Save \$${savings.toStringAsFixed(2)}',
+                    '💰 Save KES ${savings.toStringAsFixed(2)}',
                     isSelected,
                   ),
                 ),
@@ -260,7 +260,7 @@ class SharedRideOption extends StatelessWidget {
 
 // Example usage
 class SharedRideExample extends StatefulWidget {
-  const SharedRideExample({Key? key}) : super(key: key);
+  const SharedRideExample({super.key});
 
   @override
   State<SharedRideExample> createState() => _SharedRideExampleState();
@@ -320,7 +320,7 @@ class _SharedRideExampleState extends State<SharedRideExample> {
                     ),
                   ),
                   const Text(
-                    '\$15.50',
+                    'KES 1550.00',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -339,8 +339,8 @@ class _SharedRideExampleState extends State<SharedRideExample> {
                 isSharedSelected = true;
               });
             },
-            standardFare: 15.50,
-            sharedFare: 9.99,
+            standardFare: 1550.00,
+            sharedFare: 999.00,
             estimatedExtraTime: 7,
           ),
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 // --- MOCK MODELS AND SERVICES FOR DEMONSTRATION ---
 
-enum HistoryFilterStatus { All, Pending, Approved, Rejected }
+enum HistoryFilterStatus { all, pending, approved, rejected }
 
 class DocumentSubmission {
   final String id;
@@ -32,9 +32,9 @@ class DocumentHistoryService {
 
   Future<List<DocumentSubmission>> fetchDocumentHistory(
     String docType, {
-    HistoryFilterStatus filter = HistoryFilterStatus.All,
+    HistoryFilterStatus filter = HistoryFilterStatus.all,
   }) async {
-    print(
+    debugPrint(
       "Fetching history for '$docType' with filter '${filter.name}' from mock service...",
     );
     await Future.delayed(const Duration(milliseconds: 800));
@@ -63,7 +63,7 @@ class DocumentHistoryService {
         .map((s) => DocumentSubmission.fromJson(s))
         .toList();
 
-    if (filter != HistoryFilterStatus.All) {
+    if (filter != HistoryFilterStatus.all) {
       submissions = submissions
           .where(
             (s) => s.status.toLowerCase().contains(filter.name.toLowerCase()),
@@ -82,18 +82,18 @@ class DocumentHistoryScreen extends StatefulWidget {
   final DocumentHistoryService historyService;
 
   const DocumentHistoryScreen({
-    Key? key,
+    super.key,
     required this.docType,
     this.historyService = const DocumentHistoryService(),
-  }) : super(key: key);
+  });
 
   @override
-  _DocumentHistoryScreenState createState() => _DocumentHistoryScreenState();
+  State<DocumentHistoryScreen> createState() => _DocumentHistoryScreenState();
 }
 
 class _DocumentHistoryScreenState extends State<DocumentHistoryScreen> {
   late Future<List<DocumentSubmission>> _historyFuture;
-  HistoryFilterStatus _selectedFilter = HistoryFilterStatus.All;
+  HistoryFilterStatus _selectedFilter = HistoryFilterStatus.all;
 
   @override
   void initState() {
@@ -119,19 +119,19 @@ class _DocumentHistoryScreenState extends State<DocumentHistoryScreen> {
             child: SegmentedButton<HistoryFilterStatus>(
               segments: const [
                 ButtonSegment(
-                  value: HistoryFilterStatus.All,
+                  value: HistoryFilterStatus.all,
                   label: Text('All'),
                 ),
                 ButtonSegment(
-                  value: HistoryFilterStatus.Pending,
+                  value: HistoryFilterStatus.pending,
                   label: Text('Pending'),
                 ),
                 ButtonSegment(
-                  value: HistoryFilterStatus.Approved,
+                  value: HistoryFilterStatus.approved,
                   label: Text('Approved'),
                 ),
                 ButtonSegment(
-                  value: HistoryFilterStatus.Rejected,
+                  value: HistoryFilterStatus.rejected,
                   label: Text('Rejected'),
                 ),
               ],
@@ -185,10 +185,10 @@ class DocumentHistoryCard extends StatelessWidget {
   final int submissionNumber;
 
   const DocumentHistoryCard({
-    Key? key,
+    super.key,
     required this.submission,
     required this.submissionNumber,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

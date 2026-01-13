@@ -32,17 +32,18 @@ class _CreateOrganizationScreenState extends State<CreateOrganizationScreen> {
     final payload = CreateOrganizationRequestDto(name: _nameController.text);
 
     // Mock API call
-    print('Submitting organization request for: ${payload.name}');
-    await Future.delayed(const Duration(seconds: 1));
+    debugPrint('Creating organization: ${payload.name}');
+    await Future.delayed(
+        const Duration(seconds: 2)); // Changed duration to 2 seconds
+
+    if (!mounted) return; // Added mounted check
 
     setState(() => _isSubmitting = false);
 
+    Navigator.pop(context); // Go back to Management Screen
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Request submitted! You will be notified upon review.'),
-      ),
+      SnackBar(content: Text('Organization "${payload.name}" Created!')),
     );
-    Navigator.of(context).pop();
   }
 
   @override

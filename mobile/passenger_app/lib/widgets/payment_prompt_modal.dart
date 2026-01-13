@@ -45,9 +45,11 @@ class _PaymentPromptModalState extends State<PaymentPromptModal> {
     } catch (e) {
       // Handle failure to even initiate the STK push
       setState(() => _isAwaitingMpesaConfirmation = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not start M-Pesa payment: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not start M-Pesa payment: $e')),
+        );
+      }
     }
   }
 
@@ -63,18 +65,23 @@ class _PaymentPromptModalState extends State<PaymentPromptModal> {
         ); // Payment is confirmed, now submit rating
       } else {
         // This case would happen if the query confirms the payment has NOT been made.
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Payment not yet confirmed. Please try again shortly.',
+        // This case would happen if the query confirms the payment has NOT been made.
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Payment not yet confirmed. Please try again shortly.',
+              ),
             ),
-          ),
-        );
+          );
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to check status: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to check status: $e')));
+      }
     } finally {
       setState(() => _isCheckingStatus = false);
     }

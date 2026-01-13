@@ -10,15 +10,28 @@ import { EmailProvider } from './notifications/email.provider';
 import { SmsProvider } from './notifications/sms.provider';
 import { PushProvider } from './notifications/push.provider';
 import { TokenCleanupJob } from './jobs/token-cleanup.job';
-import { AuditModule } from './audit/audit.module';
+import { DocumentModule } from './document/document.module';
+import { OrganizationModule } from './organization/organization.module';
+import { AnalyticsModule } from './analytics/analytics.module';
+import { JwtStrategy } from './auth/jwt.strategy'; // Assuming jwt.strategy is in an 'auth' folder
+import { AuditModule } from './audit/audit.module'; // Assuming AuditModule is in an 'audit' folder
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'your-super-secret-key-that-is-long',
+      signOptions: { expiresIn: '60m' },
+    }),
     AuditModule,
+    DocumentModule,
+    OrganizationModule,
+    AnalyticsModule,
   ],
   controllers: [AuthController, AdminSecurityController],
   providers: [
+    JwtStrategy,
     UserManagementService,
     PrismaService,
     NotificationService,
@@ -29,4 +42,4 @@ import { AuditModule } from './audit/audit.module';
     TokenCleanupJob,
   ],
 })
-export class AppModule {}
+export class AppModule { }

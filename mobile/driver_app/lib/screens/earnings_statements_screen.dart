@@ -54,7 +54,7 @@ class _EarningsStatementsScreenState extends State<EarningsStatementsScreen> {
 
   void _downloadStatement(String url) {
     // Mock download action
-    print('Downloading statement from: $url');
+    debugPrint('Downloading statement from: $url');
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Downloading statement... (mock)')),
     );

@@ -1,0 +1,59 @@
+{
+    "name": "dispatch-panel",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "web/dispatch_panel",
+    "projectType": "application",
+    "targets": {
+        "build": {
+            "executor": "@nx/vite:build",
+            "outputs": [
+                "{options.outputPath}"
+            ],
+            "defaultConfiguration": "production",
+            "options": {
+                "outputPath": "dist/web/dispatch_panel"
+            },
+            "configurations": {
+                "development": {
+                    "mode": "development"
+                },
+                "production": {
+                    "mode": "production"
+                }
+            }
+        },
+        "serve": {
+            "executor": "@nx/vite:dev-server",
+            "defaultConfiguration": "development",
+            "options": {
+                "buildTarget": "dispatch-panel:build"
+            },
+            "configurations": {
+                "development": {
+                    "buildTarget": "dispatch-panel:build:development",
+                    "hmr": true
+                },
+                "production": {
+                    "buildTarget": "dispatch-panel:build:production",
+                    "hmr": false
+                }
+            }
+        },
+        "preview": {
+            "executor": "@nx/vite:preview-server",
+            "defaultConfiguration": "development",
+            "options": {
+                "buildTarget": "dispatch-panel:build"
+            },
+            "configurations": {
+                "development": {
+                    "buildTarget": "dispatch-panel:build:development"
+                },
+                "production": {
+                    "buildTarget": "dispatch-panel:build:production"
+                }
+            }
+        }
+    },
+    "tags": []
+}

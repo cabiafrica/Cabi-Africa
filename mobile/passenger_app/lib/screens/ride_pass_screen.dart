@@ -19,7 +19,7 @@ class RidePassPlan {
 }
 
 class RidePassScreen extends StatefulWidget {
-  const RidePassScreen({Key? key}) : super(key: key);
+  const RidePassScreen({super.key});
 
   @override
   State<RidePassScreen> createState() => _RidePassScreenState();
@@ -34,7 +34,7 @@ class _RidePassScreenState extends State<RidePassScreen> {
       id: 'basic',
       name: 'Basic Pass',
       description: 'Perfect for occasional riders',
-      monthlyPrice: 9.99,
+      monthlyPrice: 999.00,
       benefits: [
         '10% off all rides',
         'Priority customer support',
@@ -45,7 +45,7 @@ class _RidePassScreenState extends State<RidePassScreen> {
       id: 'premium',
       name: 'Premium Pass',
       description: 'Best value for frequent riders',
-      monthlyPrice: 19.99,
+      monthlyPrice: 1999.00,
       isPopular: true,
       benefits: [
         '20% off all rides',
@@ -60,9 +60,9 @@ class _RidePassScreenState extends State<RidePassScreen> {
       id: 'unlimited',
       name: 'Unlimited Pass',
       description: 'For daily commuters',
-      monthlyPrice: 49.99,
+      monthlyPrice: 4999.00,
       benefits: [
-        'Unlimited rides up to \$15 each',
+        'Unlimited rides up to KES 1500 each',
         'No surge pricing',
         'Priority pickup',
         'VIP customer support',
@@ -79,7 +79,7 @@ class _RidePassScreenState extends State<RidePassScreen> {
       builder: (context) => AlertDialog(
         title: Text('Subscribe to ${plan.name}?'),
         content: Text(
-          'You will be charged \$${plan.monthlyPrice.toStringAsFixed(2)}/month. You can cancel anytime.',
+          'You will be charged KES ${plan.monthlyPrice.toStringAsFixed(2)}/month. You can cancel anytime.',
         ),
         actions: [
           TextButton(
@@ -357,7 +357,7 @@ class _RidePassScreenState extends State<RidePassScreen> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              '\$${plan.monthlyPrice.toStringAsFixed(2)}',
+                              'KES ${plan.monthlyPrice.toStringAsFixed(2)}',
                               style: const TextStyle(
                                 fontSize: 36,
                                 fontWeight: FontWeight.bold,

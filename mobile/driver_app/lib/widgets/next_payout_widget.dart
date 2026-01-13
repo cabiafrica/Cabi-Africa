@@ -24,7 +24,7 @@ class PayoutService {
     }
 
     return UpcomingPayout(
-      estimatedAmount: 125.50,
+      estimatedAmount: 12550.00,
       expectedPayoutDate: payoutDate,
     );
   }
@@ -85,7 +85,7 @@ class _NextPayoutWidgetState extends State<NextPayoutWidget> {
                       style: TextStyle(fontSize: 16),
                     ),
                     Text(
-                      '\$${payout.estimatedAmount.toStringAsFixed(2)}',
+                      'KES ${payout.estimatedAmount.toStringAsFixed(2)}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

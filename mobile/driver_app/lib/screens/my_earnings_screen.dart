@@ -71,7 +71,7 @@ class EarningsData {
 
 class EarningsService {
   Future<EarningsData> fetchMyEarnings() async {
-    print("Fetching earnings from mock service...");
+    debugPrint("Fetching earnings from mock service...");
     await Future.delayed(const Duration(seconds: 1));
     // In a real app, this would make an HTTP GET request to `/api/earnings/my-summary`
     final mockApiResponse = {
@@ -127,7 +127,7 @@ class EarningsService {
   }
 
   Future<void> requestPayout(double amount) async {
-    print("Requesting payout of \$$amount...");
+    debugPrint("Requesting payout of KES $amount...");
     await Future.delayed(const Duration(seconds: 1));
   }
 }
@@ -137,10 +137,10 @@ class EarningsService {
 class MyEarningsScreen extends StatefulWidget {
   final EarningsService? earningsService;
 
-  const MyEarningsScreen({Key? key, this.earningsService}) : super(key: key);
+  const MyEarningsScreen({super.key, this.earningsService});
 
   @override
-  _MyEarningsScreenState createState() => _MyEarningsScreenState();
+  State<MyEarningsScreen> createState() => _MyEarningsScreenState();
 }
 
 class _MyEarningsScreenState extends State<MyEarningsScreen> {
@@ -206,7 +206,7 @@ class _MyEarningsScreenState extends State<MyEarningsScreen> {
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         Text(
-                          '\$${summary.total.toStringAsFixed(2)}',
+                          'KES ${summary.total.toStringAsFixed(2)}',
                           style: Theme.of(context).textTheme.displaySmall,
                         ),
                         const Divider(height: 32),
@@ -268,7 +268,7 @@ class _MyEarningsScreenState extends State<MyEarningsScreen> {
                     title: Text(tx.description),
                     subtitle: Text(tx.type),
                     trailing: Text(
-                      '+\$${tx.amount.toStringAsFixed(2)}',
+                      '${tx.amount >= 0 ? '+' : ''}KES ${tx.amount.toStringAsFixed(2)}',
                       style: const TextStyle(
                         color: Colors.green,
                         fontWeight: FontWeight.bold,
@@ -289,7 +289,7 @@ class _MyEarningsScreenState extends State<MyEarningsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirm Payout'),
-        content: Text('Request a payout of \$${amount.toStringAsFixed(2)}?'),
+        content: Text('Request a payout of KES ${amount.toStringAsFixed(2)}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -321,7 +321,7 @@ class _MyEarningsScreenState extends State<MyEarningsScreen> {
       children: [
         Text(title, style: Theme.of(context).textTheme.bodySmall),
         Text(
-          '\$${amount.toStringAsFixed(2)}',
+          'KES ${amount.toStringAsFixed(2)}',
           style: Theme.of(context).textTheme.titleLarge,
         ),
       ],

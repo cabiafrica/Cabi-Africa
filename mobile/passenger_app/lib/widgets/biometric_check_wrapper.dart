@@ -48,7 +48,7 @@ class _BiometricCheckWrapperState extends State<BiometricCheckWrapper>
         await _showBiometricPrompt();
       }
     } catch (e) {
-      print("Error checking profile for biometric request: $e");
+      debugPrint("Error checking profile for biometric request: $e");
     } finally {
       if (mounted) setState(() => _isChecking = false);
     }
@@ -67,9 +67,12 @@ class _BiometricCheckWrapperState extends State<BiometricCheckWrapper>
     }
 
     // If loop finishes, it means 3 failed attempts
+    // If loop finishes, it means 3 failed attempts
+    if (!mounted) return;
+    await _userService.biometricFailed();
+
+    // Force logout
     if (mounted) {
-      await _userService.biometricFailed();
-      // Force logout
       Provider.of<AuthProvider>(context, listen: false).logout();
     }
   }

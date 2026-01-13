@@ -42,7 +42,7 @@ class PositiveFeedbackScreen extends StatelessWidget {
                           color: Colors.indigo),
                     ),
                   ),
-                  ...items.map((item) => _buildFeedbackCard(item)).toList(),
+                  ...items.map((item) => _buildFeedbackCard(item)),
                 ],
               );
             },

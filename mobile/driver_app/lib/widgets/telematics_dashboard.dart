@@ -9,14 +9,14 @@ class TelematicsDashboard extends StatelessWidget {
   final bool isConnected;
 
   const TelematicsDashboard({
-    Key? key,
+    super.key,
     required this.odometerReading,
     required this.fuelLevel,
     required this.batteryLevel,
     required this.tirePressure,
     required this.activeAlerts,
     this.isConnected = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +29,10 @@ class TelematicsDashboard extends StatelessWidget {
           // Header
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.black,
               borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
+                  BorderRadius.vertical(top: Radius.circular(16)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -174,7 +174,7 @@ class TelematicsDashboard extends StatelessWidget {
                               ],
                             ),
                           ))
-                      .toList(),
+                      ,
                 ],
               ],
             ),

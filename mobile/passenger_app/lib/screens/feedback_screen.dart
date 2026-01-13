@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class FeedbackService {
   Future<bool> submitFeedback(String feedback) async {
     await Future.delayed(const Duration(seconds: 1));
-    print('Submitting feedback: "$feedback"');
+    debugPrint('Submitting feedback: "$feedback"');
     // In a real app, this would be a POST request to the support-service
     // to create a ticket with category: 'Suggestion'.
     return true;
@@ -35,13 +35,16 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     final success = await _feedbackService.submitFeedback(
       _feedbackController.text,
     );
+    if (!mounted) return;
     setState(() => _isLoading = false);
 
     if (success) {
-      Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Thank you for your feedback!')),
-      );
+      if (mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Thank you for your feedback!')),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

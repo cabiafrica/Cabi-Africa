@@ -96,7 +96,7 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
                                   child: CircleAvatar(
                                       radius: 30,
                                       backgroundColor: Colors.grey.shade200,
-                                      child: story['isMe'] ? const Icon(Icons.add) : Icon(Icons.person), 
+                                      child: story['isMe'] ? const Icon(Icons.add) : const Icon(Icons.person), 
                                   ),
                               ),
                               const SizedBox(height: 4),

@@ -4,7 +4,8 @@ class RatePassengerScreen extends StatefulWidget {
   final String rideId;
   final String passengerName;
 
-  const RatePassengerScreen({super.key, required this.rideId, required this.passengerName});
+  const RatePassengerScreen(
+      {super.key, required this.rideId, required this.passengerName});
 
   @override
   State<RatePassengerScreen> createState() => _RatePassengerScreenState();
@@ -17,8 +18,9 @@ class _RatePassengerScreenState extends State<RatePassengerScreen> {
   void _submit() {
     if (_rating == 0) return;
     // API Call: POST /ratings
-    print('Rating Passenger: $_rating stars');
-    Navigator.of(context).popUntil((route) => route.isFirst); // Back to home/map
+    debugPrint('Rating Passenger: $_rating stars');
+    Navigator.of(context)
+        .popUntil((route) => route.isFirst); // Back to home/map
   }
 
   @override
@@ -29,7 +31,8 @@ class _RatePassengerScreenState extends State<RatePassengerScreen> {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            Text('How was ${widget.passengerName}?', style: const TextStyle(fontSize: 18)),
+            Text('How was ${widget.passengerName}?',
+                style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 32),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -56,7 +59,8 @@ class _RatePassengerScreenState extends State<RatePassengerScreen> {
             const Spacer(),
             ElevatedButton(
               onPressed: _rating > 0 ? _submit : null,
-              style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)),
+              style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50)),
               child: const Text('SUBMIT'),
             ),
           ],

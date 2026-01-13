@@ -62,6 +62,14 @@ const getActionChipColor = (action: string) => {
     case '2FA_ENABLED':
     case 'PASSWORD_CHANGED':
       return 'info';
+    case 'DRIVER_APPROVED':
+    case 'VEHICLE_VERIFIED':
+      return 'success';
+    case 'TRIP_CANCELLED_BY_ADMIN':
+    case 'USER_SUSPENDED':
+      return 'error';
+    case 'SETTINGS_UPDATED':
+      return 'secondary';
     default:
       return 'default';
   }
@@ -208,11 +216,13 @@ export const AuditLogPage = () => {
       try {
         // Mocking the response since the backend isn't implemented
         const mockData: AuditEvent[] = [
-          { 
+          {
             id: 'evt-1', userId: 'admin-user-01', userFullName: 'Admin User', action: 'PASSWORD_CHANGED', timestamp: new Date().toISOString(),
-            details: { sourceIp: '192.168.1.1', userAgent: 'Chrome/125.0.0.0' } 
+            details: { sourceIp: '192.168.1.1', userAgent: 'Chrome/125.0.0.0' }
           },
-          { id: 'evt-2', userId: 'admin-user-01', userFullName: 'Admin User', action: '2FA_ENABLED', timestamp: new Date(Date.now() - (86400000 * 2)).toISOString() },
+          { id: 'evt-2', userId: 'admin-user-01', userFullName: 'Admin User', action: 'DRIVER_APPROVED', timestamp: new Date(Date.now() - (3600000 * 2)).toISOString(), details: { driverId: 'DRV-778', notes: 'All docs verified' } },
+          { id: 'evt-4', userId: 'admin-user-02', userFullName: 'Sarah Connor', action: 'SETTINGS_UPDATED', timestamp: new Date(Date.now() - (3600000 * 5)).toISOString(), details: { component: 'PricingEngine', change: 'Surge multiplier increased' } },
+          { id: 'evt-5', userId: 'admin-user-01', userFullName: 'Admin User', action: 'USER_SUSPENDED', timestamp: new Date(Date.now() - (3600000 * 12)).toISOString(), details: { targetUserId: 'USR-665', reason: 'Fraudulent activity detected' } },
           { id: 'evt-3', userId: 'driver-007', userFullName: 'James Bond', action: 'ACCOUNT_DELETED', timestamp: new Date(Date.now() - (86400000 * 5)).toISOString() },
         ];
         // const data = await fetchAuditEvents();

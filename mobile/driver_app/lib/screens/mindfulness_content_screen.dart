@@ -70,10 +70,11 @@ class _MindfulnessContentScreenState extends State<MindfulnessContentScreen> {
       setState(() {
         _isPlaying = !_isPlaying;
       });
-      if (_isPlaying)
+      if (_isPlaying) {
         _startTimer();
-      else
+      } else {
         _stopTimer();
+      }
       return;
     }
 
@@ -175,13 +176,13 @@ class _MindfulnessContentScreenState extends State<MindfulnessContentScreen> {
           if (_currentTrack != null)
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
                       color: Colors.black12,
                       blurRadius: 10,
-                      offset: const Offset(0, -2))
+                      offset: Offset(0, -2))
                 ],
               ),
               child: Column(
@@ -215,10 +216,11 @@ class _MindfulnessContentScreenState extends State<MindfulnessContentScreen> {
                         onPressed: () {
                           setState(() {
                             _isPlaying = !_isPlaying;
-                            if (_isPlaying)
+                            if (_isPlaying) {
                               _startTimer();
-                            else
+                            } else {
                               _stopTimer();
+                            }
                           });
                         },
                       ),

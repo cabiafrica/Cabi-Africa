@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class WeeklyEarningsScreen extends StatefulWidget {
-  const WeeklyEarningsScreen({Key? key}) : super(key: key);
+  const WeeklyEarningsScreen({super.key});
 
   @override
   State<WeeklyEarningsScreen> createState() => _WeeklyEarningsScreenState();

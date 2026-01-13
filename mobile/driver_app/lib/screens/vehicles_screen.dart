@@ -8,7 +8,7 @@ class VehiclesScreen extends StatefulWidget {
 }
 
 class _VehiclesScreenState extends State<VehiclesScreen> {
-  List<Map<String, dynamic>> _vehicles = [
+  final List<Map<String, dynamic>> _vehicles = [
     {
       'id': 'veh_1',
       'make': 'Toyota',
@@ -82,7 +82,11 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('My Vehicles')),
+      appBar: AppBar(
+        title: const Text('My Vehicles'),
+        backgroundColor: const Color(0xFFFFBE0B), // Cabi Yellow
+        foregroundColor: Colors.black,
+      ),
       body: _vehicles.isEmpty
           ? Center(
               child: Column(
@@ -93,10 +97,15 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                   const Text('No vehicles added',
                       style: TextStyle(fontSize: 18)),
                   const SizedBox(height: 24),
+                  // Button to add first vehicle via portal
                   ElevatedButton.icon(
                     onPressed: _addVehicle,
                     icon: const Icon(Icons.add),
-                    label: const Text('ADD YOUR FIRST VEHICLE'),
+                    label: const Text('ADD VEHICLE VIA PORTAL'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFBE0B),
+                      foregroundColor: Colors.black,
+                    ),
                   ),
                 ],
               ),
@@ -108,6 +117,9 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                 final vehicle = _vehicles[index];
                 return Card(
                   margin: const EdgeInsets.only(bottom: 16),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -119,14 +131,15 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: vehicle['isActive']
-                                    ? Colors.green[100]
+                                    ? const Color(0xFFFFBE0B)
+                                        .withValues(alpha: 0.2) // Yellow tint
                                     : Colors.grey[200],
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Icon(
                                 Icons.directions_car,
                                 color: vehicle['isActive']
-                                    ? Colors.green
+                                    ? Colors.black
                                     : Colors.grey,
                                 size: 32,
                               ),
@@ -172,11 +185,13 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                         const Divider(height: 24),
                         Row(
                           children: [
-                            const Icon(Icons.confirmation_number, size: 16),
+                            const Icon(Icons.confirmation_number,
+                                size: 16, color: Colors.grey),
                             const SizedBox(width: 8),
                             Text(vehicle['licensePlate'],
-                                style:
-                                    const TextStyle(fontFamily: 'monospace')),
+                                style: const TextStyle(
+                                    fontFamily: 'monospace',
+                                    fontWeight: FontWeight.bold)),
                             const Spacer(),
                             Text(vehicle['type'],
                                 style: TextStyle(
@@ -192,14 +207,19 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                                   onPressed: () => _setActive(vehicle['id']),
                                   icon: const Icon(Icons.check_circle_outline),
                                   label: const Text('SET AS ACTIVE'),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.black,
+                                  ),
                                 ),
                               ),
                             if (!vehicle['isActive']) const SizedBox(width: 8),
+                            // Delete button (Disabled if active, but logic handles it above)
                             if (!vehicle['isActive'])
                               IconButton(
                                 onPressed: () => _deleteVehicle(vehicle['id']),
-                                icon:
-                                    const Icon(Icons.delete, color: Colors.red),
+                                icon: const Icon(Icons.delete_outline,
+                                    color: Colors.red),
+                                tooltip: 'Delete Vehicle',
                               ),
                           ],
                         ),
@@ -209,13 +229,15 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                 );
               },
             ),
-      floatingActionButton: _vehicles.isNotEmpty
-          ? FloatingActionButton.extended(
-              onPressed: _addVehicle,
-              icon: const Icon(Icons.add),
-              label: const Text('ADD VEHICLE'),
-            )
-          : null,
+      // Plus button at left bottom as requested
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addVehicle,
+        backgroundColor: const Color(0xFFFFBE0B),
+        foregroundColor: Colors.black,
+        tooltip: 'Go to User Portal to Add Vehicle',
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
@@ -254,12 +276,30 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Vehicle')),
+      appBar: AppBar(
+        title: const Text('Driver Portal - Vehicle Registration'),
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              color: Colors.blue.shade50,
+              child: const Row(
+                children: [
+                  Icon(Icons.info_outline, color: Colors.blue),
+                  SizedBox(width: 12),
+                  Expanded(
+                      child: Text(
+                          "Use this portal to register new vehicles. Approvals may take up to 24 hours.")),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
             TextFormField(
               controller: _makeController,
               decoration: const InputDecoration(
@@ -331,8 +371,10 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               onPressed: _submit,
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size.fromHeight(50),
+                backgroundColor: const Color(0xFFFFBE0B),
+                foregroundColor: Colors.black,
               ),
-              child: const Text('ADD VEHICLE'),
+              child: const Text('SUBMIT FOR APPROVAL'),
             ),
           ],
         ),

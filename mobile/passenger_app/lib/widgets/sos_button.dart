@@ -7,7 +7,8 @@ class SOSButton extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('EMERGENCY ALERT', style: TextStyle(color: Colors.red)),
+        title:
+            const Text('EMERGENCY ALERT', style: TextStyle(color: Colors.red)),
         content: const Text(
             'Are you sure you want to trigger an SOS? This will alert our safety team and prompt you to call emergency services.'),
         actions: [
@@ -20,11 +21,12 @@ class SOSButton extends StatelessWidget {
             onPressed: () {
               Navigator.of(ctx).pop();
               // 1. Send API Alert
-              print('Sending SOS Alert to Backend...');
+              debugPrint('Sending SOS Alert to Backend...');
               // 2. Launch Dialer
-              print('Launching Dialer with Emergency Number...');
+              debugPrint('Launching Dialer with Emergency Number...');
             },
-            child: const Text('CONFIRM SOS', style: TextStyle(color: Colors.white)),
+            child: const Text('CONFIRM SOS',
+                style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -39,7 +41,8 @@ class SOSButton extends StatelessWidget {
         onPressed: () => _triggerSOS(context),
         backgroundColor: Colors.red,
         icon: const Icon(Icons.warning_amber_rounded, color: Colors.white),
-        label: const Text('SOS', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        label: const Text('SOS',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
   }

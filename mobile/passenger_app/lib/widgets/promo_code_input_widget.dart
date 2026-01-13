@@ -42,9 +42,9 @@ class _PromoCodeInputWidgetState extends State<PromoCodeInputWidget> {
     if (_promoController.text.toUpperCase() == 'WELCOME20') {
       setState(() {
         _appliedPromo = AppliedPromoCodeDto(
-          originalFare: 20.0,
-          discountAmount: 4.0,
-          finalFare: 16.0,
+          originalFare: 2000.0,
+          discountAmount: 400.0,
+          finalFare: 1600.0,
           message: 'WELCOME20 applied!',
         );
       });
@@ -77,7 +77,7 @@ class _PromoCodeInputWidgetState extends State<PromoCodeInputWidget> {
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Text(
-              '${_appliedPromo!.message} New fare: \$${_appliedPromo!.finalFare.toStringAsFixed(2)}',
+              '${_appliedPromo!.message} New fare: KES ${_appliedPromo!.finalFare.toStringAsFixed(2)}',
               style: const TextStyle(color: Colors.green),
             ),
           ),

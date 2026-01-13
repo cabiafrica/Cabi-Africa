@@ -23,12 +23,12 @@ class TrustedContactsService {
     // In a real app, this would use a plugin like `contacts_service`
     // to open the phone's contact picker.
     await Future.delayed(const Duration(milliseconds: 300));
-    print('Opening contact picker to add a new trusted contact...');
+    debugPrint('Opening contact picker to add a new trusted contact...');
   }
 
   Future<void> removeContact(String id) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    print('Removing trusted contact: $id');
+    debugPrint('Removing trusted contact: $id');
   }
 }
 

@@ -1,53 +1,143 @@
 import { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
 import { RideRequest, Driver, DispatchMetrics } from './types';
-import { mockRideRequests, mockDrivers, mockMetrics, mockSurgeZones, mockTripAnalytics } from './mockData';
+import { mockRideRequests, mockDrivers, mockMetrics, mockSurgeZones, mockTripAnalytics, mockTripHistory, mockDriverHistory, mockPassengers } from './mockData';
 import MetricsOverview from './components/MetricsOverview';
 import RideRequestsList from './components/RideRequestsList';
 import DriversList from './components/DriversList';
 import LiveMap from './components/LiveMap';
 import SurgeMonitor from './components/SurgeMonitor';
 import TripAnalytics from './components/TripAnalytics';
+import TripHistoryPage from './components/TripHistoryPage';
+import DriverHistoryPage from './components/DriverHistoryPage';
+import PassengerManagementPage from './components/PassengerManagementPage';
 
 function App() {
-    const [activeView, setActiveView] = useState<'overview' | 'rides' | 'drivers' | 'map' | 'surge' | 'analytics'>('overview');
+    const [activeView, setActiveView] = useState<'overview' | 'rides' | 'drivers' | 'map' | 'surge' | 'analytics' | 'trips' | 'driver-history' | 'passengers'>('overview');
     const [rideRequests, setRideRequests] = useState<RideRequest[]>(mockRideRequests);
     const [drivers, setDrivers] = useState<Driver[]>(mockDrivers);
     const [metrics, setMetrics] = useState<DispatchMetrics>(mockMetrics);
     const [selectedRide, setSelectedRide] = useState<RideRequest | null>(null);
 
-    // Simulate real-time updates
+    // Socket.io for Real-time Tracking
     useEffect(() => {
-        const interval = setInterval(() => {
-            // Update metrics with slight variations
-            setMetrics(prev => ({
-                ...prev,
-                activeRides: prev.activeRides + Math.floor(Math.random() * 3) - 1,
-                pendingRequests: Math.max(0, prev.pendingRequests + Math.floor(Math.random() * 3) - 1),
-                onlineDrivers: prev.onlineDrivers + Math.floor(Math.random() * 5) - 2,
-            }));
-        }, 5000);
+        // Dispatch service is on localhost:3000 (proxied via /api/dispatch in development)
+        // However, WebSockets usually bypass the Vite proxy unless configured.
+        // We'll connect directly to the backend port for WebSockets.
+        const socket = io('http://localhost:3334/trip-tracking');
+
+        socket.on('connect', () => {
+            console.log('Connected to Dispatch Real-time Gateway');
+        });
+
+        socket.on('globalDriverUpdate', (data: { driverId: string; lat: number; lng: number }) => {
+            setDrivers(prev => prev.map(d =>
+                d.id === data.driverId
+                    ? { ...d, currentLocation: { lat: data.lat, lng: data.lng }, status: 'online' }
+                    : d
+            ));
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
+
+    // Poll for updates
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Fetch Metrics
+                const metricsRes = await fetch('/api/dispatch/metrics');
+                if (metricsRes.ok) {
+                    const data = await metricsRes.json();
+                    setMetrics(prev => ({ ...prev, ...data }));
+                }
+
+                // Fetch Rides
+                const ridesRes = await fetch('/api/dispatch/rides');
+                if (ridesRes.ok) {
+                    const data = await ridesRes.json();
+                    // Map backend data to frontend types
+                    const mappedRides = data.map((r: any) => ({
+                        id: r.id,
+                        passengerId: r.passengerId,
+                        passengerName: r.passenger?.fullName || 'Unknown',
+                        passengerPhone: r.passenger?.phone || '',
+                        pickupLocation: typeof r.pickupLocation === 'string' ? JSON.parse(r.pickupLocation) : r.pickupLocation,
+                        dropoffLocation: typeof r.dropoffLocation === 'string' ? JSON.parse(r.dropoffLocation) : r.dropoffLocation,
+                        requestedAt: r.createdAt,
+                        status: r.status.toLowerCase(),
+                        assignedDriverId: r.driverId,
+                        estimatedFare: Number(r.fare) || 0,
+                        distance: r.distance || 0,
+                        priority: 'medium',
+                    }));
+                    setRideRequests(mappedRides);
+                }
+
+                // Fetch Drivers
+                const driversRes = await fetch('/api/dispatch/drivers');
+                if (driversRes.ok) {
+                    const data = await driversRes.json();
+                    const mappedDrivers = data.map((d: any) => ({
+                        id: d.id,
+                        name: d.user?.fullName || 'Unknown Driver',
+                        phone: d.user?.phone || '',
+                        vehicleType: d.vehicle?.type || 'Standard',
+                        vehiclePlate: d.vehicle?.plateNumber || '',
+                        rating: 5.0, // TODO: Fetch real rating
+                        status: d.isOnline ? 'online' : 'offline',
+                        currentLocation: typeof d.currentLocation === 'string' ? JSON.parse(d.currentLocation) : d.currentLocation || { lat: -1.286389, lng: 36.817223 },
+                        completedRides: 0,
+                        acceptanceRate: 100,
+                        score: 100
+                    }));
+                    setDrivers(mappedDrivers);
+                }
+            } catch (error) {
+                console.error("Failed to fetch dispatch data", error);
+            }
+        };
+
+        fetchData(); // Initial fetch
+        const interval = setInterval(fetchData, 5000); // Poll every 5s
 
         return () => clearInterval(interval);
     }, []);
 
-    const handleAssignDriver = (rideId: string, driverId: string) => {
-        setRideRequests(prev =>
-            prev.map(ride =>
-                ride.id === rideId
-                    ? { ...ride, status: 'assigned', assignedDriverId: driverId }
-                    : ride
-            )
-        );
-        setDrivers(prev =>
-            prev.map(driver =>
-                driver.id === driverId
-                    ? { ...driver, status: 'busy', activeRideId: rideId }
-                    : driver
-            )
-        );
+    const handleAssignDriver = async (rideId: string, driverId: string) => {
+        try {
+            const res = await fetch(`/api/dispatch/rides/${rideId}/assign`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ driverId })
+            });
+
+            if (res.ok) {
+                // Optimistic update
+                setRideRequests(prev =>
+                    prev.map(ride =>
+                        ride.id === rideId
+                            ? { ...ride, status: 'DRIVER_ASSIGNED', assignedDriverId: driverId }
+                            : ride
+                    )
+                );
+                setDrivers(prev =>
+                    prev.map(driver =>
+                        driver.id === driverId
+                            ? { ...driver, status: 'busy', activeRideId: rideId }
+                            : driver
+                    )
+                );
+            }
+        } catch (e) {
+            console.error("Assign failed", e);
+        }
     };
 
     const handleCancelRide = (rideId: string) => {
+        // TODO: Implement cancel API
         setRideRequests(prev =>
             prev.map(ride =>
                 ride.id === rideId ? { ...ride, status: 'cancelled' } : ride
@@ -181,6 +271,49 @@ function App() {
                         </svg>
                         <span className="font-medium">Trip Analytics</span>
                     </button>
+
+                    <div className="px-4 mb-2 mt-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                        Management
+                    </div>
+
+                    <button
+                        onClick={() => setActiveView('trips')}
+                        className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === 'trips'
+                            ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
+                            : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+                            }`}
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className="font-medium">Trip Management</span>
+                    </button>
+
+                    <button
+                        onClick={() => setActiveView('driver-history')}
+                        className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === 'driver-history'
+                            ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
+                            : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+                            }`}
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span className="font-medium">Driver Management</span>
+                    </button>
+
+                    <button
+                        onClick={() => setActiveView('passengers')}
+                        className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === 'passengers'
+                            ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
+                            : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+                            }`}
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <span className="font-medium">Passenger Management</span>
+                    </button>
                 </nav>
 
                 {/* Footer */}
@@ -210,9 +343,16 @@ function App() {
                                 {activeView === 'map' && 'Live Map View'}
                                 {activeView === 'surge' && 'Surge Pricing Monitor'}
                                 {activeView === 'analytics' && 'Trip Analytics'}
+                                {activeView === 'trips' && 'Trip Management'}
+                                {activeView === 'driver-history' && 'Driver Management'}
+                                {activeView === 'passengers' && 'Passenger Management'}
                             </h2>
                             <p className="text-sm text-slate-400 mt-1">
-                                {activeView === 'analytics' ? 'Comprehensive trip performance and cancellation analysis' : 'Real-time dispatch operations and monitoring'}
+                                {activeView === 'analytics' && 'Comprehensive trip performance and cancellation analysis'}
+                                {activeView === 'trips' && 'View and manage all trip history with advanced filtering'}
+                                {activeView === 'driver-history' && 'Manage drivers, view performance metrics and earnings'}
+                                {activeView === 'passengers' && 'Manage passengers, view ride history and spending'}
+                                {!['analytics', 'trips', 'driver-history', 'passengers'].includes(activeView) && 'Real-time dispatch operations and monitoring'}
                             </p>
                         </div>
                         <div className="flex items-center gap-4">
@@ -260,6 +400,15 @@ function App() {
                     )}
                     {activeView === 'surge' && (
                         <SurgeMonitor surgeZones={mockSurgeZones} />
+                    )}
+                    {activeView === 'trips' && (
+                        <TripHistoryPage trips={mockTripHistory} />
+                    )}
+                    {activeView === 'driver-history' && (
+                        <DriverHistoryPage drivers={mockDriverHistory} />
+                    )}
+                    {activeView === 'passengers' && (
+                        <PassengerManagementPage passengers={mockPassengers} />
                     )}
                 </div>
             </main>

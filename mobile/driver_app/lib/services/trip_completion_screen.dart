@@ -39,7 +39,7 @@ class _TripCompletionScreenState extends State<TripCompletionScreen> {
   Future<void> _confirmCash() async {
     setState(() => _isLoading = true);
     try {
-      await _rideService.confirmCashPayment(widget.tripId);
+      await _rideService.confirmCashPayment(widget.tripId, _finalFare!);
       if (mounted) {
         setState(() {
           _isPaymentConfirmed = true;
@@ -106,9 +106,8 @@ class _TripCompletionScreenState extends State<TripCompletionScreen> {
               ),
               const SizedBox(height: 32),
               OutlinedButton(
-                onPressed: _isLoading || _isPaymentConfirmed
-                    ? null
-                    : _confirmCash,
+                onPressed:
+                    _isLoading || _isPaymentConfirmed ? null : _confirmCash,
                 child: const Text('CONFIRM CASH RECEIVED'),
               ),
               if (_isPaymentConfirmed)

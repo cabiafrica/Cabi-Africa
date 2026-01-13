@@ -46,8 +46,10 @@ class _DestinationModeScreenState extends State<DestinationModeScreen> {
     );
 
     // Mock API call
-    print('Setting destination mode: ${payload.destinationAddress}');
+    debugPrint('Setting destination mode: ${payload.destinationAddress}');
     await Future.delayed(const Duration(seconds: 1));
+
+    if (!mounted) return;
 
     setState(() => _isDestinationModeActive = true);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -57,7 +59,7 @@ class _DestinationModeScreenState extends State<DestinationModeScreen> {
 
   void _cancelDestinationMode() {
     // Mock API call
-    print('Cancelling destination mode.');
+    debugPrint('Cancelling destination mode.');
     setState(() {
       _isDestinationModeActive = false;
       _destinationController.clear();

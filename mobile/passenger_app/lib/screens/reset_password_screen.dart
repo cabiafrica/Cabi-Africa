@@ -21,15 +21,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
     // Mock API call
     await Future.delayed(const Duration(seconds: 2));
-    print('Password reset for token: ${_tokenController.text}');
+    debugPrint('Password reset for token: ${_tokenController.text}');
 
+    if (!mounted) return;
     setState(() => _isLoading = false);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Password has been reset successfully.')),
-    );
-    // In a real app, navigate to the login screen
-    Navigator.of(context).pop();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password has been reset successfully.')),
+      );
+      // In a real app, navigate to the login screen
+      Navigator.of(context).pop();
+    }
   }
 
   @override

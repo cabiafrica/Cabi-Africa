@@ -6,6 +6,8 @@ import PolicyIcon from '@mui/icons-material/Policy';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuthContext } from '@/context/AuthContext';
 
+import logo from '@/assets/logo.png';
+
 const drawerWidth = 240;
 
 export const Sidebar = () => {
@@ -20,7 +22,9 @@ export const Sidebar = () => {
         [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
       }}
     >
-      <Toolbar />
+      <Toolbar sx={{ display: 'flex', justifyContent: 'center', p: 1 }}>
+        <img src={logo} alt="CABI Logo" style={{ height: '40px', width: 'auto' }} />
+      </Toolbar>
       <Box sx={{ overflow: 'auto' }}>
         {isAuthenticated && (
           <>

@@ -32,7 +32,7 @@ class _BiometricCheckWrapperState extends State<BiometricCheckWrapper> {
         _promptForVerification();
       }
     } catch (e) {
-      print("Failed to check user profile: $e");
+      debugPrint("Failed to check user profile: $e");
     }
   }
 
@@ -55,7 +55,7 @@ class _BiometricCheckWrapperState extends State<BiometricCheckWrapper> {
       if (_failedAttempts >= 3) {
         await _userService.postBiometricFailure();
         // In a real app, this would trigger a global logout via an AuthProvider
-        print("LOGGING OUT USER DUE TO 3 FAILED ATTEMPTS");
+        debugPrint("LOGGING OUT USER DUE TO 3 FAILED ATTEMPTS");
       } else {
         // Re-prompt after a short delay
         await Future.delayed(const Duration(seconds: 1));

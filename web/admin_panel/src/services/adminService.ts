@@ -1,3 +1,13 @@
+export interface Organization {
+  id: string;
+  name: string;
+  ownerId: string;
+  memberCount: number;
+  status?: 'ACTIVE' | 'HOLD' | 'TEMP_HOLD' | 'PENDING';
+  type?: 'UNION' | 'ASSOCIATION' | 'GROUP'; // Added type
+  founder?: string; // Unified field
+}
+
 export interface DriverApplication {
   id: string;
   fullName: string;
@@ -61,6 +71,7 @@ export interface Badge {
   name: string;
   description: string;
   icon: string;
+  value?: number;
   rules: BadgeRule[];
 }
 
@@ -133,8 +144,16 @@ export interface SOSIncidentLogEntry {
  */
 class AdminService {
   async getPendingApplications(): Promise<DriverApplication[]> {
-    console.log('Fetching pending driver applications...');
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      const res = await fetch('/api/v1/driver-leads/pending');
+      if (res.ok) {
+        const data = await res.json();
+        return data.data; // backend returns { data: [...] }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    // Fallback if API fails (or for dev without backend)
     return [
       { id: 'driver-123', fullName: 'John Doe', phone: '0712345678', applicationDate: '2024-05-21T10:00:00Z', status: 'PENDING' },
       { id: 'driver-456', fullName: 'Peter Jones', phone: '0787654321', applicationDate: '2024-05-20T14:00:00Z', status: 'PENDING' },
@@ -143,7 +162,29 @@ class AdminService {
 
   async getApplicationDetails(driverId: string): Promise<DriverApplicationDetails> {
     console.log(`Fetching details for application ${driverId}...`);
-    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Fetch real documents from backend
+    // Endpoints: GET /api/v1/documents/admin/drivers/:userId/documents
+    let documents: any[] = [];
+    try {
+      const res = await fetch(`/api/v1/documents/admin/drivers/${driverId}/documents`);
+      if (res.ok) {
+        const data = await res.json();
+        documents = data.map((d: any) => ({
+          id: d.id,
+          type: d.type,
+          url: d.url,
+          // Map backend status to frontend expected values if needed, 
+          // though frontend seems to rely on 'approved'/'rejected' in local state.
+          // The interface has status in 'UserDocument' but 'DriverApplicationDetails.documents' 
+          // only has id, type, url.
+        }));
+      }
+    } catch (e) {
+      console.error("Failed to fetch documents", e);
+    }
+
+    // Mock Profile Details (until we have user-service endpoints connected here)
     return {
       id: driverId,
       fullName: 'John Doe',
@@ -151,26 +192,42 @@ class AdminService {
       applicationDate: '2024-05-21T10:00:00Z',
       status: 'PENDING',
       vehicleDetails: { make: 'Toyota', model: 'Vitz', year: 2018, licensePlate: 'KDA 123B' },
-      documents: [
-        { id: 'doc-1', type: 'DRIVERS_LICENSE', url: '#' },
-        { id: 'doc-2', type: 'NATIONAL_ID', url: '#' },
-        { id: 'doc-3', type: 'VEHICLE_INSPECTION', url: '#' },
-      ],
+      documents: documents.length > 0 ? documents : [
+        // Fallback if no docs found
+        { id: 'doc-1', type: 'DRIVERS_LICENSE', url: 'https://placehold.co/400?text=License' },
+      ] as any,
     };
   }
 
   async approveApplication(driverId: string): Promise<void> {
     console.log(`Submitting APPROVAL for driver ${driverId}...`);
-    // This would call POST /admin/drivers/{id}/approve
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Approval successful.');
+    try {
+      const res = await fetch(`/api/v1/driver-leads/${driverId}/approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!res.ok) throw new Error('Failed to approve application');
+      console.log('Approval successful.');
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   }
 
   async requestCorrection(driverId: string, reasons: string[]): Promise<void> {
     console.log(`Submitting CORRECTION request for driver ${driverId} with reasons:`, reasons);
-    // This would call POST /admin/drivers/{id}/request-correction
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Correction request successful.');
+    try {
+      const res = await fetch(`/api/v1/driver-leads/${driverId}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reasons })
+      });
+      if (!res.ok) throw new Error('Failed to submit correction request');
+      console.log('Correction request successful.');
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   }
 
   async getMlmConfig(): Promise<MlmConfig> {
@@ -576,49 +633,71 @@ class AdminService {
 
   // --- Organization & Subgroup Management (Mock) ---
 
+  // --- Organization & Subgroup Management (Real Integration) ---
+
   async getOrganizations(): Promise<Organization[]> {
-    await new Promise(resolve => setTimeout(resolve, 600));
-    return [
-      { id: 'org-1', name: 'Nairobi West Drivers', ownerId: 'u5', memberCount: 120 },
-      { id: 'org-2', name: 'CBD Elite', ownerId: 'u9', memberCount: 85 },
-    ];
+    try {
+      const res = await fetch('/api/v1/organizations');
+      if (!res.ok) throw new Error('Failed to fetch orgs');
+      return await res.json();
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  }
+
+  async updateOrganizationStatus(orgId: string, status: 'ACTIVE' | 'HOLD' | 'TEMP_HOLD'): Promise<void> {
+    await fetch(`/api/v1/organizations/${orgId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
   }
 
   async getSubgroupDetails(orgId: string, subgroupId: string): Promise<Subgroup | null> {
-    console.log('Fetching subgroup:', orgId, subgroupId);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return {
-      id: subgroupId,
-      orgId,
-      name: 'Team Alpha',
-      parentId: null,
-      memberCount: 25
-    };
+    // We can fetch all subgroups and find one, or add a specific endpoint.
+    // For now, reusing getSubgroups.
+    const subgroups = await this.getSubgroups(orgId);
+    return subgroups.find(sg => sg.id === subgroupId) || null;
   }
+
   async getSubgroups(orgId: string): Promise<Subgroup[]> {
-    await new Promise(resolve => setTimeout(resolve, 600));
-    // Mock hierarchy
-    return [
-      { id: 'sg-1', orgId, name: 'Team Alpha', parentId: null, memberCount: 30 },
-      { id: 'sg-2', orgId, name: 'Team Beta', parentId: null, memberCount: 25 },
-      { id: 'sg-3', orgId, name: 'Alpha Squad 1', parentId: 'sg-1', memberCount: 10 },
-      { id: 'sg-4', orgId, name: 'Alpha Squad 2', parentId: 'sg-1', memberCount: 8 },
-    ];
+    try {
+      const res = await fetch(`/api/v1/organizations/${orgId}/subgroups`);
+      if (!res.ok) throw new Error('Failed to fetch subgroups');
+      return await res.json();
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
   }
 
   async createSubgroup(orgId: string, name: string, parentId?: string): Promise<void> {
-    console.log('Creating subgroup:', { orgId, name, parentId });
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await fetch(`/api/v1/organizations/${orgId}/subgroups`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      // If parentId exists, we might need a different logic or nested structure in backend.
+      // Current backend implementation uses route param :id as parentId.
+      // If `parentId` arg calls for a deeper nest, our backend needs update. 
+      // But for "Root Subgroup" (child of Org), orgId is the parent. 
+      // If creating a child of a subgroup, we'd pass the subgroup ID as 'orgId' effectively?
+      // Let's assume this method is for direct children of the Org for now.
+      body: JSON.stringify({ name })
+    });
   }
 
   async updateSubgroup(subgroupId: string, updates: Partial<Subgroup>): Promise<void> {
-    console.log('Updating subgroup:', subgroupId, updates);
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await fetch(`/api/v1/organizations/subgroups/${subgroupId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates)
+    });
   }
 
   async deleteSubgroup(subgroupId: string): Promise<void> {
-    console.log('Deleting subgroup:', subgroupId);
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await fetch(`/api/v1/organizations/subgroups/${subgroupId}`, {
+      method: 'DELETE'
+    });
   }
 
   async getSubgroupMembers(subgroupId: string): Promise<PlatformUser[]> {
@@ -641,7 +720,23 @@ class AdminService {
       { id: 'tx-2', date: '2024-05-02T14:30:00Z', type: 'Wallet Top-up', amount: 1000, status: 'COMPLETED' },
       { id: 'tx-3', date: '2024-05-05T09:15:00Z', type: 'Ride Payment', amount: -300, status: 'COMPLETED' },
       { id: 'tx-4', date: '2024-05-10T11:20:00Z', type: 'Refund', amount: 300, status: 'PENDING' },
+      { id: 'tx-4', date: '2024-05-10T11:20:00Z', type: 'Refund', amount: 300, status: 'PENDING' },
     ];
+  }
+
+  // --- Services Management ---
+  async getServices(): Promise<any[]> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return [
+      { id: 'srv-1', name: 'Economy', baseFare: 200, perKm: 30 },
+      { id: 'srv-2', name: 'Comfort', baseFare: 350, perKm: 50 },
+      { id: 'srv-3', name: 'XL', baseFare: 500, perKm: 70 },
+    ];
+  }
+
+  async createService(service: any): Promise<void> {
+    console.log('Creating service', service);
+    await new Promise(resolve => setTimeout(resolve, 500));
   }
 
   // --- Story 79.2: Global Search ---
@@ -665,20 +760,20 @@ class AdminService {
 
   // --- Story 79.17: Paginated Approvals ---
   async getDriverApplicationsPaginated(page: number = 1, limit: number = 10): Promise<{ data: any[], total: number }> {
+    try {
+      const res = await fetch(`/api/v1/driver-leads/pending?page=${page}&limit=${limit}`);
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    // Fallback Mock
     await new Promise(resolve => setTimeout(resolve, 500));
     const all = [
       { id: '1', name: 'John Doe', status: 'PENDING', date: '2023-10-01' },
       { id: '2', name: 'Jane Smith', status: 'PENDING', date: '2023-10-02' },
-      { id: '3', name: 'Bob Wilson', status: 'REVIEW_REQUIRED', date: '2023-10-03', notes: ' blurry license' },
-      { id: '4', name: 'Alice Brown', status: 'PENDING', date: '2023-10-04' },
-      { id: '5', name: 'Charlie Davis', status: 'PENDING', date: '2023-10-05' },
-      { id: '6', name: 'Eve White', status: 'PENDING', date: '2023-10-06' },
-      { id: '7', name: 'Frank Black', status: 'PENDING', date: '2023-10-07' },
-      { id: '8', name: 'Grace Green', status: 'PENDING', date: '2023-10-08' },
-      { id: '9', name: 'Henry Hill', status: 'PENDING', date: '2023-10-09' },
-      { id: '10', name: 'Ivy Ivy', status: 'PENDING', date: '2023-10-10' },
-      { id: '11', name: 'Jack Jack', status: 'PENDING', date: '2023-10-11' },
-      { id: '12', name: 'Kelly Kelly', status: 'PENDING', date: '2023-10-12' },
+      // ... more items
     ];
 
     const start = (page - 1) * limit;
@@ -904,39 +999,25 @@ class AdminService {
 
   // --- Story 79.10: City Management ---
   async getCityKPIs(cityId: string): Promise<any> {
-    console.log('Fetching KPIs for city:', cityId);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    return {
-      activeDrivers: 150,
-      totalTrips: 1240,
-      avgSurge: 1.2,
-      complaints: 5
-    };
+    try {
+      const res = await fetch(`/api/v1/analytics/city-kpis/${cityId}`);
+      if (!res.ok) throw new Error('Failed to fetch city KPI');
+      return await res.json();
+    } catch (e) {
+      console.error(e);
+      return {
+        activeDrivers: 0,
+        totalTrips: 0,
+        avgSurge: 1.0,
+        complaints: 0
+      };
+    }
   }
 
-  // --- Story 79.11: Heat Map ---
-  async getHeatMapData(type: 'DEMAND' | 'SUPPLY'): Promise<any[]> {
-    console.log('Fetching heat map for:', type);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // Mocking some points
-    return Array.from({ length: 20 }).map((_, i) => ({
-      lat: -1.2921 + (Math.random() * 0.05),
-      lng: 36.8219 + (Math.random() * 0.05),
-      intensity: (i % 2 === 0) ? 0.8 : Math.random() // Using 'i' effectively
-    }));
-  }
-
-  // --- Story 79.21: Driver Unions ---
-  async getDriverUnions(): Promise<any[]> {
-    await new Promise(resolve => setTimeout(resolve, 600));
-    return [
-      { id: 'u-1', name: 'Nairobi Taxi Association', founder: 'James K.', status: 'ACTIVE', members: 450 },
-      { id: 'u-2', name: 'Digital Drivers Ke', founder: 'Sarah M.', status: 'PENDING', members: 120 },
-    ];
-  }
 
   // --- Story 79.8: Live Map ---
   async getLiveDrivers(): Promise<any[]> {
+    // This could also be provided by heatmap logic or dedicated live endpoint
     await new Promise(resolve => setTimeout(resolve, 500));
     return Array.from({ length: 15 }).map((_, i) => ({
       id: `d-${i}`,
@@ -949,14 +1030,20 @@ class AdminService {
 
   // --- Story 79.4: BI Dashboard ---
   async getBIStats(): Promise<any> {
-    await new Promise(resolve => setTimeout(resolve, 700));
-    return {
-      grossBookings: 1500000,
-      trips: 4500,
-      newUsers: 320,
-      activeDrivers: 410,
-      avgRating: 4.7
-    };
+    try {
+      const res = await fetch('/api/v1/analytics/bi-stats');
+      if (!res.ok) throw new Error('Failed to fetch stats');
+      return await res.json();
+    } catch (e) {
+      console.error(e);
+      return {
+        grossBookings: 0,
+        trips: 0,
+        newUsers: 0,
+        activeDrivers: 0,
+        avgRating: 0
+      };
+    }
   }
 
   // --- Story 79.5: Fraud Detection ---
@@ -976,14 +1063,23 @@ class AdminService {
       { driverId: 'u105', driverName: 'Driver Z', docType: 'LICENSE', expiryDate: '2024-12-25' },
     ];
   }
+
+
+  // --- Story 79.11: Heat Map (Dynamic) ---
+  async getHeatMapData(type: 'DEMAND' | 'SUPPLY', serviceId: string = 'ALL'): Promise<any[]> {
+    try {
+      const res = await fetch(`/api/v1/analytics/heatmap?type=${type}`);
+      if (!res.ok) throw new Error('Heatmap fetch failed');
+      // Backend returns [{ lat, lng, intensity }]
+      return await res.json();
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  }
 }
 
-export interface Organization {
-  id: string;
-  name: string;
-  ownerId: string;
-  memberCount: number;
-}
+
 
 export interface Subgroup {
   id: string;

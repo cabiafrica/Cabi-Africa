@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    darkMode: 'class',
     content: [
         './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
         './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -10,14 +11,33 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                primary: {
+                    DEFAULT: '#F59E0B',
+                    dark: '#D97706',
+                    light: '#FBBF24',
+                },
+                secondary: {
+                    DEFAULT: '#10B981', // Mapped to success for variety if needed, or keep consistent
+                },
+                success: '#10B981',
+                error: '#EF4444',
+                background: {
+                    light: '#F3F4F6',
+                    dark: '#0a0a0a',
+                },
+                surface: {
+                    light: '#FFFFFF',
+                    dark: '#121212',
+                },
+                // Maintaining brand alias for backward compatibility but mapping to new palette
                 brand: {
                     black: '#0a0a0a',
                     dark: '#121212',
                     gray: '#1E1E1E',
-                    yellow: '#FFD700',
-                    yellowHover: '#E6C200',
-                    accent: '#00f2fe', // Cyan for tech accents
-                    purple: '#4facfe', // Gradient partner
+                    yellow: '#F59E0B',
+                    yellowHover: '#D97706',
+                    accent: '#F59E0B',
+                    purple: '#F59E0B',
                 },
             },
             backgroundImage: {

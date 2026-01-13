@@ -21,10 +21,10 @@ class CalendarSuggestionsWidget extends StatelessWidget {
   final Function(CalendarEvent) onEventTap;
 
   const CalendarSuggestionsWidget({
-    Key? key,
+    super.key,
     required this.upcomingEvents,
     required this.onEventTap,
-  }) : super(key: key);
+  });
 
   String _formatTime(DateTime time) {
     final hour = time.hour > 12 ? time.hour - 12 : time.hour;

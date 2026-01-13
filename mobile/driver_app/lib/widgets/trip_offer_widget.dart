@@ -34,7 +34,7 @@ class TripOfferWidget extends StatelessWidget {
       tripId: 'trip-abc-123',
       pickupLocation: '456 Grand Ave',
       destination: 'City Museum',
-      estimatedFare: '\$15.50',
+      estimatedFare: 'KES 1550',
       timeToPickup: '5 min',
     );
 

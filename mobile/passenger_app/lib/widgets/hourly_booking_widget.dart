@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HourlyBookingWidget extends StatefulWidget {
-  const HourlyBookingWidget({Key? key}) : super(key: key);
+  const HourlyBookingWidget({super.key});
 
   @override
   State<HourlyBookingWidget> createState() => _HourlyBookingWidgetState();
@@ -9,8 +9,8 @@ class HourlyBookingWidget extends StatefulWidget {
 
 class _HourlyBookingWidgetState extends State<HourlyBookingWidget> {
   int selectedHours = 2;
-  final double hourlyRate = 25.00;
-  final double perMileRate = 1.50;
+  final double hourlyRate = 2500.00;
+  final double perMileRate = 150.00;
   final int minimumHours = 2;
   final int maximumHours = 8;
 
@@ -221,12 +221,12 @@ class _HourlyBookingWidgetState extends State<HourlyBookingWidget> {
                     children: [
                       _buildPriceRow(
                         'Hourly Rate',
-                        '\$${hourlyRate.toStringAsFixed(2)}/hr',
+                        'KES ${hourlyRate.toStringAsFixed(2)}/hr',
                       ),
                       const SizedBox(height: 12),
                       _buildPriceRow(
                         'Per Mile',
-                        '\$${perMileRate.toStringAsFixed(2)}/mi',
+                        'KES ${perMileRate.toStringAsFixed(2)}/mi',
                       ),
                       const Divider(height: 24),
                       Row(
@@ -243,7 +243,7 @@ class _HourlyBookingWidgetState extends State<HourlyBookingWidget> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                '\$${totalEstimate.toStringAsFixed(2)}',
+                                'KES ${totalEstimate.toStringAsFixed(2)}',
                                 style: const TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.bold,
@@ -304,7 +304,7 @@ class _HourlyBookingWidgetState extends State<HourlyBookingWidget> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            'Booking $selectedHours hour${selectedHours > 1 ? 's' : ''} for \$${totalEstimate.toStringAsFixed(2)}',
+                            'Booking $selectedHours hour${selectedHours > 1 ? 's' : ''} for KES ${totalEstimate.toStringAsFixed(2)}',
                           ),
                           backgroundColor: Colors.green,
                         ),

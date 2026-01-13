@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'mfa_setup_screen.dart';
 
 class SecurityScreen extends StatelessWidget {
+  const SecurityScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     // In a real app, you'd get this from a provider

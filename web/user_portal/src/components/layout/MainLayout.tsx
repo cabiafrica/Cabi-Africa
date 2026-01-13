@@ -26,7 +26,7 @@ export default function MainLayout({
             </Head>
             <div className={`min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 ${inter.className}`}>
                 <Header />
-                <main className="flex-grow">
+                <main className="flex-grow pt-16">
                     {children}
                 </main>
                 <Footer />

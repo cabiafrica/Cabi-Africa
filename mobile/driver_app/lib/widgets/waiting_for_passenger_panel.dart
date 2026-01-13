@@ -60,12 +60,12 @@ class WaitingForPassengerPanel extends StatelessWidget {
               const SizedBox(height: 16),
               const Text('Compliments', style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              Wrap(
+              const Wrap(
                 spacing: 8,
                 children: [
-                  Chip(avatar: const Icon(Icons.thumb_up, size: 16), label: const Text('Polite')),
-                  Chip(avatar: const Icon(Icons.access_time, size: 16), label: const Text('Punctual')),
-                  Chip(avatar: const Icon(Icons.music_note, size: 16), label: const Text('Great Music Taste')),
+                  Chip(avatar: Icon(Icons.thumb_up, size: 16), label: Text('Polite')),
+                  Chip(avatar: Icon(Icons.access_time, size: 16), label: Text('Punctual')),
+                  Chip(avatar: Icon(Icons.music_note, size: 16), label: Text('Great Music Taste')),
                 ],
               ),
               const SizedBox(height: 24),

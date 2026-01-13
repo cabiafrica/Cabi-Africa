@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:passenger_app/widgets/referral_tree_graph.dart';
+import 'package:passenger_app/theme/app_theme.dart';
 
 class ReferralStatusScreen extends StatefulWidget {
   const ReferralStatusScreen({super.key});
@@ -41,23 +43,57 @@ class _ReferralStatusScreenState extends State<ReferralStatusScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Referrals'),
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
+        backgroundColor: AppTheme.primaryColor,
+        foregroundColor: Colors.black,
+        elevation: 0,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Referral Visualization
+          Center(
+            child: SizedBox(
+              height: 300,
+              width: 300,
+              child: ReferralTreeGraph(
+                level1Count: 5, // Mock data
+                level2Count: 12, // Mock data
+                userImageUrl: 'https://i.pravatar.cc/150?u=passenger',
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Legend
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildLegendItem("You", const Color(0xFFFFD700)),
+              const SizedBox(width: 15),
+              _buildLegendItem("Level 1", Colors.orange.shade700),
+              const SizedBox(width: 15),
+              _buildLegendItem("Level 2", Colors.orange.shade300),
+            ],
+          ),
+
+          const SizedBox(height: 30),
+
           // Stats Card
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.green.shade700, Colors.green.shade500],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-            ),
+                gradient: const LinearGradient(
+                  colors: [Colors.black87, Colors.black],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4))
+                ]),
             child: Column(
               children: [
                 Row(
@@ -76,17 +112,21 @@ class _ReferralStatusScreenState extends State<ReferralStatusScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                      color: Colors.white.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.white24)),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline, color: Colors.white, size: 20),
-                      const SizedBox(width: 8),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Icon(Icons.info_outline,
+                            color: AppTheme.primaryColor, size: 20),
+                      ),
                       Expanded(
                         child: Text(
                           'Earn KES 500 for each friend who completes their first ride',
-                          style: TextStyle(color: Colors.white, fontSize: 12),
+                          style: TextStyle(
+                              color: Colors.grey.shade300, fontSize: 12),
                         ),
                       ),
                     ],
@@ -102,7 +142,7 @@ class _ReferralStatusScreenState extends State<ReferralStatusScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'Referral History',
+                'Level 1 Referrals',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               TextButton.icon(
@@ -143,6 +183,35 @@ class _ReferralStatusScreenState extends State<ReferralStatusScreen> {
             )
           else
             ..._referrals.map((referral) => _buildReferralCard(referral)),
+
+          const SizedBox(height: 24),
+
+          // Portal Link Button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                // In real app, launchUrl to portal
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Redirecting to User Portal...')),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: const Color(0xFFFFBE0B), // Cabi Yellow
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                'View All Network & Details in User Portal',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -291,6 +360,21 @@ class _ReferralStatusScreenState extends State<ReferralStatusScreen> {
           'color': Colors.grey,
         };
     }
+  }
+
+  Widget _buildLegendItem(String label, Color color) {
+    return Row(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+        ),
+        const SizedBox(width: 4),
+        Text(label,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+      ],
+    );
   }
 
   String _formatDate(DateTime date) {

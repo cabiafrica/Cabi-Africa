@@ -22,8 +22,18 @@ class _ApplyPromoScreenState extends State<ApplyPromoScreen> {
 
   // Mock available promos
   final List<Map<String, dynamic>> _availablePromos = [
-    {'code': 'SAVE10', 'description': '10% off your ride', 'type': 'PERCENTAGE', 'value': 10},
-    {'code': 'FIRSTRIDE', 'description': '\$5 off first ride', 'type': 'FIXED', 'value': 5.0},
+    {
+      'code': 'SAVE10',
+      'description': '10% off your ride',
+      'type': 'PERCENTAGE',
+      'value': 10
+    },
+    {
+      'code': 'FIRSTRIDE',
+      'description': 'KES 500 off first ride',
+      'type': 'FIXED',
+      'value': 500.0
+    },
   ];
 
   Future<void> _applyPromoCode(String code) async {
@@ -85,7 +95,9 @@ class _ApplyPromoScreenState extends State<ApplyPromoScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Enter Promo Code', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    const Text('Enter Promo Code',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 12),
                     Row(
                       children: [
@@ -102,15 +114,19 @@ class _ApplyPromoScreenState extends State<ApplyPromoScreen> {
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton(
-                          onPressed: _isLoading ? null : () => _applyPromoCode(_codeController.text),
+                          onPressed: _isLoading
+                              ? null
+                              : () => _applyPromoCode(_codeController.text),
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 16),
                           ),
                           child: _isLoading
                               ? const SizedBox(
                                   width: 20,
                                   height: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Text('APPLY'),
                         ),
@@ -138,25 +154,40 @@ class _ApplyPromoScreenState extends State<ApplyPromoScreen> {
                       children: [
                         Icon(Icons.check_circle, color: Colors.green[700]),
                         const SizedBox(width: 8),
-                        const Text('Promo Applied!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        const Text('Promo Applied!',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16)),
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Text('Code: ${_appliedPromo!['code']}', style: const TextStyle(fontFamily: 'monospace')),
-                    Text('Discount: -\$${_appliedPromo!['discount'].toStringAsFixed(2)}', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                    Text('Code: ${_appliedPromo!['code']}',
+                        style: const TextStyle(fontFamily: 'monospace')),
+                    Text(
+                        'Discount: -KES ${_appliedPromo!['discount'].toStringAsFixed(2)}',
+                        style: const TextStyle(
+                            color: Colors.green, fontWeight: FontWeight.bold)),
                     const Divider(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Original Fare:', style: TextStyle(decoration: TextDecoration.lineThrough)),
-                        Text('\$${widget.fareAmount.toStringAsFixed(2)}'),
+                        const Text('Original Fare:',
+                            style: TextStyle(
+                                decoration: TextDecoration.lineThrough)),
+                        Text('KES ${widget.fareAmount.toStringAsFixed(2)}'),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('New Total:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                        Text('\$${_appliedPromo!['finalAmount'].toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.green)),
+                        const Text('New Total:',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18)),
+                        Text(
+                            'KES ${_appliedPromo!['finalAmount'].toStringAsFixed(2)}',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.green)),
                       ],
                     ),
                   ],
@@ -165,32 +196,36 @@ class _ApplyPromoScreenState extends State<ApplyPromoScreen> {
             ],
 
             const SizedBox(height: 24),
-            const Text('Available Promos', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const Text('Available Promos',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 12),
 
             // Available Promos List
             ..._availablePromos.map((promo) => Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.blue[100],
-                    borderRadius: BorderRadius.circular(8),
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[100],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.local_offer, color: Colors.blue),
+                    ),
+                    title: Text(promo['code'],
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'monospace')),
+                    subtitle: Text(promo['description']),
+                    trailing: TextButton(
+                      onPressed: () {
+                        _codeController.text = promo['code'];
+                        _applyPromoCode(promo['code']);
+                      },
+                      child: const Text('APPLY'),
+                    ),
                   ),
-                  child: const Icon(Icons.local_offer, color: Colors.blue),
-                ),
-                title: Text(promo['code'], style: const TextStyle(fontWeight: FontWeight.bold, fontFamily: 'monospace')),
-                subtitle: Text(promo['description']),
-                trailing: TextButton(
-                  onPressed: () {
-                    _codeController.text = promo['code'];
-                    _applyPromoCode(promo['code']);
-                  },
-                  child: const Text('APPLY'),
-                ),
-              ),
-            )),
+                )),
           ],
         ),
       ),

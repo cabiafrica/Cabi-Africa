@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DriverProfileScreen extends StatelessWidget {
-  const DriverProfileScreen({Key? key}) : super(key: key);
+  const DriverProfileScreen({super.key});
 
   // Mock Data
   final String driverName = "James Kamau";

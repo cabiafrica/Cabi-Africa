@@ -4,9 +4,23 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
-import { FaUser, FaCar, FaBuilding, FaArrowRight, FaCheck } from 'react-icons/fa';
+import { FaUser, FaCar, FaBuilding, FaArrowRight, FaCheck, FaCheckCircle } from 'react-icons/fa';
+import FileUpload from '../components/forms/FileUpload';
+import VideoEmbed from '../components/VideoEmbed';
 
 type UserRole = 'passenger' | 'driver' | 'organization';
+
+interface FileUploads {
+    // Driver files
+    drivingLicence: File | null;
+    psvBadge: File | null;
+    policeClearance: File | null;
+    driverPhoto: File | null;
+    // Passenger files
+    passengerPhoto: File | null;
+    // Organization files
+    registrationCertificate: File | null;
+}
 
 export default function Register() {
     const [role, setRole] = useState<UserRole | null>(null);
@@ -17,25 +31,63 @@ export default function Register() {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [isLoading, setIsLoading] = useState(false);
+    const [referralValidation, setReferralValidation] = useState<{ valid: boolean; referrerName?: string } | null>(null);
+
+    // File upload state
+    const [files, setFiles] = useState<FileUploads>({
+        drivingLicence: null,
+        psvBadge: null,
+        policeClearance: null,
+        driverPhoto: null,
+        passengerPhoto: null,
+        registrationCertificate: null,
+    });
+
+    const handleFileChange = (fieldName: keyof FileUploads, file: File | null) => {
+        setFiles(prev => ({ ...prev, [fieldName]: file }));
+    };
 
     const onSubmit = async (data: any) => {
         setIsLoading(true);
         try {
-            // Call the Driver Lead Service API
-            const response = await fetch('http://localhost:3000/api/driver-lead-service/register', {
+            // Create FormData for multipart upload
+            const formData = new FormData();
+
+            // Add all form fields
+            Object.keys(data).forEach(key => {
+                if (data[key]) {
+                    formData.append(key, data[key]);
+                }
+            });
+
+            // Add role and orgType
+            formData.append('role', role || '');
+            if (role === 'organization') {
+                formData.append('orgType', orgType);
+            }
+
+            // Add files
+            Object.entries(files).forEach(([key, file]) => {
+                if (file) {
+                    formData.append(key, file);
+                }
+            });
+
+            // Call the Registration API
+            const response = await fetch('/api/register', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...data,
-                    role: role,
-                    orgType: role === 'organization' ? orgType : undefined,
-                }),
+                body: formData, // Send as FormData instead of JSON
             });
 
             if (!response.ok) throw new Error('Registration failed');
 
             const result = await response.json();
             console.log("Registration Success:", result);
+
+            // Save user data to localStorage for dashboard access
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('user', JSON.stringify(result.user));
+            }
 
             // Redirect to dashboard or success page
             router.push('/dashboard');
@@ -117,16 +169,30 @@ export default function Register() {
                                 ← Back to roles
                             </button>
 
+                            {/* Video Embed for Selected Role */}
+                            <div className="mb-8">
+                                <VideoEmbed
+                                    videoId={role === 'driver' ? 'dQw4w9WgXcQ' : role === 'passenger' ? 'dQw4w9WgXcQ' : 'dQw4w9WgXcQ'}
+                                    title={`${role} Registration Guide`}
+                                    showChannelLink={false}
+                                    className="mb-6"
+                                />
+                            </div>
+
                             <h2 className="text-3xl font-bold mb-2 capitalize">Join as {role}</h2>
                             <p className="text-gray-400 mb-8">Enter your details to create your secure account.</p>
 
                             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
                                 {/* Common Fields */}
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-3 gap-4">
                                     <div className="space-y-2">
                                         <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">First Name</label>
                                         <input {...register('firstName', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all" placeholder="John" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Middle Name</label>
+                                        <input {...register('middleName')} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all" placeholder="Michael" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Last Name</label>
@@ -139,13 +205,45 @@ export default function Register() {
                                     <input type="email" {...register('email', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all" placeholder="john@example.com" />
                                 </div>
 
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Gender</label>
+                                            <select {...register('gender', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-gray-300">
+                                                <option value="">Select Gender</option>
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Date of Birth</label>
+                                            <input type="date" {...register('dob', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-gray-300" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Phone Number</label>
+                                        <input type="tel" {...register('phone', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all" placeholder="+254 712 345 678" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">ID Number</label>
+                                        <input {...register('idNumber', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all" placeholder="12345678" />
+                                    </div>
+                                </div>
+
                                 {/* Organization Specific Fields */}
                                 {role === 'organization' && (
                                     <div className="space-y-6 pt-4 border-t border-gray-800 animate-fade-in">
+                                        <h3 className="text-lg font-bold text-brand-purple">Organization Details</h3>
+
                                         <div className="space-y-2">
                                             <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Organization Name</label>
                                             <input {...register('orgName', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all" placeholder="Nairobi Central Sacco" />
                                         </div>
+
                                         <div className="space-y-2">
                                             <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Type</label>
                                             <div className="grid grid-cols-3 gap-2">
@@ -155,18 +253,169 @@ export default function Register() {
                                             </div>
                                             <input type="hidden" {...register('orgType')} value={orgType} />
                                         </div>
+
+                                        <FileUpload
+                                            label="Registration Certificate"
+                                            name="registrationCertificate"
+                                            accept="application/pdf"
+                                            maxSize={5}
+                                            required={true}
+                                            onChange={(file) => handleFileChange('registrationCertificate', file)}
+                                            value={files.registrationCertificate}
+                                            helperText="Upload your organization's registration certificate (PDF only)"
+                                        />
+
+                                        <div className="border-t border-gray-700 pt-4">
+                                            <h4 className="text-md font-semibold text-gray-300 mb-4">Founder Information</h4>
+                                            <div className="space-y-2">
+                                                <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Founder Name</label>
+                                                <input {...register('founderName', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all" placeholder="John Doe" />
+                                            </div>
+                                        </div>
+
+                                        <div className="border-t border-gray-700 pt-4">
+                                            <h4 className="text-md font-semibold text-gray-300 mb-4">Member 1</h4>
+                                            <div className="grid grid-cols-3 gap-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Name</label>
+                                                    <input {...register('member1Name', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all" placeholder="Jane Smith" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Email</label>
+                                                    <input type="email" {...register('member1Email', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all" placeholder="jane@example.com" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Phone</label>
+                                                    <input type="tel" {...register('member1Phone', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all" placeholder="+254 712 345 678" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="border-t border-gray-700 pt-4">
+                                            <h4 className="text-md font-semibold text-gray-300 mb-4">Member 2</h4>
+                                            <div className="grid grid-cols-3 gap-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Name</label>
+                                                    <input {...register('member2Name', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all" placeholder="Bob Johnson" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Email</label>
+                                                    <input type="email" {...register('member2Email', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all" placeholder="bob@example.com" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Phone</label>
+                                                    <input type="tel" {...register('member2Phone', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all" placeholder="+254 712 345 678" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="border-t border-gray-700 pt-4">
+                                            <h4 className="text-md font-semibold text-gray-300 mb-4">Member 3</h4>
+                                            <div className="grid grid-cols-3 gap-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Name</label>
+                                                    <input {...register('member3Name', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all" placeholder="Alice Williams" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Email</label>
+                                                    <input type="email" {...register('member3Email', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all" placeholder="alice@example.com" />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Phone</label>
+                                                    <input type="tel" {...register('member3Phone', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all" placeholder="+254 712 345 678" />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
 
                                 {/* Driver Specific Fields */}
                                 {role === 'driver' && (
                                     <div className="space-y-6 pt-4 border-t border-gray-800 animate-fade-in">
+                                        <h3 className="text-lg font-bold text-brand-accent">Driver Documents</h3>
+
                                         <div className="space-y-2">
                                             <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">License Number</label>
                                             <input {...register('licenseNumber', { required: true })} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all" placeholder="DL-1234567" />
                                         </div>
+
+                                        <FileUpload
+                                            label="Driving Licence"
+                                            name="drivingLicence"
+                                            accept="image/*,application/pdf"
+                                            maxSize={5}
+                                            required={true}
+                                            onChange={(file) => handleFileChange('drivingLicence', file)}
+                                            value={files.drivingLicence}
+                                            helperText="Upload a clear copy of your driving licence (PDF or Image)"
+                                        />
+
+                                        <FileUpload
+                                            label="PSV Badge"
+                                            name="psvBadge"
+                                            accept="image/*,application/pdf"
+                                            maxSize={5}
+                                            required={true}
+                                            onChange={(file) => handleFileChange('psvBadge', file)}
+                                            value={files.psvBadge}
+                                            helperText="Upload your PSV badge certificate"
+                                        />
+
+                                        <FileUpload
+                                            label="Police Clearance Certificate"
+                                            name="policeClearance"
+                                            accept="application/pdf"
+                                            maxSize={5}
+                                            required={true}
+                                            onChange={(file) => handleFileChange('policeClearance', file)}
+                                            value={files.policeClearance}
+                                            helperText="Upload your police clearance certificate (PDF only)"
+                                        />
+
+                                        <FileUpload
+                                            label="Professional Passport Photo"
+                                            name="driverPhoto"
+                                            accept="image/*"
+                                            maxSize={2}
+                                            required={true}
+                                            onChange={(file) => handleFileChange('driverPhoto', file)}
+                                            value={files.driverPhoto}
+                                            helperText="Upload a professional passport-sized photo"
+                                        />
                                     </div>
                                 )}
+
+                                {/* Passenger Specific Fields */}
+                                {role === 'passenger' && (
+                                    <div className="space-y-6 pt-4 border-t border-gray-800 animate-fade-in">
+                                        <h3 className="text-lg font-bold text-brand-yellow">Passenger Information</h3>
+
+                                        <FileUpload
+                                            label="Professional Passport Photo"
+                                            name="passengerPhoto"
+                                            accept="image/*"
+                                            maxSize={2}
+                                            required={false}
+                                            onChange={(file) => handleFileChange('passengerPhoto', file)}
+                                            value={files.passengerPhoto}
+                                            helperText="Upload a professional passport-sized photo (optional)"
+                                        />
+                                    </div>
+                                )}
+
+                                <div className="space-y-2">
+                                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Referral Code (Optional)</label>
+                                    <input type="text" {...register('referralCode')} className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all" placeholder="Enter code if you have one" />
+                                    {referralValidation?.valid && (
+                                        <p className="text-sm text-green-500 flex items-center gap-1">
+                                            <FaCheckCircle /> Referred by {referralValidation.referrerName}
+                                        </p>
+                                    )}
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        {role === 'passenger' && 'You can use a referral code from a driver or another passenger'}
+                                        {role === 'driver' && 'You can use a referral code from another driver'}
+                                    </p>
+                                </div>
 
                                 <div className="space-y-2">
                                     <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Password</label>

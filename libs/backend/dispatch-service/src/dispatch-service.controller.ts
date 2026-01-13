@@ -19,6 +19,15 @@ export class DispatchController {
     }
   }
 
+  @Post('rides/:id/assign')
+  async assignDriver(@Param('id') id: string, @Body() body: { driverId: string }) {
+    try {
+      return await this.service.assignDriver(id, body.driverId);
+    } catch (error) {
+      return { error: (error as any).message };
+    }
+  }
+
   @Get('rides/:id')
   async getRideStatus(@Param('id') id: string) {
     try {

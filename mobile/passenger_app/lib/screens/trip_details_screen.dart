@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class TripDetailsScreen extends StatelessWidget {
   final Map<String, String> trip;
 
-  const TripDetailsScreen({Key? key, required this.trip}) : super(key: key);
+  const TripDetailsScreen({super.key, required this.trip});
 
   @override
   Widget build(BuildContext context) {

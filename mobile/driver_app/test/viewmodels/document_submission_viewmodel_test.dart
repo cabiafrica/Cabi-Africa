@@ -195,7 +195,9 @@ void main() {
 
       // Act: Set loading to true
       // ignore: cascade_invocations
-      viewModel.documents.forEach((doc) => doc.status = 'Pending Review');
+      for (var doc in viewModel.documents) {
+        doc.status = 'Pending Review';
+      }
       // Private method call simulation for testing state
       // In a real scenario, an async call would set this.
       viewModel.isLoading = true;

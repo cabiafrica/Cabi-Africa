@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/ride_service.dart';
 
 class PayoutHistoryScreen extends StatefulWidget {
-  const PayoutHistoryScreen({Key? key}) : super(key: key);
+  const PayoutHistoryScreen({super.key});
 
   @override
   State<PayoutHistoryScreen> createState() => _PayoutHistoryScreenState();

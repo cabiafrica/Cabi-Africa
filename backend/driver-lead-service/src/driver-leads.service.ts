@@ -47,4 +47,27 @@ export class DriverLeadsService {
     await new Promise(resolve => setTimeout(resolve, 500));
     return { success: true, transactionId: `tx_${Date.now()}` };
   }
+
+  async getPendingDrivers(page: number, limit: number) {
+    // Mock data for Admin Panel
+    // In real app, query UserService for users with role DRIVER and status PENDING
+    const drivers = [
+      { id: 'driver-123', fullName: 'John Doe', phone: '0712345678', applicationDate: '2024-05-21T10:00:00Z', status: 'PENDING' },
+      { id: 'driver-456', fullName: 'Peter Jones', phone: '0787654321', applicationDate: '2024-05-20T14:00:00Z', status: 'PENDING' },
+    ];
+    return { data: drivers, total: drivers.length };
+  }
+
+  async approveDriver(driverId: string) {
+    console.log(`Approving driver ${driverId}`);
+    // Call UserService to update status to VERIFIED/ACTIVE
+    // await this.userService.updateStatus(driverId, 'ACTIVE');
+    return { success: true, message: 'Driver approved' };
+  }
+
+  async rejectDriver(driverId: string, reasons: string[]) {
+    console.log(`Rejecting driver ${driverId} for reasons: ${reasons}`);
+    // Call UserService to update status to REJECTED or create task
+    return { success: true, message: 'Driver rejected' };
+  }
 }

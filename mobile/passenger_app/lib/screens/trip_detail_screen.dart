@@ -12,7 +12,7 @@ class TripDetailScreen extends StatefulWidget {
 
 class _TripDetailScreenState extends State<TripDetailScreen> {
   // Mock trip data
-  final _fareAmount = 25.50;
+  final _fareAmount = 2550.00;
   bool _tipAdded = false;
   double _tipAmount = 0.0;
   final _tripDate = DateTime.now().subtract(const Duration(hours: 2));
@@ -55,7 +55,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                 // API call to process tip
                 setState(() {
                   _tipAdded = true;
-                  _tipAmount = 5.0; // Mock
+                  _tipAmount = 500.0; // Mock
                 });
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -174,9 +174,9 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 12),
-                    _buildFareRow('Base Fare', 15.00),
-                    _buildFareRow('Distance (5.2 mi)', 8.50),
-                    _buildFareRow('Time (12 min)', 2.00),
+                    _buildFareRow('Base Fare', 1500.00),
+                    _buildFareRow('Distance (5.2 mi)', 850.00),
+                    _buildFareRow('Time (12 min)', 200.00),
                     if (_tipAdded) _buildFareRow('Tip', _tipAmount),
                     const Divider(),
                     _buildFareRow('Total', _fareAmount + _tipAmount,
@@ -274,7 +274,7 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
               style: TextStyle(
                   fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
           Text(
-            '\$${amount.toStringAsFixed(2)}',
+            'KES ${amount.toStringAsFixed(2)}',
             style: TextStyle(
                 fontWeight: isBold ? FontWeight.bold : FontWeight.normal),
           ),

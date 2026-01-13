@@ -47,7 +47,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
   DateTime _selectedDate = DateTime.now();
   bool _isAddingExpense = false;
 
-  List<ExpenseDto> _expenses = [
+  final List<ExpenseDto> _expenses = [
     ExpenseDto(
       id: 'exp-1',
       description: 'Gas fill-up',
@@ -80,8 +80,10 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
     );
 
     // Mock API call
-    print('Adding expense: ${newExpense.description}');
+    debugPrint('Adding expense: ${newExpense.description}');
     await Future.delayed(const Duration(seconds: 1));
+
+    if (!mounted) return;
 
     setState(() {
       _expenses.add(

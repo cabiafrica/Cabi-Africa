@@ -4,7 +4,8 @@ class RateDriverScreen extends StatefulWidget {
   final String rideId;
   final String driverName;
 
-  const RateDriverScreen({super.key, required this.rideId, required this.driverName});
+  const RateDriverScreen(
+      {super.key, required this.rideId, required this.driverName});
 
   @override
   State<RateDriverScreen> createState() => _RateDriverScreenState();
@@ -19,8 +20,10 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
   void _submit() {
     if (_rating == 0) return;
     // API Call: POST /ratings
-    print('Rating Driver: $_rating stars');
-    if (_selectedTipPercent != null) print('Tip Added: $_selectedTipPercent%');
+    debugPrint('Rating Driver: $_rating stars');
+    if (_selectedTipPercent != null) {
+      debugPrint('Tip Added: $_selectedTipPercent%');
+    }
     Navigator.of(context).popUntil((route) => route.isFirst); // Back to home
   }
 
@@ -34,7 +37,8 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
           children: [
             const CircleAvatar(radius: 40, child: Icon(Icons.person, size: 40)),
             const SizedBox(height: 16),
-            Text('How was your ride with ${widget.driverName}?', style: const TextStyle(fontSize: 18)),
+            Text('How was your ride with ${widget.driverName}?',
+                style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 32),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -50,22 +54,23 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
               }),
             ),
             const SizedBox(height: 24),
-            const Text('Add a Tip', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('Add a Tip',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             Wrap(
               spacing: 12,
               children: [10, 15, 20].map((percent) {
-                  final isSelected = _selectedTipPercent == percent;
-                  return ChoiceChip(
-                      label: Text('$percent%'),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                          setState(() {
-                              _selectedTipPercent = selected ? percent : null;
-                              _customTip = null;
-                          });
-                      },
-                  );
+                final isSelected = _selectedTipPercent == percent;
+                return ChoiceChip(
+                  label: Text('$percent%'),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    setState(() {
+                      _selectedTipPercent = selected ? percent : null;
+                      _customTip = null;
+                    });
+                  },
+                );
               }).toList(),
             ),
             const SizedBox(height: 24),
@@ -80,8 +85,11 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
             const Spacer(),
             ElevatedButton(
               onPressed: _rating > 0 ? _submit : null,
-              style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)),
-              child: Text(_selectedTipPercent != null || _customTip != null ? 'SUBMIT RATING & TIP' : 'SUBMIT RATING'),
+              style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50)),
+              child: Text(_selectedTipPercent != null || _customTip != null
+                  ? 'SUBMIT RATING & TIP'
+                  : 'SUBMIT RATING'),
             ),
           ],
         ),

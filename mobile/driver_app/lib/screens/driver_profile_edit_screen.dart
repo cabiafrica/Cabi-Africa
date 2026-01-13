@@ -5,10 +5,10 @@ class DriverProfileEditScreen extends StatefulWidget {
   final String? currentProfilePictureUrl;
 
   const DriverProfileEditScreen({
-    Key? key,
+    super.key,
     required this.currentName,
     this.currentProfilePictureUrl,
-  }) : super(key: key);
+  });
 
   @override
   State<DriverProfileEditScreen> createState() =>

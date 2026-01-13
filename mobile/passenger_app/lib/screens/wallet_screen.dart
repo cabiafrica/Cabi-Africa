@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/providers.dart';
 import 'package:core_ui/core_ui.dart';
+import 'payout_setup_screen.dart';
 
 class WalletScreen extends ConsumerStatefulWidget {
   const WalletScreen({super.key});
@@ -39,6 +40,34 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Payout initiated!')),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showTopUpDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Top Up Wallet'),
+          content: const Text('Add funds via M-Pesa or Card.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: const Text('Proceed'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                // In real app, trigger payment SDK
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Payment Gateway Launched')),
                 );
               },
             ),
@@ -96,10 +125,24 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                                 ),
                       ),
                       const SizedBox(height: 24),
-                      PrimaryButton(
-                        onPressed: () => _showCashOutDialog(balance),
-                        label: 'Cash Out',
-                      ),
+                      if (balance < 50)
+                        PrimaryButton(
+                          onPressed: () => _showTopUpDialog(),
+                          label: 'Top Up Wallet',
+                          color: Colors
+                              .green, // Override color if supported, else assume green theme
+                        )
+                      else if (balance >= 100)
+                        PrimaryButton(
+                          onPressed: () => _showCashOutDialog(balance),
+                          label: 'Cash Out',
+                        )
+                      else
+                        PrimaryButton(
+                          onPressed: () => _showTopUpDialog(),
+                          label: 'Top Up Wallet',
+                          color: Colors.grey,
+                        ),
                     ],
                   ),
                 ),
@@ -119,7 +162,10 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                   subtitle: Text(payoutMethod['accountNumber']),
                   trailing: const Icon(Icons.edit),
                   onTap: () {
-                    // Navigate to edit payout method screen in a future story
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const PayoutSetupScreen()));
                   },
                 ),
               ),
@@ -142,7 +188,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                     subtitle: Text('On ${tx['date']}'),
                   ),
                 );
-              }).toList(),
+              }),
             ],
           );
         },

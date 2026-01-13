@@ -7,14 +7,14 @@ class RideModificationService {
     String newStopAddress,
   ) async {
     await Future.delayed(const Duration(seconds: 1));
-    print('Backend: Adding stop "$newStopAddress" to trip $tripId');
+    debugPrint('Backend: Adding stop "$newStopAddress" to trip $tripId');
     // Simulate backend response with a new estimated fare
     return {'success': true, 'newEstimatedFare': 25.50};
   }
 
   Future<void> confirmStopAddition(String tripId) async {
     await Future.delayed(const Duration(milliseconds: 500));
-    print(
+    debugPrint(
       'Backend: Passenger confirmed new stop for trip $tripId. Notifying driver.',
     );
   }
@@ -79,9 +79,8 @@ class _InTripPanelState extends State<InTripPanel> {
       margin: const EdgeInsets.all(8.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: _isProposingStop
-            ? _buildConfirmationView()
-            : _buildDefaultView(),
+        child:
+            _isProposingStop ? _buildConfirmationView() : _buildDefaultView(),
       ),
     );
   }

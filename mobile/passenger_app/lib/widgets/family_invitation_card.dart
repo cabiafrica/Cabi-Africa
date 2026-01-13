@@ -7,12 +7,12 @@ class FamilyInvitationCard extends StatelessWidget {
   final VoidCallback onDecline;
 
   const FamilyInvitationCard({
-    Key? key,
+    super.key,
     required this.organizerName,
     required this.familyName,
     required this.onAccept,
     required this.onDecline,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

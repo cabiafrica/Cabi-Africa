@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HelpScreen extends StatelessWidget {
-  const HelpScreen({Key? key}) : super(key: key);
+  const HelpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +40,7 @@ class FaqItem extends StatelessWidget {
   final String question;
   final String answer;
 
-  const FaqItem({Key? key, required this.question, required this.answer})
-    : super(key: key);
+  const FaqItem({super.key, required this.question, required this.answer});
 
   @override
   Widget build(BuildContext context) {

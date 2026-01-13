@@ -6,10 +6,10 @@ class VehicleDocumentsScreen extends StatefulWidget {
   final String vehicleName;
 
   const VehicleDocumentsScreen({
-    Key? key,
+    super.key,
     required this.vehicleId,
     required this.vehicleName,
-  }) : super(key: key);
+  });
 
   @override
   State<VehicleDocumentsScreen> createState() => _VehicleDocumentsScreenState();
@@ -17,7 +17,7 @@ class VehicleDocumentsScreen extends StatefulWidget {
 
 class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen> {
   // Mock document data
-  List<Map<String, dynamic>> _documents = [
+  final List<Map<String, dynamic>> _documents = [
     {
       'id': 'd1',
       'name': 'Vehicle Registration',

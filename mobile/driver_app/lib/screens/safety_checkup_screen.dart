@@ -10,7 +10,7 @@ class SafetyCheckupScreen extends StatefulWidget {
 class _SafetyCheckupScreenState extends State<SafetyCheckupScreen> {
   // Mock feature status
   bool _trustedContactsEnabled = false;
-  bool _pinVerificationEnabled = true;
+  final bool _pinVerificationEnabled = true;
   bool _rideCheckEnabled = false;
 
   void _setupTrustedContacts() {

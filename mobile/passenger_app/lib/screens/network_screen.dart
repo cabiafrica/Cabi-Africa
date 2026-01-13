@@ -122,7 +122,7 @@ class _NetworkScreenState extends State<NetworkScreen> {
             child: Center(child: Text('No recent transactions.')),
           )
         else
-          ...transactions.map((tx) => _buildTransactionTile(tx)).toList(),
+          ...transactions.map((tx) => _buildTransactionTile(tx)),
       ],
     );
   }

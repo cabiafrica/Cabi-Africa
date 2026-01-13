@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import MainLayout from '@/src/components/layout/MainLayout';
+import MainLayout from '@/components/layout/MainLayout';
 
 export default function SuccessPage() {
     const router = useRouter();

@@ -29,7 +29,7 @@ class DriverChatService {
 class ChatScreen extends StatefulWidget {
   final String rideId;
 
-  const ChatScreen({Key? key, required this.rideId}) : super(key: key);
+  const ChatScreen({super.key, required this.rideId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -74,8 +74,9 @@ class _ChatScreenState extends State<ChatScreen> {
             child: StreamBuilder<List<Map<String, dynamic>>>(
               stream: _chatService.messages,
               builder: (context, snapshot) {
-                if (!snapshot.hasData)
+                if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
+                }
                 final messages = snapshot.data!;
 
                 return ListView.builder(

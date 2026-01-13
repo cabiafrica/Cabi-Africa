@@ -64,18 +64,18 @@ class _MentorshipScreenState extends State<MentorshipScreen> with SingleTickerPr
       children: [
         Card(
           color: Colors.deepPurple.shade50,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+          child: const Padding(
+            padding: EdgeInsets.all(20),
             child: Column(
               children: [
-                const Icon(Icons.handshake, size: 60, color: Colors.deepPurple),
-                const SizedBox(height: 16),
-                const Text(
+                Icon(Icons.handshake, size: 60, color: Colors.deepPurple),
+                SizedBox(height: 16),
+                Text(
                   'Grow Together',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                SizedBox(height: 8),
+                Text(
                   'Join the mentorship program to share knowledge and earn rewards.',
                   textAlign: TextAlign.center,
                 ),
@@ -109,7 +109,7 @@ class _MentorshipScreenState extends State<MentorshipScreen> with SingleTickerPr
 
   Widget _buildBenefitItem(IconData icon, String title, String desc) {
     return ListTile(
-      leading: CircleAvatar(child: Icon(icon, color: Colors.white, size: 20), radius: 18, backgroundColor: Colors.deepPurple),
+      leading: CircleAvatar(radius: 18, backgroundColor: Colors.deepPurple, child: Icon(icon, color: Colors.white, size: 20)),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
       subtitle: Text(desc),
       contentPadding: EdgeInsets.zero,

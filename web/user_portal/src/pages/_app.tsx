@@ -5,11 +5,15 @@ import { appWithTranslation } from 'next-i18next';
 
 const inter = Inter({ subsets: ['latin'] });
 
+import { ThemeProvider } from '../context/ThemeContext';
+
 function App({ Component, pageProps }: AppProps) {
   return (
-    <main className={inter.className}>
-      <Component {...pageProps} />
-    </main>
+    <ThemeProvider>
+      <main className={inter.className}>
+        <Component {...pageProps} />
+      </main>
+    </ThemeProvider>
   );
 }
 

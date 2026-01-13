@@ -21,7 +21,7 @@ class FamilyMember {
 }
 
 class FamilyProfileScreen extends StatefulWidget {
-  const FamilyProfileScreen({Key? key}) : super(key: key);
+  const FamilyProfileScreen({super.key});
 
   @override
   State<FamilyProfileScreen> createState() => _FamilyProfileScreenState();
@@ -37,7 +37,7 @@ class _FamilyProfileScreenState extends State<FamilyProfileScreen> {
       role: 'organizer',
       status: 'active',
       tripsThisMonth: 12,
-      spendingThisMonth: 145.50,
+      spendingThisMonth: 14550.00,
     ),
     FamilyMember(
       id: '2',
@@ -46,7 +46,7 @@ class _FamilyProfileScreenState extends State<FamilyProfileScreen> {
       role: 'adult',
       status: 'active',
       tripsThisMonth: 8,
-      spendingThisMonth: 89.25,
+      spendingThisMonth: 8925.00,
     ),
     FamilyMember(
       id: '3',
@@ -55,7 +55,7 @@ class _FamilyProfileScreenState extends State<FamilyProfileScreen> {
       role: 'teen',
       status: 'active',
       tripsThisMonth: 5,
-      spendingThisMonth: 42.00,
+      spendingThisMonth: 4200.00,
     ),
     FamilyMember(
       id: '4',
@@ -214,7 +214,7 @@ class _FamilyProfileScreenState extends State<FamilyProfileScreen> {
               Expanded(
                 child: _buildStatCard(
                   'Total Spent',
-                  '\$${totalSpending.toStringAsFixed(2)}',
+                  'KES ${totalSpending.toStringAsFixed(2)}',
                   Icons.attach_money,
                   Colors.green,
                 ),
@@ -509,7 +509,7 @@ class _FamilyProfileScreenState extends State<FamilyProfileScreen> {
                 Column(
                   children: [
                     Text(
-                      '\$${member.spendingThisMonth.toStringAsFixed(2)}',
+                      'KES ${member.spendingThisMonth.toStringAsFixed(2)}',
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart' as io;
 
 class Message {
   final String text;
@@ -18,17 +18,17 @@ class ChatScreen extends StatefulWidget {
   final String currentUserId;
 
   const ChatScreen({
-    Key? key,
+    super.key,
     required this.tripId,
     required this.currentUserId,
-  }) : super(key: key);
+  });
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  late IO.Socket _socket;
+  late io.Socket _socket;
   final TextEditingController _textController = TextEditingController();
   final List<Message> _messages = [];
 
@@ -40,7 +40,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _connectToSocket() {
     // In a real app, this URL and token would come from a config/auth provider
-    _socket = IO.io('http://localhost:3000', <String, dynamic>{
+    _socket = io.io('http://localhost:3000', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
       'extraHeaders': {'Authorization': 'Bearer mock-jwt'},
@@ -49,11 +49,12 @@ class _ChatScreenState extends State<ChatScreen> {
     _socket.connect();
 
     _socket.onConnect((_) {
-      print('Connected to chat server');
+      debugPrint('Connected to chat server');
       _socket.emit('joinRoom', widget.tripId);
     });
 
     _socket.on('newMessage', (data) {
+      if (!mounted) return;
       setState(() {
         _messages.add(
           Message(
@@ -65,7 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     });
 
-    _socket.onDisconnect((_) => print('Disconnected from chat server'));
+    _socket.onDisconnect((_) => debugPrint('Disconnected from chat server'));
   }
 
   void _sendMessage() {

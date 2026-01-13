@@ -6,7 +6,9 @@ export default function Footer() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div className="col-span-1 md:col-span-2">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">CABI</h3>
+                        <div className="mb-4">
+                            <img src="/logo.png" alt="CABI Logo" className="h-12 w-auto" />
+                        </div>
                         <p className="text-gray-500 dark:text-gray-400 text-sm max-w-xs">
                             Transforming the ride-hailing experience with a community-first approach.
                             Join us in building a sustainable and profitable future for drivers and passengers.
@@ -27,7 +29,7 @@ export default function Footer() {
                             </li>
                             <li>
                                 <Link href="/" className="text-base text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
-                                    Blog
+                                    Intel
                                 </Link>
                             </li>
                         </ul>
@@ -50,7 +52,7 @@ export default function Footer() {
                 </div>
                 <div className="mt-8 border-t border-slate-200 dark:border-slate-800 pt-8 text-center">
                     <p className="text-base text-slate-500">
-                        &copy; {new Date().getFullYear()} CABI Platform. All rights reserved.
+                        &copy; {new Date().getFullYear()} CABI AFRICA Platform. All rights reserved.
                     </p>
                 </div>
             </div>

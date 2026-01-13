@@ -7,12 +7,12 @@ class SustainabilityImpactWidget extends StatelessWidget {
   final int totalRides;
 
   const SustainabilityImpactWidget({
-    Key? key,
+    super.key,
     required this.totalCO2Offset,
     required this.greenRidesCount,
     required this.sharedRidesCount,
     required this.totalRides,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

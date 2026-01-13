@@ -4,7 +4,7 @@ description: Preview User Portal Application
 
 1. Navigate to the User Portal directory.
    ```
-   cd apps/user-portal
+   cd web/user_portal
    ```
    // turbo
 2. Install dependencies.

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, Param } from '@nestjs/common';
 import { DriverLeadsService } from './driver-leads.service';
 import { RegisterLeadDto } from './driver-leads/dto/register-lead.dto';
 import { MlmService } from './mlm.service';
@@ -8,7 +8,7 @@ export class DriverLeadsController {
   constructor(
     private readonly driverLeadsService: DriverLeadsService,
     private readonly mlmService: MlmService,
-  ) {}
+  ) { }
 
   @Post('register')
   register(@Body() registerLeadDto: RegisterLeadDto) {
@@ -19,5 +19,20 @@ export class DriverLeadsController {
   @Get('referral/validate')
   validateReferralCode(@Query('code') code: string) {
     return this.mlmService.validateReferralCode(code);
+  }
+
+  @Get('pending')
+  getPendingDrivers(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.driverLeadsService.getPendingDrivers(Number(page), Number(limit));
+  }
+
+  @Post(':id/approve')
+  approve(@Param('id') id: string) {
+    return this.driverLeadsService.approveDriver(id);
+  }
+
+  @Post(':id/reject')
+  reject(@Param('id') id: string, @Body('reasons') reasons: string[]) {
+    return this.driverLeadsService.rejectDriver(id, reasons);
   }
 }

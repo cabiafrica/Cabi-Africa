@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:driver_app/screens/downline_screen.dart'; // Ensure import
+import 'package:flutter/services.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
 // Mock DTOs - In a real app, these would be generated.
-enum ReferralStatus { Pending, Active }
+enum ReferralStatus { pending, active }
 
 class ReferredDriverDto {
   final String name;
@@ -17,7 +21,8 @@ class ReferredDriverDto {
 
 class DriverReferralInfoDto {
   final String referralCode;
-  final List<ReferredDriverDto> referredDrivers;
+  final List<ReferredDriverDto>
+      referredDrivers; // Only level 1 usually here, detailed tree in Downline
 
   DriverReferralInfoDto({
     required this.referralCode,
@@ -49,12 +54,12 @@ class _ReferralProgramScreenState extends State<ReferralProgramScreen> {
       referredDrivers: [
         ReferredDriverDto(
           name: 'John D.',
-          status: ReferralStatus.Active,
+          status: ReferralStatus.active,
           joinedAt: DateTime.now().subtract(const Duration(days: 10)),
         ),
         ReferredDriverDto(
           name: 'Jane S.',
-          status: ReferralStatus.Pending,
+          status: ReferralStatus.pending,
           joinedAt: DateTime.now().subtract(const Duration(days: 2)),
         ),
       ],
@@ -62,18 +67,16 @@ class _ReferralProgramScreenState extends State<ReferralProgramScreen> {
   }
 
   void _shareCode(String code) {
-    // Mock share action
-    print('Sharing referral code: $code');
+    Clipboard.setData(ClipboardData(text: code));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening share dialog... (mock)')),
+      const SnackBar(content: Text('Referral code copied to clipboard!')),
     );
-    // In a real app, you would use a package like `share_plus`.
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Referral Program')),
+      appBar: AppBar(title: const Text('Invite & Earn')),
       body: FutureBuilder<DriverReferralInfoDto>(
         future: _referralInfoFuture,
         builder: (context, snapshot) {
@@ -85,48 +88,168 @@ class _ReferralProgramScreenState extends State<ReferralProgramScreen> {
           }
 
           final referralInfo = snapshot.data!;
+          // Using a unique invitation link structure for the QR code
+          final inviteLink =
+              "https://cabi.africa/invite?code=${referralInfo.referralCode}";
 
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const Text('Your Referral Code:'),
-                    Text(
-                      referralInfo.referralCode,
-                      style: Theme.of(context).textTheme.headlineMedium,
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // 1. QR Code Section
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Scan to Join My Team',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 16),
+                        QrImageView(
+                          data: inviteLink,
+                          version: QrVersions.auto,
+                          size: 200.0,
+                          backgroundColor: Colors.white,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          referralInfo.referralCode,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
+                                  color: AppTheme.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 2.0),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Share this unique code or QR with other drivers.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
                     ),
-                    ElevatedButton.icon(
-                      onPressed: () => _shareCode(referralInfo.referralCode),
-                      icon: const Icon(Icons.share),
-                      label: const Text('Share Code'),
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // 2. Action Buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _shareCode(referralInfo.referralCode),
+                        icon: const Icon(Icons.copy),
+                        label: const Text('Copy Code'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[200],
+                          foregroundColor: Colors.black,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          // Navigate to Downline / Team View
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const DownlineScreen()));
+                        },
+                        icon: const Icon(Icons.people),
+                        label: const Text('View Team'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.primaryColor,
+                          foregroundColor: Colors.black,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
-              const Divider(),
-              Expanded(
-                child: ListView.builder(
+
+                const SizedBox(height: 32),
+
+                // 3. Level 1 Referrals
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Level 1 Referrals (Recent)',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: referralInfo.referredDrivers.length,
                   itemBuilder: (context, index) {
                     final driver = referralInfo.referredDrivers[index];
                     return ListTile(
-                      title: Text(driver.name),
-                      subtitle: Text(
-                        'Joined: ${driver.joinedAt.toLocal().toString().split(' ')[0]}',
+                      contentPadding: EdgeInsets.zero,
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.grey[200],
+                        child: Text(driver.name[0]),
                       ),
-                      trailing: Chip(
-                        label: Text(driver.status.name),
-                        backgroundColor: driver.status == ReferralStatus.Active
-                            ? Colors.green
-                            : Colors.orange,
+                      title: Text(driver.name),
+                      subtitle:
+                          Text('Status: ${driver.status.name.toUpperCase()}'),
+                      trailing: Text(
+                        driver.status == ReferralStatus.active
+                            ? '+ Earned'
+                            : 'Pending',
+                        style: TextStyle(
+                            color: driver.status == ReferralStatus.active
+                                ? Colors.green
+                                : Colors.orange,
+                            fontWeight: FontWeight.bold),
                       ),
                     );
                   },
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 24),
+
+                // Portal Link Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Redirect logic
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Opening Driver Portal...')),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black, // Cabi Black
+                      foregroundColor: const Color(0xFFFFBE0B), // Cabi Yellow
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text('View Full Team in Portal',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           );
         },
       ),

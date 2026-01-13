@@ -1,2 +1,3 @@
 export * from './user.module';
-export * from './lib/user.service';
+export * from './user.service';
+export * from './dto/register-user.dto';

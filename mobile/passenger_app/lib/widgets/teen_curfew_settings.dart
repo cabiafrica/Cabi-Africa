@@ -8,13 +8,13 @@ class TeenCurfewSettings extends StatefulWidget {
   final ValueChanged<Map<String, dynamic>> onSave;
 
   const TeenCurfewSettings({
-    Key? key,
+    super.key,
     required this.teenName,
     this.curfewStart,
     this.curfewEnd,
     this.isCurfewEnabled = false,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   State<TeenCurfewSettings> createState() => _TeenCurfewSettingsState();

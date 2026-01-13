@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 
 class NotificationService {
@@ -20,7 +21,7 @@ class NotificationService {
     //     _sosAlertController.add(message.data);
     //   }
     // });
-    print('Notification Service Initialized');
+    debugPrint('Notification Service Initialized');
   }
 
   // Method to simulate receiving an SOS alert (for testing/demo)

@@ -31,7 +31,7 @@ class _RatingReviewScreenState extends State<RatingReviewScreen> {
 
     // Simulate network call to the backend
     await Future.delayed(const Duration(seconds: 1));
-    print(
+    debugPrint(
       'Submitting rating for trip ${widget.tripId}: $_starRating stars, review: ${_reviewController.text}',
     );
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class OrganizationBrowserScreen extends StatefulWidget {
-  const OrganizationBrowserScreen({Key? key}) : super(key: key);
+  const OrganizationBrowserScreen({super.key});
 
   @override
   State<OrganizationBrowserScreen> createState() =>

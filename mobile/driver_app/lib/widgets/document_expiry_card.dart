@@ -9,12 +9,12 @@ class DocumentExpiryCard extends StatelessWidget {
   final VoidCallback onUpdate;
 
   const DocumentExpiryCard({
-    Key? key,
+    super.key,
     required this.documentName,
     required this.expiryDate,
     required this.status,
     required this.onUpdate,
-  }) : super(key: key);
+  });
 
   String _getExpiryText() {
     if (expiryDate == null) return 'No Date Set';

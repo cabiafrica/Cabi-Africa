@@ -14,7 +14,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
   final _packageDescController = TextEditingController();
   final _instructionsController = TextEditingController();
 
-  String? _pickupAddress = '123 Main St (Your Location)';
+  final String _pickupAddress = '123 Main St (Your Location)';
   String? _dropoffAddress;
 
   void _selectDropoff() async {
@@ -75,9 +75,10 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                 child: Column(
                   children: [
                     ListTile(
-                      leading: const Icon(Icons.my_location, color: Colors.blue),
+                      leading:
+                          const Icon(Icons.my_location, color: Colors.blue),
                       title: const Text('Pickup'),
-                      subtitle: Text(_pickupAddress ?? 'Select pickup'),
+                      subtitle: Text(_pickupAddress),
                       trailing: const Icon(Icons.edit, size: 16),
                       onTap: () {}, // Edit pickup
                     ),
@@ -95,7 +96,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             ),
             const SizedBox(height: 24),
 
-            const Text('Recipient Details', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const Text('Recipient Details',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 8),
             TextFormField(
               controller: _recipientNameController,
@@ -120,7 +122,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             ),
             const SizedBox(height: 24),
 
-            const Text('Package Info', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const Text('Package Info',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 8),
             TextFormField(
               controller: _packageDescController,

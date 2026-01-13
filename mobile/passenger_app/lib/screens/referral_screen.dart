@@ -11,8 +11,20 @@ class ReferralScreen extends StatefulWidget {
 class _ReferralScreenState extends State<ReferralScreen> {
   final String _myReferralCode = 'REFUSER123'; // Mock - from API
   final List<Map<String, dynamic>> _referralHistory = [
-    {'name': 'John Doe', 'email': 'john@example.com', 'status': 'COMPLETED', 'credit': 5.00, 'date': DateTime.now().subtract(const Duration(days: 5))},
-    {'name': 'Jane Smith', 'email': 'jane@example.com', 'status': 'PENDING', 'credit': 5.00, 'date': DateTime.now().subtract(const Duration(days: 2))},
+    {
+      'name': 'John Doe',
+      'email': 'john@example.com',
+      'status': 'COMPLETED',
+      'credit': 500.00,
+      'date': DateTime.now().subtract(const Duration(days: 5))
+    },
+    {
+      'name': 'Jane Smith',
+      'email': 'jane@example.com',
+      'status': 'PENDING',
+      'credit': 500.00,
+      'date': DateTime.now().subtract(const Duration(days: 2))
+    },
   ];
 
   void _shareReferralCode() {
@@ -25,8 +37,9 @@ class _ReferralScreenState extends State<ReferralScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final completedReferrals = _referralHistory.where((r) => r['status'] == 'COMPLETED').length;
-    final totalEarned = completedReferrals * 5.00;
+    final completedReferrals =
+        _referralHistory.where((r) => r['status'] == 'COMPLETED').length;
+    final totalEarned = completedReferrals * 500.00;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Refer Friends')),
@@ -48,10 +61,11 @@ class _ReferralScreenState extends State<ReferralScreen> {
               ),
               child: Column(
                 children: [
-                  const Icon(Icons.card_giftcard, color: Colors.white, size: 48),
+                  const Icon(Icons.card_giftcard,
+                      color: Colors.white, size: 48),
                   const SizedBox(height: 16),
                   const Text(
-                    'Give \$5, Get \$5',
+                    'Give KES 500, Get KES 500',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -60,7 +74,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Share your code with friends. When they take their first ride, you both get \$5!',
+                    'Share your code with friends. When they take their first ride, you both get KES 500!',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.white70),
                   ),
@@ -73,7 +87,8 @@ class _ReferralScreenState extends State<ReferralScreen> {
                     ),
                     child: Column(
                       children: [
-                        const Text('Your Referral Code', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                        const Text('Your Referral Code',
+                            style: TextStyle(fontSize: 12, color: Colors.grey)),
                         const SizedBox(height: 8),
                         Text(
                           _myReferralCode,
@@ -111,47 +126,56 @@ class _ReferralScreenState extends State<ReferralScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildStat('Successful Referrals', completedReferrals.toString()),
+                    _buildStat(
+                        'Successful Referrals', completedReferrals.toString()),
                     Container(width: 1, height: 40, color: Colors.grey[300]),
-                    _buildStat('Total Earned', '\$${totalEarned.toStringAsFixed(2)}'),
+                    _buildStat('Total Earned',
+                        'KES ${totalEarned.toStringAsFixed(2)}'),
                   ],
                 ),
               ),
             ),
 
             const SizedBox(height: 24),
-            const Text('Referral History', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text('Referral History',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
 
             // Referral History
             ..._referralHistory.map((referral) => Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: referral['status'] == 'COMPLETED' ? Colors.green[100] : Colors.orange[100],
-                  child: Icon(
-                    referral['status'] == 'COMPLETED' ? Icons.check : Icons.schedule,
-                    color: referral['status'] == 'COMPLETED' ? Colors.green : Colors.orange,
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: referral['status'] == 'COMPLETED'
+                          ? Colors.green[100]
+                          : Colors.orange[100],
+                      child: Icon(
+                        referral['status'] == 'COMPLETED'
+                            ? Icons.check
+                            : Icons.schedule,
+                        color: referral['status'] == 'COMPLETED'
+                            ? Colors.green
+                            : Colors.orange,
+                      ),
+                    ),
+                    title: Text(referral['email']),
+                    subtitle: Text(
+                      referral['status'] == 'COMPLETED'
+                          ? 'Completed • ${_formatDate(referral['date'])}'
+                          : 'Pending signup',
+                    ),
+                    trailing: referral['status'] == 'COMPLETED'
+                        ? Text(
+                            '+KES ${referral['credit'].toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          )
+                        : null,
                   ),
-                ),
-                title: Text(referral['email']),
-                subtitle: Text(
-                  referral['status'] == 'COMPLETED'
-                      ? 'Completed • ${_formatDate(referral['date'])}'
-                      : 'Pending signup',
-                ),
-                trailing: referral['status'] == 'COMPLETED'
-                    ? Text(
-                        '+\$${referral['credit'].toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      )
-                    : null,
-              ),
-            )),
+                )),
 
             if (_referralHistory.isEmpty)
               const Center(
@@ -172,7 +196,8 @@ class _ReferralScreenState extends State<ReferralScreen> {
   Widget _buildStat(String label, String value) {
     return Column(
       children: [
-        Text(value, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        Text(value,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
         Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
       ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AccountDeletionScreen extends StatefulWidget {
-  const AccountDeletionScreen({Key? key}) : super(key: key);
+  const AccountDeletionScreen({super.key});
 
   @override
   State<AccountDeletionScreen> createState() => _AccountDeletionScreenState();

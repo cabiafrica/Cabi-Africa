@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MyOrganizationScreen extends StatefulWidget {
-  const MyOrganizationScreen({Key? key}) : super(key: key);
+  const MyOrganizationScreen({super.key});
 
   @override
   State<MyOrganizationScreen> createState() => _MyOrganizationScreenState();

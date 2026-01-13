@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class RatePassengerScreen extends StatefulWidget {
   final String rideId;
 
-  const RatePassengerScreen({Key? key, required this.rideId}) : super(key: key);
+  const RatePassengerScreen({super.key, required this.rideId});
 
   @override
   State<RatePassengerScreen> createState() => _RatePassengerScreenState();

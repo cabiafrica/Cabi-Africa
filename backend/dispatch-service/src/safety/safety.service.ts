@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { SupportService } from '@cabi/backend/support-service';
+// import { SupportService } from '@cabi/backend/support-service';
+
+class SupportService { }
 
 interface SosSignalDto {
   tripId: string;

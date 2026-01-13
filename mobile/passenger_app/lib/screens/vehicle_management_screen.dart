@@ -27,10 +27,10 @@ class Vehicle {
 }
 
 class VehicleManagementScreen extends StatefulWidget {
-  const VehicleManagementScreen({Key? key}) : super(key: key);
+  const VehicleManagementScreen({super.key});
 
   @override
-  _VehicleManagementScreenState createState() =>
+  State<VehicleManagementScreen> createState() =>
       _VehicleManagementScreenState();
 }
 
@@ -69,6 +69,8 @@ class _VehicleManagementScreenState extends State<VehicleManagementScreen> {
 
     // Simulate API call
     await Future.delayed(const Duration(seconds: 1));
+
+    if (!mounted) return;
 
     setState(() {
       _vehicles = _vehicles.map((v) {

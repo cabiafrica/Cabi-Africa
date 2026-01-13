@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import MainLayout from '@/src/components/layout/MainLayout';
+import MainLayout from '@/components/layout/MainLayout';
 
 interface DriverEntry {
     id: string;
@@ -163,8 +163,8 @@ export default function GroupRegistrationPage() {
                 {[1, 2, 3].map((step) => (
                     <div key={step} className="flex-1 flex items-center">
                         <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${step <= currentStep
-                                ? 'bg-indigo-600 border-indigo-600 text-white'
-                                : 'bg-white border-gray-300 text-gray-400'
+                            ? 'bg-indigo-600 border-indigo-600 text-white'
+                            : 'bg-white border-gray-300 text-gray-400'
                             }`}>
                             {step < currentStep ? (
                                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">

@@ -63,7 +63,7 @@ class _AddStopsScreenState extends State<AddStopsScreen> {
 
   double _calculateFare() {
     // Base fare + extra per stop
-    return 15.00 + (_stops.length * 5.00);
+    return 1500.00 + (_stops.length * 500.00);
   }
 
   @override
@@ -154,7 +154,7 @@ class _AddStopsScreenState extends State<AddStopsScreen> {
                     const Text('Estimated Fare:',
                         style: TextStyle(fontSize: 16)),
                     Text(
-                      '\$${_calculateFare().toStringAsFixed(2)}',
+                      'KES ${_calculateFare().toStringAsFixed(2)}',
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -166,7 +166,7 @@ class _AddStopsScreenState extends State<AddStopsScreen> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
-                      '+\$${(_stops.length * 5.00).toStringAsFixed(2)} for ${_stops.length} stop(s)',
+                      '+KES ${(_stops.length * 500.00).toStringAsFixed(2)} for ${_stops.length} stop(s)',
                       style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ),
