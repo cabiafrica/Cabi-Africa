@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import QRCode from "react-qr-code";
 import { driverLeadService, ProspectStatus } from '../../services/driverLeadService';
+// import { useLogout } from '@/hooks/useLogout'; // handled by useAuth
+import { useAuth } from '@/context/AuthContext';
 
 // Simple mock Auth context or similar could be used here, 
 // for now we'll simulate fetching for a hardcoded user or from query param.
@@ -11,6 +13,8 @@ import { driverLeadService, ProspectStatus } from '../../services/driverLeadServ
 export default function ApplicationDashboard() {
     const [status, setStatus] = useState<ProspectStatus | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { user, logout } = useAuth();
 
     const router = useRouter();
 
@@ -71,9 +75,36 @@ export default function ApplicationDashboard() {
                         <span className="text-gray-500 text-sm border-l pl-2 ml-2 border-gray-300">Driver Portal</span>
                     </div>
                     <div>
-                        {/* User Profile / Logout would go here */}
-                        <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
-                            👤
+                        <div className="relative">
+                            <button
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                            >
+                                👤
+                            </button>
+
+                            {isMenuOpen && (
+                                <>
+                                    <div
+                                        className="fixed inset-0 z-10 cursor-default"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    ></div>
+                                    <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-20">
+                                        <div className="px-4 py-2 border-b border-gray-100">
+                                            <p className="text-sm text-gray-700 font-medium">Driver Account</p>
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                setIsMenuOpen(false);
+                                                logout();
+                                            }}
+                                            className="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50"
+                                        >
+                                            Log out
+                                        </button>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -82,7 +113,7 @@ export default function ApplicationDashboard() {
             <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900">Application Status</h1>
-                    <p className="mt-2 text-gray-600">Welcome back, {status?.firstName || 'User'}. Here is the status of your driver application.</p>
+                    <p className="mt-2 text-gray-600">Welcome back, {user?.firstName || status?.firstName || 'User'}. Here is the status of your driver application.</p>
                 </div>
 
                 {loading ? (

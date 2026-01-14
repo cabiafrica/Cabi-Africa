@@ -12,7 +12,11 @@ import TripHistoryPage from './components/TripHistoryPage';
 import DriverHistoryPage from './components/DriverHistoryPage';
 import PassengerManagementPage from './components/PassengerManagementPage';
 
+import { useAuth } from './AuthContext';
+import { LoginPage } from './components/LoginPage';
+
 function App() {
+    const { isAuthenticated, logout, user } = useAuth();
     const [activeView, setActiveView] = useState<'overview' | 'rides' | 'drivers' | 'map' | 'surge' | 'analytics' | 'trips' | 'driver-history' | 'passengers'>('overview');
     const [rideRequests, setRideRequests] = useState<RideRequest[]>(mockRideRequests);
     const [drivers, setDrivers] = useState<Driver[]>(mockDrivers);
@@ -144,6 +148,10 @@ function App() {
             )
         );
     };
+
+    if (!isAuthenticated) {
+        return <LoginPage />;
+    }
 
     return (
         <div className="flex h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -323,9 +331,18 @@ function App() {
                             OP
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white truncate">Operator</p>
-                            <p className="text-xs text-slate-500">Dispatch Team</p>
+                            <p className="text-sm font-medium text-white truncate">{user?.firstName} {user?.lastName}</p>
+                            <p className="text-xs text-slate-500">{user?.role || 'Dispatch Team'}</p>
                         </div>
+                        <button
+                            onClick={logout}
+                            className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                            title="Log Out"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </aside>

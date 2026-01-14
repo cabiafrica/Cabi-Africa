@@ -193,14 +193,39 @@ model Vehicle {
   insurancePolicyNumber String?
   insuranceExpiry DateTime?
   insuranceCertificateUrl String? @db.Text // Compressed document URL
+  logbookImageUrl String?         @db.Text // Compressed document URL
   inspectionReportUrl String?     @db.Text // Compressed document URL
   frontPhotoUrl   String?         @db.Text // Compressed image URL
   backPhotoUrl    String?         @db.Text // Compressed image URL
   sidePhotoUrl    String?         @db.Text // Compressed image URL
   type            VehicleType   @default(STANDARD)
+  usage           VehicleUsage  @default(TAXI)
+  insuranceType   InsuranceType?
+
+  // Owner Details
+  ownerName       String?
+  ownerPhone      String?
+  
+  // Capacity Details
+  capacity        Float?
+  capacityUnit    String? // 'PASSENGERS', 'TONS', 'KG'
+
   occurrences     Occurrence[]  @relation("VehicleOccurrences")
 
   @@map("vehicles")
+}
+
+enum VehicleUsage {
+  TAXI
+  COMMERCIAL
+  PRIVATE
+  INSTITUTIONAL
+}
+
+enum InsuranceType {
+  PSV
+  COMMERCIAL
+  PRIVATE
 }
 
 model Ride {

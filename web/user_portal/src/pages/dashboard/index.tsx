@@ -2,14 +2,18 @@
 import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+// import { useLogout } from '@/hooks/useLogout'; // handled by useAuth
+import { useAuth } from '@/context/AuthContext';
 
 import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
 import ReferralNetworkVisualizer from '@/components/dashboard/ReferralNetworkVisualizer';
 
 export default function Dashboard() {
+    const router = useRouter();
     const [userRole, setUserRole] = React.useState<'passenger' | 'driver'>('driver');
     const [hasOrganization, setHasOrganization] = React.useState(true); // Default to true for detail view
-    const [activeTab, setActiveTab] = React.useState<'overview' | 'analytics' | 'network' | 'wallet'>('overview');
+    const [activeTab, setActiveTab] = React.useState<'overview' | 'analytics' | 'network' | 'wallet' | 'vehicles'>('overview');
     const [referralCode, setReferralCode] = React.useState('REF-INVITE');
     const [isConnectingSacco, setIsConnectingSacco] = React.useState(false);
     const [showProfileMenu, setShowProfileMenu] = React.useState(false);
@@ -22,21 +26,23 @@ export default function Dashboard() {
         setIsConnectingSacco(false);
     };
 
+    const { user, logout } = useAuth();
+
     React.useEffect(() => {
-        // Hydrate state from localStorage if available (simulating auth)
-        if (typeof window !== 'undefined') {
-            const storedUser = localStorage.getItem('user');
-            if (storedUser) {
-                try {
-                    const user = JSON.parse(storedUser);
-                    if (user.role) setUserRole(user.role.toLowerCase() as any);
-                    if (user.referralCode) setReferralCode(user.referralCode);
-                } catch (e) {
-                    console.error("Failed to parse user data", e);
-                }
+        if (router.isReady && router.query.tab) {
+            const tab = router.query.tab as string;
+            if (['overview', 'analytics', 'network', 'wallet', 'vehicles'].includes(tab)) {
+                setActiveTab(tab as any);
             }
         }
-    }, []);
+    }, [router.isReady, router.query.tab]);
+
+    React.useEffect(() => {
+        if (user) {
+            if (user.role) setUserRole(user.role as any);
+            if (user.referralCode) setReferralCode(user.referralCode);
+        }
+    }, [user]);
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-brand-black text-slate-900 dark:text-white flex font-sans text-sm md:text-base transition-colors duration-300">
@@ -78,6 +84,12 @@ export default function Dashboard() {
                                 <span className="text-lg">🕸️</span> My Network
                             </button>
                             <button
+                                onClick={() => setActiveTab('vehicles')}
+                                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'vehicles' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
+                            >
+                                <span className="text-lg">🚙</span> My Vehicles
+                            </button>
+                            <button
                                 onClick={() => setActiveTab('wallet')}
                                 className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'wallet' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
                             >
@@ -112,7 +124,7 @@ export default function Dashboard() {
                             <span className="text-xs font-black uppercase tracking-[0.2em] text-brand-yellow">Dashboard</span>
                         </div>
                         <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                            Welcome back, <span className="text-brand-yellow">User</span>
+                            Welcome back, <span className="text-brand-yellow">{user?.firstName || 'User'}</span>
                         </h1>
                         <p className="text-slate-500 dark:text-gray-400 mt-2 flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
@@ -126,7 +138,7 @@ export default function Dashboard() {
                             className="flex items-center gap-4 group focus:outline-none"
                         >
                             <div className="text-right hidden sm:block">
-                                <div className="text-sm font-black text-slate-900 dark:text-white group-hover:text-brand-yellow transition-colors">Cabi User</div>
+                                <div className="text-sm font-black text-slate-900 dark:text-white group-hover:text-brand-yellow transition-colors">Cabi {user?.firstName}</div>
                                 <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mt-1">Diamond Member</div>
                             </div>
                             <div className={`w-14 h-14 rounded-lg bg-gradient-to-tr from-brand-yellow to-brand-accent p-[2px] shadow-lg shadow-brand-yellow/10 group-hover:scale-105 transition-all ${showProfileMenu ? 'scale-105 rotate-3' : ''}`}>
@@ -147,13 +159,16 @@ export default function Dashboard() {
                                 <div className="absolute right-0 mt-4 w-64 bg-white dark:bg-brand-dark rounded-xl border border-slate-200 dark:border-white/10 shadow-2xl z-50 overflow-hidden animate-fade-in origin-top-right">
                                     <div className="p-6 border-b border-slate-100 dark:border-white/10">
                                         <div className="font-black text-slate-900 dark:text-white">Account Info</div>
-                                        <div className="text-xs text-slate-500">ID: CABI-4920-X</div>
+                                        <div className="text-xs text-slate-500">ID: {user?.id || 'CABI-4920-X'}</div>
                                     </div>
                                     <div className="p-2">
                                         <Link href="/settings/profile" className="flex items-center gap-3 p-4 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 transition-colors font-bold text-sm">
                                             <span className="text-lg">👤</span> View Profile
                                         </Link>
-                                        <button className="w-full flex items-center gap-3 p-4 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors font-bold text-sm">
+                                        <button
+                                            onClick={logout}
+                                            className="w-full flex items-center gap-3 p-4 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors font-bold text-sm"
+                                        >
                                             <span className="text-lg">🚪</span> Log Out
                                         </button>
                                     </div>
@@ -462,6 +477,70 @@ export default function Dashboard() {
                 {activeTab === 'network' && (
                     <div className="animate-fade-in">
                         <ReferralNetworkVisualizer referralCode={referralCode} />
+                    </div>
+                )}
+
+                {activeTab === 'vehicles' && (
+                    <div className="animate-fade-in">
+                        <div className="flex justify-between items-end mb-8">
+                            <div>
+                                <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">My Vehicles</h2>
+                                <p className="text-slate-500 mt-1">Manage your fleet and vehicle documents</p>
+                            </div>
+                            <Link href="/vehicles/register" className="px-6 py-3 bg-brand-yellow text-black font-black rounded-lg text-sm shadow-xl shadow-brand-yellow/20 hover:scale-105 transition-all flex items-center gap-2">
+                                <span>+</span> Register New Vehicle
+                            </Link>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {userRole === 'driver' ? (
+                                <>
+                                    <div className="glass p-6 rounded-2xl border border-slate-200 dark:border-white/5 group hover:border-brand-yellow/50 transition-all relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-yellow/5 rounded-full blur-2xl -translate-y-16 translate-x-16"></div>
+                                        <div className="flex justify-between items-start mb-6">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-14 h-14 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-3xl shadow-inner">
+                                                    🚗
+                                                </div>
+                                                <div>
+                                                    <h3 className="font-bold text-lg leading-tight">Toyota Fielder</h3>
+                                                    <p className="text-xs font-mono text-slate-500 mt-1 bg-slate-100 dark:bg-white/5 px-2 py-1 rounded inline-block">KCB 123A</p>
+                                                </div>
+                                            </div>
+                                            <span className="px-3 py-1 bg-green-500/10 text-green-500 rounded-full text-[10px] font-black uppercase tracking-wider border border-green-500/20">Active</span>
+                                        </div>
+                                        <div className="space-y-3 mb-6">
+                                            <div className="flex justify-between text-sm py-2 border-b border-dashed border-slate-200 dark:border-white/5">
+                                                <span className="text-slate-500">Color</span>
+                                                <span className="font-bold">Silver</span>
+                                            </div>
+                                            <div className="flex justify-between text-sm py-2 border-b border-dashed border-slate-200 dark:border-white/5">
+                                                <span className="text-slate-500">Insurance</span>
+                                                <span className="font-bold text-green-500 flex items-center gap-1">✓ Valid</span>
+                                            </div>
+                                            <div className="flex justify-between text-sm py-2 border-b border-dashed border-slate-200 dark:border-white/5">
+                                                <span className="text-slate-500">Inspection</span>
+                                                <span className="font-bold text-green-500 flex items-center gap-1">✓ Passed</span>
+                                            </div>
+                                        </div>
+                                        <button className="w-full py-3 bg-slate-900 dark:bg-white text-white dark:text-black rounded-xl font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                                            <span>⚙️</span> Manage Settings
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="col-span-1 md:col-span-3 py-20 text-center border-2 border-dashed border-slate-200 dark:border-white/10 rounded-3xl bg-slate-50/50 dark:bg-white/5">
+                                    <div className="w-20 h-20 bg-slate-200 dark:bg-white/10 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">🚙</div>
+                                    <h3 className="text-2xl font-black mb-2">Start Your Engine</h3>
+                                    <p className="text-slate-500 mb-8 max-w-md mx-auto">You haven't added any vehicles yet. Register a vehicle to start driving or manage a fleet on Cabi.</p>
+                                    <div className="flex justify-center gap-4">
+                                        <Link href="/vehicles/register" className="px-8 py-4 bg-brand-yellow text-black font-black rounded-xl hover:scale-105 transition-all shadow-xl shadow-brand-yellow/20 text-lg">
+                                            Register First Vehicle
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
 

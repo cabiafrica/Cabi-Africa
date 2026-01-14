@@ -45,6 +45,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const logbookNumber = getValue('logbookNumber');
         const insurancePolicyNumber = getValue('insurancePolicyNumber');
         const insuranceExpiry = getValue('insuranceExpiry');
+        const vehicleUse = getValue('vehicleUse');
+        const insuranceType = getValue('insuranceType');
+        const ownerName = getValue('ownerName');
+        const ownerPhone = getValue('ownerPhone');
+        const capacity = getValue('capacity');
+
+        // Determine Capacity Unit
+        let capacityUnit = 'PASSENGERS';
+        if (vehicleUse === 'COMMERCIAL') {
+            capacityUnit = 'TONS';
+        }
 
         // TODO: Get authenticated user's driverProfileId. 
         // For now, accepting it from body or using a placeholder/failing if not present.
@@ -65,6 +76,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         const insuranceCertificateUrl = await getFileUrl('insuranceCertificate');
+        const logbookImageUrl = await getFileUrl('logbookImage');
         const inspectionReportUrl = await getFileUrl('inspectionReport');
         const frontPhotoUrl = await getFileUrl('vehiclePhotoFront');
         const backPhotoUrl = await getFileUrl('vehiclePhotoBack');
@@ -87,17 +99,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     logbookNumber,
                     insurancePolicyNumber,
                     insuranceExpiry: insuranceExpiry ? new Date(insuranceExpiry) : null,
+                    usage: vehicleUse,
+                    insuranceType: insuranceType,
+                    ownerName,
+                    ownerPhone,
+                    capacity: capacity ? parseFloat(capacity) : null,
+                    capacityUnit,
                     insuranceCertificateUrl,
+                    logbookImageUrl,
                     inspectionReportUrl,
                     frontPhotoUrl,
                     backPhotoUrl,
                     sidePhotoUrl
-                }
+                } as any
             });
             return res.status(201).json({ success: true, vehicle });
         } else {
             // Mock response for testing frontend without full auth flow
-            console.log('Mock Vehicle Registration (No DriverProfileId):', { make, model, licensePlate, photos: { frontPhotoUrl } });
+            console.log('Mock Vehicle Registration (No DriverProfileId):', { make, model, licensePlate, ownerName, capacity, capacityUnit, photos: { frontPhotoUrl } });
             return res.status(201).json({ success: true, message: 'Vehicle data received (Mock Mode)' });
         }
 

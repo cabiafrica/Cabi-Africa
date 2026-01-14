@@ -100,6 +100,66 @@ export default function ProfileSettings() {
                             </div>
                         </div>
 
+                        {/* Personal Verification Details */}
+                        <div className="bg-white dark:bg-gray-800 shadow rounded-2xl p-6 md:p-8 animate-fade-in-up delay-75">
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
+                                Verification Details
+                            </h2>
+                            <p className="text-sm text-gray-500 mb-6">
+                                Provide these details to verify your account and unlock all features.
+                            </p>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Gender
+                                    </label>
+                                    <select
+                                        name="gender"
+                                        // @ts-ignore
+                                        value={profile.gender || ''}
+                                        // @ts-ignore
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-brand-purple dark:bg-gray-700 dark:text-white"
+                                    >
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Date of Birth
+                                    </label>
+                                    <input
+                                        type="date"
+                                        name="dob"
+                                        // @ts-ignore
+                                        value={profile.dob || ''}
+                                        onChange={handleInputChange}
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-brand-purple dark:bg-gray-700 dark:text-white"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        ID / Passport Number
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="idNumber"
+                                        // @ts-ignore
+                                        value={profile.idNumber || ''}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter ID Number"
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-brand-purple dark:bg-gray-700 dark:text-white"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Privacy Settings Section */}
                         <div className="bg-white dark:bg-gray-800 shadow rounded-2xl p-6 md:p-8 animate-fade-in-up delay-100">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">

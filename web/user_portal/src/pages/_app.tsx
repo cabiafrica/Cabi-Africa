@@ -6,13 +6,16 @@ import { appWithTranslation } from 'next-i18next';
 const inter = Inter({ subsets: ['latin'] });
 
 import { ThemeProvider } from '../context/ThemeContext';
+import { AuthProvider } from '../context/AuthContext';
 
 function App({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider>
-      <main className={inter.className}>
-        <Component {...pageProps} />
-      </main>
+      <AuthProvider>
+        <main className={inter.className}>
+          <Component {...pageProps} />
+        </main>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

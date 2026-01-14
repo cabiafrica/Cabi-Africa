@@ -1,9 +1,12 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { ThemeToggle } from '../ThemeToggle';
+// import { useLogout } from '@/hooks/useLogout'; // handled by useAuth
+import { useAuth } from '@/context/AuthContext';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { isAuthenticated, user, logout } = useAuth();
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -53,8 +56,8 @@ export default function Header() {
                     {/* User Profile / Auth Section */}
                     <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
                         <ThemeToggle />
-                        {/* Mock Auth State: Replace with actual auth context later */}
-                        {true ? (
+                        {/* Real Auth State */}
+                        {isAuthenticated ? (
                             <div className="relative ml-3 flex items-center space-x-3">
                                 {/* Avatar Link: Directly to Dashboard as requested */}
                                 <Link
@@ -64,7 +67,7 @@ export default function Header() {
                                 >
                                     <img
                                         className="h-10 w-10 rounded-full object-cover border-2 border-indigo-500 shadow-sm cursor-pointer"
-                                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                        src={user?.profilePictureUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"}
                                         alt="User Avatar"
                                     />
                                 </Link>
@@ -78,7 +81,7 @@ export default function Header() {
                                     aria-haspopup="true"
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                                 >
-                                    <span className="ml-1 hidden md:block font-medium text-gray-700 dark:text-gray-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Hi Alex</span>
+                                    <span className="ml-1 hidden md:block font-medium text-gray-700 dark:text-gray-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Hi {user?.firstName || 'User'}</span>
                                     <svg className={`ml-1 h-4 w-4 text-gray-400 transition-transform duration-200 ${isMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
@@ -130,7 +133,7 @@ export default function Header() {
                                                 role="menuitem"
                                                 onClick={() => {
                                                     setIsMenuOpen(false);
-                                                    alert('Logout clicked');
+                                                    logout();
                                                 }}
                                             >
                                                 <svg className="mr-3 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -220,13 +223,13 @@ export default function Header() {
                             <div className="flex-shrink-0">
                                 <img
                                     className="h-10 w-10 rounded-full border-2 border-indigo-500"
-                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                    src={user?.profilePictureUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"}
                                     alt="User Avatar"
                                 />
                             </div>
                             <div className="ml-3">
-                                <div className="text-base font-medium text-gray-800 dark:text-white">Alex</div>
-                                <div className="text-sm font-medium text-gray-500 dark:text-gray-400">alex@example.com</div>
+                                <div className="text-base font-medium text-gray-800 dark:text-white">{user?.firstName} {user?.lastName}</div>
+                                <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{user?.email}</div>
                             </div>
                         </div>
                         <div className="mt-3 space-y-1">
@@ -248,7 +251,7 @@ export default function Header() {
                                 className="block w-full text-left px-4 py-2 text-base font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                 onClick={() => {
                                     setIsMenuOpen(false);
-                                    alert('Logout clicked');
+                                    logout();
                                 }}
                             >
                                 Log out
