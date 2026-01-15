@@ -89,16 +89,8 @@ export class UserService {
   }
 
   async login(identifier: string, password: string) {
-    // Backdoor for admin access without DB
-    if (identifier === 'admin@cabi.com' && password === 'password123') {
-      return {
-        id: 'admin-123',
-        email: 'admin@cabi.com',
-        fullName: 'System Admin',
-        role: 'ADMIN',
-        permissions: ['*'] // Full access
-      };
-    }
+    // Backdoor removed for production/DB auth
+    // if (identifier === 'admin@cabi.com' && password === 'password123') { ... }
 
     const user = await this.prisma.user.findFirst({
       where: {
@@ -148,12 +140,10 @@ export class UserService {
     });
 
     // 3. Fallback for Legacy Role (if no RBAC roles assigned)
-    if (permissions.size === 0 && user.role === 'ADMIN') {
+    if (permissions.size === 0 && user.role === LegacyRole.ADMIN) {
       // Give basic admin permissions if legacy ADMIN but no sophisticated roles
       permissions.add('DISPATCH_DASHBOARD_VIEW');
       permissions.add('DISPATCH_RIDE_MONITOR');
-    } else if (permissions.size === 0 && user.role === 'SUPER_ADMIN') {
-      permissions.add('*');
     }
 
     return {

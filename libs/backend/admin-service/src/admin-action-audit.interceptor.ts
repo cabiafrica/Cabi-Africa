@@ -28,7 +28,7 @@ export class AdminActionAuditInterceptor implements NestInterceptor {
             tap(async () => {
                 // Log after the request succeeds
                 await logAuditEvent({
-                    action,
+                    action: action as any,
                     userId: adminId,
                     details,
                 });

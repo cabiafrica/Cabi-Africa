@@ -11,9 +11,11 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // In a real app, you would get the token from a state management store or secure storage.
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },
@@ -30,8 +32,12 @@ apiClient.interceptors.response.use(
       if (error.response.status === 401) {
         // Unauthorized: Token is invalid or expired.
         // Clear user session and redirect to login.
-        localStorage.removeItem('authToken');
-        window.location.href = '/login';
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem('authToken');
+        }
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
       }
     }
     return Promise.reject(error);

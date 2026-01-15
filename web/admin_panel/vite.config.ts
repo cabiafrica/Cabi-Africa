@@ -7,16 +7,8 @@ export default defineConfig({
     server: {
         port: 3001,
         proxy: {
-            '/api/roles': {
-                target: 'http://localhost:3334',
-                changeOrigin: true,
-            },
-            '/api/admin': {
-                target: 'http://localhost:3334',
-                changeOrigin: true,
-            },
             '/api': {
-                target: 'http://localhost:3000',
+                target: 'http://localhost:3333',
                 changeOrigin: true,
             }
         }

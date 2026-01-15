@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
 import { AdminActionAuditInterceptor } from './admin-action-audit.interceptor';
@@ -20,24 +19,6 @@ import { AdminUsersService } from './admin-users.service';
 @Module({
   imports: [
     RbacModule,
-    ConfigModule.forRoot({
-      isGlobal: true, // Makes ConfigService available throughout the app
-      envFilePath: '.env',
-    }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_NAME'),
-        autoLoadEntities: true, // Automatically load entities defined in the project
-        synchronize: configService.get<string>('NODE_ENV') !== 'production', // Auto-create schema in dev. DO NOT use in prod.
-      }),
-    }),
   ],
   controllers: [AdminController, AdminRolesController, AdminUsersController],
   providers: [
@@ -51,10 +32,10 @@ import { AdminUsersService } from './admin-users.service';
       provide: APP_INTERCEPTOR,
       useClass: AdminActionAuditInterceptor,
     },
-    {
-      provide: APP_GUARD,
-      useClass: AdminActionAuditGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AdminActionAuditGuard,
+    // },
     {
       provide: APP_GUARD,
       useClass: AdminReadOnlyGuard,

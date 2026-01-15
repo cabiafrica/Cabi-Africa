@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { UserModule } from '@cabi/backend/user-service';
+import { AdminModule } from '@cabi/backend/admin-service';
 
 @Module({
-  imports: [UserModule],
+  imports: [UserModule, AdminModule],
   controllers: [],
   providers: [],
 })
