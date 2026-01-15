@@ -19,6 +19,7 @@ interface AuthContextType {
     logout: () => void;
     isAuthenticated: boolean;
     loading: boolean;
+    hasPermission: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -62,8 +63,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const isAuthenticated = !!user;
 
+    const hasPermission = (permission: string) => {
+        if (!user) return false;
+        // Super/System Admin check (if implemented) or wildcard
+        if (user.permissions?.includes('*')) return true;
+        return user.permissions?.includes(permission) || false;
+    };
+
     return (
-        <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated, loading }}>
+        <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated, loading, hasPermission }}>
             {children}
         </AuthContext.Provider>
     );

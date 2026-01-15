@@ -417,34 +417,48 @@ class AdminService {
 
   async getAdminUsers(): Promise<AdminUser[]> {
     console.log('Fetching admin users...');
-    await new Promise(resolve => setTimeout(resolve, 300));
-    return [
-      { id: 'user-1', email: 'super@cabi.com', roles: ['super-admin'], directGrants: [], directRevokes: [] },
-      { id: 'user-2', email: 'content@cabi.com', roles: ['content-manager'], directGrants: [], directRevokes: [] },
-    ];
+    try {
+      const res = await fetch('/api/admin/users');
+      if (!res.ok) throw new Error('Failed to fetch admin users');
+      return await res.json();
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
   }
 
   async createAdminUser(userData: Omit<AdminUser, 'id'>): Promise<AdminUser> {
     console.log('Creating new admin user:', userData);
-    // This would typically invite a user via email and set their initial roles.
-    await new Promise(resolve => setTimeout(resolve, 800));
-    const newUser = { ...userData, id: `user-${Math.random()}` };
-    return newUser;
+    const res = await fetch('/api/admin/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: userData.email, roles: userData.roles })
+    });
+    if (!res.ok) throw new Error('Failed to create admin user');
+    return await res.json();
   }
 
   async updateUserRoles(userId: string, roleIds: string[]): Promise<void> {
     console.log(`Updating roles for user ${userId} to:`, roleIds);
-    // This calls PUT /admin/users/{userId}/roles
-    // The backend would then clear and re-populate the user's roles in the admin_user_roles table.
-    await new Promise(resolve => setTimeout(resolve, 600));
+    const res = await fetch(`/api/admin/users/${userId}/roles`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roles: roleIds })
+    });
+    if (!res.ok) throw new Error('Failed to update roles');
   }
 
   async updateUserDirectPermissions(userId: string, grants: string[], revokes: string[]): Promise<void> {
     console.log(`Updating direct permissions for user ${userId}. Grants: ${grants}, Revokes: ${revokes}`);
-    // This calls PUT /admin/users/{userId}/permissions
-    // The backend would then update the admin_user_permissions table.
-    await new Promise(resolve => setTimeout(resolve, 600));
+    const res = await fetch(`/api/admin/users/${userId}/permissions`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ grants, revokes })
+    });
+    if (!res.ok) throw new Error('Failed to update permissions');
   }
+
+
 
   async getAuditLogs(filters: AuditLogFilters): Promise<AuditLog[]> {
     console.log('Fetching audit logs with filters:', filters);

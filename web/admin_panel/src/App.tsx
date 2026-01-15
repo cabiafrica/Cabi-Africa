@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { useLocation, Routes, Route } from 'react-router-dom';
+import { useLocation, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import { LoginPage } from './pages/LoginPage';
+// Components 
 import { DriverApplicationsList } from './components/drivers/DriverApplicationsList';
 import { MlmConfiguration as MlmConfig } from './components/MlmConfiguration';
 import { PromotionalConfig as PromoConfig } from './components/PromotionalConfig';
@@ -38,6 +39,10 @@ import { Header } from './components/layout/Header';
 import { DashboardAnalytics } from './components/dashboard/DashboardAnalytics';
 import { GamificationManagement } from './components/settings/GamificationManagement';
 
+// New Role Pages
+import RolesList from './pages/Roles/RolesList';
+import RoleEditor from './pages/Roles/RoleEditor';
+
 // Widgets
 import { RevenueWidget } from './components/widgets/RevenueWidget';
 import { RideStatusWidget } from './components/widgets/RideStatusWidget';
@@ -52,7 +57,7 @@ type View = 'dashboard' | 'applications' | 'mlm-dashboard' | 'mlm-config' | 'pro
 interface MenuItem {
   icon: string;
   label: string;
-  view?: View;
+  view?: string; // Changed from View to string path
   permission?: string;
 }
 
@@ -65,68 +70,68 @@ const SIDEBAR_MENU: MenuGroup[] = [
   {
     label: 'Operations',
     items: [
-      { icon: '🏠', label: 'Dashboard', view: 'dashboard', permission: 'view_dashboard' },
-      { icon: '📄', label: 'Driver Applications', view: 'applications', permission: 'manage_applications' },
-      { icon: '🏢', label: 'Organization', view: 'organization-management', permission: 'manage_organizations' },
-      { icon: '📅', label: 'Scheduled Rides', view: 'scheduled-rides', permission: 'view_scheduled_rides' },
-      { icon: '🎫', label: 'Support Tickets', view: 'support-tickets', permission: 'manage_support' },
-      { icon: '📊', label: 'Driver Performance', view: 'driver-performance', permission: 'view_performance' },
+      { icon: '🏠', label: 'Dashboard', view: '/dashboard', permission: 'view_dashboard' },
+      { icon: '📄', label: 'Driver Applications', view: '/applications', permission: 'manage_applications' },
+      { icon: '🏢', label: 'Organization', view: '/organization-management', permission: 'manage_organizations' },
+      { icon: '📅', label: 'Scheduled Rides', view: '/scheduled-rides', permission: 'view_scheduled_rides' },
+      { icon: '🎫', label: 'Support Tickets', view: '/support-tickets', permission: 'manage_support' },
+      { icon: '📊', label: 'Driver Performance', view: '/driver-performance', permission: 'view_performance' },
     ]
   },
   {
     label: 'Analytics & Map',
     items: [
-      { icon: '📡', label: 'Live Map', view: 'live-map', permission: 'view_live_map' },
-      { icon: '🔥', label: 'Heat Maps', view: 'heat-maps', permission: 'view_heat_maps' },
-      { icon: '📈', label: 'BI Dashboard', view: 'bi-dashboard', permission: 'view_bi_dashboard' },
-      { icon: '🏙️', label: 'City Management', view: 'city-management', permission: 'manage_cities' },
-      { icon: '🚨', label: 'Fraud Alerts', view: 'fraud-alerts', permission: 'view_fraud_alerts' },
+      { icon: '📡', label: 'Live Map', view: '/live-map', permission: 'view_live_map' },
+      { icon: '🔥', label: 'Heat Maps', view: '/heat-maps', permission: 'view_heat_maps' },
+      { icon: '📈', label: 'BI Dashboard', view: '/bi-dashboard', permission: 'view_bi_dashboard' },
+      { icon: '🏙️', label: 'City Management', view: '/city-management', permission: 'manage_cities' },
+      { icon: '🚨', label: 'Fraud Alerts', view: '/fraud-alerts', permission: 'view_fraud_alerts' },
     ]
   },
   {
     label: 'User Management',
     items: [
-      { icon: '🌍', label: 'All Users', view: 'platform-users', permission: 'manage_users' },
-      { icon: '👥', label: 'Admin Users', view: 'users', permission: 'manage_admins' },
-      { icon: '🚫', label: 'Suspended', view: 'suspended-accounts', permission: 'manage_suspended' },
+      { icon: '🌍', label: 'All Users', view: '/platform-users', permission: 'manage_users' },
+      { icon: '👥', label: 'Admin Users', view: '/users', permission: 'manage_admins' },
+      { icon: '🚫', label: 'Suspended', view: '/suspended-accounts', permission: 'manage_suspended' },
     ]
   },
   {
     label: 'Configuration',
     items: [
-      { icon: '💰', label: 'MLM Config', view: 'mlm-config', permission: 'configure_mlm' },
-      { icon: '🔮', label: 'Simulation', view: 'simulation-dashboard', permission: 'view_simulation' },
-      { icon: '🗺️', label: 'Surge Zones', view: 'surge-zones', permission: 'manage_zones' },
-      { icon: '✈️', label: 'Airport Zones', view: 'airport-zones', permission: 'manage_zones' },
-      { icon: '🚗', label: 'Services', view: 'vehicle-categories', permission: 'manage_vehicles' },
-      { icon: '🏅', label: 'Badges', view: 'badge-management', permission: 'manage_config' },
-      { icon: '🎮', label: 'Gamification', view: 'gamification', permission: 'manage_config' },
+      { icon: '💰', label: 'MLM Config', view: '/mlm-config', permission: 'configure_mlm' },
+      { icon: '🔮', label: 'Simulation', view: '/simulation-dashboard', permission: 'view_simulation' },
+      { icon: '🗺️', label: 'Surge Zones', view: '/surge-zones', permission: 'manage_zones' },
+      { icon: '✈️', label: 'Airport Zones', view: '/airport-zones', permission: 'manage_zones' },
+      { icon: '🚗', label: 'Services', view: '/vehicle-categories', permission: 'manage_vehicles' },
+      { icon: '🏅', label: 'Badges', view: '/badge-management', permission: 'manage_config' },
+      { icon: '🎮', label: 'Gamification', view: '/gamification', permission: 'manage_config' },
     ]
   },
   {
     label: 'Marketing & Content',
     items: [
-      { icon: '🏷️', label: 'Promo Codes', view: 'promo-codes', permission: 'manage_promotions' },
-      { icon: '📢', label: 'Bulk Msg', view: 'bulk-messaging', permission: 'send_bulk_messages' },
-      { icon: '📝', label: 'CMS', view: 'cms', permission: 'manage_content' },
+      { icon: '🏷️', label: 'Promo Codes', view: '/promo-codes', permission: 'manage_promotions' },
+      { icon: '📢', label: 'Bulk Msg', view: '/bulk-messaging', permission: 'send_bulk_messages' },
+      { icon: '📝', label: 'CMS', view: '/cms', permission: 'manage_content' },
     ]
   },
   {
     label: 'Finance & System',
     items: [
-      { icon: '💹', label: 'Commissions', view: 'commission-ledger', permission: 'view_commissions' },
-      { icon: '💰', label: 'Traction Logs', view: 'traction-logs', permission: 'view_traction_logs' },
-      { icon: '📜', label: 'Audit Log', view: 'audit-log', permission: 'view_audit_log' },
-      { icon: '🔒', label: 'Permissions', view: 'permissions', permission: 'manage_permissions' },
+      { icon: '💹', label: 'Commissions', view: '/commission-ledger', permission: 'view_commissions' },
+      { icon: '💰', label: 'Traction Logs', view: '/traction-logs', permission: 'view_traction_logs' },
+      { icon: '📜', label: 'Audit Log', view: '/audit-log', permission: 'view_audit_log' },
+      { icon: '🔒', label: 'Roles & Permissions', view: '/roles', permission: 'manage_permissions' },
     ]
   }
 ];
 
 function App() {
   const { user, isAuthenticated, logout } = useAuth();
-  const [currentView, setCurrentView] = useState<View>('dashboard');
-  const [expandedMenus, setExpandedMenus] = useState<string[]>(['Operations']); // Default open
   const location = useLocation();
+  const navigate = useNavigate();
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(['Operations']);
 
   // Detached Visualization Mode
   if (location.pathname.startsWith('/visualize')) {
@@ -144,9 +149,7 @@ function App() {
     );
   }
 
-  if (!isAuthenticated) {
-    return <LoginPage />;
-  }
+  if (!isAuthenticated) return <LoginPage />;
 
   const hasPermission = (p: string) => {
     if (!user?.permissions) return false;
@@ -155,15 +158,16 @@ function App() {
 
   const toggleMenu = (label: string) => {
     setExpandedMenus(prev =>
-      prev.includes(label)
-        ? prev.filter(item => item !== label)
-        : [...prev, label]
+      prev.includes(label) ? prev.filter(item => item !== label) : [...prev, label]
     );
   };
 
+  // Helper to determine active state
+  const isActive = (path?: string) => path && location.pathname.startsWith(path);
+
   return (
     <div className="flex h-screen bg-slate-900 text-slate-100">
-      <aside className="sidebar">
+      <aside className="sidebar w-64 flex-shrink-0 flex flex-col bg-slate-900 border-r border-slate-800">
         <div className="p-6 border-b border-slate-800 flex flex-col items-center text-center">
           <h1 className="text-xl font-bold tracking-wider">CABI ADMIN</h1>
           <div className="mt-1 text-xs text-slate-400 mb-6">Control Center</div>
@@ -187,9 +191,7 @@ function App() {
 
         <nav className="flex-1 overflow-y-auto py-4">
           {SIDEBAR_MENU.map((group) => {
-            // Filter items user has permission for
             const visibleItems = group.items.filter(item => !item.permission || hasPermission(item.permission));
-
             if (visibleItems.length === 0) return null;
 
             const isExpanded = expandedMenus.includes(group.label);
@@ -208,8 +210,8 @@ function App() {
                   {visibleItems.map(item => (
                     <button
                       key={item.label}
-                      onClick={() => item.view && setCurrentView(item.view)}
-                      className={`w-full text-left px-6 py-3 hover:bg-slate-800 flex items-center gap-3 transition-colors border-l-4 ${currentView === item.view ? 'bg-slate-800 border-blue-500 text-white' : 'border-transparent text-slate-300 hover:text-white'}`}
+                      onClick={() => item.view && navigate(item.view)}
+                      className={`w-full text-left px-6 py-3 hover:bg-slate-800 flex items-center gap-3 transition-colors border-l-4 ${isActive(item.view) ? 'bg-slate-800 border-blue-500 text-white' : 'border-transparent text-slate-300 hover:text-white'}`}
                     >
                       <span className="text-lg">{item.icon}</span>
                       <span className="text-sm">{item.label}</span>
@@ -219,71 +221,69 @@ function App() {
               </div>
             );
           })}
-
-          <div className="px-4 mt-6 pt-6 border-t border-slate-700">
-            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">External Apps</div>
-            <a href="http://localhost:3002" target="_blank" rel="noreferrer" className="w-full text-left px-6 py-2 hover:bg-slate-800 flex items-center gap-3 text-cyan-400 font-semibold border border-slate-700 rounded mb-2 text-sm"><span>🚀</span> Dispatch Panel &rarr;</a>
-            <a href="http://localhost:3000/admin" target="_blank" rel="noreferrer" className="w-full text-left px-6 py-2 hover:bg-slate-800 flex items-center gap-3 text-emerald-400 font-semibold border border-slate-700 rounded text-sm"><span>🌐</span> User Portal Admin &rarr;</a>
-          </div>
         </nav>
       </aside>
 
-      <main className="flex-1 overflow-y-auto">
-        <Header currentView={currentView} />
+      <main className="flex-1 overflow-y-auto bg-slate-50 text-slate-900">
+        {/* Using light bg for content area, can revert to dark if requested */}
+        <Header currentView={location.pathname.replace('/', '') as View} />
 
-        <div className="p-6 card">
+        <div className="p-6">
           <div className="max-w-7xl mx-auto space-y-6">
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-            {currentView === 'dashboard' && (
-              <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-2xl font-bold">Admin Dashboard</h2>
-                  <span className="text-sm text-gray-500">Live Overview</span>
+              <Route path="/dashboard" element={
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-2xl font-bold">Admin Dashboard</h2>
+                    <span className="text-sm text-gray-500">Live Overview</span>
+                  </div>
+                  <DashboardAnalytics />
+                  <div className="grid grid-cols-1 gap-6">
+                    <ExpiringDocumentsWidget />
+                  </div>
                 </div>
+              } />
 
-                <DashboardAnalytics />
+              <Route path="/applications" element={<DriverApplicationsList />} />
+              <Route path="/organization-management" element={<OrganizationManagement />} />
+              <Route path="/mlm-config" element={<MlmConfig />} />
+              <Route path="/mlm-dashboard" element={<MlmDashboard />} />
+              <Route path="/simulation-dashboard" element={<SimulationDashboard />} />
+              <Route path="/promo-config" element={<PromoConfig />} />
+              <Route path="/platform-users" element={<PlatformUsers />} />
+              <Route path="/commission-ledger" element={<CommissionLedger />} />
+              <Route path="/badge-management" element={<BadgeManagement />} />
+              <Route path="/blog-management" element={<BlogManagement />} />
 
-                <div className="grid grid-cols-1 gap-6">
-                  <ExpiringDocumentsWidget />
-                </div>
-              </div>
-            )}
+              {/* Updated Permission/Role Routes */}
+              <Route path="/roles" element={<RolesList />} />
+              <Route path="/roles/:id" element={<RoleEditor />} />
+              <Route path="/permissions" element={<PermissionManagement />} /> {/* Legacy or update this later */}
 
-            {currentView === 'applications' && <DriverApplicationsList />}
-            {currentView === 'organization-management' && <OrganizationManagement />}
-            {currentView === 'mlm-config' && <MlmConfig />}
-            {currentView === 'mlm-dashboard' && <MlmDashboard />}
-            {currentView === 'simulation-dashboard' && <SimulationDashboard />}
-            {currentView === 'promo-config' && <PromoConfig />}
-            {currentView === 'platform-users' && <PlatformUsers />}
-            {currentView === 'commission-ledger' && <CommissionLedger />}
-            {currentView === 'badge-management' && <BadgeManagement />}
-            {currentView === 'blog-management' && <BlogManagement />}
-            {currentView === 'permissions' && <PermissionManagement />}
-            {currentView === 'roles' && <RoleManagement />}
-            {currentView === 'users' && <UserManagement />}
-            {currentView === 'audit-log' && <AuditLogViewer />}
-            {currentView === 'sos-config' && <SosPenaltyConfig />}
-            {currentView === 'suspended-accounts' && <SuspendedAccounts />}
-            {currentView === 'traction-logs' && <TractionLogs />}
-
-            {currentView === 'support-tickets' && <SupportTicketManagement />}
-            {currentView === 'surge-zones' && <ZoneManagement type="SURGE" />}
-            {currentView === 'airport-zones' && <ZoneManagement type="AIRPORT" />}
-            {currentView === 'vehicle-categories' && <VehicleCategoriesManagement />}
-            {currentView === 'promo-codes' && <PromoCodeManagement />}
-            {currentView === 'scheduled-rides' && <ScheduledRideManagement />}
-            {currentView === 'cms' && <CMSManagement />}
-            {currentView === 'bulk-messaging' && <BulkMessaging />}
-            {currentView === 'driver-performance' && <DriverPerformanceReport />}
-
-            {currentView === 'city-management' && <CityManagementDashboard />}
-            {currentView === 'heat-maps' && <HeatMapAnalytics />}
-            {currentView === 'driver-unions' && <DriverUnionManagement />}
-            {currentView === 'live-map' && <LiveMap />}
-            {currentView === 'bi-dashboard' && <BIDashboard />}
-            {currentView === 'fraud-alerts' && <FraudDetectionDashboard />}
-            {currentView === 'gamification' && <GamificationManagement />}
+              <Route path="/users" element={<UserManagement />} />
+              <Route path="/audit-log" element={<AuditLogViewer />} />
+              <Route path="/sos-config" element={<SosPenaltyConfig />} />
+              <Route path="/suspended-accounts" element={<SuspendedAccounts />} />
+              <Route path="/traction-logs" element={<TractionLogs />} />
+              <Route path="/support-tickets" element={<SupportTicketManagement />} />
+              <Route path="/surge-zones" element={<ZoneManagement type="SURGE" />} />
+              <Route path="/airport-zones" element={<ZoneManagement type="AIRPORT" />} />
+              <Route path="/vehicle-categories" element={<VehicleCategoriesManagement />} />
+              <Route path="/promo-codes" element={<PromoCodeManagement />} />
+              <Route path="/scheduled-rides" element={<ScheduledRideManagement />} />
+              <Route path="/cms" element={<CMSManagement />} />
+              <Route path="/bulk-messaging" element={<BulkMessaging />} />
+              <Route path="/driver-performance" element={<DriverPerformanceReport />} />
+              <Route path="/city-management" element={<CityManagementDashboard />} />
+              <Route path="/heat-maps" element={<HeatMapAnalytics />} />
+              <Route path="/driver-unions" element={<DriverUnionManagement />} />
+              <Route path="/live-map" element={<LiveMap />} />
+              <Route path="/bi-dashboard" element={<BIDashboard />} />
+              <Route path="/fraud-alerts" element={<FraudDetectionDashboard />} />
+              <Route path="/gamification" element={<GamificationManagement />} />
+            </Routes>
           </div>
         </div>
       </main>

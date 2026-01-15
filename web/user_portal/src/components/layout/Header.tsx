@@ -6,21 +6,26 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { isAuthenticated, user, logout } = useAuth();
+    const { isAuthenticated, user, logout, hasPermission } = useAuth();
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
-    const navLinks = [
+    const baseNavLinks = [
         { name: 'Home', href: '/' },
         { name: 'Services', href: '/services' },
         { name: 'Safety', href: '/safety' },
         { name: 'Intel', href: '/blog' },
-        // { name: 'For Passengers', href: '/passengers' }, // Hidden until passenger page is ready
         { name: 'About Us', href: '/about' },
         { name: 'FAQ', href: '/faq' },
         { name: 'Contact Us', href: '/contact' },
+    ];
+
+    const navLinks = [
+        ...baseNavLinks,
+        ...(hasPermission('DRIVER_PROFILE_EDIT') ? [{ name: 'For Drivers', href: '/drivers/dashboard' }] : []),
+        ...(hasPermission('ORGANIZATION_VIEW') ? [{ name: 'Organization', href: '/organizations/dashboard' }] : []),
     ];
 
     const registrationLinks = [

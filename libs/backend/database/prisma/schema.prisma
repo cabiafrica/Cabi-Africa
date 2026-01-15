@@ -20,7 +20,13 @@ model User {
   idNumber   String?  @unique
   passportPhotoUrl String?  @db.Text // Stores compressed image URL or base64
   privacySettings Json?   @default("{}") // { showEmail: boolean, showPhone: boolean, showRealName: boolean }
-  role      Role     @default(PASSENGER)
+  role      LegacyRole     @default(PASSENGER)
+  
+  // RBAC Relations
+  userRoles     UserRole[]
+  userPermissions UserPermission[]
+  assignedRoles UserRole[] @relation("AssignedRoles")
+  assignedPermissions UserPermission[] @relation("AssignedPermissions")
   
   // Verification Status
   isEmailVerified Boolean @default(false)
@@ -95,6 +101,7 @@ model Organization {
   members                    OrganizationMember[]
   drivers                    DriverProfile[]
   invitations                Invitation[]
+  userRoles                  UserRole[]
 
   @@map("organizations")
 }
@@ -251,11 +258,256 @@ model Ride {
   @@map("rides")
 }
 
-enum Role {
+enum LegacyRole {
   PASSENGER
   DRIVER
   ADMIN
   DISPATCHER
+}
+
+enum Permission {
+  // SITE MANAGEMENT
+  SITE_SETUP_VIEW
+  SITE_SETUP_EDIT
+  FEATURES_INTEGRATIONS_VIEW
+  FEATURES_INTEGRATIONS_EDIT
+  ORG_STRUCTURE_VIEW
+  ORG_STRUCTURE_EDIT
+  
+  // USER MANAGEMENT
+  GROUPS_ROLES_VIEW
+  GROUPS_ROLES_EDIT
+  LOCATIONS_VIEW
+  LOCATIONS_EDIT
+  PEOPLE_VIEW
+  PEOPLE_EDIT
+  PEOPLE_CREATE
+  PEOPLE_DELETE
+  INVITATIONS_VIEW
+  INVITATIONS_SEND
+  
+  // CONTENT MANAGEMENT
+  SKILLS_VIEW
+  SKILLS_EDIT
+  METRICS_VIEW
+  METRICS_EDIT
+  PATHWAYS_VIEW
+  PATHWAYS_EDIT
+  LEARNING_BOARDS_VIEW
+  LEARNING_BOARDS_EDIT
+  LIBRARY_CONTENT_VIEW
+  LIBRARY_CONTENT_EDIT
+  LIBRARY_CONTENT_PUBLISH
+  
+  // ASSESSMENT
+  ASSESSMENT_DEFINITIONS_VIEW
+  ASSESSMENT_DEFINITIONS_EDIT
+  THIRD_PARTY_PACKAGES_VIEW
+  THIRD_PARTY_PACKAGES_MANAGE
+  
+  // TRAINING
+  GROUP_TRAINING_VIEW
+  GROUP_TRAINING_EDIT
+  PUBLISHED_CONTENT_VIEW
+  PUBLISHED_CONTENT_MANAGE
+  AUTOMATION_TRIGGERS_VIEW
+  AUTOMATION_TRIGGERS_EDIT
+  
+  // DASHBOARD & NOTIFICATIONS
+  NOTIFICATIONS_VIEW
+  NOTIFICATIONS_MANAGE
+  DASHBOARD_PERSONALIZE
+  TASK_VIEW_ACCESS
+  LEARNING_VIEW_ACCESS
+  
+  // OPERATIONS & REPORTING
+  REPORT_BUILDER_ACCESS
+  PATHWAY_ACTIVITY_VIEW
+  ASSESSMENT_RESULTS_VIEW
+  SKILLS_COMPETENCIES_VIEW
+  AUDIT_ACTIVITY_VIEW
+  REPORT_PUBLISHING_ACCESS
+  
+  // RIDE OPERATIONS (Dispatch Panel)
+  DISPATCH_DASHBOARD_VIEW
+  DISPATCH_RIDE_ASSIGN
+  DISPATCH_RIDE_MONITOR
+  DISPATCH_DRIVER_MANAGE
+  DISPATCH_REAL_TIME_MAP
+  DISPATCH_ANALYTICS_VIEW
+  
+  // DRIVER MANAGEMENT
+  DRIVER_APPLICATIONS_VIEW
+  DRIVER_APPLICATIONS_APPROVE
+  DRIVER_APPLICATIONS_REJECT
+  DRIVER_DOCUMENTS_VIEW
+  DRIVER_DOCUMENTS_VERIFY
+  DRIVER_PROFILE_EDIT
+  DRIVER_SUSPEND
+  DRIVER_ACTIVATE
+  
+  // PASSENGER MANAGEMENT
+  PASSENGER_PROFILES_VIEW
+  PASSENGER_PROFILES_EDIT
+  PASSENGER_SUSPEND
+  PASSENGER_ACTIVATE
+  
+  // VEHICLE MANAGEMENT
+  VEHICLES_VIEW
+  VEHICLES_EDIT
+  VEHICLES_APPROVE
+  VEHICLES_SUSPEND
+  
+  // OCCURRENCE BOOK
+  OCCURRENCE_VIEW
+  OCCURRENCE_CREATE
+  OCCURRENCE_EDIT
+  OCCURRENCE_RESOLVE
+  OCCURRENCE_OBJECTION_REVIEW
+  
+  // FINANCIAL
+  PAYMENTS_VIEW
+  PAYMENTS_PROCESS
+  FARE_MANAGEMENT_VIEW
+  FARE_MANAGEMENT_EDIT
+  COMMISSION_VIEW
+  COMMISSION_EDIT
+  FINANCIAL_REPORTS_VIEW
+  
+  // VERIFICATION
+  VERIFICATION_DOCUMENTS_VIEW
+  VERIFICATION_DOCUMENTS_APPROVE
+  VERIFICATION_BIOMETRIC_VIEW
+  VERIFICATION_BIOMETRIC_APPROVE
+  
+  // ORGANIZATION & MLM
+  ORGANIZATION_VIEW
+  ORGANIZATION_EDIT
+  ORGANIZATION_APPROVE
+  MLM_FORMULA_VIEW
+  MLM_FORMULA_EDIT
+  REFERRAL_TRACKING_VIEW
+  
+  // MARKETING (User Portal)
+  MARKETING_CONTENT_VIEW
+  MARKETING_CONTENT_EDIT
+  MARKETING_ANALYTICS_VIEW
+  BLOG_POSTS_VIEW
+  BLOG_POSTS_EDIT
+  
+  // SYSTEM ADMINISTRATION
+  SYSTEM_SETTINGS_VIEW
+  SYSTEM_SETTINGS_EDIT
+  USER_ROLES_ASSIGN
+  AUDIT_LOGS_VIEW
+  SYSTEM_HEALTH_MONITOR
+}
+
+enum RoleType {
+  // ADMIN PANEL ROLES
+  SUPER_ADMIN
+  ADMIN
+  CONTENT_MANAGER
+  USER_MANAGER
+  OPERATIONS_MANAGER
+  FINANCIAL_MANAGER
+  VERIFICATION_OFFICER
+  SUPPORT_AGENT
+  
+  // DISPATCH PANEL ROLES
+  DISPATCHER
+  SENIOR_DISPATCHER
+  DISPATCH_SUPERVISOR
+  DISPATCH_ANALYST
+  
+  // USER PORTAL ROLES
+  MARKETING_ADMIN
+  CONTENT_EDITOR
+  BLOG_WRITER
+  
+  // DRIVER/PASSENGER ROLES
+  DRIVER
+  PASSENGER
+  ORGANIZATION_ADMIN
+  ORGANIZATION_MEMBER
+  
+  // LEGACY/UTILITY ROLES
+  VIEWER
+  AUDITOR
+  GUEST
+}
+
+enum Platform {
+  ADMIN_PANEL
+  DISPATCH_PANEL
+  USER_PORTAL
+  MOBILE_APP
+  ALL
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  displayName String
+  description String?  @db.Text
+  type        RoleType
+  platform    Platform 
+  
+  // Permissions
+  permissions Permission[]
+  
+  // Hierarchy
+  parentRoleId String?
+  parentRole   Role?  @relation("RoleHierarchy", fields: [parentRoleId], references: [id])
+  childRoles   Role[] @relation("RoleHierarchy")
+  
+  isActive    Boolean  @default(true)
+  isSystem    Boolean  @default(false) // System roles cannot be deleted
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  userRoles   UserRole[]
+  
+  @@map("roles")
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  roleId    String
+  role      Role     @relation(fields: [roleId], references: [id])
+  
+  // Scope (optional - for multi-tenancy)
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  
+  assignedById String?
+  assignedBy   User?    @relation("AssignedRoles", fields: [assignedById], references: [id])
+  assignedAt   DateTime @default(now())
+  expiresAt    DateTime?
+  
+  isActive     Boolean  @default(true)
+  
+  @@unique([userId, roleId, organizationId])
+  @@map("user_roles")
+}
+
+model UserPermission {
+  id        String     @id @default(uuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+  permission Permission
+  isGranted Boolean    @default(true) // true = Grant (add), false = Revoke (override)
+  
+  assignedById String?
+  assignedBy   User?    @relation("AssignedPermissions", fields: [assignedById], references: [id])
+  assignedAt   DateTime @default(now())
+
+  @@unique([userId, permission])
+  @@map("user_permissions")
 }
 
 enum VehicleType {

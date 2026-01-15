@@ -12,9 +12,14 @@ import { AdminRolesController } from './admin-roles.controller';
 import { AdminRolesService } from './admin-roles.service';
 import { Admin2FAService } from './admin-2fa.service';
 import { AdminGeofenceInterceptor } from './admin-geofence.interceptor';
+import { RbacModule } from '@cabi/backend/rbac';
+
+import { AdminUsersController } from './admin-users.controller';
+import { AdminUsersService } from './admin-users.service';
 
 @Module({
   imports: [
+    RbacModule,
     ConfigModule.forRoot({
       isGlobal: true, // Makes ConfigService available throughout the app
       envFilePath: '.env',
@@ -34,10 +39,11 @@ import { AdminGeofenceInterceptor } from './admin-geofence.interceptor';
       }),
     }),
   ],
-  controllers: [AdminController, AdminRolesController],
+  controllers: [AdminController, AdminRolesController, AdminUsersController],
   providers: [
     AdminService,
     AdminRolesService,
+    AdminUsersService,
     Admin2FAService,
     AdminReadOnlyGuard,
     AdminPermissionGuard,
@@ -53,6 +59,7 @@ import { AdminGeofenceInterceptor } from './admin-geofence.interceptor';
       provide: APP_GUARD,
       useClass: AdminReadOnlyGuard,
     },
+    // We can keep AdminPermissionGuard if it's used elsewhere, otherwise we might remove it
     {
       provide: APP_GUARD,
       useClass: AdminPermissionGuard,

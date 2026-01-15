@@ -11,12 +11,47 @@ import TripAnalytics from './components/TripAnalytics';
 import TripHistoryPage from './components/TripHistoryPage';
 import DriverHistoryPage from './components/DriverHistoryPage';
 import PassengerManagementPage from './components/PassengerManagementPage';
+import { PERMISSIONS_LIST } from './constants/permissions';
+
+interface MenuItem {
+    view: 'overview' | 'rides' | 'drivers' | 'map' | 'surge' | 'analytics' | 'trips' | 'driver-history' | 'passengers';
+    label: string;
+    icon: JSX.Element;
+    permission: string;
+    group?: 'management';
+}
+
+const MENU_ICONS = {
+    overview: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />,
+    rides: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />,
+    drivers: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />,
+    map: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />,
+    surge: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />,
+    analytics: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />,
+    trips: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />,
+    'driver-history': <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />,
+    passengers: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+};
+
+const MENU_ITEMS: MenuItem[] = [
+    { view: 'overview', label: 'Overview', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS.overview}</svg>, permission: 'DISPATCH_DASHBOARD_VIEW' },
+    { view: 'rides', label: 'Ride Requests', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS.rides}</svg>, permission: 'DISPATCH_RIDE_MONITOR' },
+    { view: 'drivers', label: 'Drivers', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS.drivers}</svg>, permission: 'DISPATCH_DRIVER_MANAGE' },
+    { view: 'map', label: 'Live Map', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS.map}</svg>, permission: 'DISPATCH_REAL_TIME_MAP' },
+    { view: 'surge', label: 'Surge Monitor', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS.surge}</svg>, permission: 'DISPATCH_DASHBOARD_VIEW' },
+    { view: 'analytics', label: 'Trip Analytics', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS.analytics}</svg>, permission: 'DISPATCH_ANALYTICS_VIEW' },
+
+    // Management Group
+    { view: 'trips', label: 'Trip Management', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS.trips}</svg>, permission: 'DISPATCH_RIDE_MONITOR', group: 'management' },
+    { view: 'driver-history', label: 'Driver Management', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS['driver-history']}</svg>, permission: 'DISPATCH_DRIVER_MANAGE', group: 'management' },
+    { view: 'passengers', label: 'Passenger Management', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS.passengers}</svg>, permission: 'PASSENGER_PROFILES_VIEW', group: 'management' },
+]; import { LoginPage } from './components/LoginPage';
 
 import { useAuth } from './AuthContext';
 import { LoginPage } from './components/LoginPage';
 
 function App() {
-    const { isAuthenticated, logout, user } = useAuth();
+    const { isAuthenticated, logout, user, hasPermission } = useAuth();
     const [activeView, setActiveView] = useState<'overview' | 'rides' | 'drivers' | 'map' | 'surge' | 'analytics' | 'trips' | 'driver-history' | 'passengers'>('overview');
     const [rideRequests, setRideRequests] = useState<RideRequest[]>(mockRideRequests);
     const [drivers, setDrivers] = useState<Driver[]>(mockDrivers);
@@ -188,140 +223,52 @@ function App() {
                     <div className="px-4 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                         Main Views
                     </div>
-
-                    <button
-                        onClick={() => setActiveView('overview')}
-                        className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === 'overview'
-                            ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
-                            : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
-                            }`}
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                        </svg>
-                        <span className="font-medium">Overview</span>
-                    </button>
-
-                    <button
-                        onClick={() => setActiveView('rides')}
-                        className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === 'rides'
-                            ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
-                            : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
-                            }`}
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                        <span className="font-medium">Ride Requests</span>
-                        {metrics.pendingRequests > 0 && (
-                            <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                                {metrics.pendingRequests}
-                            </span>
-                        )}
-                    </button>
-
-                    <button
-                        onClick={() => setActiveView('drivers')}
-                        className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === 'drivers'
-                            ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
-                            : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
-                            }`}
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        <span className="font-medium">Drivers</span>
-                        <span className="ml-auto text-xs text-green-400 font-semibold">
-                            {drivers.filter(d => d.status === 'online').length} online
-                        </span>
-                    </button>
-
-                    <button
-                        onClick={() => setActiveView('map')}
-                        className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === 'map'
-                            ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
-                            : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
-                            }`}
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                        </svg>
-                        <span className="font-medium">Live Map</span>
-                    </button>
-
-                    <button
-                        onClick={() => setActiveView('surge')}
-                        className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === 'surge'
-                            ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
-                            : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
-                            }`}
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <span className="font-medium">Surge Monitor</span>
-                        {mockSurgeZones.length > 0 && (
-                            <span className="ml-auto bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                                {mockSurgeZones.length}
-                            </span>
-                        )}
-                    </button>
-
-                    <button
-                        onClick={() => setActiveView('analytics')}
-                        className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === 'analytics'
-                            ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
-                            : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
-                            }`}
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                        <span className="font-medium">Trip Analytics</span>
-                    </button>
+                    {MENU_ITEMS.filter(i => !i.group && hasPermission(i.permission)).map(item => (
+                        <button
+                            key={item.view}
+                            onClick={() => setActiveView(item.view)}
+                            className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === item.view
+                                ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
+                                : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+                                }`}
+                        >
+                            {item.icon}
+                            <span className="font-medium">{item.label}</span>
+                            {/* Badges */}
+                            {item.view === 'rides' && metrics.pendingRequests > 0 && (
+                                <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                                    {metrics.pendingRequests}
+                                </span>
+                            )}
+                            {item.view === 'drivers' && (
+                                <span className="ml-auto text-xs text-green-400 font-semibold">
+                                    {drivers.filter(d => d.status === 'online').length} online
+                                </span>
+                            )}
+                            {item.view === 'surge' && mockSurgeZones.length > 0 && (
+                                <span className="ml-auto bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                                    {mockSurgeZones.length}
+                                </span>
+                            )}
+                        </button>
+                    ))}
 
                     <div className="px-4 mb-2 mt-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                         Management
                     </div>
-
-                    <button
-                        onClick={() => setActiveView('trips')}
-                        className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === 'trips'
-                            ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
-                            : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
-                            }`}
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span className="font-medium">Trip Management</span>
-                    </button>
-
-                    <button
-                        onClick={() => setActiveView('driver-history')}
-                        className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === 'driver-history'
-                            ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
-                            : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
-                            }`}
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                        <span className="font-medium">Driver Management</span>
-                    </button>
-
-                    <button
-                        onClick={() => setActiveView('passengers')}
-                        className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === 'passengers'
-                            ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
-                            : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
-                            }`}
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        <span className="font-medium">Passenger Management</span>
-                    </button>
+                    {MENU_ITEMS.filter(i => i.group === 'management' && hasPermission(i.permission)).map(item => (
+                        <button
+                            key={item.view}
+                            onClick={() => setActiveView(item.view)}
+                            className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === item.view
+                                ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
+                                : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+                                }`}
+                        >
+                            {item.icon}
+                            <span className="font-medium">{item.label}</span>
+                        </button>
+                    ))}
                 </nav>
 
                 {/* Footer */}
@@ -385,48 +332,68 @@ function App() {
 
                 {/* Content Area */}
                 <div className="flex-1 overflow-y-auto p-8">
-                    {activeView === 'overview' && (
-                        <MetricsOverview
-                            metrics={metrics}
-                            rideRequests={rideRequests}
-                            drivers={drivers}
-                        />
-                    )}
-                    {activeView === 'analytics' && (
-                        <TripAnalytics analytics={mockTripAnalytics} />
-                    )}
-                    {activeView === 'rides' && (
-                        <RideRequestsList
-                            rideRequests={rideRequests}
-                            drivers={drivers}
-                            onAssignDriver={handleAssignDriver}
-                            onCancelRide={handleCancelRide}
-                            selectedRide={selectedRide}
-                            onSelectRide={setSelectedRide}
-                        />
-                    )}
-                    {activeView === 'drivers' && (
-                        <DriversList drivers={drivers} />
-                    )}
-                    {activeView === 'map' && (
-                        <LiveMap
-                            drivers={drivers}
-                            rideRequests={rideRequests}
-                            surgeZones={mockSurgeZones}
-                        />
-                    )}
-                    {activeView === 'surge' && (
-                        <SurgeMonitor surgeZones={mockSurgeZones} />
-                    )}
-                    {activeView === 'trips' && (
-                        <TripHistoryPage trips={mockTripHistory} />
-                    )}
-                    {activeView === 'driver-history' && (
-                        <DriverHistoryPage drivers={mockDriverHistory} />
-                    )}
-                    {activeView === 'passengers' && (
-                        <PassengerManagementPage passengers={mockPassengers} />
-                    )}
+                    {/* Access Contol Check for Content */}
+                    {(() => {
+                        const currentItem = MENU_ITEMS.find(i => i.view === activeView);
+                        if (currentItem && !hasPermission(currentItem.permission)) {
+                            return (
+                                <div className="flex flex-col items-center justify-center h-full text-slate-400">
+                                    <svg className="w-16 h-16 mb-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                    <h2 className="text-xl font-bold text-white mb-2">Access Denied</h2>
+                                    <p>You do not have permission to view this section.</p>
+                                </div>
+                            );
+                        }
+
+                        return (
+                            <>
+                                {activeView === 'overview' && (
+                                    <MetricsOverview
+                                        metrics={metrics}
+                                        rideRequests={rideRequests}
+                                        drivers={drivers}
+                                    />
+                                )}
+                                {activeView === 'analytics' && (
+                                    <TripAnalytics analytics={mockTripAnalytics} />
+                                )}
+                                {activeView === 'rides' && (
+                                    <RideRequestsList
+                                        rideRequests={rideRequests}
+                                        drivers={drivers}
+                                        onAssignDriver={handleAssignDriver}
+                                        onCancelRide={handleCancelRide}
+                                        selectedRide={selectedRide}
+                                        onSelectRide={setSelectedRide}
+                                    />
+                                )}
+                                {activeView === 'drivers' && (
+                                    <DriversList drivers={drivers} />
+                                )}
+                                {activeView === 'map' && (
+                                    <LiveMap
+                                        drivers={drivers}
+                                        rideRequests={rideRequests}
+                                        surgeZones={mockSurgeZones}
+                                    />
+                                )}
+                                {activeView === 'surge' && (
+                                    <SurgeMonitor surgeZones={mockSurgeZones} />
+                                )}
+                                {activeView === 'trips' && (
+                                    <TripHistoryPage trips={mockTripHistory} />
+                                )}
+                                {activeView === 'driver-history' && (
+                                    <DriverHistoryPage drivers={mockDriverHistory} />
+                                )}
+                                {activeView === 'passengers' && (
+                                    <PassengerManagementPage passengers={mockPassengers} />
+                                )}
+                            </>
+                        );
+                    })()}
                 </div>
             </main>
         </div>

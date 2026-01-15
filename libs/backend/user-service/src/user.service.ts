@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, ConflictException } from '@ne
 import { RegisterUserDto, UserRole } from './dto/register-user.dto';
 import { PrismaService } from '@cabi/backend/database';
 import * as bcrypt from 'bcryptjs';
-import { Role } from '@prisma/client';
+import { LegacyRole, UserRole as PrismaUserRole, UserPermission as PrismaUserPermission, Role as PrismaRole, Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -29,10 +29,10 @@ export class UserService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Map frontend roles to Prisma roles
-    const prismaRole = role.toUpperCase() as Role;
+    const prismaRole = role.toUpperCase() as LegacyRole;
 
     try {
-      const user = await this.prisma.$transaction(async (tx) => {
+      const user = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         // Create the base user
         const newUser = await tx.user.create({
           data: {
@@ -48,14 +48,16 @@ export class UserService {
 
         // Handle role-specific profiles
         if (role === UserRole.DRIVER) {
-          await tx.driverProfile.create({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          await (tx as any).driverProfile.create({
             data: {
               userId: newUser.id,
               licenseNumber: licenseNumber || `DL-${newUser.id.substring(0, 8)}`,
             }
           });
         } else if (role === UserRole.ORGANIZATION) {
-          await tx.organization.create({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          await (tx as any).organization.create({
             data: {
               name: orgName || `${firstName}'s Organization`,
               email: email,
@@ -94,6 +96,7 @@ export class UserService {
         email: 'admin@cabi.com',
         fullName: 'System Admin',
         role: 'ADMIN',
+        permissions: ['*'] // Full access
       };
     }
 
@@ -103,6 +106,14 @@ export class UserService {
           { email: identifier },
           { phone: identifier }
         ]
+      },
+      include: {
+        userRoles: {
+          include: {
+            role: true
+          }
+        },
+        userPermissions: true
       }
     });
 
@@ -116,11 +127,41 @@ export class UserService {
       throw new InternalServerErrorException('Invalid credentials.');
     }
 
+    // Aggregate Permissions
+    const permissions = new Set<string>();
+
+    // 1. Add permissions from assigned roles
+    // We explicitly define the type of 'ur' to match the included relation
+    user.userRoles.forEach((ur: PrismaUserRole & { role: PrismaRole }) => {
+      if (ur.isActive && ur.role.isActive) {
+        ur.role.permissions.forEach((p: string) => permissions.add(p));
+      }
+    });
+
+    // 2. Apply direct overrides
+    user.userPermissions.forEach((up: PrismaUserPermission) => {
+      if (up.isGranted) {
+        permissions.add(up.permission);
+      } else {
+        permissions.delete(up.permission);
+      }
+    });
+
+    // 3. Fallback for Legacy Role (if no RBAC roles assigned)
+    if (permissions.size === 0 && user.role === 'ADMIN') {
+      // Give basic admin permissions if legacy ADMIN but no sophisticated roles
+      permissions.add('DISPATCH_DASHBOARD_VIEW');
+      permissions.add('DISPATCH_RIDE_MONITOR');
+    } else if (permissions.size === 0 && user.role === 'SUPER_ADMIN') {
+      permissions.add('*');
+    }
+
     return {
       id: user.id,
       email: user.email,
       fullName: user.fullName,
       role: user.role,
+      permissions: Array.from(permissions)
     };
   }
 }

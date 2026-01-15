@@ -7,6 +7,7 @@ export interface AuthUser {
     firstName?: string;
     lastName?: string;
     role: 'passenger' | 'driver' | 'admin';
+    permissions?: string[];
     referralCode?: string;
     [key: string]: any;
 }
@@ -18,6 +19,7 @@ interface AuthContextType {
     logout: () => void;
     updateUser: (userData: AuthUser) => void;
     loading: boolean;
+    hasPermission: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -73,8 +75,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(userData);
     };
 
+    const hasPermission = (permission: string) => {
+        if (!user || !user.permissions) return false;
+        return user.permissions.includes('*') || user.permissions.includes(permission);
+    };
+
     return (
-        <AuthContext.Provider value={{ isAuthenticated: !!user, user, login, logout, updateUser, loading }}>
+        <AuthContext.Provider value={{ isAuthenticated: !!user, user, login, logout, updateUser, loading, hasPermission }}>
             {children}
         </AuthContext.Provider>
     );

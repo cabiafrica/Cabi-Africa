@@ -1,0 +1,37 @@
+import { Controller, Get, Post, Put, Body, Param, UseGuards } from '@nestjs/common';
+import { AdminUsersService } from './admin-users.service';
+import { RequirePermissions, PermissionsGuard } from '@cabi/backend/rbac';
+import { Permission } from '@prisma/client';
+
+@Controller('admin/users') // Prefix admin/users
+@UseGuards(PermissionsGuard)
+export class AdminUsersController {
+    constructor(private readonly usersService: AdminUsersService) { }
+
+    @Get()
+    @RequirePermissions(Permission.GROUPS_ROLES_VIEW)
+    getAdminUsers() {
+        return this.usersService.findAll();
+    }
+
+    @Post()
+    @RequirePermissions(Permission.GROUPS_ROLES_EDIT)
+    createAdminUser(@Body() body: { email: string; roles: string[] }) {
+        return this.usersService.create(body.email, body.roles);
+    }
+
+    @Put(':id/roles')
+    @RequirePermissions(Permission.GROUPS_ROLES_EDIT)
+    updateUserRoles(@Param('id') id: string, @Body() body: { roles: string[] }) {
+        return this.usersService.updateRoles(id, body.roles);
+    }
+
+    @Put(':id/permissions')
+    @RequirePermissions(Permission.GROUPS_ROLES_EDIT)
+    updateUserPermissions(
+        @Param('id') id: string,
+        @Body() body: { grants: string[]; revokes: string[] }
+    ) {
+        return this.usersService.updatePermissions(id, body.grants, body.revokes);
+    }
+}

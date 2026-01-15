@@ -4,6 +4,10 @@ export class UpdateRoleDto {
      */
     name?: string;
 
+    displayName?: string;
+    description?: string;
+    isActive?: boolean;
+
     /**
      * Updated list of permissions.
      */
