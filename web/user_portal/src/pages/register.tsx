@@ -26,9 +26,10 @@ export default function Register() {
     const [role, setRole] = useState<UserRole | null>(null);
     const router = useRouter();
 
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, trigger, formState: { errors } } = useForm();
     const [isLoading, setIsLoading] = useState(false);
     const [referralValidation, setReferralValidation] = useState<{ valid: boolean; referrerName?: string } | null>(null);
+    const [driverStep, setDriverStep] = useState(1);
 
     // File upload state
     const [files, setFiles] = useState<FileUploads>({
@@ -43,6 +44,13 @@ export default function Register() {
 
     const handleFileChange = (fieldName: keyof FileUploads, file: File | null) => {
         setFiles(prev => ({ ...prev, [fieldName]: file }));
+    };
+
+    const handleNextStep = async () => {
+        const isValid = await trigger(['firstName', 'lastName', 'email', 'phone', 'gender', 'dob', 'idNumber', 'licenseNumber']);
+        if (isValid) {
+            setDriverStep(2);
+        }
     };
 
     const onSubmit = async (data: any) => {
@@ -170,7 +178,7 @@ export default function Register() {
                     ) : (
                         // STEP 2: REGISTRATION FORM
                         <div className="animate-slide-up max-w-xl mx-auto bg-black/40 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-white/10">
-                            <button onClick={() => setRole(null)} className="text-gray-500 hover:text-white mb-8 flex items-center gap-2 text-sm font-medium transition-colors">
+                            <button onClick={() => { setRole(null); setDriverStep(1); }} className="text-gray-500 hover:text-white mb-8 flex items-center gap-2 text-sm font-medium transition-colors">
                                 ← Back to roles
                             </button>
 
@@ -187,13 +195,17 @@ export default function Register() {
                             <h2 className="text-3xl font-bold mb-2 capitalize text-white">
                                 Join as {role === 'vehicle_owner' ? 'Vehicle Owner' : role}
                             </h2>
-                            <p className="text-gray-400 mb-8">Enter your details to create your secure account.</p>
+                            <p className="text-gray-400 mb-8">
+                                {role === 'driver' && driverStep === 1 && "Start your journey - Personal Details (1/2)"}
+                                {role === 'driver' && driverStep === 2 && "Finalize Profile - Documents & Secure (2/2)"}
+                                {role !== 'driver' && "Enter your details to create your secure account."}
+                            </p>
 
                             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
                                 {/* Common Fields - Simplified for Passenger & Vehicle Owner */}
-                                {role === 'passenger' || role === 'vehicle_owner' ? (
-                                    <div className="space-y-6">
+                                {(role === 'passenger' || role === 'vehicle_owner') && (
+                                    <div className="space-y-6 animate-fade-in">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">First Name</label>
@@ -215,33 +227,37 @@ export default function Register() {
                                             <input type="email" {...register('email', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="john@example.com" />
                                         </div>
                                     </div>
-                                ) : (
-                                    /* Full Form for Drivers */
-                                    <div className="space-y-6">
+                                )}
+
+
+                                {/* Driver Specific Fields - 2 Steps */}
+                                {role === 'driver' && driverStep === 1 && (
+                                    <div className="space-y-6 animate-fade-in">
+                                        {/* Step 1: Personal Information */}
                                         <div className="grid grid-cols-3 gap-4">
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">First Name</label>
-                                                <input {...register('firstName', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="John" />
+                                                <input {...register('firstName', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600" placeholder="John" />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Middle Name</label>
-                                                <input {...register('middleName')} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="Michael" />
+                                                <input {...register('middleName')} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600" placeholder="Michael" />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Last Name</label>
-                                                <input {...register('lastName', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="Doe" />
+                                                <input {...register('lastName', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600" placeholder="Doe" />
                                             </div>
                                         </div>
 
                                         <div className="space-y-2">
                                             <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Email Address</label>
-                                            <input type="email" {...register('email', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="john@example.com" />
+                                            <input type="email" {...register('email', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600" placeholder="john@example.com" />
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Gender</label>
-                                                <select {...register('gender', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-gray-300">
+                                                <select {...register('gender', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-gray-300">
                                                     <option value="">Select Gender</option>
                                                     <option value="male">Male</option>
                                                     <option value="female">Female</option>
@@ -250,32 +266,40 @@ export default function Register() {
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Date of Birth</label>
-                                                <input type="date" {...register('dob', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-gray-300" />
+                                                <input type="date" {...register('dob', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-gray-300" />
                                             </div>
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Phone Number</label>
-                                                <input type="tel" {...register('phone', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="+254 712 345 678" />
+                                                <input type="tel" {...register('phone', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600" placeholder="+254 712 345 678" />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">ID Number</label>
-                                                <input {...register('idNumber', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="12345678" />
+                                                <input {...register('idNumber', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600" placeholder="12345678" />
                                             </div>
                                         </div>
-                                    </div>
-                                )}
-
-                                {/* Driver Specific Fields */}
-                                {role === 'driver' && (
-                                    <div className="space-y-6 pt-4 border-t border-gray-800 animate-fade-in">
-                                        <h3 className="text-lg font-bold text-brand-accent">Driver Documents</h3>
 
                                         <div className="space-y-2">
                                             <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">License Number</label>
                                             <input {...register('licenseNumber', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600" placeholder="DL-1234567" />
                                         </div>
+
+                                        {/* Next Button for Step 1 */}
+                                        <button
+                                            type="button"
+                                            onClick={handleNextStep}
+                                            className="w-full py-4 rounded-xl font-bold text-black text-lg transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1 shadow-lg bg-brand-accent hover:bg-cyan-300"
+                                        >
+                                            Next Step: Documents <FaArrowRight className="text-sm" />
+                                        </button>
+                                    </div>
+                                )}
+
+                                {role === 'driver' && driverStep === 2 && (
+                                    <div className="space-y-6 animate-fade-in">
+                                        <h3 className="text-lg font-bold text-brand-accent">Driver Documents & Security</h3>
 
                                         <FileUpload
                                             label="Driving Licence"
@@ -320,43 +344,56 @@ export default function Register() {
                                             value={files.driverPhoto}
                                             helperText="Upload a professional passport-sized photo"
                                         />
+
+                                        {/* Back Button forStep 2 */}
+                                        <button
+                                            type="button"
+                                            onClick={() => setDriverStep(1)}
+                                            className="text-gray-400 hover:text-white flex items-center gap-2 text-sm font-medium transition-colors"
+                                        >
+                                            ← Back to Personal Details
+                                        </button>
                                     </div>
                                 )}
 
-                                {role !== 'vehicle_owner' && (
-                                    <div className="space-y-2">
-                                        <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Referral Code (Optional)</label>
-                                        <input type="text" {...register('referralCode')} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="Enter code if you have one" />
-                                        {referralValidation?.valid && (
-                                            <p className="text-sm text-green-500 flex items-center gap-1">
-                                                <FaCheckCircle /> Referred by {referralValidation.referrerName}
-                                            </p>
+                                {(role !== 'driver' || (role === 'driver' && driverStep === 2)) && (
+                                    <>
+                                        {role !== 'vehicle_owner' && (
+                                            <div className="space-y-2 animate-fade-in">
+                                                <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Referral Code (Optional)</label>
+                                                <input type="text" {...register('referralCode')} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="Enter code if you have one" />
+                                                {referralValidation?.valid && (
+                                                    <p className="text-sm text-green-500 flex items-center gap-1">
+                                                        <FaCheckCircle /> Referred by {referralValidation.referrerName}
+                                                    </p>
+                                                )}
+                                                <p className="text-xs text-gray-500 mt-1">
+                                                    {role === 'passenger' && 'You can use a referral code from a driver or another passenger'}
+                                                    {role === 'driver' && 'You can use a referral code from another driver'}
+                                                </p>
+                                            </div>
                                         )}
-                                        <p className="text-xs text-gray-500 mt-1">
-                                            {role === 'passenger' && 'You can use a referral code from a driver or another passenger'}
-                                            {role === 'driver' && 'You can use a referral code from another driver'}
-                                        </p>
-                                    </div>
+
+                                        <div className="space-y-2 animate-fade-in">
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Password</label>
+                                            <input type="password" {...register('password', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="••••••••" />
+                                        </div>
+
+                                        <button
+                                            type="submit"
+                                            disabled={isLoading}
+                                            className={`w-full py-4 rounded-xl font-bold text-black text-lg transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1 shadow-lg
+                                            ${role === 'vehicle_owner' ? 'bg-brand-yellow hover:bg-yellow-400' : role === 'driver' ? 'bg-brand-accent hover:bg-cyan-300' : 'bg-brand-yellow hover:bg-yellow-400'}
+                                            `}
+                                        >
+                                            {isLoading ? 'Creating Account...' : (
+                                                <>
+                                                    Create Account <FaArrowRight className="text-sm" />
+                                                </>
+                                            )}
+                                        </button>
+                                    </>
                                 )}
-
-                                <div className="space-y-2">
-                                    <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Password</label>
-                                    <input type="password" {...register('password', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="••••••••" />
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={isLoading}
-                                    className={`w-full py-4 rounded-xl font-bold text-black text-lg transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1 shadow-lg
-                            ${role === 'vehicle_owner' ? 'bg-brand-yellow hover:bg-yellow-400' : role === 'driver' ? 'bg-brand-accent hover:bg-cyan-300' : 'bg-brand-yellow hover:bg-yellow-400'}
-                            `}
-                                >
-                                    {isLoading ? 'Creating Account...' : (
-                                        <>
-                                            Create Account <FaArrowRight className="text-sm" />
-                                        </>
-                                    )}
-                                </button>
 
                                 <p className="text-center text-xs text-gray-500 mt-4 leading-relaxed">
                                     By joining, you agree to our <Link href="/terms" className="underline hover:text-white">Terms of Service</Link> and <Link href="/privacy" className="underline hover:text-white">Privacy Policy</Link>.
