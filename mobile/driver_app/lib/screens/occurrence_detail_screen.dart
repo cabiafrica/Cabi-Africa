@@ -68,7 +68,7 @@ class _OccurrenceDetailScreenState extends State<OccurrenceDetailScreen> {
     setState(() => isSubmitting = true);
 
     try {
-      final userId = 'current-user-id'; // Get from auth
+      const userId = 'current-user-id'; // Get from auth
       final response = await http.post(
         Uri.parse('http://10.0.2.2:3005/objections'),
         headers: {'Content-Type': 'application/json'},
@@ -147,11 +147,11 @@ class _OccurrenceDetailScreenState extends State<OccurrenceDetailScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFFDC2626),
-                    const Color(0xFFB91C1C),
+                    Color(0xFFDC2626),
+                    Color(0xFFB91C1C),
                   ],
                 ),
               ),

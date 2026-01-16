@@ -6,7 +6,11 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test --all",
-    "lint": "nx lint --all",
+    "lint": "nx run-many --target=lint --all --parallel=3",
+    "lint:web": "nx run-many --target=lint --projects=user-portal,admin-panel,dispatch-panel --parallel=3",
+    "lint:backend": "nx run-many --target=lint --projects=auth-gateway,admin-service,user-service,verification-service,dispatch-service,driver-lead-service --parallel=3",
+    "build:web": "nx run-many --target=build --projects=user-portal,admin-panel,dispatch-panel --parallel=3",
+    "build:backend": "nx run-many --target=build --projects=auth-gateway,admin-service,user-service,verification-service,dispatch-service,driver-lead-service --parallel=3",
     "format": "nx format:write",
     "format:check": "nx format:check"
   },

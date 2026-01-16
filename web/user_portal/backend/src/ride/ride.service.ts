@@ -94,7 +94,7 @@ export class RideService {
     this.logger.log(`Matching ride ${rideId}. Is long trip: ${isLongTrip}`);
 
     // Get all available drivers (mocked)
-    let availableDrivers = await this.userService.getAvailableDrivers();
+    const availableDrivers = await this.userService.getAvailableDrivers();
 
     // If it's a long trip, sort drivers by their preference
     if (isLongTrip) {

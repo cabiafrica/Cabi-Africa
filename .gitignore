@@ -8,8 +8,9 @@ yarn-error.log*
 .pnpm-debug.log*
 .yarn/
 .pnp.*
-package-lock.json
+# Using npm as standard package manager - ignore others
 pnpm-lock.yaml
+yarn.lock
 
 # ===================================
 # Build Outputs
@@ -53,6 +54,8 @@ project-graph.json
 # Keep build/ for Flutter but exclude for other projects
 **/mobile/**/build/
 **/flutter/**/build/
+# Flutter engine/SDK (use system-installed Flutter)
+tools/flutter/
 
 # ===================================
 # React Native / Expo

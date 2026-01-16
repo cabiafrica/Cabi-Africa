@@ -16,5 +16,42 @@ export default defineConfig({
                 ws: true,
             },
         },
+        // Performance optimizations
+        warmup: {
+            clientFiles: ['./src/main.tsx', './src/App.tsx'],
+        },
+    },
+    resolve: {
+        alias: {
+            '@': '/src',
+        },
+    },
+    build: {
+        sourcemap: false,
+        minify: 'esbuild',
+        chunkSizeWarningLimit: 1000,
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+                    'vendor-socket': ['socket.io-client'],
+                    'vendor-utils': ['axios'],
+                }
+            }
+        },
+        cssCodeSplit: true,
+        assetsInlineLimit: 4096,
+    },
+    optimizeDeps: {
+        include: [
+            'react',
+            'react-dom',
+            'react-router-dom',
+            'socket.io-client',
+            'axios',
+        ],
+    },
+    esbuild: {
+        logOverride: { 'this-is-undefined-in-esm': 'silent' }
     },
 });

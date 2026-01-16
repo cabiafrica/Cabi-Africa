@@ -29,15 +29,15 @@ export const WidgetWrapper: React.FC<WidgetWrapperProps> = ({
 
     return (
         <Card
-            className={`bg-slate-800 ring-1 ring-slate-700/50 shadow-xl ${className || ''}`}
+            className={`bg-white dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700/50 shadow-xl ${className || ''}`}
             decoration={decoration}
             decorationColor={decorationColor as any}
         >
             <Flex justifyContent="between" alignItems="start" className="mb-4">
-                <Title className="text-slate-100 font-semibold tracking-wide">{title}</Title>
+                <Title className="text-slate-900 dark:text-slate-100 font-semibold tracking-wide">{title}</Title>
                 <button
                     onClick={() => openWidget(widgetId)}
-                    className="p-1.5 hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-blue-400"
+                    className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-blue-500"
                     title="Detach Widget"
                 >
                     <OpenInNew fontSize="small" />

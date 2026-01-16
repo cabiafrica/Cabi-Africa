@@ -12,8 +12,8 @@ export class RideController {
   // @UseGuards(AuthGuard('jwt')) // Protect this route
   async getMyHistory(
     @Req() req: any, // In a real app, req.user would be populated by the AuthGuard
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
   ) {
     // Mocking an authenticated user ID. In a real app, this would come from the JWT.
     const driverId = 'driver-abc'; // req.user.id;

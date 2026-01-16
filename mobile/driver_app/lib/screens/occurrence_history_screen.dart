@@ -48,8 +48,8 @@ class _OccurrenceHistoryScreenState extends State<OccurrenceHistoryScreen> {
 
     try {
       // Replace with your actual API endpoint and user ID
-      final userId = 'current-user-id'; // Get from auth
-      final role = 'passenger'; // or 'driver'
+      const userId = 'current-user-id'; // Get from auth
+      const role = 'passenger'; // or 'driver'
 
       final response = await http.get(
         Uri.parse(

@@ -7,26 +7,45 @@
     "default": {
       "runner": "@nx/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e"
+        ],
+        "parallel": 3,
+        "maxParallel": 5,
+        "useDaemonProcess": true,
+        "runtimeCacheInputs": [
+          "node -v"
+        ]
       }
     }
   },
   "targetDefaults": {
     "build": {
       "cache": true,
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "lint": {
       "cache": true,
-      "dependsOn": ["^lint"]
+      "dependsOn": [
+        "^lint"
+      ]
     },
     "test": {
       "cache": true,
-      "dependsOn": ["^test"]
+      "dependsOn": [
+        "^test"
+      ]
     },
     "e2e": {
       "cache": true,
-      "dependsOn": ["^e2e"]
+      "dependsOn": [
+        "^e2e"
+      ]
     }
   },
   "generators": {
