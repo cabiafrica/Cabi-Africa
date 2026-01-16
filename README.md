@@ -174,4 +174,44 @@ See [QUICK_REFERENCE.md](QUICK_REFERENCE.md#-common-issues--solutions)
 
 ---
 
+---
+
+## 📦 Production Deployment
+
+Ready to deploy? We've got you covered with comprehensive guides and automation:
+
+### Quick Deploy:
+```powershell
+# Windows
+.\scripts\deploy-production.ps1
+
+# Linux/Mac
+./scripts/deploy-production.sh
+```
+
+### Documentation:
+- **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** - Complete deployment guide
+  - Environment setup
+  - Build & deployment procedures
+  - Database migrations
+  - Multiple platform support (Vercel, AWS, Digital Ocean)
+  - CI/CD pipeline configuration
+  - Monitoring & logging
+  - Security hardening
+  - Rollback procedures
+
+### Automated CI/CD:
+- GitHub Actions workflow included (`.github/workflows/deploy-production.yml`)
+- Automated testing, building, and deployment
+- Health checks after deployment
+- Slack notifications
+
+### Deployment Platforms Supported:
+- ✅ **Vercel** (Frontend - Recommended)
+- ✅ **AWS** (Full stack - ECS/Fargate + S3/CloudFront)
+- ✅ **Digital Ocean** (App Platform)
+- ✅ **Custom** (Docker + Kubernetes)
+
+---
+
 **Built with ❤️ for East Africa**
