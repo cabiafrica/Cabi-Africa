@@ -1,0 +1,295 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+
+jobs:
+  # Quality checks
+  quality-check:
+    name: Code Quality & Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npx nx affected --target=lint --parallel=3 --base=origin/main
+
+      - name: Run tests
+        run: npx nx affected --target=test --parallel=3 --base=origin/main --code-coverage
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/**/coverage-final.json
+
+  # Build frontend applications
+  build-frontend:
+    name: Build ${{ matrix.app }}
+    needs: quality-check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [admin-panel, dispatch-panel, user-portal]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build ${{ matrix.app }}
+        run: npx nx build ${{ matrix.app }} --configuration=production
+        env:
+          VITE_API_URL: ${{ secrets.PRODUCTION_API_URL }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.PRODUCTION_API_URL }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-build
+          path: |
+            web/${{ matrix.app }}/dist
+            web/${{ matrix.app }}/.next
+          retention-days: 7
+
+  # Build backend services
+  build-backend:
+    name: Build Backend Services
+    needs: quality-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build backend services
+        run: |
+          npx nx run-many --target=build \
+            --projects=auth-gateway,admin-service,user-service,verification-service,dispatch-service,driver-lead-service \
+            --parallel=3 \
+            --configuration=production
+
+      - name: Upload backend artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-services
+          path: dist/
+          retention-days: 7
+
+  # Database migrations
+  migrate-database:
+    name: Run Database Migrations
+    needs: [build-frontend, build-backend]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Prisma migrations
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+  # Deploy User Portal (Next.js to Vercel)
+  deploy-user-portal:
+    name: Deploy User Portal
+    needs: migrate-database
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: user-portal-build
+          path: web/user_portal
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_USER_PORTAL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: web/user_portal
+
+  # Deploy Admin Panel (to Vercel/S3/etc)
+  deploy-admin-panel:
+    name: Deploy Admin Panel
+    needs: migrate-database
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: admin-panel-build
+          path: web/admin_panel/dist
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_ADMIN_PANEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: web/admin_panel
+
+  # Deploy Dispatch Panel
+  deploy-dispatch-panel:
+    name: Deploy Dispatch Panel
+    needs: migrate-database
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dispatch-panel-build
+          path: web/dispatch_panel/dist
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_DISPATCH_PANEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: web/dispatch_panel
+
+  # Health checks
+  post-deployment-checks:
+    name: Post-Deployment Health Checks
+    needs: [deploy-user-portal, deploy-admin-panel, deploy-dispatch-panel]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for deployments to stabilize
+        run: sleep 30
+
+      - name: Check User Portal health
+        run: |
+          curl -f https://cabi-africa.com/api/health || exit 1
+
+      - name: Check Admin Panel health
+        run: |
+          curl -f https://admin.cabi-africa.com || exit 1
+
+      - name: Check Dispatch Panel health
+        run: |
+          curl -f https://dispatch.cabi-africa.com || exit 1
+
+      - name: Verify database connectivity
+        run: |
+          curl -f https://api.cabi-africa.com/health | jq -e '.database.status == "connected"' || exit 1
+
+  # Notifications
+  notify:
+    name: Send Deployment Notifications
+    needs: post-deployment-checks
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Notify Slack on success
+        if: success()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "✅ Production deployment completed successfully!",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Deployment Status: Success* ✅\n\n*Commit:* ${{ github.sha }}\n*Branch:* ${{ github.ref_name }}\n*Deployed by:* ${{ github.actor }}\n\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Workflow>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Notify Slack on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "❌ Production deployment failed!",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Deployment Status: Failed* ❌\n\n*Commit:* ${{ github.sha }}\n*Branch:* ${{ github.ref_name }}\n*Deployed by:* ${{ github.actor }}\n\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Workflow>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Create Sentry release
+        if: success()
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: cabi-africa
+        with:
+          environment: production
+          version: ${{ github.sha }}
