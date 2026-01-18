@@ -48,9 +48,11 @@ export const LoginPage = () => {
       const response = await loginUser({ email, password });
       login(response.token, {
         id: response.user.id,
+        email: response.user.email || email,
         fullName: response.user.fullName,
         role: response.user.role as 'admin' | 'user',
-        permissions: ['*'], // Grant super admin permissions by default for now
+        permissions: response.user.permissions || ['*'],
+        driverProfileId: response.user.driverProfileId,
       });
       navigate('/');
     } catch (err: any) {
@@ -159,7 +161,6 @@ export const LoginPage = () => {
                 sx={{
                   maxWidth: '65%',
                   maxHeight: '65%',
-                  objectFit: 'contain',
                   objectFit: 'contain',
                 }}
               />

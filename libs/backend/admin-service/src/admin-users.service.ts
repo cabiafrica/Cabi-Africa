@@ -65,16 +65,24 @@ export class AdminUsersService {
         // Check if user exists by email
         let user = await this.prisma.user.findUnique({ where: { email } });
         if (!user) {
+            // Import bcrypt for password hashing
+            const bcrypt = require('bcryptjs');
+            const tempPassword = `Temp${Math.random().toString(36).substring(2, 10)}!`;
+            const hashedPassword = await bcrypt.hash(tempPassword, 10);
+
             // Create basic user
             user = await this.prisma.user.create({
                 data: {
                     email,
-                    password: 'temp-password', // Should handle invite flow properly
+                    password: hashedPassword, // Properly hashed password
                     fullName: email.split('@')[0],
                     phone: `+000${Math.floor(Math.random() * 1000000000)}`, // Placeholder
                     role: 'ADMIN'
                 }
             });
+
+            // TODO: Send invite email with tempPassword
+            console.log(`Admin user created with temporary password: ${tempPassword}`);
         }
 
         // Assign roles
@@ -101,7 +109,7 @@ export class AdminUsersService {
                     data: roles.map(role => ({
                         userId,
                         roleId: role.id,
-                        assignedById: 'SYSTEM' // TODO: Get current admin ID
+                        assignedById: null // Changed from 'SYSTEM' to null to avoid FK violation
                     }))
                 });
             }
@@ -110,7 +118,7 @@ export class AdminUsersService {
         return this.findOne(userId);
     }
 
-    async updatePermissions(userId: string, grants: string[], revokes: string[]) {
+    async updatePermissions(userId: string, grants: string[], revokes: string[], assignedById: string) {
         // Transactional replace
         await this.prisma.$transaction(async (tx) => {
             // Remove existing
@@ -127,7 +135,7 @@ export class AdminUsersService {
                         userId,
                         permission: p.permission,
                         isGranted: p.isGranted,
-                        assignedById: 'SYSTEM'
+                        assignedById: assignedById // This comes from controller
                     }))
                 });
             }

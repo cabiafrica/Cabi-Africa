@@ -311,4 +311,208 @@ export class RideService {
       include: { passenger: true, driver: true }
     });
   }
+
+  // Admin methods for Job Activities Dashboard
+  async getAllRidesForAdmin(filters: {
+    status?: string;
+    search?: string;
+    date?: string;
+    page: number;
+    limit: number;
+  }) {
+    const skip = (filters.page - 1) * filters.limit;
+    const take = filters.limit;
+
+    // Build where clause
+    const where: any = {};
+
+    // Status filter
+    if (filters.status && filters.status !== 'ALL') {
+      where.status = filters.status;
+    }
+
+    // Date filter
+    if (filters.date) {
+      const startOfDay = new Date(filters.date);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(filters.date);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      where.createdAt = {
+        gte: startOfDay,
+        lte: endOfDay
+      };
+    }
+
+    // Search filter - search across passenger, driver, and ride ID
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      where.OR = [
+        { id: { contains: searchLower, mode: 'insensitive' } },
+        {
+          passenger: {
+            OR: [
+              { fullName: { contains: searchLower, mode: 'insensitive' } },
+              { phone: { contains: searchLower, mode: 'insensitive' } },
+              { email: { contains: searchLower, mode: 'insensitive' } }
+            ]
+          }
+        },
+        {
+          driver: {
+            user: {
+              OR: [
+                { fullName: { contains: searchLower, mode: 'insensitive' } },
+                { phone: { contains: searchLower, mode: 'insensitive' } },
+                { email: { contains: searchLower, mode: 'insensitive' } }
+              ]
+            }
+          }
+        }
+      ];
+    }
+
+    // Fetch rides and total count
+    const [rides, total] = await Promise.all([
+      this.prisma.ride.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          passenger: {
+            select: {
+              id: true,
+              fullName: true,
+              phone: true,
+              email: true
+            }
+          },
+          driver: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  fullName: true,
+                  phone: true,
+                  email: true
+                }
+              },
+              vehicle: {
+                select: {
+                  id: true,
+                  make: true,
+                  model: true,
+                  plateNumber: true,
+                  type: true
+                }
+              }
+            }
+          }
+        }
+      }),
+      this.prisma.ride.count({ where })
+    ]);
+
+    // Transform data for frontend
+    const transformedRides = rides.map(ride => ({
+      id: ride.id,
+      passengerId: ride.passengerId,
+      passengerName: ride.passenger.fullName,
+      passengerPhone: ride.passenger.phone,
+      passengerEmail: ride.passenger.email,
+      driverId: ride.driverId,
+      driverName: ride.driver?.user.fullName || null,
+      driverPhone: ride.driver?.user.phone || null,
+      driverEmail: ride.driver?.user.email || null,
+      driverVehicle: ride.driver?.vehicle ? {
+        make: ride.driver.vehicle.make,
+        model: ride.driver.vehicle.model,
+        plateNumber: ride.driver.vehicle.plateNumber,
+        type: ride.driver.vehicle.type
+      } : null,
+      status: ride.status,
+      pickupLocation: ride.pickupLocation,
+      dropoffLocation: ride.dropoffLocation,
+      fare: ride.fare ? Number(ride.fare) : null,
+      distance: ride.distance,
+      duration: ride.duration,
+      createdAt: ride.createdAt.toISOString(),
+      updatedAt: ride.updatedAt.toISOString()
+    }));
+
+    return {
+      rides: transformedRides,
+      total,
+      page: filters.page,
+      limit: filters.limit,
+      totalPages: Math.ceil(total / filters.limit)
+    };
+  }
+
+  async getRideStatistics(startDate?: string, endDate?: string) {
+    // Build date filter
+    const dateFilter: any = {};
+    if (startDate || endDate) {
+      dateFilter.createdAt = {};
+      if (startDate) {
+        dateFilter.createdAt.gte = new Date(startDate);
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        dateFilter.createdAt.lte = end;
+      }
+    }
+
+    // Get all rides with filters
+    const allRides = await this.prisma.ride.findMany({
+      where: dateFilter,
+      select: {
+        id: true,
+        status: true,
+        fare: true,
+        distance: true,
+        duration: true,
+        createdAt: true
+      }
+    });
+
+    // Calculate statistics
+    const stats = {
+      total: allRides.length,
+      requested: allRides.filter(r => r.status === 'REQUESTED').length,
+      matching: allRides.filter(r => r.status === 'MATCHING').length,
+      assigned: allRides.filter(r => r.status === 'DRIVER_ASSIGNED').length,
+      driverArrived: allRides.filter(r => r.status === 'DRIVER_ARRIVED').length,
+      inProgress: allRides.filter(r => r.status === 'IN_PROGRESS').length,
+      completed: allRides.filter(r => r.status === 'COMPLETED').length,
+      cancelled: allRides.filter(r => r.status === 'CANCELLED').length,
+      totalRevenue: allRides
+        .filter(r => r.status === 'COMPLETED' && r.fare)
+        .reduce((sum, r) => sum + Number(r.fare), 0),
+      averageFare: 0,
+      averageDistance: 0,
+      averageDuration: 0
+    };
+
+    // Calculate averages
+    const ridesWithFare = allRides.filter(r => r.fare);
+    const ridesWithDistance = allRides.filter(r => r.distance);
+    const ridesWithDuration = allRides.filter(r => r.duration);
+
+    if (ridesWithFare.length > 0) {
+      stats.averageFare = ridesWithFare.reduce((sum, r) => sum + Number(r.fare), 0) / ridesWithFare.length;
+    }
+
+    if (ridesWithDistance.length > 0) {
+      stats.averageDistance = ridesWithDistance.reduce((sum, r) => sum + (r.distance || 0), 0) / ridesWithDistance.length;
+    }
+
+    if (ridesWithDuration.length > 0) {
+      stats.averageDuration = ridesWithDuration.reduce((sum, r) => sum + (r.duration || 0), 0) / ridesWithDuration.length;
+    }
+
+    return stats;
+  }
 }

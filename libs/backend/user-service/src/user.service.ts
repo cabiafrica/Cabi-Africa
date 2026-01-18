@@ -105,7 +105,8 @@ export class UserService {
             role: true
           }
         },
-        userPermissions: true
+        userPermissions: true,
+        driverProfile: true
       }
     });
 
@@ -151,7 +152,8 @@ export class UserService {
       email: user.email,
       fullName: user.fullName,
       role: user.role,
-      permissions: Array.from(permissions)
+      permissions: Array.from(permissions),
+      driverProfileId: user.driverProfile?.id
     };
   }
 }

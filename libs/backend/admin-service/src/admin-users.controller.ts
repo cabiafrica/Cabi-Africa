@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Put, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, UseGuards, Req } from '@nestjs/common';
 import { AdminUsersService } from './admin-users.service';
-import { RequirePermissions, PermissionsGuard } from '@cabi/backend/rbac';
+import { RequirePermissions, PermissionsGuard, MockJwtAuthGuard } from '@cabi/backend/rbac';
 import { Permission } from '@prisma/client';
 
 @Controller('admin/users') // Prefix admin/users
-@UseGuards(PermissionsGuard)
+@UseGuards(MockJwtAuthGuard, PermissionsGuard)
 export class AdminUsersController {
     constructor(private readonly usersService: AdminUsersService) { }
 
@@ -30,8 +30,9 @@ export class AdminUsersController {
     @RequirePermissions(Permission.GROUPS_ROLES_EDIT)
     updateUserPermissions(
         @Param('id') id: string,
-        @Body() body: { grants: string[]; revokes: string[] }
+        @Body() body: { grants: string[]; revokes: string[] },
+        @Req() req: any
     ) {
-        return this.usersService.updatePermissions(id, body.grants, body.revokes);
+        return this.usersService.updatePermissions(id, body.grants, body.revokes, req.user.id);
     }
 }

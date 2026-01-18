@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel Diagnostic</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        .success {
+            background: #1a3d1a;
+            border-color: #4caf50;
+        }
+        .error {
+            background: #3d1a1a;
+            border-color: #f44336;
+        }
+        .warning {
+            background: #3d3d1a;
+            border-color: #ff9800;
+        }
+        .info {
+            background: #1a1a3d;
+            border-color: #2196f3;
+        }
+        button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+        pre {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        h1 {
+            color: #2196f3;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2196f3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Admin Panel Diagnostic Tool</h1>
+    
+    <div id="results"></div>
+    
+    <div style="margin-top: 20px;">
+        <button onclick="runDiagnostics()">🔄 Run Diagnostics</button>
+        <button onclick="testBackend()">🌐 Test Backend</button>
+        <button onclick="testLogin()">🔐 Test Login</button>
+        <button onclick="clearStorage()">🗑️ Clear Storage</button>
+        <button onclick="location.href='/login'">↗️ Go to Login</button>
+    </div>
+
+    <script>
+        const results = document.getElementById('results');
+
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = message;
+            results.appendChild(div);
+        }
+
+        function clearResults() {
+            results.innerHTML = '';
+        }
+
+        async function runDiagnostics() {
+            clearResults();
+            addResult('🔍 Running diagnostics...', 'info');
+
+            // Check localStorage
+            const token = localStorage.getItem('authToken');
+            const user = localStorage.getItem('authUser');
+            
+            if (token) {
+                addResult(`✅ Auth token found: ${token.substring(0, 20)}...`, 'success');
+            } else {
+                addResult('⚠️ No auth token found in localStorage', 'warning');
+            }
+
+            if (user) {
+                try {
+                    const userData = JSON.parse(user);
+                    addResult(`✅ User data found: ${userData.fullName || userData.email}`, 'success');
+                    addResult(`<pre>${JSON.stringify(userData, null, 2)}</pre>`, 'info');
+                } catch (e) {
+                    addResult('❌ User data is corrupted', 'error');
+                }
+            } else {
+                addResult('⚠️ No user data found in localStorage', 'warning');
+            }
+
+            // Check backend
+            await testBackend();
+        }
+
+        async function testBackend() {
+            addResult('🌐 Testing backend connection...', 'info');
+            
+            try {
+                const response = await fetch('/api/rides/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult(`✅ Backend is running: ${JSON.stringify(data)}`, 'success');
+                } else {
+                    addResult(`❌ Backend returned ${response.status}: ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Backend connection failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testLogin() {
+            addResult('🔐 Testing login endpoint...', 'info');
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'ithrivebusinessnetworks@gmail.com',
+                        password: 'Admin@2026'
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult('✅ Login successful!', 'success');
+                    addResult(`<pre>${JSON.stringify(data, null, 2)}</pre>`, 'info');
+                    
+                    // Store credentials
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('authUser', JSON.stringify(data.user));
+                    
+                    addResult('✅ Credentials stored. You can now <a href="/login" style="color: #2196f3;">go to login page</a>', 'success');
+                } else {
+                    const error = await response.text();
+                    addResult(`❌ Login failed: ${error}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Login request failed: ${error.message}`, 'error');
+            }
+        }
+
+        function clearStorage() {
+            localStorage.clear();
+            sessionStorage.clear();
+            addResult('✅ Storage cleared', 'success');
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            runDiagnostics();
+        });
+    </script>
+</body>
+</html>

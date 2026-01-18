@@ -103,4 +103,33 @@ export class RideController {
     const limitNumber = parseInt(limit, 10);
     return this.rideService.findForUser(userId, { page: pageNumber, limit: limitNumber });
   }
+
+  // Admin endpoint for Job Activities Dashboard
+  @Get('/admin/all')
+  getAllRidesForAdmin(
+    @Query('status') status?: string,
+    @Query('search') search?: string,
+    @Query('date') date?: string,
+    @Query('page') page = '1',
+    @Query('limit') limit = '50'
+  ) {
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+    return this.rideService.getAllRidesForAdmin({
+      status,
+      search,
+      date,
+      page: pageNumber,
+      limit: limitNumber
+    });
+  }
+
+  // Admin endpoint to get ride statistics
+  @Get('/admin/statistics')
+  getRideStatistics(
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string
+  ) {
+    return this.rideService.getRideStatistics(startDate, endDate);
+  }
 }

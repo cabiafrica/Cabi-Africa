@@ -1,62 +1,113 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '@cabi/backend/database';
+import { RideStatus } from '@prisma/client';
 
 @Injectable()
 export class DispatchService {
-  // Matches rides to drivers and manages logistics.
-
-  // In-memory queue for simplified matching
-  private rideQueue: any[] = [];
+  constructor(private readonly prisma: PrismaService) { }
 
   async requestRide(rideRequest: any) {
     console.log('Received ride request:', rideRequest);
 
-    // 1. Validate request
-    if (!rideRequest.pickupLocation || !rideRequest.destination) {
-      throw new Error('Invalid ride request');
+    if (!rideRequest.pickup || !rideRequest.dropoff || !rideRequest.passengerId) {
+      throw new Error('Invalid ride request: Missing pickup, dropoff, or passengerId');
     }
 
-    // 2. Create Ride Record (Mock)
-    const rideId = 'ride-' + Date.now();
-    const ride = {
-      id: rideId,
-      ...rideRequest,
-      status: 'SEARCHING',
-      createdAt: new Date()
-    };
+    // Create Ride in DB
+    const ride = await this.prisma.ride.create({
+      data: {
+        passengerId: rideRequest.passengerId,
+        pickupLocation: rideRequest.pickup,
+        dropoffLocation: rideRequest.dropoff,
+        status: RideStatus.REQUESTED,
+      },
+    });
 
-    this.rideQueue.push(ride);
-
-    // 3. Initiate Matching (Async)
-    this._findDriver(ride);
-
-    return { rideId, status: 'SEARCHING', message: 'Looking for a driver...' };
-  }
-
-  // Mock matching logic
-  private async _findDriver(ride: any) {
-    console.log(`Searching driver for ride ${ride.id}...`);
-    await new Promise(resolve => setTimeout(resolve, 3000)); // Simulate search delay
-
-    // Assume we found a driver
-    ride.status = 'DRIVER_FOUND';
-    ride.driverId = 'driver-mock-123';
-    ride.driverName = 'John Doe';
-    console.log(`Driver found for ride ${ride.id}: ${ride.driverName}`);
-  }
-
-  async assignDriver(rideId: string, driverId: string) {
-    const ride = this.rideQueue.find(r => r.id === rideId);
-    if (!ride) throw new Error('Ride not found');
-
-    ride.status = 'DRIVER_ASSIGNED';
-    ride.driverId = driverId;
-    console.log(`Driver ${driverId} manually assigned to ride ${rideId}`);
+    console.log(`Ride created: ${ride.id}`);
     return ride;
+  }
+
+  async acceptRide(rideId: string, driverId: string) {
+    console.log(`Driver ${driverId} accepting ride ${rideId}`);
+
+    // In a real scenario, we might check if ride is already taken
+    // or verify driver eligibility.
+
+    const ride = await this.prisma.ride.update({
+      where: { id: rideId },
+      data: {
+        driverId: driverId,
+        status: RideStatus.DRIVER_ASSIGNED, // Or MATCHED ideally
+      },
+    });
+
+    return ride;
+  }
+
+  async updateRideStatus(rideId: string, status: string) {
+    // Validate status string matches enum if possible, or cast
+    // For simplicity we cast loosely but ideally validation pipe handles this
+    console.log(`Updating ride ${rideId} to ${status}`);
+
+    const ride = await this.prisma.ride.update({
+      where: { id: rideId },
+      data: {
+        status: status as RideStatus,
+      },
+    });
+
+    return ride;
+  }
+
+  async completeRide(rideId: string) {
+    console.log(`Completing ride ${rideId}`);
+
+    const ride = await this.prisma.ride.update({
+      where: { id: rideId },
+      data: {
+        status: RideStatus.COMPLETED,
+        // Calculate fare, distance, etc here if needed
+      },
+    });
+
+    return ride;
+  }
+
+  // Legacy/Helper methods kept for compatibility with controller
+  async assignDriver(rideId: string, driverId: string) {
+    return this.acceptRide(rideId, driverId);
   }
 
   async getRideStatus(rideId: string) {
-    const ride = this.rideQueue.find(r => r.id === rideId);
-    if (!ride) throw new Error('Ride not found');
+    const ride = await this.prisma.ride.findUnique({
+      where: { id: rideId },
+      include: {
+        passenger: true,
+        driver: {
+          include: {
+            user: true
+          }
+        }
+      }
+    });
+
+    if (!ride) throw new NotFoundException('Ride not found');
     return ride;
+  }
+
+  async getAllRides(limit: number = 100) {
+    const rides = await this.prisma.ride.findMany({
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        passenger: true,
+        driver: {
+          include: {
+            user: true
+          }
+        }
+      }
+    });
+    return rides;
   }
 }

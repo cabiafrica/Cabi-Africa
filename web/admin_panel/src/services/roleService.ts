@@ -1,7 +1,27 @@
 
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+// FIXED: Changed port from 3000 to 3333 to match auth-gateway
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3333/api';
+
+// Create axios instance with authentication interceptor
+const apiClient = axios.create({
+    baseURL: API_URL
+});
+
+// Add authentication token to all requests
+apiClient.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 export interface Permission {
     id: string; // The enum key, e.g. "SITE_SETUP_VIEW"
@@ -24,27 +44,27 @@ export type RoleFormData = Omit<Role, 'id' | 'isSystem'>;
 
 class RoleService {
     async getAllRoles(): Promise<Role[]> {
-        const response = await axios.get(`${API_URL}/roles`);
+        const response = await apiClient.get('/roles');
         return response.data;
     }
 
     async getRole(id: string): Promise<Role> {
-        const response = await axios.get(`${API_URL}/roles/${id}`);
+        const response = await apiClient.get(`/roles/${id}`);
         return response.data;
     }
 
     async createRole(data: RoleFormData): Promise<Role> {
-        const response = await axios.post(`${API_URL}/roles`, data);
+        const response = await apiClient.post('/roles', data);
         return response.data;
     }
 
     async updateRole(id: string, data: Partial<RoleFormData>): Promise<Role> {
-        const response = await axios.patch(`${API_URL}/roles/${id}`, data);
+        const response = await apiClient.patch(`/roles/${id}`, data);
         return response.data;
     }
 
     async deleteRole(id: string): Promise<void> {
-        await axios.delete(`${API_URL}/roles/${id}`);
+        await apiClient.delete(`/roles/${id}`);
     }
 
     // Helper to get available permissions (could be hardcoded or fetched)

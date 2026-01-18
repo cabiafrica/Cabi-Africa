@@ -38,15 +38,7 @@
     "exclude": [
         "src/**/*.test.tsx",
         "src/**/*.test.ts",
-        "src/__tests__",
-        "src/pages",
-        "src/components/layout",
-        "src/components/users",
-        "src/components/modals",
-        "src/components/maps",
-        "src/hooks",
-        "src/ProtectedRoute.tsx",
-        "src/AuthContext.tsx"
+        "src/__tests__"
     ],
     "references": [
         {

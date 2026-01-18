@@ -13,23 +13,13 @@ export class PermissionService {
      * Get all permissions for a user
      */
     async getUserPermissions(userId: string): Promise<Set<string>> {
-        // Fetch all roles assigned to the user
-        // Include the legacy `role` field mapped to permissions if needed?
-        // We moved `role` to `LegacyRole`.
-        // We should rely on `UserRole` table primarily, but for migration compatibility,
-        // we might want to map LegacyRole to some default permissions if UserRole is empty.
-        // However, our seed script assigned Super Admin to UserRole.
-        // New users might only have LegacyRole if register flow isn't fully updated yet.
-        // Ideally, registration should create UserRole.
-
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
             include: {
                 userRoles: {
-                    include: {
-                        role: true
-                    }
-                }
+                    include: { role: true }
+                },
+                userPermissions: true
             }
         });
 
@@ -37,14 +27,27 @@ export class PermissionService {
 
         const permissions = new Set<string>();
 
-        // Add permissions from all assigned roles
+        // 1. Add permissions from all assigned roles
         for (const userRole of user.userRoles) {
             if (!userRole.isActive || !userRole.role.isActive) continue;
-
-            // Check expiration
             if (userRole.expiresAt && userRole.expiresAt < new Date()) continue;
 
             userRole.role.permissions.forEach(p => permissions.add(p));
+        }
+
+        // 2. Apply Direct Permissions (Overrides)
+        // Grants add to the set
+        // Revokes remove from the set
+        // Priority: Direct overrides > Role permissions
+
+        if (user.userPermissions) {
+            for (const perm of user.userPermissions) {
+                if (perm.isGranted) {
+                    permissions.add(perm.permission);
+                } else {
+                    permissions.delete(perm.permission);
+                }
+            }
         }
 
         return permissions;

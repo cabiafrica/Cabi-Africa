@@ -3,11 +3,13 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 // Define the shape of the user object and the context
 export interface AuthUser {
   id: string;
+  email?: string;
   fullName: string;
   role: 'admin' | 'user';
   permissions?: string[]; // Granular permissions
   profilePictureUrl?: string;
   isTwoFactorEnabled?: boolean;
+  driverProfileId?: string;
 }
 
 interface AuthContextType {

@@ -60,6 +60,10 @@ model User {
   reviewedObjections      OccurrenceObjection[] @relation("ReviewedObjections")
   auditActions            OccurrenceAuditLog[]  @relation("OccurrenceAuditActions")
 
+  @@index([role])
+  @@index([createdAt])
+  @@index([email])
+  @@index([phone])
   @@map("users")
 }
 
@@ -255,6 +259,10 @@ model Ride {
   updatedAt       DateTime    @updatedAt
   occurrences     Occurrence[] @relation("RideOccurrences")
 
+  @@index([passengerId])
+  @@index([driverId])
+  @@index([status])
+  @@index([createdAt])
   @@map("rides")
 }
 
@@ -722,6 +730,12 @@ model Occurrence {
   objections      OccurrenceObjection[]
   auditLog        OccurrenceAuditLog[]
   
+  @@index([status])
+  @@index([severity])
+  @@index([category])
+  @@index([occurrenceDate])
+  @@index([driverId])
+  @@index([passengerId])
   @@map("occurrences")
 }
 

@@ -27,11 +27,16 @@ export class AdminActionAuditInterceptor implements NestInterceptor {
         return next.handle().pipe(
             tap(async () => {
                 // Log after the request succeeds
-                await logAuditEvent({
-                    action: action as any,
-                    userId: adminId,
-                    details,
-                });
+                try {
+                    await logAuditEvent({
+                        action: action as any,
+                        userId: adminId,
+                        details,
+                    });
+                } catch (error) {
+                    console.error('Failed to log audit event:', error.message);
+                    // Silently fail - don't crash the request
+                }
             }),
         );
     }

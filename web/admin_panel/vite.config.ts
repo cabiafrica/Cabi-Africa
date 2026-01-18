@@ -51,6 +51,7 @@ export default defineConfig({
             '@mui/material',
             '@mui/icons-material',
             'axios',
+            'lodash',
         ],
         exclude: ['@tremor/react'], // Some packages work better without pre-bundling
     },

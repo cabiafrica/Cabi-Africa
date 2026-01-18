@@ -3,8 +3,8 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:3333/api';
 const CREDENTIALS = {
-    email: 'super@cabi.com',
-    password: 'simplepassword'
+    email: 'ithrivebusinessnetworks@gmail.com',
+    password: 'Admin@2026'
 };
 
 async function main() {
@@ -21,8 +21,9 @@ async function main() {
 
         // 2. Create Role
         console.log('2. Creating Test Role...');
+        const timestamp = Date.now();
         const newRole = {
-            name: 'TEST_ROLE_AUTOMATED',
+            name: `TEST_ROLE_${timestamp}`,
             displayName: 'Automated Test Role',
             description: 'Created by automated test script',
             type: 'ADMIN',

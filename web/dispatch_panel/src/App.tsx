@@ -45,7 +45,7 @@ const MENU_ITEMS: MenuItem[] = [
     { view: 'trips', label: 'Trip Management', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS.trips}</svg>, permission: 'DISPATCH_RIDE_MONITOR', group: 'management' },
     { view: 'driver-history', label: 'Driver Management', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS['driver-history']}</svg>, permission: 'DISPATCH_DRIVER_MANAGE', group: 'management' },
     { view: 'passengers', label: 'Passenger Management', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS.passengers}</svg>, permission: 'PASSENGER_PROFILES_VIEW', group: 'management' },
-]; import { LoginPage } from './components/LoginPage';
+];
 
 import { useAuth } from './AuthContext';
 import { LoginPage } from './components/LoginPage';

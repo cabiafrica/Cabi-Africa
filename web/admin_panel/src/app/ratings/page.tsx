@@ -28,7 +28,7 @@ export default function RatingsModeration() {
                 <thead>
                     <tr className="bg-gray-100">
                         <th className="p-3 text-left">Type</th>
-                        <th className="p-3 text-left">Rater -> Ratee</th>
+                        <th className="p-3 text-left">Rater {'->'} Ratee</th>
                         <th className="p-3 text-left">Stars</th>
                         <th className="p-3 text-left">Comment</th>
                         <th className="p-3 text-left">Status</th>
@@ -39,7 +39,7 @@ export default function RatingsModeration() {
                     {ratings.map(r => (
                         <tr key={r.id} className="border-b">
                             <td className="p-3 text-xs font-mono">{r.type === 'PASSENGER_TO_DRIVER' ? 'P->D' : 'D->P'}</td>
-                            <td className="p-3">{r.rater} -> {r.ratee}</td>
+                            <td className="p-3">{r.rater} {'->'} {r.ratee}</td>
                             <td className="p-3 text-amber-500">{'★'.repeat(r.stars)}</td>
                             <td className="p-3 italic">"{r.comment}"</td>
                             <td className="p-3">

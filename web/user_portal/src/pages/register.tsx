@@ -26,7 +26,7 @@ export default function Register() {
     const [role, setRole] = useState<UserRole | null>(null);
     const router = useRouter();
 
-    const { register, handleSubmit, trigger, formState: { errors } } = useForm();
+    const { register, handleSubmit, trigger, watch, formState: { errors } } = useForm();
     const [isLoading, setIsLoading] = useState(false);
     const [referralValidation, setReferralValidation] = useState<{ valid: boolean; referrerName?: string } | null>(null);
     const [driverStep, setDriverStep] = useState(1);
@@ -376,7 +376,27 @@ export default function Register() {
 
                                         <div className="space-y-2 animate-fade-in">
                                             <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Password</label>
-                                            <input type="password" {...register('password', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="••••••••" />
+                                            <input type="password" {...register('password', { required: true, minLength: 6 })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="••••••••" />
+                                            {errors.password && <span className="text-red-500 text-xs">Password must be at least 6 characters</span>}
+                                        </div>
+
+                                        <div className="space-y-2 animate-fade-in">
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Confirm Password</label>
+                                            <input
+                                                type="password"
+                                                {...register('confirmPassword', {
+                                                    required: true,
+                                                    validate: (val: string) => {
+                                                        if (watch('password') !== val) {
+                                                            return "Your passwords do not match";
+                                                        }
+                                                        return true;
+                                                    }
+                                                })}
+                                                className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600"
+                                                placeholder="••••••••"
+                                            />
+                                            {errors.confirmPassword && <span className="text-red-500 text-xs">{errors.confirmPassword.message as string}</span>}
                                         </div>
 
                                         <button

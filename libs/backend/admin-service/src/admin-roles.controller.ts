@@ -4,13 +4,13 @@ import { Permission } from '@prisma/client';
 import { AdminRolesService } from './admin-roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { PermissionsGuard } from '@cabi/backend/rbac';
+import { PermissionsGuard, MockJwtAuthGuard } from '@cabi/backend/rbac';
 
 /**
  * Controller for managing admin roles and permissions.
  */
 @Controller('roles')
-@UseGuards(PermissionsGuard)
+@UseGuards(MockJwtAuthGuard, PermissionsGuard)
 export class AdminRolesController {
     constructor(private readonly rolesService: AdminRolesService) { }
 

@@ -8,9 +8,6 @@ const nextConfig = {
   // Enable compression
   compress: true,
 
-  // SWC minifier (faster than Terser)
-  swcMinify: true,
-
   // Image optimization
   images: {
     formats: ['image/webp', 'image/avif'],
@@ -33,6 +30,11 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
     optimizePackageImports: ['@heroicons/react'],
+  },
+
+  // Turbopack configuration (Next.js 16+)
+  turbopack: {
+    // Enable optimizations
   },
 
   // Production optimizations
@@ -91,11 +93,6 @@ const nextConfig = {
     }
     return config;
   },
-
-  // Turbopack configuration (Next.js 16+)
-  // turbopack: {
-  // Enable optimizations
-  // },
 };
 
 module.exports = nextConfig;

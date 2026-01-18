@@ -6,9 +6,11 @@ export interface AuthResponse {
     token: string;
     user: {
         id: string;
+        email?: string;
         fullName: string;
         role: string;
         permissions: string[];
+        driverProfileId?: string;
     };
 }
 

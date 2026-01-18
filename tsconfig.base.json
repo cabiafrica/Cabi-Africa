@@ -79,6 +79,9 @@
       ],
       "@cabi/backend/rbac": [
         "libs/backend/rbac/src/index.ts"
+      ],
+      "@cabi/backend/dispatch-service": [
+        "libs/backend/dispatch-service/src/index.ts"
       ]
     }
   },

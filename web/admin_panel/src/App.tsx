@@ -38,6 +38,7 @@ import { FraudDetectionDashboard } from './components/dashboard/FraudDetectionDa
 import { Header } from './components/layout/Header';
 import { DashboardAnalytics } from './components/dashboard/DashboardAnalytics';
 import { GamificationManagement } from './components/settings/GamificationManagement';
+import { JobActivitiesDashboard } from './components/operations/JobActivitiesDashboard';
 
 // New Role Pages
 import RolesList from './pages/Roles/RolesList';
@@ -52,7 +53,7 @@ import { AcquisitionChannelWidget } from './components/widgets/AcquisitionChanne
 // Icons
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
-type View = 'dashboard' | 'applications' | 'mlm-dashboard' | 'mlm-config' | 'promo-config' | 'badge-management' | 'blog-management' | 'permissions' | 'roles' | 'users' | 'platform-users' | 'commission-ledger' | 'audit-log' | 'sos-config' | 'suspended-accounts' | 'organization-management' | 'simulation-dashboard' | 'support-tickets' | 'surge-zones' | 'airport-zones' | 'vehicle-categories' | 'promo-codes' | 'scheduled-rides' | 'cms' | 'bulk-messaging' | 'driver-performance' | 'city-management' | 'heat-maps' | 'driver-unions' | 'live-map' | 'bi-dashboard' | 'fraud-alerts' | 'gamification' | 'traction-logs';
+type View = 'dashboard' | 'applications' | 'job-activities' | 'mlm-dashboard' | 'mlm-config' | 'promo-config' | 'badge-management' | 'blog-management' | 'permissions' | 'roles' | 'users' | 'platform-users' | 'commission-ledger' | 'audit-log' | 'sos-config' | 'suspended-accounts' | 'organization-management' | 'simulation-dashboard' | 'support-tickets' | 'surge-zones' | 'airport-zones' | 'vehicle-categories' | 'promo-codes' | 'scheduled-rides' | 'cms' | 'bulk-messaging' | 'driver-performance' | 'city-management' | 'heat-maps' | 'driver-unions' | 'live-map' | 'bi-dashboard' | 'fraud-alerts' | 'gamification' | 'traction-logs';
 
 interface MenuItem {
   icon: string;
@@ -71,6 +72,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
     label: 'Operations',
     items: [
       { icon: '🏠', label: 'Dashboard', view: '/dashboard', permission: 'view_dashboard' },
+      { icon: '🚗', label: 'Job Activities', view: '/job-activities', permission: 'view_dashboard' },
       { icon: '📄', label: 'Driver Applications', view: '/applications', permission: 'manage_applications' },
       { icon: '🏢', label: 'Organization', view: '/organization-management', permission: 'manage_organizations' },
       { icon: '📅', label: 'Scheduled Rides', view: '/scheduled-rides', permission: 'view_scheduled_rides' },
@@ -247,6 +249,7 @@ function App() {
               } />
 
               <Route path="/applications" element={<DriverApplicationsList />} />
+              <Route path="/job-activities" element={<JobActivitiesDashboard />} />
               <Route path="/organization-management" element={<OrganizationManagement />} />
               <Route path="/mlm-config" element={<MlmConfig />} />
               <Route path="/mlm-dashboard" element={<MlmDashboard />} />

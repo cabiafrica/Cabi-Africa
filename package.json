@@ -12,7 +12,13 @@
     "build:web": "nx run-many --target=build --projects=user-portal,admin-panel,dispatch-panel --parallel=3",
     "build:backend": "nx run-many --target=build --projects=auth-gateway,admin-service,user-service,verification-service,dispatch-service,driver-lead-service --parallel=3",
     "format": "nx format:write",
-    "format:check": "nx format:check"
+    "format:check": "nx format:check",
+    "launch:prepare": "node scripts/prepare-for-launch.js",
+    "launch:list-users": "node scripts/list-users.js",
+    "admin:recreate": "node scripts/recreate-super-admin.js",
+    "admin:verify": "node scripts/verify-admin-final.js",
+    "db:clean": "ts-node scripts/clean_data.ts",
+    "db:seed-roles": "ts-node scripts/seed_roles.ts"
   },
   "private": true,
   "dependencies": {
@@ -82,6 +88,7 @@
     "ts-node": "10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "~5.4.5",
+    "vite": "^7.3.1",
     "webpack": "^5.104.1",
     "webpack-cli": "^6.0.1"
   }

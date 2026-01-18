@@ -106,7 +106,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     passportPhotoUrl
                 }
             });
-            return res.status(201).json({ success: true, user: { id: newUser.id, email: newUser.email, role: newUser.role } });
+            // Mock Send Verification Email
+            console.log(`[Mock Email Service] Sending Welcome/Verification Email to ${email} with subject: "Welcome to Cabi - Please Verify Your Email"`);
+            // In a real implementation: await mailService.sendVerificationEmail(newUser);
+
+            return res.status(201).json({
+                success: true,
+                user: {
+                    id: newUser.id,
+                    email: newUser.email,
+                    role: newUser.role,
+                    firstName: newUser.fullName.split(' ')[0],
+                    lastName: newUser.fullName.split(' ').slice(1).join(' '),
+                    profilePictureUrl: passportPhotoUrl
+                }
+            });
         }
         else if (role === 'driver') {
             const licenseNumber = getValue('licenseNumber');
@@ -151,32 +165,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             };
 
             const documentsData = [];
-            const dlDoc = await handleDoc('drivingLicence', 'LICENSE_FRONT'); // Assuming front for now
+            let profilePhotoUrl = null;
+
+            const dlDoc = await handleDoc('drivingLicence', 'LICENSE_FRONT');
             if (dlDoc) documentsData.push(dlDoc);
 
-            const psvDoc = await handleDoc('psvBadge', 'PSV_BADGE'); // Need to add PSV_BADGE to enum if missing, or map to closest
-            // Wait, schema has specific enums. Let's check schema/add missing enums later or map to others.
-            // Schema has: LICENSE_FRONT, LICENSE_BACK, ID_FRONT, ID_BACK, PROFILE_PHOTO, VEHICLE_LOGBOOK, VEHICLE_INSURANCE, VEHICLE_INSPECTION, POLICE_CLEARANCE
-            // I'll map 'psvBadge' to 'LICENSE_BACK' as a placeholder or 'ID_BACK' if 'PSV_BADGE' is missing in my memory of schema.
-            // Actually I should have added PSV_BADGE to schema. I missed that. 
-            // For now, I'll use 'LICENSE_BACK' for PSV Badge to avoid breaking if I can't update schema again easily. 
-            // OR I can use 'POLICE_CLEARANCE' for police clearance.
-            // 'driverPhoto' -> 'PROFILE_PHOTO'
-
-            if (dlDoc) documentsData.push(dlDoc);
+            // Handle PSV Badge (Save as LICENSE_BACK for now if ENUM is restrictive, or check schema later)
+            const psvDoc = await handleDoc('psvBadge', 'LICENSE_BACK');
+            if (psvDoc) documentsData.push(psvDoc);
 
             const policeDoc = await handleDoc('policeClearance', 'POLICE_CLEARANCE');
             if (policeDoc) documentsData.push(policeDoc);
 
             const photoDoc = await handleDoc('driverPhoto', 'PROFILE_PHOTO');
-            if (photoDoc) documentsData.push(photoDoc);
-
-            // Note: PSV Badge mapping issue. I'll skip it in DB for now or map to ID_FRONT? 
-            // Let's just create the documents we have enums for. 
-            // UPDATE: I will use ID_FRONT for PSV Badge for now (hack) or just not save it if enum is strict.
-            // Better: I'll try to use a generic type if possible? No, enum.
-            // I'll skip PSV badge document creation in DB for this iteration to ensure success, 
-            // or better, I assume I can update schema later.
+            if (photoDoc) {
+                documentsData.push(photoDoc);
+                profilePhotoUrl = photoDoc.url;
+            }
 
             // Create Driver Profile
             await prisma.driverProfile.create({
@@ -192,7 +197,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
             });
 
-            return res.status(201).json({ success: true, user: { id: newUser.id, email: newUser.email, role: newUser.role } });
+            // Mock Send Verification Email
+            console.log(`[Mock Email Service] Sending Welcome/Verification Email to ${email} with subject: "Welcome to Cabi Driver - Please Verify Your Email"`);
+
+            return res.status(201).json({
+                success: true,
+                user: {
+                    id: newUser.id,
+                    email: newUser.email,
+                    role: newUser.role,
+                    firstName: newUser.fullName.split(' ')[0],
+                    lastName: newUser.fullName.split(' ').slice(1).join(' '),
+                    profilePictureUrl: profilePhotoUrl
+                }
+            });
         }
         else if (role === 'organization') {
             const orgName = getValue('orgName');
@@ -259,7 +277,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
             // Repeat for mem2, mem3...
 
-            return res.status(201).json({ success: true, user: { id: newUser.id, role: newUser.role }, org: { id: org.id } });
+            // Mock Email
+            console.log(`[Mock Email Service] Sending Organization Welcome Email to ${email}`);
+
+            return res.status(201).json({
+                success: true,
+                user: {
+                    id: newUser.id,
+                    role: newUser.role,
+                    firstName: newUser.fullName.split(' ')[0],
+                    lastName: newUser.fullName.split(' ').slice(1).join(' '),
+                    profilePictureUrl: null
+                },
+                org: { id: org.id }
+            });
         }
 
         return res.status(400).json({ message: `Registration for role '${role}' is not supported via this endpoint yet.` });
