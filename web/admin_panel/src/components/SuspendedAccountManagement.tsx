@@ -1,4 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Block,
+  Search,
+  FilterList,
+  CheckCircle,
+  Warning,
+  History,
+  PersonOff
+} from '@mui/icons-material';
 
 interface SuspendedUser {
   id: string;
@@ -11,25 +20,30 @@ interface SuspendedUser {
 export const SuspendedAccountManagement: React.FC = () => {
   const [suspendedUsers, setSuspendedUsers] = useState<SuspendedUser[]>([]);
   const [userToReactivate, setUserToReactivate] = useState<SuspendedUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    // Mock Data
-    setSuspendedUsers([
-      {
-        id: 'u1',
-        name: 'Alice Driver',
-        phoneNumber: '+254712345678',
-        reason: 'BIOMETRIC_FAILURE',
-        suspendedAt: '2024-05-20',
-      },
-      {
-        id: 'u2',
-        name: 'Bob Rider',
-        phoneNumber: '+254787654321',
-        reason: 'PAYMENT_FRAUD',
-        suspendedAt: '2024-05-22',
-      },
-    ]);
+    // Mock Data simulating fetching from API
+    setTimeout(() => {
+      setSuspendedUsers([
+        {
+          id: 'u1',
+          name: 'Alice Driver',
+          phoneNumber: '+254712345678',
+          reason: 'BIOMETRIC_FAILURE',
+          suspendedAt: '2024-05-20',
+        },
+        {
+          id: 'u2',
+          name: 'Bob Rider',
+          phoneNumber: '+254787654321',
+          reason: 'PAYMENT_FRAUD',
+          suspendedAt: '2024-05-22',
+        },
+      ]);
+      setLoading(false);
+    }, 800);
   }, []);
 
   const handleReactivateClick = (user: SuspendedUser) => {
@@ -39,81 +53,131 @@ export const SuspendedAccountManagement: React.FC = () => {
   const confirmReactivation = async () => {
     if (!userToReactivate) return;
 
-    console.log(`Reactivating user ${userToReactivate.id}`);
-    // API Call: POST /admin/users/{id}/unsuspend
-    
     // Optimistic update
     setSuspendedUsers((prev) => prev.filter((u) => u.id !== userToReactivate.id));
     setUserToReactivate(null);
-    alert(`User ${userToReactivate.name} has been reactivated.`);
   };
 
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Suspended Accounts</h1>
+  const filteredUsers = suspendedUsers.filter(u =>
+    u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    u.phoneNumber.includes(searchTerm)
+  );
 
-      <div className="bg-white shadow rounded overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Suspended</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {suspendedUsers.map((user) => (
-              <tr key={user.id}>
-                <td className="px-6 py-4 whitespace-nowrap font-medium">{user.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-gray-500">{user.phoneNumber}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                    {user.reason}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-gray-500">{user.suspendedAt}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button 
-                    onClick={() => handleReactivateClick(user)} 
-                    className="text-green-600 hover:text-green-900 font-bold"
-                  >
-                    Reactivate
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {suspendedUsers.length === 0 && (
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <PersonOff className="text-red-600 dark:text-red-400" />
+            Suspended Accounts
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Review and manage account suspensions and bans.</p>
+        </div>
+        <div className="flex bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-1">
+          <div className="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700">
+            Total Suspended
+          </div>
+          <div className="px-4 py-2 text-sm font-bold text-red-600 dark:text-red-400">
+            {suspendedUsers.length}
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        {/* Toolbar */}
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
+            <input
+              type="text"
+              placeholder="Search by name or phone..."
+              className="w-full pl-9 pr-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+            <FilterList fontSize="small" />
+            Filter Reason
+          </button>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-900">
               <tr>
-                <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                  No suspended accounts found.
-                </td>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">User</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Reason</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date Suspended</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+              {loading ? (
+                <tr><td colSpan={4} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">Loading suspended users...</td></tr>
+              ) : filteredUsers.length === 0 ? (
+                <tr><td colSpan={4} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">No suspended accounts found.</td></tr>
+              ) : filteredUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-slate-900 dark:text-white">{user.name}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{user.phoneNumber}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border ${user.reason === 'PAYMENT_FRAUD'
+                        ? 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900/50'
+                        : 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-900/50'
+                      }`}>
+                      <Warning style={{ fontSize: 12 }} />
+                      {user.reason.replace('_', ' ')}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center gap-2">
+                      <History fontSize="small" className="text-slate-400" />
+                      {user.suspendedAt}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button
+                      onClick={() => handleReactivateClick(user)}
+                      className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 font-bold flex items-center justify-end gap-1 w-full"
+                    >
+                      <CheckCircle fontSize="small" />
+                      Reactivate
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Confirmation Modal */}
       {userToReactivate && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
-            <h2 className="text-xl font-bold mb-4">Confirm Reactivation</h2>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to reactivate <strong>{userToReactivate.name}</strong>? 
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-700 scale-100 animate-in zoom-in-95 duration-200">
+            <h2 className="text-xl font-bold mb-4 text-slate-900 dark:text-white flex items-center gap-2">
+              <CheckCircle className="text-green-600 dark:text-green-400" />
+              Confirm Reactivation
+            </h2>
+            <p className="text-slate-600 dark:text-slate-300 mb-6 text-sm leading-relaxed">
+              Are you sure you want to reactivate <strong>{userToReactivate.name}</strong>?
               This will restore their access to the platform immediately.
             </p>
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setUserToReactivate(null)}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
+                className="px-4 py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg font-medium transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmReactivation}
-                className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium shadow-sm transition-colors"
               >
                 Confirm Reactivate
               </button>

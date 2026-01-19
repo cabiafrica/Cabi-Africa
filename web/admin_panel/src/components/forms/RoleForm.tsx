@@ -47,18 +47,18 @@ export const RoleForm: React.FC<Props> = ({ role, onSave, onCancel }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 max-w-4xl mx-auto">
-      <h3 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">{role ? 'Edit' : 'Create'} Role</h3>
+    <div className="card max-w-4xl mx-auto">
+      <h3 className="text-2xl font-bold text-current mb-6 border-b border-slate-200 dark:border-slate-700 pb-2">{role ? 'Edit' : 'Create'} Role</h3>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Role Name</label>
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Role Name</label>
           <input
             type="text"
             value={name}
             onChange={e => setName(e.target.value)}
             required
-            className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border text-gray-900"
+            className="w-full text-current"
             placeholder="e.g. Moderator"
           />
         </div>

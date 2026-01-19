@@ -1,19 +1,32 @@
 import React, { useState } from 'react';
 import { adminService } from '../../services/adminService';
+import {
+    Send,
+    Message,
+    Groups,
+    UploadFile,
+    Title,
+    Subject,
+    CheckCircle
+} from '@mui/icons-material';
 
 export const BulkMessaging: React.FC = () => {
     const [segment, setSegment] = useState('ALL_USERS');
     const [subject, setSubject] = useState('');
     const [body, setBody] = useState('');
     const [sending, setSending] = useState(false);
+    const [success, setSuccess] = useState(false);
 
     const handleSend = async () => {
         setSending(true);
         try {
+            // Simulated delay for better UX
+            await new Promise(resolve => setTimeout(resolve, 1500));
             await adminService.sendBulkMessage(segment, subject, body);
-            alert('Message queued successfully!');
+            setSuccess(true);
             setSubject('');
             setBody('');
+            setTimeout(() => setSuccess(false), 3000);
         } catch (e) {
             alert('Failed to send message');
         } finally {
@@ -22,68 +35,140 @@ export const BulkMessaging: React.FC = () => {
     };
 
     return (
-        <div className="bg-white shadow rounded-lg p-6 max-w-2xl mx-auto">
-            <h2 className="text-xl font-bold mb-6">Send Bulk Message</h2>
+        <div className="max-w-4xl mx-auto space-y-6">
+            <div>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <Message className="text-blue-600 dark:text-blue-400" />
+                    Bulk Messaging Center
+                </h1>
+                <p className="text-slate-500 dark:text-slate-400 mt-1">Broadcast announcements and notifications to user segments.</p>
+            </div>
 
-            <div className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Target Segment</label>
-                    <select
-                        value={segment}
-                        onChange={(e) => setSegment(e.target.value)}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
-                    >
-                        <option value="ALL_USERS">All Users</option>
-                        <option value="ALL_DRIVERS">All Drivers</option>
-                        <option value="ALL_PASSENGERS">All Passengers</option>
-                        <option value="ACTIVE_DRIVERS">Active Drivers</option>
-                        <option value="UPLOAD_CSV">Upload User List (CSV)</option>
-                    </select>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                {/* Story 79.9: CSV Upload */}
-                {segment === 'UPLOAD_CSV' && (
-                    <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Upload CSV File</label>
-                        <input
-                            type="file"
-                            accept=".csv"
-                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                        />
-                        <p className="mt-1 text-xs text-gray-500">File must contain a column named 'user_id'.</p>
+                {/* Form Section */}
+                <div className="md:col-span-2 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 md:p-8">
+                    <div className="space-y-6">
+                        <div>
+                            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                                <Groups fontSize="small" className="text-slate-400" />
+                                Target Audience
+                            </label>
+                            <select
+                                value={segment}
+                                onChange={(e) => setSegment(e.target.value)}
+                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                            >
+                                <option value="ALL_USERS">All Users (Global)</option>
+                                <option value="ALL_DRIVERS">All Drivers</option>
+                                <option value="ALL_PASSENGERS">All Passengers</option>
+                                <option value="ACTIVE_DRIVERS">Active Drivers (Last 24h)</option>
+                                <option value="UPLOAD_CSV">Custom List (CSV Upload)</option>
+                            </select>
+                        </div>
+
+                        {segment === 'UPLOAD_CSV' && (
+                            <div className="bg-blue-50 dark:bg-slate-900/50 p-4 rounded-lg border border-blue-100 dark:border-slate-700 border-dashed animate-in fade-in zoom-in-95">
+                                <label className="block text-sm font-medium text-blue-800 dark:text-blue-300 mb-2 flex items-center gap-2">
+                                    <UploadFile fontSize="small" />
+                                    Upload Recipients CSV
+                                </label>
+                                <input
+                                    type="file"
+                                    accept=".csv"
+                                    className="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition-all cursor-pointer"
+                                />
+                                <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                                    File must contain a column header named <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded">user_id</code>.
+                                </p>
+                            </div>
+                        )}
+
+                        <div>
+                            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                                <Title fontSize="small" className="text-slate-400" />
+                                Subject Line
+                            </label>
+                            <input
+                                type="text"
+                                value={subject}
+                                onChange={(e) => setSubject(e.target.value)}
+                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-400"
+                                placeholder="e.g., Important Update: New Bonus Structure"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                                <Subject fontSize="small" className="text-slate-400" />
+                                Message Body
+                            </label>
+                            <textarea
+                                value={body}
+                                onChange={(e) => setBody(e.target.value)}
+                                rows={8}
+                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none placeholder:text-slate-400"
+                                placeholder="Type your message here..."
+                            />
+                        </div>
+
+                        <div className="pt-2">
+                            <button
+                                onClick={handleSend}
+                                disabled={sending || success || !subject || !body}
+                                className={`w-full flex justify-center items-center gap-2 py-3 px-6 rounded-lg shadow-md text-sm font-bold text-white transition-all transform active:scale-[0.98] ${success
+                                        ? 'bg-green-600 hover:bg-green-700'
+                                        : 'bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                                    }`}
+                            >
+                                {sending ? (
+                                    <>
+                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        Queueing Message...
+                                    </>
+                                ) : success ? (
+                                    <>
+                                        <CheckCircle fontSize="small" />
+                                        Sent Successfully!
+                                    </>
+                                ) : (
+                                    <>
+                                        <Send fontSize="small" />
+                                        Send Broadcast
+                                    </>
+                                )}
+                            </button>
+                        </div>
                     </div>
-                )}
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Subject</label>
-                    <input
-                        type="text"
-                        value={subject}
-                        onChange={(e) => setSubject(e.target.value)}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
-                        placeholder="Important Announcement"
-                    />
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Message Body</label>
-                    <textarea
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                        rows={6}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
-                        placeholder="Enter your message here..."
-                    />
-                </div>
+                {/* Info / Preview Panel (Placeholder for now) */}
+                <div className="md:col-span-1 space-y-6">
+                    <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700 h-full">
+                        <h3 className="font-bold text-slate-900 dark:text-white mb-4">Tips & Guidelines</h3>
+                        <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-400">
+                            <li className="flex gap-2">
+                                <div className="mt-1 w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0" />
+                                Keep subjects under 50 characters for better push notification visibility.
+                            </li>
+                            <li className="flex gap-2">
+                                <div className="mt-1 w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0" />
+                                Bulk messages are processed in queues. Delivery may take a few minutes for large segments.
+                            </li>
+                            <li className="flex gap-2">
+                                <div className="mt-1 w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0" />
+                                Avoid using special characters that may not render correctly on all devices.
+                            </li>
+                        </ul>
 
-                <div className="pt-4">
-                    <button
-                        onClick={handleSend}
-                        disabled={sending || !subject || !body}
-                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-                    >
-                        {sending ? 'Queueing Message...' : 'Send Message'}
-                    </button>
+                        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+                            <h4 className="font-semibold text-slate-900 dark:text-white text-xs uppercase tracking-wide mb-2">Estimated Reach</h4>
+                            <div className="text-3xl font-bold text-slate-900 dark:text-white">
+                                {segment === 'ALL_USERS' ? '12.5k' : segment === 'ALL_DRIVERS' ? '3,420' : segment === 'ACTIVE_DRIVERS' ? '850' : '--'}
+                                <span className="text-sm font-normal text-slate-500 ml-2">users</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

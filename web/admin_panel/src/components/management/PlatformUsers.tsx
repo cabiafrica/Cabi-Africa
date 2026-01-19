@@ -93,17 +93,17 @@ export const UserManagementDashboard: React.FC = () => {
     }
 
     return (
-        <div className="bg-white shadow rounded-lg overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4 bg-gray-50">
-                <h2 className="text-xl font-semibold text-gray-800">User Management</h2>
+        <div className="bg-white dark:bg-slate-800 shadow rounded-lg overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50 dark:bg-slate-900">
+                <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">User Management</h2>
 
                 {selectedUserIds.length > 0 ? (
-                    <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded">
-                        <span className="text-sm font-medium text-blue-800">{selectedUserIds.length} Selected</span>
-                        <div className="h-4 w-px bg-blue-200"></div>
+                    <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded">
+                        <span className="text-sm font-medium text-blue-800 dark:text-blue-200">{selectedUserIds.length} Selected</span>
+                        <div className="h-4 w-px bg-blue-200 dark:bg-blue-700"></div>
                         <select
                             onChange={(e) => handleBulkAction(e.target.value as any)}
-                            className="bg-white border border-blue-200 text-sm rounded shadow-sm focus:outline-none"
+                            className="bg-white dark:bg-slate-800 border border-blue-200 dark:border-blue-700/50 text-sm rounded shadow-sm focus:outline-none text-slate-900 dark:text-slate-100"
                             defaultValue=""
                         >
                             <option value="" disabled>Bulk Actions...</option>
@@ -119,7 +119,7 @@ export const UserManagementDashboard: React.FC = () => {
                             placeholder="Search by name or email..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                         />
                         <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
                     </div>
@@ -127,8 +127,8 @@ export const UserManagementDashboard: React.FC = () => {
             </div>
 
             <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+                    <thead className="bg-slate-50 dark:bg-slate-900">
                         <tr>
                             <th scope="col" className="px-6 py-3">
                                 <input
@@ -138,40 +138,40 @@ export const UserManagementDashboard: React.FC = () => {
                                     onChange={(e) => toggleSelectAll(e.target.checked)}
                                 />
                             </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700">Name</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700">Email</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700">Type</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700">Registered</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-700 dark:hover:text-slate-200">Name</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-700 dark:hover:text-slate-200">Email</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-700 dark:hover:text-slate-200">Type</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-700 dark:hover:text-slate-200">Registered</th>
                             <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
                         {loading || isBulkProcessing ? (
                             <tr>
                                 <td colSpan={6} className="px-6 py-4 text-center">Loading...</td>
                             </tr>
                         ) : users.map(user => (
-                            <tr key={user.id} className={`hover:bg-gray-50 transition-colors ${selectedUserIds.includes(user.id) ? 'bg-blue-50' : ''}`}>
+                            <tr key={user.id} className={`hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${selectedUserIds.includes(user.id) ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}>
                                 <td className="px-6 py-4">
                                     <input
                                         type="checkbox"
-                                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 bg-white dark:bg-slate-700"
                                         checked={selectedUserIds.includes(user.id)}
                                         onChange={(e) => toggleSelectUser(user.id, e.target.checked)}
                                     />
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    <button onClick={() => setSelectedUser(user)} className="text-blue-600 hover:text-blue-900 font-medium text-left">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-slate-100">
+                                    <button onClick={() => setSelectedUser(user)} className="text-blue-600 hover:text-blue-900 dark:hover:text-blue-400 font-medium text-left">
                                         {user.name}
                                     </button>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{user.email}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${user.type === 'DRIVER' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${user.type === 'DRIVER' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'}`}>
                                         {user.type}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(user.registrationDate).toLocaleDateString()}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{new Date(user.registrationDate).toLocaleDateString()}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <button onClick={() => setSelectedUser(user)} className="text-blue-600 hover:text-blue-900">
                                         Manage

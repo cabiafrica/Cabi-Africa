@@ -1,14 +1,25 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { adminService, Badge } from '../../services/adminService';
 import { BadgeForm } from '../forms/BadgeForm';
+import {
+  MilitaryTech,
+  Add,
+  Edit,
+  Delete,
+  Rule,
+  Star
+} from '@mui/icons-material';
 
 export const BadgeManagement: React.FC = () => {
   const [badges, setBadges] = useState<Badge[]>([]);
   const [editingBadge, setEditingBadge] = useState<Badge | 'new' | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchBadges = useCallback(async () => {
+    setLoading(true);
     const data = await adminService.getBadges();
     setBadges(data);
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -32,55 +43,98 @@ export const BadgeManagement: React.FC = () => {
   }
 
   return (
-    <div className="bg-white shadow rounded-lg overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-        <h2 className="text-xl font-semibold text-gray-800">Badge Management</h2>
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <MilitaryTech className="text-blue-600 dark:text-blue-400" />
+            Badge Management
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Configure gamification badges and qualification rules.</p>
+        </div>
         <button
           onClick={() => setEditingBadge('new')}
-          className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm"
         >
+          <Add fontSize="small" />
           Create New Badge
         </button>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rules</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {badges.map(badge => (
-              <tr key={badge.id} className="hover:bg-purple-50 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mr-3">
-                      ★
-                    </div>
-                    <span className="text-sm font-medium text-gray-900">{badge.name}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{badge.description}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <span className="bg-gray-100 px-2 py-1 rounded text-xs">{badge.rules.length} Rules</span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button onClick={() => setEditingBadge(badge)} className="text-purple-600 hover:text-purple-900 mr-4">Edit</button>
-                  <button onClick={() => handleDelete(badge.id)} className="text-red-600 hover:text-red-900">Delete</button>
-                </td>
-              </tr>
-            ))}
-            {badges.length === 0 && (
+      <div className="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex justify-between items-center">
+          <h3 className="font-semibold text-slate-800 dark:text-slate-100">All Badges</h3>
+          <span className="bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+            {badges.length} Total
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-900">
               <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-gray-500 text-sm">No badges found.</td>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Description</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Rules</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+              {loading ? (
+                <tr><td colSpan={4} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">Loading badges...</td></tr>
+              ) : badges.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                    <div className="flex flex-col items-center">
+                      <MilitaryTech className="text-slate-300 dark:text-slate-600 text-5xl mb-2" />
+                      <p>No badges found.</p>
+                      <button onClick={() => setEditingBadge('new')} className="mt-2 text-blue-600 hover:underline text-sm">Create your first badge</button>
+                    </div>
+                  </td>
+                </tr>
+              ) : badges.map(badge => (
+                <tr key={badge.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="h-10 w-10 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center text-yellow-600 dark:text-yellow-400 mr-3 border border-yellow-200 dark:border-yellow-700">
+                        <Star fontSize="small" />
+                      </div>
+                      <div>
+                        <span className="text-sm font-bold text-slate-900 dark:text-white block">{badge.name}</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">ID: {badge.id}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-300 max-w-xs truncate">{badge.description}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center gap-1.5">
+                      <Rule fontSize="small" className="text-slate-400" />
+                      <span className="bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded text-xs font-semibold text-slate-700 dark:text-slate-200">{badge.rules.length} Rules</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => setEditingBadge(badge)}
+                        className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                        title="Edit"
+                      >
+                        <Edit fontSize="small" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(badge.id)}
+                        className="p-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                        title="Delete"
+                      >
+                        <Delete fontSize="small" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

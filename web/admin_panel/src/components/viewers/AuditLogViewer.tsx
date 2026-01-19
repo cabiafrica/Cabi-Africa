@@ -37,9 +37,9 @@ export const AuditLogViewer: React.FC = () => {
   };
 
   return (
-    <div className="bg-white shadow rounded-lg overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Audit Log</h2>
+    <div className="bg-white dark:bg-slate-800 shadow rounded-lg overflow-hidden">
+      <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+        <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-4">Audit Log</h2>
 
         <form onSubmit={handleFilterSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <input
@@ -49,7 +49,7 @@ export const AuditLogViewer: React.FC = () => {
             value={filters.userEmail}
             onChange={handleFilterChange}
             aria-label="Filter by User Email"
-            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border rounded-md p-2"
+            className="border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
           />
           <input
             type="text"
@@ -57,21 +57,21 @@ export const AuditLogViewer: React.FC = () => {
             placeholder="Filter by Action..."
             value={filters.action}
             onChange={handleFilterChange}
-            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border rounded-md p-2"
+            className="border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
           />
           <input
             type="date"
             name="startDate"
             value={filters.startDate}
             onChange={handleFilterChange}
-            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border rounded-md p-2"
+            className="border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
           />
           <input
             type="date"
             name="endDate"
             value={filters.endDate}
             onChange={handleFilterChange}
-            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border rounded-md p-2"
+            className="border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
           />
           <button
             type="submit"
@@ -83,17 +83,17 @@ export const AuditLogViewer: React.FC = () => {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+          <thead className="bg-slate-50 dark:bg-slate-900">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Timestamp</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">User</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Action</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Details</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">IP Address</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
             {isLoading ? (
               <tr>
                 <td colSpan={5} className="px-6 py-10 text-center text-gray-500">
@@ -108,24 +108,24 @@ export const AuditLogViewer: React.FC = () => {
               </tr>
             ) : logs.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-10 text-center text-gray-500">No logs found.</td>
+                <td colSpan={5} className="px-6 py-10 text-center text-slate-500 dark:text-slate-400">No logs found.</td>
               </tr>
             ) : (
               logs.map(log => (
-                <tr key={log.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-mono">
                     {new Date(log.timestamp).toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-slate-100">
                     {log.adminUserEmail}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    <span className="px-2 py-1 bg-gray-100 rounded text-xs font-bold border border-gray-300">{log.action}</span>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
+                    <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-xs font-bold border border-slate-300 dark:border-slate-600">{log.action}</span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 font-mono text-xs max-w-xs truncate">
+                  <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 font-mono text-xs max-w-xs truncate">
                     {JSON.stringify(log.details)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-mono">
                     {log.ipAddress}
                   </td>
                 </tr>

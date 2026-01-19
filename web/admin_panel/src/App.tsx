@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import { LoginPage } from './pages/LoginPage';
@@ -50,6 +50,11 @@ import { RideStatusWidget } from './components/widgets/RideStatusWidget';
 import { NetworkGrowthWidget } from './components/widgets/NetworkGrowthWidget';
 import { AcquisitionChannelWidget } from './components/widgets/AcquisitionChannelWidget';
 
+// Enhanced Finance & Reporting Components
+import { PayoutProcessing } from './components/PayoutProcessing';
+import { PayoutScheduler } from './components/PayoutScheduler';
+import { ExportableReports } from './components/ExportableReports';
+
 // Icons
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
@@ -60,6 +65,7 @@ interface MenuItem {
   label: string;
   view?: string; // Changed from View to string path
   permission?: string;
+  external?: boolean;
 }
 
 interface MenuGroup {
@@ -87,7 +93,19 @@ const SIDEBAR_MENU: MenuGroup[] = [
       { icon: '🔥', label: 'Heat Maps', view: '/heat-maps', permission: 'view_heat_maps' },
       { icon: '📈', label: 'BI Dashboard', view: '/bi-dashboard', permission: 'view_bi_dashboard' },
       { icon: '🏙️', label: 'City Management', view: '/city-management', permission: 'manage_cities' },
+      { icon: '📥', label: 'Data Exports', view: '/exports', permission: 'view_reports' },
+    ]
+  },
+  {
+    label: 'Security',
+    items: [
       { icon: '🚨', label: 'Fraud Alerts', view: '/fraud-alerts', permission: 'view_fraud_alerts' },
+      { icon: '📝', label: 'OB Bookings', view: '/ob-bookings', permission: 'manage_bookings' },
+      { icon: '⚖️', label: 'Resolution Dash', view: '/resolution-dashboard', permission: 'manage_disputes' },
+      { icon: '🚫', label: 'Suspended Accounts', view: '/suspended-accounts', permission: 'manage_suspended' },
+      { icon: '📜', label: 'Audit Log', view: '/audit-log', permission: 'view_audit_log' },
+      { icon: '🔒', label: 'Roles & Permissions', view: '/roles', permission: 'manage_permissions' },
+      { icon: '🆘', label: 'SOS Config', view: '/sos-config', permission: 'manage_config' },
     ]
   },
   {
@@ -95,7 +113,6 @@ const SIDEBAR_MENU: MenuGroup[] = [
     items: [
       { icon: '🌍', label: 'All Users', view: '/platform-users', permission: 'manage_users' },
       { icon: '👥', label: 'Admin Users', view: '/users', permission: 'manage_admins' },
-      { icon: '🚫', label: 'Suspended', view: '/suspended-accounts', permission: 'manage_suspended' },
     ]
   },
   {
@@ -122,9 +139,16 @@ const SIDEBAR_MENU: MenuGroup[] = [
     label: 'Finance & System',
     items: [
       { icon: '💹', label: 'Commissions', view: '/commission-ledger', permission: 'view_commissions' },
+      { icon: '💸', label: 'Payout Processing', view: '/payouts', permission: 'manage_payouts' },
+      { icon: '⏱️', label: 'Payout Scheduler', view: '/payout-scheduler', permission: 'manage_payouts' },
       { icon: '💰', label: 'Traction Logs', view: '/traction-logs', permission: 'view_traction_logs' },
-      { icon: '📜', label: 'Audit Log', view: '/audit-log', permission: 'view_audit_log' },
-      { icon: '🔒', label: 'Roles & Permissions', view: '/roles', permission: 'manage_permissions' },
+    ]
+  },
+  {
+    label: 'External Apps',
+    items: [
+      { icon: '🖥️', label: 'Dispatch Panel', view: 'http://localhost:3002', permission: 'view_dashboard', external: true },
+      { icon: '👤', label: 'User Portal', view: 'http://localhost:3000', permission: 'view_dashboard', external: true },
     ]
   }
 ];
@@ -133,7 +157,32 @@ function App() {
   const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [expandedMenus, setExpandedMenus] = useState<string[]>(['Operations']);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(['Operations', 'External Apps']);
+
+  // Theme state
+  const [darkMode, setDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    // Check local storage or system preference
+    if (savedTheme) {
+      return savedTheme === 'dark';
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  // Sync theme with HTML element for Tailwind and useTheme hook
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
+
+  const toggleTheme = () => {
+    setDarkMode(prev => !prev);
+  };
 
   // Detached Visualization Mode
   if (location.pathname.startsWith('/visualize')) {
@@ -168,27 +217,36 @@ function App() {
   const isActive = (path?: string) => path && location.pathname.startsWith(path);
 
   return (
-    <div className="flex h-screen bg-slate-900 text-slate-100">
-      <aside className="sidebar w-64 flex-shrink-0 flex flex-col bg-slate-900 border-r border-slate-800">
-        <div className="p-6 border-b border-slate-800 flex flex-col items-center text-center">
-          <h1 className="text-xl font-bold tracking-wider">CABI ADMIN</h1>
-          <div className="mt-1 text-xs text-slate-400 mb-6">Control Center</div>
+    <div className={`flex h-screen transition-colors duration-200 ${darkMode ? 'dark bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+      <aside className="sidebar w-64 flex-shrink-0 flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-200">
+        <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col items-center text-center">
+          <h1 className="text-xl font-bold tracking-wider text-slate-900 dark:text-white">CABI ADMIN</h1>
+          <div className="mt-1 text-xs text-slate-500 dark:text-slate-400 mb-6">Control Center</div>
 
           <img
             src={user?.profilePictureUrl || "https://ui-avatars.com/api/?name=" + (user?.fullName || "Admin") + "&background=random"}
             alt="Profile"
-            className="w-16 h-16 rounded-full object-cover ring-2 ring-slate-600 mb-3"
+            className="w-16 h-16 rounded-full object-cover ring-2 ring-slate-200 dark:ring-slate-700 mb-3"
           />
-          <div className="font-medium text-slate-200">{user?.fullName || 'Admin User'}</div>
-          <div className="text-xs text-slate-400 mb-4">{user?.email || 'admin@cabialpha.com'}</div>
+          <div className="font-medium text-slate-900 dark:text-slate-200">{user?.fullName || 'Admin User'}</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400 mb-4">{user?.email || 'admin@cabialpha.com'}</div>
 
-          <button
-            onClick={logout}
-            className="flex items-center gap-2 px-4 py-2 text-xs font-medium bg-slate-800 hover:bg-red-500/10 hover:text-red-400 border border-slate-700 rounded-full transition-all duration-200 group"
-          >
-            <span>Log Out</span>
-            <span className="group-hover:translate-x-1 transition-transform">↪️</span>
-          </button>
+          <div className="flex gap-2 w-full justify-center">
+            <button
+              onClick={toggleTheme}
+              className="p-2 text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-full transition-all duration-200 text-slate-600 dark:text-slate-300"
+              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {darkMode ? '☀️' : '🌙'}
+            </button>
+            <button
+              onClick={logout}
+              className="flex items-center gap-2 px-4 py-2 text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-red-50 hover:dark:bg-red-900/20 hover:text-red-600 hover:dark:text-red-400 border border-slate-200 dark:border-slate-700 rounded-full transition-all duration-200 group text-slate-600 dark:text-slate-300"
+            >
+              <span>Log Out</span>
+              <span className="group-hover:translate-x-1 transition-transform">↪️</span>
+            </button>
+          </div>
         </div>
 
         <nav className="flex-1 overflow-y-auto py-4">
@@ -202,7 +260,7 @@ function App() {
               <div key={group.label} className="mb-2">
                 <button
                   onClick={() => toggleMenu(group.label)}
-                  className="w-full flex items-center justify-between px-4 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider hover:bg-slate-800/50 transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   <span>{group.label}</span>
                   {isExpanded ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" />}
@@ -212,11 +270,18 @@ function App() {
                   {visibleItems.map(item => (
                     <button
                       key={item.label}
-                      onClick={() => item.view && navigate(item.view)}
-                      className={`w-full text-left px-6 py-3 hover:bg-slate-800 flex items-center gap-3 transition-colors border-l-4 ${isActive(item.view) ? 'bg-slate-800 border-blue-500 text-white' : 'border-transparent text-slate-300 hover:text-white'}`}
+                      onClick={() => {
+                        if (item.external && item.view) {
+                          window.open(item.view, '_blank');
+                        } else if (item.view) {
+                          navigate(item.view);
+                        }
+                      }}
+                      className={`w-full text-left px-6 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3 transition-colors border-l-4 ${isActive(item.view) ? 'bg-blue-50 dark:bg-slate-800 border-blue-600 dark:border-blue-500 text-blue-700 dark:text-blue-400 font-medium' : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
                     >
                       <span className="text-lg">{item.icon}</span>
                       <span className="text-sm">{item.label}</span>
+                      {item.external && <span className="text-xs ml-auto opacity-50">↗️</span>}
                     </button>
                   ))}
                 </div>
@@ -226,7 +291,7 @@ function App() {
         </nav>
       </aside>
 
-      <main className="flex-1 overflow-y-auto bg-slate-50 text-slate-900">
+      <main className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-200">
         {/* Using light bg for content area, can revert to dark if requested */}
         <Header currentView={location.pathname.replace('/', '') as View} />
 
@@ -250,6 +315,8 @@ function App() {
 
               <Route path="/applications" element={<DriverApplicationsList />} />
               <Route path="/job-activities" element={<JobActivitiesDashboard />} />
+              <Route path="/ob-bookings" element={<div className="card"> <h2 className="text-2xl font-bold mb-4">OB Bookings</h2> <p>Outbound/On-Boarding Bookings Management</p> </div>} />
+              <Route path="/resolution-dashboard" element={<div className="card"> <h2 className="text-2xl font-bold mb-4">Resolution Dashboard</h2> <p>Dispute Resolution and Case Management</p> </div>} />
               <Route path="/organization-management" element={<OrganizationManagement />} />
               <Route path="/mlm-config" element={<MlmConfig />} />
               <Route path="/mlm-dashboard" element={<MlmDashboard />} />
@@ -276,6 +343,9 @@ function App() {
               <Route path="/vehicle-categories" element={<VehicleCategoriesManagement />} />
               <Route path="/promo-codes" element={<PromoCodeManagement />} />
               <Route path="/scheduled-rides" element={<ScheduledRideManagement />} />
+              <Route path="/payouts" element={<PayoutProcessing />} />
+              <Route path="/payout-scheduler" element={<PayoutScheduler />} />
+              <Route path="/exports" element={<ExportableReports />} />
               <Route path="/cms" element={<CMSManagement />} />
               <Route path="/bulk-messaging" element={<BulkMessaging />} />
               <Route path="/driver-performance" element={<DriverPerformanceReport />} />

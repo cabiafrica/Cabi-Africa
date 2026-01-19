@@ -134,6 +134,10 @@ const createDropoffIcon = () => {
     });
 };
 
+import { useTheme } from '../hooks/useTheme';
+
+// ... (existing helper functions)
+
 export const CabiMap: React.FC<CabiMapProps> = ({
     center = [-1.286389, 36.817223], // Nairobi, Kenya
     zoom = 13,
@@ -147,6 +151,8 @@ export const CabiMap: React.FC<CabiMapProps> = ({
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const markersLayerRef = useRef<L.LayerGroup | null>(null);
     const routeLayerRef = useRef<L.Polyline | null>(null);
+    const tileLayerRef = useRef<L.TileLayer | null>(null);
+    const { isDark } = useTheme();
 
     // Initialize map
     useEffect(() => {
@@ -154,8 +160,17 @@ export const CabiMap: React.FC<CabiMapProps> = ({
 
         const map = L.map(mapContainerRef.current).setView(center, zoom);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
+        // Initial Tile Layer
+        const tileUrl = isDark
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+        const attribution = isDark
+            ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            : '&copy; OpenStreetMap contributors';
+
+        tileLayerRef.current = L.tileLayer(tileUrl, {
+            attribution: attribution,
             maxZoom: 19,
         }).addTo(map);
 
@@ -173,6 +188,19 @@ export const CabiMap: React.FC<CabiMapProps> = ({
             mapRef.current = null;
         };
     }, []);
+
+    // Handle Theme Change
+    useEffect(() => {
+        if (!mapRef.current || !tileLayerRef.current) return;
+
+        const tileUrl = isDark
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+        tileLayerRef.current.setUrl(tileUrl);
+    }, [isDark]);
+
+
 
     // Update markers
     useEffect(() => {

@@ -4,6 +4,8 @@ export default {
     content: [
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
+        // Tremor UI compliance
+        "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
         extend: {
@@ -19,5 +21,10 @@ export default {
             },
         },
     },
+    safelist: [
+        {
+            pattern: /^(fill|text|bg)-(emerald|rose|amber)-(400|500|600)$/,
+        },
+    ],
     plugins: [],
 }

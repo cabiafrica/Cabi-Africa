@@ -2,6 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { adminService, DriverApplication } from '../../services/adminService';
 import { DriverApplicationDetail } from './DriverApplicationDetail';
 import { RejectionReasonModal } from '../approvals/RejectionReasonModal';
+import {
+  RecentActors,
+  Search,
+  FilterList,
+  CheckCircle,
+  Cancel,
+  Visibility,
+  MoreVert,
+  NavigateNext,
+  NavigateBefore
+} from '@mui/icons-material';
 
 export const DriverApplicationsList: React.FC = () => {
   const [applications, setApplications] = useState<DriverApplication[]>([]);
@@ -16,34 +27,24 @@ export const DriverApplicationsList: React.FC = () => {
   // Pagination state
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchApps = async () => {
+      setLoading(true);
       try {
-        const { data, total } = await adminService.getDriverApplicationsPaginated(currentPage, pageSize);
-        // If we had a real backend search, we'd pass searchQuery too. 
-        // For now, let's filter the returned page client-side or assume the service handles it.
-        // Since my mock service doesn't handle search, I'll fetch 'all' then filter.
-        // Actually, let's just use the returned paginated data for the table, 
-        // and ignore search for this specific step unless I update the service to handle search.
-        // To keep it simple and consistent with the previous logic:
-
+        const { data } = await adminService.getDriverApplicationsPaginated(currentPage, pageSize);
+        // Mock client-side search logic fallback
         let displayData = data;
 
         if (searchQuery) {
-          // If searching, we might need a search endpoint. 
-          // Providing a simple client side fallback for the mock experience:
-          const allResult = await adminService.getDriverApplicationsPaginated(1, 100); // Fetch more for search
+          const allResult = await adminService.getDriverApplicationsPaginated(1, 100);
           displayData = allResult.data.filter(app =>
             app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             (app.email && app.email.toLowerCase().includes(searchQuery.toLowerCase()))
           );
-          // Verify 'name' vs 'fullName' in interface
-          // The interface has 'fullName', the mock service has 'name'. I should standardize.
-          // I'll update the service to return 'fullName' to match interface.
         }
 
-        // Mapping service 'name' to 'fullName' if needed
         const mappedData = displayData.map((d: any) => ({
           ...d,
           fullName: d.name || d.fullName,
@@ -55,6 +56,8 @@ export const DriverApplicationsList: React.FC = () => {
         setApplications(mappedData);
       } catch (err) {
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchApps();
@@ -62,7 +65,9 @@ export const DriverApplicationsList: React.FC = () => {
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      setSelectedDriverIds(applications.slice(0, pageSize).map(app => app.id));
+      // Logic modified to select only current page items for simplicity and UX
+      const pageIds = applications.slice((currentPage - 1) * pageSize, currentPage * pageSize).map(app => app.id);
+      setSelectedDriverIds(pageIds);
     } else {
       setSelectedDriverIds([]);
     }
@@ -82,7 +87,7 @@ export const DriverApplicationsList: React.FC = () => {
     setIsBulkApproving(true);
     try {
       await adminService.bulkApproveDocuments(selectedDriverIds);
-      alert('Bulk approval successful');
+      // alert('Bulk approval successful'); // Using UI feedback instead
       setApplications(prev => prev.filter(app => !selectedDriverIds.includes(app.id)));
       setSelectedDriverIds([]);
     } catch (error) {
@@ -97,7 +102,6 @@ export const DriverApplicationsList: React.FC = () => {
     setIsBulkRejectModalOpen(false);
     try {
       await adminService.bulkRejectDocuments(selectedDriverIds, reason);
-      alert('Bulk rejection successful');
       setApplications(prev => prev.filter(app => !selectedDriverIds.includes(app.id)));
       setSelectedDriverIds([]);
     } catch (error) {
@@ -110,159 +114,192 @@ export const DriverApplicationsList: React.FC = () => {
     return <DriverApplicationDetail applicationId={selectedAppId} onBack={() => setSelectedAppId(null)} />;
   }
 
-  // Pagination logic
+  // Client-side pagination logic wrapper (since we are doing hybrid mock/client)
   const totalPages = Math.ceil(applications.length / pageSize);
   const currentData = applications.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
-    <div className="bg-white shadow rounded-lg overflow-hidden space-y-4">
-      {/* Controls Header */}
-      <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
-        <div className="flex items-center gap-4 w-full sm:w-auto">
-          <h2 className="text-xl font-semibold text-gray-800">Applications</h2>
-          <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-            {applications.length} Found
-          </span>
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <RecentActors className="text-blue-600 dark:text-blue-400" />
+            Driver Applications
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Review and approve new driver registrations.</p>
         </div>
-
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          {/* Search Input (Story 79.16) */}
-          <input
-            type="text"
-            placeholder="Search name or email..."
-            className="border border-gray-300 rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full sm:w-64"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-
-          {/* Page Size Selector (Story 79.19) */}
-          <select
-            className="border border-gray-300 rounded px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-            value={pageSize}
-            onChange={(e) => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}
-          >
-            <option value={5}>5 / page</option>
-            <option value={10}>10 / page</option>
-            <option value={20}>20 / page</option>
-          </select>
+        <div className="flex bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-1">
+          <div className="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700">
+            Pending
+          </div>
+          <div className="px-4 py-2 text-sm font-bold text-slate-900 dark:text-white">
+            {applications.length}
+          </div>
         </div>
       </div>
 
-      {/* Bulk Actions Bar */}
-      {selectedDriverIds.length > 0 && (
-        <div className="px-6 py-2 bg-blue-50 border-b border-blue-100 flex items-center justify-between animate-in fade-in slide-in-from-top-1">
-          <span className="text-sm text-blue-800 font-medium">{selectedDriverIds.length} selected</span>
-          <div className="flex gap-2">
-            {/* Bulk Reject (Story 79.20) */}
-            <button
-              onClick={() => setIsBulkRejectModalOpen(true)}
-              className="bg-white border border-red-300 text-red-700 hover:bg-red-50 px-3 py-1.5 rounded text-sm font-medium transition-colors"
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden space-y-4">
+        {/* Controls Header */}
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="w-full sm:w-auto relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
+            <input
+              type="text"
+              placeholder="Search name or email..."
+              className="w-full sm:w-64 pl-9 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <span className="text-sm text-slate-500 dark:text-slate-400">Rows:</span>
+            <select
+              className="border border-slate-300 dark:border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 cursor-pointer"
+              value={pageSize}
+              onChange={(e) => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}
             >
-              Reject Selected
-            </button>
-            <button
-              onClick={handleBulkApprove}
-              disabled={isBulkApproving}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm font-medium transition-colors"
-            >
-              {isBulkApproving ? 'Approving...' : 'Approve Selected'}
-            </button>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+            </select>
           </div>
         </div>
-      )}
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th scope="col" className="px-6 py-3 text-left w-10">
-                <input
-                  type="checkbox"
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  checked={selectedDriverIds.length > 0 && selectedDriverIds.length === currentData.length}
-                  onChange={handleSelectAll}
-                />
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver Name</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {currentData.map(app => (
-              <tr key={app.id} className={`hover:bg-gray-50 transition-colors ${selectedDriverIds.includes(app.id) ? 'bg-blue-50' : ''}`}>
-                <td className="px-6 py-4 whitespace-nowrap">
+        {/* Bulk Actions Bar */}
+        {selectedDriverIds.length > 0 && (
+          <div className="px-6 py-2 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-100 dark:border-blue-800 flex items-center justify-between animate-in fade-in slide-in-from-top-1">
+            <span className="text-sm text-blue-800 dark:text-blue-300 font-medium flex items-center gap-2">
+              <CheckCircle fontSize="small" />
+              {selectedDriverIds.length} selected
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setIsBulkRejectModalOpen(true)}
+                className="flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-red-300 dark:border-red-500/50 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+              >
+                <Cancel fontSize="small" />
+                Reject Selected
+              </button>
+              <button
+                onClick={handleBulkApprove}
+                disabled={isBulkApproving}
+                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
+              >
+                <CheckCircle fontSize="small" />
+                {isBulkApproving ? 'Approving...' : 'Approve Selected'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-900">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left w-10">
                   <input
                     type="checkbox"
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    checked={selectedDriverIds.includes(app.id)}
-                    onChange={() => handleSelectOne(app.id)}
+                    className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 bg-white dark:bg-slate-700"
+                    checked={selectedDriverIds.length > 0 && currentData.every(d => selectedDriverIds.includes(d.id))}
+                    onChange={handleSelectAll}
                   />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{app.fullName}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.email || '-'}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.phone}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(app.applicationDate).toLocaleDateString()}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button
-                    onClick={() => setSelectedAppId(app.id)}
-                    className="text-blue-600 hover:text-blue-900 font-semibold"
-                  >
-                    Review
-                  </button>
-                </td>
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Driver Name</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Phone</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date</th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
               </tr>
-            ))}
-            {currentData.length === 0 && (
-              <tr>
-                <td colSpan={6} className="px-6 py-8 text-center text-gray-500 text-sm">
-                  No applications match your search.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination Footer */}
-      {totalPages > 1 && (
-        <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-          <div className="flex-1 flex justify-between sm:hidden">
-            <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Previous</button>
-            <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Next</button>
-          </div>
-          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{(currentPage - 1) * pageSize + 1}</span> to <span className="font-medium">{Math.min(currentPage * pageSize, applications.length)}</span> of <span className="font-medium">{applications.length}</span> results
-              </p>
-            </div>
-            <div>
-              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                {/* Simple pagination buttons */}
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === page ? 'z-10 bg-blue-50 border-blue-500 text-blue-600' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}`}
-                  >
-                    {page}
-                  </button>
-                ))}
-              </nav>
-            </div>
-          </div>
+            </thead>
+            <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+              {loading ? (
+                <tr><td colSpan={6} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">Loading applications...</td></tr>
+              ) : currentData.length === 0 ? (
+                <tr><td colSpan={6} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">No applications match your search.</td></tr>
+              ) : currentData.map(app => (
+                <tr key={app.id} className={`hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${selectedDriverIds.includes(app.id) ? 'bg-blue-50 dark:bg-blue-900/10' : ''}`}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <input
+                      type="checkbox"
+                      className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 bg-white dark:bg-slate-700"
+                      checked={selectedDriverIds.includes(app.id)}
+                      onChange={() => handleSelectOne(app.id)}
+                    />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-slate-100">{app.fullName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{app.email || '-'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{app.phone}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{new Date(app.applicationDate).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button
+                      onClick={() => setSelectedAppId(app.id)}
+                      className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 font-semibold flex items-center justify-end gap-1 w-full"
+                    >
+                      <Visibility fontSize="small" />
+                      Review
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      )}
 
-      <RejectionReasonModal
-        isOpen={isBulkRejectModalOpen}
-        onClose={() => setIsBulkRejectModalOpen(false)}
-        onConfirm={handleBulkReject}
-        title="Bulk Reject Applications"
-      />
+        {/* Pagination Footer */}
+        {totalPages > 1 && (
+          <div className="bg-white dark:bg-slate-800 px-6 py-4 flex items-center justify-between border-t border-slate-200 dark:border-slate-700">
+            <div className="flex-1 flex justify-between sm:hidden">
+              <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="relative inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-md text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700">Previous</button>
+              <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-md text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700">Next</button>
+            </div>
+            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-slate-700 dark:text-slate-400">
+                  Showing <span className="font-medium">{(currentPage - 1) * pageSize + 1}</span> to <span className="font-medium">{Math.min(currentPage * pageSize, applications.length)}</span> of <span className="font-medium">{applications.length}</span> results
+                </p>
+              </div>
+              <div>
+                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px gap-1" aria-label="Pagination">
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="relative inline-flex items-center px-2 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
+                  >
+                    <NavigateBefore fontSize="small" />
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md ${currentPage === page
+                          ? 'z-10 bg-blue-50 dark:bg-blue-900/30 border-blue-500 dark:border-blue-500 text-blue-600 dark:text-blue-400'
+                          : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
+                        }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="relative inline-flex items-center px-2 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
+                  >
+                    <NavigateNext fontSize="small" />
+                  </button>
+                </nav>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <RejectionReasonModal
+          isOpen={isBulkRejectModalOpen}
+          onClose={() => setIsBulkRejectModalOpen(false)}
+          onConfirm={handleBulkReject}
+          title="Bulk Reject Applications"
+        />
+      </div>
     </div>
   );
 };

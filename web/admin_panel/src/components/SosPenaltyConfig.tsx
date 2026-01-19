@@ -1,4 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Sos,
+  Gavel,
+  MonetizationOn,
+  RemoveCircle,
+  Save,
+  CheckCircle,
+  Warning
+} from '@mui/icons-material';
 
 interface Badge {
   id: string;
@@ -17,100 +26,161 @@ export const SosPenaltyConfig: React.FC = () => {
     feeAmount: 500,
   });
   const [badges, setBadges] = useState<Badge[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   useEffect(() => {
-    // Mock fetch current config
-    // setConfig({ type: 'FEE', feeAmount: 1000 });
-
-    // Mock fetch available badges (from Story 4.4)
-    setBadges([
-      { id: 'b1', name: 'Promo Qualified' },
-      { id: 'b2', name: 'Super Driver' },
-      { id: 'b3', name: 'Safe Driver' },
-    ]);
+    // Mock fetch
+    setTimeout(() => {
+      setBadges([
+        { id: 'b1', name: 'Promo Qualified' },
+        { id: 'b2', name: 'Super Driver' },
+        { id: 'b3', name: 'Safe Driver' },
+      ]);
+      setLoading(false);
+    }, 600);
   }, []);
 
   const handleSave = () => {
     if (config.type === 'FEE' && (config.feeAmount === undefined || config.feeAmount <= 0)) {
-      alert('Please enter a valid fee amount.');
+      // Ideally show toast
       return;
     }
     if (config.type === 'REVOKE_BADGE' && !config.badgeId) {
-      alert('Please select a badge to revoke.');
       return;
     }
 
-    console.log('Saving SOS Penalty Config:', config);
-    // API Call: PUT /admin/config/sos-penalty
-    alert('Configuration saved successfully.');
+    setSaveStatus('saving');
+    setTimeout(() => {
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    }, 1000);
   };
 
-  return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">SOS Misuse Penalty Configuration</h1>
+  if (loading) return <div className="p-8 text-center text-slate-500 animate-pulse">Loading configuration...</div>;
 
-      <div className="bg-white shadow rounded p-6 space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Penalty Type</label>
-          <div className="flex gap-4">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="penaltyType"
-                checked={config.type === 'FEE'}
-                onChange={() => setConfig({ ...config, type: 'FEE' })}
-              />
-              <span>Monetary Fee</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="penaltyType"
-                checked={config.type === 'REVOKE_BADGE'}
-                onChange={() => setConfig({ ...config, type: 'REVOKE_BADGE' })}
-              />
-              <span>Revoke Badge</span>
-            </label>
+  return (
+    <div className="max-w-3xl mx-auto space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <Sos className="text-red-600 dark:text-red-500" />
+          SOS Misuse Penalty
+        </h1>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">Configure automated penalties for false SOS alerts.</p>
+      </div>
+
+      <div className="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-slate-200 dark:border-slate-700 p-6 md:p-8">
+
+        {/* WARNING BANNER */}
+        <div className="mb-8 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-lg p-4 flex gap-3">
+          <Warning className="text-amber-600 dark:text-amber-500 flex-shrink-0" />
+          <div>
+            <h4 className="font-bold text-amber-800 dark:text-amber-400 text-sm">Vital Configuration</h4>
+            <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
+              These penalties apply automatically when an SOS alert is marked as "False Alarm" or "Misuse" by the support team. Please set carefully.
+            </p>
           </div>
         </div>
 
-        {config.type === 'FEE' ? (
+        <div className="space-y-8">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Fee Amount (KES)</label>
-            <input
-              type="number"
-              className="mt-1 block w-full border rounded px-3 py-2"
-              value={config.feeAmount || ''}
-              onChange={(e) => setConfig({ ...config, feeAmount: parseFloat(e.target.value) })}
-            />
-          </div>
-        ) : (
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Select Badge to Revoke</label>
-            <select
-              className="mt-1 block w-full border rounded px-3 py-2"
-              value={config.badgeId || ''}
-              onChange={(e) => setConfig({ ...config, badgeId: e.target.value })}
-            >
-              <option value="">-- Select Badge --</option>
-              {badges.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.name}
-                </option>
-              ))}
-            </select>
-            <p className="text-sm text-gray-500 mt-1">
-              Drivers found misusing the SOS feature will lose this badge and its associated benefits.
-            </p>
-          </div>
-        )}
+            <label className="block text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <Gavel fontSize="small" className="text-slate-400" />
+              Select Penalty Type
+            </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <label className={`relative flex items-start p-4 cursor-pointer rounded-lg border-2 transition-all ${config.type === 'FEE'
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/10'
+                  : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'
+                }`}>
+                <div className="flex items-center h-5">
+                  <input
+                    type="radio"
+                    name="penaltyType"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    checked={config.type === 'FEE'}
+                    onChange={() => setConfig({ ...config, type: 'FEE' })}
+                  />
+                </div>
+                <div className="ml-3">
+                  <span className={`block text-sm font-bold ${config.type === 'FEE' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-900 dark:text-white'}`}>Monetary Fine</span>
+                  <span className="block text-xs text-slate-500 dark:text-slate-400 mt-1">Deduct a fixed amount from the driver's wallet.</span>
+                </div>
+              </label>
 
-        <div className="pt-4 flex justify-end">
+              <label className={`relative flex items-start p-4 cursor-pointer rounded-lg border-2 transition-all ${config.type === 'REVOKE_BADGE'
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/10'
+                  : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'
+                }`}>
+                <div className="flex items-center h-5">
+                  <input
+                    type="radio"
+                    name="penaltyType"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    checked={config.type === 'REVOKE_BADGE'}
+                    onChange={() => setConfig({ ...config, type: 'REVOKE_BADGE' })}
+                  />
+                </div>
+                <div className="ml-3">
+                  <span className={`block text-sm font-bold ${config.type === 'REVOKE_BADGE' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-900 dark:text-white'}`}>Revoke Privilege</span>
+                  <span className="block text-xs text-slate-500 dark:text-slate-400 mt-1">Remove a specific badge or qualification.</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+            {config.type === 'FEE' ? (
+              <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg border border-slate-100 dark:border-slate-600">
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                  <MonetizationOn fontSize="small" className="text-green-600" />
+                  Fee Amount (KES)
+                </label>
+                <input
+                  type="number"
+                  className="block w-full md:w-1/2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-lg font-mono font-bold"
+                  value={config.feeAmount || ''}
+                  onChange={(e) => setConfig({ ...config, feeAmount: parseFloat(e.target.value) })}
+                  placeholder="e.g. 500"
+                />
+              </div>
+            ) : (
+              <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg border border-slate-100 dark:border-slate-600">
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                  <RemoveCircle fontSize="small" className="text-red-600" />
+                  Select Badge to Revoke
+                </label>
+                <select
+                  className="block w-full md:w-1/2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
+                  value={config.badgeId || ''}
+                  onChange={(e) => setConfig({ ...config, badgeId: e.target.value })}
+                >
+                  <option value="">-- Choose Credential --</option>
+                  {badges.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 italic">
+                  Drivers will need to re-qualify for this badge manually if lost.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="pt-8 flex justify-end">
           <button
             onClick={handleSave}
-            className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700"
+            disabled={saveStatus !== 'idle'}
+            className={`flex items-center gap-2 px-8 py-3 rounded-lg font-bold shadow-md transition-all transform active:scale-95 ${saveStatus === 'saved'
+                ? 'bg-green-600 text-white'
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
           >
-            Save Penalty Rule
+            {saveStatus === 'saving' ? 'Saving Rule...' : saveStatus === 'saved' ? 'Saved' : 'Save Configuration'}
+            {saveStatus === 'saved' ? <CheckCircle fontSize="small" /> : <Save fontSize="small" />}
           </button>
         </div>
       </div>

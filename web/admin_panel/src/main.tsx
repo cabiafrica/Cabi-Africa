@@ -6,14 +6,21 @@ import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 
 console.log('--- MAIN.TSX STARTING ---');
-console.log('--- RENDERING ROOT ---');
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-        <BrowserRouter>
-            <AuthProvider>
-                <App />
-            </AuthProvider>
-        </BrowserRouter>
-    </React.StrictMode>,
-)
+try {
+    const root = document.getElementById('root');
+    console.log('--- ROOT ELEMENT:', root);
+
+    ReactDOM.createRoot(root!).render(
+        <React.StrictMode>
+            <BrowserRouter>
+                <AuthProvider>
+                    <App />
+                </AuthProvider>
+            </BrowserRouter>
+        </React.StrictMode>,
+    );
+    console.log('--- RENDER CALLED ---');
+} catch (error) {
+    console.error('--- RENDER ERROR:', error);
+}

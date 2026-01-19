@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Box,
-  Card,
-  CardContent,
+
   Typography,
   Table,
   TableBody,
@@ -12,11 +11,6 @@ import {
   TableRow,
   Paper,
   Chip,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   Grid,
   IconButton,
   Tooltip,
@@ -289,18 +283,18 @@ export function JobActivitiesDashboard() {
     <Box>
       {/* Header */}
       <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h4" fontWeight="bold">
+        <Typography variant="h4" fontWeight="bold" className="text-slate-900 dark:text-white">
           Job Activities
         </Typography>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Tooltip title="Refresh">
             <IconButton onClick={fetchRides} color="primary">
-              <Refresh />
+              <Refresh className="text-blue-600 dark:text-blue-400" />
             </IconButton>
           </Tooltip>
           <Tooltip title="Export to CSV">
             <IconButton onClick={handleExport} color="primary">
-              <Download />
+              <Download className="text-blue-600 dark:text-blue-400" />
             </IconButton>
           </Tooltip>
         </Box>
@@ -309,149 +303,138 @@ export function JobActivitiesDashboard() {
       {/* Statistics Cards */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Total Rides
-              </Typography>
-              <Typography variant="h4" fontWeight="bold">
-                {stats.total}
-              </Typography>
-            </CardContent>
-          </Card>
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border border-slate-200 dark:border-slate-700">
+            <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
+              Total Rides
+            </Typography>
+            <Typography variant="h4" fontWeight="bold" className="text-slate-900 dark:text-white">
+              {stats.total}
+            </Typography>
+          </div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Active Rides
-              </Typography>
-              <Typography variant="h4" fontWeight="bold" color="primary">
-                {stats.inProgress + stats.assigned}
-              </Typography>
-            </CardContent>
-          </Card>
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border border-slate-200 dark:border-slate-700">
+            <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
+              Active Rides
+            </Typography>
+            <Typography variant="h4" fontWeight="bold" className="text-blue-600 dark:text-blue-400">
+              {stats.inProgress + stats.assigned}
+            </Typography>
+          </div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Completed
-              </Typography>
-              <Typography variant="h4" fontWeight="bold" color="success.main">
-                {stats.completed}
-              </Typography>
-            </CardContent>
-          </Card>
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border border-slate-200 dark:border-slate-700">
+            <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
+              Completed
+            </Typography>
+            <Typography variant="h4" fontWeight="bold" className="text-green-600 dark:text-green-400">
+              {stats.completed}
+            </Typography>
+          </div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom>
-                Total Revenue
-              </Typography>
-              <Typography variant="h4" fontWeight="bold" color="success.main">
-                KES {stats.totalRevenue.toLocaleString()}
-              </Typography>
-            </CardContent>
-          </Card>
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border border-slate-200 dark:border-slate-700">
+            <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
+              Total Revenue
+            </Typography>
+            <Typography variant="h4" fontWeight="bold" className="text-green-600 dark:text-green-400">
+              KES {stats.totalRevenue.toLocaleString()}
+            </Typography>
+          </div>
         </Grid>
       </Grid>
 
       {/* Filters */}
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow mb-6 border border-slate-200 dark:border-slate-700">
+        <div className="p-4">
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={4}>
-              <TextField
-                fullWidth
-                label="Search"
-                placeholder="Search by passenger, driver, or ID"
+              <input
+                type="text"
+                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
+                placeholder="Search by passenger, driver, or ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                size="small"
               />
             </Grid>
             <Grid item xs={12} sm={3}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Status</InputLabel>
-                <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} label="Status">
-                  <MenuItem value="ALL">All Statuses</MenuItem>
-                  <MenuItem value="REQUESTED">Requested</MenuItem>
-                  <MenuItem value="MATCHING">Matching</MenuItem>
-                  <MenuItem value="DRIVER_ASSIGNED">Driver Assigned</MenuItem>
-                  <MenuItem value="DRIVER_ARRIVED">Driver Arrived</MenuItem>
-                  <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
-                  <MenuItem value="COMPLETED">Completed</MenuItem>
-                  <MenuItem value="CANCELLED">Cancelled</MenuItem>
-                </Select>
-              </FormControl>
+              <select
+                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="ALL">All Statuses</option>
+                <option value="REQUESTED">Requested</option>
+                <option value="MATCHING">Matching</option>
+                <option value="DRIVER_ASSIGNED">Driver Assigned</option>
+                <option value="DRIVER_ARRIVED">Driver Arrived</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="CANCELLED">Cancelled</option>
+              </select>
             </Grid>
             <Grid item xs={12} sm={3}>
-              <TextField
-                fullWidth
+              <input
                 type="date"
-                label="Date"
+                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none placeholder-slate-400"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                size="small"
-                InputLabelProps={{ shrink: true }}
               />
             </Grid>
             <Grid item xs={12} sm={2}>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="body2" className="text-slate-500 dark:text-slate-400">
                 {filteredRides.length} results
               </Typography>
             </Grid>
           </Grid>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Rides Table */}
-      <Card>
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
         <TableContainer>
           <Table>
-            <TableHead>
+            <TableHead className="bg-slate-50 dark:bg-slate-900">
               <TableRow>
-                <TableCell>Ride ID</TableCell>
-                <TableCell>Passenger</TableCell>
-                <TableCell>Driver</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Pickup</TableCell>
-                <TableCell>Dropoff</TableCell>
-                <TableCell>Fare</TableCell>
-                <TableCell>Distance</TableCell>
-                <TableCell>Time</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell className="text-slate-500 dark:text-slate-400 font-semibold">Ride ID</TableCell>
+                <TableCell className="text-slate-500 dark:text-slate-400 font-semibold">Passenger</TableCell>
+                <TableCell className="text-slate-500 dark:text-slate-400 font-semibold">Driver</TableCell>
+                <TableCell className="text-slate-500 dark:text-slate-400 font-semibold">Status</TableCell>
+                <TableCell className="text-slate-500 dark:text-slate-400 font-semibold">Pickup</TableCell>
+                <TableCell className="text-slate-500 dark:text-slate-400 font-semibold">Dropoff</TableCell>
+                <TableCell className="text-slate-500 dark:text-slate-400 font-semibold">Fare</TableCell>
+                <TableCell className="text-slate-500 dark:text-slate-400 font-semibold">Distance</TableCell>
+                <TableCell className="text-slate-500 dark:text-slate-400 font-semibold">Time</TableCell>
+                <TableCell className="text-slate-500 dark:text-slate-400 font-semibold">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={10} align="center">
+                  <TableCell colSpan={10} align="center" className="text-slate-500 dark:text-slate-400 py-8">
                     Loading...
                   </TableCell>
                 </TableRow>
               ) : filteredRides.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={10} align="center">
+                  <TableCell colSpan={10} align="center" className="text-slate-500 dark:text-slate-400 py-8">
                     No rides found
                   </TableCell>
                 </TableRow>
               ) : (
                 filteredRides.map((ride) => (
-                  <TableRow key={ride.id} hover>
+                  <TableRow key={ride.id} hover className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors border-b border-slate-200 dark:border-slate-700">
                     <TableCell>
-                      <Typography variant="body2" fontFamily="monospace">
+                      <Typography variant="body2" fontFamily="monospace" className="text-slate-900 dark:text-slate-100">
                         {ride.id.substring(0, 8)}...
                       </Typography>
                     </TableCell>
                     <TableCell>
                       <Box>
-                        <Typography variant="body2" fontWeight="medium">
+                        <Typography variant="body2" fontWeight="medium" className="text-slate-900 dark:text-slate-100">
                           {ride.passengerName}
                         </Typography>
-                        <Typography variant="caption" color="textSecondary">
+                        <Typography variant="caption" className="text-slate-500 dark:text-slate-400">
                           {ride.passengerPhone}
                         </Typography>
                       </Box>
@@ -459,15 +442,15 @@ export function JobActivitiesDashboard() {
                     <TableCell>
                       {ride.driverName ? (
                         <Box>
-                          <Typography variant="body2" fontWeight="medium">
+                          <Typography variant="body2" fontWeight="medium" className="text-slate-900 dark:text-slate-100">
                             {ride.driverName}
                           </Typography>
-                          <Typography variant="caption" color="textSecondary">
+                          <Typography variant="caption" className="text-slate-500 dark:text-slate-400">
                             {ride.driverPhone}
                           </Typography>
                         </Box>
                       ) : (
-                        <Typography variant="body2" color="textSecondary">
+                        <Typography variant="body2" className="text-slate-400 italic">
                           Not assigned
                         </Typography>
                       )}
@@ -476,37 +459,37 @@ export function JobActivitiesDashboard() {
                       <Chip label={formatStatus(ride.status)} color={getStatusColor(ride.status)} size="small" />
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body2" noWrap sx={{ maxWidth: 150 }}>
+                      <Typography variant="body2" noWrap sx={{ maxWidth: 150 }} className="text-slate-900 dark:text-slate-100">
                         {ride.pickupLocation.address}
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body2" noWrap sx={{ maxWidth: 150 }}>
+                      <Typography variant="body2" noWrap sx={{ maxWidth: 150 }} className="text-slate-900 dark:text-slate-100">
                         {ride.dropoffLocation.address}
                       </Typography>
                     </TableCell>
                     <TableCell>
                       {ride.fare ? (
-                        <Typography variant="body2" fontWeight="medium">
+                        <Typography variant="body2" fontWeight="medium" className="text-slate-900 dark:text-slate-100">
                           KES {ride.fare.toLocaleString()}
                         </Typography>
                       ) : (
-                        <Typography variant="body2" color="textSecondary">
+                        <Typography variant="body2" className="text-slate-400">
                           N/A
                         </Typography>
                       )}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-slate-900 dark:text-slate-100">
                       {ride.distance ? `${ride.distance.toFixed(1)} km` : 'N/A'}
                     </TableCell>
                     <TableCell>
-                      <Typography variant="caption">
+                      <Typography variant="caption" className="text-slate-500 dark:text-slate-400">
                         {new Date(ride.createdAt).toLocaleString()}
                       </Typography>
                     </TableCell>
                     <TableCell>
                       <Tooltip title="View Details">
-                        <IconButton size="small" onClick={() => handleViewDetails(ride)} color="primary">
+                        <IconButton size="small" onClick={() => handleViewDetails(ride)} className="text-blue-600 dark:text-blue-400">
                           <Visibility fontSize="small" />
                         </IconButton>
                       </Tooltip>
@@ -517,7 +500,7 @@ export function JobActivitiesDashboard() {
             </TableBody>
           </Table>
         </TableContainer>
-      </Card>
+      </div>
 
       {/* Ride Details Dialog */}
       <Dialog open={detailsOpen} onClose={() => setDetailsOpen(false)} maxWidth="md" fullWidth>
