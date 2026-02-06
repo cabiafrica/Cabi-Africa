@@ -1,10 +1,17 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 /// A service class responsible for all document-related API communication.
 class DocumentService {
-  final String _baseUrl = 'http://localhost:3333/api';
+  String get _baseUrl {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return 'http://10.0.2.2:3333/api';
+    }
+    return 'http://localhost:3333/api';
+  }
+
   final http.Client _client;
 
   DocumentService({http.Client? client}) : _client = client ?? http.Client();

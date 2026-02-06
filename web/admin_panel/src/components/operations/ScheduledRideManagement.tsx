@@ -1,16 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { adminService } from '../../services/adminService';
 import {
-    Event, // Changed from CalendarMonth to Event for safety
-    AccessTime,
-    Person,
-    LocationOn,
-    Cancel,
-    CheckCircle,
-    Schedule,
-    Search,
-    FilterList,
-    MoreVert
+    Box,
+    Typography,
+    Paper,
+    Grid,
+    TextField,
+    InputAdornment,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Chip,
+    IconButton,
+    Tooltip,
+    Card,
+    CardContent,
+    Avatar,
+    useTheme,
+    alpha
+} from '@mui/material';
+import {
+    Event as EventIcon,
+    AccessTime as AccessTimeIcon,
+    Person as PersonIcon,
+    LocationOn as LocationOnIcon,
+    Search as SearchIcon,
+    MoreVert as MoreVertIcon,
+    Schedule as ScheduleIcon,
+    CheckCircle as CheckCircleIcon,
+    Cancel as CancelIcon,
+    DirectionsCar as CarIcon,
+    Timeline as TimelineIcon
 } from '@mui/icons-material';
 
 interface ScheduledRide {
@@ -26,6 +53,7 @@ interface ScheduledRide {
 }
 
 export const ScheduledRideManagement: React.FC = () => {
+    const theme = useTheme();
     console.log("ScheduledRideManagement: Component Rendering...");
 
     const [rides, setRides] = useState<ScheduledRide[]>([]);
@@ -40,12 +68,8 @@ export const ScheduledRideManagement: React.FC = () => {
 
     const fetchScheduledRides = async () => {
         setLoading(true);
-        console.log("ScheduledRideManagement: Fetching rides...");
         try {
             const data = await adminService.getScheduledRides();
-            console.log("ScheduledRideManagement: Fetched data", data);
-
-            // Basic validation/mapping
             let mapped: ScheduledRide[] = [];
 
             if (Array.isArray(data) && data.length > 0) {
@@ -60,7 +84,6 @@ export const ScheduledRideManagement: React.FC = () => {
                     status: d.status || 'PENDING'
                 }));
             } else {
-                console.log("ScheduledRideManagement: Data empty or invalid, using mock");
                 mapped = generateMockScheduledRides();
             }
             setRides(mapped);
@@ -84,158 +107,264 @@ export const ScheduledRideManagement: React.FC = () => {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'PENDING': return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-700';
-            case 'ASSIGNED': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-700';
-            case 'COMPLETED': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-700';
-            case 'CANCELLED': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-700';
-            default: return 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300';
+            case 'PENDING': return 'warning';
+            case 'ASSIGNED': return 'info';
+            case 'COMPLETED': return 'success';
+            case 'CANCELLED': return 'error';
+            default: return 'default';
         }
     };
 
-    if (error) {
-        return <div className="p-4 text-red-500">Error: {error}</div>;
-    }
+    const stats = {
+        total: rides.length,
+        pending: rides.filter(r => r.status === 'PENDING').length,
+        assigned: rides.filter(r => r.status === 'ASSIGNED').length,
+        totalValue: rides.reduce((acc, curr) => acc + curr.estimatedFare, 0)
+    };
 
     return (
-        <div className="space-y-6">
-            {/* Header & Stats */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <Event className="text-blue-600 dark:text-blue-400" />
+        <Box sx={{ p: { xs: 2, md: 0 }, color: 'text.primary' }}>
+            {/* Header Section */}
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+                <Box>
+                    <Typography variant="h4" fontWeight="800" sx={{
+                        background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        mb: 1
+                    }}>
                         Scheduled Rides
-                    </h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">Manage upcoming bookings and assignments</p>
-                </div>
-                <div className="flex gap-3">
-                    <div className="bg-white dark:bg-slate-800 p-3 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 flex items-center gap-3">
-                        <div className="p-2 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400">
-                            <Schedule fontSize="small" />
-                        </div>
-                        <div>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Upcoming</p>
-                            <p className="text-lg font-bold text-slate-900 dark:text-white">{rides.filter(r => r.status === 'PENDING' || r.status === 'ASSIGNED').length}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                        Manage upcoming bookings and assignments
+                    </Typography>
+                </Box>
+            </Box>
 
-            {/* Filters */}
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
-                <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="flex-1 relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                        <input
-                            type="text"
+            {/* Stats Cards */}
+            <Grid container spacing={3} mb={4}>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Paper sx={{
+                        p: 3,
+                        background: alpha(theme.palette.primary.main, 0.05),
+                        border: '1px solid',
+                        borderColor: alpha(theme.palette.primary.main, 0.1),
+                        borderRadius: 4
+                    }}>
+                        <Box display="flex" alignItems="center" justifyContent="space-between">
+                            <Box>
+                                <Typography variant="caption" color="text.secondary" fontWeight="bold">TOTAL SCHEDULED</Typography>
+                                <Typography variant="h4" fontWeight="bold" sx={{ mt: 1 }}>{stats.total}</Typography>
+                            </Box>
+                            <Avatar sx={{ bgcolor: alpha(theme.palette.primary.main, 0.2), color: theme.palette.primary.main }}>
+                                <EventIcon />
+                            </Avatar>
+                        </Box>
+                    </Paper>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Paper sx={{
+                        p: 3,
+                        background: alpha(theme.palette.warning.main, 0.05),
+                        border: '1px solid',
+                        borderColor: alpha(theme.palette.warning.main, 0.1),
+                        borderRadius: 4
+                    }}>
+                        <Box display="flex" alignItems="center" justifyContent="space-between">
+                            <Box>
+                                <Typography variant="caption" color="text.secondary" fontWeight="bold">PENDING</Typography>
+                                <Typography variant="h4" fontWeight="bold" sx={{ mt: 1, color: theme.palette.warning.main }}>{stats.pending}</Typography>
+                            </Box>
+                            <Avatar sx={{ bgcolor: alpha(theme.palette.warning.main, 0.2), color: theme.palette.warning.main }}>
+                                <ScheduleIcon />
+                            </Avatar>
+                        </Box>
+                    </Paper>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Paper sx={{
+                        p: 3,
+                        background: alpha(theme.palette.info.main, 0.05),
+                        border: '1px solid',
+                        borderColor: alpha(theme.palette.info.main, 0.1),
+                        borderRadius: 4
+                    }}>
+                        <Box display="flex" alignItems="center" justifyContent="space-between">
+                            <Box>
+                                <Typography variant="caption" color="text.secondary" fontWeight="bold">ASSIGNED</Typography>
+                                <Typography variant="h4" fontWeight="bold" sx={{ mt: 1, color: theme.palette.info.main }}>{stats.assigned}</Typography>
+                            </Box>
+                            <Avatar sx={{ bgcolor: alpha(theme.palette.info.main, 0.2), color: theme.palette.info.main }}>
+                                <CarIcon />
+                            </Avatar>
+                        </Box>
+                    </Paper>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Paper sx={{
+                        p: 3,
+                        background: alpha(theme.palette.success.main, 0.05),
+                        border: '1px solid',
+                        borderColor: alpha(theme.palette.success.main, 0.1),
+                        borderRadius: 4
+                    }}>
+                        <Box display="flex" alignItems="center" justifyContent="space-between">
+                            <Box>
+                                <Typography variant="caption" color="text.secondary" fontWeight="bold">EST. VALUE</Typography>
+                                <Typography variant="h4" fontWeight="bold" sx={{ mt: 1, color: theme.palette.success.main }}>
+                                    {stats.totalValue.toLocaleString()}
+                                </Typography>
+                            </Box>
+                            <Avatar sx={{ bgcolor: alpha(theme.palette.success.main, 0.2), color: theme.palette.success.main }}>
+                                <TimelineIcon />
+                            </Avatar>
+                        </Box>
+                    </Paper>
+                </Grid>
+            </Grid>
+
+            {/* Filters & Control */}
+            <Paper sx={{ p: 2, mb: 4, borderRadius: 3, backdropFilter: 'blur(20px)', background: alpha(theme.palette.background.paper, 0.8) }}>
+                <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            fullWidth
+                            variant="outlined"
                             placeholder="Search passenger, location..."
-                            className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
                             value={searchQuery}
-                            onChange={e => setSearchQuery(e.target.value)}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon color="action" />
+                                    </InputAdornment>
+                                ),
+                                sx: { borderRadius: 2 }
+                            }}
+                            size="small"
                         />
-                    </div>
-                    <div className="w-full sm:w-48">
-                        <select
-                            className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none appearance-none"
-                            value={filterStatus}
-                            onChange={e => setFilterStatus(e.target.value)}
-                        >
-                            <option value="ALL">All Statuses</option>
-                            <option value="PENDING">Pending</option>
-                            <option value="ASSIGNED">Assigned</option>
-                            <option value="COMPLETED">Completed</option>
-                            <option value="CANCELLED">Cancelled</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                        <FormControl fullWidth size="small">
+                            <InputLabel>Filter Status</InputLabel>
+                            <Select
+                                value={filterStatus}
+                                label="Filter Status"
+                                onChange={(e) => setFilterStatus(e.target.value)}
+                                sx={{ borderRadius: 2 }}
+                            >
+                                <MenuItem value="ALL">All Statuses</MenuItem>
+                                <MenuItem value="PENDING">Pending</MenuItem>
+                                <MenuItem value="ASSIGNED">Assigned</MenuItem>
+                                <MenuItem value="COMPLETED">Completed</MenuItem>
+                                <MenuItem value="CANCELLED">Cancelled</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                </Grid>
+            </Paper>
 
-            {/* Rides List */}
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                        <thead className="bg-slate-50 dark:bg-slate-900">
-                            <tr>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Time & Date</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Passenger</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Route</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Fare (Est)</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
-                                <th scope="col" className="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
-                            {loading ? (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">Loading scheduled rides...</td>
-                                </tr>
-                            ) : filteredRides.length === 0 ? (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
-                                        <div className="flex flex-col items-center justify-center">
-                                            <Event className="text-slate-300 dark:text-slate-600 text-5xl mb-3" />
-                                            <p>No scheduled rides found</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ) : (
-                                filteredRides.map((ride) => (
-                                    <tr key={ride.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center text-sm text-slate-900 dark:text-slate-100 font-medium">
-                                                <AccessTime className="mr-2 text-slate-400" fontSize="small" />
-                                                {new Date(ride.pickupTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            </div>
-                                            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 pl-7">
-                                                {new Date(ride.pickupTime).toLocaleDateString()}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center">
-                                                <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300 mr-3">
-                                                    <Person fontSize="small" />
-                                                </div>
-                                                <div>
-                                                    <div className="text-sm font-medium text-slate-900 dark:text-slate-100">{ride.passengerName}</div>
-                                                    <div className="text-xs text-slate-500 dark:text-slate-400">{ride.passengerPhone}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="text-sm space-y-1">
-                                                <div className="flex items-start">
-                                                    <div className="w-2 h-2 mt-1.5 rounded-full bg-green-500 mr-2 flex-shrink-0"></div>
-                                                    <span className="text-slate-700 dark:text-slate-300 truncate max-w-[200px]" title={ride.pickupLocation}>{ride.pickupLocation}</span>
-                                                </div>
-                                                <div className="flex items-start">
-                                                    <div className="w-2 h-2 mt-1.5 rounded-full bg-red-500 mr-2 flex-shrink-0"></div>
-                                                    <span className="text-slate-700 dark:text-slate-300 truncate max-w-[200px]" title={ride.dropoffLocation}>{ride.dropoffLocation}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300 font-medium">
+            {/* Main Data Table */}
+            <TableContainer component={Paper} elevation={0} sx={{
+                borderRadius: 4,
+                border: '1px solid',
+                borderColor: 'divider',
+                background: alpha(theme.palette.background.paper, 0.5)
+            }}>
+                <Table>
+                    <TableHead sx={{ bgcolor: alpha(theme.palette.primary.main, 0.05) }}>
+                        <TableRow>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Time</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Passenger</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Route Information</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Est. Fare</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+                            <TableCell align="right" sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan={6} align="center" sx={{ py: 6 }}>
+                                    <Typography color="text.secondary">Loading scheduled rides...</Typography>
+                                </TableCell>
+                            </TableRow>
+                        ) : filteredRides.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={6} align="center" sx={{ py: 8 }}>
+                                    <Box display="flex" flexDirection="column" alignItems="center">
+                                        <EventIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
+                                        <Typography variant="h6" color="text.secondary">No scheduled rides found</Typography>
+                                    </Box>
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            filteredRides.map((ride) => (
+                                <TableRow key={ride.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                    <TableCell>
+                                        <Box display="flex" alignItems="center">
+                                            <AccessTimeIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+                                            <Box>
+                                                <Typography variant="body2" fontWeight="medium">
+                                                    {new Date(ride.pickupTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary">
+                                                    {new Date(ride.pickupTime).toLocaleDateString()}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Box display="flex" alignItems="center">
+                                            <Avatar sx={{ width: 32, height: 32, mr: 1.5, bgcolor: alpha(theme.palette.secondary.main, 0.1), color: theme.palette.secondary.main }}>
+                                                <PersonIcon fontSize="small" />
+                                            </Avatar>
+                                            <Box>
+                                                <Typography variant="body2" fontWeight="medium">{ride.passengerName}</Typography>
+                                                <Typography variant="caption" color="text.secondary">{ride.passengerPhone}</Typography>
+                                            </Box>
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Box sx={{ maxWidth: 350 }}>
+                                            <Box display="flex" alignItems="center" mb={0.5}>
+                                                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'success.main', mr: 2 }} />
+                                                <Typography variant="body2" noWrap>{ride.pickupLocation}</Typography>
+                                            </Box>
+                                            <Box display="flex" alignItems="center">
+                                                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'error.main', mr: 2 }} />
+                                                <Typography variant="body2" noWrap>{ride.dropoffLocation}</Typography>
+                                            </Box>
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography variant="body2" fontWeight="bold">
                                             KES {ride.estimatedFare.toLocaleString()}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusColor(ride.status)}`}>
-                                                {ride.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button className="text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                                <MoreVert />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Chip
+                                            label={ride.status}
+                                            size="small"
+                                            color={getStatusColor(ride.status) as any}
+                                            variant="outlined"
+                                            sx={{ fontWeight: 'bold', borderWidth: 2 }}
+                                        />
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <IconButton size="small">
+                                            <MoreVertIcon />
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Box>
     );
 };
-
 
 // Helper to generate mock data if API fails or returns empty in dev
 function generateMockScheduledRides(): ScheduledRide[] {

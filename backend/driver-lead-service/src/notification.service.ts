@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Notification, NotificationChannel, NotificationProvider } from './notifications/notification.provider';
-import { EmailProvider } from './notifications/email.provider';
-import { SmsProvider } from './notifications/sms.provider';
-import { PushProvider } from './notifications/push.provider';
+import { Notification, NotificationChannel, NotificationProvider } from './notification.provider';
+import { EmailProvider } from './email.provider';
+import { SmsProvider } from './sms.provider';
 
 @Injectable()
 export class NotificationService {
@@ -12,11 +11,9 @@ export class NotificationService {
   constructor(
     private readonly emailProvider: EmailProvider,
     private readonly smsProvider: SmsProvider,
-    private readonly pushProvider: PushProvider,
   ) {
     this.registerProvider(emailProvider);
     this.registerProvider(smsProvider);
-    this.registerProvider(pushProvider);
   }
 
   private registerProvider(provider: NotificationProvider) {

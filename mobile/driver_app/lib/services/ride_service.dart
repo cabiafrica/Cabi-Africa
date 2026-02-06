@@ -6,12 +6,12 @@ import 'package:http/http.dart' as http;
 class RideService {
   String get _baseUrl {
     if (kIsWeb) {
-      return 'http://localhost:3334/api';
+      return 'http://localhost:3333/api';
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:3334/api';
+      return 'http://10.0.2.2:3333/api';
     }
-    return 'http://localhost:3334/api';
+    return 'http://localhost:3333/api';
   }
 
   Future<bool> getDriverStatus(String driverId) async {

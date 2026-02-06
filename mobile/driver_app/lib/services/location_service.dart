@@ -12,12 +12,12 @@ class LocationService {
   // Base URL for Dispatch Service
   String get _baseUrl {
     if (kIsWeb) {
-      return 'http://localhost:3334';
+      return 'http://localhost:3333';
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:3334';
+      return 'http://10.0.2.2:3333';
     }
-    return 'http://localhost:3334';
+    return 'http://localhost:3333';
   }
 
   void init(String driverId) {

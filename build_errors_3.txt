@@ -1,0 +1,184 @@
+﻿
+ NX   Running target build for project driver-lead-service and 1 task it depends on:
+
+
+
+> nx run user-service:build  [local cache]
+
+
+> nx run driver-lead-service:build
+
+> npx webpack-cli build --node-env=production
+
+chunk (runtime: main) [1m[32mmain.js[39m[22m (main) 61.5 KiB [1m[33m[entry][39m[22m [1m[32m[rendered][39m[22m
+
+[1m[31mERROR[39m[22m in [1m./src/auth/auth.controller.ts:[32m[1m2:48[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './auth.service' or its corresponding type declarations.
+  [0m [90m 1 |[39m [36mimport[39m { [33mController[39m[33m,[39m [33mPost[39m[33m,[39m [33mBody[39m } [36mfrom[39m [32m'@nestjs/common'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m { [33mAuthService[39m[33m,[39m [33mRegisterDriverDto[39m } [36mfrom[39m [32m'./auth.service'[39m[33m;[39m
+   [90m   |[39m                                                [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 3 |[39m
+   [90m 4 |[39m [33m@[39m[33mController[39m([32m'auth'[39m)
+   [90m 5 |[39m [36mexport[39m [36mclass[39m [33mAuthController[39m {[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/auth.controller.ts:[32m[1m15:39[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './user-management.service' or its corresponding type declarations.
+  [0m [90m 13 |[39m   [33mQuery[39m[33m,[39m
+   [90m 14 |[39m } [36mfrom[39m [32m'@nestjs/common'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 15 |[39m [36mimport[39m { [33mUserManagementService[39m } [36mfrom[39m [32m'./user-management.service'[39m[33m;[39m
+   [90m    |[39m                                       [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 16 |[39m [36mimport[39m { [33mForgotPasswordDto[39m } [36mfrom[39m [32m'./dto/forgot-password.dto'[39m[33m;[39m
+   [90m 17 |[39m [36mimport[39m { [33mResetPasswordDto[39m } [36mfrom[39m [32m'./dto/reset-password.dto'[39m[33m;[39m
+   [90m 18 |[39m [36mimport[39m { [33mTwoFactorAuthCodeDto[39m } [36mfrom[39m [32m'./dto/two-factor-auth.dto'[39m[33m;[39m[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/auth.controller.ts:[32m[1m16:35[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './dto/forgot-password.dto' or its corresponding type declarations.
+  [0m [90m 14 |[39m } [36mfrom[39m [32m'@nestjs/common'[39m[33m;[39m
+   [90m 15 |[39m [36mimport[39m { [33mUserManagementService[39m } [36mfrom[39m [32m'./user-management.service'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 16 |[39m [36mimport[39m { [33mForgotPasswordDto[39m } [36mfrom[39m [32m'./dto/forgot-password.dto'[39m[33m;[39m
+   [90m    |[39m                                   [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 17 |[39m [36mimport[39m { [33mResetPasswordDto[39m } [36mfrom[39m [32m'./dto/reset-password.dto'[39m[33m;[39m
+   [90m 18 |[39m [36mimport[39m { [33mTwoFactorAuthCodeDto[39m } [36mfrom[39m [32m'./dto/two-factor-auth.dto'[39m[33m;[39m
+   [90m 19 |[39m [36mimport[39m { [33mLoginDto[39m } [36mfrom[39m [32m'./dto/login.dto'[39m[33m;[39m[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/auth.controller.ts:[32m[1m17:34[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './dto/reset-password.dto' or its corresponding type declarations.
+  [0m [90m 15 |[39m [36mimport[39m { [33mUserManagementService[39m } [36mfrom[39m [32m'./user-management.service'[39m[33m;[39m
+   [90m 16 |[39m [36mimport[39m { [33mForgotPasswordDto[39m } [36mfrom[39m [32m'./dto/forgot-password.dto'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 17 |[39m [36mimport[39m { [33mResetPasswordDto[39m } [36mfrom[39m [32m'./dto/reset-password.dto'[39m[33m;[39m
+   [90m    |[39m                                  [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 18 |[39m [36mimport[39m { [33mTwoFactorAuthCodeDto[39m } [36mfrom[39m [32m'./dto/two-factor-auth.dto'[39m[33m;[39m
+   [90m 19 |[39m [36mimport[39m { [33mLoginDto[39m } [36mfrom[39m [32m'./dto/login.dto'[39m[33m;[39m
+   [90m 20 |[39m [36mimport[39m { [33mLogin2faDto[39m } [36mfrom[39m [32m'./dto/login-2fa.dto'[39m[33m;[39m[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/auth.controller.ts:[32m[1m18:38[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './dto/two-factor-auth.dto' or its corresponding type declarations.
+  [0m [90m 16 |[39m [36mimport[39m { [33mForgotPasswordDto[39m } [36mfrom[39m [32m'./dto/forgot-password.dto'[39m[33m;[39m
+   [90m 17 |[39m [36mimport[39m { [33mResetPasswordDto[39m } [36mfrom[39m [32m'./dto/reset-password.dto'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 18 |[39m [36mimport[39m { [33mTwoFactorAuthCodeDto[39m } [36mfrom[39m [32m'./dto/two-factor-auth.dto'[39m[33m;[39m
+   [90m    |[39m                                      [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 19 |[39m [36mimport[39m { [33mLoginDto[39m } [36mfrom[39m [32m'./dto/login.dto'[39m[33m;[39m
+   [90m 20 |[39m [36mimport[39m { [33mLogin2faDto[39m } [36mfrom[39m [32m'./dto/login-2fa.dto'[39m[33m;[39m
+   [90m 21 |[39m [36mimport[39m { [33mLoginRecoveryDto[39m } [36mfrom[39m [32m'./dto/login-recovery.dto'[39m[33m;[39m[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/auth.controller.ts:[32m[1m19:26[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './dto/login.dto' or its corresponding type declarations.
+  [0m [90m 17 |[39m [36mimport[39m { [33mResetPasswordDto[39m } [36mfrom[39m [32m'./dto/reset-password.dto'[39m[33m;[39m
+   [90m 18 |[39m [36mimport[39m { [33mTwoFactorAuthCodeDto[39m } [36mfrom[39m [32m'./dto/two-factor-auth.dto'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 19 |[39m [36mimport[39m { [33mLoginDto[39m } [36mfrom[39m [32m'./dto/login.dto'[39m[33m;[39m
+   [90m    |[39m                          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 20 |[39m [36mimport[39m { [33mLogin2faDto[39m } [36mfrom[39m [32m'./dto/login-2fa.dto'[39m[33m;[39m
+   [90m 21 |[39m [36mimport[39m { [33mLoginRecoveryDto[39m } [36mfrom[39m [32m'./dto/login-recovery.dto'[39m[33m;[39m
+   [90m 22 |[39m [36mimport[39m { [33mInitiateForgotEmailDto[39m } [36mfrom[39m [32m'./dto/initiate-forgot-email.dto'[39m[33m;[39m[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/auth.controller.ts:[32m[1m20:29[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './dto/login-2fa.dto' or its corresponding type declarations.
+  [0m [90m 18 |[39m [36mimport[39m { [33mTwoFactorAuthCodeDto[39m } [36mfrom[39m [32m'./dto/two-factor-auth.dto'[39m[33m;[39m
+   [90m 19 |[39m [36mimport[39m { [33mLoginDto[39m } [36mfrom[39m [32m'./dto/login.dto'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 20 |[39m [36mimport[39m { [33mLogin2faDto[39m } [36mfrom[39m [32m'./dto/login-2fa.dto'[39m[33m;[39m
+   [90m    |[39m                             [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 21 |[39m [36mimport[39m { [33mLoginRecoveryDto[39m } [36mfrom[39m [32m'./dto/login-recovery.dto'[39m[33m;[39m
+   [90m 22 |[39m [36mimport[39m { [33mInitiateForgotEmailDto[39m } [36mfrom[39m [32m'./dto/initiate-forgot-email.dto'[39m[33m;[39m
+   [90m 23 |[39m [36mimport[39m { [33mVerifyForgotEmailDto[39m } [36mfrom[39m [32m'./dto/verify-forgot-email.dto'[39m[33m;[39m[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/auth.controller.ts:[32m[1m21:34[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './dto/login-recovery.dto' or its corresponding type declarations.
+  [0m [90m 19 |[39m [36mimport[39m { [33mLoginDto[39m } [36mfrom[39m [32m'./dto/login.dto'[39m[33m;[39m
+   [90m 20 |[39m [36mimport[39m { [33mLogin2faDto[39m } [36mfrom[39m [32m'./dto/login-2fa.dto'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 21 |[39m [36mimport[39m { [33mLoginRecoveryDto[39m } [36mfrom[39m [32m'./dto/login-recovery.dto'[39m[33m;[39m
+   [90m    |[39m                                  [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 22 |[39m [36mimport[39m { [33mInitiateForgotEmailDto[39m } [36mfrom[39m [32m'./dto/initiate-forgot-email.dto'[39m[33m;[39m
+   [90m 23 |[39m [36mimport[39m { [33mVerifyForgotEmailDto[39m } [36mfrom[39m [32m'./dto/verify-forgot-email.dto'[39m[33m;[39m
+   [90m 24 |[39m [36mimport[39m { [33mPaginationDto[39m } [36mfrom[39m [32m'../common/dto/pagination.dto'[39m[33m;[39m[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/auth.controller.ts:[32m[1m22:40[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './dto/initiate-forgot-email.dto' or its corresponding type declarations.
+  [0m [90m 20 |[39m [36mimport[39m { [33mLogin2faDto[39m } [36mfrom[39m [32m'./dto/login-2fa.dto'[39m[33m;[39m
+   [90m 21 |[39m [36mimport[39m { [33mLoginRecoveryDto[39m } [36mfrom[39m [32m'./dto/login-recovery.dto'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 22 |[39m [36mimport[39m { [33mInitiateForgotEmailDto[39m } [36mfrom[39m [32m'./dto/initiate-forgot-email.dto'[39m[33m;[39m
+   [90m    |[39m                                        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 23 |[39m [36mimport[39m { [33mVerifyForgotEmailDto[39m } [36mfrom[39m [32m'./dto/verify-forgot-email.dto'[39m[33m;[39m
+   [90m 24 |[39m [36mimport[39m { [33mPaginationDto[39m } [36mfrom[39m [32m'../common/dto/pagination.dto'[39m[33m;[39m
+   [90m 25 |[39m [36mimport[39m { [33mRegisterDeviceDto[39m } [36mfrom[39m [32m'./dto/register-device.dto'[39m[33m;[39m[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/auth.controller.ts:[32m[1m23:38[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './dto/verify-forgot-email.dto' or its corresponding type declarations.
+  [0m [90m 21 |[39m [36mimport[39m { [33mLoginRecoveryDto[39m } [36mfrom[39m [32m'./dto/login-recovery.dto'[39m[33m;[39m
+   [90m 22 |[39m [36mimport[39m { [33mInitiateForgotEmailDto[39m } [36mfrom[39m [32m'./dto/initiate-forgot-email.dto'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 23 |[39m [36mimport[39m { [33mVerifyForgotEmailDto[39m } [36mfrom[39m [32m'./dto/verify-forgot-email.dto'[39m[33m;[39m
+   [90m    |[39m                                      [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 24 |[39m [36mimport[39m { [33mPaginationDto[39m } [36mfrom[39m [32m'../common/dto/pagination.dto'[39m[33m;[39m
+   [90m 25 |[39m [36mimport[39m { [33mRegisterDeviceDto[39m } [36mfrom[39m [32m'./dto/register-device.dto'[39m[33m;[39m
+   [90m 26 |[39m [36mimport[39m { [33mJwtAuthGuard[39m } [36mfrom[39m [32m'./jwt-auth.guard'[39m[33m;[39m[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/auth.controller.ts:[32m[1m24:31[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module '../common/dto/pagination.dto' or its corresponding type declarations.
+  [0m [90m 22 |[39m [36mimport[39m { [33mInitiateForgotEmailDto[39m } [36mfrom[39m [32m'./dto/initiate-forgot-email.dto'[39m[33m;[39m
+   [90m 23 |[39m [36mimport[39m { [33mVerifyForgotEmailDto[39m } [36mfrom[39m [32m'./dto/verify-forgot-email.dto'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 24 |[39m [36mimport[39m { [33mPaginationDto[39m } [36mfrom[39m [32m'../common/dto/pagination.dto'[39m[33m;[39m
+   [90m    |[39m                               [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 25 |[39m [36mimport[39m { [33mRegisterDeviceDto[39m } [36mfrom[39m [32m'./dto/register-device.dto'[39m[33m;[39m
+   [90m 26 |[39m [36mimport[39m { [33mJwtAuthGuard[39m } [36mfrom[39m [32m'./jwt-auth.guard'[39m[33m;[39m
+   [90m 27 |[39m[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/auth.controller.ts:[32m[1m25:35[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './dto/register-device.dto' or its corresponding type declarations.
+  [0m [90m 23 |[39m [36mimport[39m { [33mVerifyForgotEmailDto[39m } [36mfrom[39m [32m'./dto/verify-forgot-email.dto'[39m[33m;[39m
+   [90m 24 |[39m [36mimport[39m { [33mPaginationDto[39m } [36mfrom[39m [32m'../common/dto/pagination.dto'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 25 |[39m [36mimport[39m { [33mRegisterDeviceDto[39m } [36mfrom[39m [32m'./dto/register-device.dto'[39m[33m;[39m
+   [90m    |[39m                                   [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 26 |[39m [36mimport[39m { [33mJwtAuthGuard[39m } [36mfrom[39m [32m'./jwt-auth.guard'[39m[33m;[39m
+   [90m 27 |[39m
+   [90m 28 |[39m [33m@[39m[33mController[39m([32m'auth'[39m)[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/driver-leads.module.ts:[32m[1m2:39[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './driver-leads.controller' or its corresponding type declarations.
+  [0m [90m 1 |[39m [36mimport[39m { [33mModule[39m } [36mfrom[39m [32m'@nestjs/common'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m { [33mDriverLeadsController[39m } [36mfrom[39m [32m'./driver-leads.controller'[39m[33m;[39m
+   [90m   |[39m                                       [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 3 |[39m [36mimport[39m { [33mDriverLeadsService[39m } [36mfrom[39m [32m'./driver-leads.service'[39m[33m;[39m
+   [90m 4 |[39m [36mimport[39m { [33mUserManagementService[39m } [36mfrom[39m [32m'./user-management.service'[39m[33m;[39m
+   [90m 5 |[39m [36mimport[39m { [33mMlmService[39m } [36mfrom[39m [32m'./mlm.service'[39m[33m;[39m[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/driver-leads.module.ts:[32m[1m3:36[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './driver-leads.service' or its corresponding type declarations.
+  [0m [90m 1 |[39m [36mimport[39m { [33mModule[39m } [36mfrom[39m [32m'@nestjs/common'[39m[33m;[39m
+   [90m 2 |[39m [36mimport[39m { [33mDriverLeadsController[39m } [36mfrom[39m [32m'./driver-leads.controller'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mDriverLeadsService[39m } [36mfrom[39m [32m'./driver-leads.service'[39m[33m;[39m
+   [90m   |[39m                                    [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 4 |[39m [36mimport[39m { [33mUserManagementService[39m } [36mfrom[39m [32m'./user-management.service'[39m[33m;[39m
+   [90m 5 |[39m [36mimport[39m { [33mMlmService[39m } [36mfrom[39m [32m'./mlm.service'[39m[33m;[39m
+   [90m 6 |[39m[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/driver-leads.module.ts:[32m[1m4:39[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './user-management.service' or its corresponding type declarations.
+  [0m [90m 2 |[39m [36mimport[39m { [33mDriverLeadsController[39m } [36mfrom[39m [32m'./driver-leads.controller'[39m[33m;[39m
+   [90m 3 |[39m [36mimport[39m { [33mDriverLeadsService[39m } [36mfrom[39m [32m'./driver-leads.service'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mUserManagementService[39m } [36mfrom[39m [32m'./user-management.service'[39m[33m;[39m
+   [90m   |[39m                                       [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 5 |[39m [36mimport[39m { [33mMlmService[39m } [36mfrom[39m [32m'./mlm.service'[39m[33m;[39m
+   [90m 6 |[39m
+   [90m 7 |[39m [33m@[39m[33mModule[39m({[0m
+
+[1m[31mERROR[39m[22m in [1m./src/driver-leads/driver-leads.module.ts:[32m[1m5:28[22m[39m[1m[39m[22m
+[90mTS2307: [39mCannot find module './mlm.service' or its corresponding type declarations.
+  [0m [90m 3 |[39m [36mimport[39m { [33mDriverLeadsService[39m } [36mfrom[39m [32m'./driver-leads.service'[39m[33m;[39m
+   [90m 4 |[39m [36mimport[39m { [33mUserManagementService[39m } [36mfrom[39m [32m'./user-management.service'[39m[33m;[39m
+  [31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { [33mMlmService[39m } [36mfrom[39m [32m'./mlm.service'[39m[33m;[39m
+   [90m   |[39m                            [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+   [90m 6 |[39m
+   [90m 7 |[39m [33m@[39m[33mModule[39m({
+   [90m 8 |[39m   imports[33m:[39m [][33m,[39m[0m
+
+webpack compiled with [1m[31m16 errors[39m[22m (02a8e416a82bf596)
+
+
+
+ NX   Running target build for project driver-lead-service and 1 task it depends on failed
+
+Failed tasks:
+
+- driver-lead-service:build
+
+Hint: run the command with --verbose for more details.
+

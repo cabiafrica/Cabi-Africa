@@ -798,7 +798,23 @@ class AdminService {
     };
   }
 
-  // --- Story 79.3: Impersonation ---
+  async simulateDriverRegistrations(count: number): Promise<void> {
+    console.log(`Simulating ${count} driver registrations...`);
+    try {
+      const res = await fetch('/api/v1/driver-leads/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ count })
+      });
+      if (!res.ok) throw new Error('Failed to simulate registrations');
+      console.log('Simulation triggered successfully.');
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  }
+
+  // --- Story 79.22: Bulk Actions ---
   async impersonateUser(userId: string): Promise<string> {
     console.log(`Impersonating user: ${userId}`);
     await new Promise(resolve => setTimeout(resolve, 1000));

@@ -28,14 +28,10 @@ const nextConfig = {
 
   // Experimental features for better performance
   experimental: {
-    optimizeCss: true,
+    optimizeCss: false,
     optimizePackageImports: ['@heroicons/react'],
   },
 
-  // Turbopack configuration (Next.js 16+)
-  turbopack: {
-    // Enable optimizations
-  },
 
   // Production optimizations
   poweredByHeader: false,

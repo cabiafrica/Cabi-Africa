@@ -128,12 +128,41 @@ export const DriverApplicationsList: React.FC = () => {
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Review and approve new driver registrations.</p>
         </div>
-        <div className="flex bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-1">
-          <div className="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700">
-            Pending
-          </div>
-          <div className="px-4 py-2 text-sm font-bold text-slate-900 dark:text-white">
-            {applications.length}
+        <div className="flex gap-4">
+          <button
+            onClick={async () => {
+              if (window.confirm('Simulate 10 new driver registrations?')) {
+                setLoading(true);
+                try {
+                  await adminService.simulateDriverRegistrations(10);
+                  // Refresh list
+                  const { data } = await adminService.getDriverApplicationsPaginated(currentPage, pageSize);
+                  setApplications(data.map((d: any) => ({
+                    ...d,
+                    fullName: d.name || d.fullName,
+                    phone: d.phone || '+254...',
+                    applicationDate: d.date || d.applicationDate || new Date().toISOString(),
+                    status: d.status
+                  })));
+                } catch (err) {
+                  console.error(err);
+                  alert('Simulation failed');
+                } finally {
+                  setLoading(false);
+                }
+              }
+            }}
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
+          >
+            <span>✨</span> Simulate Drivers
+          </button>
+          <div className="flex bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-1">
+            <div className="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700">
+              Pending
+            </div>
+            <div className="px-4 py-2 text-sm font-bold text-slate-900 dark:text-white">
+              {applications.length}
+            </div>
           </div>
         </div>
       </div>
@@ -273,8 +302,8 @@ export const DriverApplicationsList: React.FC = () => {
                       key={page}
                       onClick={() => setCurrentPage(page)}
                       className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md ${currentPage === page
-                          ? 'z-10 bg-blue-50 dark:bg-blue-900/30 border-blue-500 dark:border-blue-500 text-blue-600 dark:text-blue-400'
-                          : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
+                        ? 'z-10 bg-blue-50 dark:bg-blue-900/30 border-blue-500 dark:border-blue-500 text-blue-600 dark:text-blue-400'
+                        : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
                         }`}
                     >
                       {page}

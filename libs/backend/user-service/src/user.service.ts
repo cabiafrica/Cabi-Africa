@@ -156,4 +156,54 @@ export class UserService {
       driverProfileId: user.driverProfile?.id
     };
   }
+
+  async createProspect(data: { firstName: string, lastName: string, email: string, phone: string, city: string, referralCode?: string }) {
+    // Check if user already exists
+    const existingUser = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: data.email },
+          { phone: data.phone }
+        ]
+      }
+    });
+
+    if (existingUser) {
+      return { userId: existingUser.id, status: (existingUser as any).status || 'PROSPECT' };
+    }
+
+    const user = await this.prisma.user.create({
+      data: {
+        email: data.email,
+        phone: data.phone,
+        fullName: `${data.firstName} ${data.lastName}`,
+        password: await bcrypt.hash('Prospect@2026', 10), // Default password for prospects
+        role: LegacyRole.DRIVER,
+        status: 'PROSPECT' as any,
+        city: data.city,
+        referralCode: data.referralCode || `CABI-${Math.random().toString(36).substring(7).toUpperCase()}`,
+      }
+    });
+
+    return { userId: user.id, status: (user as any).status };
+  }
+
+  async getPendingDrivers() {
+    return this.prisma.user.findMany({
+      where: {
+        role: LegacyRole.DRIVER,
+        status: 'PENDING' as any
+      },
+      include: {
+        driverProfile: true
+      }
+    });
+  }
+
+  async updateUserStatus(userId: string, status: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { status: status as any }
+    });
+  }
 }

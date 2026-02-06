@@ -1,0 +1,21 @@
+﻿
+ NX   Running target build for project driver-lead-service and 1 task it depends on:
+
+
+
+> nx run user-service:build  [local cache]
+
+
+> nx run driver-lead-service:build
+
+> npx webpack-cli build --node-env=production
+
+chunk (runtime: main) [1m[32mmain.js[39m[22m (main) 61.5 KiB [1m[33m[entry][39m[22m [1m[32m[rendered][39m[22m
+webpack compiled [1m[32msuccessfully[39m[22m (02a8e416a82bf596)
+
+
+
+ NX   Successfully ran target build for project driver-lead-service and 1 task it depends on
+
+Nx read the output from the cache instead of running the command for 1 out of 2 tasks.
+

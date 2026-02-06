@@ -1,15 +1,19 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
-    Box, Typography, Button, Paper, TextField, Grid,
-    FormControlLabel, Checkbox, Divider, Switch, Card, CardContent,
-    InputAdornment, IconButton, Tooltip, Fade, Grow, Chip
+    TextField,
+    FormControlLabel,
+    Checkbox,
+    Switch,
+    InputAdornment,
+    IconButton,
+    Tooltip,
+    Grow,
+    Button
 } from '@mui/material';
 import {
     Save as SaveIcon,
     ArrowBack as ArrowBackIcon,
     Search as SearchIcon,
-    CheckCircle as CheckAllIcon,
-    Cancel as CancelIcon,
     Security as SecurityIcon,
     AdminPanelSettings as AdminIcon,
     Smartphone as MobileIcon,
@@ -71,7 +75,6 @@ const RoleEditor: React.FC = () => {
     };
 
     const handleCategoryToggle = (categoryPerms: string[], checked: boolean) => {
-        // Collect actual full permission strings matching the prefixes for this category
         const permsInCategory = PERMISSIONS_LIST.filter(p =>
             categoryPerms.some(prefix => p.startsWith(prefix))
         );
@@ -79,12 +82,10 @@ const RoleEditor: React.FC = () => {
         setFormData(prev => {
             let newPerms = [...prev.permissions];
             if (checked) {
-                // Add all missing permissions from this category
                 permsInCategory.forEach(p => {
                     if (!newPerms.includes(p)) newPerms.push(p);
                 });
             } else {
-                // Remove all permissions belonging to this category
                 newPerms = newPerms.filter(p => !permsInCategory.includes(p));
             }
             return { ...prev, permissions: newPerms };
@@ -106,17 +107,6 @@ const RoleEditor: React.FC = () => {
         }
     };
 
-    const getPlatformIcon = (platform: string) => {
-        switch (platform) {
-            case 'ADMIN_PANEL': return <AdminIcon />;
-            case 'DISPATCH_PANEL': return <WebIcon />;
-            case 'USER_PORTAL': return <WebIcon />;
-            case 'MOBILE_APP': return <MobileIcon />;
-            default: return <ApiIcon />;
-        }
-    };
-
-    // Filter permissions based on search
     const filteredCategories = useMemo(() => {
         if (!searchTerm) return Object.entries(PERMISSION_CATEGORIES);
 
@@ -124,7 +114,6 @@ const RoleEditor: React.FC = () => {
             const categoryPerms = PERMISSIONS_LIST.filter(p =>
                 prefixes.some(prefix => p.startsWith(prefix))
             );
-            // Check if category name matches OR if any child permission matches
             const hasMatch = category.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 categoryPerms.some(p => p.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -133,112 +122,77 @@ const RoleEditor: React.FC = () => {
     }, [searchTerm]);
 
     return (
-        <Box sx={{
-            p: { xs: 2, md: 4 },
-            minHeight: '100vh',
-            background: 'linear-gradient(135deg, #121212 0%, #000000 100%)',
-            color: 'white',
-            pb: 10
-        }}>
-            <form onSubmit={handleSubmit}>
-                {/* Header Section */}
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={4} sx={{
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 100,
-                    background: 'rgba(18, 18, 18, 0.8)',
-                    backdropFilter: 'blur(10px)',
-                    py: 2,
-                    borderBottom: '1px solid rgba(255,255,255,0.05)'
-                }}>
-                    <Box display="flex" alignItems="center" gap={2}>
-                        <IconButton onClick={() => navigate('/roles')} sx={{ color: 'rgba(255,255,255,0.7)' }}>
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-4 md:p-8 pb-24 font-sans text-slate-900 dark:text-slate-100">
+            <form onSubmit={handleSubmit} className="max-w-7xl mx-auto space-y-6">
+
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm mb-6">
+                    <div className="flex items-center gap-3">
+                        <IconButton onClick={() => navigate('/roles')} className="text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700">
                             <ArrowBackIcon />
                         </IconButton>
-                        <Box>
-                            <Typography variant="h4" fontWeight="800" sx={{
-                                background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent'
-                            }}>
+                        <div>
+                            <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <SecurityIcon className="text-purple-600 dark:text-purple-400" />
                                 {isEditMode ? 'Edit Role' : 'Create Access Role'}
-                            </Typography>
-                            <Typography variant="caption" color="gray">
-                                {isEditMode ? `ID: ${id}` : 'Define new system access levels'}
-                            </Typography>
-                        </Box>
-                    </Box>
-                    <Box display="flex" gap={2}>
+                            </h1>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                                {isEditMode ? `Editing Role ID: ${id}` : 'Define new system access levels and permissions'}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex gap-3">
                         <Button
                             variant="outlined"
                             onClick={() => navigate('/roles')}
-                            sx={{
-                                borderColor: 'rgba(255,255,255,0.2)',
-                                color: 'rgba(255,255,255,0.8)',
-                                '&:hover': { borderColor: 'white', background: 'rgba(255,255,255,0.05)' }
-                            }}
+                            color="inherit"
+                            className="text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
                         >
                             Cancel
                         </Button>
-                        <Button
+                        <button
                             type="submit"
-                            variant="contained"
-                            startIcon={<SaveIcon />}
-                            sx={{
-                                background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                                boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-                                fontWeight: 'bold'
-                            }}
+                            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-bold shadow-lg shadow-purple-900/20 active:scale-95 transition-all flex items-center gap-2"
                         >
+                            <SaveIcon fontSize="small" />
                             Save Configuration
-                        </Button>
-                    </Box>
-                </Box>
+                        </button>
+                    </div>
+                </div>
 
                 {/* Main Configuration Card */}
-                <Grow in={true} timeout={500}>
-                    <Paper elevation={0} sx={{
-                        p: 4,
-                        mb: 4,
-                        background: 'rgba(30, 30, 30, 0.4)',
-                        backdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: 4
-                    }}>
-                        <Grid container spacing={4}>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Display Name"
-                                    placeholder="e.g. Super Administrator"
-                                    value={formData.displayName}
-                                    onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
-                                    required
-                                    variant="filled"
-                                    InputProps={{
-                                        sx: { color: 'white', background: 'rgba(0,0,0,0.2)' }
-                                    }}
-                                    InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    label="System Identifier (Immutable)"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value.toUpperCase().replace(/\s+/g, '_') })}
-                                    disabled={isEditMode}
-                                    helperText={!isEditMode && "Uppercase, underscores only. Cannot be changed later."}
-                                    required
-                                    variant="filled"
-                                    InputProps={{
-                                        sx: { color: 'white', background: 'rgba(0,0,0,0.2)' },
-                                        startAdornment: <InputAdornment position="start"><SecurityIcon sx={{ color: 'gray' }} /></InputAdornment>
-                                    }}
-                                    InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
+                <Grow in={true} timeout={300}>
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <TextField
+                                fullWidth
+                                label="Display Name"
+                                placeholder="e.g. Super Administrator"
+                                value={formData.displayName}
+                                onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+                                required
+                                variant="outlined"
+                                className="bg-white dark:bg-slate-900"
+                                InputLabelProps={{ className: "dark:text-slate-400" }}
+                                InputProps={{ className: "dark:text-white" }}
+                            />
+                            <TextField
+                                fullWidth
+                                label="System Identifier"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value.toUpperCase().replace(/\s+/g, '_') })}
+                                disabled={isEditMode}
+                                helperText={!isEditMode && "Uppercase, underscores only. Cannot be changed later."}
+                                required
+                                variant="outlined"
+                                className="bg-white dark:bg-slate-900"
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start"><SecurityIcon className="text-slate-400" /></InputAdornment>,
+                                    className: "dark:text-white"
+                                }}
+                                InputLabelProps={{ className: "dark:text-slate-400" }}
+                            />
+                            <div className="col-span-1 md:col-span-2">
                                 <TextField
                                     fullWidth
                                     multiline
@@ -246,185 +200,167 @@ const RoleEditor: React.FC = () => {
                                     label="Description"
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    variant="filled"
-                                    InputProps={{
-                                        sx: { color: 'white', background: 'rgba(0,0,0,0.2)' }
-                                    }}
-                                    InputLabelProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }}
+                                    variant="outlined"
+                                    className="bg-white dark:bg-slate-900"
+                                    InputLabelProps={{ className: "dark:text-slate-400" }}
+                                    InputProps={{ className: "dark:text-white" }}
                                 />
-                            </Grid>
+                            </div>
 
-                            {/* Platform Selection - Visual Cards */}
-                            <Grid item xs={12}>
-                                <Typography variant="subtitle2" sx={{ mb: 2, color: 'rgba(255,255,255,0.7)' }}>Target Platform</Typography>
-                                <Grid container spacing={2}>
+                            {/* Platform Selection */}
+                            <div className="col-span-1 md:col-span-2">
+                                <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Target Platform</p>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                     {[
                                         { value: 'ADMIN_PANEL', label: 'Admin Panel', icon: <AdminIcon /> },
                                         { value: 'DISPATCH_PANEL', label: 'Dispatch', icon: <WebIcon /> },
                                         { value: 'USER_PORTAL', label: 'User Portal', icon: <WebIcon /> },
                                         { value: 'MOBILE_APP', label: 'Mobile App', icon: <MobileIcon /> }
-                                    ].map((opt) => (
-                                        <Grid item xs={6} md={3} key={opt.value}>
-                                            <Paper
+                                    ].map((opt) => {
+                                        const isSelected = formData.platform === opt.value;
+                                        return (
+                                            <div
+                                                key={opt.value}
                                                 onClick={() => setFormData({ ...formData, platform: opt.value })}
-                                                sx={{
-                                                    p: 2,
-                                                    cursor: 'pointer',
-                                                    textAlign: 'center',
-                                                    background: formData.platform === opt.value ? 'rgba(33, 150, 243, 0.2)' : 'rgba(255,255,255,0.05)',
-                                                    border: formData.platform === opt.value ? '2px solid #2196F3' : '1px solid rgba(255,255,255,0.1)',
-                                                    transition: 'all 0.3s ease',
-                                                    '&:hover': { transform: 'translateY(-2px)', background: 'rgba(255,255,255,0.1)' }
-                                                }}
+                                                className={`cursor-pointer p-4 rounded-xl border text-center transition-all duration-200
+                                                    ${isSelected
+                                                        ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-500 ring-1 ring-purple-500 text-purple-700 dark:text-purple-300 shadow-sm'
+                                                        : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                                    }`}
                                             >
-                                                <Box sx={{ color: formData.platform === opt.value ? '#2196F3' : 'gray', mb: 1 }}>
+                                                <div className={`mb-2 ${isSelected ? 'text-purple-600 dark:text-purple-400' : 'text-slate-400'}`}>
                                                     {opt.icon}
-                                                </Box>
-                                                <Typography variant="body2" fontWeight={formData.platform === opt.value ? 'bold' : 'normal'}>
-                                                    {opt.label}
-                                                </Typography>
-                                            </Paper>
-                                        </Grid>
-                                    ))}
-                                </Grid>
-                            </Grid>
+                                                </div>
+                                                <p className="font-semibold text-sm">{opt.label}</p>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
 
-                            <Grid item xs={12}>
-                                <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)', mb: 2 }} />
+                            <div className="col-span-1 md:col-span-2 border-t border-slate-200 dark:border-slate-700 pt-4">
                                 <FormControlLabel
                                     control={
                                         <Switch
                                             checked={formData.isActive}
                                             onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                                            color="success"
+                                            color="secondary" // Maps vaguely to purple in default MUI, or we can leave it
                                         />
                                     }
                                     label={
-                                        <Box>
-                                            <Typography variant="body1">Active Status</Typography>
-                                            <Typography variant="caption" color="gray">Disable to temporarily suspend all users with this role</Typography>
-                                        </Box>
+                                        <div>
+                                            <p className="font-medium text-slate-900 dark:text-white">Active Status</p>
+                                            <p className="text-xs text-slate-500">Enable or disable this role globally.</p>
+                                        </div>
                                     }
                                 />
-                            </Grid>
-                        </Grid>
-                    </Paper>
+                            </div>
+                        </div>
+                    </div>
                 </Grow>
 
                 {/* Permissions Section */}
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                    <Typography variant="h5" fontWeight="bold">Permissions Configuration</Typography>
+                <div>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-white">Permissions</h2>
+                        <div className="relative">
+                            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <input
+                                type="text"
+                                placeholder="Search permissions..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none shadow-sm w-full sm:w-64"
+                            />
+                        </div>
+                    </div>
 
-                    <TextField
-                        size="small"
-                        placeholder="Search permissions..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: 'gray' }} /></InputAdornment>,
-                            sx: { color: 'white', background: 'rgba(255,255,255,0.05)', borderRadius: 2, width: 300 }
-                        }}
-                    />
-                </Box>
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {filteredCategories.map(([category, prefixes], index) => {
+                            const categoryPerms = PERMISSIONS_LIST.filter(p =>
+                                prefixes.some(prefix => p.startsWith(prefix))
+                            );
 
-                <Grid container spacing={3}>
-                    {filteredCategories.map(([category, prefixes], index) => {
-                        // Get permissions
-                        const categoryPerms = PERMISSIONS_LIST.filter(p =>
-                            prefixes.some(prefix => p.startsWith(prefix))
-                        );
+                            const displayPerms = searchTerm
+                                ? categoryPerms.filter(p =>
+                                    p.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                    category.toLowerCase().includes(searchTerm.toLowerCase())
+                                )
+                                : categoryPerms;
 
-                        // If searching, we might want to filter the permissions display too
-                        const displayPerms = searchTerm
-                            ? categoryPerms.filter(p =>
-                                p.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                category.toLowerCase().includes(searchTerm.toLowerCase())
-                            )
-                            : categoryPerms;
+                            if (displayPerms.length === 0) return null;
 
-                        if (displayPerms.length === 0) return null;
+                            const allChecked = displayPerms.every(p => formData.permissions.includes(p));
+                            const someChecked = displayPerms.some(p => formData.permissions.includes(p));
 
-                        const allChecked = displayPerms.every(p => formData.permissions.includes(p));
-                        const someChecked = displayPerms.some(p => formData.permissions.includes(p));
-
-                        return (
-                            <Grid item xs={12} md={6} xl={4} key={category}>
-                                <Grow in={true} timeout={500 + (index * 100)}>
-                                    <Card
+                            return (
+                                <Grow in={true} timeout={300 + (index * 100)} key={category}>
+                                    <div
+                                        className="bg-white dark:bg-slate-800 rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm hover:shadow-md transition-all duration-200"
                                         onMouseEnter={() => setHoveredCategory(category)}
                                         onMouseLeave={() => setHoveredCategory(null)}
-                                        sx={{
-                                            height: '100%',
-                                            background: 'rgba(255,255,255,0.03)',
-                                            backdropFilter: 'blur(10px)',
-                                            border: '1px solid rgba(255,255,255,0.1)',
-                                            borderRadius: 3,
-                                            transition: 'all 0.3s ease',
-                                            transform: hoveredCategory === category ? 'translateY(-5px)' : 'none',
-                                            boxShadow: hoveredCategory === category ? '0 10px 30px rgba(0,0,0,0.5)' : 'none'
-                                        }}
                                     >
-                                        <CardContent>
-                                            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                                                <Box display="flex" alignItems="center" gap={1}>
-                                                    <Box sx={{ width: 4, height: 24, background: '#2196F3', borderRadius: 2 }} />
-                                                    <Typography variant="h6" fontWeight="bold">{category}</Typography>
-                                                </Box>
-                                                <Tooltip title={allChecked ? "Deselect All" : "Select All"}>
-                                                    <Checkbox
-                                                        checked={allChecked}
-                                                        indeterminate={someChecked && !allChecked}
-                                                        onChange={(e) => handleCategoryToggle(prefixes, e.target.checked)}
-                                                        color="primary"
-                                                        sx={{ color: 'rgba(255,255,255,0.3)' }}
-                                                    />
-                                                </Tooltip>
-                                            </Box>
+                                        <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-1 h-5 bg-purple-500 rounded-full"></div>
+                                                <h3 className="font-bold text-slate-800 dark:text-slate-200">{category}</h3>
+                                            </div>
+                                            <Tooltip title={allChecked ? "Deselect All" : "Select All"}>
+                                                <Checkbox
+                                                    checked={allChecked}
+                                                    indeterminate={someChecked && !allChecked}
+                                                    onChange={(e) => handleCategoryToggle(prefixes, e.target.checked)}
+                                                    size="small"
+                                                    className="text-slate-400 data-[state=checked]:text-purple-600"
+                                                    sx={{ color: 'inherit', '&.Mui-checked': { color: '#9333ea' }, '&.MuiCheckbox-indeterminate': { color: '#9333ea' } }}
+                                                />
+                                            </Tooltip>
+                                        </div>
 
-                                            <Divider sx={{ mb: 2, borderColor: 'rgba(255,255,255,0.05)' }} />
-
-                                            <Grid container spacing={1}>
-                                                {displayPerms.map(perm => (
-                                                    <Grid item xs={12} key={perm}>
-                                                        <Box
-                                                            onClick={() => handlePermissionChange(perm, !formData.permissions.includes(perm))}
+                                        <div className="p-2 grid gap-1 max-h-64 overflow-y-auto custom-scrollbar">
+                                            {displayPerms.map(perm => {
+                                                const isSelected = formData.permissions.includes(perm);
+                                                return (
+                                                    <div
+                                                        key={perm}
+                                                        onClick={() => handlePermissionChange(perm, !isSelected)}
+                                                        className={`flex items-start gap-2 p-2 rounded-lg cursor-pointer transition-colors
+                                                            ${isSelected
+                                                                ? 'bg-purple-50 dark:bg-purple-900/20'
+                                                                : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                                                            }`}
+                                                    >
+                                                        <Checkbox
+                                                            size="small"
+                                                            checked={isSelected}
+                                                            onChange={(e) => handlePermissionChange(perm, e.target.checked)}
+                                                            className="mt-0.5"
                                                             sx={{
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                p: 1,
-                                                                borderRadius: 1,
-                                                                cursor: 'pointer',
-                                                                background: formData.permissions.includes(perm) ? 'rgba(33, 150, 243, 0.1)' : 'transparent',
-                                                                '&:hover': { background: 'rgba(255,255,255,0.05)' }
+                                                                padding: 0,
+                                                                color: isSelected ? '#9333ea' : 'rgb(148, 163, 184)',
+                                                                '&.Mui-checked': { color: '#9333ea' }
                                                             }}
-                                                        >
-                                                            <Checkbox
-                                                                size="small"
-                                                                checked={formData.permissions.includes(perm)}
-                                                                onChange={(e) => handlePermissionChange(perm, e.target.checked)}
-                                                                sx={{ p: 0.5, mr: 1 }}
-                                                            />
-                                                            <Typography variant="body2" sx={{
-                                                                color: formData.permissions.includes(perm) ? '#90cbf9' : 'rgba(255,255,255,0.7)',
-                                                                fontWeight: formData.permissions.includes(perm) ? 500 : 400
-                                                            }}>
+                                                        />
+                                                        <div>
+                                                            <p className={`text-sm font-medium ${isSelected ? 'text-purple-700 dark:text-purple-300' : 'text-slate-700 dark:text-slate-300'}`}>
                                                                 {perm.replace(prefixes[0] || '', '').replace(/_/g, ' ').toLowerCase()}
-                                                                {/* Fallback to show full name if replacement looks weird, simpler logic below */}
-                                                                <span style={{ opacity: 0.5, fontSize: '0.7em', display: 'block' }}>{perm}</span>
-                                                            </Typography>
-                                                        </Box>
-                                                    </Grid>
-                                                ))}
-                                            </Grid>
-                                        </CardContent>
-                                    </Card>
+                                                            </p>
+                                                            <p className="text-xs text-slate-400 mt-0.5 font-mono opacity-70">
+                                                                {perm}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
                                 </Grow>
-                            </Grid>
-                        );
-                    })}
-                </Grid>
+                            );
+                        })}
+                    </div>
+                </div>
             </form>
-        </Box>
+        </div>
     );
 };
 

@@ -14,7 +14,7 @@ import Footer from '../components/layout/Footer';
 
 // ... (in HomePage component return)
 
-import { getPostSummaries, BlogPostSummary } from '@/backend/services/cms';
+import { getPostSummaries, BlogPostSummary } from '@/services/cms';
 import { FaBuilding, FaCar, FaUser, FaArrowRight, FaShieldAlt, FaRocket, FaGlobe } from 'react-icons/fa';
 
 interface HomePageProps {

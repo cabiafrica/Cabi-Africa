@@ -77,87 +77,80 @@ const SIDEBAR_MENU: MenuGroup[] = [
   {
     label: 'Operations',
     items: [
-      { icon: '🏠', label: 'Dashboard', view: '/dashboard', permission: 'view_dashboard' },
-      { icon: '🚗', label: 'Job Activities', view: '/job-activities', permission: 'view_dashboard' },
-      { icon: '📄', label: 'Driver Applications', view: '/applications', permission: 'manage_applications' },
-      { icon: '🏢', label: 'Organization', view: '/organization-management', permission: 'manage_organizations' },
-      { icon: '📅', label: 'Scheduled Rides', view: '/scheduled-rides', permission: 'view_scheduled_rides' },
-      { icon: '🎫', label: 'Support Tickets', view: '/support-tickets', permission: 'manage_support' },
-      { icon: '📊', label: 'Driver Performance', view: '/driver-performance', permission: 'view_performance' },
+      { icon: '🏠', label: 'Dashboard', view: '/dashboard', permission: 'DISPATCH_DASHBOARD_VIEW' },
+      { icon: '🚗', label: 'Job Activities', view: '/job-activities', permission: 'DISPATCH_DASHBOARD_VIEW' },
+      { icon: '📄', label: 'Driver Applications', view: '/applications', permission: 'DRIVER_APPLICATIONS_VIEW' },
+      { icon: '🏢', label: 'Organization', view: '/organization-management', permission: 'ORGANIZATION_VIEW' },
+      { icon: '📅', label: 'Scheduled Rides', view: '/scheduled-rides', permission: 'DISPATCH_RIDE_MONITOR' },
+      { icon: '🎫', label: 'Support Tickets', view: '/support-tickets', permission: 'OCCURRENCE_VIEW' },
+      { icon: '📊', label: 'Driver Performance', view: '/driver-performance', permission: 'DISPATCH_ANALYTICS_VIEW' },
     ]
   },
   {
     label: 'Analytics & Map',
     items: [
-      { icon: '📡', label: 'Live Map', view: '/live-map', permission: 'view_live_map' },
-      { icon: '🔥', label: 'Heat Maps', view: '/heat-maps', permission: 'view_heat_maps' },
-      { icon: '📈', label: 'BI Dashboard', view: '/bi-dashboard', permission: 'view_bi_dashboard' },
-      { icon: '🏙️', label: 'City Management', view: '/city-management', permission: 'manage_cities' },
-      { icon: '📥', label: 'Data Exports', view: '/exports', permission: 'view_reports' },
+      { icon: '📡', label: 'Live Map', view: '/live-map', permission: 'DISPATCH_REAL_TIME_MAP' },
+      { icon: '🔥', label: 'Heat Maps', view: '/heat-maps', permission: 'DISPATCH_ANALYTICS_VIEW' },
+      { icon: '📈', label: 'BI Dashboard', view: '/bi-dashboard', permission: 'DISPATCH_ANALYTICS_VIEW' },
+      { icon: '🏙️', label: 'City Management', view: '/city-management', permission: 'LOCATIONS_EDIT' },
+      { icon: '📥', label: 'Data Exports', view: '/exports', permission: 'FINANCIAL_REPORTS_VIEW' },
     ]
   },
   {
     label: 'Security',
     items: [
-      { icon: '🚨', label: 'Fraud Alerts', view: '/fraud-alerts', permission: 'view_fraud_alerts' },
-      { icon: '📝', label: 'OB Bookings', view: '/ob-bookings', permission: 'manage_bookings' },
-      { icon: '⚖️', label: 'Resolution Dash', view: '/resolution-dashboard', permission: 'manage_disputes' },
-      { icon: '🚫', label: 'Suspended Accounts', view: '/suspended-accounts', permission: 'manage_suspended' },
-      { icon: '📜', label: 'Audit Log', view: '/audit-log', permission: 'view_audit_log' },
-      { icon: '🔒', label: 'Roles & Permissions', view: '/roles', permission: 'manage_permissions' },
-      { icon: '🆘', label: 'SOS Config', view: '/sos-config', permission: 'manage_config' },
+      { icon: '🚨', label: 'Fraud Alerts', view: '/fraud-alerts', permission: 'AUDIT_LOGS_VIEW' },
+      { icon: '⚖️', label: 'Resolution Dash', view: '/resolution-dashboard', permission: 'OCCURRENCE_RESOLVE' },
+      { icon: '🚫', label: 'Suspended Accounts', view: '/suspended-accounts', permission: 'DRIVER_SUSPEND' },
+      { icon: '📜', label: 'Audit Log', view: '/audit-log', permission: 'AUDIT_LOGS_VIEW' },
+      { icon: '🔒', label: 'Roles & Permissions', view: '/roles', permission: 'USER_ROLES_ASSIGN' },
+      { icon: '🆘', label: 'SOS Config', view: '/sos-config', permission: 'SYSTEM_SETTINGS_EDIT' },
     ]
   },
   {
     label: 'User Management',
     items: [
-      { icon: '🌍', label: 'All Users', view: '/platform-users', permission: 'manage_users' },
-      { icon: '👥', label: 'Admin Users', view: '/users', permission: 'manage_admins' },
+      { icon: '🌍', label: 'All Users', view: '/platform-users', permission: 'PEOPLE_VIEW' },
+      { icon: '👥', label: 'Admin Users', view: '/users', permission: 'PEOPLE_VIEW' },
     ]
   },
   {
     label: 'Configuration',
     items: [
-      { icon: '💰', label: 'MLM Config', view: '/mlm-config', permission: 'configure_mlm' },
-      { icon: '🔮', label: 'Simulation', view: '/simulation-dashboard', permission: 'view_simulation' },
-      { icon: '🗺️', label: 'Surge Zones', view: '/surge-zones', permission: 'manage_zones' },
-      { icon: '✈️', label: 'Airport Zones', view: '/airport-zones', permission: 'manage_zones' },
-      { icon: '🚗', label: 'Services', view: '/vehicle-categories', permission: 'manage_vehicles' },
-      { icon: '🏅', label: 'Badges', view: '/badge-management', permission: 'manage_config' },
-      { icon: '🎮', label: 'Gamification', view: '/gamification', permission: 'manage_config' },
+      { icon: '💰', label: 'MLM Config', view: '/mlm-config', permission: 'MLM_FORMULA_VIEW' },
+      { icon: '🔮', label: 'Simulation', view: '/simulation-dashboard', permission: 'DISPATCH_ANALYTICS_VIEW' },
+      { icon: '🗺️', label: 'Surge Zones', view: '/surge-zones', permission: 'LOCATIONS_EDIT' },
+      { icon: '✈️', label: 'Airport Zones', view: '/airport-zones', permission: 'LOCATIONS_EDIT' },
+      { icon: '🚗', label: 'Services', view: '/vehicle-categories', permission: 'VEHICLES_VIEW' },
+      { icon: '🏅', label: 'Badges', view: '/badge-management', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: '🎮', label: 'Gamification', view: '/gamification', permission: 'SYSTEM_SETTINGS_EDIT' },
     ]
   },
   {
     label: 'Marketing & Content',
     items: [
-      { icon: '🏷️', label: 'Promo Codes', view: '/promo-codes', permission: 'manage_promotions' },
-      { icon: '📢', label: 'Bulk Msg', view: '/bulk-messaging', permission: 'send_bulk_messages' },
-      { icon: '📝', label: 'CMS', view: '/cms', permission: 'manage_content' },
+      { icon: '🏷️', label: 'Promo Codes', view: '/promo-codes', permission: 'MARKETING_CONTENT_EDIT' },
+      { icon: '📢', label: 'Bulk Msg', view: '/bulk-messaging', permission: 'NOTIFICATIONS_MANAGE' },
+      { icon: '📝', label: 'CMS', view: '/cms', permission: 'BLOG_POSTS_EDIT' },
     ]
   },
   {
     label: 'Finance & System',
     items: [
-      { icon: '💹', label: 'Commissions', view: '/commission-ledger', permission: 'view_commissions' },
-      { icon: '💸', label: 'Payout Processing', view: '/payouts', permission: 'manage_payouts' },
-      { icon: '⏱️', label: 'Payout Scheduler', view: '/payout-scheduler', permission: 'manage_payouts' },
-      { icon: '💰', label: 'Traction Logs', view: '/traction-logs', permission: 'view_traction_logs' },
-    ]
-  },
-  {
-    label: 'External Apps',
-    items: [
-      { icon: '🖥️', label: 'Dispatch Panel', view: 'http://localhost:3002', permission: 'view_dashboard', external: true },
-      { icon: '👤', label: 'User Portal', view: 'http://localhost:3000', permission: 'view_dashboard', external: true },
+      { icon: '💹', label: 'Commissions', view: '/commission-ledger', permission: 'COMMISSION_VIEW' },
+      { icon: '💸', label: 'Payout Processing', view: '/payouts', permission: 'PAYMENTS_PROCESS' },
+      { icon: '⏱️', label: 'Payout Scheduler', view: '/payout-scheduler', permission: 'PAYMENTS_PROCESS' },
+      { icon: '💰', label: 'Traction Logs', view: '/traction-logs', permission: 'AUDIT_LOGS_VIEW' },
     ]
   }
 ];
+
 
 function App() {
   const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [expandedMenus, setExpandedMenus] = useState<string[]>(['Operations', 'External Apps']);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(['Operations']);
 
   // Theme state
   const [darkMode, setDarkMode] = useState(() => {
@@ -203,7 +196,12 @@ function App() {
   if (!isAuthenticated) return <LoginPage />;
 
   const hasPermission = (p: string) => {
-    if (!user?.permissions) return false;
+    if (!user) return false;
+    // Super admins/Admins should have access to everything for now or via granular roles
+    const role = (user.role as any)?.toUpperCase();
+    if (role === 'SUPER_ADMIN' || role === 'ADMIN') return true;
+
+    if (!user.permissions) return false;
     return user.permissions.includes('*') || user.permissions.includes(p);
   };
 
@@ -289,6 +287,37 @@ function App() {
             );
           })}
         </nav>
+
+        {/* Global Access Buttons - Persistent Footer */}
+        {((user?.role as any)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as any)?.toUpperCase() === 'ADMIN' || hasPermission('DISPATCH_DASHBOARD_VIEW') || hasPermission('USER_PORTAL_DASHBOARD_VIEW')) && (
+          <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2 bg-slate-50/50 dark:bg-slate-800/20">
+            <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2 mb-2">
+              System Access
+            </div>
+            {(user?.role === 'admin' || hasPermission('DISPATCH_DASHBOARD_VIEW') || hasPermission('view_dashboard')) && (
+              <button
+                onClick={() => window.open('http://localhost:3002', '_blank')}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 rounded-lg transition-all duration-200 group shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 hover:border-blue-600"
+                title="Launch Dispatch Management Panel"
+              >
+                <span className="text-base group-hover:scale-110 transition-transform">🖥️</span>
+                <span>Dispatch Panel</span>
+                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH ↗️</span>
+              </button>
+            )}
+            {(user?.role === 'admin' || hasPermission('USER_PORTAL_DASHBOARD_VIEW') || hasPermission('view_dashboard')) && (
+              <button
+                onClick={() => window.open('http://localhost:3000', '_blank')}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 rounded-lg transition-all duration-200 group shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 hover:border-indigo-600"
+                title="View User Portal Dashboard"
+              >
+                <span className="text-base group-hover:scale-110 transition-transform">👤</span>
+                <span>User Portal</span>
+                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">VIEW ↗️</span>
+              </button>
+            )}
+          </div>
+        )}
       </aside>
 
       <main className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-200">
@@ -315,7 +344,7 @@ function App() {
 
               <Route path="/applications" element={<DriverApplicationsList />} />
               <Route path="/job-activities" element={<JobActivitiesDashboard />} />
-              <Route path="/ob-bookings" element={<div className="card"> <h2 className="text-2xl font-bold mb-4">OB Bookings</h2> <p>Outbound/On-Boarding Bookings Management</p> </div>} />
+
               <Route path="/resolution-dashboard" element={<div className="card"> <h2 className="text-2xl font-bold mb-4">Resolution Dashboard</h2> <p>Dispute Resolution and Case Management</p> </div>} />
               <Route path="/organization-management" element={<OrganizationManagement />} />
               <Route path="/mlm-config" element={<MlmConfig />} />

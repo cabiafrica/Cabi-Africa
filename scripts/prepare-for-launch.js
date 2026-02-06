@@ -126,8 +126,7 @@ async function prepareForLaunch() {
 
         let superAdminRole = await prisma.role.findFirst({
             where: {
-                type: 'SUPER_ADMIN',
-                platform: 'ADMIN_PANEL'
+                type: 'SUPER_ADMIN'
             }
         });
 
@@ -137,9 +136,9 @@ async function prepareForLaunch() {
                 data: {
                     name: 'super_admin',
                     displayName: 'Super Administrator',
-                    description: 'Full system access with all permissions',
+                    description: 'Full system access with all permissions across all platforms',
                     type: 'SUPER_ADMIN',
-                    platform: 'ADMIN_PANEL',
+                    platform: 'ALL',
                     isSystem: true,
                     isActive: true,
                     permissions: [

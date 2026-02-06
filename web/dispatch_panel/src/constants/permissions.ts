@@ -91,12 +91,7 @@ export const PERMISSIONS_LIST = [
     'VEHICLES_APPROVE',
     'VEHICLES_SUSPEND',
 
-    // OCCURRENCE BOOK
-    'OCCURRENCE_VIEW',
-    'OCCURRENCE_CREATE',
-    'OCCURRENCE_EDIT',
-    'OCCURRENCE_RESOLVE',
-    'OCCURRENCE_OBJECTION_REVIEW',
+
 
     // FINANCIAL
     'PAYMENTS_VIEW',
@@ -141,7 +136,7 @@ export const PERMISSION_CATEGORIES = {
     'User Management': ['GROUPS_', 'LOCATIONS_', 'PEOPLE_', 'INVITATIONS_'],
     'Content Management': ['SKILLS_', 'METRICS_', 'PATHWAYS_', 'LEARNING_', 'LIBRARY_'],
     'Dispatch Operations': ['DISPATCH_'],
-    'Ride Operations': ['DRIVER_', 'PASSENGER_', 'VEHICLES_', 'OCCURRENCE_'],
+    'Ride Operations': ['DRIVER_', 'PASSENGER_', 'VEHICLES_'],
     'Financial': ['PAYMENTS_', 'FARE_', 'COMMISSION_', 'FINANCIAL_'],
     'Verification': ['VERIFICATION_'],
     'Marketing': ['MARKETING_', 'BLOG_'],

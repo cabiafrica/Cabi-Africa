@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
-import { formatDistanceToNow } from 'date-fns';
+// TODO: Install @nestjs/microservices and date-fns packages
+// import { EventPattern, Payload } from '@nestjs/microservices';
+// import { formatDistanceToNow } from 'date-fns';
 
 // In a real app, this would be a more robust interface.
 interface ScheduledRideReminderPayload {
@@ -22,6 +23,7 @@ export class NotificationService {
    * Listens for the 'scheduled_ride_reminder' event from the ride-service.
    * @param data The payload containing the ride and passenger details.
    */
+  /* TODO: Uncomment when @nestjs/microservices is installed
   @EventPattern('scheduled_ride_reminder')
   async handleScheduledRideReminder(@Payload() data: ScheduledRideReminderPayload) {
     this.logger.log(`Received scheduled_ride_reminder event for passenger ${data.passengerId}`);
@@ -39,4 +41,5 @@ export class NotificationService {
     this.logger.log(`Title: ${notification.title}`);
     this.logger.log(`Body: ${notification.body}`);
   }
+  */
 }

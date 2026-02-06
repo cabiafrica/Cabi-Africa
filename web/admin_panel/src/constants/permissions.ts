@@ -91,12 +91,13 @@ export const PERMISSIONS_LIST = [
     'VEHICLES_APPROVE',
     'VEHICLES_SUSPEND',
 
-    // OCCURRENCE BOOK
-    'OCCURRENCE_VIEW',
-    'OCCURRENCE_CREATE',
-    'OCCURRENCE_EDIT',
-    'OCCURRENCE_RESOLVE',
-    'OCCURRENCE_OBJECTION_REVIEW',
+
+
+    // SECURITY OPERATIONS
+    'SECURITY_DASHBOARD_VIEW',
+    'SECURITY_INCIDENT_REPORT',
+    'SECURITY_INCIDENT_MANAGE',
+    'SECURITY_EMERGENCY_RESPONSE',
 
     // FINANCIAL
     'PAYMENTS_VIEW',
@@ -125,8 +126,15 @@ export const PERMISSIONS_LIST = [
     'MARKETING_CONTENT_VIEW',
     'MARKETING_CONTENT_EDIT',
     'MARKETING_ANALYTICS_VIEW',
+    'USER_PORTAL_DASHBOARD_VIEW',
     'BLOG_POSTS_VIEW',
     'BLOG_POSTS_EDIT',
+
+    // COMPLIANCE & PRIVACY
+    'COMPLIANCE_VIEW',
+    'COMPLIANCE_MANAGE',
+    'COMPLIANCE_AUDIT',
+    'COMPLIANCE_POLICY_EDIT',
 
     // SYSTEM ADMINISTRATION
     'SYSTEM_SETTINGS_VIEW',
@@ -140,10 +148,15 @@ export const PERMISSION_CATEGORIES = {
     'Site Management': ['SITE_', 'FEATURES_', 'ORG_STRUCTURE'],
     'User Management': ['GROUPS_', 'LOCATIONS_', 'PEOPLE_', 'INVITATIONS_'],
     'Content Management': ['SKILLS_', 'METRICS_', 'PATHWAYS_', 'LEARNING_', 'LIBRARY_'],
+    'Assessment & Training': ['ASSESSMENT_', 'THIRD_PARTY_', 'GROUP_TRAINING_', 'PUBLISHED_CONTENT_', 'AUTOMATION_'],
+    'Dashboard & Reports': ['NOTIFICATIONS_', 'DASHBOARD_', 'TASK_', 'REPORT_'],
     'Dispatch Operations': ['DISPATCH_'],
-    'Ride Operations': ['DRIVER_', 'PASSENGER_', 'VEHICLES_', 'OCCURRENCE_'],
+    'Ride Operations': ['DRIVER_', 'PASSENGER_', 'VEHICLES_'],
+    'Security': ['SECURITY_'],
+    'Compliance': ['COMPLIANCE_'],
     'Financial': ['PAYMENTS_', 'FARE_', 'COMMISSION_', 'FINANCIAL_'],
     'Verification': ['VERIFICATION_'],
-    'Marketing': ['MARKETING_', 'BLOG_'],
+    'Organization & MLM': ['ORGANIZATION_', 'MLM_', 'REFERRAL_'],
+    'Marketing': ['MARKETING_', 'USER_PORTAL_', 'BLOG_'],
     'System': ['SYSTEM_', 'USER_ROLES_', 'AUDIT_']
 };

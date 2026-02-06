@@ -8,6 +8,10 @@ export default defineConfig({
     server: {
         port: 3001,
         proxy: {
+            '/api/v1/driver-leads': {
+                target: 'http://localhost:3010',
+                changeOrigin: true,
+            },
             '/api': {
                 target: 'http://localhost:3333',
                 changeOrigin: true,

@@ -6,20 +6,37 @@
     "tags": [],
     "targets": {
         "build": {
-            "executor": "@nx/nest:build",
-            "outputs": [
-                "{options.outputPath}"
-            ],
+            "executor": "nx:run-commands",
             "options": {
-                "outputPath": "dist/backend/dispatch-service",
-                "main": "backend/dispatch-service/src/main.ts",
-                "tsConfig": "backend/dispatch-service/tsconfig.app.json"
+                "command": "npx webpack-cli build",
+                "args": [
+                    "--node-env=production"
+                ],
+                "cwd": "backend/dispatch-service"
+            },
+            "configurations": {
+                "development": {
+                    "args": [
+                        "--node-env=development"
+                    ]
+                }
             }
         },
         "serve": {
-            "executor": "@nx/nest:serve",
+            "continuous": true,
+            "executor": "@nx/js:node",
+            "defaultConfiguration": "development",
+            "dependsOn": [
+                "build"
+            ],
             "options": {
-                "buildTarget": "dispatch-service:build"
+                "buildTarget": "dispatch-service:build",
+                "runBuildTargetDependencies": false
+            },
+            "configurations": {
+                "development": {
+                    "buildTarget": "dispatch-service:build:development"
+                }
             }
         }
     }

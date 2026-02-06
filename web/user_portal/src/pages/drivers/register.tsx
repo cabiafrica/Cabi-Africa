@@ -66,11 +66,35 @@ export default function DriverRegistrationPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (validateStep(currentStep)) {
       if (currentStep === 1) {
-        // Skip validation check logic for payment step for now, just move next
-        setCurrentStep(prev => prev + 1);
+        setIsSubmitting(true);
+        try {
+          const response = await fetch('/api/driver-leads/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              ...formData,
+              recaptchaToken: 'mock-token-for-development' // Required by API
+            }),
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result.error || 'Registration failed');
+          }
+
+          setCurrentStep(2);
+        } catch (error: any) {
+          console.error('Registration error:', error);
+          alert(error.message || 'An error occurred during registration. Please try again.');
+        } finally {
+          setIsSubmitting(false);
+        }
       } else {
         setCurrentStep(prev => Math.min(prev + 1, totalSteps));
       }
@@ -459,13 +483,12 @@ export default function DriverRegistrationPage() {
                 {/* Show Create Account (Proceed to Payment) button on Step 1 */}
                 {currentStep === 1 && (
                   <button
-                    type="button" // Changed to button to prevent form submit default, handled by logic
-                    onClick={() => {
-                      if (validateStep(1)) setCurrentStep(2);
-                    }}
-                    className="ml-auto px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center"
+                    type="button"
+                    onClick={handleNext}
+                    disabled={isSubmitting}
+                    className="ml-auto px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Proceed to Payment &rarr;
+                    {isSubmitting ? 'Processing...' : 'Proceed to Payment →'}
                   </button>
                 )}
 

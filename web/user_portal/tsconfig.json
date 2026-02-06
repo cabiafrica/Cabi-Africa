@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -25,7 +25,7 @@
         "src/*"
       ],
       "@/backend/services/*": [
-        "../../libs/backend/src/services/*"
+        "./src/services/*"
       ]
     },
     "target": "ES2017",

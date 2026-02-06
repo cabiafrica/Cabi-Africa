@@ -8,12 +8,21 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum UserStatus {
+  PROSPECT
+  PENDING
+  ACTIVE
+  SUSPENDED
+  REJECTED
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   phone     String   @unique
   password  String
   fullName  String
+  city      String?
   username  String?  @unique
   nickname  String?
   middleName String?
@@ -21,6 +30,7 @@ model User {
   passportPhotoUrl String?  @db.Text // Stores compressed image URL or base64
   privacySettings Json?   @default("{}") // { showEmail: boolean, showPhone: boolean, showRealName: boolean }
   role      LegacyRole     @default(PASSENGER)
+  status    UserStatus     @default(PROSPECT)
   
   // RBAC Relations
   userRoles     UserRole[]

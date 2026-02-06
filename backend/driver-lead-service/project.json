@@ -6,11 +6,38 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/nest:build",
-      "outputs": [
-        "{options.outputPath}"
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx webpack-cli build",
+        "args": [
+          "--node-env=production"
+        ],
+        "cwd": "backend/driver-lead-service"
+      },
+      "configurations": {
+        "development": {
+          "args": [
+            "--node-env=development"
+          ]
+        }
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": [
+        "build"
       ],
-      "options": {}
+      "options": {
+        "buildTarget": "driver-lead-service:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "driver-lead-service:build:development"
+        }
+      }
     }
   }
 }

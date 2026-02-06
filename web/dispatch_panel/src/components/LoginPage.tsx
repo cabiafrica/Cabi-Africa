@@ -30,7 +30,7 @@ export const LoginPage = () => {
                     lastName: 'Operator',
                     role: 'dispatcher',
                     profilePictureUrl: 'https://ui-avatars.com/api/?name=Dispatch+Operator&background=0D8ABC&color=fff',
-                    permissions: ['manage_dispatch']
+                    permissions: ['*']
                 };
                 login('mock-jwt-token-dispatch', mockUser);
             } else {

@@ -2,16 +2,37 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { adminService, AdminUser } from '../../services/adminService';
 import { UserForm } from '../forms/UserForm';
 import {
+  Box,
+  Paper,
+  Typography,
+  Button,
+  InputAdornment,
+  TextField,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Avatar,
+  IconButton,
+  Chip,
+  alpha,
+  useTheme,
+  Tooltip
+} from '@mui/material';
+import {
   SupervisorAccount,
-  Add,
-  Edit,
-  Delete,
-  AdminPanelSettings,
-  Email,
-  Search
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  AdminPanelSettings as AdminIcon,
+  Email as EmailIcon,
+  Search as SearchIcon
 } from '@mui/icons-material';
 
 export const UserManagement: React.FC = () => {
+  const theme = useTheme();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [editingUser, setEditingUser] = useState<AdminUser | 'new' | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -45,116 +66,161 @@ export const UserManagement: React.FC = () => {
 
   if (editingUser) {
     return (
-      <div className="max-w-2xl mx-auto mt-8">
-        <UserForm user={editingUser === 'new' ? undefined : editingUser} onSave={handleSave} onCancel={() => setEditingUser(null)} />
-      </div>
+      <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
+        <Paper sx={{ p: 4, borderRadius: 4, bgcolor: alpha(theme.palette.background.paper, 0.8), backdropFilter: 'blur(20px)' }}>
+          <Typography variant="h5" fontWeight="bold" mb={3}>
+            {editingUser === 'new' ? 'Create New Admin' : 'Edit Admin User'}
+          </Typography>
+          <UserForm user={editingUser === 'new' ? undefined : editingUser} onSave={handleSave} onCancel={() => setEditingUser(null)} />
+        </Paper>
+      </Box>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <SupervisorAccount className="text-indigo-600 dark:text-indigo-400" />
+    <Box sx={{ p: { xs: 2, md: 0 } }}>
+      {/* Header */}
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+        <Box>
+          <Typography variant="h4" fontWeight="800" sx={{
+            background: 'linear-gradient(45deg, #6366f1 30%, #8b5cf6 90%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            mb: 1
+          }}>
             Admin User Management
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage system administrators and their access roles.</p>
-        </div>
-        <button
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Manage system administrators and their access roles.
+          </Typography>
+        </Box>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
           onClick={() => setEditingUser('new')}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-bold shadow-lg transition-transform hover:scale-105 active:scale-95"
+          sx={{
+            background: 'linear-gradient(45deg, #6366f1 30%, #8b5cf6 90%)',
+            boxShadow: '0 3px 5px 2px rgba(99, 102, 241, .3)',
+            fontWeight: 'bold',
+            px: 3,
+            py: 1.5,
+            borderRadius: 2
+          }}
         >
-          <Add />
           Create New User
-        </button>
-      </div>
+        </Button>
+      </Box>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-        {/* Filters */}
-        <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <input
-              type="text"
-              placeholder="Search by email or role..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
-            />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          </div>
-        </div>
+      {/* Content Card */}
+      <Paper elevation={0} sx={{
+        borderRadius: 4,
+        border: '1px solid',
+        borderColor: 'divider',
+        overflow: 'hidden',
+        background: alpha(theme.palette.background.paper, 0.5)
+      }}>
+        {/* Search Bar */}
+        <Box sx={{ p: 3, borderBottom: '1px solid', borderColor: 'divider', bgcolor: alpha(theme.palette.primary.main, 0.02) }}>
+          <TextField
+            fullWidth
+            placeholder="Search by email or role..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            variant="outlined"
+            size="small"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              ),
+              sx: { bgcolor: 'background.paper', borderRadius: 2 }
+            }}
+          />
+        </Box>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-            <thead className="bg-slate-50 dark:bg-slate-800">
-              <tr>
-                <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">User Details</th>
-                <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Assigned Roles</th>
-                <th scope="col" className="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+        <TableContainer>
+          <Table>
+            <TableHead sx={{ bgcolor: alpha(theme.palette.primary.main, 0.05) }}>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>User Details</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Assigned Roles</TableCell>
+                <TableCell align="right" sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {filteredUsers.map(user => (
-                <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                        <AdminPanelSettings fontSize="small" />
-                      </div>
-                      <div>
-                        <div className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <TableRow key={user.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell>
+                    <Box display="flex" alignItems="center" gap={2}>
+                      <Avatar sx={{ bgcolor: alpha(theme.palette.primary.main, 0.1), color: theme.palette.primary.main }}>
+                        <AdminIcon />
+                      </Avatar>
+                      <Box>
+                        <Typography variant="body2" fontWeight="bold">
                           {user.email.split('@')[0]}
-                        </div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                          <Email style={{ fontSize: 12 }} /> {user.email}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex gap-1.5 flex-wrap max-w-xs">
+                        </Typography>
+                        <Box display="flex" alignItems="center" gap={0.5}>
+                          <EmailIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
+                          <Typography variant="caption" color="text.secondary">
+                            {user.email}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Box display="flex" gap={1} flexWrap="wrap">
                       {user.roles.map(role => (
-                        <span key={role} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
-                          {role}
-                        </span>
+                        <Chip
+                          key={role}
+                          label={role}
+                          size="small"
+                          variant="outlined"
+                          sx={{ borderRadius: 1, borderColor: 'divider' }}
+                        />
                       ))}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => setEditingUser(user)}
-                        className="p-2 text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
-                        title="Edit User"
-                      >
-                        <Edit fontSize="small" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(user.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30 rounded-lg transition-colors"
-                        title="Delete User"
-                      >
-                        <Delete fontSize="small" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                    </Box>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Box display="flex" justifyContent="flex-end" gap={1}>
+                      <Tooltip title="Edit User">
+                        <IconButton
+                          onClick={() => setEditingUser(user)}
+                          size="small"
+                          sx={{ color: theme.palette.primary.main, bgcolor: alpha(theme.palette.primary.main, 0.1) }}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete User">
+                        <IconButton
+                          onClick={() => handleDelete(user.id)}
+                          size="small"
+                          sx={{ color: theme.palette.error.main, bgcolor: alpha(theme.palette.error.main, 0.1) }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  </TableCell>
+                </TableRow>
               ))}
               {filteredUsers.length === 0 && (
-                <tr>
-                  <td colSpan={3} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
-                    <div className="flex flex-col items-center">
-                      <Search fontSize="large" className="text-slate-300 dark:text-slate-600 mb-2" />
-                      <p>No admin users found matching your search.</p>
-                    </div>
-                  </td>
-                </tr>
+                <TableRow>
+                  <TableCell colSpan={3} align="center" sx={{ py: 8 }}>
+                    <Box display="flex" flexDirection="column" alignItems="center">
+                      <SearchIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
+                      <Typography variant="h6" color="text.secondary">No users found</Typography>
+                      <Typography variant="body2" color="text.disabled">Try adjusting your search terms</Typography>
+                    </Box>
+                  </TableCell>
+                </TableRow>
               )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
+    </Box>
   );
 };

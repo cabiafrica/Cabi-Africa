@@ -73,29 +73,32 @@ class DriverAnalyticsCards extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'GOLD TIER',
-                    style: TextStyle(
-                      color: Color(0xFFFBBF24), // Cabi Yellow
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      letterSpacing: 1.2,
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'GOLD TIER',
+                      style: TextStyle(
+                        color: Color(0xFFFBBF24), // Cabi Yellow
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        letterSpacing: 1.2,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    '2,450 Points',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
+                    SizedBox(height: 8),
+                    Text(
+                      '2,450 Points',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               // Badges Mini View
               Container(
                 padding:
@@ -174,8 +177,10 @@ class DriverAnalyticsCards extends StatelessWidget {
               const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Earnings Activity',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Expanded(
+                    child: Text('Earnings Activity',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
                   Text(
                     'Last 7 Days',
                     style: TextStyle(fontSize: 11, color: Colors.grey),

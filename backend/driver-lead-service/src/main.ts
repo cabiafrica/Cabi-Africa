@@ -7,7 +7,8 @@ async function bootstrap() {
   const globalPrefix = 'api/v1';
   app.setGlobalPrefix(globalPrefix);
   app.useGlobalPipes(new ValidationPipe());
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 3010;
   await app.listen(port);
+  console.log(`� Driver Lead Service is running on: http://localhost:${port}/${globalPrefix}`);
 }
 bootstrap();

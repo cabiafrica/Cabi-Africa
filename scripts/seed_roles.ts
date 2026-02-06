@@ -1,4 +1,5 @@
 
+require('dotenv').config();
 import { PrismaClient, Permission, RoleType, Platform, LegacyRole } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -9,19 +10,19 @@ const roles = [
     {
         name: 'SUPER_ADMIN',
         displayName: 'Super Administrator',
-        description: 'Full access to all features and settings',
+        description: 'Full access to all features and settings across all platforms',
         type: RoleType.SUPER_ADMIN,
-        platform: Platform.ADMIN_PANEL,
+        platform: Platform.ALL,
         permissions: allPermissions,
         isSystem: true
     },
     {
         name: 'ADMIN',
         displayName: 'Administrator',
-        description: 'Access to most features except system critical settings',
+        description: 'Full access to all features including System, Dispatch, and User management',
         type: RoleType.ADMIN,
-        platform: Platform.ADMIN_PANEL,
-        permissions: allPermissions.filter(p => !p.startsWith('SYSTEM_') && !p.startsWith('USER_ROLES_')),
+        platform: Platform.ALL,
+        permissions: allPermissions,
         isSystem: true
     },
     {
@@ -34,7 +35,8 @@ const roles = [
             p.startsWith('DISPATCH_') ||
             p.startsWith('DRIVER_') ||
             p.startsWith('OCCURRENCE_') ||
-            p.startsWith('VEHICLE_')
+            p.startsWith('VEHICLES_') ||
+            p.startsWith('PASSENGER_')
         ),
         isSystem: true
     },
@@ -103,7 +105,9 @@ async function main() {
             update: {
                 permissions: roleData.permissions,
                 displayName: roleData.displayName,
-                description: roleData.description
+                description: roleData.description,
+                platform: roleData.platform,
+                type: roleData.type
             },
             create: {
                 name: roleData.name,

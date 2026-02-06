@@ -1,7 +1,55 @@
 import React, { useState } from 'react';
+import {
+    Box,
+    Typography,
+    Paper,
+    Grid,
+    Button,
+    Chip,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    IconButton,
+    InputAdornment,
+    TextField,
+    Avatar,
+    alpha,
+    useTheme,
+    Tooltip,
+    Tabs,
+    Tab
+} from '@mui/material';
+import {
+    Policy,
+    Download,
+    DeleteForever,
+    MoreVert,
+    Search,
+    History,
+    AssignmentTurnedIn,
+    HourglassEmpty,
+    PrivacyTip,
+    FilterList
+} from '@mui/icons-material';
+
+interface Request {
+    id: string;
+    type: 'DATA_EXPORT' | 'ACCOUNT_DELETION';
+    userId: string;
+    userName: string;
+    userEmail: string;
+    status: 'COMPLETED' | 'PENDING' | 'PROCESSING' | 'FAILED';
+    requestedAt: string;
+    completedAt?: string;
+    scheduledFor?: string;
+}
 
 export default function PrivacyCompliancePage() {
-    const [requests, setRequests] = useState([
+    const theme = useTheme();
+    const [requests, setRequests] = useState<Request[]>([
         {
             id: 'export_1',
             type: 'DATA_EXPORT',
@@ -33,149 +81,213 @@ export default function PrivacyCompliancePage() {
         },
     ]);
 
-    const [filter, setFilter] = useState('all');
+    const [tabValue, setTabValue] = useState(0);
+    const [searchTerm, setSearchTerm] = useState('');
 
-    const filteredRequests = requests.filter(r => filter === 'all' || r.type === filter);
+    const filteredRequests = requests.filter(r => {
+        const matchesTab = tabValue === 0 ? true :
+            tabValue === 1 ? r.type === 'DATA_EXPORT' :
+                r.type === 'ACCOUNT_DELETION';
+        const matchesSearch = r.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            r.userEmail.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesTab && matchesSearch;
+    });
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'PENDING': return 'bg-yellow-100 text-yellow-800';
-            case 'PROCESSING': return 'bg-blue-100 text-blue-800';
-            case 'COMPLETED': return 'bg-green-100 text-green-800';
-            case 'FAILED': return 'bg-red-100 text-red-800';
-            default: return 'bg-gray-100 text-gray-800';
-        }
+    const getStatusChip = (status: Request['status']) => {
+        const config = {
+            COMPLETED: { color: 'success', icon: <AssignmentTurnedIn fontSize="small" /> },
+            PENDING: { color: 'warning', icon: <HourglassEmpty fontSize="small" /> },
+            PROCESSING: { color: 'info', icon: <History fontSize="small" /> },
+            FAILED: { color: 'error', icon: <MoreVert fontSize="small" /> }
+        };
+        const { color, icon } = config[status] || { color: 'default', icon: null };
+        return <Chip icon={icon} label={status} color={color as any} size="small" variant="outlined" sx={{ fontWeight: 'bold' }} />;
     };
 
-    const getTypeIcon = (type: string) => {
-        return type === 'DATA_EXPORT' ? '📥' : '🗑️';
-    };
+    const stats = [
+        { label: 'Total Requests', value: requests.length, color: theme.palette.primary.main, icon: <Policy /> },
+        { label: 'Data Exports', value: requests.filter(r => r.type === 'DATA_EXPORT').length, color: theme.palette.info.main, icon: <Download /> },
+        { label: 'Deletions', value: requests.filter(r => r.type === 'ACCOUNT_DELETION').length, color: theme.palette.error.main, icon: <DeleteForever /> },
+        { label: 'Pending', value: requests.filter(r => r.status === 'PENDING').length, color: theme.palette.warning.main, icon: <HourglassEmpty /> }
+    ];
 
     return (
-        <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-                <div>
-                    <h1 className="text-2xl font-bold">Privacy & Compliance</h1>
-                    <p className="text-gray-600">Monitor GDPR/CCPA data requests</p>
-                </div>
-            </div>
+        <Box sx={{ p: { xs: 2, md: 4 }, minHeight: '100vh', bgcolor: 'background.default' }}>
+            {/* Header */}
+            <Box mb={4}>
+                <Typography variant="h4" fontWeight="800" sx={{
+                    background: 'linear-gradient(45deg, #6366f1 30%, #8b5cf6 90%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    mb: 1
+                }}>
+                    Privacy & Compliance
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                    Monitor and manage GDPR/CCPA data privacy requests from users.
+                </Typography>
+            </Box>
 
-            {/* Stats */}
-            <div className="grid grid-cols-4 gap-4 mb-6">
-                <div className="bg-white p-6 rounded shadow">
-                    <h3 className="text-sm text-gray-600 mb-1">Total Requests</h3>
-                    <p className="text-3xl font-bold">{requests.length}</p>
-                </div>
-                <div className="bg-white p-6 rounded shadow">
-                    <h3 className="text-sm text-gray-600 mb-1">Data Exports</h3>
-                    <p className="text-3xl font-bold text-blue-600">
-                        {requests.filter(r => r.type === 'DATA_EXPORT').length}
-                    </p>
-                </div>
-                <div className="bg-white p-6 rounded shadow">
-                    <h3 className="text-sm text-gray-600 mb-1">Deletions</h3>
-                    <p className="text-3xl font-bold text-red-600">
-                        {requests.filter(r => r.type === 'ACCOUNT_DELETION').length}
-                    </p>
-                </div>
-                <div className="bg-white p-6 rounded shadow">
-                    <h3 className="text-sm text-gray-600 mb-1">Pending</h3>
-                    <p className="text-3xl font-bold text-yellow-600">
-                        {requests.filter(r => r.status === 'PENDING').length}
-                    </p>
-                </div>
-            </div>
+            {/* Stats Cards */}
+            <Grid container spacing={3} mb={4}>
+                {stats.map((stat) => (
+                    <Grid item xs={12} sm={6} md={3} key={stat.label}>
+                        <Paper sx={{
+                            p: 3,
+                            borderRadius: 3,
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            bgcolor: alpha(theme.palette.background.paper, 0.4),
+                            backdropFilter: 'blur(10px)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2
+                        }}>
+                            <Avatar sx={{ bgcolor: alpha(stat.color, 0.1), color: stat.color }}>
+                                {stat.icon}
+                            </Avatar>
+                            <Box>
+                                <Typography variant="caption" color="text.secondary" fontWeight="bold" sx={{ textTransform: 'uppercase' }}>
+                                    {stat.label}
+                                </Typography>
+                                <Typography variant="h5" fontWeight="bold">
+                                    {stat.value}
+                                </Typography>
+                            </Box>
+                        </Paper>
+                    </Grid>
+                ))}
+            </Grid>
 
-            {/* Filters */}
-            <div className="bg-white p-4 rounded shadow mb-6">
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => setFilter('all')}
-                        className={`px-4 py-2 rounded ${filter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
-                    >
-                        All Requests
-                    </button>
-                    <button
-                        onClick={() => setFilter('DATA_EXPORT')}
-                        className={`px-4 py-2 rounded ${filter === 'DATA_EXPORT' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
-                    >
-                        Data Exports
-                    </button>
-                    <button
-                        onClick={() => setFilter('ACCOUNT_DELETION')}
-                        className={`px-4 py-2 rounded ${filter === 'ACCOUNT_DELETION' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
-                    >
-                        Account Deletions
-                    </button>
-                </div>
-            </div>
+            {/* Main Content Area */}
+            <Paper sx={{
+                borderRadius: 4,
+                overflow: 'hidden',
+                border: '1px solid',
+                borderColor: 'divider',
+                bgcolor: alpha(theme.palette.background.paper, 0.6),
+                backdropFilter: 'blur(20px)'
+            }}>
+                <Box sx={{ borderBottom: '1px solid', borderColor: 'divider', px: 3, pt: 2 }}>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                        <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)} textColor="primary" indicatorColor="primary">
+                            <Tab label="All Requests" />
+                            <Tab label="Data Exports" />
+                            <Tab label="Account Deletions" />
+                        </Tabs>
 
-            {/* Requests Table */}
-            <div className="bg-white rounded shadow">
-                <table className="min-w-full">
-                    <thead className="bg-gray-100">
-                        <tr>
-                            <th className="p-3 text-left">Type</th>
-                            <th className="p-3 text-left">User</th>
-                            <th className="p-3 text-left">Requested</th>
-                            <th className="p-3 text-left">Status</th>
-                            <th className="p-3 text-left">Details</th>
-                            <th className="p-3 text-left">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredRequests.map((request) => (
-                            <tr key={request.id} className="border-b hover:bg-gray-50">
-                                <td className="p-3">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-2xl">{getTypeIcon(request.type)}</span>
-                                        <span className="font-medium">
-                                            {request.type === 'DATA_EXPORT' ? 'Data Export' : 'Account Deletion'}
-                                        </span>
-                                    </div>
-                                </td>
-                                <td className="p-3">
-                                    <div>
-                                        <div className="font-medium">{request.userName}</div>
-                                        <div className="text-sm text-gray-600">{request.userEmail}</div>
-                                    </div>
-                                </td>
-                                <td className="p-3">{request.requestedAt}</td>
-                                <td className="p-3">
-                                    <span className={`px-2 py-1 rounded text-xs ${getStatusColor(request.status)}`}>
-                                        {request.status}
-                                    </span>
-                                </td>
-                                <td className="p-3 text-sm">
-                                    {request.completedAt && <div>Completed: {request.completedAt}</div>}
-                                    {request.scheduledFor && <div>Scheduled: {request.scheduledFor}</div>}
-                                </td>
-                                <td className="p-3">
-                                    <button className="text-blue-600 hover:underline text-sm mr-3">
-                                        View Details
-                                    </button>
-                                    {request.type === 'ACCOUNT_DELETION' && request.status === 'PENDING' && (
-                                        <button className="text-red-600 hover:underline text-sm">
-                                            Cancel
-                                        </button>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                        <TextField
+                            size="small"
+                            placeholder="Search user..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Search fontSize="small" color="action" />
+                                    </InputAdornment>
+                                ),
+                                sx: { borderRadius: 2, width: 250, bgcolor: 'background.paper' }
+                            }}
+                        />
+                    </Box>
+                </Box>
 
-            {/* Compliance Info */}
-            <div className="mt-6 bg-blue-50 p-4 rounded border border-blue-200">
-                <h3 className="font-bold mb-2">📋 Compliance Notes</h3>
-                <ul className="text-sm space-y-1">
-                    <li>• GDPR requires data export within 30 days</li>
-                    <li>• CCPA requires data export within 45 days</li>
-                    <li>• Account deletions have a 30-day grace period</li>
-                    <li>• Financial records are anonymized, not deleted (legal requirement)</li>
-                </ul>
-            </div>
-        </div>
+                <TableContainer>
+                    <Table>
+                        <TableHead sx={{ bgcolor: alpha(theme.palette.primary.main, 0.03) }}>
+                            <TableRow>
+                                <TableCell sx={{ fontWeight: 'bold' }}>Type</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold' }}>User Details</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold' }}>Requested At</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold' }}>Fulfillment Info</TableCell>
+                                <TableCell align="right" sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {filteredRequests.map((request) => (
+                                <TableRow key={request.id} hover>
+                                    <TableCell>
+                                        <Box display="flex" alignItems="center" gap={1.5}>
+                                            <Avatar sx={{
+                                                width: 32,
+                                                height: 32,
+                                                bgcolor: alpha(request.type === 'DATA_EXPORT' ? theme.palette.info.main : theme.palette.error.main, 0.1),
+                                                color: request.type === 'DATA_EXPORT' ? theme.palette.info.main : theme.palette.error.main
+                                            }}>
+                                                {request.type === 'DATA_EXPORT' ? <Download fontSize="small" /> : <DeleteForever fontSize="small" />}
+                                            </Avatar>
+                                            <Typography variant="body2" fontWeight="bold">
+                                                {request.type === 'DATA_EXPORT' ? 'Data Export' : 'Deletion'}
+                                            </Typography>
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography variant="body2" fontWeight="medium">{request.userName}</Typography>
+                                        <Typography variant="caption" color="text.secondary">{request.userEmail}</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Typography variant="body2">{new Date(request.requestedAt).toLocaleDateString()}</Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        {getStatusChip(request.status)}
+                                    </TableCell>
+                                    <TableCell>
+                                        {request.completedAt && (
+                                            <Typography variant="caption" display="block" color="success.main">
+                                                <b>Completed:</b> {request.completedAt}
+                                            </Typography>
+                                        )}
+                                        {request.scheduledFor && (
+                                            <Typography variant="caption" display="block" color="warning.main">
+                                                <b>Scheduled:</b> {request.scheduledFor}
+                                            </Typography>
+                                        )}
+                                        {!request.completedAt && !request.scheduledFor && (
+                                            <Typography variant="caption" color="text.disabled italic">Processing...</Typography>
+                                        )}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <Tooltip title="View Details">
+                                            <IconButton size="small"><MoreVert fontSize="small" /></IconButton>
+                                        </Tooltip>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Paper>
+
+            {/* Compliance Info Note */}
+            <Paper sx={{
+                mt: 4,
+                p: 3,
+                borderRadius: 3,
+                bgcolor: alpha(theme.palette.info.main, 0.05),
+                border: '1px solid',
+                borderColor: alpha(theme.palette.info.main, 0.2),
+                display: 'flex',
+                gap: 2
+            }}>
+                <PrivacyTip color="info" />
+                <Box>
+                    <Typography variant="subtitle2" fontWeight="bold" color="info.main" mb={1}>
+                        Compliance Requirements Summary
+                    </Typography>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="caption" component="div">• GDPR/CCPA: Data export must be fulfilled within 30-45 days.</Typography>
+                            <Typography variant="caption" component="div">• Account Deletions: 30-day grace period before permanent erasure.</Typography>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="caption" component="div">• Data Minimization: Only retain financial records as legally required.</Typography>
+                            <Typography variant="caption" component="div">• Audit Trail: Every compliance action is logged in the System Audit.</Typography>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Paper>
+        </Box>
     );
 }

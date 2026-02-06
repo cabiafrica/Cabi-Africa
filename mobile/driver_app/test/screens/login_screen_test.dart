@@ -31,6 +31,20 @@ class MockHttpClient extends Mock implements HttpClient {
   Future<HttpClientRequest> openUrl(String method, Uri url) =>
       _handleRequest(url);
 
+  @override
+  bool autoUncompress = false;
+
+  @override
+  String Function(Uri url)? findProxy = (url) => 'DIRECT';
+
+  @override
+  void addCredentials(
+      Uri url, String realm, HttpClientCredentials credentials) {}
+
+  @override
+  void addProxyCredentials(
+      String host, int port, String realm, HttpClientCredentials credentials) {}
+
   Future<HttpClientRequest> _handleRequest(Uri url) async {
     final request = MockHttpClientRequest();
 
@@ -44,54 +58,69 @@ class MockHttpClient extends Mock implements HttpClient {
         'token': 'mock_token',
         'user': {'id': '1', 'email': 'driver@example.com'}
       });
-    } else if (url.toString().contains('pravatar')) {
-      status = 200;
-      isImage = true;
-    } else if (url.toString().contains('via.placeholder.com') ||
+    } else if (url.toString().contains('pravatar') ||
+        url.toString().contains('via.placeholder.com') ||
         url.toString().contains('openstreetmap') ||
         url.path.endsWith('.png') ||
-        url.path.endsWith('.jpg')) {
+        url.path.endsWith('.jpg') ||
+        url.path.endsWith('.jpeg')) {
       status = 200;
       isImage = true;
-    } else if (url.path.contains('/rides')) {
-      status = 404;
+    } else if (url.path.contains('/dispatch')) {
+      status = 200;
+      body = jsonEncode({'isOnline': true});
     } else if (url.path.contains('/status')) {
       status = 200;
-      body = 'false';
-    } else if (url.path.contains('/api/')) {
+      body = 'true';
+    } else {
       status = 200;
       body = '{}';
-    } else {
-      // Default catch-all for external resources (maps, images) to prevent crashes
-      status = 200;
-      isImage = true;
     }
 
     final response = MockHttpClientResponse(
         isImage: isImage, statusCode: status, bodyString: body);
     when(() => request.close()).thenAnswer((_) async => response);
+    when(() => request.done).thenAnswer((_) async => response);
     return request;
   }
-
-  @override
-  set autoUncompress(bool autoUncompress) {}
 }
 
 class MockHttpClientRequest extends Mock implements HttpClientRequest {
   final _headers = MockHttpHeaders();
   @override
   HttpHeaders get headers => _headers;
+
+  @override
+  void add(List<int> data) {}
+
+  @override
+  void write(Object? object) {}
 }
 
 class MockHttpHeaders extends Mock implements HttpHeaders {
+  final Map<String, List<String>> _values = {};
+
   @override
   List<String>? operator [](String name) {
-    return ['image/png'];
+    return _values[name] ?? ['text/plain'];
+  }
+
+  @override
+  void add(String name, Object value, {bool preserveHeaderCase = false}) {
+    _values[name] ??= [];
+    _values[name]!.add(value.toString());
   }
 
   @override
   String? value(String name) {
-    return 'image/png';
+    return _values[name]?.first;
+  }
+
+  @override
+  set contentType(ContentType? contentType) {
+    if (contentType != null) {
+      _values['content-type'] = [contentType.toString()];
+    }
   }
 }
 
@@ -100,6 +129,10 @@ class MockHttpClientResponse extends Mock implements HttpClientResponse {
   @override
   final int statusCode;
   final String bodyString;
+
+  @override
+  final HttpHeaders headers = MockHttpHeaders();
+
   final List<int> _imageBytes = const [
     137,
     80,
@@ -171,11 +204,18 @@ class MockHttpClientResponse extends Mock implements HttpClientResponse {
   ];
 
   MockHttpClientResponse(
-      {this.isImage = false, this.statusCode = 200, this.bodyString = ''});
+      {this.isImage = false, this.statusCode = 200, this.bodyString = ''}) {
+    if (isImage) {
+      headers.contentType = ContentType.parse('image/png');
+    } else {
+      headers.contentType = ContentType.parse('application/json');
+    }
+  }
 
   @override
   int get contentLength =>
       isImage ? _imageBytes.length : utf8.encode(bodyString).length;
+
   @override
   HttpClientResponseCompressionState get compressionState =>
       HttpClientResponseCompressionState.notCompressed;
@@ -183,21 +223,24 @@ class MockHttpClientResponse extends Mock implements HttpClientResponse {
   @override
   StreamSubscription<List<int>> listen(void Function(List<int> event)? onData,
       {Function? onError, void Function()? onDone, bool? cancelOnError}) {
-    List<int> bytes;
-    if (isImage) {
-      bytes = _imageBytes;
-    } else {
-      bytes = utf8.encode(bodyString);
-    }
-
+    List<int> bytes = isImage ? _imageBytes : utf8.encode(bodyString);
     return Stream<List<int>>.fromIterable([bytes]).listen(onData,
         onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 }
 
+class TestHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) => MockHttpClient();
+}
+
 void main() {
   late MockAuthService mockAuthService;
   late MockFlutterSecureStorage mockSecureStorage;
+
+  setUpAll(() {
+    HttpOverrides.global = TestHttpOverrides();
+  });
 
   setUp(() {
     mockAuthService = MockAuthService();
@@ -207,6 +250,11 @@ void main() {
     when(() => mockSecureStorage.write(
         key: any(named: 'key'),
         value: any(named: 'value'))).thenAnswer((_) async => {});
+
+    // Default stub for signIn to prevent "Null is not a subtype of Future"
+    when(() => mockAuthService.signIn(any(), any())).thenAnswer(
+      (_) async => AuthResult(isSignedIn: false, error: 'Stub error'),
+    );
   });
 
   Widget createWidgetUnderTest() {
@@ -231,12 +279,9 @@ void main() {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 3.0;
 
-    await HttpOverrides.runZoned(() async {
-      await tester.pumpWidget(createWidgetUnderTest());
-
-      expect(find.text('CABI AFRICA'), findsOneWidget);
-      expect(find.text('Drive with Us'), findsOneWidget);
-    }, createHttpClient: (_) => MockHttpClient());
+    await tester.pumpWidget(createWidgetUnderTest());
+    expect(find.text('CABI AFRICA'), findsOneWidget);
+    expect(find.text('Drive with Us'), findsOneWidget);
 
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -246,15 +291,12 @@ void main() {
     tester.view.physicalSize = const Size(1080, 2400);
     tester.view.devicePixelRatio = 3.0;
 
-    await HttpOverrides.runZoned(() async {
-      await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.ensureVisible(find.text('Start Driving'));
+    await tester.tap(find.text('Start Driving'));
+    await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.text('Start Driving'));
-      await tester.tap(find.text('Start Driving'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Invalid email'), findsOneWidget);
-    }, createHttpClient: (_) => MockHttpClient());
+    expect(find.text('Invalid email'), findsOneWidget);
 
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -268,25 +310,22 @@ void main() {
       (_) async => AuthResult(isSignedIn: false, error: 'Invalid credentials'),
     );
 
-    await HttpOverrides.runZoned(() async {
-      await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.enterText(
+        find.byType(TextFormField).at(0), 'wrong@example.com');
+    await tester.enterText(find.byType(TextFormField).at(1), 'wrongpass');
 
-      await tester.enterText(
-          find.byType(TextFormField).at(0), 'wrong@example.com');
-      await tester.enterText(find.byType(TextFormField).at(1), 'wrongpass');
+    await tester.ensureVisible(find.text('Start Driving'));
+    await tester.tap(find.text('Start Driving'));
+    await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.text('Start Driving'));
-      await tester.tap(find.text('Start Driving'));
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('Invalid credentials'), findsOneWidget);
-    }, createHttpClient: (_) => MockHttpClient());
+    expect(find.textContaining('Invalid credentials'), findsOneWidget);
 
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
   });
+
   testWidgets('navigates to HomeScreen on successful login', (tester) async {
-    // TODO: Fix NetworkImage loading issue. HttpOverrides.global is not intercepting NetworkImage in this test environment.
     tester.view.physicalSize = const Size(1284, 2778);
     tester.view.devicePixelRatio = 3.0;
 
@@ -295,32 +334,29 @@ void main() {
           AuthResult(isSignedIn: true, token: 'mock_token', user: {'id': '1'}),
     );
 
-    await HttpOverrides.runZoned(() async {
-      await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pumpWidget(createWidgetUnderTest());
 
-      await tester.enterText(
-          find.byType(TextFormField).at(0), 'driver@example.com');
-      await tester.enterText(find.byType(TextFormField).at(1), 'password123');
+    await tester.enterText(
+        find.byType(TextFormField).at(0), 'driver@example.com');
+    await tester.enterText(find.byType(TextFormField).at(1), 'password123');
 
-      await tester.ensureVisible(find.text('Start Driving'));
-      await tester.tap(find.text('Start Driving'));
+    await tester.ensureVisible(find.text('Start Driving'));
+    await tester.tap(find.text('Start Driving'));
 
-      await tester.pump();
-      await tester.pump(const Duration(seconds: 1)); // Auth logic
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1)); // Auth logic
 
-      // Just verify Auth Called for now if HomeScreen crashes in test env
-      // verify(() => mockAuthService.signIn('driver@example.com', 'password123'))
-      //    .called(1);
+    // Attempt navigation
+    try {
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+      expect(find.byType(HomeScreen), findsOneWidget);
+    } catch (e) {
+      debugPrint('Navigation happened but UI elements might be settling: $e');
+      // If we are here, we at least expect HomeScreen to be present
+      expect(find.byType(HomeScreen), findsOneWidget);
+    }
 
-      // Attempt navigation
-      try {
-        await tester.pump(const Duration(seconds: 2));
-        expect(find.byType(HomeScreen), findsOneWidget);
-      } catch (e) {
-        // Log but don't fail if it's unrelated to navigation logic (e.g. image asset)
-        debugPrint('Navigation happened but HomeScreen crashed: $e');
-        // If we are here, it means pump threw.
-      }
-    }, createHttpClient: (_) => MockHttpClient());
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
   });
 }

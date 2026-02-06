@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Get, Query, Param } from '@nestjs/common';
 import { DriverLeadsService } from './driver-leads.service';
-import { RegisterLeadDto } from './driver-leads/dto/register-lead.dto';
+import { RegisterLeadDto } from './register-lead.dto';
 import { MlmService } from './mlm.service';
 
 @Controller('driver-leads')
@@ -24,6 +24,11 @@ export class DriverLeadsController {
   @Get('pending')
   getPendingDrivers(@Query('page') page = 1, @Query('limit') limit = 10) {
     return this.driverLeadsService.getPendingDrivers(Number(page), Number(limit));
+  }
+
+  @Post('simulate')
+  simulate(@Body('count') count = 5) {
+    return this.driverLeadsService.simulateRegistrations(Number(count));
   }
 
   @Post(':id/approve')

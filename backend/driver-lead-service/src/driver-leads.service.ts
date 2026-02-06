@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { RegisterLeadDto } from './dto/register-lead.dto';
+import { RegisterLeadDto } from './register-lead.dto';
 import { UserService } from '@cabi/backend/user-service';
 import { MlmService } from './mlm.service';
 
@@ -34,10 +34,13 @@ export class DriverLeadsService {
     // 4. Distribute Fee via MLM
     await this.mlmService.distributeFee(userId, 500);
 
+    // 5. Update Status to PENDING (waiting for documents)
+    await this.userService.updateUserStatus(userId, 'PENDING');
+
     return {
       message: 'Registration successful. Please download the app to continue.',
       userId,
-      status
+      status: 'PENDING'
     };
   }
 
@@ -49,13 +52,50 @@ export class DriverLeadsService {
   }
 
   async getPendingDrivers(page: number, limit: number) {
-    // Mock data for Admin Panel
-    // In real app, query UserService for users with role DRIVER and status PENDING
-    const drivers = [
-      { id: 'driver-123', fullName: 'John Doe', phone: '0712345678', applicationDate: '2024-05-21T10:00:00Z', status: 'PENDING' },
-      { id: 'driver-456', fullName: 'Peter Jones', phone: '0787654321', applicationDate: '2024-05-20T14:00:00Z', status: 'PENDING' },
-    ];
-    return { data: drivers, total: drivers.length };
+    const drivers = await this.userService.getPendingDrivers();
+    // Wrap to match expected format
+    const mapped = drivers.map(d => ({
+      id: d.id,
+      fullName: d.fullName,
+      phone: d.phone,
+      email: d.email,
+      applicationDate: d.createdAt.toISOString(),
+      status: 'PENDING'
+    }));
+    return { data: mapped, total: mapped.length };
+  }
+
+  async simulateRegistrations(count: number) {
+    console.log(`Simulating ${count} driver registrations...`);
+    const results = [];
+    for (let i = 0; i < count; i++) {
+      const timestamp = Date.now() + i;
+      const firstName = `Simulated`;
+      const lastName = `Driver ${i + 1}`;
+      const email = `sim_driver_${timestamp}@cabi.test`;
+      const phone = `+254700${Math.floor(100000 + Math.random() * 900000)}`;
+
+      const res = await this.register({
+        firstName,
+        lastName,
+        email,
+        phone,
+        dateOfBirth: '1990-01-01',
+        street: 'Simulated Street',
+        city: 'Nairobi',
+        county: 'Nairobi',
+        vehicleType: 'car' as any,
+        licensePlate: `KDA ${Math.floor(100 + Math.random() * 900)}${String.fromCharCode(65 + Math.floor(Math.random() * 26))}`,
+        nationalId: `ID-${timestamp}`,
+        drivingLicense: `DL-${timestamp}`,
+        recaptchaToken: 'SIMULATED',
+        password: 'Password123!',
+        referralCode: '',
+        agreeToTerms: true
+      });
+      results.push(res);
+    }
+    return results;
   }
 
   async approveDriver(driverId: string) {
