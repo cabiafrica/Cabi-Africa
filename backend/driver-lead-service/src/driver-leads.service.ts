@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { RegisterLeadDto } from './register-lead.dto';
+import { RegisterLeadDto } from './driver-leads/dto/register-lead.dto';
 import { UserService } from '@cabi/backend/user-service';
 import { MlmService } from './mlm.service';
 

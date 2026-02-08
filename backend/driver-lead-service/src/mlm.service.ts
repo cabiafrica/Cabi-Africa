@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { UpdateMlmFormulaDto } from './driver-leads/update-mlm-formula.dto';
+import { UpdateMlmFormulaDto } from './driver-leads/dto/update-mlm-formula.dto';
 
 /**
  * Defines the structure for a single rule in the MLM fee formula.

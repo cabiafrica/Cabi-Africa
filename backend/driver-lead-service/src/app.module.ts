@@ -5,6 +5,7 @@ import { NotificationService } from './notification.service';
 import { AuthTokenService } from './auth-token.service';
 import { EmailProvider } from './email.provider';
 import { SmsProvider } from './sms.provider';
+import { PushProvider } from './push.provider';
 import { DocumentModule } from './document/document.module';
 import { OrganizationModule } from './organization/organization.module';
 import { AnalyticsModule } from './analytics/analytics.module';
@@ -27,6 +28,7 @@ import { JwtStrategy } from './driver-leads/jwt.strategy';
     AuthTokenService,
     EmailProvider,
     SmsProvider,
+    PushProvider,
   ],
 })
 export class AppModule { }

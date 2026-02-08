@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import Tesseract from 'tesseract.js';
+import * as Tesseract from 'tesseract.js';
 import sharp from 'sharp';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { Controller, Get, Put, Body, UseGuards } from '@nestjs/common';
 import { MlmService } from '../mlm.service';
-import { UpdateMlmFormulaDto } from './update-mlm-formula.dto';
+import { UpdateMlmFormulaDto } from './dto/update-mlm-formula.dto';
 
 // TODO: Implement a real AdminGuard for production
 @UseGuards() // Placeholder for a real AdminGuard

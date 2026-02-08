@@ -4,6 +4,8 @@ import { PassportModule } from '@nestjs/passport';
 import { DriverLeadsController } from './driver-leads.controller';
 import { DriverLeadsService } from './driver-leads.service';
 import { MlmController } from './driver-leads/mlm.controller';
+import { AuthController } from './driver-leads/auth.controller';
+import { UserManagementService } from './driver-leads/user-management.service';
 import { UserModule } from '@cabi/backend/user-service';
 import { MlmService } from './mlm.service';
 
@@ -17,7 +19,7 @@ import { MlmService } from './mlm.service';
     }),
     UserModule,
   ],
-  controllers: [DriverLeadsController, MlmController],
-  providers: [DriverLeadsService, MlmService],
+  controllers: [DriverLeadsController, MlmController, AuthController],
+  providers: [DriverLeadsService, MlmService, UserManagementService],
 })
 export class DriverLeadsModule { }

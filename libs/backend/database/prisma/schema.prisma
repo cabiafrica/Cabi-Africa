@@ -32,6 +32,14 @@ model User {
   role      LegacyRole     @default(PASSENGER)
   status    UserStatus     @default(PROSPECT)
   
+  // 2FA and Security
+  isTwoFactorEnabled Boolean @default(false)
+  twoFactorSecret    String?
+  recoveryCodes      String[]
+  forgotEmailOtp     String?
+  forgotEmailOtpExpires DateTime?
+  lastActiveAt       DateTime?
+
   // RBAC Relations
   userRoles     UserRole[]
   userPermissions UserPermission[]
@@ -51,6 +59,7 @@ model User {
   driverProfile    DriverProfile?
   documentVerifications DocumentVerification[]
   biometricVerifications BiometricVerification[]
+  loginHistory     LoginHistory[]
 
   // Referrals
   referralCode String? @unique
@@ -76,6 +85,21 @@ model User {
   @@index([phone])
   @@map("users")
 }
+
+model LoginHistory {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  ipAddress   String
+  userAgent   String
+  location    String?
+  reportedAt  DateTime?
+  reviewedAt  DateTime?
+  createdAt   DateTime @default(now())
+
+  @@map("login_history")
+}
+
 
 // ... existing enums
 

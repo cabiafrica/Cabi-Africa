@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Get, Query, Param } from '@nestjs/common';
 import { DriverLeadsService } from './driver-leads.service';
-import { RegisterLeadDto } from './register-lead.dto';
+import { RegisterLeadDto } from './driver-leads/dto/register-lead.dto';
 import { MlmService } from './mlm.service';
 
 @Controller('driver-leads')
