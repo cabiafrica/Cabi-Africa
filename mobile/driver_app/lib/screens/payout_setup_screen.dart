@@ -24,6 +24,7 @@ class _PayoutSetupScreenState extends State<PayoutSetupScreen> {
   PayoutMethodType _selectedMethod =
       PayoutMethodType.mpesa; // Default to M-Pesa commonly
   bool _isSaving = false;
+  bool _obscureAccount = true;
 
   @override
   void dispose() {
@@ -206,15 +207,23 @@ class _PayoutSetupScreenState extends State<PayoutSetupScreen> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _accountNumberController,
-                  decoration: const InputDecoration(
+                  obscureText: _obscureAccount,
+                  decoration: InputDecoration(
                     labelText: 'Account Number',
-                    border: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: cabiYellow, width: 2)),
-                    prefixIcon: Icon(Icons.numbers),
+                    border: const OutlineInputBorder(),
+                    focusedBorder: const OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Color(0xFFFFBE0B), width: 2)),
+                    prefixIcon: const Icon(Icons.numbers),
+                    suffixIcon: IconButton(
+                      icon: Icon(_obscureAccount
+                          ? Icons.visibility
+                          : Icons.visibility_off),
+                      onPressed: () =>
+                          setState(() => _obscureAccount = !_obscureAccount),
+                    ),
                   ),
                   keyboardType: TextInputType.number,
-                  obscureText: true,
                   validator: (value) => value == null || value.isEmpty
                       ? 'Please enter account number'
                       : null,

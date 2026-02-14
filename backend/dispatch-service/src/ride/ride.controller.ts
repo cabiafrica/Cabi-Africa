@@ -5,6 +5,7 @@ class CreateRideDto {
   passengerId: string;
   pickup: any;
   dropoff: any;
+  vehicleType?: string;
 }
 
 class AcceptRideDto {
@@ -32,9 +33,30 @@ export class RideController {
     return this.rideService.getCurrentRide(userId, role);
   }
 
+  @Get('nearby-drivers')
+  async getNearbyDrivers(
+    @Query('pickupLat') pickupLat: string,
+    @Query('pickupLng') pickupLng: string,
+    @Query('vehicleType') vehicleType?: string,
+    @Query('maxDistanceKm') maxDistanceKm?: string,
+  ) {
+    const drivers = await this.rideService.matchingService.findNearbyDrivers({
+      pickupLat: parseFloat(pickupLat),
+      pickupLng: parseFloat(pickupLng),
+      vehicleType: vehicleType as any,
+      maxDistanceKm: maxDistanceKm ? parseFloat(maxDistanceKm) : 5.0,
+    });
+    return { success: true, data: drivers };
+  }
+
   @Post()
   createRide(@Body() body: CreateRideDto) {
-    return this.rideService.createRide(body.passengerId, body.pickup, body.dropoff);
+    return this.rideService.createRide(
+      body.passengerId,
+      body.pickup,
+      body.dropoff,
+      body.vehicleType
+    );
   }
 
   @Post(':id/accept')

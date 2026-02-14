@@ -7,12 +7,12 @@ export default defineConfig({
         port: 3002,
         proxy: {
             '/api/dispatch': {
-                target: 'http://localhost:3334',
+                target: 'http://localhost:3333',
                 changeOrigin: true,
             },
-            '/api': 'http://localhost:3000',
+            '/api': 'http://localhost:3333',
             '/socket.io': {
-                target: 'http://localhost:3334',
+                target: 'http://localhost:3333',
                 ws: true,
             },
         },

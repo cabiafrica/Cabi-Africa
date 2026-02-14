@@ -20,6 +20,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _obscurePassword = true;
   String? _errorMessage;
 
   Future<void> _signIn() async {
@@ -153,14 +154,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   child: TextFormField(
                     controller: _passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
                       labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock, color: Colors.black),
+                      prefixIcon: const Icon(Icons.lock, color: Colors.black),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(20),
-                      labelStyle: TextStyle(color: Colors.grey),
-                      floatingLabelStyle: TextStyle(color: Colors.black),
+                      contentPadding: const EdgeInsets.all(20),
+                      labelStyle: const TextStyle(color: Colors.grey),
+                      floatingLabelStyle: const TextStyle(color: Colors.black),
                     ),
                     validator: (value) =>
                         value!.isEmpty ? 'Please enter your password' : null,

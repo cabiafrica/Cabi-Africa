@@ -54,4 +54,8 @@ export class RegisterUserDto {
   @IsString()
   @IsOptional()
   orgType?: string;
+
+  @IsString()
+  @IsOptional()
+  profilePhotoUrl?: string;
 }

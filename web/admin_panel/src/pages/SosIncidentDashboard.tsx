@@ -187,7 +187,7 @@ export const SosIncidentDashboard = () => {
       </Box>
       <Grid container spacing={3}>
         {/* Left Column: Details */}
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card>
             <CardHeader title="Driver Details" />
             <CardContent>
@@ -212,7 +212,7 @@ export const SosIncidentDashboard = () => {
         </Grid>
 
         {/* Right Column: Map and Actions */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Box sx={{ height: '400px', width: '100%' }}>
             <LiveMap location={incident.liveLocation} />
           </Box>

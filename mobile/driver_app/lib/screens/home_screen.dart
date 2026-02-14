@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cabi_maps/cabi_maps.dart';
@@ -23,6 +24,7 @@ import 'package:driver_app/widgets/ride_request_modal.dart';
 import 'package:driver_app/providers/ride_request_provider.dart';
 import 'package:provider/provider.dart' as legacy_provider;
 import 'package:driver_app/theme/app_theme.dart';
+import 'package:driver_app/services/badge_service.dart' as badge_service;
 
 // Mock DTO
 class DriverHomeStatusDto {
@@ -41,6 +43,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Timer? _ridePollTimer;
   final _rideService = RideService();
   final _locationService = LocationService();
+
+  GoogleMapController? _googleMapController;
+  CabiMapController? _cabiMapController;
+  LatLng? _currentPosition;
+  bool _isFollowingLocation = true;
+  StreamSubscription<Position>? _locationSubscription;
 
   // unused fields removed
   bool _isOnline = false;
@@ -123,12 +131,67 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchStatus();
       _startRidePolling();
+      _initLocationTracking();
     });
+  }
+
+  Future<void> _initLocationTracking() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return;
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return;
+    }
+
+    // Get initial position
+    final position = await Geolocator.getCurrentPosition();
+    if (mounted) {
+      setState(() {
+        _currentPosition = LatLng(position.latitude, position.longitude);
+      });
+      _centerMapOnLocation();
+    }
+
+    // Subscribe to updates
+    _locationSubscription = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 5,
+      ),
+    ).listen((Position position) {
+      if (mounted) {
+        setState(() {
+          _currentPosition = LatLng(position.latitude, position.longitude);
+        });
+        if (_isFollowingLocation) {
+          _centerMapOnLocation();
+        }
+      }
+    });
+  }
+
+  void _centerMapOnLocation() {
+    if (_currentPosition == null) return;
+
+    final latLng =
+        LatLng(_currentPosition!.latitude, _currentPosition!.longitude);
+
+    _googleMapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(latLng, 15),
+    );
+
+    _cabiMapController?.animateCamera(
+      lat_lng.LatLng(latLng.latitude, latLng.longitude),
+      zoom: 15,
+    );
   }
 
   @override
   void dispose() {
     _ridePollTimer?.cancel();
+    _locationSubscription?.cancel();
     _locationService.dispose();
     super.dispose();
   }
@@ -172,7 +235,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ? ride['pickupLocation']
                 : (ride['pickupLocation']?['address'] ?? 'Unspecified Pickup'),
             'distanceToPickup': 'Calculating...',
-            'passengerRating': ride['passenger']?['rating'] ?? 5.0,
+            'passengerRating': ride['passenger']?['averageRating'] ?? 5.0,
+            'passengerBadges':
+                (ride['passenger']?['badges'] as List?)?.map((e) {
+                      final badgeMap = Map<String, dynamic>.from(e['badge']);
+                      badgeMap['isEarned'] = true;
+                      return badge_service.Badge.fromJson(badgeMap);
+                    }).toList() ??
+                    [],
           });
 
           showDialog(
@@ -225,17 +295,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               builder: (context, ref, child) {
                 final mapType = ref.watch(provider.mapProvider);
                 if (mapType == provider.MapType.cabi) {
-                  return const CabiMap(
-                    initialCenter: lat_lng.LatLng(40.7128, -74.0060),
+                  return CabiMap(
+                    initialCenter: _currentPosition != null
+                        ? lat_lng.LatLng(_currentPosition!.latitude,
+                            _currentPosition!.longitude)
+                        : const lat_lng.LatLng(40.7128, -74.0060),
                     initialZoom: 14,
+                    onMapCreated: (controller) {
+                      _cabiMapController = controller;
+                    },
                   );
                 }
-                return const GoogleMap(
-                  initialCameraPosition: _kInitialPosition,
+                return GoogleMap(
+                  initialCameraPosition: _currentPosition != null
+                      ? CameraPosition(target: _currentPosition!, zoom: 15)
+                      : _kInitialPosition,
                   myLocationEnabled: true,
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
                   mapToolbarEnabled: false,
+                  onMapCreated: (controller) {
+                    _googleMapController = controller;
+                  },
                 );
               },
             ),
@@ -323,7 +404,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: FloatingActionButton.small(
               heroTag: 'location_btn',
               onPressed: () {
-                debugPrint('Resetting to current location...');
+                setState(() => _isFollowingLocation = true);
+                _centerMapOnLocation();
               },
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,

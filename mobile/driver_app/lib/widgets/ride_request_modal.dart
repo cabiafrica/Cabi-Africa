@@ -3,6 +3,8 @@ import 'package:driver_app/providers/ride_request_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../screens/trip_in_progress_screen.dart';
+import 'package:driver_app/widgets/badge_showcase_widget.dart';
+import 'package:driver_app/services/badge_service.dart' as badge_service;
 
 class RideRequestModal extends StatelessWidget {
   final Map<String, dynamic> requestData;
@@ -31,8 +33,8 @@ class RideRequestModal extends StatelessWidget {
           );
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) =>
-                  TripInProgressScreen(rideId: requestData['rideId']),
+              builder: (context) => TripInProgressScreen(
+                  rideId: requestData['rideId'], driverId: driverId),
             ),
           );
         }
@@ -70,6 +72,15 @@ class RideRequestModal extends StatelessWidget {
                 Text('Pickup: ${requestData['pickupAddress']}'),
                 Text('Distance to pickup: ${requestData['distanceToPickup']}'),
                 Text('Passenger Rating: ${requestData['passengerRating']} ★'),
+                if ((requestData['passengerBadges'] as List?)?.isNotEmpty ??
+                    false) ...[
+                  const SizedBox(height: 12),
+                  BadgeShowcaseWidget(
+                    badges: (requestData['passengerBadges'] as List)
+                        .cast<badge_service.Badge>(),
+                    compact: true,
+                  ),
+                ],
                 const SizedBox(height: 24),
                 Stack(
                   alignment: Alignment.center,

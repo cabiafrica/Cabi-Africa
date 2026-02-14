@@ -137,18 +137,30 @@ export default function GroupRegistrationPage() {
         setIsSubmitting(true);
 
         try {
-            // TODO: Integrate with backend API
-            // const response = await fetch('/api/driver-leads/group-register', {
-            //   method: 'POST',
-            //   headers: { 'Content-Type': 'application/json' },
-            //   body: JSON.stringify({ organization: organizationData, drivers }),
-            // });
+            const response = await fetch('/api/driver-leads/group-register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ organization: organizationData, drivers }),
+            });
 
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to register group');
+            }
 
-            // Redirect to payment page
-            router.push('/drivers/register/payment');
+            const result = await response.json();
+
+            // Redirect to payment page with registration data
+            router.push({
+                pathname: '/drivers/register/payment',
+                query: {
+                    organizationId: result.organizationId,
+                    driverIds: result.driverIds,
+                    totalAmount: result.totalAmount,
+                    discount: result.discount,
+                    finalAmount: result.finalAmount,
+                },
+            });
         } catch (error) {
             console.error('Registration error:', error);
             alert('An error occurred during registration. Please try again.');

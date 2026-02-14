@@ -31,9 +31,17 @@ class AuthService {
           token: data['token'],
         );
       } else {
+        String errorMessage = 'Login failed';
+        if (data['message'] != null) {
+          if (data['message'] is List) {
+            errorMessage = (data['message'] as List).join('\n');
+          } else {
+            errorMessage = data['message'].toString();
+          }
+        }
         return AuthResult(
           isSignedIn: false,
-          error: data['message'] ?? 'Login failed',
+          error: errorMessage,
         );
       }
     } catch (e) {
@@ -62,7 +70,7 @@ class AuthService {
           'email': email,
           'phone': phone,
           'password': password,
-          'role': 'PASSENGER',
+          'role': 'passenger',
           'referralCode': referralCode,
         }),
       );
@@ -75,9 +83,17 @@ class AuthService {
           user: data,
         );
       } else {
+        String errorMessage = 'Registration failed';
+        if (data['message'] != null) {
+          if (data['message'] is List) {
+            errorMessage = (data['message'] as List).join('\n');
+          } else {
+            errorMessage = data['message'].toString();
+          }
+        }
         return AuthResult(
           isSignedIn: false,
-          error: data['message'] ?? 'Registration failed',
+          error: errorMessage,
         );
       }
     } catch (e) {

@@ -9,7 +9,7 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) { }
 
   async registerPassenger(registerUserDto: RegisterUserDto) {
-    const { firstName, lastName, email, phone, password, role, referrerId, referralCode, licenseNumber, orgName, orgType } = registerUserDto;
+    const { firstName, lastName, email, phone, password, role, referrerId, referralCode, licenseNumber, orgName, orgType, profilePhotoUrl } = registerUserDto;
 
     // Check if user already exists
     const existingUser = await this.prisma.user.findFirst({
@@ -41,6 +41,7 @@ export class UserService {
             password: hashedPassword,
             fullName: `${firstName} ${lastName}`,
             role: prismaRole,
+            passportPhotoUrl: profilePhotoUrl,
             referralCode: referralCode || `CABI-${Math.random().toString(36).substring(7).toUpperCase()}`,
             referredById: referrerId,
           }
@@ -153,11 +154,15 @@ export class UserService {
       fullName: user.fullName,
       role: user.role,
       permissions: Array.from(permissions),
-      driverProfileId: user.driverProfile?.id
+      driverProfileId: user.driverProfile?.id,
+      isEmailVerified: user.isEmailVerified,
+      isPhoneVerified: user.isPhoneVerified,
+      isIdentityVerified: user.isIdentityVerified,
+      passportPhotoUrl: user.passportPhotoUrl,
     };
   }
 
-  async createProspect(data: { firstName: string, lastName: string, email: string, phone: string, city: string, referralCode?: string }) {
+  async createProspect(data: { firstName: string, lastName: string, email: string, phone: string, city: string, password?: string, referralCode?: string }) {
     // Check if user already exists
     const existingUser = await this.prisma.user.findFirst({
       where: {
@@ -177,7 +182,7 @@ export class UserService {
         email: data.email,
         phone: data.phone,
         fullName: `${data.firstName} ${data.lastName}`,
-        password: await bcrypt.hash('Prospect@2026', 10), // Default password for prospects
+        password: await bcrypt.hash(data.password || 'Prospect@2026', 10),
         role: LegacyRole.DRIVER,
         status: 'PROSPECT' as any,
         city: data.city,
@@ -205,5 +210,35 @@ export class UserService {
       where: { id: userId },
       data: { status: status as any }
     });
+  }
+
+  async promoteToDriver(userId: string) {
+    // Check if driver profile already exists
+    const existingProfile = await this.prisma.driverProfile.findFirst({
+      where: { userId }
+    });
+
+    if (existingProfile) {
+      return existingProfile;
+    }
+
+    // Get the user to retrieve their password from registration
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Create driver profile
+    const driverProfile = await this.prisma.driverProfile.create({
+      data: {
+        userId: userId,
+        licenseNumber: `DL-${userId.substring(0, 8)}`,
+      }
+    });
+
+    return driverProfile;
   }
 }

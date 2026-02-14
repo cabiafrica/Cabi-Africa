@@ -101,7 +101,16 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> tryAutoLogin() async {
-    // Just a dummy for now to satisfy splash screen
-    notifyListeners();
+    // TEST BYPASS: Auto-login with mock credentials for testing
+    // _token = 'test_token_12345';
+    // _user = {
+    //   'id': 'test-passenger-001',
+    //   'userId': 'test-passenger-001',
+    //   'email': 'test@passenger.com',
+    //   'firstName': 'Test',
+    //   'lastName': 'Passenger',
+    //   'role': 'PASSENGER'
+    // };
+    // notifyListeners();
   }
 }

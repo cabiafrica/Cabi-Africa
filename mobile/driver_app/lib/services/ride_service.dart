@@ -4,20 +4,20 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class RideService {
-  String get _baseUrl {
+  String get _dispatchBaseUrl {
     if (kIsWeb) {
-      return 'http://localhost:3333/api';
+      return 'http://localhost:3334/api';
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:3333/api';
+      return 'http://10.0.2.2:3334/api';
     }
-    return 'http://localhost:3333/api';
+    return 'http://localhost:3334/api';
   }
 
   Future<bool> getDriverStatus(String driverId) async {
     try {
       final response = await http.get(
-        Uri.parse('$_baseUrl/dispatch/drivers/$driverId/status'),
+        Uri.parse('$_dispatchBaseUrl/dispatch/drivers/$driverId/status'),
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -32,7 +32,7 @@ class RideService {
   Future<void> toggleOnlineStatus(String driverId, bool isOnline) async {
     try {
       await http.post(
-        Uri.parse('$_baseUrl/dispatch/drivers/$driverId/toggle-status'),
+        Uri.parse('$_dispatchBaseUrl/dispatch/drivers/$driverId/toggle-status'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'isOnline': isOnline}),
       );
@@ -45,7 +45,8 @@ class RideService {
       String userId, String role) async {
     try {
       final response = await http.get(
-        Uri.parse('$_baseUrl/dispatch/rides/current?userId=$userId&role=$role'),
+        Uri.parse(
+            '$_dispatchBaseUrl/dispatch/rides/current?userId=$userId&role=$role'),
       );
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -60,7 +61,7 @@ class RideService {
   Future<double> completeTrip(String tripId) async {
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/rides/$tripId/complete'),
+        Uri.parse('$_dispatchBaseUrl/rides/$tripId/complete'),
       );
 
       if (response.statusCode == 200) {
@@ -91,7 +92,7 @@ class RideService {
   Future<void> acceptRide(String rideId, String driverId) async {
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/dispatch/rides/$rideId/assign'),
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/accept'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'driverId': driverId}),
       );
@@ -99,17 +100,36 @@ class RideService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         debugPrint('Ride $rideId accepted via backend.');
       } else {
-        debugPrint('Backend acceptRide failed: ${response.statusCode}');
+        debugPrint(
+            'Backend acceptRide failed: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
       debugPrint('Error accepting ride: $e');
     }
   }
 
+  Future<void> startTrip(String rideId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/start'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint('Ride $rideId started via backend.');
+      } else {
+        debugPrint(
+            'Backend startTrip failed: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error starting ride: $e');
+    }
+  }
+
   Future<void> rejectRide(String rideId, String driverId) async {
     try {
       await http.post(
-        Uri.parse('$_baseUrl/rides/$rideId/reject'),
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/reject'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'driverId': driverId}),
       );
@@ -128,7 +148,7 @@ class RideService {
       {required String tripId, required double rating, String? comment}) async {
     try {
       await http.post(
-        Uri.parse('$_baseUrl/rides/$tripId/rate'),
+        Uri.parse('$_dispatchBaseUrl/rides/$tripId/rate'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'rating': rating, 'comment': comment}),
       );
@@ -141,13 +161,26 @@ class RideService {
   Future<void> confirmCashPayment(String tripId, double amount) async {
     try {
       await http.post(
-        Uri.parse('$_baseUrl/rides/$tripId/confirm-cash'),
+        Uri.parse('$_dispatchBaseUrl/rides/$tripId/confirm-cash'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'amount': amount}),
       );
       debugPrint('Cash payment confirmed for trip $tripId.');
     } catch (e) {
       debugPrint('Error confirming cash payment: $e');
+    }
+  }
+
+  Future<void> updateDriverLocation(
+      String driverId, double lat, double lng) async {
+    try {
+      await http.post(
+        Uri.parse('$_dispatchBaseUrl/dispatch/drivers/$driverId/location'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'lat': lat, 'lng': lng}),
+      );
+    } catch (e) {
+      debugPrint('Error updating location: $e');
     }
   }
 }

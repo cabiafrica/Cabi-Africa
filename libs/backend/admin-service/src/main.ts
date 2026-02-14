@@ -13,7 +13,7 @@ async function bootstrap() {
   app.enableCors();
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3334;
+  const port = process.env.PORT || 3336;
   await app.listen(port);
   Logger.log(
     `🚀 Admin Service is running on: http://localhost:${port}/${globalPrefix}`,

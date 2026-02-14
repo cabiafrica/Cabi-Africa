@@ -25,6 +25,7 @@ export class DriverLeadsService {
       email: registerLeadDto.email,
       phone: registerLeadDto.phone,
       city: registerLeadDto.city,
+      password: registerLeadDto.password,
       referralCode: registerLeadDto.referralCode
     });
 
@@ -100,9 +101,12 @@ export class DriverLeadsService {
 
   async approveDriver(driverId: string) {
     console.log(`Approving driver ${driverId}`);
-    // Call UserService to update status to VERIFIED/ACTIVE
-    // await this.userService.updateStatus(driverId, 'ACTIVE');
-    return { success: true, message: 'Driver approved' };
+
+    // Update user status to ACTIVE and role to DRIVER
+    await this.userService.updateUserStatus(driverId, 'ACTIVE');
+    await this.userService.promoteToDriver(driverId);
+
+    return { success: true, message: 'Driver approved and activated' };
   }
 
   async rejectDriver(driverId: string, reasons: string[]) {

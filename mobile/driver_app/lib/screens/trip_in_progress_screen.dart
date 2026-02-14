@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:cabi_maps/cabi_maps.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:driver_app/widgets/back_to_back_offer_widget.dart';
+import 'package:driver_app/widgets/swipeable_action_button.dart';
 import 'package:driver_app/theme/app_theme.dart';
 import 'package:driver_app/services/ride_service.dart';
 
 class TripInProgressScreen extends StatefulWidget {
   final String? rideId;
-  const TripInProgressScreen({super.key, this.rideId});
+  final String? driverId;
+  const TripInProgressScreen({super.key, this.rideId, this.driverId});
 
   @override
   State<TripInProgressScreen> createState() => _TripInProgressScreenState();
@@ -24,13 +26,20 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
   final _rideService = RideService();
 
   // Mock Locations
-  final LatLng _driverLocation = const LatLng(-1.286389, 36.817223); // CBD
+  LatLng _driverLocation = const LatLng(-1.286389, 36.817223); // CBD
   final LatLng _passengerLocation = const LatLng(-1.2921, 36.8219); // Near CBD
 
   @override
   void initState() {
     super.initState();
+    _startBackendTrip();
     _startTripSimulation();
+  }
+
+  Future<void> _startBackendTrip() async {
+    if (widget.rideId != null) {
+      await _rideService.startTrip(widget.rideId!);
+    }
   }
 
   @override
@@ -52,6 +61,22 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
           _distanceKm += 0.1;
           // Simulate fare calculation: KES 30/km + KES 5/min
           _currentFare += (0.1 * 30) + (5 / 60 * 5);
+        }
+
+        // Move 2% closer to destination every second
+        final double latDiff =
+            _passengerLocation.latitude - _driverLocation.latitude;
+        final double lngDiff =
+            _passengerLocation.longitude - _driverLocation.longitude;
+        if (latDiff.abs() > 0.0001 || lngDiff.abs() > 0.0001) {
+          _driverLocation = LatLng(_driverLocation.latitude + (latDiff * 0.02),
+              _driverLocation.longitude + (lngDiff * 0.02));
+
+          // Send update to backend
+          if (widget.driverId != null) {
+            _rideService.updateDriverLocation(widget.driverId!,
+                _driverLocation.latitude, _driverLocation.longitude);
+          }
         }
       });
     });
@@ -115,7 +140,8 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/home', (route) => false),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryColor,
                   foregroundColor: Colors.black,
@@ -308,28 +334,22 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                       const SizedBox(width: 16),
                       Expanded(
                         flex: 2,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (widget.rideId != null) {
-                              try {
-                                await _rideService.completeTrip(widget.rideId!);
-                              } catch (e) {
-                                debugPrint('Error completing trip: $e');
+                        child: SwipeableActionButton(
+                            label: 'Slide to End Trip',
+                            color: AppTheme.errorRed,
+                            icon: Icons.flag,
+                            onAction: () async {
+                              if (widget.rideId != null) {
+                                try {
+                                  await _rideService
+                                      .completeTrip(widget.rideId!);
+                                } catch (e) {
+                                  debugPrint('Error completing trip: $e');
+                                }
                               }
-                            }
-                            setState(() => _isTripEnded = true);
-                            _showWaybill(); // Show final bill
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.errorRed,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                          ),
-                          child: const Text('End Trip',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
+                              setState(() => _isTripEnded = true);
+                              _showWaybill(); // Show final bill
+                            }),
                       ),
                     ],
                   ),

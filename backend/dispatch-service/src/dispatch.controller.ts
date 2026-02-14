@@ -46,6 +46,14 @@ export class DispatchController {
         return this.dispatchService.updateDriverStatus(driverId, isOnline);
     }
 
+    @Post('drivers/:driverId/location')
+    async updateDriverLocation(
+        @Param('driverId') driverId: string,
+        @Body() location: { lat: number; lng: number },
+    ) {
+        return this.dispatchService.updateDriverLocation(driverId, location);
+    }
+
     @Get('rides/current')
     async getCurrentRide(
         @Query('userId') userId: string,

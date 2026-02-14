@@ -63,7 +63,7 @@ class RideService {
     PayoutMethod(id: '2', type: 'bank', display: 'KCB Bank: ***1234'),
   ];
 
-  String get _baseUrl {
+  String get _dispatchBaseUrl {
     if (kIsWeb) {
       return 'http://localhost:3334/api';
     }
@@ -73,20 +73,55 @@ class RideService {
     return 'http://localhost:3334/api';
   }
 
-  // Create a ride request
+  // Get nearby drivers
+  Future<List<Map<String, dynamic>>> getNearbyDrivers({
+    required double lat,
+    required double lng,
+    String? vehicleType,
+    double maxDistanceKm = 5.0,
+  }) async {
+    try {
+      final queryParams = {
+        'pickupLat': lat.toString(),
+        'pickupLng': lng.toString(),
+        'maxDistanceKm': maxDistanceKm.toString(),
+      };
+      if (vehicleType != null) {
+        queryParams['vehicleType'] = vehicleType;
+      }
+
+      final uri = Uri.parse('$_dispatchBaseUrl/rides/nearby-drivers')
+          .replace(queryParameters: queryParams);
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return List<Map<String, dynamic>>.from(data['data'] ?? []);
+      }
+    } catch (e) {
+      debugPrint('Error fetching nearby drivers: $e');
+    }
+    return [];
+  }
+
+  // Create a ride request with vehicle type support
   Future<Map<String, dynamic>> createRide(
-      String passengerId, dynamic pickup, dynamic dropoff) async {
+    String passengerId,
+    dynamic pickup,
+    dynamic dropoff, {
+    String? vehicleType,
+  }) async {
     try {
       final response = await http.post(
-        Uri.parse(
-            '$_baseUrl/dispatch/rides'), // Assuming dispatch-service handles this
+        Uri.parse('$_dispatchBaseUrl/rides'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'passengerId': passengerId,
           'pickupLocation': pickup,
           'dropoffLocation': dropoff,
-          'fare': 350.0, // Mock fare for now, or calculate
-          'distance': 5.0, // Mock distance
+          'vehicleType': vehicleType,
+          'fare': 350.0,
+          'distance': 5.0,
           'status': 'REQUESTED'
         }),
       );
@@ -106,7 +141,7 @@ class RideService {
       String userId, String role) async {
     try {
       final response = await http.get(
-        Uri.parse('$_baseUrl/dispatch/rides/current?userId=$userId&role=$role'),
+        Uri.parse('$_dispatchBaseUrl/rides/current?userId=$userId&role=$role'),
       );
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -182,7 +217,7 @@ class RideService {
     try {
       // Using admin endpoint as proxy for now
       final response = await http
-          .get(Uri.parse('$_baseUrl/rides/admin/users/$userId/rides'));
+          .get(Uri.parse('$_dispatchBaseUrl/rides/admin/users/$userId/rides'));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

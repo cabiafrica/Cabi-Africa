@@ -6,6 +6,7 @@ import 'package:mocktail/mocktail.dart';
 
 // Adjust the import path to match your project structure
 import 'package:driver_app/screens/profile_screen.dart';
+import 'package:driver_app/services/badge_service.dart' as badge_service;
 
 // Mock the service class
 class MockProfileService extends Mock implements ProfileService {}
@@ -23,7 +24,24 @@ void main() {
     registrationDate: "2024-08-10T09:00:00Z",
     accountStatus: "Active",
     averageRating: 4.85,
-    badges: ["Top Rated", "Safety Star"],
+    badges: [
+      badge_service.Badge(
+        id: '1',
+        code: 'TOP_RATED',
+        name: 'Top Rated',
+        description: 'Consistent 5-star ratings',
+        category: 'QUALITY',
+        tier: 'GOLD',
+      ),
+      badge_service.Badge(
+        id: '2',
+        code: 'SAFETY_STAR',
+        name: 'Safety Star',
+        description: 'No safety incidents',
+        category: 'SAFETY',
+        tier: 'SILVER',
+      )
+    ],
     tier: "Gold",
     compliments: {"Great Service": 5},
   );

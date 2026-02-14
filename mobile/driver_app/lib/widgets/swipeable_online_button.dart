@@ -26,7 +26,8 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
   @override
   void didUpdateWidget(SwipeableOnlineButton oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!widget.isOnline && oldWidget.isOnline) {
+    if (widget.isOnline != oldWidget.isOnline) {
+      // Reset drag value when status changes externally or after successful swipe
       setState(() {
         _dragValue = 0.0;
       });
@@ -47,40 +48,51 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
   }
 
   void _onDragUpdate(DragUpdateDetails details) {
-    if (widget.isOnline) return; // Disable dragging if already online?
-    // Or allow dragging to go offline? Let's assume this specific request is for "Go Online"
-    // If we want bidirectional, we need more logic.
-    // For now, let's assume it's "Swipe to Go Online" and maybe tap/swipe to go offline is handled differently or same widget.
-
-    // If online, let's treat it as a reset or allow "Swipe to Go Offline" (reverse)
-    // But the prompt specifically describes the "Go Online" button.
-
+    final double maxDrag = _maxWidth - _thumbSize - (_padding * 2);
     setState(() {
-      _dragValue = (_dragValue + details.delta.dx)
-          .clamp(0.0, _maxWidth - _thumbSize - (_padding * 2));
+      if (!widget.isOnline) {
+        // Offline: Drag Right (positive dx) to go Online
+        _dragValue = (_dragValue + details.delta.dx).clamp(0.0, maxDrag);
+      } else {
+        // Online: Drag Left (negative dx) to go Offline
+        // We want _dragValue to be positive distance from Right edge.
+        // Dragging left gives negative dx. So we need to subtract dx (or add -dx).
+        _dragValue = (_dragValue - details.delta.dx).clamp(0.0, maxDrag);
+      }
     });
   }
 
   void _onDragEnd(DragEndDetails details) {
-    if (widget.isOnline) return;
+    final double maxDrag = _maxWidth - _thumbSize - (_padding * 2);
 
-    if (_dragValue > (_maxWidth - _thumbSize - (_padding * 2)) * 0.7) {
-      // Threshold reached
-      _dragValue = _maxWidth - _thumbSize - (_padding * 2);
-      widget.onStatusChanged(true);
+    if (_dragValue > maxDrag * 0.7) {
+      widget.onStatusChanged(!widget.isOnline);
+      // Reset is handled in didUpdateWidget when parent updates state
     } else {
-      // Snap back
-      final currentDrag = _dragValue;
-      _controller.duration = const Duration(milliseconds: 200);
-      Animation<double> animation =
-          Tween<double>(begin: currentDrag, end: 0.0).animate(_controller);
-      animation.addListener(() {
-        setState(() {
-          _dragValue = animation.value;
-        });
-      });
-      _controller.forward(from: 0.0);
+      _snapBack();
     }
+  }
+
+  void _snapBack() {
+    _controller.stop(); // Stop any previous animation
+    final double start = _dragValue;
+    _controller.reset();
+
+    // Create a simple animation from start to 0
+    // We can't use the controller directly like previous complex logic easily
+    // Let's just use a simple value listener for now or standard AnimationController drive
+
+    Animation<double> animation = Tween<double>(begin: start, end: 0.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+
+    animation.addListener(() {
+      setState(() {
+        _dragValue = animation.value;
+      });
+    });
+
+    _controller.forward();
   }
 
   @override
@@ -88,91 +100,73 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
     return LayoutBuilder(
       builder: (context, constraints) {
         _maxWidth = constraints.maxWidth;
-
-        // If online, maybe just show a different state or lock it full?
-        // Let's make it so if it IS online, it's fully expanded or transforms into a "Online" card.
-        // But for swiping interaction, standard is:
-        // Offline -> [ O --> ] -> Online
+        // recalculate maxDrag purely for build safety if needed, mostly used in interactions
 
         return Container(
           height: _thumbSize + (_padding * 2),
+          width: double.infinity, // Ensure it takes full width
           decoration: BoxDecoration(
-              color: widget.isOnline ? AppTheme.primaryColor : Colors.grey[900],
-              borderRadius: BorderRadius.circular(100),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6))
-              ]),
+            color: widget.isOnline
+                ? AppTheme.primaryColor
+                : Colors.grey[900], // Green/Gold for Online
+            borderRadius: BorderRadius.circular(100),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              )
+            ],
+          ),
           child: Stack(
+            alignment: Alignment.center,
             children: [
-              // 1. Text Background
-              Center(
-                child: Text(
-                  widget.isOnline ? "YOU ARE ONLINE" : "SWIPE TO GO ONLINE",
-                  style: TextStyle(
-                      color: widget.isOnline
-                          ? Colors.black // High contrast on Gold
-                          : Colors.white.withValues(alpha: 0.5),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      letterSpacing: 1.2),
+              // 1. Label Text
+              Text(
+                widget.isOnline ? "SWIPE TO GO OFFLINE" : "SWIPE TO GO ONLINE",
+                style: TextStyle(
+                  color: widget.isOnline ? Colors.white : Colors.white54,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  letterSpacing: 1.0,
                 ),
               ),
 
-              // 2. Slider Track/Thumb
-              if (!widget.isOnline)
-                Positioned(
-                  left: _padding + _dragValue,
-                  top: _padding,
-                  bottom: _padding,
-                  child: GestureDetector(
-                    onHorizontalDragUpdate: _onDragUpdate,
-                    onHorizontalDragEnd: _onDragEnd,
-                    child: Container(
-                      width: _thumbSize,
-                      height: _thumbSize,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color(0xFFFFD700), // Yellow
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.3),
-                                blurRadius: 10,
-                                spreadRadius: 2,
-                                offset: const Offset(0, 4)),
-                          ]),
-                      child: const Center(
-                        child: Icon(
-                          Icons.arrow_forward_rounded,
-                          color: Colors.black,
-                          size: 32,
+              // 2. Sliding Thumb
+              Positioned(
+                // If Offline: Left aligned, offset by _dragValue
+                left: !widget.isOnline ? _padding + _dragValue : null,
+                // If Online: Right aligned, offset by _dragValue
+                right: widget.isOnline ? _padding + _dragValue : null,
+                top: _padding,
+                bottom: _padding,
+                child: GestureDetector(
+                  onHorizontalDragUpdate: _onDragUpdate,
+                  onHorizontalDragEnd: _onDragEnd,
+                  child: Container(
+                    width: _thumbSize,
+                    height: _thumbSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
                         ),
-                      ),
+                      ],
+                    ),
+                    child: Icon(
+                      widget.isOnline
+                          ? Icons.power_settings_new
+                          : Icons.arrow_forward,
+                      color: widget.isOnline ? Colors.red : Colors.green,
+                      size: 28,
                     ),
                   ),
                 ),
-
-              if (widget.isOnline)
-                Positioned(
-                  right: _padding,
-                  top: _padding,
-                  bottom: _padding,
-                  child: GestureDetector(
-                    onTap: () => widget.onStatusChanged(false),
-                    child: Container(
-                      width: _thumbSize,
-                      height: _thumbSize,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white, // White circle
-                      ),
-                      child: const Icon(Icons.power_settings_new,
-                          color: Colors.red), // Red power icon
-                    ),
-                  ),
-                ),
+              ),
             ],
           ),
         );

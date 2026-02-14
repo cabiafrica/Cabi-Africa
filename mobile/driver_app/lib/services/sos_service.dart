@@ -8,7 +8,7 @@ class SosService {
 
   Future<void> activateSos(String tripId, Map<String, double> position) async {
     final response = await _dio.post(
-      'https://api.cabi.com/sos', // Mock API
+      'http://10.0.2.2:3333/api/sos', // Mock API
       data: {
         'tripId': tripId,
         'lat': position['lat'],
@@ -24,7 +24,7 @@ class SosService {
 
   WebSocketChannel connectAudioStream(String tripId) {
     // Mock WebSocket connection
-    final uri = Uri.parse('wss://api.cabi.com/sos/audio/$tripId');
+    final uri = Uri.parse('ws://10.0.2.2:3333/sos/audio/$tripId');
     return WebSocketChannel.connect(uri);
   }
 }

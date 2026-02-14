@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:driver_app/theme/app_theme.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'positive_feedback_screen.dart';
+import '../services/badge_service.dart' as badge_service;
+import '../widgets/badge_showcase_widget.dart';
 
 // --- MOCK MODELS AND SERVICES FOR DEMONSTRATION ---
 
@@ -14,7 +16,7 @@ class DriverProfile {
   final String registrationDate;
   final String accountStatus;
   final double averageRating;
-  final List<String> badges;
+  final List<badge_service.Badge> badges;
   final String tier;
   final String? coverImageUrl;
   final Map<String, int> compliments;
@@ -44,7 +46,10 @@ class DriverProfile {
       registrationDate: json['registrationDate'],
       accountStatus: json['accountStatus'],
       averageRating: (json['averageRating'] as num).toDouble(),
-      badges: List<String>.from(json['badges'] ?? []),
+      badges: (json['badges'] as List?)
+              ?.map((e) => badge_service.Badge.fromJson(e))
+              .toList() ??
+          [],
       tier: json['tier'] ?? 'Silver',
       coverImageUrl: json['coverImageUrl'],
       compliments: Map<String, int>.from(json['compliments'] ?? {}),
@@ -84,7 +89,39 @@ class ProfileService {
         "Safe Driver": 15,
       },
     };
-    return DriverProfile.fromJson(mockApiResponse);
+
+    // Fetch real badges if possible
+    try {
+      final badgeService = badge_service.BadgeService();
+      final realBadges = await badgeService.getUserBadges("driver-123");
+      mockApiResponse['badges'] =
+          realBadges; // This relies on Badge.fromJson handling the object correctly or we pass List
+
+      // Since fromJson expects List<dynamic> (Map), and realBadges is List<Badge>
+      // We should reconstruct the DriverProfile manually or adjust logic.
+      // Easiest is to construct DriverProfile with the mock data + real badges
+
+      return DriverProfile(
+        id: mockApiResponse['id'] as String,
+        name: mockApiResponse['name'] as String,
+        email: mockApiResponse['email'] as String,
+        phone: mockApiResponse['phone'] as String,
+        userType: mockApiResponse['userType'] as String,
+        registrationDate: mockApiResponse['registrationDate'] as String,
+        accountStatus: mockApiResponse['accountStatus'] as String,
+        averageRating: (mockApiResponse['averageRating'] as num).toDouble(),
+        badges: realBadges,
+        tier: mockApiResponse['tier'] as String,
+        coverImageUrl: mockApiResponse['coverImageUrl'] as String?,
+        compliments:
+            Map<String, int>.from(mockApiResponse['compliments'] as Map),
+      );
+    } catch (e) {
+      debugPrint("Error fetching real badges: $e");
+      // Fallback with empty badges
+      mockApiResponse['badges'] = [];
+      return DriverProfile.fromJson(mockApiResponse);
+    }
   }
 }
 
@@ -588,45 +625,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Text("No badges earned yet.")));
     }
 
-    return SizedBox(
-      height: 110,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: profile.badges.length,
-        itemBuilder: (ctx, index) {
-          return Container(
-            margin: const EdgeInsets.only(right: 12),
-            width: 90,
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.amber.withValues(alpha: 0.2)),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.amber.withValues(alpha: 0.05),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3))
-                ]),
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.emoji_events, color: Colors.amber, size: 32),
-                const SizedBox(height: 8),
-                Text(
-                  profile.badges[index],
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontSize: 10, fontWeight: FontWeight.bold, height: 1.1),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
+    return BadgeShowcaseWidget(badges: profile.badges, compact: true);
   }
 
   Widget _buildComplimentsCard(DriverProfile profile) {

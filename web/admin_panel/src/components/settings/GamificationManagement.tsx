@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     EmojiEvents,
     Star,
@@ -7,9 +7,15 @@ import {
     Save,
     CheckCircle,
     Info,
-    MilitaryTech
+    MilitaryTech,
+    DirectionsCar,
+    WorkspacePremium,
+    EmojiEmotions,
+    TrendingUp
 } from '@mui/icons-material';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@tremor/react';
+
+const API_BASE_URL = 'http://localhost:3333/api';
 
 interface RatingRule {
     stars: number;
@@ -23,6 +29,7 @@ interface BadgeLevel {
     color: string;
     privileges: string[];
     loanDeductionRate: number;
+    criteria?: any;
 }
 
 interface GamificationConfig {
@@ -42,10 +49,18 @@ const AVAILABLE_PRIVILEGES = [
     { id: 'LOAN_ACCESS', label: 'Big Ticket Loans Access', type: 'driver' },
     { id: 'ZERO_COMMISSION', label: '0% Commission Weeks', type: 'driver' },
     { id: 'FREE_TRIP', label: 'Monthly Free Trip', type: 'passenger' },
+    { id: 'PRIORITY_DISPATCH', label: 'Priority Dispatch', type: 'driver' },
+    { id: 'ZONE_SELECTION', label: 'Zone Selection', type: 'driver' },
+    { id: 'COMMISSION_REBATE', label: 'Commission Rebate', type: 'driver' },
+    { id: 'SACCO_BONUS', label: '3% Sacco Bonus', type: 'driver' },
+    { id: 'SACCO_MATCH', label: 'Sacco Savings Match', type: 'driver' },
+    { id: 'CREDIT_LIMIT_BOOST', label: 'Credit Limit Boost', type: 'driver' },
+    { id: 'LOAN_RATE_REDUCTION', label: 'Loan Rate Reduction', type: 'driver' },
 ];
 
 export const GamificationManagement: React.FC = () => {
     const [loading, setLoading] = useState(false);
+    const [saccoLoading, setSaccoLoading] = useState(false);
     const [config, setConfig] = useState<GamificationConfig>({
         ratingRules: [
             { stars: 5, pointsAwarded: 2 },
@@ -63,6 +78,40 @@ export const GamificationManagement: React.FC = () => {
         passengerSpendRate: 100,
         spinWheelThreshold: 50,
     });
+
+    const [saccoBadges, setSaccoBadges] = useState<any[]>([]);
+    const [rewards, setRewards] = useState<any[]>([]);
+    const [badgeStats, setBadgeStats] = useState<any>(null);
+
+    useEffect(() => {
+        fetchSaccoData();
+    }, []);
+
+    const fetchSaccoData = async () => {
+        try {
+            const [badgesRes, rewardsRes, statsRes] = await Promise.all([
+                fetch(`${API_BASE_URL}/badges`),
+                fetch(`${API_BASE_URL}/admin/badges/rewards`),
+                fetch(`${API_BASE_URL}/admin/badges/stats`),
+            ]);
+
+            const badgesData = await badgesRes.json();
+            const rewardsData = await rewardsRes.json();
+            const statsData = await statsRes.json();
+
+            if (badgesData.success) {
+                setSaccoBadges(badgesData.data.filter((b: any) => ['ROOKIE', 'STAR_DRIVER', 'ROAD_MASTER', 'ELITE'].includes(b.code)));
+            }
+            if (rewardsData.success) {
+                setRewards(rewardsData.data);
+            }
+            if (statsData.success) {
+                setBadgeStats(statsData.data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch sacco data:', error);
+        }
+    };
 
     const handleRatingChange = (stars: number, points: number) => {
         setConfig(prev => ({
@@ -147,6 +196,9 @@ export const GamificationManagement: React.FC = () => {
                     </Tab>
                     <Tab className="ui-selected:border-indigo-500 ui-selected:text-indigo-600 dark:ui-selected:text-indigo-400 px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
                         Loan & Repayment
+                    </Tab>
+                    <Tab className="ui-selected:border-indigo-500 ui-selected:text-indigo-600 dark:ui-selected:text-indigo-400 px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
+                        Sacco System
                     </Tab>
                 </TabList>
 
@@ -363,6 +415,115 @@ export const GamificationManagement: React.FC = () => {
                                     <li>If a driver's rating drops below 3 stars, loan access is temporarily suspended.</li>
                                     <li>Deductions stop automatically once the loan principal + interest is fully paid.</li>
                                 </ul>
+                            </div>
+                        </div>
+                    </TabPanel>
+
+                    {/* SACCO SYSTEM */}
+                    <TabPanel>
+                        <div className="space-y-6">
+                            <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl p-6 text-white">
+                                <h3 className="text-xl font-bold flex items-center gap-2">
+                                    <DirectionsCar /> Gamified Sacco Ecosystem
+                                </h3>
+                                <p className="text-green-100 mt-1">
+                                    Driver tiers with commission reallocation, priority dispatch, and integrated savings
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl p-4">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <EmojiEmotions className="text-orange-500" />
+                                        <span className="font-bold text-orange-800200">ROOK dark:text-orange-IE</span>
+                                    </div>
+                                    <p className="text-sm text-orange-700 dark:text-orange-300">First 50 trips</p>
+                                    <div className="mt-3 text-xs font-semibold text-orange-600 dark:text-orange-400">+3% Sacco Bonus</div>
+                                </div>
+
+                                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <Star className="text-blue-500" />
+                                        <span className="font-bold text-blue-800 dark:text-blue-200">STAR DRIVER</span>
+                                    </div>
+                                    <p className="text-sm text-blue-700 dark:text-blue-300">100+ trips, 4.5+ rating</p>
+                                    <div className="mt-3 text-xs font-semibold text-blue-600 dark:text-blue-400">+Commission Rebate</div>
+                                </div>
+
+                                <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-xl p-4">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <WorkspacePremium className="text-purple-500" />
+                                        <span className="font-bold text-purple-800 dark:text-purple-200">ROAD MASTER</span>
+                                    </div>
+                                    <p className="text-sm text-purple-700 dark:text-purple-300">500+ trips, 4.7+ rating</p>
+                                    <div className="mt-3 text-xs font-semibold text-purple-600 dark:text-purple-400">+Priority Dispatch</div>
+                                </div>
+
+                                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <EmojiEvents className="text-amber-500" />
+                                        <span className="font-bold text-amber-800 dark:text-amber-200">ELITE</span>
+                                    </div>
+                                    <p className="text-sm text-amber-700 dark:text-amber-300">Top 10% performers</p>
+                                    <div className="mt-3 text-xs font-semibold text-amber-600 dark:text-amber-400">+All Benefits</div>
+                                </div>
+                            </div>
+
+                            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                                <div className="p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+                                    <h4 className="font-bold text-slate-900 dark:text-white">Commission Structure</h4>
+                                </div>
+                                <div className="p-6">
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                                        <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                                            <div className="text-2xl font-bold text-red-600">20%</div>
+                                            <div className="text-sm text-slate-600 dark:text-slate-400">Platform Commission</div>
+                                        </div>
+                                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                                            <div className="text-2xl font-bold text-blue-600">80%</div>
+                                            <div className="text-sm text-slate-600 dark:text-slate-400">Driver Share</div>
+                                        </div>
+                                        <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                                            <div className="text-2xl font-bold text-green-600">2%</div>
+                                            <div className="text-sm text-slate-600 dark:text-slate-400">Sacco Admin</div>
+                                        </div>
+                                        <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                                            <div className="text-2xl font-bold text-amber-600">3%</div>
+                                            <div className="text-sm text-slate-600 dark:text-slate-400">Badge Bonus</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-xl p-6">
+                                <h4 className="font-bold text-amber-800 dark:text-amber-200 mb-3 flex items-center gap-2">
+                                    <TrendingUp /> Safety Mechanisms
+                                </h4>
+                                <ul className="text-sm text-amber-700 dark:text-amber-300 space-y-2">
+                                    <li className="flex items-center gap-2">
+                                        <CheckCircle fontSize="small" className="text-green-500" />
+                                        50% cap on total deductions to protect driver earnings
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <CheckCircle fontSize="small" className="text-green-500" />
+                                        Grace period (50 trips) for new drivers to earn first badge
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <CheckCircle fontSize="small" className="text-green-500" />
+                                        Multi-metric validation to prevent badge gaming
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <CheckCircle fontSize="small" className="text-green-500" />
+                                        Automatic tier review after every 50 completed trips
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div className="flex justify-end">
+                                <button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg font-bold">
+                                    <Save />
+                                    Sync to Database
+                                </button>
                             </div>
                         </div>
                     </TabPanel>

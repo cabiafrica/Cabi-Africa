@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'map_marker.dart';
+import 'map_controller.dart';
 
 /// Custom map widget for Cabi platform
 /// Uses OpenStreetMap for free, unlimited usage
@@ -15,6 +16,8 @@ class CabiMap extends StatefulWidget {
   final bool showUserLocation;
   final bool enableInteraction;
 
+  final Function(CabiMapController)? onMapCreated;
+
   const CabiMap({
     super.key,
     this.initialCenter = const LatLng(-1.286389, 36.817223), // Nairobi
@@ -23,6 +26,7 @@ class CabiMap extends StatefulWidget {
     this.routePoints,
     this.onTap,
     this.onLongPress,
+    this.onMapCreated,
     this.showUserLocation = true,
     this.enableInteraction = true,
   });
@@ -38,6 +42,11 @@ class _CabiMapState extends State<CabiMap> {
   void initState() {
     super.initState();
     _mapController = MapController();
+    if (widget.onMapCreated != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.onMapCreated!(CabiMapController(_mapController));
+      });
+    }
   }
 
   @override

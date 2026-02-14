@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:passenger_app/theme/app_theme.dart';
 import 'package:passenger_app/screens/referral_status_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:passenger_app/providers/auth_provider.dart';
+import 'package:passenger_app/widgets/badge_showcase_widget.dart';
+import '../services/badge_service.dart' as badge_service;
 
 class UserDashboardScreen extends StatelessWidget {
   const UserDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final badgeServiceInstance = badge_service.BadgeService();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),
@@ -65,9 +71,55 @@ class UserDashboardScreen extends StatelessWidget {
                 _buildStatCard('Rides', '124'),
                 const SizedBox(width: 15),
                 _buildStatCard('Spent', 'KES 450'),
+                _buildStatCard('Spent', 'KES 450'),
               ],
             ),
             const SizedBox(height: 20),
+
+            // Badges & Achievements
+            Consumer<AuthProvider>(
+              builder: (context, auth, _) {
+                if (auth.userId == null) return const SizedBox.shrink();
+
+                return FutureBuilder<List<badge_service.Badge>>(
+                  future: badgeServiceInstance.getUserBadges(auth.userId!),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError ||
+                        !snapshot.hasData ||
+                        snapshot.data!.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Achievements',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                            TextButton(
+                              onPressed: () {
+                                // Navigate to full badge screen if implemented
+                              },
+                              child: const Text('View All'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        BadgeShowcaseWidget(
+                            badges: snapshot.data!, compact: true),
+                        const SizedBox(height: 20),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
 
             // Quick Actions
             Container(

@@ -1,0 +1,84 @@
+// ============================================
+// BADGE SYSTEM
+// ============================================
+
+enum BadgeCategory {
+  ACHIEVEMENT    // Ride milestones
+  QUALITY        // High ratings
+  LOYALTY        // Long-term usage
+  SAFETY         // Safety features usage
+  SOCIAL         // Referrals, sharing
+  SPECIAL        // Limited edition, events
+}
+
+enum BadgeTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
+}
+
+model Badge {
+  id          String        @id @default(uuid())
+  code        String        @unique // e.g., "FIRST_RIDE", "CENTURY_CLUB"
+  name        String
+  description String        @db.Text
+  iconUrl     String?       @db.Text
+  category    BadgeCategory
+  tier        BadgeTier     @default(BRONZE)
+  
+  // Earning criteria (stored as JSON for flexibility)
+  criteria    Json          // { type: "RIDES_COMPLETED", threshold: 100 }
+  
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  
+  userBadges  UserBadge[]
+  
+  @@map("badges")
+}
+
+model UserBadge {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  badgeId   String
+  badge     Badge    @relation(fields: [badgeId], references: [id])
+  
+  earnedAt  DateTime @default(now())
+  progress  Int?     // For progressive badges (e.g., 75/100 rides)
+  
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+// ============================================
+// RIDE PREFERENCES
+// ============================================
+
+model RidePreference {
+  id              String       @id @default(uuid())
+  userId          String       @unique
+  user            User         @relation(fields: [userId], references: [id])
+  
+  // Matching preferences
+  preferredVehicleTypes VehicleType[]
+  maxWaitMinutes  Int          @default(10)
+  maxDistanceKm   Float        @default(5.0)
+  
+  // Ride preferences
+  quietRide       Boolean      @default(false)
+  musicAllowed    Boolean      @default(true)
+  acPreferred     Boolean      @default(false)
+  petFriendly     Boolean      @default(false)
+  
+  // Favorite drivers
+  favoriteDriverIds String[]
+  blockedDriverIds  String[]
+  
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  @@map("ride_preferences")
+}

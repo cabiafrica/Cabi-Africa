@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:driver_app/screens/map_picker_screen.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 // Mock DTO - In a real app, this would be generated.
 class SetDestinationModeDto {
@@ -67,6 +69,20 @@ class _DestinationModeScreenState extends State<DestinationModeScreen> {
     });
   }
 
+  void _pickLocationOnMap() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const MapPickerScreen()),
+    );
+
+    if (result != null && result is LatLng) {
+      setState(() {
+        _destinationController.text =
+            'Lat: ${result.latitude.toStringAsFixed(5)}, Lng: ${result.longitude.toStringAsFixed(5)}';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,11 +91,28 @@ class _DestinationModeScreenState extends State<DestinationModeScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: _destinationController,
-              decoration: const InputDecoration(labelText: 'Enter Destination'),
-              enabled: !_isDestinationModeActive,
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _destinationController,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter Destination',
+                      border: OutlineInputBorder(),
+                    ),
+                    enabled: !_isDestinationModeActive,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: const Icon(Icons.location_on, color: Colors.red),
+                  onPressed:
+                      _isDestinationModeActive ? null : _pickLocationOnMap,
+                  tooltip: 'Pin on Map',
+                ),
+              ],
             ),
+            const SizedBox(height: 16),
             ListTile(
               title: Text(
                 'Arrival Time: ${_selectedTime?.format(context) ?? 'Any time'}',
@@ -98,15 +131,27 @@ class _DestinationModeScreenState extends State<DestinationModeScreen> {
                     },
             ),
             const SizedBox(height: 20),
-            _isDestinationModeActive
-                ? ElevatedButton(
-                    onPressed: _cancelDestinationMode,
-                    child: const Text('Cancel Destination Mode'),
-                  )
-                : ElevatedButton(
-                    onPressed: _setDestinationMode,
-                    child: const Text('Set Destination'),
-                  ),
+            SizedBox(
+              width: double.infinity,
+              child: _isDestinationModeActive
+                  ? ElevatedButton(
+                      onPressed: _cancelDestinationMode,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text('Cancel Destination Mode'),
+                    )
+                  : ElevatedButton(
+                      onPressed: _setDestinationMode,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text('Set Destination'),
+                    ),
+            ),
           ],
         ),
       ),

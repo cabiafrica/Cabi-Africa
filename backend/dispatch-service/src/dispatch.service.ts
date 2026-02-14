@@ -93,6 +93,13 @@ export class DispatchService {
         });
     }
 
+    async updateDriverLocation(driverId: string, location: { lat: number; lng: number }) {
+        return this.prisma.driverProfile.update({
+            where: { id: driverId },
+            data: { currentLocation: location }
+        });
+    }
+
     async getCurrentRide(userId: string, role: 'PASSENGER' | 'DRIVER') {
         const whereClause: any = {
             status: { in: [RideStatus.REQUESTED, RideStatus.MATCHING, RideStatus.DRIVER_ASSIGNED, RideStatus.IN_PROGRESS] }

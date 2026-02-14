@@ -1,6 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../services/auth_service.dart';
-import 'otp_verification_screen.dart';
 import 'package:core_ui/core_ui.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -13,12 +14,18 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final _referralController = TextEditingController();
+  File? _profileImage;
+  final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
   late final AuthService _authService;
 
   @override
@@ -42,21 +49,46 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (value == null || value.length < 8) {
       return 'Password must be at least 8 characters long';
     }
-    // Simple validation: must have letters and numbers
-    if (!RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$').hasMatch(value)) {
-      return 'Password must contain letters and numbers';
+    // Strict validation: must have letters, numbers, and symbols
+    // Backend requires: Lowercase, Uppercase, Number, Special Char
+    // Similar to: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).*$/
+    bool hasLower = RegExp(r'[a-z]').hasMatch(value);
+    bool hasUpper = RegExp(r'[A-Z]').hasMatch(value);
+    bool hasDigit = RegExp(r'\d').hasMatch(value);
+    bool hasSpecial = RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value);
+
+    if (!hasLower || !hasUpper || !hasDigit || !hasSpecial) {
+      return 'Must contain: Lowercase, Uppercase, Number & Symbol';
     }
     return null;
+  }
+
+  Future<void> _pickImage() async {
+    try {
+      final XFile? photo = await _picker.pickImage(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.front,
+      );
+      if (photo != null) {
+        setState(() {
+          _profileImage = File(photo.path);
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error capturing photo: $e')),
+        );
+      }
+    }
   }
 
   void _submitRegistration() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       try {
-        final nameParts = _nameController.text.trim().split(' ');
-        final firstName = nameParts[0];
-        final lastName =
-            nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+        final firstName = _firstNameController.text.trim();
+        final lastName = _lastNameController.text.trim();
 
         final result = await _authService.register(
           firstName: firstName,
@@ -68,15 +100,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         );
 
         if (result.isSignedIn && mounted) {
-          // Pass the authService down to the next screen for testability.
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (_) => OtpVerificationScreen(
-                phone: _phoneController.text,
-                authService: _authService,
-              ),
-            ),
+          // On success, show message and navigate to Login
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text(
+                    'Registration successful! Please sign in to continue.')),
           );
+          // Small delay to let user see the message
+          await Future.delayed(const Duration(seconds: 1));
+          if (mounted) {
+            Navigator.of(context).pop(); // Go back to Login Screen
+          }
         } else if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Registration Failed: ${result.error}')),
@@ -105,12 +139,50 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Full Name'),
-                validator: (value) => (value == null || value.isEmpty)
-                    ? 'Please enter your name'
-                    : null,
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.grey[200],
+                    backgroundImage: _profileImage != null
+                        ? FileImage(_profileImage!)
+                        : null,
+                    child: _profileImage == null
+                        ? const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.camera_alt,
+                                  size: 30, color: Colors.grey),
+                              Text('Add Photo', style: TextStyle(fontSize: 10)),
+                            ],
+                          )
+                        : null,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _firstNameController,
+                      decoration:
+                          const InputDecoration(labelText: 'First Name'),
+                      validator: (value) =>
+                          (value == null || value.isEmpty) ? 'Required' : null,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _lastNameController,
+                      decoration: const InputDecoration(labelText: 'Last Name'),
+                      validator: (value) =>
+                          (value == null || value.isEmpty) ? 'Required' : null,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -132,9 +204,52 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
+                obscureText: !_isPasswordVisible,
                 validator: _validatePassword,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _confirmPasswordController,
+                decoration: InputDecoration(
+                  labelText: 'Confirm Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isConfirmPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
+                obscureText: !_isConfirmPasswordVisible,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please confirm your password';
+                  }
+                  if (value != _passwordController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               TextFormField(

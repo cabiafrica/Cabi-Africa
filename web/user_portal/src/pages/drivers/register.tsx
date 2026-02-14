@@ -12,10 +12,19 @@ interface FormData {
   lastName: string;
   email: string;
   phone: string;
+  dateOfBirth: string;
+  street: string;
   city: string;
+  county: string;
   vehicleType: 'car' | 'motorcycle' | 'tuktuk' | '';
+  vehicleMake: string;
+  vehicleModel: string;
+  vehicleYear: number | '';
+  licensePlate: string;
   nationalId: string;
-  licenseExpiry: string;
+  drivingLicense: string;
+  password: string;
+  confirmPassword: string;
   agreeToTerms: boolean;
   referralCode?: string;
 }
@@ -30,10 +39,19 @@ export default function DriverRegistrationPage() {
     lastName: '',
     email: '',
     phone: '',
+    dateOfBirth: '',
+    street: '',
     city: '',
+    county: '',
     vehicleType: '',
+    vehicleMake: '',
+    vehicleModel: '',
+    vehicleYear: '',
+    licensePlate: '',
     nationalId: '',
-    licenseExpiry: '',
+    drivingLicense: '',
+    password: '',
+    confirmPassword: '',
     agreeToTerms: false,
     referralCode: '',
   });
@@ -55,10 +73,23 @@ export default function DriverRegistrationPage() {
       if (!formData.email.trim()) newErrors.email = 'Email is required';
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email format';
       if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
+      if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
+      if (!formData.street.trim()) newErrors.street = 'Street address is required';
       if (!formData.city.trim()) newErrors.city = 'City is required';
+      if (!formData.county.trim()) newErrors.county = 'County is required';
       if (!formData.vehicleType) newErrors.vehicleType = 'Vehicle type is required';
+      if (!formData.vehicleMake.trim()) newErrors.vehicleMake = 'Vehicle make is required';
+      if (!formData.vehicleModel.trim()) newErrors.vehicleModel = 'Vehicle model is required';
+      if (!formData.vehicleYear) newErrors.vehicleYear = 'Vehicle year is required';
+      if (!formData.licensePlate.trim()) newErrors.licensePlate = 'License plate is required';
       if (!formData.nationalId.trim()) newErrors.nationalId = 'National ID/Passport is required';
-      if (!formData.licenseExpiry) newErrors.licenseExpiry = 'License Expiry date is required';
+      if (!formData.drivingLicense.trim()) newErrors.drivingLicense = 'Driving license number is required';
+      if (!formData.password) newErrors.password = 'Password is required';
+      else if (formData.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
+      else if (!/[A-Z]/.test(formData.password)) newErrors.password = 'Password must contain an uppercase letter';
+      else if (!/[0-9]/.test(formData.password)) newErrors.password = 'Password must contain a number';
+      if (!formData.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
+      else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
       if (!formData.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
     }
 
@@ -111,7 +142,7 @@ export default function DriverRegistrationPage() {
 
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === 'checkbox' ? checked : type === 'number' ? (value === '' ? '' : Number(value)) : value,
     }));
 
     // Clear error for this field
@@ -201,121 +232,276 @@ export default function DriverRegistrationPage() {
 
   const renderStep1 = () => (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Basic Information</h2>
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Driver Registration</h2>
 
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name *</label>
-            <input
-              type="text"
-              id="firstName"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.firstName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
-            />
-            {errors.firstName && <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>}
-          </div>
-          <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Name *</label>
-            <input
-              type="text"
-              id="lastName"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.lastName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
-            />
-            {errors.lastName && <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>}
-          </div>
-        </div>
-
+        {/* Personal Information */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address *</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className={`w-full px-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
-          />
-          {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number *</label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleInputChange}
-            className={`w-full px-4 py-3 rounded-lg border ${errors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
-          />
-          {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">City *</label>
-            <input
-              type="text"
-              id="city"
-              name="city"
-              value={formData.city}
-              onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
-            />
-            {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city}</p>}
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Personal Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name *</label>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-3 rounded-lg border ${errors.firstName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+              />
+              {errors.firstName && <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>}
+            </div>
+            <div>
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Name *</label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-3 rounded-lg border ${errors.lastName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+              />
+              {errors.lastName && <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>}
+            </div>
           </div>
-          <div>
-            <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vehicle Type *</label>
-            <select
-              id="vehicleType"
-              name="vehicleType"
-              value={formData.vehicleType}
-              onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.vehicleType ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
-            >
-              <option value="">Select Type</option>
-              <option value="car">Car</option>
-              <option value="motorcycle">Motorcycle</option>
-              <option value="tuktuk">Tuk Tuk</option>
-            </select>
-            {errors.vehicleType && <p className="mt-1 text-sm text-red-500">{errors.vehicleType}</p>}
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor="nationalId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">National ID / Passport *</label>
-            <input
-              type="text"
-              id="nationalId"
-              name="nationalId"
-              value={formData.nationalId}
-              onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.nationalId ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
-              placeholder="ID-12345678"
-            />
-            {errors.nationalId && <p className="mt-1 text-sm text-red-500">{errors.nationalId}</p>}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address *</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+              />
+              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
+            </div>
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number *</label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                placeholder="+254722123456"
+                className={`w-full px-4 py-3 rounded-lg border ${errors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+              />
+              {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
+            </div>
           </div>
-          <div>
-            <label htmlFor="licenseExpiry" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Driver License Expiry *</label>
+
+          <div className="mt-6">
+            <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date of Birth *</label>
             <input
               type="date"
-              id="licenseExpiry"
-              name="licenseExpiry"
-              value={formData.licenseExpiry}
+              id="dateOfBirth"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
               onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border ${errors.licenseExpiry ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+              className={`w-full px-4 py-3 rounded-lg border ${errors.dateOfBirth ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
             />
-            {errors.licenseExpiry && <p className="mt-1 text-sm text-red-500">{errors.licenseExpiry}</p>}
+            {errors.dateOfBirth && <p className="mt-1 text-sm text-red-500">{errors.dateOfBirth}</p>}
           </div>
         </div>
 
+        {/* Address Information */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Address</h3>
+          <div className="space-y-6">
+            <div>
+              <label htmlFor="street" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Street Address *</label>
+              <input
+                type="text"
+                id="street"
+                name="street"
+                value={formData.street}
+                onChange={handleInputChange}
+                placeholder="123 Main Street"
+                className={`w-full px-4 py-3 rounded-lg border ${errors.street ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+              />
+              {errors.street && <p className="mt-1 text-sm text-red-500">{errors.street}</p>}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">City *</label>
+                <input
+                  type="text"
+                  id="city"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 rounded-lg border ${errors.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+                />
+                {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city}</p>}
+              </div>
+              <div>
+                <label htmlFor="county" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">County *</label>
+                <input
+                  type="text"
+                  id="county"
+                  name="county"
+                  value={formData.county}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 rounded-lg border ${errors.county ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+                />
+                {errors.county && <p className="mt-1 text-sm text-red-500">{errors.county}</p>}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Vehicle Information */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Vehicle Information</h3>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vehicle Type *</label>
+                <select
+                  id="vehicleType"
+                  name="vehicleType"
+                  value={formData.vehicleType}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 rounded-lg border ${errors.vehicleType ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+                >
+                  <option value="">Select Type</option>
+                  <option value="car">Car</option>
+                  <option value="motorcycle">Motorcycle</option>
+                  <option value="tuktuk">Tuk Tuk</option>
+                </select>
+                {errors.vehicleType && <p className="mt-1 text-sm text-red-500">{errors.vehicleType}</p>}
+              </div>
+              <div>
+                <label htmlFor="vehicleMake" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vehicle Make *</label>
+                <input
+                  type="text"
+                  id="vehicleMake"
+                  name="vehicleMake"
+                  value={formData.vehicleMake}
+                  onChange={handleInputChange}
+                  placeholder="Toyota, Honda, etc."
+                  className={`w-full px-4 py-3 rounded-lg border ${errors.vehicleMake ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+                />
+                {errors.vehicleMake && <p className="mt-1 text-sm text-red-500">{errors.vehicleMake}</p>}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="vehicleModel" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vehicle Model *</label>
+                <input
+                  type="text"
+                  id="vehicleModel"
+                  name="vehicleModel"
+                  value={formData.vehicleModel}
+                  onChange={handleInputChange}
+                  placeholder="Corolla, Civic, etc."
+                  className={`w-full px-4 py-3 rounded-lg border ${errors.vehicleModel ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+                />
+                {errors.vehicleModel && <p className="mt-1 text-sm text-red-500">{errors.vehicleModel}</p>}
+              </div>
+              <div>
+                <label htmlFor="vehicleYear" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vehicle Year *</label>
+                <input
+                  type="number"
+                  id="vehicleYear"
+                  name="vehicleYear"
+                  value={formData.vehicleYear}
+                  onChange={handleInputChange}
+                  min="2000"
+                  max={new Date().getFullYear()}
+                  placeholder="2020"
+                  className={`w-full px-4 py-3 rounded-lg border ${errors.vehicleYear ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+                />
+                {errors.vehicleYear && <p className="mt-1 text-sm text-red-500">{errors.vehicleYear}</p>}
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="licensePlate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">License Plate *</label>
+              <input
+                type="text"
+                id="licensePlate"
+                name="licensePlate"
+                value={formData.licensePlate}
+                onChange={handleInputChange}
+                placeholder="KDA 123X"
+                className={`w-full px-4 py-3 rounded-lg border ${errors.licensePlate ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+              />
+              {errors.licensePlate && <p className="mt-1 text-sm text-red-500">{errors.licensePlate}</p>}
+            </div>
+          </div>
+        </div>
+
+        {/* License Information */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">License & Identification</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label htmlFor="nationalId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">National ID / Passport *</label>
+              <input
+                type="text"
+                id="nationalId"
+                name="nationalId"
+                value={formData.nationalId}
+                onChange={handleInputChange}
+                placeholder="ID-12345678"
+                className={`w-full px-4 py-3 rounded-lg border ${errors.nationalId ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+              />
+              {errors.nationalId && <p className="mt-1 text-sm text-red-500">{errors.nationalId}</p>}
+            </div>
+            <div>
+              <label htmlFor="drivingLicense" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Driving License Number *</label>
+              <input
+                type="text"
+                id="drivingLicense"
+                name="drivingLicense"
+                value={formData.drivingLicense}
+                onChange={handleInputChange}
+                placeholder="DL-123456"
+                className={`w-full px-4 py-3 rounded-lg border ${errors.drivingLicense ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+              />
+              {errors.drivingLicense && <p className="mt-1 text-sm text-red-500">{errors.drivingLicense}</p>}
+            </div>
+          </div>
+        </div>
+
+        {/* Password */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Account Security</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password *</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-3 rounded-lg border ${errors.password ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+              />
+              {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
+              <p className="mt-1 text-xs text-gray-500">Must be at least 8 characters with uppercase and number</p>
+            </div>
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirm Password *</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-3 rounded-lg border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white`}
+              />
+              {errors.confirmPassword && <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>}
+            </div>
+          </div>
+        </div>
+
+        {/* Referral Code */}
         <div>
           <label htmlFor="referralCode" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Referral Code (Optional)
@@ -336,6 +522,7 @@ export default function DriverRegistrationPage() {
           )}
         </div>
 
+        {/* Terms and Conditions */}
         <div className="flex items-start bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg">
           <input
             type="checkbox"

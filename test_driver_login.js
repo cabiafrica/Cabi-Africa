@@ -3,7 +3,7 @@ const axios = require('axios');
 
 async function testDriverLogin() {
     try {
-        const driverEmail = 'pending_driver_1769722821923@test.com';
+        const driverEmail = 'driver@test.com';
         const password = 'Prospect@2026';
 
         console.log(`Attempting login for driver: ${driverEmail}`);
@@ -17,7 +17,14 @@ async function testDriverLogin() {
 
         return loginRes.data;
     } catch (error) {
-        console.error('❌ Driver login failed:', error.response?.data || error.message);
+        console.error('❌ Driver login failed:');
+        if (error.response) {
+            console.error('Status:', error.response.status);
+            console.error('Data:', JSON.stringify(error.response.data, null, 2));
+        } else {
+            console.error('Error Message:', error.message);
+            if (error.code) console.error('Error Code:', error.code);
+        }
     }
 }
 

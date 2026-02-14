@@ -81,4 +81,25 @@ export class TripTrackingGateway
     });
     this.logger.log(`Driver ${driverId} is now OFFLINE`);
   }
+
+  /**
+   * Broadcast a ride request to a specific driver
+   */
+  broadcastRideRequest(driverId: string, ride: any) {
+    this.logger.log(`Broadcasting ride ${ride.id} to driver ${driverId}`);
+    // Emit to specific driver room (assuming they join room 'driver_DRIVER_ID')
+    // Or we can emit to all and filter on client, but better to be targeted.
+    // Ideally duplicate socket connection logic to join driver room on connect.
+    // For now, we'll try to emit to a room name convention
+    this.server.to(`driver:${driverId}`).emit('newRideRequest', ride);
+
+    // Fallback: emit global event for testing if room join isn't perfect yet
+    this.server.emit(`driver:${driverId}:rideRequest`, ride);
+  }
+
+  @SubscribeMessage('driverJoinRoom')
+  handleDriverJoinRoom(client: Socket, driverId: string) {
+    client.join(`driver:${driverId}`);
+    this.logger.log(`Driver ${driverId} joined personal room`);
+  }
 }

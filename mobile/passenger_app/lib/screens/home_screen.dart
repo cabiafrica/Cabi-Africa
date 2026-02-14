@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:cabi_maps/cabi_maps.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:passenger_app/theme/app_theme.dart';
@@ -29,18 +30,23 @@ class HomeScreen extends ConsumerStatefulWidget {
 enum TripStatus { idle, searching, driverFound, onTrip }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final LatLng _passengerLocation =
-      const LatLng(-1.286389, 36.817223); // Westlands
   LatLng? _pickupLocation;
   LatLng? _dropoffLocation;
   bool _isBooking = false;
   String? _selectedVehicleId;
+  String? _selectedVehicleType; // STANDARD, PREMIUM, XL, BODA
+  int _nearbyDriversCount = 0;
   String _destination = "Where to?"; // Destination state
 
   TripStatus _tripStatus = TripStatus.idle;
   int _arrivalDurationMinutes = 5;
 
-  // Mock data
+  CabiMapController? _mapController;
+  bool _isFollowingLocation = true;
+  StreamSubscription<Position>? _locationSubscription;
+
+  LatLng _passengerLocation =
+      const LatLng(-1.286389, 36.817223); // Default Westlands
   final List<Map<String, dynamic>> _vehicleTypes = [
     {
       'id': 'standard',
@@ -68,7 +74,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     },
   ];
 
-  final List<Map<String, dynamic>> _nearbyDrivers = [
+  List<Map<String, dynamic>> _nearbyDrivers = [
     {
       'id': 'drv-001',
       'location': const LatLng(-1.288000, 36.815000),
@@ -83,9 +89,63 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     _selectedVehicleId = _vehicleTypes[0]['id'];
+    _selectedVehicleType = 'STANDARD'; // Default vehicle type
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkActiveRide();
+      _initLocationTracking();
+      _updateNearbyDrivers(); // Fetch nearby drivers on init
     });
+  }
+
+  Future<void> _initLocationTracking() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return;
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return;
+    }
+
+    // Get initial position
+    try {
+      final position = await Geolocator.getCurrentPosition();
+      if (mounted) {
+        setState(() {
+          _passengerLocation = LatLng(position.latitude, position.longitude);
+        });
+        _centerMapOnLocation();
+      }
+    } catch (e) {
+      debugPrint("Error getting current location: $e");
+    }
+
+    // Subscribe to updates
+    _locationSubscription = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 5,
+      ),
+    ).listen((Position position) {
+      if (mounted) {
+        setState(() {
+          _passengerLocation = LatLng(position.latitude, position.longitude);
+        });
+        // Update nearby drivers when location changes significantly (already filtered by distanceFilter)
+        _updateNearbyDrivers();
+
+        if (_isFollowingLocation) {
+          _centerMapOnLocation();
+        }
+      }
+    });
+  }
+
+  void _centerMapOnLocation() {
+    _mapController?.animateCamera(
+      _passengerLocation,
+      zoom: 15.0,
+    );
   }
 
   @override
@@ -93,6 +153,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _rideUpdateTimer?.cancel();
     _arrivalTimer?.cancel();
     _tripTimer?.cancel();
+    _locationSubscription?.cancel();
     super.dispose();
   }
 
@@ -243,6 +304,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           'lng': _dropoffLocation?.longitude ?? 0.0,
           'address': _destination
         },
+        vehicleType: _selectedVehicleType, // Include vehicle type
       );
 
       if (mounted) {
@@ -260,6 +322,48 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           SnackBar(content: Text("Booking Error: $e")),
         );
       }
+    }
+  }
+
+  void _updateNearbyDrivers() async {
+    final rideService = ref.read(rideServiceProvider);
+    try {
+      final drivers = await rideService.getNearbyDrivers(
+        lat: _passengerLocation.latitude,
+        lng: _passengerLocation.longitude,
+        vehicleType: _selectedVehicleType,
+        maxDistanceKm: 5.0,
+      );
+
+      if (mounted) {
+        setState(() {
+          _nearbyDriversCount = drivers.length;
+          _nearbyDrivers = drivers.map((d) {
+            // Handle location from backend (Map) vs Mock (LatLng)
+            final loc = d['location'];
+            LatLng position;
+            if (loc is LatLng) {
+              position = loc;
+            } else if (loc is Map) {
+              position = LatLng(
+                (loc['lat'] as num).toDouble(),
+                (loc['lng'] as num).toDouble(),
+              );
+            } else {
+              position = const LatLng(0, 0); // Fallback
+            }
+
+            return {
+              'id': d['driverId'] ?? d['id'], // Backend uses driverId
+              'location': position,
+              'vehicleType': d['vehicleType'],
+            };
+          }).toList();
+        });
+      }
+    } catch (e) {
+      // Silently fail - not critical for UX
+      debugPrint('Error fetching nearby drivers: $e');
     }
   }
 
@@ -332,6 +436,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             routePoints: _getRoute(),
             showUserLocation: true,
             onTap: _onMapTap,
+            onMapCreated: (controller) {
+              _mapController = controller;
+            },
           ),
 
           // 2. Top Left Menu (Replicating Driver App)
@@ -367,18 +474,64 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           builder: (context) => const UserDashboardScreen()),
                     );
                   },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                        boxShadow: const [
-                          BoxShadow(color: Colors.black26, blurRadius: 4)
-                        ]),
-                    child: const CircleAvatar(
-                      radius: 20,
-                      backgroundImage:
-                          NetworkImage('https://i.pravatar.cc/150?u=passenger'),
-                    ),
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black26, blurRadius: 4)
+                            ]),
+                        child: CircleAvatar(
+                          radius: 20,
+                          backgroundColor: Colors.grey[300],
+                          backgroundImage: (legacy_provider.Provider.of<
+                                          AuthProvider>(context)
+                                      .user?['passportPhotoUrl'] !=
+                                  null)
+                              ? NetworkImage(
+                                  legacy_provider.Provider.of<AuthProvider>(
+                                          context)
+                                      .user!['passportPhotoUrl'])
+                              : (legacy_provider.Provider.of<AuthProvider>(
+                                              context)
+                                          .user?['isIdentityVerified'] ==
+                                      true
+                                  ? const NetworkImage(
+                                      'https://i.pravatar.cc/150?u=passenger') // Fallback valid
+                                  : null), // Blank if not verified and no photo
+                          child: (legacy_provider.Provider.of<AuthProvider>(
+                                              context)
+                                          .user?['passportPhotoUrl'] ==
+                                      null &&
+                                  legacy_provider.Provider.of<AuthProvider>(
+                                              context)
+                                          .user?['isIdentityVerified'] !=
+                                      true)
+                              ? const Icon(Icons.person, color: Colors.grey)
+                              : null,
+                        ),
+                      ),
+                      if (legacy_provider.Provider.of<AuthProvider>(context)
+                              .user?['isIdentityVerified'] !=
+                          true)
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 10,
+                              minHeight: 10,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -397,9 +550,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
 
           // 3. Condition UI: Booking Sheet OR Driver Arriving Panel OR On Trip Panel
-          if (_tripStatus == TripStatus.idle ||
-              _tripStatus == TripStatus.searching)
+          // 3. Condition UI: Booking Sheet OR Driver Arriving Panel OR On Trip Panel
+          if (_tripStatus == TripStatus.idle)
             _buildBookingSheet(primaryColor)
+          else if (_tripStatus == TripStatus.searching)
+            _buildSearchingPanel(primaryColor)
           else if (_tripStatus == TripStatus.driverFound)
             _buildDriverArrivingPanel(primaryColor)
           else if (_tripStatus == TripStatus.onTrip)
@@ -731,13 +886,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             // From Here
                             InkWell(
                               onTap: () {
-                                // Recenter Map Logic
-                                // Ideally pass a controller to animate, but for now we set state to re-trigger
+                                setState(() => _isFollowingLocation = true);
+                                _centerMapOnLocation();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                         content: Text(
                                             "Location updated to current position")));
-                                // In real app: mapController.move(_passengerLocation, 15);
                               },
                               child: Row(children: [
                                 Icon(Icons.my_location,
@@ -784,9 +938,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(height: 24),
 
                       // 2. Choose a ride (Grid Layout)
-                      const Text("Choose a ride",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Choose a ride",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18)),
+                          if (_nearbyDriversCount > 0)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.green.shade50,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.local_taxi,
+                                      size: 16, color: Colors.green.shade700),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '$_nearbyDriversCount nearby',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.green.shade700,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
                       const SizedBox(height: 12),
                       GridView.builder(
                         padding: EdgeInsets.zero,
@@ -807,6 +991,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             onTap: () {
                               setState(() {
                                 _selectedVehicleId = v['id'];
+                                // Map UI vehicle ID to backend vehicle type
+                                switch (v['id']) {
+                                  case 'standard':
+                                    _selectedVehicleType = 'STANDARD';
+                                    break;
+                                  case 'xl':
+                                    _selectedVehicleType = 'XL';
+                                    break;
+                                  case 'bany':
+                                    _selectedVehicleType = 'BODA';
+                                    break;
+                                  default:
+                                    _selectedVehicleType = 'STANDARD';
+                                }
+                                _updateNearbyDrivers(); // Refresh nearby drivers count
                               });
                             },
                             child: Container(
@@ -895,6 +1094,80 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSearchingPanel(Color primaryColor) {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 20,
+              spreadRadius: 5,
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 60,
+              width: 60,
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                strokeWidth: 4,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              "Finding your driver...",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade800,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "Connecting you to nearby drivers",
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 30),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: OutlinedButton(
+                onPressed: () {
+                  setState(() {
+                    _tripStatus = TripStatus.idle;
+                    _isBooking = false;
+                  });
+                },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red,
+                  side: const BorderSide(color: Colors.red),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text("Cancel Request"),
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
+      ),
     );
   }
 

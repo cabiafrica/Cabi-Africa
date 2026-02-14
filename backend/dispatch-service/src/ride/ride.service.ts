@@ -1,5 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
+import { MatchingService } from '../matching/matching.service';
+import { BadgeService } from '../badge/badge.service';
 // import { PaymentService } from '@cabi/backend/payment-service'; 
 // import { VehicleService } from '@cabi/backend/vehicle-service'; 
 // import { UserService } from '@cabi/backend/user-service';
@@ -29,20 +31,81 @@ export class RideService {
   private readonly userService = new UserService();
   private readonly notificationService = new NotificationService();
 
-  constructor(private prisma: PrismaService) { }
+  constructor(
+    private prisma: PrismaService,
+    public matchingService: MatchingService,
+    private badgeService: BadgeService
+  ) { }
 
-  async createRide(passengerId: string, pickup: any, dropoff: any) {
-    return this.prisma.ride.create({
+  async createRide(passengerId: string, pickup: any, dropoff: any, vehicleType?: string) {
+    const matchingStartedAt = new Date();
+
+    const ride = await this.prisma.ride.create({
       data: {
         passengerId,
         pickupLocation: pickup,
         dropoffLocation: dropoff,
         status: 'REQUESTED',
-        fare: 0, // Initial fare, will be calculated later?
+        requestedVehicleType: vehicleType as any,
+        matchingStartedAt,
+        fare: 0,
         distance: 0,
         duration: 0
       }
     });
+
+    // Start matching process asynchronously
+    this.startMatching(ride.id).catch(err =>
+      this.logger.error(`Matching failed for ride ${ride.id}: ${err.message}`)
+    );
+
+    return ride;
+  }
+
+  private async startMatching(rideId: string): Promise<void> {
+    const driverId = await this.matchingService.matchRideToDriver(rideId);
+
+    if (driverId) {
+      const matchingCompletedAt = new Date();
+      const ride = await this.prisma.ride.findUnique({ where: { id: rideId } });
+      const matchingDurationMs = matchingCompletedAt.getTime() - new Date(ride.matchingStartedAt).getTime();
+
+      await this.prisma.ride.update({
+        where: { id: rideId },
+        data: {
+          driverId,
+          status: 'DRIVER_ASSIGNED',
+          matchingCompletedAt,
+          matchingDurationMs
+        }
+      });
+
+      this.logger.log(`Ride ${rideId} matched to driver ${driverId} in ${matchingDurationMs}ms`);
+
+      // Notify the assigned driver via WebSocket
+      // We pass the updated ride object which now has the driverId
+      const updatedRide = await this.prisma.ride.findUnique({
+        where: { id: rideId },
+        include: {
+          passenger: {
+            select: {
+              id: true,
+              fullName: true,
+              passportPhotoUrl: true,
+              averageRating: true,
+              badges: {
+
+                select: { badge: true },
+                take: 5 // Limit to top 5 badges to keep payload small
+              }
+            }
+          }
+        }
+      });
+      await this.matchingService.broadcastRideRequest(updatedRide, [driverId]);
+    } else {
+      this.logger.warn(`No driver found for ride ${rideId}`);
+    }
   }
 
   async getCurrentRide(userId: string, role: string) {
@@ -56,7 +119,14 @@ export class RideService {
         }
       },
       include: {
-        passenger: true,
+        passenger: {
+          include: {
+            badges: {
+              select: { badge: true },
+              take: 5
+            }
+          }
+        },
         driver: {
           include: {
             user: true,
@@ -77,21 +147,30 @@ export class RideService {
       throw new Error('Ride is not available');
     }
 
-    // Assign driver
-    // Fetch driver vehicle? 
-    // For now assuming driver exists and has vehicle (mock vehicle service)
-    const vehicle = this.vehicleService.getActiveVehicleForDriver(driverId);
+    // Fetch driver with vehicle information
+    const driver = await this.prisma.driverProfile.findUnique({
+      where: { id: driverId },
+      include: { vehicle: true }
+    });
+
+    if (!driver) {
+      throw new NotFoundException('Driver not found');
+    }
+
+    // Vehicle type validation
+    if (ride.requestedVehicleType && driver.vehicle) {
+      if (driver.vehicle.type !== ride.requestedVehicleType) {
+        throw new Error(
+          `Vehicle type mismatch. Ride requires ${ride.requestedVehicleType}, driver has ${driver.vehicle.type}`
+        );
+      }
+    }
 
     const updatedRide = await this.prisma.ride.update({
       where: { id: rideId },
       data: {
         driverId: driverId,
         status: 'DRIVER_ASSIGNED',
-        // vehicleId? Schema doesn't have vehicleId explicitly on Ride? 
-        // Ah, schema has `driverId` relation to `DriverProfile`. 
-        // `DriverProfile` has `vehicle`.
-        // The schema shows `driver DriverProfile? @relation...`
-        // So we just set driverId.
       },
       include: { passenger: true, driver: true }
     });
@@ -193,7 +272,37 @@ export class RideService {
       }
     });
 
+    // Award badges to passenger and driver
+    this.awardRideCompletionBadges(updatedRide.passengerId, updatedRide.driverId);
+
     return updatedRide;
+  }
+
+  private async awardRideCompletionBadges(passengerId: string, driverId: string | null): Promise<void> {
+    try {
+      // Award badges to passenger
+      const passengerBadges = await this.badgeService.checkAndAwardBadges(passengerId, 'RIDE_COMPLETED');
+      if (passengerBadges.length > 0) {
+        this.logger.log(`Awarded ${passengerBadges.length} badge(s) to passenger ${passengerId}`);
+      }
+
+      // Award badges to driver if exists
+      if (driverId) {
+        const driver = await this.prisma.driverProfile.findUnique({
+          where: { id: driverId },
+          select: { userId: true }
+        });
+
+        if (driver) {
+          const driverBadges = await this.badgeService.checkAndAwardBadges(driver.userId, 'RIDE_COMPLETED');
+          if (driverBadges.length > 0) {
+            this.logger.log(`Awarded ${driverBadges.length} badge(s) to driver ${driver.userId}`);
+          }
+        }
+      }
+    } catch (error) {
+      this.logger.error(`Failed to award badges: ${error.message}`);
+    }
   }
 
   async confirmCashPayment(rideId: string, amount: number) {

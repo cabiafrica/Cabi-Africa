@@ -1,0 +1,78 @@
+{
+  "timestamp": "2026-02-12T14:27:35.397Z",
+  "duration": 8.32,
+  "summary": {
+    "totalTests": 5,
+    "passedTests": 0,
+    "failedTests": 5,
+    "successRate": "0.0%"
+  },
+  "testData": {
+    "driver": {
+      "email": "integration_test_driver_1770906447070@test.com",
+      "firstName": "Integration",
+      "lastName": "Test Driver",
+      "phone": "+254712345678",
+      "dateOfBirth": "1990-01-01",
+      "street": "123 Test Street",
+      "city": "Nairobi",
+      "county": "Nairobi",
+      "vehicleType": "car",
+      "licensePlate": "TEST1770906447070",
+      "nationalId": "123456789",
+      "drivingLicense": "DL1770906447070",
+      "password": "TestPass123",
+      "recaptchaToken": "test-token",
+      "agreeToTerms": true
+    },
+    "passenger": {
+      "email": "integration_test_passenger_1770906447070@test.com",
+      "name": "Integration Test Passenger",
+      "phone": "+1234567891"
+    },
+    "passengerId": null,
+    "tripId": null
+  },
+  "results": {
+    "driverRegistration": {
+      "success": false,
+      "error": "Driver verification failed: {\"message\":\"Cannot GET /api/v1/driver-leads/undefined\",\"error\":\"Not Found\",\"statusCode\":404}",
+      "data": null
+    },
+    "tripRequest": {
+      "success": false,
+      "error": "Passenger registration failed: [object Object]",
+      "data": null
+    },
+    "tripAssignment": {
+      "success": false,
+      "error": "Trip assignment failed: [object Object]",
+      "data": null
+    },
+    "tripCompletion": {
+      "success": false,
+      "error": "Trip completion failed: [object Object]",
+      "data": null
+    },
+    "crossSystemConsistency": {
+      "success": false,
+      "error": null,
+      "data": [
+        {
+          "check": "Driver data consistency",
+          "success": false,
+          "error": "Inconsistent driver data across services"
+        },
+        {
+          "check": "Trip data consistency",
+          "success": false,
+          "error": "Trip data inconsistent"
+        },
+        {
+          "check": "Revenue data consistency",
+          "success": false
+        }
+      ]
+    }
+  }
+}

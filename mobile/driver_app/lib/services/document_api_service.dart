@@ -9,8 +9,8 @@ final dioProvider = Provider(
     // Backend is on port 3000 (driver-lead-service default?) or via gateway.
     // Assuming 3000 based on previous checks.
     final baseUrl = defaultTargetPlatform == TargetPlatform.android
-        ? 'http://10.0.2.2:3000/api/v1'
-        : 'http://localhost:3000/api/v1';
+        ? 'http://10.0.2.2:3010/api/v1'
+        : 'http://localhost:3010/api/v1';
     return Dio(BaseOptions(baseUrl: baseUrl));
   },
 );

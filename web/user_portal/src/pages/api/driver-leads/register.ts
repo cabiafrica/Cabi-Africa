@@ -8,14 +8,18 @@ interface RegistrationRequest {
     lastName: string;
     email: string;
     phone: string;
+    dateOfBirth: string;
+    street: string;
     city: string;
+    county: string;
     vehicleType: string;
-    vehicleModel?: string;
-    vehicleYear?: number;
+    vehicleMake: string;
+    vehicleModel: string;
+    vehicleYear: number;
     licensePlate: string;
     nationalId: string;
     drivingLicense: string;
-    password?: string;
+    password: string;
     recaptchaToken: string;
     referralCode?: string;
     agreeToTerms: boolean;
@@ -51,9 +55,6 @@ export default async function handler(
     try {
         const data: RegistrationRequest = req.body;
 
-        // Simulate processing delay (realistic API behavior)
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
         // Validation: Check required fields
         if (!data.firstName || !data.lastName || !data.email || !data.phone) {
             return res.status(400).json({
@@ -62,80 +63,71 @@ export default async function handler(
             });
         }
 
-        // Validation: Check email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(data.email)) {
-            return res.status(400).json({
-                success: false,
-                error: 'Invalid email format',
-            });
-        }
-
-        // Validation: Check duplicate email
-        if (existingEmails.has(data.email.toLowerCase())) {
-            return res.status(400).json({
-                success: false,
-                error: 'Email already registered. Please use a different email or sign in.',
-            });
-        }
-
-        // Validation: Check terms acceptance
-        if (!data.agreeToTerms) {
-            return res.status(400).json({
-                success: false,
-                error: 'You must agree to the terms and conditions',
-            });
-        }
-
-        // Mock reCAPTCHA validation
-        if (!data.recaptchaToken || data.recaptchaToken.length < 10) {
-            return res.status(400).json({
-                success: false,
-                error: 'Invalid reCAPTCHA. Please try again.',
-            });
-        }
-
-        // Validate referral code if provided
-        if (data.referralCode) {
-            if (!validReferralCodes.has(data.referralCode.toUpperCase())) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'Invalid referral code. Please check and try again.',
-                });
-            }
-        }
-
-        // Generate mock IDs
-        const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)} `;
-        const paymentIntentId = `pi_${Date.now()}_${Math.random().toString(36).substr(2, 9)} `;
-        const clientSecret = `${paymentIntentId}_secret_${Math.random().toString(36).substr(2, 16)} `;
-
-        // Add email to "database"
-        existingEmails.add(data.email.toLowerCase());
-
-        // Log registration (in production, this would go to database)
-        console.log('✅ New driver registration:', {
-            userId,
-            name: `${data.firstName} ${data.lastName} `,
+        // Map frontend data to backend DTO
+        const backendPayload = {
+            firstName: data.firstName,
+            lastName: data.lastName,
             email: data.email,
             phone: data.phone,
+            password: data.password,
+            dateOfBirth: data.dateOfBirth,
+            street: data.street,
             city: data.city,
-            vehicleType: data.vehicleType,
-            referralCode: data.referralCode || 'None',
-            timestamp: new Date().toISOString(),
-        });
+            county: data.county,
+            vehicleType: data.vehicleType.toLowerCase(),
+            vehicleMake: data.vehicleMake,
+            vehicleModel: data.vehicleModel,
+            vehicleYear: data.vehicleYear,
+            licensePlate: data.licensePlate,
+            nationalId: data.nationalId,
+            drivingLicense: data.drivingLicense,
+            recaptchaToken: data.recaptchaToken || 'mock_token',
+            referralCode: data.referralCode,
+            agreeToTerms: data.agreeToTerms
+        };
 
-        // Return success with payment details
-        return res.status(201).json({
-            success: true,
-            userId,
-            paymentIntentId,
-            clientSecret,
-            message: 'Registration successful! Please proceed to payment.',
-        });
+        try {
+            const backendUrl = process.env.DRIVER_LEAD_SERVICE_URL || 'http://localhost:3010/api/v1';
+            const response = await fetch(`${backendUrl}/driver-leads/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(backendPayload),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                // Handle backend errors
+                let errorMessage = 'Registration failed';
+                if (result.message) {
+                    errorMessage = Array.isArray(result.message) ? result.message.join(', ') : result.message;
+                }
+
+                return res.status(response.status).json({
+                    success: false,
+                    error: errorMessage
+                });
+            }
+
+            // Return success
+            return res.status(201).json({
+                success: true,
+                userId: result.id,
+                message: 'Registration successful! Your application is pending approval.',
+            });
+
+        } catch (backendError) {
+            console.error('Backend connection error:', backendError);
+            return res.status(502).json({
+                success: false,
+                error: 'Service unavailable. Please try again later.'
+            });
+        }
 
     } catch (error) {
-        console.error('Registration error:', error);
+        console.error('Registration processing error:', error);
         return res.status(500).json({
             success: false,
             error: 'An unexpected error occurred. Please try again.',

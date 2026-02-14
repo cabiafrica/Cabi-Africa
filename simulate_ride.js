@@ -24,7 +24,7 @@ async function simulateRideCycle() {
 
         // 3. Login Driver
         console.log('3️⃣ Logging in Driver...');
-        const driverEmail = 'pending_driver_1769722821923@test.com';
+        const driverEmail = 'driver@test.com';
         const driverLogin = await axios.post('http://localhost:3333/api/auth/login', {
             email: driverEmail,
             password: 'Prospect@2026'
