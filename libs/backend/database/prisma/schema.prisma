@@ -482,8 +482,8 @@ enum Permission {
   ORGANIZATION_VIEW
   ORGANIZATION_EDIT
   ORGANIZATION_APPROVE
-  MLM_FORMULA_VIEW
-  MLM_FORMULA_EDIT
+  REFERRAL_FORMULA_VIEW
+  REFERRAL_FORMULA_EDIT
   REFERRAL_TRACKING_VIEW
 
   // MARKETING (User Portal)
@@ -933,8 +933,9 @@ model Badge {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
-  userBadges           UserBadge[]
-  badgeRewardMappings  BadgeRewardMapping[]
+  userBadges          UserBadge[]
+  badgeRewardMappings BadgeRewardMapping[]
+  sosConfigs          SosConfig[]
 
   @@map("badges")
 }
@@ -1110,4 +1111,37 @@ model RidePreference {
   updatedAt DateTime @updatedAt
 
   @@map("ride_preferences")
+}
+
+// ============================================
+// SYSTEM CONFIGURATION
+// ============================================
+
+enum SosPenaltyType {
+  FEE
+  REVOKE_BADGE
+}
+
+model SosConfig {
+  id        String         @id @default(uuid())
+  type      SosPenaltyType @default(FEE)
+  feeAmount Decimal?       @db.Decimal(10, 2) // KES amount for monetary fine
+  badgeId   String?        // Badge to revoke if type is REVOKE_BADGE
+  badge     Badge?         @relation(fields: [badgeId], references: [id])
+  
+  isActive  Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  
+  @@map("sos_config")
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
 }

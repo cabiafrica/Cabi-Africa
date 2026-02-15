@@ -4,7 +4,7 @@ import { useAuth } from './hooks/useAuth';
 import { LoginPage } from './pages/LoginPage';
 // Components 
 import { DriverApplicationsList } from './components/drivers/DriverApplicationsList';
-import { MlmConfiguration as MlmConfig } from './components/MlmConfiguration';
+import { ReferralConfiguration as ReferralConfig } from './components/ReferralConfiguration';
 import { PromotionalConfig as PromoConfig } from './components/PromotionalConfig';
 import { BadgeManagement } from './components/management/BadgeManagement';
 import { BlogManagement } from './components/management/BlogManagement';
@@ -16,7 +16,7 @@ import { OrganizationManagement } from './components/management/OrganizationMana
 import { SimulationDashboard } from './components/management/SimulationDashboard';
 import { ExpiringDocumentsWidget } from './components/dashboard/ExpiringDocumentsWidget';
 import { CommissionLedger } from './components/management/CommissionLedger';
-import { MlmDashboard } from './components/management/MlmDashboard';
+import { ReferralDashboard } from './components/management/ReferralDashboard';
 import { AuditLogViewer } from './components/viewers/AuditLogViewer';
 import { TractionLogs } from './components/management/TractionLogs';
 import { SuspendedAccountManagement as SuspendedAccounts } from './components/SuspendedAccountManagement';
@@ -58,7 +58,7 @@ import { ExportableReports } from './components/ExportableReports';
 // Icons
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
-type View = 'dashboard' | 'applications' | 'job-activities' | 'mlm-dashboard' | 'mlm-config' | 'promo-config' | 'badge-management' | 'blog-management' | 'permissions' | 'roles' | 'users' | 'platform-users' | 'commission-ledger' | 'audit-log' | 'sos-config' | 'suspended-accounts' | 'organization-management' | 'simulation-dashboard' | 'support-tickets' | 'surge-zones' | 'airport-zones' | 'vehicle-categories' | 'promo-codes' | 'scheduled-rides' | 'cms' | 'bulk-messaging' | 'driver-performance' | 'city-management' | 'heat-maps' | 'driver-unions' | 'live-map' | 'bi-dashboard' | 'fraud-alerts' | 'gamification' | 'traction-logs';
+type View = 'dashboard' | 'applications' | 'job-activities' | 'referral-dashboard' | 'referral-config' | 'promo-config' | 'badge-management' | 'blog-management' | 'permissions' | 'roles' | 'users' | 'platform-users' | 'commission-ledger' | 'audit-log' | 'sos-config' | 'suspended-accounts' | 'organization-management' | 'simulation-dashboard' | 'support-tickets' | 'surge-zones' | 'airport-zones' | 'vehicle-categories' | 'promo-codes' | 'scheduled-rides' | 'cms' | 'bulk-messaging' | 'driver-performance' | 'city-management' | 'heat-maps' | 'driver-unions' | 'live-map' | 'bi-dashboard' | 'fraud-alerts' | 'gamification' | 'traction-logs';
 
 interface MenuItem {
   icon: string;
@@ -117,7 +117,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
   {
     label: 'Configuration',
     items: [
-      { icon: '💰', label: 'MLM Config', view: '/mlm-config', permission: 'MLM_FORMULA_VIEW' },
+      { icon: '💰', label: 'Referral Config', view: '/referral-config', permission: 'REFERRAL_FORMULA_VIEW' },
       { icon: '🔮', label: 'Simulation', view: '/simulation-dashboard', permission: 'DISPATCH_ANALYTICS_VIEW' },
       { icon: '🗺️', label: 'Surge Zones', view: '/surge-zones', permission: 'LOCATIONS_EDIT' },
       { icon: '✈️', label: 'Airport Zones', view: '/airport-zones', permission: 'LOCATIONS_EDIT' },
@@ -347,8 +347,8 @@ function App() {
 
               <Route path="/resolution-dashboard" element={<div className="card"> <h2 className="text-2xl font-bold mb-4">Resolution Dashboard</h2> <p>Dispute Resolution and Case Management</p> </div>} />
               <Route path="/organization-management" element={<OrganizationManagement />} />
-              <Route path="/mlm-config" element={<MlmConfig />} />
-              <Route path="/mlm-dashboard" element={<MlmDashboard />} />
+              <Route path="/referral-config" element={<ReferralConfig />} />
+              <Route path="/referral-dashboard" element={<ReferralDashboard />} />
               <Route path="/simulation-dashboard" element={<SimulationDashboard />} />
               <Route path="/promo-config" element={<PromoConfig />} />
               <Route path="/platform-users" element={<PlatformUsers />} />

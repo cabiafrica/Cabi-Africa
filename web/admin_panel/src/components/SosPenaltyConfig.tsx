@@ -8,17 +8,7 @@ import {
   CheckCircle,
   Warning
 } from '@mui/icons-material';
-
-interface Badge {
-  id: string;
-  name: string;
-}
-
-interface PenaltyConfig {
-  type: 'FEE' | 'REVOKE_BADGE';
-  feeAmount?: number;
-  badgeId?: string;
-}
+import { adminService, Badge, SosPenaltyConfig as PenaltyConfig } from '../services/adminService';
 
 export const SosPenaltyConfig: React.FC = () => {
   const [config, setConfig] = useState<PenaltyConfig>({
@@ -30,18 +20,24 @@ export const SosPenaltyConfig: React.FC = () => {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   useEffect(() => {
-    // Mock fetch
-    setTimeout(() => {
-      setBadges([
-        { id: 'b1', name: 'Promo Qualified' },
-        { id: 'b2', name: 'Super Driver' },
-        { id: 'b3', name: 'Safe Driver' },
-      ]);
-      setLoading(false);
-    }, 600);
+    const loadData = async () => {
+      try {
+        const [configData, badgesData] = await Promise.all([
+          adminService.getSosPenaltyConfig(),
+          adminService.getBadges(),
+        ]);
+        setConfig(configData);
+        setBadges(badgesData);
+      } catch (error) {
+        console.error('Failed to load SOS configuration', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
   }, []);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (config.type === 'FEE' && (config.feeAmount === undefined || config.feeAmount <= 0)) {
       // Ideally show toast
       return;
@@ -51,10 +47,14 @@ export const SosPenaltyConfig: React.FC = () => {
     }
 
     setSaveStatus('saving');
-    setTimeout(() => {
+    try {
+      await adminService.updateSosPenaltyConfig(config);
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
-    }, 1000);
+    } catch (error) {
+      console.error('Failed to save SOS configuration', error);
+      setSaveStatus('idle');
+    }
   };
 
   if (loading) return <div className="p-8 text-center text-slate-500 animate-pulse">Loading configuration...</div>;
@@ -90,8 +90,8 @@ export const SosPenaltyConfig: React.FC = () => {
             </label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className={`relative flex items-start p-4 cursor-pointer rounded-lg border-2 transition-all ${config.type === 'FEE'
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/10'
-                  : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/10'
+                : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'
                 }`}>
                 <div className="flex items-center h-5">
                   <input
@@ -109,8 +109,8 @@ export const SosPenaltyConfig: React.FC = () => {
               </label>
 
               <label className={`relative flex items-start p-4 cursor-pointer rounded-lg border-2 transition-all ${config.type === 'REVOKE_BADGE'
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/10'
-                  : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/10'
+                : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'
                 }`}>
                 <div className="flex items-center h-5">
                   <input
@@ -175,8 +175,8 @@ export const SosPenaltyConfig: React.FC = () => {
             onClick={handleSave}
             disabled={saveStatus !== 'idle'}
             className={`flex items-center gap-2 px-8 py-3 rounded-lg font-bold shadow-md transition-all transform active:scale-95 ${saveStatus === 'saved'
-                ? 'bg-green-600 text-white'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
+              ? 'bg-green-600 text-white'
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
               }`}
           >
             {saveStatus === 'saving' ? 'Saving Rule...' : saveStatus === 'saved' ? 'Saved' : 'Save Configuration'}

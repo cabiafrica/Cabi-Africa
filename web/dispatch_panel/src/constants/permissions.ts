@@ -108,12 +108,12 @@ export const PERMISSIONS_LIST = [
     'VERIFICATION_BIOMETRIC_VIEW',
     'VERIFICATION_BIOMETRIC_APPROVE',
 
-    // ORGANIZATION & MLM
+    // ORGANIZATION & REFERRAL
     'ORGANIZATION_VIEW',
     'ORGANIZATION_EDIT',
     'ORGANIZATION_APPROVE',
-    'MLM_FORMULA_VIEW',
-    'MLM_FORMULA_EDIT',
+    'REFERRAL_FORMULA_VIEW',
+    'REFERRAL_FORMULA_EDIT',
     'REFERRAL_TRACKING_VIEW',
 
     // MARKETING (User Portal)
@@ -139,6 +139,7 @@ export const PERMISSION_CATEGORIES = {
     'Ride Operations': ['DRIVER_', 'PASSENGER_', 'VEHICLES_'],
     'Financial': ['PAYMENTS_', 'FARE_', 'COMMISSION_', 'FINANCIAL_'],
     'Verification': ['VERIFICATION_'],
+    'Organization & Referral': ['ORGANIZATION_', 'REFERRAL_'],
     'Marketing': ['MARKETING_', 'BLOG_'],
     'System': ['SYSTEM_', 'USER_ROLES_', 'AUDIT_']
 };

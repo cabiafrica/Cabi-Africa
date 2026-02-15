@@ -8,6 +8,7 @@ import {
   History,
   PersonOff
 } from '@mui/icons-material';
+import { adminService } from '../services/adminService';
 
 interface SuspendedUser {
   id: string;
@@ -23,27 +24,20 @@ export const SuspendedAccountManagement: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    // Mock Data simulating fetching from API
-    setTimeout(() => {
-      setSuspendedUsers([
-        {
-          id: 'u1',
-          name: 'Alice Driver',
-          phoneNumber: '+254712345678',
-          reason: 'BIOMETRIC_FAILURE',
-          suspendedAt: '2024-05-20',
-        },
-        {
-          id: 'u2',
-          name: 'Bob Rider',
-          phoneNumber: '+254787654321',
-          reason: 'PAYMENT_FRAUD',
-          suspendedAt: '2024-05-22',
-        },
-      ]);
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const data = await adminService.getSuspendedUsers();
+      setSuspendedUsers(data);
+    } catch (error) {
+      console.error('Failed to load suspended users', error);
+    } finally {
       setLoading(false);
-    }, 800);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
 
   const handleReactivateClick = (user: SuspendedUser) => {
@@ -53,9 +47,15 @@ export const SuspendedAccountManagement: React.FC = () => {
   const confirmReactivation = async () => {
     if (!userToReactivate) return;
 
-    // Optimistic update
-    setSuspendedUsers((prev) => prev.filter((u) => u.id !== userToReactivate.id));
-    setUserToReactivate(null);
+    try {
+      await adminService.reactivateUser(userToReactivate.id);
+      // Refresh list
+      await loadData();
+      setUserToReactivate(null);
+    } catch (error) {
+      console.error('Failed to reactivate user', error);
+      alert('Failed to reactivate user');
+    }
   };
 
   const filteredUsers = suspendedUsers.filter(u =>
@@ -127,11 +127,11 @@ export const SuspendedAccountManagement: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border ${user.reason === 'PAYMENT_FRAUD'
-                        ? 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900/50'
-                        : 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-900/50'
+                      ? 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900/50'
+                      : 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-900/50'
                       }`}>
                       <Warning style={{ fontSize: 12 }} />
-                      {user.reason.replace('_', ' ')}
+                      {user.reason?.replace('_', ' ') || 'Unknown'}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">

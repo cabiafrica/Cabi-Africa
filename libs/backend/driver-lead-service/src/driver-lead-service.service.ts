@@ -26,7 +26,7 @@ export class DriverLeadService {
 
     // In a real app, this would:
     // 1. Call User Service to create a user account
-    // 2. Call MLM Service to link referrer
+    // 2. Call Referral Service to link referrer
     // 3. Send confirmation email
 
     return {

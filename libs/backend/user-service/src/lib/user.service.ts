@@ -18,6 +18,50 @@ export class UserService {
             phoneNumber: '+1234567890',
             profilePictureUrl: null
         });
+
+        // Seed some suspended users for testing
+        this.users.set('u1', {
+            id: 'u1',
+            firstName: 'Alice',
+            lastName: 'Driver',
+            email: 'alice@example.com',
+            phoneNumber: '+254712345678',
+            status: 'SUSPENDED',
+            suspensionReason: 'BIOMETRIC_FAILURE',
+            suspendedAt: '2024-05-20'
+        });
+        this.users.set('u2', {
+            id: 'u2',
+            firstName: 'Bob',
+            lastName: 'Rider',
+            email: 'bob@example.com',
+            phoneNumber: '+254787654321',
+            status: 'SUSPENDED',
+            suspensionReason: 'PAYMENT_FRAUD',
+            suspendedAt: '2024-05-22'
+        });
+    }
+
+    async getSuspendedUsers() {
+        return Array.from(this.users.values())
+            .filter(u => u.status === 'SUSPENDED')
+            .map(u => ({
+                id: u.id,
+                name: `${u.firstName} ${u.lastName}`,
+                phoneNumber: u.phoneNumber,
+                reason: u.suspensionReason,
+                suspendedAt: u.suspendedAt
+            }));
+    }
+
+    async reactivateUser(userId: string) {
+        const user = this.users.get(userId);
+        if (user) {
+            user.status = 'ACTIVE';
+            this.users.set(userId, user);
+            return { success: true };
+        }
+        throw new Error('User not found');
     }
 
     async validateUser(email: string, pass: string): Promise<any> {

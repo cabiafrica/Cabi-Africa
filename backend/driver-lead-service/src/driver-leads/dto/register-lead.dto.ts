@@ -97,7 +97,7 @@ export class RegisterLeadDto {
   @IsNotEmpty()
   recaptchaToken: string;
 
-  // MLM Referral
+  // Referral Program
   @IsString()
   @IsOptional()
   referralCode?: string;

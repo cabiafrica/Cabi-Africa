@@ -47,7 +47,11 @@ export const UserDetails: React.FC<UserDetailsProps> = ({ userId, onBack }) => {
     const handleToggleStatus = async () => {
         setProcessing(true);
         try {
-            await adminService.updateUserStatus(userId, user.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE', suspendReason);
+            if (user.status === 'ACTIVE') {
+                await adminService.suspendUser(userId, suspendReason);
+            } else {
+                await adminService.reactivateUser(userId);
+            }
             alert(`User ${user.status === 'ACTIVE' ? 'suspended' : 'activated'} successfully.`);
 
             // Refresh user details
@@ -175,7 +179,7 @@ export const UserDetails: React.FC<UserDetailsProps> = ({ userId, onBack }) => {
                             onClick={() => setActiveTab('DOWNLINE')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'DOWNLINE' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
                         >
-                            Downline & MLM
+                            Downline & Referral
                         </button>
                     )}
                     <button

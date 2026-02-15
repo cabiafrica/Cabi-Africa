@@ -48,9 +48,9 @@ export class CreateOrganizationRequestDto {
 }
 
 /**
- * DTO representing a single entry in the MLM registration fee ledger.
+ * DTO representing a single entry in the Referral registration fee ledger.
  */
-export class MlmRegistrationFeeLedgerEntryDto {
+export class ReferralRegistrationFeeLedgerEntryDto {
   transactionId: string;
   payingDriverId: string;
   payingDriverName: string;

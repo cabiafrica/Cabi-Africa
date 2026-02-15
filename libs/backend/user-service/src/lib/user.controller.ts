@@ -108,4 +108,14 @@ export class UserController {
     getDownline(@Param('userId') userId: string) {
         return this.userService.getDownline(userId);
     }
+
+    @Get('suspended/all')
+    getSuspended() {
+        return this.userService.getSuspendedUsers();
+    }
+
+    @Post(':userId/reactivate')
+    reactivate(@Param('userId') userId: string) {
+        return this.userService.reactivateUser(userId);
+    }
 }

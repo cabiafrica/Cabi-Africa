@@ -8,10 +8,10 @@ export const Permission = {
     VIEW_ROLES: 'roles.view',
     MANAGE_ROLES: 'roles.manage',
 
-    // Configuration / MLM
+    // Configuration / Referral
     VIEW_CONFIG: 'config.view',
     MANAGE_CONFIG: 'config.manage',
-    EDIT_MLM_CONFIG: 'config.edit.mlm',
+    EDIT_REFERRAL_CONFIG: 'config.edit.referral',
 
     // Audit and Logs
     VIEW_AUDIT_LOGS: 'audit.view',

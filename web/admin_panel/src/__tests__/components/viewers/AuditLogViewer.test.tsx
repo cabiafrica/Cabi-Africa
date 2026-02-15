@@ -40,7 +40,7 @@ describe('AuditLogViewer', () => {
       expect(screen.getByText('super@cabi.com')).toBeInTheDocument();
     });
     expect(screen.getByText('content@cabi.com')).toBeInTheDocument();
-    expect(screen.getByText('UPDATE_MLM_CONFIG')).toBeInTheDocument();
+    expect(screen.getByText('UPDATE_REFERRAL_CONFIG')).toBeInTheDocument();
   });
 
   it('should refetch logs when a filter is applied', async () => {

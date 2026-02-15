@@ -1,1 +1,1 @@
-export * from './lib/mlm.dto';
+export * from './lib/referral.dto';

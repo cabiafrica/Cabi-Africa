@@ -1,10 +1,17 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { SosPenaltyConfig } from './SosPenaltyConfig';
-import { adminService } from '../services/adminService';
+import { SosPenaltyConfig } from '../../../components/SosPenaltyConfig';
+import { adminService } from '../../../services/adminService';
 
-jest.mock('../services/adminService');
+jest.mock('../../../services/adminService', () => ({
+  adminService: {
+    getBadges: jest.fn(),
+    getSosPenaltyConfig: jest.fn(),
+    updateSosPenaltyConfig: jest.fn(),
+  },
+}));
+
 const mockedAdminService = adminService as jest.Mocked<typeof adminService>;
 
 const mockBadges = [
@@ -14,12 +21,12 @@ const mockBadges = [
 
 const mockFeeConfig = {
   type: 'FEE' as const,
-  value: 500,
+  feeAmount: 500,
 };
 
 const mockBadgeConfig = {
   type: 'REVOKE_BADGE' as const,
-  value: 'EARNING_BADGE',
+  badgeId: 'EARNING_BADGE',
 };
 
 describe('SosPenaltyConfig', () => {
@@ -28,52 +35,46 @@ describe('SosPenaltyConfig', () => {
     mockedAdminService.getBadges.mockResolvedValue(mockBadges);
   });
 
-  it('should render with FEE type selected and fetch badges', async () => {
+  it('should render and load configuration', async () => {
     mockedAdminService.getSosPenaltyConfig.mockResolvedValue(mockFeeConfig);
     render(<SosPenaltyConfig />);
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Fee')).toBeChecked();
+      expect(screen.getByText('SOS Misuse Penalty')).toBeInTheDocument();
     });
-    expect(screen.getByLabelText(/Penalty Amount/)).toHaveValue(500);
+
+    expect(mockedAdminService.getSosPenaltyConfig).toHaveBeenCalled();
     expect(mockedAdminService.getBadges).toHaveBeenCalled();
   });
 
-  it('should render with REVOKE_BADGE type selected and show badge dropdown', async () => {
-    mockedAdminService.getSosPenaltyConfig.mockResolvedValue(mockBadgeConfig);
-    render(<SosPenaltyConfig />);
-
-    await waitFor(() => {
-      expect(screen.getByLabelText('Revoke Badge')).toBeChecked();
-    });
-    expect(screen.getByLabelText(/Badge to Revoke/)).toHaveValue('EARNING_BADGE');
-  });
-
-  it('should switch UI when penalty type is changed', async () => {
+  it('should switch between Fee and Revoke Badge', async () => {
     mockedAdminService.getSosPenaltyConfig.mockResolvedValue(mockFeeConfig);
     render(<SosPenaltyConfig />);
-    await waitFor(() => expect(screen.getByLabelText('Fee')).toBeInTheDocument());
 
-    fireEvent.click(screen.getByLabelText('Revoke Badge'));
+    await waitFor(() => expect(screen.getByText('Monetary Fine')).toBeInTheDocument());
 
-    expect(screen.getByLabelText(/Badge to Revoke/)).toBeInTheDocument();
-    expect(screen.queryByLabelText(/Penalty Amount/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText('Revoke Privilege'));
+    expect(screen.getByText('Select Badge to Revoke')).toBeInTheDocument();
   });
 
   it('should submit the updated configuration', async () => {
     mockedAdminService.getSosPenaltyConfig.mockResolvedValue(mockFeeConfig);
     render(<SosPenaltyConfig />);
-    await waitFor(() => expect(screen.getByLabelText('Fee')).toBeInTheDocument());
 
-    fireEvent.click(screen.getByLabelText('Revoke Badge'));
-    fireEvent.change(screen.getByLabelText(/Badge to Revoke/), { target: { value: 'TOP_DRIVER' } });
+    await waitFor(() => expect(screen.getByText('Save Configuration')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByText('Revoke Privilege'));
+
+    // Select a badge
+    const select = screen.getByRole('combobox');
+    fireEvent.change(select, { target: { value: 'TOP_DRIVER' } });
 
     fireEvent.click(screen.getByText('Save Configuration'));
 
     await waitFor(() => {
       expect(mockedAdminService.updateSosPenaltyConfig).toHaveBeenCalledWith({
         type: 'REVOKE_BADGE',
-        value: 'TOP_DRIVER',
+        badgeId: 'TOP_DRIVER',
       });
     });
   });

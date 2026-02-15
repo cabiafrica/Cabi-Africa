@@ -1,13 +1,13 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { RegisterLeadDto } from './driver-leads/dto/register-lead.dto';
 import { UserService } from '@cabi/backend/user-service';
-import { MlmService } from './mlm.service';
+import { ReferralService } from './mlm.service';
 
 @Injectable()
 export class DriverLeadsService {
   constructor(
     private readonly userService: UserService,
-    private readonly mlmService: MlmService
+    private readonly referralService: ReferralService
   ) { }
 
   async register(registerLeadDto: RegisterLeadDto) {
@@ -32,8 +32,8 @@ export class DriverLeadsService {
     // 3. Process Registration Fee (Mock Stripe)
     await this.processPayment(userId, 500); // 500 KES fee
 
-    // 4. Distribute Fee via MLM
-    await this.mlmService.distributeFee(userId, 500);
+    // 4. Distribute Fee via Referral Program
+    await this.referralService.distributeFee(userId, 500);
 
     // 5. Update Status to PENDING (waiting for documents)
     await this.userService.updateUserStatus(userId, 'PENDING');

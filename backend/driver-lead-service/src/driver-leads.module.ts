@@ -3,11 +3,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { DriverLeadsController } from './driver-leads.controller';
 import { DriverLeadsService } from './driver-leads.service';
-import { MlmController } from './driver-leads/mlm.controller';
+import { ReferralController } from './driver-leads/referral.controller';
 import { AuthController } from './driver-leads/auth.controller';
 import { UserManagementService } from './driver-leads/user-management.service';
 import { UserModule } from '@cabi/backend/user-service';
-import { MlmService } from './mlm.service';
+import { ReferralService } from './referral.service';
 import { PrismaService } from './prisma.service';
 import { NotificationService } from './notification.service';
 import { AuthTokenService } from './auth-token.service';
@@ -25,10 +25,10 @@ import { PushProvider } from './push.provider';
     }),
     UserModule,
   ],
-  controllers: [DriverLeadsController, MlmController, AuthController],
+  controllers: [DriverLeadsController, ReferralController, AuthController],
   providers: [
     DriverLeadsService,
-    MlmService,
+    ReferralService,
     UserManagementService,
     PrismaService,
     NotificationService,

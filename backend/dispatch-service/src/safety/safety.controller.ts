@@ -12,11 +12,16 @@ interface MockRequest {
 
 @Controller('safety')
 export class SafetyController {
-  constructor(private readonly safetyService: SafetyService) {}
+  constructor(private readonly safetyService: SafetyService) { }
 
   @Post('sos')
   triggerSos(@Body() sosSignalDto: SosSignalDto, @Req() req: MockRequest) {
     const user = req.user || { id: 'user-unknown', role: 'unknown' }; // Mock user
     return this.safetyService.handleSosSignal(user.id, user.role, sosSignalDto);
+  }
+
+  @Post('resolve-sos')
+  resolveSos(@Body() body: { userId: string; isMisuse: boolean }) {
+    return this.safetyService.resolveSosIncident(body.userId, body.isMisuse);
   }
 }

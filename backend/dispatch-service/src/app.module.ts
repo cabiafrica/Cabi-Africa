@@ -13,9 +13,10 @@ import { BadgeController } from './badge/badge.controller';
 import { AdminBadgeController } from './badge/admin-badge.controller';
 import { CommissionModule } from './commission/commission.module';
 import { CommissionController } from './commission/commission.controller';
+import { SafetyModule } from './safety/safety.module';
 
 @Module({
-    imports: [PrismaModule, RideModule, MatchingModule, BadgeModule, CommissionModule, GatewayModule, UserModule],
+    imports: [PrismaModule, RideModule, MatchingModule, BadgeModule, CommissionModule, GatewayModule, UserModule, SafetyModule],
     controllers: [DispatchController, BadgeController, AdminBadgeController, CommissionController],
     providers: [MockTripService, DispatchService],
 })

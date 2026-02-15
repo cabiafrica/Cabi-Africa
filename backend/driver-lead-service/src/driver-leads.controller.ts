@@ -1,13 +1,13 @@
 import { Controller, Post, Body, Get, Query, Param } from '@nestjs/common';
 import { DriverLeadsService } from './driver-leads.service';
 import { RegisterLeadDto } from './driver-leads/dto/register-lead.dto';
-import { MlmService } from './mlm.service';
+import { ReferralService } from './referral.service';
 
 @Controller('driver-leads')
 export class DriverLeadsController {
   constructor(
     private readonly driverLeadsService: DriverLeadsService,
-    private readonly mlmService: MlmService,
+    private readonly referralService: ReferralService,
   ) { }
 
   @Post('register')
@@ -18,7 +18,7 @@ export class DriverLeadsController {
 
   @Get('referral/validate')
   validateReferralCode(@Query('code') code: string) {
-    return this.mlmService.validateReferralCode(code);
+    return this.referralService.validateReferralCode(code);
   }
 
   @Get('pending')
