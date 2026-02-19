@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
     container_name: cabi_postgres
@@ -8,11 +9,119 @@ services:
     environment:
       POSTGRES_USER: cabi_user
       POSTGRES_PASSWORD: cabi_password
-      POSTGRES_DB: cabi_db
+      POSTGRES_DB: cabi_africa
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cabi_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    container_name: cabi_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # Verification Service
+  verification-service:
+    build:
+      context: ./backend/verification-service
+      dockerfile: Dockerfile
+    container_name: cabi_verification
+    ports:
+      - "3003:3003"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
+      REDIS_URL: redis://redis:6379
+      PORT: 3003
+      MAX_FILE_SIZE: 10485760
+      TESSERACT_WORKERS: 2
+      OCR_CONFIDENCE_THRESHOLD: 0.7
+      MAX_FREE_TRIPS: 1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Dispatch Service
+  dispatch-service:
+    image: node:20-alpine
+    container_name: cabi_dispatch
+    working_dir: /app
+    command: sh -c "npm install && npm run start:prod"
+    ports:
+      - "3334:3334"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
+      REDIS_URL: redis://redis:6379
+      PORT: 3334
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend/dispatch-service:/app
+    restart: unless-stopped
+
+  # Referral Service
+  referral-service:
+    build:
+      context: ./backend/referral-service
+      dockerfile: Dockerfile
+    container_name: cabi_referral
+    ports:
+      - "3335:3335"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
+      PORT: 3335
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend/referral-service:/app
+      - /app/node_modules
+
+  # Sacco Service
+  sacco-service:
+    build:
+      context: ./backend/sacco-service
+      dockerfile: Dockerfile
+    container_name: cabi_sacco
+    ports:
+      - "3336:3336"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
+      PORT: 3336
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend/sacco-service:/app
+      - /app/node_modules
+
+networks:
+  default:
+    name: cabi_network
 
 volumes:
   postgres_data:
+  redis_data:

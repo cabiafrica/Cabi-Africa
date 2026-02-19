@@ -1,7 +1,8 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
 import { MatchingService } from '../matching/matching.service';
 import { BadgeService } from '../badge/badge.service';
+import { CommissionService } from '../commission/commission.service';
 // import { PaymentService } from '@cabi/backend/payment-service'; 
 // import { VehicleService } from '@cabi/backend/vehicle-service'; 
 // import { UserService } from '@cabi/backend/user-service';
@@ -21,6 +22,10 @@ interface PaginationParams {
 const WAIT_TIME_GRACE_PERIOD_MINUTES = 2;
 const WAIT_TIME_FEE_PER_MINUTE = 0.50;
 
+// In-memory passenger trip tracking (would use database in production)
+const passengerTripCounts: Map<string, number> = new Map();
+const MAX_FREE_TRIPS = 1;
+
 @Injectable()
 export class RideService {
   private readonly logger = new Logger(RideService.name);
@@ -34,10 +39,54 @@ export class RideService {
   constructor(
     private prisma: PrismaService,
     public matchingService: MatchingService,
-    private badgeService: BadgeService
+    private badgeService: BadgeService,
+    private commissionService: CommissionService
   ) { }
 
+  private checkPassengerVerification(passengerId: string): { canRequest: boolean; reason?: string; remainingTrips?: number; isVerified?: boolean } {
+    // Get current trip count
+    const tripCount = passengerTripCounts.get(passengerId) || 0;
+    const remainingTrips = Math.max(0, MAX_FREE_TRIPS - tripCount);
+
+    // Check if passenger is verified (would query database in production)
+    // For now, assume not verified if they have trips tracked
+    const isVerified = tripCount === 0 && passengerTripCounts.has(passengerId);
+
+    // If exceeded trip limit and not verified
+    if (tripCount >= MAX_FREE_TRIPS && !isVerified) {
+      return {
+        canRequest: false,
+        reason: 'Verification required. Please verify your identity to continue using the service.',
+        remainingTrips: 0,
+        isVerified: false
+      };
+    }
+
+    return {
+      canRequest: true,
+      reason: `You have ${remainingTrips} trip(s) remaining before verification is required.`,
+      remainingTrips,
+      isVerified: isVerified
+    };
+  }
+
   async createRide(passengerId: string, pickup: any, dropoff: any, vehicleType?: string) {
+    // Check passenger verification before creating ride
+    const verificationCheck = this.checkPassengerVerification(passengerId);
+
+    if (!verificationCheck.canRequest) {
+      throw new HttpException(
+        {
+          error: 'Verification Required',
+          message: verificationCheck.reason,
+          remainingTrips: verificationCheck.remainingTrips,
+          isVerified: verificationCheck.isVerified,
+          action: 'VERIFY_IDENTITY'
+        },
+        HttpStatus.FORBIDDEN
+      );
+    }
+
     const matchingStartedAt = new Date();
 
     const ride = await this.prisma.ride.create({
@@ -54,12 +103,21 @@ export class RideService {
       }
     });
 
+    // Increment trip count for tracking
+    const currentCount = passengerTripCounts.get(passengerId) || 0;
+    passengerTripCounts.set(passengerId, currentCount + 1);
+
     // Start matching process asynchronously
     this.startMatching(ride.id).catch(err =>
       this.logger.error(`Matching failed for ride ${ride.id}: ${err.message}`)
     );
 
-    return ride;
+    return {
+      ...ride,
+      remainingTrips: verificationCheck.remainingTrips,
+      isVerified: verificationCheck.isVerified,
+      verificationMessage: verificationCheck.reason
+    };
   }
 
   private async startMatching(rideId: string): Promise<void> {
@@ -109,7 +167,7 @@ export class RideService {
   }
 
   async getCurrentRide(userId: string, role: string) {
-    return this.prisma.ride.findFirst({
+    const ride = await this.prisma.ride.findFirst({
       where: {
         OR: [
           role === 'DRIVER' ? { driverId: userId } : { passengerId: userId }
@@ -136,6 +194,22 @@ export class RideService {
       },
       orderBy: { createdAt: 'desc' }
     });
+
+    // Add passenger verification status if driver is viewing
+    if (ride && role === 'DRIVER') {
+      const tripCount = passengerTripCounts.get(ride.passengerId) || 0;
+      const isVerified = tripCount === 0 && passengerTripCounts.has(ride.passengerId);
+
+      return {
+        ...ride,
+        passengerVerificationStatus: isVerified ? 'VERIFIED' : 'UNVERIFIED',
+        passengerWarning: isVerified
+          ? null
+          : 'This passenger has not verified their identity. You may reject this ride if you have concerns about safety.'
+      };
+    }
+
+    return ride;
   }
 
   async acceptRide(rideId: string, driverId: string) {
@@ -185,16 +259,26 @@ export class RideService {
     return updatedRide;
   }
 
-  async rejectRide(rideId: string, driverId: string) {
+  async rejectRide(rideId: string, driverId: string, reason?: string) {
     const ride = await this.prisma.ride.findUnique({ where: { id: rideId } });
     if (!ride) throw new NotFoundException('Ride not found');
 
+    // Log the rejection reason for analytics
+    if (reason) {
+      this.logger.log(`Driver ${driverId} rejected ride ${rideId}. Reason: ${reason}`);
+
+      // Track rejection due to unverified passenger
+      if (reason.includes('unverified') || reason.includes('not verified')) {
+        // Could trigger notification to passenger to verify
+        this.notificationService.sendNotification({
+          userId: ride.passengerId,
+          title: 'Ride Rejected',
+          body: 'A driver rejected your ride request. Consider verifying your identity for better service.'
+        });
+      }
+    }
+
     if (ride.driverId !== driverId) {
-      // If driver is not assigned, maybe they are just rejecting the offer?
-      // In that case, we don't need to do anything if they aren't assigned.
-      // But if they are assigned, we unassign.
-      // If we are implementing a 'pool', rejecting might mean 'don't show me this again'.
-      // For now, assume unassign logic.
       throw new Error('Driver is not assigned to this ride');
     }
 
@@ -208,7 +292,11 @@ export class RideService {
     });
 
     this.logger.log(`Ride ${rideId} rejected by driver ${driverId}. Returned to pool.`);
-    return updatedRide;
+    return {
+      ...updatedRide,
+      rejectionReason: reason,
+      message: 'Ride rejected. Returned to driver pool.'
+    };
   }
 
   async startRide(rideId: string) {
@@ -274,6 +362,42 @@ export class RideService {
 
     // Award badges to passenger and driver
     this.awardRideCompletionBadges(updatedRide.passengerId, updatedRide.driverId);
+
+    // Calculate payouts and commissions if ride is successful and driver exists
+    if (status === 'COMPLETED' && updatedRide.driverId) {
+      try {
+        await this.commissionService.calculateTripPayout({
+          baseFare: Number(finalFare),
+          driverProfileId: updatedRide.driverId,
+          tripId: updatedRide.id
+        });
+
+        // Trigger SACCO deduction via Sacco Service API
+        // Service name 'sacco-service' resolves via Docker DNS
+        const saccoServiceUrl = process.env.SACCO_SERVICE_URL || 'http://sacco-service:3336';
+
+        fetch(`${saccoServiceUrl}/api/sacco/deduct`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tripId: updatedRide.id,
+            driverId: updatedRide.driverId,
+            finalFare: Number(finalFare)
+          })
+        }).then(res => {
+          if (!res.ok) {
+            this.logger.error(`Sacco service returned ${res.status}`);
+          } else {
+            this.logger.log(`Sacco deduction triggered successfully for ride ${rideId}`);
+          }
+        }).catch(err => {
+          this.logger.error(`Failed to call Sacco service: ${err.message}`);
+        });
+
+      } catch (commissionError) {
+        this.logger.error(`Failed to process payout/commission: ${commissionError.message}`);
+      }
+    }
 
     return updatedRide;
   }

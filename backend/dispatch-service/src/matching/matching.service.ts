@@ -326,8 +326,27 @@ export class MatchingService {
             `Broadcasting ride ${ride.id} to ${driverIds.length} drivers`
         );
 
+        // Get passenger verification status
+        let passengerVerificationStatus = 'UNKNOWN';
+        let isVerified = false;
+        
+        // In production, query the verification service
+        // For now, use the status from the ride object
+        if (ride.passengerVerificationStatus) {
+            passengerVerificationStatus = ride.passengerVerificationStatus;
+            isVerified = ride.isVerified || false;
+        }
+
         for (const driverId of driverIds) {
-            this.tripTrackingGateway.broadcastRideRequest(driverId, ride);
+            // Include passenger verification info for driver to make informed decision
+            this.tripTrackingGateway.broadcastRideRequest(driverId, {
+                ...ride,
+                passengerVerificationStatus,
+                isVerifiedPassenger: isVerified,
+                passengerWarning: isVerified 
+                    ? null 
+                    : 'This passenger is not verified. You may reject this ride if you have concerns.'
+            });
         }
     }
 }

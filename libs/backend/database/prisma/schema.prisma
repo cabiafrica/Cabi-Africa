@@ -48,8 +48,18 @@ model User {
 
   // Verification Status
   isEmailVerified    Boolean @default(false)
-  isPhoneVerified    Boolean @default(false)
+  isPhoneVerified   Boolean @default(false)
   isIdentityVerified Boolean @default(false)
+
+  // Passenger Verification (new fields)
+  isVerifiedPassenger Boolean @default(false) // Badge after full verification
+  passengerTripCount Int @default(0) // Track trips taken (1 free trip allowed)
+  maxFreeTrips Int @default(1) // Maximum trips before verification required
+  lastVerificationAt DateTime?
+  verificationLevel PassengerVerificationLevel @default(BASIC) // BASIC, SELFIE, BIOMETRIC
+  
+  // Fingerprint/biometric data reference
+  fingerprintDataUrl String? @db.Text // Reference to stored biometric template
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -89,6 +99,8 @@ model User {
   @@index([createdAt])
   @@index([email])
   @@index([phone])
+  @@index([lastActiveAt])
+  @@index([isTwoFactorEnabled])
   @@map("users")
 }
 
@@ -204,7 +216,7 @@ model DriverProfile {
   driverGroupId String?
   driverGroup   DriverGroup? @relation(fields: [driverGroupId], references: [id])
   
-  // MLM Referral tracking
+  // Referral tracking
   referrerId String?
   referrer   DriverProfile?  @relation("DriverReferrals", fields: [referrerId], references: [id])
   referrals  DriverProfile[] @relation("DriverReferrals")
@@ -226,6 +238,10 @@ model DriverProfile {
   receivedInvitations Invitation[]
   documents           Document[]
   occurrences         Occurrence[] @relation("DriverOccurrences")
+  
+  commissionLedger CommissionLedger[]
+  commissionSource CommissionLedger[] @relation("CommissionSource")
+  saccoLedger      SaccoLedger[]
 
   @@index([isOnline])
   @@index([organizationId])
@@ -478,7 +494,7 @@ enum Permission {
   VERIFICATION_BIOMETRIC_VIEW
   VERIFICATION_BIOMETRIC_APPROVE
 
-  // ORGANIZATION & MLM
+  // ORGANIZATION & REFERRAL PROGRAM
   ORGANIZATION_VIEW
   ORGANIZATION_EDIT
   ORGANIZATION_APPROVE
@@ -707,6 +723,18 @@ enum VerificationDocumentType {
   NATIONAL_ID
   PASSPORT
   DRIVERS_LICENSE
+  // Passenger-specific document types
+  PASSENGER_ID
+  PASSENGER_PASSPORT_PHOTO
+  PASSENGER_SELFIE
+  FINGERPRINT
+}
+
+enum PassengerVerificationLevel {
+  NONE // Not started
+  BASIC // ID verified
+  SELFIE // Selfie verified
+  BIOMETRIC // Fingerprint verified
 }
 
 enum VerificationStatus {
@@ -1144,4 +1172,81 @@ model Setting {
   updatedAt DateTime @updatedAt
 
   @@map("settings")
+}
+
+// ============================================
+// PASSENGER VERIFICATION CONFIGURATION
+// ============================================
+
+enum RequiredVerificationMethod {
+  NONE
+  ID_ONLY
+  ID_AND_SELFIE
+  ID_SELFIE_FINGERPRINT
+}
+
+model PassengerVerificationConfig {
+  id                        String   @id @default(uuid())
+  
+  // Required verification methods
+  requireNationalId         Boolean  @default(true)
+  requirePassengerPhoto     Boolean  @default(true)
+  requireSelfieVerification Boolean  @default(true)
+  requireFingerprint        Boolean  @default(false) // Optional biometric
+  
+  // Verification frequency (re-verification required)
+  selfieReverificationDays Int      @default(30) // Days before re-verification required
+  fingerprintReverificationDays Int  @default(90) // Days before re-verification required
+  
+  // Trip limits
+  maxTripsBeforeVerification Int   @default(1) // Trips allowed before forced verification
+  maxTripsWithUnverified      Int   @default(1) // Maximum trips with unverified account
+  
+  // Privileges for verified passengers
+  verifiedPassengerPrivileges Json @default("{}") // { priorityMatching: true, ... }
+  
+  // Admin settings
+  autoVerifyOnDocumentUpload Boolean @default(true)
+  requireAdminApproval       Boolean @default(false)
+  
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("passenger_verification_config")
+}
+
+enum LedgerEntryType {
+  CREDIT
+  DEBIT
+}
+
+model CommissionLedger {
+  id              String          @id @default(uuid())
+  driverId        String
+  driverProfile   DriverProfile   @relation(fields: [driverId], references: [id])
+  amount          Decimal         @db.Decimal(10, 2)
+  type            LedgerEntryType
+  transactionType String
+  reason          String?
+  sourceDriverId  String?
+  sourceDriver    DriverProfile?  @relation("CommissionSource", fields: [sourceDriverId], references: [id])
+  createdAt       DateTime        @default(now())
+
+  @@index([driverId])
+  @@index([createdAt])
+  @@map("commission_ledger")
+}
+
+model SaccoLedger {
+  id            String        @id @default(uuid())
+  driverId      String
+  driverProfile DriverProfile @relation(fields: [driverId], references: [id])
+  amount        Decimal       @db.Decimal(10, 2)
+  type          String
+  relatedTripId String?
+  createdAt     DateTime      @default(now())
+
+  @@index([driverId])
+  @@map("sacco_ledger")
 }

@@ -1,0 +1,39 @@
+{
+    "name": "referral-service",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "backend/referral-service/src",
+    "projectType": "application",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "nx:run-commands",
+            "options": {
+                "command": "npx webpack-cli build",
+                "args": [
+                    "--node-env=production"
+                ],
+                "cwd": "backend/referral-service"
+            },
+            "configurations": {
+                "development": {
+                    "args": [
+                        "--node-env=development"
+                    ]
+                }
+            }
+        },
+        "serve": {
+            "executor": "@nx/js:node",
+            "defaultConfiguration": "development",
+            "options": {
+                "buildTarget": "referral-service:build",
+                "runBuildTargetDependencies": false
+            },
+            "configurations": {
+                "development": {
+                    "buildTarget": "referral-service:build:development"
+                }
+            }
+        }
+    }
+}

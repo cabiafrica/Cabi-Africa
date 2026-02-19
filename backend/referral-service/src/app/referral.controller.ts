@@ -29,6 +29,15 @@ export class ReferralController {
         return { message: 'Ledger adjustment processed successfully' };
     }
 
+    @Post('process-registration-fee')
+    async processRegistrationFee(@Body() body: { driverId: string; fee: number }) {
+        if (!body.driverId || !body.fee) {
+            throw new HttpException('Driver ID and Fee are required', HttpStatus.BAD_REQUEST);
+        }
+        await this.referralService.processRegistrationFee(body.driverId, body.fee);
+        return { message: 'Registration fee processed successfully' };
+    }
+
     @Get('ledger')
     async getLedger(
         @Query('page') page = 1,

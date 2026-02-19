@@ -1,26 +1,45 @@
 import { Controller, Get, Param, Put, Post, Body, Query, HttpCode } from '@nestjs/common';
 import { RideService } from './ride.service';
 
+import { IsString, IsNotEmpty, IsOptional, IsObject, IsNumber, IsEnum } from 'class-validator';
+
 class CreateRideDto {
+  @IsString()
+  @IsNotEmpty()
   passengerId: string;
+
+  @IsNotEmpty()
+  @IsObject()
   pickup: any;
+
+  @IsNotEmpty()
+  @IsObject()
   dropoff: any;
+
+  @IsString()
+  @IsOptional()
   vehicleType?: string;
 }
 
 class AcceptRideDto {
+  @IsString()
+  @IsNotEmpty()
   driverId: string;
 }
 
 class StopActionDto {
+  @IsNumber()
   stopIndex: number;
 }
 
 class AddStopDto {
+  @IsString()
+  @IsNotEmpty()
   address: string;
 }
 
 class RespondToChangeDto {
+  @IsEnum(['accepted', 'declined'])
   response: 'accepted' | 'declined';
 }
 

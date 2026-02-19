@@ -3,7 +3,7 @@ import { PrismaService } from '@cabi/backend/database';
 import { BadgeTier } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 
-export interface TripPayoutInput {
+export class TripPayoutInput {
     baseFare: number;
     driverProfileId: string;
     tripId?: string;

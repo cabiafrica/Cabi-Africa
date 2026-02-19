@@ -3,6 +3,7 @@ import { PrismaService } from '@cabi/backend/database';
 import { SosPenaltyType } from '@prisma/client';
 
 import { UpdateSosConfigDto } from './dto/update-sos-config.dto';
+export { UpdateSosConfigDto };
 
 @Injectable()
 export class SosConfigService {

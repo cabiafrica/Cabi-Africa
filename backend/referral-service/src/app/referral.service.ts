@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaClient, LedgerEntryType, Prisma } from '@prisma/client';
+import { LedgerEntryType, Prisma } from '@prisma/client';
+import { PrismaService } from '@cabi/database';
 
-const prisma = new PrismaClient();
 const REFERRAL_CONFIG_KEY = 'referral_config';
 const PROMO_CONFIG_KEY = 'promo_config';
 const MAX_UPLINE_LEVELS = 5;
@@ -44,8 +44,10 @@ interface PromoConfig {
 export class ReferralService {
   private readonly logger = new Logger(ReferralService.name);
 
+  constructor(private readonly prisma: PrismaService) { }
+
   async getConfig(): Promise<ReferralConfig> {
-    const setting = await prisma.setting.findUnique({
+    const setting = await this.prisma.setting.findUnique({
       where: { key: REFERRAL_CONFIG_KEY },
     });
 
@@ -86,7 +88,7 @@ export class ReferralService {
   }
 
   async updateConfig(config: ReferralConfig): Promise<void> {
-    await prisma.setting.upsert({
+    await this.prisma.setting.upsert({
       where: { key: REFERRAL_CONFIG_KEY },
       update: { value: config as any },
       create: { key: REFERRAL_CONFIG_KEY, value: config as any },
@@ -94,7 +96,7 @@ export class ReferralService {
   }
 
   async getPromoConfig(): Promise<PromoConfig> {
-    const setting = await prisma.setting.findUnique({
+    const setting = await this.prisma.setting.findUnique({
       where: { key: PROMO_CONFIG_KEY },
     });
 
@@ -112,7 +114,7 @@ export class ReferralService {
   }
 
   async updatePromoConfig(config: PromoConfig): Promise<void> {
-    await prisma.setting.upsert({
+    await this.prisma.setting.upsert({
       where: { key: PROMO_CONFIG_KEY },
       update: { value: config as any },
       create: { key: PROMO_CONFIG_KEY, value: config as any },
@@ -133,7 +135,7 @@ export class ReferralService {
       return;
     }
 
-    const newDriverProfile = await prisma.driverProfile.findUnique({
+    const newDriverProfile = await this.prisma.driverProfile.findUnique({
       where: { userId: newDriverId },
       select: { referrerId: true },
     });
@@ -161,7 +163,7 @@ export class ReferralService {
         });
       }
 
-      const nextUplineProfile = await prisma.driverProfile.findUnique({
+      const nextUplineProfile = await this.prisma.driverProfile.findUnique({
         where: { userId: currentReferrerId },
         select: { referrerId: true },
       });
@@ -169,7 +171,7 @@ export class ReferralService {
     }
 
     if (ledgerEntriesToCreate.length > 0) {
-      await prisma.commissionLedger.createMany({
+      await this.prisma.commissionLedger.createMany({
         data: ledgerEntriesToCreate,
       });
       this.logger.log(`Successfully created ${ledgerEntriesToCreate.length} commission ledger entries.`);
@@ -187,7 +189,7 @@ export class ReferralService {
   ): Promise<void> {
     this.logger.log(`Creating manual ledger entry for driver ${driverId} by admin ${adminId}`);
 
-    await prisma.commissionLedger.create({
+    await this.prisma.commissionLedger.create({
       data: {
         driverId,
         amount,
@@ -219,8 +221,8 @@ export class ReferralService {
     if (sourceDriverId) where.sourceDriverId = sourceDriverId;
 
     const [total, entries] = await Promise.all([
-      prisma.commissionLedger.count({ where }),
-      prisma.commissionLedger.findMany({
+      this.prisma.commissionLedger.count({ where }),
+      this.prisma.commissionLedger.findMany({
         where,
         skip,
         take: limit,
@@ -232,17 +234,17 @@ export class ReferralService {
   }
 
   async getDashboardMetrics(dateRange?: string) {
-    const commissionSum = await prisma.commissionLedger.aggregate({
+    const commissionSum = await this.prisma.commissionLedger.aggregate({
       _sum: { amount: true },
       where: { amount: { gt: 0 } },
     });
     const totalCommissionsAllTime = commissionSum._sum.amount || 0;
 
-    const totalReferredDrivers = await prisma.driverProfile.count({
+    const totalReferredDrivers = await this.prisma.driverProfile.count({
       where: { referrerId: { not: null } },
     });
 
-    const topReferrersGroup = await prisma.driverProfile.groupBy({
+    const topReferrersGroup = await this.prisma.driverProfile.groupBy({
       by: ['referrerId'],
       _count: { referrerId: true },
       orderBy: { _count: { referrerId: 'desc' } },
@@ -284,7 +286,7 @@ export class ReferralService {
   }
 
   async getMyCommissions(driverId: string) {
-    const totalEarnedAggregate = await prisma.commissionLedger.aggregate({
+    const totalEarnedAggregate = await this.prisma.commissionLedger.aggregate({
       _sum: { amount: true },
       where: {
         driverId,
@@ -293,7 +295,7 @@ export class ReferralService {
       }
     });
 
-    const history = await prisma.commissionLedger.findMany({
+    const history = await this.prisma.commissionLedger.findMany({
       where: {
         driverId,
         transactionType: 'REGISTRATION_FEE_COMMISSION'
