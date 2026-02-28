@@ -140,7 +140,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       fillColor: Color(0xFF141414),
                       contentPadding: EdgeInsets.all(20),
                     ),
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.black),
                     validator: (value) =>
                         (value == null || !value.contains('@'))
                             ? 'Please enter a valid email address'
@@ -185,7 +185,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       fillColor: const Color(0xFF141414),
                       contentPadding: const EdgeInsets.all(20),
                     ),
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.black),
                     validator: (value) =>
                         value!.isEmpty ? 'Please enter your password' : null,
                   ),
