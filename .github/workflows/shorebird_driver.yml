@@ -3,7 +3,7 @@ name: Shorebird Driver App OTA Updates
 on:
   push:
     branches:
-      - main # Change this if your main branch has a different name
+      - main # Restore to trigger on main branch
     paths:
       - 'mobile/driver_app/**' # Only run when code in driver_app changes
 
