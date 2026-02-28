@@ -26,10 +26,12 @@ class AuthService {
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        // Backend returns { twoFactorRequired, accessToken }
+        final token = data['accessToken'] ?? data['token'];
         return AuthResult(
-          isSignedIn: true,
+          isSignedIn: token != null,
           user: data['user'],
-          token: data['token'],
+          token: token,
         );
       } else {
         String errorMessage = 'Login failed';
