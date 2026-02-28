@@ -6,7 +6,7 @@ class AppConfig {
   // API Base URLs
   // API Base URLs
   static String get dispatchApiUrl => 'http://$host:3334/api';
-  static String get authApiUrl => 'http://$host:3333/api';
+  static String get authApiUrl => 'http://$host:3010/api/v1';
   static String get verificationApiUrl =>
       'http://$host:3003/api/v1/verification';
   static String get contentApiUrl => 'http://$host:3001/api';
