@@ -1,7 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { fileURLToPath } from 'url';
 
 export default defineConfig({
+    // root: 'web/dispatch_panel',
     plugins: [react()],
     server: {
         port: 3002,

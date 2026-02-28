@@ -1,20 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'referral_commissions_screen.dart';
+import 'sacco_screen.dart';
 import 'payout_setup_screen.dart';
 import '../widgets/earnings_goal_progress_card.dart';
+import '../services/sacco_service.dart';
+import '../services/referral_service.dart';
+import '../providers/auth_provider.dart';
 
-class WalletScreen extends StatefulWidget {
+class WalletScreen extends ConsumerStatefulWidget {
   const WalletScreen({super.key});
 
   @override
-  State<WalletScreen> createState() => _WalletScreenState();
+  ConsumerState<WalletScreen> createState() => _WalletScreenState();
 }
 
-class _WalletScreenState extends State<WalletScreen> {
-  // Mock Data
-  double _balance = 154.50;
+class _WalletScreenState extends ConsumerState<WalletScreen> {
+  bool _isLoading = true;
+  double _balance =
+      154.50; // Main wallet balance (still mock until payment service is ready)
+  double _saccoBalance = 0.0;
+  double _referralBalance = 0.0;
   double _goal = 200.00;
   final double _currentEarnings = 154.50;
+
+  final SaccoService _saccoService = SaccoService();
+  final ReferralService _referralService = ReferralService();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchBalances();
+  }
+
+  Future<void> _fetchBalances() async {
+    final authState = ref.read(authProvider);
+    if (authState is! Authenticated) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    final driverId = authState.userId;
+    if (driverId == null) return;
+
+    try {
+      final saccoData = await _saccoService.getSavingsBalance(driverId);
+      final referralData = await _referralService.getReferralStats(driverId);
+
+      if (mounted) {
+        setState(() {
+          _saccoBalance =
+              double.tryParse(saccoData['totalSavings']?.toString() ?? '0.0') ??
+                  0.0;
+          _referralBalance = double.tryParse(
+                  referralData['totalEarned']?.toString() ?? '0.0') ??
+              0.0;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
   void _setGoal() async {
     final TextEditingController controller =
@@ -50,7 +99,6 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 
   void _cashOut() {
-    // API Call
     setState(() {
       _balance = 0.0;
     });
@@ -59,7 +107,6 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 
   void _topUpWallet() {
-    // API Call for M-Pesa or Card
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -71,7 +118,7 @@ class _WalletScreenState extends State<WalletScreen> {
                     child: const Text("Cancel")),
                 ElevatedButton(
                     onPressed: () {
-                      setState(() => _balance += 500); // Mock Top Up
+                      setState(() => _balance += 500);
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Wallet Topped Up!")));
@@ -81,40 +128,15 @@ class _WalletScreenState extends State<WalletScreen> {
             ));
   }
 
-  Widget _buildHeatmapRow(String label, List<int> intensities) {
-    return Row(
-      children: [
-        SizedBox(
-            width: 40,
-            child: Text(label,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                    color: Colors.grey))),
-        ...intensities.map((level) => Expanded(
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 2),
-                height: 24,
-                decoration: BoxDecoration(
-                  color: Colors.green
-                      .withValues(alpha: level * 0.2), // Maps 1-5 to 0.2-1.0
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            )),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Wallet'),
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.account_balance),
-            tooltip: 'Payout Methods',
             onPressed: () {
               Navigator.push(
                   context,
@@ -124,260 +146,186 @@ class _WalletScreenState extends State<WalletScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Balance Card
-            Card(
-              color: Colors.black87,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: _fetchBalances,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    const Text('Available Balance',
-                        style: TextStyle(color: Colors.white70)),
-                    const SizedBox(height: 8),
-                    Text('KES ${_balance.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 24),
-
-                    // Dynamic Button Logic
-                    if (_balance < 50)
-                      ElevatedButton(
-                        onPressed: _topUpWallet,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green, // Top Up Color
-                          foregroundColor: Colors.white,
-                          minimumSize: const Size.fromHeight(50),
-                        ),
-                        child: const Text('TOP UP WALLET',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      )
-                    else if (_balance >= 100)
-                      ElevatedButton(
-                        onPressed: _cashOut,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color(0xFFFFD700), // Taxi Gold for Cash Out
-                          foregroundColor: Colors.black,
-                          minimumSize: const Size.fromHeight(50),
-                        ),
-                        child: const Text('CASH OUT NOW',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      )
-                    else
-                      // Between 50 and 100 - Likely encourage top up or wait
-                      ElevatedButton(
-                        onPressed: _topUpWallet,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey.shade800,
-                          foregroundColor: Colors.white,
-                          minimumSize: const Size.fromHeight(50),
-                        ),
-                        child: const Text('TOP UP WALLET',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-
-                    const SizedBox(height: 8),
-                    if (_balance >= 100)
-                      const Text('Usually arrives in minutes. KES 50 fee.',
-                          style:
-                              TextStyle(color: Colors.white54, fontSize: 12)),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Loyalty Points Card (Story 62.2)
-            Card(
-              color: const Color(0xFF212121), // Dark card for contrast
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: Colors.grey.shade800)),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 16.0, horizontal: 24.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Loyalty Points',
-                            style: TextStyle(color: Colors.white70)),
-                        Text('1,250',
-                            style: TextStyle(
-                                color: Color(0xFFFFD700), // Taxi Gold
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    OutlinedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Redeem at Driver Store')));
-                      },
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFFFFD700),
-                        side: const BorderSide(color: Color(0xFFFFD700)),
-                      ),
-                      child: const Text('REDEEM'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Commissions Card (New!)
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            const ReferralCommissionsScreen()));
-              },
-              child: Card(
-                elevation: 4,
-                shadowColor: const Color(0xFFFFD700).withValues(alpha: 0.3),
-                color: const Color(0xFFFFF8E1), // Light Gold tint
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: const BoxDecoration(
-                            color: Color(0xFFFFD700), shape: BoxShape.circle),
-                        child: const Icon(Icons.group_add,
-                            color: Colors.black, size: 24),
-                      ),
-                      const SizedBox(width: 16),
-                      const Expanded(
+                    // Balance Card
+                    Card(
+                      color: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Referral Commissions',
-                                style: TextStyle(
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16)),
-                            Text('View your referral earnings',
-                                style: TextStyle(color: Colors.black54)),
+                            const Text('Available for Payout',
+                                style: TextStyle(color: Colors.white54)),
+                            const SizedBox(height: 8),
+                            Text('KES ${_balance.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                    color: Color(0xFFFFD700),
+                                    fontSize: 36,
+                                    fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 24),
+                            if (_balance < 50)
+                              ElevatedButton(
+                                onPressed: _topUpWallet,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white10,
+                                  foregroundColor: Colors.white,
+                                  minimumSize: const Size.fromHeight(50),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: const Text('TOP UP WALLET'),
+                              )
+                            else
+                              ElevatedButton(
+                                onPressed: _cashOut,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFFFD700),
+                                  foregroundColor: Colors.black,
+                                  minimumSize: const Size.fromHeight(50),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: const Text('CASH OUT NOW',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
                           ],
                         ),
                       ),
-                      const Icon(Icons.arrow_forward_ios,
-                          color: Colors.black54, size: 16),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                    ),
 
-            const SizedBox(height: 24),
+                    const SizedBox(height: 20),
 
-            EarningsGoalProgressCard(
-              currentEarnings: _currentEarnings,
-              goalAmount: _goal,
-              weeklyGoal: _goal * 7,
-              monthlyGoal: _goal * 30,
-              onEditGoal: _setGoal,
-            ),
-            const SizedBox(height: 24),
-
-            // Story 56.6: Earnings Heatmap
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Best Times to Drive',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 4),
-                    const Text('Based on your historical earnings',
-                        style: TextStyle(color: Colors.grey, fontSize: 12)),
-                    const SizedBox(height: 16),
+                    // Referral and Sacco Quick Cards
                     Row(
                       children: [
-                        const SizedBox(width: 40), // Label spacing
-                        ...['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d) =>
-                            Expanded(
-                                child: Center(
-                                    child: Text(d,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12))))),
+                        Expanded(
+                          child: _buildBalanceCard(
+                            'Referral',
+                            _referralBalance,
+                            const Color(0xFFFFD700),
+                            Icons.group_add,
+                            () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        const ReferralCommissionsScreen())),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildBalanceCard(
+                            'Sacco',
+                            _saccoBalance,
+                            const Color(0xFF1A237E),
+                            Icons.savings,
+                            () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const SaccoScreen())),
+                          ),
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    _buildHeatmapRow('AM', [1, 2, 3, 2, 4, 3, 1]),
-                    const SizedBox(height: 4),
-                    _buildHeatmapRow('PM', [2, 3, 4, 3, 5, 5, 4]),
-                    const SizedBox(height: 4),
-                    _buildHeatmapRow('Eve', [4, 4, 5, 5, 5, 5, 2]),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        const Text('Low', style: TextStyle(fontSize: 10)),
-                        const SizedBox(width: 4),
-                        Container(
-                            width: 10,
-                            height: 10,
-                            color: Colors.green.withValues(alpha: 0.2)),
-                        const SizedBox(width: 2),
-                        Container(
-                            width: 10,
-                            height: 10,
-                            color: Colors.green.withValues(alpha: 0.5)),
-                        const SizedBox(width: 2),
-                        Container(width: 10, height: 10, color: Colors.green),
-                        const SizedBox(width: 4),
-                        const Text('High', style: TextStyle(fontSize: 10)),
-                      ],
-                    )
+
+                    const SizedBox(height: 24),
+
+                    EarningsGoalProgressCard(
+                      currentEarnings: _currentEarnings,
+                      goalAmount: _goal,
+                      weeklyGoal: _goal * 7,
+                      monthlyGoal: _goal * 30,
+                      onEditGoal: _setGoal,
+                    ),
+
+                    const SizedBox(height: 24),
+                    const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Recent Activity',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold))),
+                    const SizedBox(height: 12),
+
+                    // Semi-Dynamic Activity List
+                    _buildActivityItem(
+                        Icons.trending_up,
+                        'Referral Bonus',
+                        'New driver joined your team',
+                        '+ KES 200',
+                        Colors.green),
+                    _buildActivityItem(
+                        Icons.savings,
+                        'Sacco Saving',
+                        'Auto-deduction from Trip #2940',
+                        '- KES 50',
+                        Colors.indigo),
                   ],
                 ),
               ),
             ),
+    );
+  }
 
-            const SizedBox(height: 24),
-            const Align(
-                alignment: Alignment.centerLeft,
-                child: Text('Recent Transactions',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-            const SizedBox(height: 8),
-            // Mock List
-            const ListTile(
-              leading: Icon(Icons.drive_eta, color: Colors.blue),
-              title: Text('Trip Payment'),
-              subtitle: Text('Today, 2:30 PM'),
-              trailing: Text('+KES 2550', // Mock KES value
-                  style: TextStyle(
-                      color: Colors.green, fontWeight: FontWeight.bold)),
-            ),
-            const ListTile(
-              leading: Icon(Icons.local_gas_station,
-                  color: Colors.orange), // Payment
-              title: Text('Instant Payout'),
-              subtitle: Text('Yesterday'),
-              trailing: Text('-KES 12000',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+  Widget _buildBalanceCard(String title, double balance, Color color,
+      IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withValues(alpha: 0.1)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(height: 12),
+            Text(title,
+                style: const TextStyle(color: Colors.grey, fontSize: 12)),
+            const SizedBox(height: 4),
+            Text(
+              'KES ${balance.toStringAsFixed(0)}',
+              style: TextStyle(
+                  color: color, fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildActivityItem(IconData icon, String title, String subtitle,
+      String amount, Color iconColor) {
+    return Card(
+      elevation: 0,
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: iconColor.withValues(alpha: 0.1),
+          child: Icon(icon, color: iconColor, size: 18),
+        ),
+        title: Text(title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+        subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
+        trailing: Text(amount,
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.black87)),
       ),
     );
   }

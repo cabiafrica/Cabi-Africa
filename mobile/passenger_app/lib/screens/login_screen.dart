@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart' as legacy_provider;
-import '../services/auth_service.dart';
 import '../providers/auth_provider.dart';
 import 'home_screen.dart';
 import 'registration_screen.dart';
 
-final authServiceProvider = Provider((ref) => AuthService());
+// final authServiceProvider = Provider((ref) => AuthService()); // Removed duplicate provider
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -55,11 +54,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Cabi Global Colors
-    const primaryColor = Color(0xFFFFBE0B); // Amber/Yellow
+    // Cabi Global Colors (New Dawn)
+    const primaryColor = Color(0xFFFFD700); // Prestige Gold
+    const backgroundColor = Color(0xFF0A0A0A); // Deep Black
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: backgroundColor,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -72,18 +72,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // Cabi Logo
                 // Replacing Icon with a placeholder for the actual logo asset
                 Container(
-                  height: 100,
-                  width: 100,
-                  decoration: const BoxDecoration(
+                  height: 120,
+                  width: 120,
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.black,
+                    border: Border.all(color: primaryColor, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: primaryColor.withValues(alpha: 0.2),
+                        blurRadius: 25,
+                        spreadRadius: 2,
+                      ),
+                    ],
                   ),
-                  child: const Center(
-                    child: Text("CABI",
-                        style: TextStyle(
-                            color: primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24)),
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/images/cabi_logo.png',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                          Icons.taxi_alert_outlined,
+                          color: primaryColor,
+                          size: 40),
+                    ),
                   ),
                 ),
                 // If you have the asset: Image.asset('assets/images/logo.png', height: 100),
@@ -93,44 +103,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   "Welcome Back",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: Colors.white,
+                    letterSpacing: -0.5,
                   ),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   "Login to continue your journey",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 16, color: Colors.grey[400]),
                 ),
                 const SizedBox(height: 50),
 
                 // Email Input
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: const Color(0xFF141414),
                     borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.grey.shade200),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 15,
-                          offset: const Offset(0, 5)),
-                    ],
+                    border: Border.all(color: Colors.white10),
                   ),
                   child: TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: 'Email Address',
+                      labelStyle: TextStyle(color: Colors.grey),
+                      floatingLabelStyle: TextStyle(color: primaryColor),
                       prefixIcon:
-                          Icon(Icons.email_outlined, color: Colors.black),
+                          Icon(Icons.email_outlined, color: primaryColor),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.all(20),
-                      labelStyle: TextStyle(color: Colors.grey),
-                      floatingLabelStyle: TextStyle(color: Colors.black),
                     ),
+                    style: const TextStyle(color: Colors.white),
                     validator: (value) =>
                         (value == null || !value.contains('@'))
                             ? 'Please enter a valid email address'
@@ -142,27 +148,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // Password Input
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: const Color(0xFF141414),
                     borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.grey.shade200),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 15,
-                          offset: const Offset(0, 5)),
-                    ],
+                    border: Border.all(color: Colors.white10),
                   ),
                   child: TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock, color: Colors.black),
+                      labelStyle: const TextStyle(color: Colors.grey),
+                      floatingLabelStyle: const TextStyle(color: primaryColor),
+                      prefixIcon:
+                          const Icon(Icons.lock_outline, color: primaryColor),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           color: Colors.grey,
                         ),
                         onPressed: () {
@@ -173,9 +176,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.all(20),
-                      labelStyle: const TextStyle(color: Colors.grey),
-                      floatingLabelStyle: const TextStyle(color: Colors.black),
                     ),
+                    style: const TextStyle(color: Colors.white),
                     validator: (value) =>
                         value!.isEmpty ? 'Please enter your password' : null,
                   ),
@@ -187,7 +189,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: TextButton(
                     onPressed: () {}, // Navigate to ForgotPasswordScreen
                     child: const Text("Forgot Password?",
-                        style: TextStyle(color: Colors.black87)),
+                        style: TextStyle(color: primaryColor)),
                   ),
                 ),
 
@@ -224,7 +226,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Don't have an account? ",
-                        style: TextStyle(color: Colors.grey[600])),
+                        style: TextStyle(color: Colors.grey[400])),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
@@ -234,7 +236,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       },
                       child: const Text("Sign Up",
                           style: TextStyle(
-                              color: Colors.black,
+                              color: primaryColor,
                               fontWeight: FontWeight.bold)),
                     ),
                   ],

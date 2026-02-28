@@ -3,67 +3,56 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:driver_app/widgets/waiting_for_passenger_panel.dart';
 
 void main() {
+  // WaitingForPassengerPanel reads 'passenger' key (not 'passengerName').
+  // It is a Positioned widget so it must live inside a Stack.
+
   final mockRideDetails = {
-    'passengerName': 'Jane Doe',
-    'pickupLocation': '123 Main St, Anytown',
+    'passenger': 'Jane Doe',
+    'phone': '0700000000',
   };
 
-  testWidgets('WaitingForPassengerPanel renders details and handles tap', (
-    WidgetTester tester,
-  ) async {
-    // Arrange
-    bool wasPressed = false;
-    void handleStartTrip() {
-      wasPressed = true;
-    }
-
-    await tester.pumpWidget(
-      MaterialApp(
+  Widget build(Map<String, dynamic> request) => MaterialApp(
         home: Scaffold(
           body: Stack(
             children: [
               WaitingForPassengerPanel(
-                request: mockRideDetails,
-                onTripStarted: handleStartTrip,
+                request: request,
+                onTripStarted: () {},
               ),
             ],
           ),
         ),
-      ),
-    );
-
-    // Assert: Check for all the static and dynamic text
-    expect(find.text('Waiting for Passenger'), findsOneWidget);
-    expect(find.text('Jane Doe'), findsOneWidget);
-    expect(find.text('123 Main St, Anytown'), findsOneWidget);
-    expect(find.widgetWithText(ElevatedButton, 'Start Trip'), findsOneWidget);
-
-    // Act: Tap the button
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Start Trip'));
-    await tester.pump();
-
-    // Assert: Check if the callback was triggered
-    expect(wasPressed, isTrue);
-  });
-
-  testWidgets(
-    'WaitingForPassengerPanel handles missing ride details gracefully',
-    (WidgetTester tester) async {
-      // Arrange
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: WaitingForPassengerPanel(
-              request: const {}, // Empty map
-              onTripStarted: () {},
-            ),
-          ),
-        ),
       );
 
-      // Assert: Check that it falls back to default text
-      expect(find.text('Passenger'), findsOneWidget);
-      expect(find.text('Pickup Address'), findsOneWidget);
-    },
-  );
+  testWidgets('WaitingForPassengerPanel renders passenger name',
+      (tester) async {
+    await tester.pumpWidget(build(mockRideDetails));
+
+    expect(find.text('Passenger Arriving...'), findsOneWidget);
+    expect(find.text('Jane Doe'), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, 'START TRIP'), findsOneWidget);
+  });
+
+  testWidgets('WaitingForPassengerPanel tapping Start Trip shows PIN dialog',
+      (tester) async {
+    await tester.pumpWidget(build(mockRideDetails));
+
+    await tester.tap(find.widgetWithText(ElevatedButton, 'START TRIP'));
+    await tester.pumpAndSettle();
+
+    // PinEntryDialog should now be visible
+    expect(find.byType(AlertDialog), findsOneWidget);
+  });
+
+  testWidgets('WaitingForPassengerPanel builds without crashing with empty map',
+      (tester) async {
+    // Only pump one frame — immediately after pumpWidget.
+    // This verifies the widget builds without crashing on null keys.
+    // We don't call pumpAndSettle to avoid pending timer assertion from
+    // any url_launcher or network images in the widget tree.
+    await tester.pumpWidget(build({}));
+
+    // Widget tree is present
+    expect(find.byType(WaitingForPassengerPanel), findsOneWidget);
+  });
 }

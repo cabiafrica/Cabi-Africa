@@ -58,8 +58,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const primaryColor = Color(0xFFFFD700); // Prestige Gold
+    const backgroundColor = Color(0xFF0A0A0A); // Deep Black
+
     return Scaffold(
-      backgroundColor: Colors.black, // Fallback
+      backgroundColor: backgroundColor, // New Dawn Black
       body: Stack(
         children: [
           // Background Image
@@ -72,17 +75,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           // Gradient Overlay
           Positioned.fill(
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withValues(alpha: 0.3),
-                    Colors.black.withValues(alpha: 0.6),
-                    Colors.black.withValues(alpha: 0.9),
-                    Colors.black,
+                    Colors.transparent,
+                    Colors.black26,
+                    Colors.black87,
+                    backgroundColor,
                   ],
-                  stops: const [0.0, 0.4, 0.7, 1.0],
+                  stops: [0.0, 0.4, 0.7, 1.0],
                 ),
               ),
             ),
@@ -101,36 +104,47 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Column(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFFD700),
-                            shape: BoxShape.circle, // Circular layout
+                            shape: BoxShape.circle,
+                            border: Border.all(color: primaryColor, width: 2),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFFD700)
-                                    .withValues(alpha: 0.3),
-                                blurRadius: 15,
-                                spreadRadius: 2,
+                                color: primaryColor.withValues(alpha: 0.2),
+                                blurRadius: 20,
+                                spreadRadius: 1,
                               )
                             ],
                           ),
                           child: ClipOval(
                             child: Image.asset(
-                              'assets/images/cabi_logo.jpg',
-                              width: 60,
-                              height: 60,
+                              'assets/images/cabi_logo.png',
+                              width: 80,
+                              height: 80,
                               fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.directions_car,
+                                      color: primaryColor, size: 40),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 20),
                         const Text(
                           'CABI AFRICA',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: primaryColor,
                             fontWeight: FontWeight.bold,
-                            fontSize: 24, // Increased size
+                            fontSize: 22,
+                            letterSpacing: 4.0,
+                          ),
+                        ),
+                        const Text(
+                          'The Mark of a New Dawn',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white60,
+                            fontSize: 10,
                             letterSpacing: 2.0,
                           ),
                         ),
@@ -140,12 +154,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                     // Title
                     const Text(
-                      'Drive with Us',
+                      'Drive with Pride',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 32,
+                        fontSize: 36,
                         fontWeight: FontWeight.bold,
+                        letterSpacing: -1,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -333,41 +348,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ],
 
                     const SizedBox(height: 32),
-                    if (_isLoginTab) ...[
-                      Row(
-                        children: [
-                          Expanded(
-                              child: Divider(
-                                  color: Colors.white.withValues(alpha: 0.1))),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              'OR CONTINUE WITH',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.3),
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                              child: Divider(
-                                  color: Colors.white.withValues(alpha: 0.1))),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          Expanded(
-                              child: _socialButton('Google',
-                                  Icons.g_mobiledata)), // Placeholder icon
-                          const SizedBox(width: 16),
-                          Expanded(
-                              child: _socialButton('Apple',
-                                  Icons.apple)), // Requires MDI or generic
-                        ],
-                      ),
-                    ],
 
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 20),
@@ -443,27 +423,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: Color(0xFFFFD700)),
-      ),
-    );
-  }
-
-  Widget _socialButton(String label, IconData icon) {
-    return OutlinedButton(
-      onPressed: () {},
-      style: OutlinedButton.styleFrom(
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        backgroundColor: Colors.white.withValues(alpha: 0.05),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 20),
-          const SizedBox(width: 8),
-          Text(label),
-        ],
       ),
     );
   }

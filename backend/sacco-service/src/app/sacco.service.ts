@@ -72,4 +72,40 @@ export class SaccoService {
     async getHealth() {
         return { status: 'OK', service: 'sacco-service', timestamp: new Date() };
     }
+
+    async getSavingsBalance(driverId: string) {
+        // Sum up all transactions for the driver
+        // Assuming withdrawals or loans would be negative amounts or handled via type
+        // For simplicity: All 'SACCO_SAVING' are positive. Withdrawals should be subtracted.
+        // We can group by type or just sum amount if we store negatives for withdrawals.
+
+        // Let's assume for now we just sum everything.
+        // Prisma aggregate
+        const result = await this.prisma.saccoLedger.aggregate({
+            _sum: {
+                amount: true
+            },
+            where: {
+                driverId: driverId
+            }
+        });
+
+        // If no transactions, sum is null
+        const totalSavings = result._sum.amount ? Number(result._sum.amount) : 0;
+
+        // Available might be less if there are loans locked, etc.
+        // For now: available = total
+        return {
+            totalSavings,
+            availableWithdrawal: totalSavings
+        };
+    }
+
+    async getTransactions(driverId: string) {
+        return this.prisma.saccoLedger.findMany({
+            where: { driverId },
+            orderBy: { createdAt: 'desc' },
+            take: 50 // limit to recent 50
+        });
+    }
 }

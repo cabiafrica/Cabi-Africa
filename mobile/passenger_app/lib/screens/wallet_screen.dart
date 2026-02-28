@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/providers.dart';
-import 'package:core_ui/core_ui.dart';
 import 'payout_setup_screen.dart';
+import 'referral_screen.dart';
+import '../services/referral_service.dart';
+import '../providers/auth_provider.dart';
 
 class WalletScreen extends ConsumerStatefulWidget {
   const WalletScreen({super.key});
@@ -13,11 +15,47 @@ class WalletScreen extends ConsumerStatefulWidget {
 
 class _WalletScreenState extends ConsumerState<WalletScreen> {
   late Future<Map<String, dynamic>> _walletFuture;
+  double _referralEarned = 0.0;
+  bool _isLoadingReferral = true;
+  final PassengerReferralService _referralService = PassengerReferralService();
 
   @override
   void initState() {
     super.initState();
+    _fetchData();
+  }
+
+  void _fetchData() {
     _walletFuture = ref.read(rideServiceProvider).getWalletDetails();
+    _fetchReferralCredits();
+  }
+
+  Future<void> _fetchReferralCredits() async {
+    final authState = ref.read(passengerAuthProvider);
+    String? userId;
+    if (authState is Authenticated) {
+      userId = authState.userId;
+    }
+
+    if (userId == null) {
+      setState(() => _isLoadingReferral = false);
+      return;
+    }
+
+    try {
+      final data = await _referralService.getReferralHistory(userId);
+      if (mounted) {
+        setState(() {
+          _referralEarned =
+              double.tryParse(data['totalEarned']?.toString() ?? '0.0') ?? 0.0;
+          _isLoadingReferral = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoadingReferral = false);
+      }
+    }
   }
 
   Future<void> _showCashOutDialog(double balance) async {
@@ -65,7 +103,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               child: const Text('Proceed'),
               onPressed: () {
                 Navigator.of(context).pop();
-                // In real app, trigger payment SDK
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Payment Gateway Launched')),
                 );
@@ -80,7 +117,13 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('My Wallet')),
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        title: const Text('My Wallet'),
+        elevation: 0,
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+      ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _walletFuture,
         builder: (context, snapshot) {
@@ -101,95 +144,221 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           final transactions = walletData['transactions'] as List;
           final payoutMethod = walletData['payoutMethod'] as Map;
 
-          return ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              // Balance Card
-              Card(
-                color: Theme.of(context).primaryColor,
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
+          return RefreshIndicator(
+            onRefresh: () async => _fetchData(),
+            child: ListView(
+              padding: const EdgeInsets.all(20.0),
+              children: [
+                // Premium Balance Card
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
                   child: Column(
                     children: [
                       const Text(
-                        'Current Balance',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        'AVAILABLE BALANCE',
+                        style: TextStyle(
+                            color: Colors.white54,
+                            letterSpacing: 1.2,
+                            fontSize: 12),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 10),
                       Text(
                         'KES ${balance.toStringAsFixed(2)}',
-                        style:
-                            Theme.of(context).textTheme.displayMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        style: const TextStyle(
+                          color: Color(0xFFFFD700),
+                          fontSize: 40,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
                       const SizedBox(height: 24),
-                      if (balance < 50)
-                        PrimaryButton(
-                          onPressed: () => _showTopUpDialog(),
-                          label: 'Top Up Wallet',
-                          color: Colors
-                              .green, // Override color if supported, else assume green theme
-                        )
-                      else if (balance >= 100)
-                        PrimaryButton(
-                          onPressed: () => _showCashOutDialog(balance),
-                          label: 'Cash Out',
-                        )
-                      else
-                        PrimaryButton(
-                          onPressed: () => _showTopUpDialog(),
-                          label: 'Top Up Wallet',
-                          color: Colors.grey,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _showTopUpDialog,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFFD700),
+                                foregroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12)),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                              ),
+                              child: const Text('TOP UP',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => _showCashOutDialog(balance),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                side: const BorderSide(color: Colors.white24),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12)),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                              ),
+                              child: const Text('WITHDRAW'),
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
 
-              // Payout Method
-              Text(
-                'Payout Method',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 8),
-              Card(
-                child: ListTile(
-                  leading: const Icon(Icons.account_balance),
-                  title: Text(payoutMethod['bankName']),
-                  subtitle: Text(payoutMethod['accountNumber']),
-                  trailing: const Icon(Icons.edit),
+                const SizedBox(height: 24),
+
+                // Referral Card
+                InkWell(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const PayoutSetupScreen()));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const ReferralScreen()),
+                    );
                   },
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Recent Transactions
-              Text(
-                'Recent Payouts',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 8),
-              ...transactions.map((tx) {
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: ListTile(
-                    leading: const Icon(Icons.history),
-                    title: Text(
-                      '${tx['type']} of KES ${tx['amount'].toStringAsFixed(2)}',
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4)),
+                      ],
                     ),
-                    subtitle: Text('On ${tx['date']}'),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.purple.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.card_giftcard,
+                              color: Colors.purple),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Referral Rewards',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              Text(
+                                _isLoadingReferral
+                                    ? 'Loading rewards...'
+                                    : 'Earned KES ${_referralEarned.toStringAsFixed(0)}',
+                                style: TextStyle(
+                                    color: Colors.grey[600], fontSize: 13),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.arrow_forward_ios,
+                            size: 14, color: Colors.grey),
+                      ],
+                    ),
                   ),
-                );
-              }),
-            ],
+                ),
+
+                const SizedBox(height: 32),
+
+                // Payout Method Section
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'PAYOUT METHOD',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                          fontSize: 12,
+                          letterSpacing: 1.1),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const PayoutSetupScreen()));
+                      },
+                      child:
+                          const Text('Manage', style: TextStyle(fontSize: 12)),
+                    )
+                  ],
+                ),
+                Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(color: Colors.grey.shade200),
+                  ),
+                  child: ListTile(
+                    leading: const Icon(Icons.account_balance,
+                        color: Colors.black87),
+                    title: Text(payoutMethod['bankName'],
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text(payoutMethod['accountNumber']),
+                    trailing: const Icon(Icons.chevron_right),
+                  ),
+                ),
+
+                const SizedBox(height: 32),
+
+                // Recent Activities
+                const Text(
+                  'RECENT ACTIVITY',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                      fontSize: 12,
+                      letterSpacing: 1.1),
+                ),
+                const SizedBox(height: 12),
+                ...transactions.map((tx) {
+                  return Card(
+                    elevation: 0,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: Colors.grey.shade200),
+                    ),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.grey[100],
+                        child: const Icon(Icons.history,
+                            color: Colors.black54, size: 18),
+                      ),
+                      title: Text(
+                        '${tx['type']}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      subtitle: Text('${tx['date']}',
+                          style: const TextStyle(fontSize: 12)),
+                      trailing: Text(
+                        'KES ${tx['amount'].toStringAsFixed(0)}',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  );
+                }),
+
+                const SizedBox(height: 30),
+              ],
+            ),
           );
         },
       ),

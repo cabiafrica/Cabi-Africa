@@ -196,3 +196,5 @@ storybook-static/
 *.tgz
 .npmrc
 .yarnrc
+
+nul

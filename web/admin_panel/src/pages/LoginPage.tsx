@@ -75,7 +75,7 @@ export const LoginPage = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundImage: `url(${loginBg})`,
+        backgroundImage: 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.95))', // Clean luxury dark base
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         position: 'relative',
@@ -86,8 +86,8 @@ export const LoginPage = () => {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.6)', // Darker overlay for neon contrast
-          backdropFilter: 'blur(3px)',
+          backgroundColor: 'rgba(0, 0, 0, 0.4)',
+          backdropFilter: 'blur(2px)',
           zIndex: 0,
         }
       }}
@@ -107,9 +107,9 @@ export const LoginPage = () => {
             // The "lights" effect - glowing border and shadow
             boxShadow: `
               0 0 0 1px rgba(255, 255, 255, 0.05),
-              0 4px 6px -1px rgba(0, 0, 0, 0.5),
-              0 0 20px rgba(220, 38, 38, 0.2), 
-              inset 0 0 20px rgba(255, 255, 255, 0.05)
+              0 10px 40px -10px rgba(0, 0, 0, 0.8),
+              0 0 30px rgba(255, 215, 0, 0.05), 
+              inset 0 0 20px rgba(255, 255, 255, 0.02)
             `,
             position: 'relative',
             overflow: 'hidden',
@@ -135,7 +135,7 @@ export const LoginPage = () => {
               left: 0,
               bottom: '20%',
               width: '1px',
-              background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(220, 38, 38, 0.3) 50%, rgba(255,255,255,0) 100%)',
+              background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255, 215, 0, 0.2) 50%, rgba(255,255,255,0) 100%)',
             }}
           />
 
@@ -143,15 +143,15 @@ export const LoginPage = () => {
             {/* Logo container with circle effect */}
             <Box
               sx={{
-                width: 80,
-                height: 80,
+                width: 90,
+                height: 90,
                 borderRadius: '50%',
-                border: '2px solid rgba(255, 255, 255, 0.2)',
+                border: '1px solid rgba(255, 215, 0, 0.3)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 mb: 3,
-                boxShadow: '0 0 15px rgba(0,0,0,0.3), 0 0 10px rgba(220, 38, 38, 0.5)', // Red glow inside
+                boxShadow: '0 0 30px rgba(255, 215, 0, 0.1)',
               }}
             >
               <Box
@@ -168,11 +168,11 @@ export const LoginPage = () => {
 
             <Typography component="h1" variant="h5" sx={{
               fontWeight: 700,
-              color: 'white',
-              letterSpacing: '0.2em',
+              color: '#FFD700',
+              letterSpacing: '0.3em',
               textTransform: 'uppercase',
               mb: 1,
-              textShadow: '0 0 20px rgba(220, 38, 38, 0.6)'
+              textShadow: '0 0 30px rgba(255, 215, 0, 0.2)'
             }}>
               Cabi Africa
             </Typography>
@@ -188,9 +188,9 @@ export const LoginPage = () => {
                 sx={{
                   mb: 3,
                   borderRadius: 2,
-                  backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                  color: '#fca5a5',
-                  border: '1px solid rgba(220, 38, 38, 0.2)'
+                  backgroundColor: 'rgba(255, 215, 0, 0.05)',
+                  color: '#FFD700',
+                  border: '1px solid rgba(255, 215, 0, 0.1)'
                 }}
               >
                 {error}
@@ -229,8 +229,8 @@ export const LoginPage = () => {
                     borderColor: 'rgba(255, 255, 255, 0.3)',
                   },
                   '&.Mui-focused fieldset': {
-                    borderColor: '#ef4444', // Red-500
-                    boxShadow: '0 0 8px rgba(239, 68, 68, 0.3)',
+                    borderColor: '#FFD700',
+                    boxShadow: '0 0 8px rgba(255, 215, 0, 0.2)',
                   },
                 },
                 '& .MuiInputBase-input::placeholder': {
@@ -285,8 +285,8 @@ export const LoginPage = () => {
                     borderColor: 'rgba(255, 255, 255, 0.3)',
                   },
                   '&.Mui-focused fieldset': {
-                    borderColor: '#ef4444', // Red-500
-                    boxShadow: '0 0 8px rgba(239, 68, 68, 0.3)',
+                    borderColor: '#FFD700',
+                    boxShadow: '0 0 8px rgba(255, 215, 0, 0.2)',
                   },
                 },
                 '& .MuiInputBase-input::placeholder': {
@@ -304,7 +304,7 @@ export const LoginPage = () => {
                     sx={{
                       color: 'rgba(255,255,255,0.5)',
                       '&.Mui-checked': {
-                        color: '#ef4444',
+                        color: '#FFD700',
                       },
                     }}
                   />
@@ -358,9 +358,10 @@ export const LoginPage = () => {
                   transform: 'translateX(-100%)',
                 },
                 '&:hover': {
-                  background: '#ef4444', // Red-500
-                  boxShadow: '0 0 20px rgba(239, 68, 68, 0.5)',
-                  borderColor: '#ef4444',
+                  background: 'rgba(255, 215, 0, 0.9)',
+                  boxShadow: '0 0 25px rgba(15, 23, 42, 0.8)',
+                  borderColor: '#FFD700',
+                  color: '#000',
                   '&::before': {
                     transform: 'translateX(100%)'
                   }

@@ -1,13 +1,15 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
 import { RegisterLeadDto } from './driver-leads/dto/register-lead.dto';
 import { UserService } from '@cabi/backend/user-service';
-import { ReferralService } from './mlm.service';
+import { ReferralService } from './referral.service';
 
 @Injectable()
 export class DriverLeadsService {
   constructor(
     private readonly userService: UserService,
-    private readonly referralService: ReferralService
+    private readonly referralService: ReferralService,
+    private readonly prisma: PrismaService
   ) { }
 
   async register(registerLeadDto: RegisterLeadDto) {
@@ -113,5 +115,58 @@ export class DriverLeadsService {
     console.log(`Rejecting driver ${driverId} for reasons: ${reasons}`);
     // Call UserService to update status to REJECTED or create task
     return { success: true, message: 'Driver rejected' };
+  }
+
+  // --- Profile & Security Enhancement (Component 2) ---
+
+  async updateUserProfile(userId: string, data: any) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        fullName: data.fullName,
+        city: data.city,
+        nickname: data.nickname,
+      },
+    });
+  }
+
+  async updatePrivacySettings(userId: string, settings: any) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        privacySettings: settings,
+      },
+    });
+  }
+
+  async enable2FA(userId: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        isTwoFactorEnabled: true,
+      },
+    });
+  }
+
+  async disable2FA(userId: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        isTwoFactorEnabled: false,
+        twoFactorSecret: null,
+      },
+    });
+  }
+
+  async updateRecoveryCodes(userId: string, codes: string[]) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        recoveryCodes: codes,
+      },
+    });
   }
 }

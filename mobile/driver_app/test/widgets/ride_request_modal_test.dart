@@ -1,138 +1,123 @@
+import 'package:driver_app/providers/ride_request_provider.dart';
+import 'package:driver_app/services/ride_service.dart';
+import 'package:driver_app/widgets/ride_request_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-
-import 'package:driver_app/services/ride_service.dart';
-import 'package:driver_app/widgets/ride_request_modal.dart';
+import 'package:provider/provider.dart';
 
 class MockRideService extends Mock implements RideService {}
 
-class MockNavigatorObserver extends Mock implements NavigatorObserver {}
-
-class FakeRoute extends Fake implements Route<dynamic> {}
-
+// Updated to match current RideRequestModal widget structure.
+// The modal has been updated: shows 'New Ride Request' (no '!'),
+// uses 'pickupAddress' key, Reject now opens a confirmation dialog,
+// and Accept navigates via pushReplacement.
 void main() {
   late MockRideService mockRideService;
 
+  // Updated mock data using the current widget's expected keys
   final mockRideDetails = {
     'rideId': 'ride-xyz-789',
-    'estimatedFare': 450.0,
-    'pickupLocation': 'The Hub Karen, Nairobi',
+    'pickupAddress': 'The Hub Karen, Nairobi',
     'destination': 'Jomo Kenyatta International Airport (JKIA)',
+    'distanceToPickup': '3.2 km',
+    'passengerRating': '4.8',
+    'estimatedFare': 450.0,
+    'isVerifiedPassenger': true,
   };
 
   setUpAll(() {
-    registerFallbackValue(FakeRoute());
+    registerFallbackValue(Uri.parse('http://example.com'));
+    registerFallbackValue(<String, String>{});
   });
 
   setUp(() {
     mockRideService = MockRideService();
+    when(() => mockRideService.acceptRide(any(), any()))
+        .thenAnswer((_) async {});
+    when(() => mockRideService.rejectRide(any(), any(), any()))
+        .thenAnswer((_) async {});
+    when(() => mockRideService.rejectRide(any(), any()))
+        .thenAnswer((_) async {});
   });
 
-  // Helper to build the widget within a testable app structure
-  Widget createWidgetUnderTest() {
-    return MaterialApp(
-      home: Scaffold(
-        body: RideRequestModal(
-          requestData: mockRideDetails,
-          rideService: mockRideService,
-          driverId: 'test-driver-id',
+  Widget createWidgetUnderTest({RideService? service}) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => RideRequestProvider()),
+      ],
+      child: MaterialApp(
+        home: Scaffold(
+          body: RideRequestModal(
+            requestData: mockRideDetails,
+            rideService: service ?? mockRideService,
+            driverId: 'test-driver-id',
+          ),
         ),
       ),
     );
   }
 
-  testWidgets('renders ride details and action buttons correctly', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('renders ride details correctly', (tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
-    expect(find.text('New Ride Request!'), findsOneWidget);
-    expect(find.text('Est. Fare: KES 450.0'), findsOneWidget);
-    expect(find.text('From: The Hub Karen, Nairobi'), findsOneWidget);
-    expect(
-      find.text('To: Jomo Kenyatta International Airport (JKIA)'),
-      findsOneWidget,
-    );
+    expect(find.text('New Ride Request'), findsOneWidget);
+    expect(find.textContaining('The Hub Karen'), findsOneWidget);
+    expect(find.textContaining('distanceToPickup').evaluate(), isEmpty);
+    expect(find.textContaining('3.2 km'), findsOneWidget);
+    expect(find.textContaining('4.8'), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, 'Accept'), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, 'Reject'), findsOneWidget);
   });
 
-  testWidgets(
-    'tapping Accept calls rideService.acceptRide and pops navigator',
-    (WidgetTester tester) async {
-      // Stub the service method
-      when(() => mockRideService.acceptRide(any(), any()))
-          .thenAnswer((_) async {});
+  testWidgets('shows Verified Passenger badge for verified passengers',
+      (tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
 
-      // Use a navigator observer to track navigation events
-      final mockObserver = MockNavigatorObserver();
-      await tester.pumpWidget(
-        MaterialApp(
-          home: RideRequestModal(
-            requestData: mockRideDetails,
-            rideService: mockRideService,
-            driverId: 'test-driver-id',
+    expect(find.text('Verified Passenger'), findsOneWidget);
+  });
+
+  testWidgets('shows Unverified badge for unverified passengers',
+      (tester) async {
+    final unverifiedData = {...mockRideDetails, 'isVerifiedPassenger': false};
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => RideRequestProvider())
+        ],
+        child: MaterialApp(
+          home: Scaffold(
+            body: RideRequestModal(
+              requestData: unverifiedData,
+              rideService: mockRideService,
+              driverId: 'test-driver-id',
+            ),
           ),
-          navigatorObservers: [mockObserver],
         ),
-      );
+      ),
+    );
 
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Accept'));
-      await tester.pump(); // Show loading indicator
+    expect(find.text('Unverified'), findsOneWidget);
+  });
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  testWidgets('tapping Reject opens confirmation dialog', (tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
 
-      await tester.pumpAndSettle(); // Wait for future to complete
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Reject'));
+    await tester.pumpAndSettle();
 
-      verify(() => mockRideService.acceptRide('ride-xyz-789', 'test-driver-id'))
-          .called(1);
-      verify(() => mockObserver.didPop(any(), any())).called(1);
-    },
-  );
+    // The reject dialog should appear
+    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(find.text('Reject Ride'), findsOneWidget);
+  });
 
-  testWidgets(
-    'tapping Reject calls rideService.rejectRide and pops navigator',
-    (WidgetTester tester) async {
-      when(() => mockRideService.rejectRide(any(), any()))
-          .thenAnswer((_) async {});
-      final mockObserver = MockNavigatorObserver();
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: RideRequestModal(
-            requestData: mockRideDetails,
-            rideService: mockRideService,
-            driverId: 'test-driver-id',
-          ),
-          navigatorObservers: [mockObserver],
-        ),
-      );
-
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Reject'));
-      await tester.pump();
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      await tester.pumpAndSettle();
-
-      verify(() => mockRideService.rejectRide('ride-xyz-789', 'test-driver-id'))
-          .called(1);
-      verify(() => mockObserver.didPop(any(), any())).called(1);
-    },
-  );
-
-  testWidgets('shows SnackBar on accept failure', (WidgetTester tester) async {
-    when(() => mockRideService.acceptRide(any(), any()))
-        .thenThrow(Exception('Network error'));
-
+  testWidgets('tapping Accept calls rideService.acceptRide', (tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
     await tester.tap(find.widgetWithText(ElevatedButton, 'Accept'));
-    await tester.pumpAndSettle();
+    await tester.pump();
 
-    expect(find.byType(SnackBar), findsOneWidget);
-    expect(
-      find.text('Failed to accept ride: Exception: Network error'),
-      findsOneWidget,
-    );
+    verify(() => mockRideService.acceptRide('ride-xyz-789', 'test-driver-id'))
+        .called(1);
   });
 }

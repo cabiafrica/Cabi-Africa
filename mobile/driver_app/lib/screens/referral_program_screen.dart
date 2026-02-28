@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:driver_app/screens/downline_screen.dart'; // Ensure import
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:driver_app/screens/downline_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:driver_app/theme/app_theme.dart';
+import 'package:driver_app/services/referral_service.dart';
+import 'package:driver_app/providers/auth_provider.dart';
 
-// Mock DTOs - In a real app, these would be generated.
 enum ReferralStatus { pending, active }
 
 class ReferredDriverDto {
@@ -21,8 +23,7 @@ class ReferredDriverDto {
 
 class DriverReferralInfoDto {
   final String referralCode;
-  final List<ReferredDriverDto>
-      referredDrivers; // Only level 1 usually here, detailed tree in Downline
+  final List<ReferredDriverDto> referredDrivers;
 
   DriverReferralInfoDto({
     required this.referralCode,
@@ -30,14 +31,16 @@ class DriverReferralInfoDto {
   });
 }
 
-class ReferralProgramScreen extends StatefulWidget {
+class ReferralProgramScreen extends ConsumerStatefulWidget {
   const ReferralProgramScreen({super.key});
 
   @override
-  State<ReferralProgramScreen> createState() => _ReferralProgramScreenState();
+  ConsumerState<ReferralProgramScreen> createState() =>
+      _ReferralProgramScreenState();
 }
 
-class _ReferralProgramScreenState extends State<ReferralProgramScreen> {
+class _ReferralProgramScreenState extends ConsumerState<ReferralProgramScreen> {
+  final ReferralService _referralService = ReferralService();
   late Future<DriverReferralInfoDto> _referralInfoFuture;
 
   @override
@@ -47,23 +50,45 @@ class _ReferralProgramScreenState extends State<ReferralProgramScreen> {
   }
 
   Future<DriverReferralInfoDto> _fetchReferralInfo() async {
-    // Mock API call
-    await Future.delayed(const Duration(seconds: 1));
-    return DriverReferralInfoDto(
-      referralCode: 'DRIVE-XYZ123',
-      referredDrivers: [
-        ReferredDriverDto(
-          name: 'John D.',
-          status: ReferralStatus.active,
-          joinedAt: DateTime.now().subtract(const Duration(days: 10)),
-        ),
-        ReferredDriverDto(
-          name: 'Jane S.',
-          status: ReferralStatus.pending,
-          joinedAt: DateTime.now().subtract(const Duration(days: 2)),
-        ),
-      ],
-    );
+    final authState = ref.read(authProvider);
+    String? driverId;
+    if (authState is Authenticated) {
+      driverId = authState.userId;
+    }
+
+    if (driverId == null) {
+      return DriverReferralInfoDto(
+        referralCode: 'LOGIN-REQ',
+        referredDrivers: [],
+      );
+    }
+
+    try {
+      final code = await _referralService.getReferralCode(driverId);
+      final downline = await _referralService.getDownline(driverId);
+
+      final List<ReferredDriverDto> referredDrivers = downline
+          .map((item) => ReferredDriverDto(
+                name: item['name'] ?? 'Unknown',
+                status: item['status'] == 'ACTIVE'
+                    ? ReferralStatus.active
+                    : ReferralStatus.pending,
+                joinedAt: item['joinedAt'] != null
+                    ? DateTime.parse(item['joinedAt'])
+                    : DateTime.now(),
+              ))
+          .toList();
+
+      return DriverReferralInfoDto(
+        referralCode: code,
+        referredDrivers: referredDrivers,
+      );
+    } catch (e) {
+      return DriverReferralInfoDto(
+        referralCode: 'ERROR',
+        referredDrivers: [],
+      );
+    }
   }
 
   void _shareCode(String code) {
@@ -88,7 +113,6 @@ class _ReferralProgramScreenState extends State<ReferralProgramScreen> {
           }
 
           final referralInfo = snapshot.data!;
-          // Using a unique invitation link structure for the QR code
           final inviteLink =
               "https://cabi.africa/invite?code=${referralInfo.referralCode}";
 
@@ -97,7 +121,6 @@ class _ReferralProgramScreenState extends State<ReferralProgramScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // 1. QR Code Section
                 Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -141,10 +164,7 @@ class _ReferralProgramScreenState extends State<ReferralProgramScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 24),
-
-                // 2. Action Buttons
                 Row(
                   children: [
                     Expanded(
@@ -162,7 +182,6 @@ class _ReferralProgramScreenState extends State<ReferralProgramScreen> {
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          // Navigate to Downline / Team View
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -179,65 +198,65 @@ class _ReferralProgramScreenState extends State<ReferralProgramScreen> {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 32),
-
-                // 3. Level 1 Referrals
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Level 1 Referrals (Recent)',
+                    'Recent Referrals',
                     style: Theme.of(context)
                         .textTheme
                         .titleMedium
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: referralInfo.referredDrivers.length,
-                  itemBuilder: (context, index) {
-                    final driver = referralInfo.referredDrivers[index];
-                    return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.grey[200],
-                        child: Text(driver.name[0]),
-                      ),
-                      title: Text(driver.name),
-                      subtitle:
-                          Text('Status: ${driver.status.name.toUpperCase()}'),
-                      trailing: Text(
-                        driver.status == ReferralStatus.active
-                            ? '+ Earned'
-                            : 'Pending',
-                        style: TextStyle(
-                            color: driver.status == ReferralStatus.active
-                                ? Colors.green
-                                : Colors.orange,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    );
-                  },
-                ),
-
+                if (referralInfo.referredDrivers.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Text('No referrals yet.'),
+                  )
+                else
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: referralInfo.referredDrivers.length,
+                    itemBuilder: (context, index) {
+                      final driver = referralInfo.referredDrivers[index];
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.grey[200],
+                          child: Text(
+                              driver.name.isNotEmpty ? driver.name[0] : '?'),
+                        ),
+                        title: Text(driver.name),
+                        subtitle:
+                            Text('Status: ${driver.status.name.toUpperCase()}'),
+                        trailing: Text(
+                          driver.status == ReferralStatus.active
+                              ? '+ Earned'
+                              : 'Pending',
+                          style: TextStyle(
+                              color: driver.status == ReferralStatus.active
+                                  ? Colors.green
+                                  : Colors.orange,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      );
+                    },
+                  ),
                 const SizedBox(height: 24),
-
-                // Portal Link Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Redirect logic
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                             content: Text('Opening Driver Portal...')),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black, // Cabi Black
-                      foregroundColor: const Color(0xFFFFBE0B), // Cabi Yellow
+                      backgroundColor: Colors.black,
+                      foregroundColor: const Color(0xFFFFBE0B),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

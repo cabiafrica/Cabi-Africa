@@ -1,0 +1,7 @@
+﻿Analyzing driver_app...
+
+   info - lib\screens\home_screen.dart:134:23 - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre. Try replacing the use of the deprecated member with the replacement. - deprecated_member_use
+   info - test\screens\my_earnings_screen_test.dart:137:29 - Don't return 'null' from a function with a return type of 'void'. Try removing the 'null'. - avoid_returning_null_for_void
+   info - test\widgets\rate_passenger_modal_test.dart:1:8 - The import of 'dart:async' is unnecessary because all of the used elements are also provided by the import of 'package:flutter_test/flutter_test.dart'. Try removing the import directive. - unnecessary_import
+
+3 issues found.

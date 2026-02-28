@@ -41,10 +41,11 @@ final documentsProvider = Provider<List<OnboardingDocument>>((ref) {
 class DocumentSubmissionScreen extends ConsumerWidget {
   const DocumentSubmissionScreen({super.key});
 
-  Future<void> _uploadDocument(BuildContext context, WidgetRef ref, String documentId) async {
+  Future<void> _uploadDocument(
+      BuildContext context, WidgetRef ref, String documentId) async {
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    
+
     if (image == null) return;
 
     try {
@@ -53,43 +54,78 @@ class DocumentSubmissionScreen extends ConsumerWidget {
         const SnackBar(content: Text('Uploading document...')),
       );
 
-      await ref.read(documentApiServiceProvider).uploadDocument(documentId, image);
-      
+      await ref
+          .read(documentApiServiceProvider)
+          .uploadDocument(documentId, image);
+
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Upload Successful! (Status would update in real app)'), 
-          backgroundColor: Colors.green
-        ),
+            content:
+                Text('Upload Successful! (Status would update in real app)'),
+            backgroundColor: Colors.green),
       );
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Upload Failed: $e'), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text('Upload Failed: $e'), backgroundColor: Colors.red),
       );
     }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    const primaryColor = Color(0xFFFFD700); // Prestige Gold
+    const backgroundColor = Color(0xFF0A0A0A); // Deep Black
     final documents = ref.watch(documentsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Upload Documents')),
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        title: const Text(
+          'DOCUMENT SUBMISSION',
+          style: TextStyle(
+            color: primaryColor,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+            fontSize: 16,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: primaryColor),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              'Please upload the following documents to continue.',
-              style: Theme.of(context).textTheme.titleMedium,
+            const Text(
+              'ELITE PARTNER VERIFICATION',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 12,
+                letterSpacing: 3,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Please provide the necessary documentation to activate your professional status.',
+              style: TextStyle(
+                color: Colors.white38,
+                fontSize: 14,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
             Expanded(
-              child: ListView.builder(
+              child: ListView.separated(
                 itemCount: documents.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 16),
                 itemBuilder: (context, index) {
                   final doc = documents[index];
                   return DocumentTile(
@@ -100,13 +136,30 @@ class DocumentSubmissionScreen extends ConsumerWidget {
                 },
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
                 // Placeholder for final submission logic
               },
-              child: const Text('Submit for Review'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                elevation: 10,
+                shadowColor: primaryColor.withValues(alpha: 0.3),
+              ),
+              child: const Text(
+                'SUBMIT FOR REVIEW',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                ),
+              ),
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -128,29 +181,65 @@ class DocumentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const primaryColor = Color(0xFFFFD700);
+    const surfaceColor = Color(0xFF141414);
+
     IconData icon;
     Color color;
 
     switch (status) {
       case 'Approved':
-        icon = Icons.check_circle;
-        color = Colors.green;
+        icon = Icons.verified_rounded;
+        color = Colors.greenAccent;
         break;
       case 'Pending Review':
-        icon = Icons.hourglass_top;
-        color = Colors.orange;
+        icon = Icons.hourglass_empty_rounded;
+        color = primaryColor.withValues(alpha: 0.7);
         break;
       default: // 'Not Submitted' or 'Rejected'
-        icon = Icons.upload_file;
-        color = Theme.of(context).colorScheme.primary;
+        icon = Icons.add_circle_outline_rounded;
+        color = primaryColor;
     }
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+      ),
       child: ListTile(
-        leading: Icon(icon, color: color),
-        title: Text(title),
-        subtitle: Text(status),
-        trailing: const Icon(Icons.arrow_forward_ios),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        leading: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: color, size: 24),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 15,
+          ),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4.0),
+          child: Text(
+            status.toUpperCase(),
+            style: TextStyle(
+              color: color.withValues(alpha: 0.6),
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
+          ),
+        ),
+        trailing:
+            const Icon(Icons.chevron_right_rounded, color: Colors.white24),
         onTap: onTap,
       ),
     );

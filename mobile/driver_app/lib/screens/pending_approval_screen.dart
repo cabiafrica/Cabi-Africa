@@ -6,64 +6,113 @@ class PendingApprovalScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const primaryColor = Color(0xFFFFD700); // Prestige Gold
+    const backgroundColor = Color(0xFF0A0A0A); // Deep Black
+
     return Scaffold(
+      backgroundColor: backgroundColor,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 40.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.hourglass_empty_rounded,
-                size: 80,
-                color: Colors.orange,
-              ),
-              const SizedBox(height: 32),
-              Text(
-                'Approval Pending',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                "Thanks for submitting your documents! We're currently reviewing them and will notify you of the outcome.",
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.grey[700],
-                      height: 1.5,
-                    ),
-                textAlign: TextAlign.center,
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: primaryColor.withValues(alpha: 0.05),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      color: primaryColor.withValues(alpha: 0.1), width: 1),
+                ),
+                child: const Icon(
+                  Icons.auto_awesome_outlined,
+                  size: 80,
+                  color: primaryColor,
+                ),
               ),
               const SizedBox(height: 48),
+              const Text(
+                'ELITE VERIFICATION IN PROGRESS',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: primaryColor,
+                  fontSize: 14,
+                  letterSpacing: 3,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                "Your application to join the CABI Africa fleet is currently under review by our executive team.",
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 16,
+                  height: 1.6,
+                  fontWeight: FontWeight.w300,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                "We represent the dawn of a new era in mobility. Your patience ensures our standard of excellence remains unmatched.",
+                style: TextStyle(
+                  color: Colors.white38,
+                  fontSize: 13,
+                  height: 1.5,
+                  fontStyle: FontStyle.italic,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 60),
               ElevatedButton(
                 onPressed: () {
-                   Navigator.push(
+                  Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const DocumentSubmissionScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => const DocumentSubmissionScreen()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  backgroundColor: primaryColor,
+                  foregroundColor: Colors.black,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  elevation: 8,
+                  shadowColor: primaryColor.withValues(alpha: 0.3),
                 ),
-                child: const Text(
-                  'Check Document Status',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'REVIEW DOCUMENTS',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                  ],
                 ),
               ),
               const SizedBox(height: 24),
               TextButton(
                 onPressed: () {
-                  // In a real app, this would sign out
-                   Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.popUntil(context, (route) => route.isFirst);
                 },
-                child: const Text('Sign Out', style: TextStyle(color: Colors.grey)),
+                child: const Text(
+                  'SIGN OUT',
+                  style: TextStyle(
+                    color: Colors.white24,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                  ),
+                ),
               ),
             ],
           ),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:driver_app/services/document_service.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -52,14 +53,22 @@ void main() {
           return http.Response('', 201);
         });
         documentService = DocumentService(client: mockClient);
-        final testImage = XFile('test/path/to/fake_image.jpg');
+        // Create a dummy file for the test
+        final file = File('test_image.jpg');
+        await file.writeAsBytes([0, 1, 2, 3]);
+
+        final testImage = XFile(file.path);
 
         // Act & Assert
         // We expect this to complete without throwing an exception.
-        await expectLater(
-          documentService.uploadDocument("Driver's License", testImage),
-          completes,
-        );
+        try {
+          await expectLater(
+            documentService.uploadDocument("Driver's License", testImage),
+            completes,
+          );
+        } finally {
+          if (await file.exists()) await file.delete();
+        }
       });
 
       test('throws an exception on a non-201 response', () async {

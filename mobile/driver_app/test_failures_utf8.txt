@@ -1,0 +1,2103 @@
+﻿flutter : Package ampl
+ify_secure_storage:lin
+ux references amplify_
+secure_storage_dart:li
+nux as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+At line:1 char:1
++ flutter test --tags 
+exclude-passing > 
+test_failures.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (Package am   
+ plify...plugin pa    
+ckage.:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+00:00 +0: loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/models/document_test.dart
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+test/screens/referral_
+commissions_screen_tes
+t.dart:22:44: Error: 
+A value of type 
+'Authenticated' can't 
+be returned from a 
+function with return 
+type 'AuthNotifier'.
+ - 'Authenticated' is 
+from 'package:driver_a
+pp/providers/auth_prov
+ider.dart' ('lib/provi
+ders/auth_provider.dar
+t').
+ - 'AuthNotifier' is 
+from 'package:driver_a
+pp/providers/auth_prov
+ider.dart' ('lib/provi
+ders/auth_provider.dar
+t').
+        authProvider.o
+verrideWith((ref) => A
+uthenticated("driver-1
+23")),
+                      
+                     ^
+00:00 +0 -1: loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart [E]
+  Failed to load "D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart":
+  Compilation failed for testPath=D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart: test/screens/referral_commissions_screen_test.dart:22:44: Error: A value of type 'Authenticated' can't be returned from a function with return type 'AuthNotifier'.
+   - 'Authenticated' is from 'package:driver_app/providers/auth_provider.dart' ('lib/providers/auth_provider.dart').
+   - 'AuthNotifier' is from 'package:driver_app/providers/auth_provider.dart' ('lib/providers/auth_provider.dart').
+          authProvider.overrideWith((ref) => Authenticated("driver-123")),
+                                             ^
+  .
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+test/screens/sacco_scr
+een_test.dart:22:44: 
+Error: A value of 
+type 'Authenticated' 
+can't be returned 
+from a function with 
+return type 
+'AuthNotifier'.
+ - 'Authenticated' is 
+from 'package:driver_a
+pp/providers/auth_prov
+ider.dart' ('lib/provi
+ders/auth_provider.dar
+t').
+ - 'AuthNotifier' is 
+from 'package:driver_a
+pp/providers/auth_prov
+ider.dart' ('lib/provi
+ders/auth_provider.dar
+t').
+        authProvider.o
+verrideWith((ref) => A
+uthenticated("driver-1
+23")),
+                      
+                     ^
+00:00 +0 -2: loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/sacco_screen_test.dart [E]
+  Failed to load "D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/sacco_screen_test.dart":
+  Compilation failed for testPath=D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/sacco_screen_test.dart: test/screens/sacco_screen_test.dart:22:44: Error: A value of type 'Authenticated' can't be returned from a function with return type 'AuthNotifier'.
+   - 'Authenticated' is from 'package:driver_app/providers/auth_provider.dart' ('lib/providers/auth_provider.dart').
+   - 'AuthNotifier' is from 'package:driver_app/providers/auth_provider.dart' ('lib/providers/auth_provider.dart').
+          authProvider.overrideWith((ref) => Authenticated("driver-123")),
+                                             ^
+  .
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+00:00 +0 -2: Some tests failed.

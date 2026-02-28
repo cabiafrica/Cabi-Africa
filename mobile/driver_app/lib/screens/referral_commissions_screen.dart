@@ -1,156 +1,339 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 import 'downline_screen.dart';
+import '../services/referral_service.dart';
+import '../providers/auth_provider.dart';
+// import '../theme/app_theme.dart'; // Removed unused import
 
-class ReferralCommissionsScreen extends StatefulWidget {
+class ReferralCommissionsScreen extends ConsumerStatefulWidget {
   const ReferralCommissionsScreen({super.key});
 
   @override
-  State<ReferralCommissionsScreen> createState() =>
+  ConsumerState<ReferralCommissionsScreen> createState() =>
       _ReferralCommissionsScreenState();
 }
 
-class _ReferralCommissionsScreenState extends State<ReferralCommissionsScreen> {
-  // Mock Data
+class _ReferralCommissionsScreenState
+    extends ConsumerState<ReferralCommissionsScreen> {
   bool _isLoading = true;
   double _totalEarned = 0.0;
   List<Map<String, dynamic>> _history = [];
+  String _referralCode = '...';
+  late final ReferralService _referralService;
 
   @override
   void initState() {
     super.initState();
-    _fetchCommissions();
+    _referralService = ref.read(referralServiceProvider);
+    _fetchData();
   }
 
-  Future<void> _fetchCommissions() async {
-    // Simulate API call to GET /referral/my-commissions
-    await Future.delayed(const Duration(seconds: 1));
+  Future<void> _fetchData() async {
+    setState(() => _isLoading = true);
 
-    // Mock response
-    setState(() {
-      _totalEarned = 1500.00;
-      _history = [
-        {
-          'id': 'tx-101',
-          'amount': 500.0,
-          'date': DateTime.now().subtract(const Duration(days: 1)),
-          'description': 'Level 1 commission from new driver',
-          'sourceDriverId': 'd-123'
-        },
-        {
-          'id': 'tx-102',
-          'amount': 500.0,
-          'date': DateTime.now().subtract(const Duration(days: 3)),
-          'description': 'Level 1 commission from new driver',
-          'sourceDriverId': 'd-124'
-        },
-        {
-          'id': 'tx-103',
-          'amount': 250.0,
-          'date': DateTime.now().subtract(const Duration(days: 5)),
-          'description': 'Level 2 commission from referral chain',
-          'sourceDriverId': 'd-125'
-        },
-        {
-          'id': 'tx-104',
-          'amount': 250.0,
-          'date': DateTime.now().subtract(const Duration(days: 20)),
-          'description': 'Level 2 commission from referral chain',
-          'sourceDriverId': 'd-130'
-        },
-      ];
-      _isLoading = false;
-    });
+    final authState = ref.read(authProvider);
+    String? driverId;
+
+    if (authState is Authenticated) {
+      driverId = authState.userId;
+    }
+
+    if (driverId == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    try {
+      final stats = await _referralService.getReferralStats(driverId);
+      final code = await _referralService.getReferralCode(driverId);
+
+      if (mounted) {
+        setState(() {
+          _referralCode = code;
+          _totalEarned =
+              double.tryParse(stats['totalEarned']?.toString() ?? '0.0') ?? 0.0;
+          _history = (stats['history'] as List? ?? []).map((item) {
+            return {
+              'id': item['id'],
+              'amount': double.tryParse(item['amount'].toString()) ?? 0.0,
+              'date': DateTime.tryParse(item['date'] ?? '') ?? DateTime.now(),
+              'description': item['description'] ?? 'Commission',
+              'sourceDriverId': item['sourceDriverId'] ?? 'Unknown'
+            };
+          }).toList();
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  void _shareCode() {
+    Clipboard.setData(ClipboardData(text: _referralCode));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Referral code copied to clipboard!')),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text('My Commissions'),
+        elevation: 0,
         actions: [
-          TextButton(
-            onPressed: () {
-              // Navigation to Downline
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const DownlineScreen()));
-            },
-            child:
-                const Text('MY NETWORK', style: TextStyle(color: Colors.white)),
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: _shareCode,
+            tooltip: 'Share Code',
           )
         ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                // Summary Card
-                Container(
-                  width: double.infinity,
-                  color: Colors.blue[800],
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Total Commission Earnings',
-                          style:
-                              TextStyle(color: Colors.white70, fontSize: 14)),
-                      const SizedBox(height: 8),
-                      Text('KES ${_totalEarned.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 8),
-                      const Text('Keep referring to earn more!',
-                          style: TextStyle(
-                              color: Colors.white60,
-                              fontStyle: FontStyle.italic))
-                    ],
-                  ),
-                ),
-
-                // Transactions Header
-                Container(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  alignment: Alignment.centerLeft,
-                  child: const Text('Recent Commissions',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                ),
-
-                // Transactions List
-                Expanded(
-                  child: _history.isEmpty
-                      ? const Center(child: Text('No commissions yet.'))
-                      : ListView.separated(
-                          itemCount: _history.length,
-                          separatorBuilder: (ctx, idx) =>
-                              const Divider(height: 1),
-                          itemBuilder: (ctx, index) {
-                            final item = _history[index];
-                            final date = item['date'] as DateTime;
-                            return ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.green[100],
-                                child: const Icon(Icons.people,
-                                    color: Colors.green),
+          : RefreshIndicator(
+              onRefresh: _fetchData,
+              child: CustomScrollView(
+                slivers: [
+                  // Header Card
+                  SliverToBoxAdapter(
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: const BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          const Text(
+                            'UNSETTLED BALANCE',
+                            style: TextStyle(
+                              color: Colors.white54,
+                              letterSpacing: 1.5,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'KES ${_totalEarned.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              color: Color(0xFFFFD700),
+                              fontSize: 40,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildQuickStat(
+                                'ACTIVE REFERRALS',
+                                _history.length.toString(),
+                                Icons.people,
                               ),
-                              title: Text(item['description']),
-                              subtitle: Text(
-                                  '${date.day}/${date.month}/${date.year} • Ref: ${item['sourceDriverId']}'),
-                              trailing: Text(
-                                  '${item['amount'] >= 0 ? '+' : ''}KES ${(item['amount'] as double).toStringAsFixed(2)}',
+                              const SizedBox(width: 40),
+                              _buildQuickStat(
+                                'TOTAL REWARDED',
+                                '${_history.length}',
+                                Icons.card_giftcard,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Referral Code Section
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 30, 20, 10),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const DownlineScreen()),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.05),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5),
+                              )
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFD700)
+                                      .withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.account_tree,
+                                    color: Colors.orange),
+                              ),
+                              const SizedBox(width: 15),
+                              const Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'View Downline Network',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      'Explore your multi-level team',
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(Icons.arrow_forward_ios,
+                                  size: 14, color: Colors.grey),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Transactions Header
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(25, 20, 25, 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'COMMISSION HISTORY',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          Text(
+                            '${_history.length} entries',
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // History List
+                  if (_history.isEmpty)
+                    const SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.history,
+                                size: 60, color: Colors.black12),
+                            SizedBox(height: 10),
+                            Text(
+                              'No commissions recorded yet',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final item = _history[index];
+                          final date = item['date'] as DateTime;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 5),
+                            child: Card(
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                side: BorderSide(color: Colors.grey.shade200),
+                              ),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.green[50],
+                                  child: const Icon(Icons.trending_up,
+                                      color: Colors.green, size: 18),
+                                ),
+                                title: Text(
+                                  item['description'],
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.green)),
-                            );
-                          },
-                        ),
-                ),
-              ],
+                                      fontSize: 14),
+                                ),
+                                subtitle: Text(
+                                  '${date.day}/${date.month}/${date.year} • Ref: ${item['sourceDriverId']}',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                                trailing: Text(
+                                  '+KES ${item['amount'].toStringAsFixed(0)}',
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        childCount: _history.length,
+                      ),
+                    ),
+
+                  const SliverPadding(padding: EdgeInsets.only(bottom: 30)),
+                ],
+              ),
             ),
+    );
+  }
+
+  Widget _buildQuickStat(String label, String value, IconData icon) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.white54, size: 20),
+        const SizedBox(height: 5),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white38, fontSize: 10),
+        ),
+      ],
     );
   }
 }

@@ -27,7 +27,7 @@ export const DashboardAnalytics: React.FC = () => {
                             {/* Top KPIs */}
                             <Grid numItems={1} numItemsSm={2} numItemsLg={3} className="gap-6">
                                 {kpiData.map((item) => (
-                                    <Card key={item.title} decoration="top" decorationColor={item.deltaType === 'decrease' && item.title !== 'SOS Incidents' ? 'red' : 'green' as any}>
+                                    <Card key={item.title} decoration="top" decorationColor={'amber' as any}>
                                         <Flex alignItems="start">
                                             <div className="truncate">
                                                 <Text>{item.title}</Text>
@@ -59,11 +59,11 @@ export const DashboardAnalytics: React.FC = () => {
                                         ))}
                                     </List>
                                 </Card>
-                                <Card decoration="left" decorationColor="orange">
+                                <Card decoration="left" decorationColor="amber">
                                     <Title>Pending Tasks</Title>
                                     <Text className="mt-2">You have 5 document verifications and 2 support tickets requiring high priority attention.</Text>
                                     <div className="mt-6">
-                                        <button className="bg-orange-100 text-orange-800 px-4 py-2 rounded text-sm font-medium hover:bg-orange-200">View Tasks</button>
+                                        <button className="bg-primary text-black px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-primary-dark transition-colors">View Tasks</button>
                                     </div>
                                 </Card>
                             </div>
@@ -90,12 +90,12 @@ export const DashboardAnalytics: React.FC = () => {
                                         colors={["teal"]}
                                     />
                                 </Card>
-                                <Card decoration="top" decorationColor="blue">
+                                <Card decoration="top" decorationColor="amber">
                                     <Title>Network Virality Coefficient</Title>
                                     <Metric className="mt-4">1.4</Metric>
                                     <Text>Each active user invites ~1.4 new users.</Text>
-                                    <div className="mt-4 h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                                        <div className="h-full bg-blue-500 w-[70%]"></div>
+                                    <div className="mt-4 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                                        <div className="h-full bg-primary w-[70%] shadow-[0_0_10px_rgba(255,215,0,0.5)]"></div>
                                     </div>
                                     <Text className="text-xs text-gray-500 mt-2">Target: 2.0 (Viral Growth)</Text>
                                 </Card>

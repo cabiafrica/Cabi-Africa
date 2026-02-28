@@ -104,7 +104,7 @@ The Cabi ride-hailing platform has been fully implemented with all user stories 
    - Payment processing
    - Commission calculation
    - Payout management
-   - MLM commission tracking
+   - Referral commission tracking
 
 4. **Analytics Service**
    - Performance metrics

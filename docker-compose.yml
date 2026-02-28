@@ -15,7 +15,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cabi_user"]
+      test: [ "CMD-SHELL", "pg_isready -U cabi_user" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -29,7 +29,7 @@ services:
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 3s
       retries: 3
@@ -87,11 +87,11 @@ services:
       dockerfile: Dockerfile
     container_name: cabi_referral
     ports:
-      - "3335:3335"
+      - "3337:3337"
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
-      PORT: 3335
+      PORT: 3337
     depends_on:
       postgres:
         condition: service_healthy
@@ -106,17 +106,37 @@ services:
       dockerfile: Dockerfile
     container_name: cabi_sacco
     ports:
-      - "3336:3336"
+      - "3338:3338"
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
-      PORT: 3336
+      PORT: 3338
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
       - ./backend/sacco-service:/app
       - /app/node_modules
+
+  # User Service (Added for Integration Testing)
+  user-service:
+    image: node:20-alpine
+    container_name: cabi_user_service
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: sh -c "if [ ! -d node_modules ]; then npm install; fi && npx nx serve backend-user-service --host=0.0.0.0 --port=3335"
+    ports:
+      - "3335:3335"
+    environment:
+      DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
+      REFERRAL_SERVICE_URL: http://referral-service:3337
+      SACCO_SERVICE_URL: http://sacco-service:3338
+      PORT: 3335
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 networks:
   default:

@@ -75,7 +75,7 @@
 - ✅ **DocumentVerification** - ID/License verification
 - ✅ **BiometricVerification** - Face matching and liveness
 
-#### Organization & MLM:
+#### Organization & Referral Program:
 - ✅ **Organization** - Organization management
 - ✅ **OrganizationMember** - Member profiles
 - ✅ **Invitation** - Driver recruitment system
@@ -124,7 +124,7 @@
 - [x] Driver Lead Service ready
 - [x] Verification Service ready
 - [x] Occurrence Service ready
-- [x] MLM Service ready
+- [x] Referral Service ready
 
 ---
 
@@ -133,7 +133,7 @@
 ### 1. **Start Backend Services**
 ```bash
 # Start all backend services
-nx run-many --target=serve --projects=auth-gateway,dispatch-service,driver-lead-service,verification-service,occurrence-service,mlm-service --parallel=6
+nx run-many --target=serve --projects=auth-gateway,dispatch-service,driver-lead-service,verification-service,occurrence-service,referral-service --parallel=6
 ```
 
 ### 2. **Start Admin Panel**

@@ -12,7 +12,7 @@ const mockLogs = [
     id: 'log-1',
     adminUserId: 'user-1',
     adminUserEmail: 'super@cabi.com',
-    action: 'UPDATE_MLM_CONFIG',
+    action: 'UPDATE_REFERRAL_CONFIG',
     details: { change: 'sacco.rate from 0.05 to 0.06' },
     ipAddress: '127.0.0.1',
     timestamp: '2024-05-22T10:00:00Z',

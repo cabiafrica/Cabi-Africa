@@ -10,13 +10,76 @@ import 'package:driver_app/screens/home_screen.dart';
 import 'package:driver_app/services/auth_service.dart';
 import 'package:driver_app/providers/auth_provider.dart';
 import 'package:driver_app/providers/ride_request_provider.dart';
+import 'package:driver_app/providers/map_provider.dart' as provider;
 import 'package:provider/provider.dart' as legacy_provider;
+import 'package:driver_app/services/ride_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'package:geolocator_platform_interface/geolocator_platform_interface.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+
 class MockAuthService extends Mock implements AuthService {}
 
+class MockRideService extends Mock implements RideService {}
+
+class SimpleMapNotifier extends provider.MapNotifier {
+  SimpleMapNotifier(provider.MapType initial) : super() {
+    state = initial;
+  }
+}
+
 class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
+
+class MockGeolocatorPlatform extends Mock
+    with MockPlatformInterfaceMixin
+    implements GeolocatorPlatform {
+  @override
+  Future<LocationPermission> checkPermission() =>
+      Future.value(LocationPermission.always);
+
+  @override
+  Future<LocationPermission> requestPermission() =>
+      Future.value(LocationPermission.always);
+
+  @override
+  Future<bool> isLocationServiceEnabled() => Future.value(true);
+
+  @override
+  Future<Position> getCurrentPosition({LocationSettings? locationSettings}) =>
+      Future.value(
+        Position(
+          latitude: -1.286389,
+          longitude: 36.817223,
+          timestamp: DateTime.now(),
+          accuracy: 0,
+          altitude: 0,
+          altitudeAccuracy: 0,
+          heading: 0,
+          headingAccuracy: 0,
+          speed: 0,
+          speedAccuracy: 0,
+        ),
+      );
+
+  @override
+  Stream<Position> getPositionStream({LocationSettings? locationSettings}) {
+    return Stream.fromIterable([
+      Position(
+        latitude: -1.286389,
+        longitude: 36.817223,
+        timestamp: DateTime.now(),
+        accuracy: 0,
+        altitude: 0,
+        altitudeAccuracy: 0,
+        heading: 0,
+        headingAccuracy: 0,
+        speed: 0,
+        speedAccuracy: 0,
+      )
+    ]);
+  }
+}
 
 class MockHttpClient extends Mock implements HttpClient {
   @override
@@ -237,15 +300,23 @@ class TestHttpOverrides extends HttpOverrides {
 void main() {
   late MockAuthService mockAuthService;
   late MockFlutterSecureStorage mockSecureStorage;
+  late MockRideService mockRideService;
 
   setUpAll(() {
+    registerFallbackValue(Uri.parse('http://localhost'));
     HttpOverrides.global = TestHttpOverrides();
   });
 
   setUp(() {
     mockAuthService = MockAuthService();
     mockSecureStorage = MockFlutterSecureStorage();
+    mockRideService = MockRideService();
     SharedPreferences.setMockInitialValues({});
+
+    when(() => mockRideService.getDriverStatus(any()))
+        .thenAnswer((_) async => true);
+    when(() => mockRideService.getCurrentRide(any(), any()))
+        .thenAnswer((_) async => null);
 
     when(() => mockSecureStorage.write(
         key: any(named: 'key'),
@@ -262,6 +333,9 @@ void main() {
       overrides: [
         authServiceProvider.overrideWithValue(mockAuthService),
         secureStorageProvider.overrideWithValue(mockSecureStorage),
+        rideServiceProvider.overrideWithValue(mockRideService),
+        provider.mapProvider
+            .overrideWith((ref) => SimpleMapNotifier(provider.MapType.google)),
       ],
       child: legacy_provider.MultiProvider(
         providers: [
@@ -334,6 +408,7 @@ void main() {
           AuthResult(isSignedIn: true, token: 'mock_token', user: {'id': '1'}),
     );
 
+    GeolocatorPlatform.instance = MockGeolocatorPlatform();
     await tester.pumpWidget(createWidgetUnderTest());
 
     await tester.enterText(

@@ -294,7 +294,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       alignment: Alignment.bottomCenter,
       children: [
         Container(
-          height: 280,
+          height: 320,
           width: double.infinity,
           decoration: BoxDecoration(
             gradient: profile.coverImageUrl == null

@@ -239,6 +239,31 @@ export class UserService {
       }
     });
 
+    // Trigger Referral Commission for Registration
+    // Fee is hardcoded to 500 for now, should be configurable
+    try {
+      const referralServiceUrl = process.env.REFERRAL_SERVICE_URL || 'http://referral-service:3337';
+      const response = await fetch(`${referralServiceUrl}/api/admin/referral/process-registration-fee`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          driverId: driverProfile.id,
+          fee: 500
+        })
+      });
+
+      if (!response.ok) {
+        console.error(`Failed to trigger referral commission: ${response.status} ${response.statusText}`);
+      } else {
+        console.log(`Referral commission triggered for new driver ${driverProfile.id}`);
+      }
+    } catch (error) {
+      console.error('Error triggering referral commission:', error);
+      // We don't throw here to avoid failing the promotion if referral service is down
+    }
+
     return driverProfile;
   }
 }

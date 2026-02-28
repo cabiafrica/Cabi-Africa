@@ -188,17 +188,17 @@ class MenuScreen extends StatelessWidget {
                       iconColor: Colors.purple,
                       route: '/dashboard'),
                   _MenuGridItem(
-                      icon: Icons.emoji_events_outlined,
-                      label: 'Score Matrix',
+                      icon: Icons.monetization_on_outlined,
+                      label: 'Earnings',
                       color: Colors.amber.shade100,
                       iconColor: Colors.amber.shade800,
-                      route: '/earnings_goal'),
+                      route: '/earnings'),
                   _MenuGridItem(
-                      icon: Icons.summarize_outlined,
-                      label: 'Shift Report',
+                      icon: Icons.star_outline,
+                      label: 'Ratings',
                       color: Colors.teal.shade100,
                       iconColor: Colors.teal,
-                      route: '/earnings_goal'),
+                      route: '/ratings'),
                 ],
                 backgroundColor: Colors.red.shade50),
 

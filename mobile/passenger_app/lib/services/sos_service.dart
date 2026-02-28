@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
-
+import '../config/app_config.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
 class SOSService {
   final String baseUrl;
   SOSService({
-    this.baseUrl = 'http://10.0.2.2:3333/api',
-  });
+    String? baseUrl,
+  }) : baseUrl = baseUrl ?? AppConfig.authApiUrl;
 
   Future<void> activateSOS({
     required String tripId,

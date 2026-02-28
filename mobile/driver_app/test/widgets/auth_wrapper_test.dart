@@ -1,111 +1,128 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:geolocator_platform_interface/geolocator_platform_interface.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'package:driver_app/providers/auth_provider.dart';
 import 'package:driver_app/widgets/auth_wrapper.dart';
 import 'package:driver_app/screens/login_screen.dart';
 import 'package:driver_app/screens/home_screen.dart';
+import 'package:driver_app/services/ride_service.dart';
+import 'package:driver_app/services/auth_service.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../mocks/image_mocks.dart';
 
-// Since HomeScreen and LoginScreen are complex, we create simple mock versions
-// for this test to keep it focused on the AuthWrapper's logic.
-class MockHomeScreen extends StatelessWidget {
-  const MockHomeScreen({super.key});
+// Mock for GeolocatorPlatform
+class MockGeolocatorPlatform extends Mock
+    with MockPlatformInterfaceMixin
+    implements GeolocatorPlatform {
   @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Text('Home Screen'));
+  Future<LocationPermission> checkPermission() =>
+      Future.value(LocationPermission.always);
+
+  @override
+  Future<LocationPermission> requestPermission() =>
+      Future.value(LocationPermission.always);
+
+  @override
+  Future<bool> isLocationServiceEnabled() => Future.value(true);
+
+  @override
+  Future<Position> getCurrentPosition({LocationSettings? locationSettings}) =>
+      Future.value(Position(
+          latitude: 0,
+          longitude: 0,
+          timestamp: DateTime.now(),
+          accuracy: 0,
+          altitude: 0,
+          altitudeAccuracy: 0,
+          heading: 0,
+          headingAccuracy: 0,
+          speed: 0,
+          speedAccuracy: 0));
+
+  @override
+  Stream<Position> getPositionStream({LocationSettings? locationSettings}) =>
+      Stream.fromIterable([]);
 }
 
-class MockLoginScreen extends StatelessWidget {
-  const MockLoginScreen({super.key});
-  @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Text('Login Screen'));
+class MockRideService extends Mock implements RideService {}
+
+class MockAuthService extends Mock implements AuthService {}
+
+class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
+
+class MockAuthNotifier extends AuthNotifier {
+  MockAuthNotifier(AuthState initialState)
+      : super(MockAuthService(), MockFlutterSecureStorage()) {
+    state = initialState;
+  }
 }
 
 void main() {
+  late MockRideService mockRideService;
+
+  setUpAll(() {
+    registerFallbackValue(Uri.parse('http://localhost'));
+  });
+
+  setUp(() {
+    mockRideService = MockRideService();
+    when(() => mockRideService.getDriverStatus(any()))
+        .thenAnswer((_) async => true);
+    when(() => mockRideService.getCurrentRide(any(), any()))
+        .thenAnswer((_) async => null);
+    GeolocatorPlatform.instance = MockGeolocatorPlatform();
+  });
+
   group('AuthWrapper', () {
-    testWidgets(
-      'shows loading indicator for AuthInitial and AuthLoading states',
-      (WidgetTester tester) async {
-        // Test for AuthInitial state
-        await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              // Override the authProvider to return a specific state
-              authProvider.overrideWith(
-                (ref) => MockAuthNotifier(const AuthInitial()),
-              ),
-            ],
-            child: const MaterialApp(home: AuthWrapper()),
-          ),
-        );
-        expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-        // Test for AuthLoading state
-        await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              authProvider.overrideWith(
-                (ref) => MockAuthNotifier(const AuthLoading()),
-              ),
-            ],
-            child: const MaterialApp(home: AuthWrapper()),
-          ),
-        );
-        expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      },
-    );
-
-    testWidgets('shows LoginScreen for Unauthenticated state', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('shows loading indicator for AuthInitial state',
+        (tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authProvider.overrideWith(
-              (ref) => MockAuthNotifier(const Unauthenticated()),
-            ),
+            authProvider
+                .overrideWith((ref) => MockAuthNotifier(const AuthInitial())),
           ],
-          // We need to replace the real LoginScreen with our mock
           child: const MaterialApp(home: AuthWrapper()),
         ),
       );
-      // In a real test, you might find a key or specific text on the login screen.
-      // Here we assume LoginScreen() is what AuthWrapper renders.
-      // For a clean test, we'd inject the screen widgets.
-      expect(find.byType(LoginScreen), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('shows HomeScreen for Authenticated state', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            authProvider.overrideWith(
-              (ref) => MockAuthNotifier(const Authenticated('fake-token')),
-            ),
-          ],
-          child: const MaterialApp(home: AuthWrapper()),
-        ),
-      );
-      expect(find.byType(HomeScreen), findsOneWidget);
+    testWidgets('shows LoginScreen for Unauthenticated state', (tester) async {
+      await provideMockedNetworkImages(() async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              authProvider.overrideWith(
+                  (ref) => MockAuthNotifier(const Unauthenticated())),
+            ],
+            child: const MaterialApp(home: AuthWrapper()),
+          ),
+        );
+        expect(find.byType(LoginScreen), findsOneWidget);
+      });
+    });
+
+    testWidgets('shows HomeScreen for Authenticated state', (tester) async {
+      await provideMockedNetworkImages(() async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              authProvider.overrideWith((ref) => MockAuthNotifier(
+                  const Authenticated('fake-token', {'id': 'driver-123'}))),
+              rideServiceProvider.overrideWithValue(mockRideService),
+            ],
+            child: const MaterialApp(home: AuthWrapper()),
+          ),
+        );
+
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(find.byType(HomeScreen), findsOneWidget);
+      });
     });
   });
-}
-
-// A mock StateNotifier for testing purposes
-class MockAuthNotifier extends StateNotifier<AuthState>
-    implements AuthNotifier {
-  MockAuthNotifier(super.initialState);
-
-  @override
-  Future<void> login(String phone, String otp) async {}
-
-  @override
-  Future<void> logout() async {}
-
-  @override
-  Future<void> tryAutoLogin() async {}
 }

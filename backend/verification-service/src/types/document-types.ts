@@ -2,6 +2,11 @@ export enum DocumentType {
     NATIONAL_ID = 'NATIONAL_ID',
     DRIVERS_LICENSE = 'DRIVERS_LICENSE',
     PASSPORT = 'PASSPORT',
+    // Passenger-specific document types
+    PASSENGER_ID = 'PASSENGER_ID',
+    PASSENGER_PASSPORT_PHOTO = 'PASSENGER_PASSPORT_PHOTO',
+    PASSENGER_SELFIE = 'PASSENGER_SELFIE',
+    FINGERPRINT = 'FINGERPRINT',
 }
 
 export enum VerificationStatus {

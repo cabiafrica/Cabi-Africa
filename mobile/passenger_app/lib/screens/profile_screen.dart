@@ -73,9 +73,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const primaryColor = Color(0xFFFFD700); // Prestige Gold
+    const backgroundColor = Color(0xFF0A0A0A); // Deep Black
+    const surfaceColor = Color(0xFF141414); // Elevated Black
+
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: const Text('My Profile'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(
+          'PRESTIGE PROFILE',
+          style: TextStyle(
+            color: primaryColor,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+            fontSize: 14,
+          ),
+        ),
+        iconTheme: const IconThemeData(color: primaryColor),
         actions: [
           if (_isLoading)
             const Padding(
@@ -84,48 +100,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: primaryColor),
                 ),
               ),
             )
           else
-            IconButton(
-              icon: const Icon(Icons.save),
+            TextButton(
               onPressed: _saveProfile,
-              tooltip: 'Save Profile',
+              child: const Text('SAVE',
+                  style: TextStyle(
+                      color: primaryColor,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1)),
             ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: 20),
             Center(
               child: Stack(
                 children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundImage: _imageFile != null
-                        ? FileImage(_imageFile!)
-                        : NetworkImage(_currentImageUrl) as ImageProvider,
-                    backgroundColor: Colors.grey[200],
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: primaryColor.withValues(alpha: 0.3), width: 1),
+                      boxShadow: [
+                        BoxShadow(
+                          color: primaryColor.withValues(alpha: 0.05),
+                          blurRadius: 30,
+                          spreadRadius: 5,
+                        ),
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      radius: 65,
+                      backgroundImage: _imageFile != null
+                          ? FileImage(_imageFile!)
+                          : NetworkImage(_currentImageUrl) as ImageProvider,
+                      backgroundColor: surfaceColor,
+                    ),
                   ),
                   Positioned(
-                    bottom: 0,
-                    right: 0,
+                    bottom: 4,
+                    right: 4,
                     child: GestureDetector(
                       onTap: _pickImage,
                       child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
+                        padding: const EdgeInsets.all(10),
+                        decoration: const BoxDecoration(
+                          color: primaryColor,
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
-                          Icons.edit,
-                          color: Colors.white,
-                          size: 20,
+                          Icons.camera_alt_rounded,
+                          color: Colors.black,
+                          size: 18,
                         ),
                       ),
                     ),
@@ -133,57 +169,143 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 32),
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Full Name',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person_outline),
-              ),
-            ),
             const SizedBox(height: 16),
-            TextFormField(
-              initialValue: _phoneNumber,
-              readOnly: true,
-              decoration: const InputDecoration(
-                labelText: 'Phone Number',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.phone_outlined),
-                fillColor: Color.fromARGB(255, 236, 236, 236),
-                filled: true,
-              ),
-            ),
-            const SizedBox(height: 24),
-            ListTile(
-              leading: const Icon(Icons.stars),
-              title: const Text('Loyalty Program'),
-              subtitle: const Text('View your points and tier status'),
-              trailing: const Icon(Icons.chevron_right),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: Colors.grey.shade300),
-              ),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LoyaltyDashboardScreen(),
-                ),
+            const Text(
+              'ELITE MEMBER',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white38,
+                fontSize: 10,
+                letterSpacing: 2,
+                fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 48),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.logout),
-              label: const Text('Logout'),
-              onPressed: _logout,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red[50],
-                foregroundColor: Colors.red[700],
-                padding: const EdgeInsets.symmetric(vertical: 12),
+            _buildSectionLabel('PERSONAL INFORMATION'),
+            const SizedBox(height: 16),
+            _buildProfileField(
+              controller: _nameController,
+              label: 'Full Name',
+              icon: Icons.person_outline_rounded,
+            ),
+            const SizedBox(height: 20),
+            _buildProfileField(
+              initialValue: _phoneNumber,
+              label: 'Identity Verified Phone',
+              icon: Icons.verified_user_outlined,
+              readOnly: true,
+            ),
+            const SizedBox(height: 32),
+            _buildSectionLabel('EXCLUSIVES'),
+            const SizedBox(height: 16),
+            _buildMenuTile(
+              icon: Icons.auto_awesome_rounded,
+              title: 'CABI Rewards Program',
+              subtitle: 'Tier Status: Gold Elite',
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const LoyaltyDashboardScreen()),
               ),
             ),
+            const SizedBox(height: 48),
+            TextButton(
+              onPressed: _logout,
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.redAccent.withValues(alpha: 0.7),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: const Text('TERMINATE SESSION',
+                  style: TextStyle(
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12)),
+            ),
+            const SizedBox(height: 40),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSectionLabel(String label) {
+    return Text(
+      label,
+      style: const TextStyle(
+        color: Color(0xFFFFD700),
+        fontSize: 10,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.5,
+      ),
+    );
+  }
+
+  Widget _buildProfileField({
+    TextEditingController? controller,
+    String? initialValue,
+    required String label,
+    required IconData icon,
+    bool readOnly = false,
+  }) {
+    const primaryColor = Color(0xFFFFD700);
+    const surfaceColor = Color(0xFF141414);
+
+    return TextFormField(
+      controller: controller,
+      initialValue: initialValue,
+      readOnly: readOnly,
+      style: TextStyle(
+          color: readOnly ? Colors.white54 : Colors.white, fontSize: 15),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.white24, fontSize: 12),
+        prefixIcon:
+            Icon(icon, color: primaryColor.withValues(alpha: 0.5), size: 18),
+        filled: true,
+        fillColor: surfaceColor,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: primaryColor, width: 0.5),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    const primaryColor = Color(0xFFFFD700);
+    const surfaceColor = Color(0xFF141414);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: primaryColor, size: 22),
+        title: Text(title,
+            style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14)),
+        subtitle: Text(subtitle,
+            style: const TextStyle(color: Colors.white38, fontSize: 11)),
+        trailing:
+            const Icon(Icons.chevron_right_rounded, color: Colors.white24),
+        onTap: onTap,
       ),
     );
   }

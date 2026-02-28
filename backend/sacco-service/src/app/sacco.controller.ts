@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Logger } from '@nestjs/common';
+import { Controller, Post, Body, Get, Logger, Query, HttpException } from '@nestjs/common';
 import { SaccoService, TripPaidEvent } from './sacco.service';
 
 @Controller('sacco')
@@ -10,6 +10,22 @@ export class SaccoController {
     @Get('health')
     getHealth() {
         return this.saccoService.getHealth();
+    }
+
+    @Get('balance')
+    async getBalance(@Query('driverId') driverId: string) {
+        if (!driverId) {
+            throw new HttpException('driverId is required', 400);
+        }
+        return this.saccoService.getSavingsBalance(driverId);
+    }
+
+    @Get('transactions')
+    async getTransactions(@Query('driverId') driverId: string) {
+        if (!driverId) {
+            throw new HttpException('driverId is required', 400);
+        }
+        return this.saccoService.getTransactions(driverId);
     }
 
     @Post('deduct')

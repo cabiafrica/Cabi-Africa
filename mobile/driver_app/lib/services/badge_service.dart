@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../config/app_config.dart';
 
 class Badge {
   final String id;
@@ -68,8 +69,9 @@ class DriverBadgeTier {
       isActive: json['isActive'] ?? false,
       earnedAt:
           json['earnedAt'] != null ? DateTime.tryParse(json['earnedAt']) : null,
-      expiresAt:
-          json['expiresAt'] != null ? DateTime.tryParse(json['expiresAt']) : null,
+      expiresAt: json['expiresAt'] != null
+          ? DateTime.tryParse(json['expiresAt'])
+          : null,
       metricsSnapshot: json['metricsSnapshot'],
     );
   }
@@ -158,15 +160,7 @@ class SaccoSummary {
 }
 
 class BadgeService {
-  String get _baseUrl {
-    if (kIsWeb) {
-      return 'http://localhost:3333/api';
-    }
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:3333/api';
-    }
-    return 'http://localhost:3333/api';
-  }
+  String get _baseUrl => AppConfig.authApiUrl;
 
   Future<List<Badge>> getUserBadges(String userId) async {
     try {

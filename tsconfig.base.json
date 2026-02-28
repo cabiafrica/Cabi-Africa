@@ -82,6 +82,12 @@
       ],
       "@cabi/backend/dispatch-service": [
         "libs/backend/dispatch-service/src/index.ts"
+      ],
+      "@cabi/backend/settings": [
+        "libs/backend/settings/src/index.ts"
+      ],
+      "@cabi/backend/common": [
+        "libs/backend/common/src/index.ts"
       ]
     }
   },

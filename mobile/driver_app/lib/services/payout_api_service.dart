@@ -1,14 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import '../config/app_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:driver_app/models/payout_dto.dart';
 
 // In a real app, the Dio instance would be configured and provided globally.
 final dioProvider = Provider((ref) {
-  final baseUrl = defaultTargetPlatform == TargetPlatform.android
-      ? 'http://10.0.2.2:3333/api'
-      : 'http://localhost:3333/api';
+  final baseUrl = AppConfig.authApiUrl;
   return Dio(BaseOptions(baseUrl: baseUrl));
 });
 

@@ -374,7 +374,7 @@ export class RideService {
 
         // Trigger SACCO deduction via Sacco Service API
         // Service name 'sacco-service' resolves via Docker DNS
-        const saccoServiceUrl = process.env.SACCO_SERVICE_URL || 'http://sacco-service:3336';
+        const saccoServiceUrl = process.env.SACCO_SERVICE_URL || 'http://sacco-service:3338';
 
         fetch(`${saccoServiceUrl}/api/sacco/deduct`, {
           method: 'POST',

@@ -4,8 +4,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DocumentVerificationController } from './controllers/document-verification.controller';
 import { BiometricVerificationController } from './controllers/biometric-verification.controller';
+import { PassengerVerificationController } from './controllers/passenger-verification.controller';
 import { DocumentVerificationService } from './services/document-verification.service';
 import { BiometricVerificationService } from './services/biometric-verification.service';
+import { AiDocumentVerificationService } from './services/ai-document-verification.service';
+import { VerificationNotificationService } from './services/verification-notification.service';
 import { OcrService } from './services/ocr.service';
 
 @Module({
@@ -18,12 +21,15 @@ import { OcrService } from './services/ocr.service';
     AppController,
     DocumentVerificationController,
     BiometricVerificationController,
+    PassengerVerificationController,
   ],
   providers: [
     AppService,
     OcrService,
     DocumentVerificationService,
     BiometricVerificationService,
+    AiDocumentVerificationService,
+    VerificationNotificationService,
   ],
 })
 export class AppModule { }

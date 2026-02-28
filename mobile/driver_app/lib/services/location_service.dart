@@ -1,3 +1,4 @@
+import '../config/app_config.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,15 +11,7 @@ class LocationService {
   String? _activeTripId;
 
   // Base URL for Dispatch Service
-  String get _baseUrl {
-    if (kIsWeb) {
-      return 'http://localhost:3334';
-    }
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:3334';
-    }
-    return 'http://localhost:3334';
-  }
+  String get _baseUrl => AppConfig.dispatchSocketUrl;
 
   void init(String driverId) {
     _driverId = driverId;
@@ -112,6 +105,10 @@ class LocationService {
       _socket?.emit('driverGoOffline', _driverId);
     }
     stopTracking();
+  }
+
+  Future<Position> getCurrentLocation() async {
+    return await Geolocator.getCurrentPosition();
   }
 
   void dispose() {

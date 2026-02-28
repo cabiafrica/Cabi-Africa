@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:driver_app/widgets/referral_tree_graph.dart';
+import 'package:driver_app/services/referral_service.dart';
+import 'package:driver_app/providers/auth_provider.dart';
 
-class DownlineScreen extends StatefulWidget {
+class DownlineScreen extends ConsumerStatefulWidget {
   const DownlineScreen({super.key});
 
   @override
-  State<DownlineScreen> createState() => _DownlineScreenState();
+  ConsumerState<DownlineScreen> createState() => _DownlineScreenState();
 }
 
-class _DownlineScreenState extends State<DownlineScreen> {
-  // Mock Data
+class _DownlineScreenState extends ConsumerState<DownlineScreen> {
+  final ReferralService _referralService = ReferralService();
   bool _isLoading = true;
   List<dynamic> _downline = [];
 
@@ -20,40 +23,27 @@ class _DownlineScreenState extends State<DownlineScreen> {
   }
 
   Future<void> _fetchDownline() async {
-    // Simulate API call to GET /users/:id/downline
-    await Future.delayed(const Duration(seconds: 1));
+    final authState = ref.read(authProvider);
+    String? driverId;
+    if (authState is Authenticated) {
+      driverId = authState.userId;
+    }
 
-    // Mock response (matches recursive structure from user.service.ts)
-    setState(() {
-      _downline = [
-        {
-          'id': 'd_mock_1',
-          'name': 'John D.',
-          'status': 'ACTIVE',
-          'level': 1,
-          'joinedAt': DateTime.now().subtract(const Duration(days: 30)),
-          'children': [
-            {
-              'id': 'd_mock_2',
-              'name': 'Sarah M.',
-              'status': 'PROSPECT',
-              'level': 2,
-              'joinedAt': DateTime.now().subtract(const Duration(days: 5)),
-              'children': []
-            }
-          ]
-        },
-        {
-          'id': 'd_mock_3',
-          'name': 'Mike R.',
-          'status': 'ACTIVE',
-          'level': 1,
-          'joinedAt': DateTime.now().subtract(const Duration(days: 60)),
-          'children': []
-        }
-      ];
-      _isLoading = false;
-    });
+    if (driverId == null) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+      return;
+    }
+
+    final data = await _referralService.getDownline(driverId);
+
+    if (mounted) {
+      setState(() {
+        _downline = data;
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -71,7 +61,6 @@ class _DownlineScreenState extends State<DownlineScreen> {
                     height: 300,
                     width: 300,
                     child: ReferralTreeGraph(
-                      // Simple count logic for mock data
                       level1Count:
                           _downline.where((n) => n['level'] == 1).length,
                       level2Count: _downline.fold<int>(
@@ -101,7 +90,16 @@ class _DownlineScreenState extends State<DownlineScreen> {
                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
 
-                ..._downline.map((node) => _buildNode(node)),
+                if (_downline.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Center(
+                      child: Text(
+                          "No referrals yet. Share your code to grow your network!"),
+                    ),
+                  )
+                else
+                  ..._downline.map((node) => _buildNode(node)),
               ],
             ),
     );
@@ -125,7 +123,7 @@ class _DownlineScreenState extends State<DownlineScreen> {
                 color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
-        title: Text(node['name']),
+        title: Text(node['name'] ?? 'Unknown User'),
         subtitle: Text(
             'Status: ${node['status']} • Joined: ${_formatDate(node['joinedAt'])}'),
         trailing: hasChildren
@@ -141,8 +139,17 @@ class _DownlineScreenState extends State<DownlineScreen> {
     );
   }
 
-  String _formatDate(DateTime d) {
-    return '${d.day}/${d.month}/${d.year}';
+  String _formatDate(dynamic d) {
+    if (d == null) return 'N/A';
+    DateTime dt;
+    if (d is String) {
+      dt = DateTime.parse(d);
+    } else if (d is DateTime) {
+      dt = d;
+    } else {
+      return 'N/A';
+    }
+    return '${dt.day}/${dt.month}/${dt.year}';
   }
 
   Widget _buildLegendItem(String label, Color color) {

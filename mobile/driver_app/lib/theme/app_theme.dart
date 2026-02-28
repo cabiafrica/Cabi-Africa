@@ -18,12 +18,12 @@ class AppTheme {
   static const Color lightTextSecondary = Color(0xFF6B7280);
   static const Color lightDivider = Color(0xFFE5E7EB);
 
-  // Dark Mode Colors
-  static const Color darkBackground = Colors.black; // Match Login Background
-  static const Color darkSurface = Color(0xFF1C1C1E); // Dark Grey Surface
+  // Dark Mode Colors ("New Dawn" Luxury)
+  static const Color darkBackground = Color(0xFF0A0A0A); // Deep Prestige Black
+  static const Color darkSurface = Color(0xFF141414); // Elevated Black Surface
   static const Color darkTextPrimary = Color(0xFFF9FAFB);
   static const Color darkTextSecondary = Color(0xFF9CA3AF);
-  static const Color darkDivider = Color(0xFF333333);
+  static const Color darkDivider = Color(0xFF1F1F1F);
 
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,

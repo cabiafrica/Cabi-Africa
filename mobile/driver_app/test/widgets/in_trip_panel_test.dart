@@ -1,5 +1,4 @@
 import 'package:driver_app/services/ride_service.dart';
-import 'package:driver_app/services/sos_service.dart';
 import 'package:driver_app/providers/active_ride_provider.dart';
 import 'package:driver_app/providers/sos_provider.dart';
 import 'package:driver_app/widgets/in_trip_panel.dart';
@@ -12,19 +11,19 @@ import 'package:provider/provider.dart';
 
 class MockRideService extends Mock implements RideService {}
 
-class MockSosService extends Mock implements SosService {}
-
 void main() {
   late MockRideService mockRideService;
-  late MockSosService mockSosService;
 
-  // Mock for permission_handler
-  TestWidgetsFlutterBinding.ensureInitialized();
-  setupPermissions();
+  setUpAll(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    _setupPermissions();
+  });
 
   setUp(() {
     mockRideService = MockRideService();
-    mockSosService = MockSosService();
+    // Default stub: completeTrip resolves with mock fare
+    when(() => mockRideService.completeTrip(any()))
+        .thenAnswer((_) async => 450.0);
   });
 
   final rideData = {
@@ -33,7 +32,7 @@ void main() {
     'passengerName': 'Jane Doe',
   };
 
-  Widget createWidgetUnderTest() {
+  Widget createWidgetUnderTest({Map<String, dynamic>? data}) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ActiveRideProvider()),
@@ -41,19 +40,22 @@ void main() {
       ],
       child: MaterialApp(
         home: Scaffold(
-          body: InTripPanel(
-            rideData: rideData,
-            rideService: mockRideService,
-            sosService: mockSosService,
+          // InTripPanel is Positioned — needs a Stack
+          body: Stack(
+            children: [
+              InTripPanel(
+                rideData: data ?? rideData,
+                rideService: mockRideService,
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  testWidgets('InTripPanel renders correctly with ride data',
-      (widgetTester) async {
-    await widgetTester.pumpWidget(createWidgetUnderTest());
+  testWidgets('InTripPanel renders correctly with ride data', (tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
 
     expect(find.text('Trip to: Yaya Centre'), findsOneWidget);
     expect(find.text('Passenger: Jane Doe'), findsOneWidget);
@@ -61,16 +63,36 @@ void main() {
     expect(
         find.widgetWithText(ElevatedButton, 'Complete Trip'), findsOneWidget);
   });
+
+  testWidgets('tapping Complete Trip calls rideService.completeTrip',
+      (tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Complete Trip'));
+    await tester.pumpAndSettle();
+
+    verify(() => mockRideService.completeTrip('trip-123')).called(1);
+  });
+
+  testWidgets('shows snackbar after successful trip completion',
+      (tester) async {
+    await tester.pumpWidget(createWidgetUnderTest());
+
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Complete Trip'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.textContaining('completed'), findsOneWidget);
+  });
 }
 
-void setupPermissions() {
+void _setupPermissions() {
   const MethodChannel channel =
-      MethodChannel('flutter.base/permission_handler');
+      MethodChannel('flutter.baseflow.com/permissions/methods');
 
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
     if (methodCall.method == 'requestPermissions') {
-      // Simulate granting all requested permissions
       return {
         (methodCall.arguments as List).first: PermissionStatus.granted.index,
       };

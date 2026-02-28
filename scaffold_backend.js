@@ -10,8 +10,8 @@ const services = [
         description: 'Handles web-based driver registration and lead capture.'
     },
     {
-        name: 'mlm-service',
-        className: 'Mlm',
+        name: 'referral-service',
+        className: 'Referral',
         description: 'Manages referral hierarchies and fee distribution.'
     },
     {

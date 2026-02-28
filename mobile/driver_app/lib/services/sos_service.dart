@@ -1,3 +1,4 @@
+import '../config/app_config.dart';
 import 'package:dio/dio.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -8,7 +9,7 @@ class SosService {
 
   Future<void> activateSos(String tripId, Map<String, double> position) async {
     final response = await _dio.post(
-      'http://10.0.2.2:3333/api/sos', // Mock API
+      '${AppConfig.authApiUrl}/sos', // Mock API
       data: {
         'tripId': tripId,
         'lat': position['lat'],
@@ -24,7 +25,7 @@ class SosService {
 
   WebSocketChannel connectAudioStream(String tripId) {
     // Mock WebSocket connection
-    final uri = Uri.parse('ws://10.0.2.2:3333/sos/audio/$tripId');
+    final uri = Uri.parse('ws://${AppConfig.host}:3333/sos/audio/$tripId');
     return WebSocketChannel.connect(uri);
   }
 }

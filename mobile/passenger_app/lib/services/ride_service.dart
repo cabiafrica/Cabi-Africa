@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../config/app_config.dart';
 
 class PayoutMethod {
   final String id;
@@ -63,15 +64,7 @@ class RideService {
     PayoutMethod(id: '2', type: 'bank', display: 'KCB Bank: ***1234'),
   ];
 
-  String get _dispatchBaseUrl {
-    if (kIsWeb) {
-      return 'http://localhost:3334/api';
-    }
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:3334/api';
-    }
-    return 'http://localhost:3334/api';
-  }
+  String get _dispatchBaseUrl => AppConfig.dispatchApiUrl;
 
   // Get nearby drivers
   Future<List<Map<String, dynamic>>> getNearbyDrivers({

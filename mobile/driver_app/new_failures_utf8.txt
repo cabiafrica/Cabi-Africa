@@ -1,0 +1,347 @@
+﻿flutter : Package ampl
+ify_secure_storage:lin
+ux references amplify_
+secure_storage_dart:li
+nux as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+At line:1 char:1
++ flutter test test/sc
+reens/referral_commiss
+ions_screen_test.dart 
+test/ ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (Package am   
+ plify...plugin pa    
+ckage.:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+00:00 +0: loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+00:00 +0: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart: ReferralCommissionsScreen shows stats and referral code
+00:01 +1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/sacco_screen_test.dart: SaccoScreen shows loading indicator and then balance
+00:02 +1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart: ReferralCommissionsScreen shows history list
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextContainingWidgetFinder:<Found 2 widgets with text containing 50: [
+            Text("KES 50.00", inherit: true, color: Color(alpha: 1.0000, red: 1.0000, green: 0.8431,
+blue: 0.0000, colorSpace: ColorSpace.sRGB), size: 40.0, weight: 900, dependencies:
+[DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+            Text("+KES 50", inherit: true, color: MaterialColor(primary value: Color(alpha: 1.0000,
+red: 0.2980, green: 0.6863, blue: 0.3137, colorSpace: ColorSpace.sRGB)), size: 16.0, weight: 700,
+dependencies: [DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+          ]>
+   Which: is too many
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart:88:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart line 88
+The test description was:
+  shows history list
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+00:02 +1 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/sacco_screen_test.dart: SaccoScreen shows loading indicator and then balance
+00:02 +1 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart: ReferralCommissionsScreen shows history list [E]
+  Test failed. See exception logs above.
+  The test description was: shows history list
+  
+00:02 +2 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/sacco_screen_test.dart: SaccoScreen shows loading indicator and then balance
+00:02 +3 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/sacco_screen_test.dart: SaccoScreen shows transactions list
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextContainingWidgetFinder:<Found 3 widgets with text containing 500: [
+            Text("KES 5000.00", inherit: true, color: Color(alpha: 1.0000, red: 1.0000, green:
+1.0000, blue: 1.0000, colorSpace: ColorSpace.sRGB), size: 36.0, weight: 700, dependencies:
+[DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+            Text("KES 15000", inherit: true, color: Color(alpha: 1.0000, red: 1.0000, green: 1.0000,
+blue: 1.0000, colorSpace: ColorSpace.sRGB), size: 18.0, weight: 700, dependencies:
+[DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+            Text("+KES 500", inherit: true, color: MaterialColor(primary value: Color(alpha: 1.0000,
+red: 0.2980, green: 0.6863, blue: 0.3137, colorSpace: ColorSpace.sRGB)), size: 16.0, weight: 700,
+dependencies: [DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+          ]>
+   Which: is too many
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/sacco_screen_test.dart:80:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/sacco_screen_test.dart line 80
+The test description was:
+  shows transactions list
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+00:03 +3 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/sacco_screen_test.dart: SaccoScreen shows transactions list [E]
+  Test failed. See exception logs above.
+  The test description was: shows transactions list
+  
+00:03 +3 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/sacco_screen_test.dart: SaccoScreen tapping apply loan shows snackbar
+00:03 +4 -2: Some tests failed.

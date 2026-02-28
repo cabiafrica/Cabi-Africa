@@ -1,25 +1,49 @@
-// This is a basic Flutter widget test.
+// Application Smoke Tests
 //
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// These tests verify that core screens render without uncaught exceptions.
+// We deliberately test individual screens rather than the full app (CabiDriverApp),
+// because CabiDriverApp → SplashScreen creates a Future.delayed(3s) timer
+// in initState which cannot be cleanly disposed in a widget test.
+//
+// To test that SplashScreen completes properly, we advance the fake clock past
+// its 3-second timer with tester.pump(const Duration(seconds: 4)).
 
+import 'package:driver_app/screens/login_screen.dart';
+import 'package:driver_app/screens/splash_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:driver_app/main.dart';
-
 void main() {
-  testWidgets('App smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  // ── SplashScreen ─────────────────────────────────────────────────────────
+  testWidgets('SplashScreen renders logo and app name', (tester) async {
     await tester.pumpWidget(
       const ProviderScope(
-        child: CabiDriverApp(),
+        child: MaterialApp(home: SplashScreen()),
       ),
     );
 
-    // Verify that the app builds without crashing.
-    expect(find.byType(CabiDriverApp), findsOneWidget);
+    // Initial frame — logo visible
+    expect(find.text('CABI AFRICA'), findsOneWidget);
+    expect(find.text('DRIVER APP'), findsOneWidget);
+
+    // Advance past the 3-second Future.delayed to let initState complete.
+    // This drains the pending timer so the test teardown assertion passes.
+    await tester.pump(const Duration(seconds: 4));
+
+    // After navigation attempt — the widget tree transitions, no exception thrown
+    expect(find.byType(SplashScreen).evaluate(), anyElement(isNotNull));
+  });
+
+  // ── LoginScreen ───────────────────────────────────────────────────────────
+  testWidgets('LoginScreen renders form fields', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: LoginScreen()),
+    );
+    await tester.pumpAndSettle();
+
+    // Login screen should show at least one form field
+    expect(find.byType(LoginScreen), findsOneWidget);
+    expect(find.byType(TextFormField), findsAny);
   });
 }

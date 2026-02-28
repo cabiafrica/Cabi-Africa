@@ -15,6 +15,8 @@ import { EmailProvider } from './email.provider';
 import { SmsProvider } from './sms.provider';
 import { PushProvider } from './push.provider';
 
+import { UserProfileController } from './user-profile.controller';
+
 @Module({
   imports: [
     PassportModule,
@@ -25,7 +27,7 @@ import { PushProvider } from './push.provider';
     }),
     UserModule,
   ],
-  controllers: [DriverLeadsController, ReferralController, AuthController],
+  controllers: [DriverLeadsController, ReferralController, AuthController, UserProfileController],
   providers: [
     DriverLeadsService,
     ReferralService,

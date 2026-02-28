@@ -1,22 +1,19 @@
+import '../config/app_config.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 class RideService {
-  String get _dispatchBaseUrl {
-    if (kIsWeb) {
-      return 'http://localhost:3334/api';
-    }
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:3334/api';
-    }
-    return 'http://localhost:3334/api';
-  }
+  final http.Client _client;
+
+  RideService({http.Client? client}) : _client = client ?? http.Client();
+  String get _dispatchBaseUrl => AppConfig.dispatchApiUrl;
 
   Future<bool> getDriverStatus(String driverId) async {
     try {
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$_dispatchBaseUrl/dispatch/drivers/$driverId/status'),
       );
       if (response.statusCode == 200) {
@@ -31,7 +28,7 @@ class RideService {
 
   Future<void> toggleOnlineStatus(String driverId, bool isOnline) async {
     try {
-      await http.post(
+      await _client.post(
         Uri.parse('$_dispatchBaseUrl/dispatch/drivers/$driverId/toggle-status'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'isOnline': isOnline}),
@@ -44,7 +41,7 @@ class RideService {
   Future<Map<String, dynamic>?> getCurrentRide(
       String userId, String role) async {
     try {
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse(
             '$_dispatchBaseUrl/dispatch/rides/current?userId=$userId&role=$role'),
       );
@@ -60,7 +57,7 @@ class RideService {
   // Complete a trip
   Future<double> completeTrip(String tripId) async {
     try {
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('$_dispatchBaseUrl/rides/$tripId/complete'),
       );
 
@@ -91,7 +88,7 @@ class RideService {
 
   Future<void> acceptRide(String rideId, String driverId) async {
     try {
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('$_dispatchBaseUrl/rides/$rideId/accept'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'driverId': driverId}),
@@ -110,7 +107,7 @@ class RideService {
 
   Future<void> startTrip(String rideId) async {
     try {
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('$_dispatchBaseUrl/rides/$rideId/start'),
         headers: {'Content-Type': 'application/json'},
       );
@@ -126,14 +123,19 @@ class RideService {
     }
   }
 
-  Future<void> rejectRide(String rideId, String driverId) async {
+  Future<void> rejectRide(String rideId, String driverId,
+      [String? reason]) async {
     try {
-      await http.post(
+      final body = reason != null
+          ? jsonEncode({'driverId': driverId, 'reason': reason})
+          : jsonEncode({'driverId': driverId});
+      await _client.post(
         Uri.parse('$_dispatchBaseUrl/rides/$rideId/reject'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'driverId': driverId}),
+        body: body,
       );
-      debugPrint('Ride $rideId rejected via backend.');
+      debugPrint(
+          'Ride $rideId rejected via backend. Reason: ${reason ?? "none"}');
     } catch (e) {
       debugPrint('Error rejecting ride: $e');
     }
@@ -147,7 +149,7 @@ class RideService {
   Future<void> submitRating(
       {required String tripId, required double rating, String? comment}) async {
     try {
-      await http.post(
+      await _client.post(
         Uri.parse('$_dispatchBaseUrl/rides/$tripId/rate'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'rating': rating, 'comment': comment}),
@@ -160,7 +162,7 @@ class RideService {
 
   Future<void> confirmCashPayment(String tripId, double amount) async {
     try {
-      await http.post(
+      await _client.post(
         Uri.parse('$_dispatchBaseUrl/rides/$tripId/confirm-cash'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'amount': amount}),
@@ -174,7 +176,7 @@ class RideService {
   Future<void> updateDriverLocation(
       String driverId, double lat, double lng) async {
     try {
-      await http.post(
+      await _client.post(
         Uri.parse('$_dispatchBaseUrl/dispatch/drivers/$driverId/location'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'lat': lat, 'lng': lng}),
@@ -184,3 +186,5 @@ class RideService {
     }
   }
 }
+
+final rideServiceProvider = Provider((ref) => RideService());

@@ -1,9 +1,13 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import '../config/app_config.dart';
 import 'package:http/http.dart' as http;
 
 class UserService {
-  static const String _baseUrl = 'http://10.0.2.2:3333/api';
+  static String get _baseUrl => '${AppConfig.authApiUrl}';
+  final http.Client _client;
+
+  UserService({http.Client? client}) : _client = client ?? http.Client();
 
   Future<Map<String, dynamic>> getUserProfile() async {
     // In a real app, this would fetch the full user profile.
@@ -18,7 +22,7 @@ class UserService {
   }
 
   Future<void> postBiometricSuccess() async {
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/users/verify-biometric'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -31,7 +35,7 @@ class UserService {
   }
 
   Future<void> postBiometricFailure() async {
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/users/biometric-failed'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',

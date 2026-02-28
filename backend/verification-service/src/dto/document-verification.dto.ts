@@ -1,6 +1,8 @@
 export class UploadDocumentDto {
-    documentType: 'NATIONAL_ID' | 'DRIVERS_LICENSE' | 'PASSPORT';
+    documentType: 'NATIONAL_ID' | 'DRIVERS_LICENSE' | 'PASSPORT' | 'PASSENGER_ID' | 'PASSENGER_PASSPORT_PHOTO' | 'PASSENGER_SELFIE' | 'FINGERPRINT';
     userId: string;
+    idNumber?: string; // For passenger ID verification
+    fullName?: string; // For passenger verification
 }
 
 export class ValidateDocumentDto {

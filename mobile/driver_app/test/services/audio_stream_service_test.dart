@@ -20,6 +20,8 @@ void main() {
 
     // Stub the sink property of the channel
     when(() => mockWebSocketChannel.sink).thenReturn(mockWebSocketSink);
+    when(() => mockWebSocketSink.close()).thenAnswer((_) async => {});
+    when(() => mockWebSocketSink.add(any())).thenReturn(null);
 
     // Inject the mock channel factory
     audioStreamService.channelFactory = (Uri uri) => mockWebSocketChannel;

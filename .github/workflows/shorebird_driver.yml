@@ -1,0 +1,33 @@
+name: Shorebird Driver App OTA Updates
+
+on:
+  push:
+    branches:
+      - main # Change this if your main branch has a different name
+    paths:
+      - 'mobile/driver_app/**' # Only run when code in driver_app changes
+
+jobs:
+  shorebird-patch:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./mobile/driver_app
+
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v4
+
+      - name: 🐦 Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+        with:
+          cache: true
+
+      - name: 📦 Get Packages
+        run: flutter pub get
+
+      - name: 🚀 Publish Shorebird Patch
+        run: shorebird patch android --force
+        env:
+          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}

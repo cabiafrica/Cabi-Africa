@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 export interface Wallet {
     userId: string;
@@ -6,13 +6,198 @@ export interface Wallet {
     currency: string;
 }
 
+export interface PaymentResult {
+    status: 'SUCCESS' | 'FAILED' | 'PENDING';
+    transactionId?: string;
+    message?: string;
+    checkoutRequestId?: string;
+}
+
+export interface MpesaConfig {
+    enabled: boolean;
+    environment: 'sandbox' | 'production';
+    shortCode: string;
+    passkey: string;
+    consumerKey: string;
+    consumerSecret: string;
+    callbackUrl: string;
+}
+
 @Injectable()
 export class PaymentService {
+    private readonly logger = new Logger(PaymentService.name);
     private wallets = new Map<string, Wallet>();
+    private mpesaConfig: MpesaConfig;
 
     constructor() {
         this.wallets.set('passenger_1', { userId: 'passenger_1', balance: 50.00, currency: 'USD' });
         this.wallets.set('driver_bob', { userId: 'driver_bob', balance: 100.00, currency: 'USD' });
+        
+        this.loadMpesaConfig();
+    }
+
+    private loadMpesaConfig() {
+        const mpesaEnabled = process.env.MPESA_ENABLED === 'true';
+        if (!mpesaEnabled) {
+            this.logger.warn('M-Pesa integration is disabled');
+            this.mpesaConfig = { enabled: false } as any;
+            return;
+        }
+
+        this.mpesaConfig = {
+            enabled: true,
+            environment: (process.env.MPESA_ENV || 'sandbox') as 'sandbox' | 'production',
+            shortCode: process.env.MPESA_SHORT_CODE || '',
+            passkey: process.env.MPESA_PASSKEY || '',
+            consumerKey: process.env.MPESA_CONSUMER_KEY || '',
+            consumerSecret: process.env.MPESA_CONSUMER_SECRET || '',
+            callbackUrl: process.env.MPESA_CALLBACK_URL || '',
+        };
+        this.logger.log('M-Pesa configuration loaded');
+    }
+
+    isMpesaEnabled(): boolean {
+        return this.mpesaConfig?.enabled === true;
+    }
+
+    async initiateMpesaPayment(
+        phoneNumber: string,
+        amount: number,
+        accountReference: string,
+        transactionDescription: string
+    ): Promise<PaymentResult> {
+        if (!this.isMpesaEnabled()) {
+            return {
+                status: 'FAILED',
+                message: 'M-Pesa is not enabled'
+            };
+        }
+
+        this.logger.log(`Initiating M-Pesa STK Push: ${phoneNumber}, KES ${amount}`);
+
+        try {
+            const response = await this.callMpesaApi('stk-push', {
+                phoneNumber,
+                amount,
+                accountReference,
+                transactionDesc: transactionDescription
+            });
+
+            return {
+                status: 'PENDING',
+                checkoutRequestId: response.CheckoutRequestID,
+                transactionId: response.MerchantRequestID,
+                message: 'STK Push sent to phone'
+            };
+        } catch (error: any) {
+            this.logger.error(`M-Pesa STK Push failed: ${error.message}`);
+            return {
+                status: 'FAILED',
+                message: error.message || 'M-Pesa payment failed'
+            };
+        }
+    }
+
+    async initiateDriverPayout(
+        driverPhoneNumber: string,
+        amount: number,
+        occasion: string
+    ): Promise<PaymentResult> {
+        if (!this.isMpesaEnabled()) {
+            return {
+                status: 'FAILED',
+                message: 'M-Pesa is not enabled'
+            };
+        }
+
+        this.logger.log(`Initiating B2C payout: ${driverPhoneNumber}, KES ${amount}`);
+
+        try {
+            const response = await this.callMpesaApi('b2c', {
+                phoneNumber: driverPhoneNumber,
+                amount,
+                occasion
+            });
+
+            return {
+                status: 'PENDING',
+                transactionId: response.ConversationID,
+                message: 'B2C payout initiated'
+            };
+        } catch (error: any) {
+            this.logger.error(`M-Pesa B2C failed: ${error.message}`);
+            return {
+                status: 'FAILED',
+                message: error.message || 'Driver payout failed'
+            };
+        }
+    }
+
+    async processMpesaCallback(callbackData: any): Promise<{ success: boolean; transactionId?: string }> {
+        this.logger.log('Processing M-Pesa callback');
+
+        if (callbackData.Body?.stkCallback) {
+            const stkCallback = callbackData.Body.stkCallback;
+            const checkoutRequestId = stkCallback.CheckoutRequestID;
+            const resultCode = stkCallback.ResultCode;
+
+            if (resultCode === 0) {
+                const metadata = stkCallback.CallbackMetadata?.Item || [];
+                const mpesaReceiptNumber = metadata.find((i: any) => i.Name === 'MpesaReceiptNumber')?.Value;
+                
+                this.logger.log(`STK Payment successful: ${mpesaReceiptNumber}`);
+                return { success: true, transactionId: mpesaReceiptNumber };
+            } else {
+                this.logger.warn(`STK Payment failed: ${stkCallback.ResultDesc}`);
+                return { success: false };
+            }
+        }
+
+        return { success: false };
+    }
+
+    private async callMpesaApi(endpoint: string, payload: any): Promise<any> {
+        const baseUrl = this.mpesaConfig.environment === 'production'
+            ? 'https://api.safaricom.co.ke'
+            : 'https://sandbox.safaricom.co.ke';
+
+        const token = await this.getMpesaAccessToken(baseUrl);
+        
+        const response = await fetch(`${baseUrl}/mpesa/${endpoint}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`M-Pesa API error: ${error}`);
+        }
+
+        return response.json();
+    }
+
+    private async getMpesaAccessToken(baseUrl: string): Promise<string> {
+        const auth = Buffer.from(
+            `${this.mpesaConfig.consumerKey}:${this.mpesaConfig.consumerSecret}`
+        ).toString('base64');
+
+        const response = await fetch(`${baseUrl}/oauth/v1/generate?grant_type=client_credentials`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Basic ${auth}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to get M-Pesa access token');
+        }
+
+        const data = await response.json();
+        return data.access_token;
     }
 
     async getWallet(userId: string) {

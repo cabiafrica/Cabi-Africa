@@ -20,7 +20,10 @@ class AuthLoading extends AuthState {
 
 class Authenticated extends AuthState {
   final String token;
-  const Authenticated(this.token);
+  final Map<String, dynamic>? user;
+  const Authenticated(this.token, [this.user]);
+
+  String? get userId => user?['id']?.toString() ?? user?['userId']?.toString();
 }
 
 class Unauthenticated extends AuthState {
@@ -55,7 +58,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       await _analyticsService.logEvent('login_success');
       // --------------------------
 
-      state = Authenticated(token);
+      state = Authenticated(token, result.user);
     } catch (e) {
       state = const Unauthenticated();
       rethrow;
@@ -114,3 +117,17 @@ class AuthProvider extends ChangeNotifier {
     // notifyListeners();
   }
 }
+
+// -- Riverpod Providers --
+final analyticsServiceProvider = Provider((ref) => AnalyticsService());
+final authServiceProvider = Provider((ref) => AuthService());
+final secureStorageProvider = Provider((ref) => const FlutterSecureStorage());
+
+final passengerAuthProvider =
+    StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+  return AuthNotifier(
+    ref.watch(authServiceProvider),
+    ref.watch(secureStorageProvider),
+    ref.watch(analyticsServiceProvider),
+  );
+});

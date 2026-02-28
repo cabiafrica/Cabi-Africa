@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../config/app_config.dart';
 
 class AuthResult {
   final bool isSignedIn;
@@ -11,7 +12,7 @@ class AuthResult {
 }
 
 class AuthService {
-  final String baseUrl = 'http://10.0.2.2:3333/api'; // For Android Emulator
+  String get baseUrl => AppConfig.authApiUrl;
 
   Future<AuthResult> signIn(
       {required String email, required String password}) async {

@@ -1,5 +1,8 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/router';
+import axios from 'axios';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3334/api';
 
 export interface AuthUser {
     id: string;
@@ -20,6 +23,7 @@ interface AuthContextType {
     updateUser: (userData: AuthUser) => void;
     loading: boolean;
     hasPermission: (permission: string) => boolean;
+    refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,6 +33,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
+    const refreshProfile = async () => {
+        const token = localStorage.getItem('authToken');
+        const userDataString = localStorage.getItem('authUser');
+        if (!token || !userDataString) return;
+
+        try {
+            const currentUser = JSON.parse(userDataString);
+            const response = await axios.get(`${API_URL}/settings/user/${currentUser.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const freshUser = { ...currentUser, ...response.data };
+            localStorage.setItem('authUser', JSON.stringify(freshUser));
+            setUser(freshUser);
+        } catch (error) {
+            console.error("Failed to refresh profile", error);
+        }
+    };
+
     useEffect(() => {
         // On initial load, check localStorage for existing session
         const token = localStorage.getItem('authToken');
@@ -36,7 +59,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if (token && userDataString) {
             try {
-                setUser(JSON.parse(userDataString));
+                const parsedUser = JSON.parse(userDataString);
+                setUser(parsedUser);
+
+                // Trigger background refresh if token exists
+                axios.get(`${API_URL}/settings/user/${parsedUser.id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                }).then(res => {
+                    const freshUser = { ...parsedUser, ...res.data };
+                    localStorage.setItem('authUser', JSON.stringify(freshUser));
+                    setUser(freshUser);
+                }).catch(e => console.error("Background profile sync failed", e));
+
             } catch (e) {
                 console.error("Failed to parse auth user", e);
                 localStorage.removeItem('authToken');
@@ -50,6 +84,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem('authToken', token);
         localStorage.setItem('authUser', JSON.stringify(userData));
         setUser(userData);
+
+        // Fetch fresh settings immediately
+        // Just triggering without await to not block redirect
+        refreshProfile();
 
         // Redirect based on role
         if (userData.role === 'driver') {
@@ -81,7 +119,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated: !!user, user, login, logout, updateUser, loading, hasPermission }}>
+        <AuthContext.Provider value={{ isAuthenticated: !!user, user, login, logout, updateUser, loading, hasPermission, refreshProfile }}>
             {children}
         </AuthContext.Provider>
     );

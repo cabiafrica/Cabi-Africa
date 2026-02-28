@@ -1,0 +1,819 @@
+﻿flutter : Package ampl
+ify_secure_storage:lin
+ux references amplify_
+secure_storage_dart:li
+nux as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+At line:1 char:1
++ flutter test test/sc
+reens/my_earnings_scre
+en_test.dart 
+test/screens/p ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (Package am   
+ plify...plugin pa    
+ckage.:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+00:00 +0: loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+00:00 +0: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart: shows loading indicator while fetching earnings
+00:01 +1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart: displays an error message when fetching fails
+00:01 +2: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart: on successful fetch displays earnings summary and recent transactions
+00:01 +3: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: shows loading indicator while fetching profile
+00:02 +4: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: shows loading indicator while fetching profile
+00:02 +5: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: shows loading indicator while fetching profile
+00:02 +6: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart: on successful fetch tapping "Request Payout" shows confirmation dialog and calls service
+00:02 +7: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart: on successful fetch tapping "Request Payout" shows confirmation dialog and calls service
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Payout request submitted successfully!": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart:243:11)
+<asynchronous suspension>
+#5      main.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart:202:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart line 243
+The test description was:
+  tapping "Request Payout" shows confirmation dialog and calls service
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+00:03 +7 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: on successful fetch displays all profile information correctly
+00:03 +7 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart: on successful fetch tapping "Request Payout" shows confirmation dialog and calls service [E]
+  Test failed. See exception logs above.
+  The test description was: tapping "Request Payout" shows confirmation dialog and calls service
+  
+Package amplify_secure
+_storage:linux 
+references amplify_sec
+ure_storage_dart:linux
+ as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: linux: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+Package amplify_secure
+_storage:windows 
+references amplify_sec
+ure_storage_dart:windo
+ws as the default 
+plugin, but the 
+package does not 
+exist, or is not a 
+plugin package.
+Ask the maintainers 
+of amplify_secure_stor
+age to either avoid 
+referencing a default 
+implementation via 
+`platforms: windows: 
+default_package: ampli
+fy_secure_storage_dart
+` or create a plugin 
+named amplify_secure_s
+torage_dart.
+
+lib/screens/home_scree
+n.dart:10:8: Error: 
+Error when reading 'li
+b/widgets/cabi_map_con
+troller.dart': The 
+system cannot find 
+the file specified
+import '../widgets/cab
+i_map_controller.dart'
+;
+       ^
+lib/screens/home_scree
+n.dart:11:8: Error: 
+Error when reading 'li
+b/widgets/active_trip_
+card.dart': The 
+system cannot find 
+the file specified
+import '../widgets/act
+ive_trip_card.dart';
+       ^
+lib/screens/home_scree
+n.dart:12:8: Error: 
+Error when reading 'li
+b/widgets/ride_request
+_dialog.dart': The 
+system cannot find 
+the file specified
+import '../widgets/rid
+e_request_dialog.dart'
+;
+       ^
+00:04 +7 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: on successful fetch displays all profile information correctly
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY RENDERING LIBRARY Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 28 pixels on the bottom.
+
+The relevant error-causing widget was:
+  Column
+  Column:file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/lib/screens/profile_screen.dart:317:20
+
+The overflowing RenderFlex has an orientation of Axis.vertical.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#803a2 OVERFLOWING:
+  creator: Column ΓåÉ MediaQuery ΓåÉ Padding ΓåÉ SafeArea ΓåÉ Padding ΓåÉ DecoratedBox ΓåÉ ConstrainedBox ΓåÉ
+    Container ΓåÉ Stack ΓåÉ Column ΓåÉ Padding ΓåÉ _SingleChildViewport ΓåÉ Γï»
+  parentData: offset=Offset(0.0, 56.0) (can use size)
+  constraints: BoxConstraints(w=1200.0, h=224.0)
+  size: Size(1200.0, 224.0)
+  direction: vertical
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: center
+  verticalDirection: down
+  spacing: 0.0
+ΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñ
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextContainingWidgetFinder:<Found 0 widgets with text containing 4.9: []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/profile_screen_test.dart:113:9)
+<asynchronous suspension>
+#5      main.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/profile_screen_test.dart:104:7)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/profile_screen_test.dart line 113
+The test description was:
+  displays all profile information correctly
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+00:04 +7 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: on successful fetch displays all profile information correctly [E]
+  Test failed. See exception logs above.
+  The test description was: displays all profile information correctly
+  
+00:04 +7 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: on successful fetch tapping edit button shows a snackbar
+lib/screens/home_scree
+n.dart:30:3: Error: 
+Type 
+'CabiMapController' 
+not found.
+  CabiMapController? 
+_cabiMapController;
+  ^^^^^^^^^^^^^^^^^
+lib/screens/home_scree
+n.dart:34:3: Error: 
+Type 'RideRequest' 
+not found.
+  RideRequest? 
+_activeRide;
+  ^^^^^^^^^^^
+lib/screens/home_scree
+n.dart:101:25: Error: 
+Type 'RideRequest' 
+not found.
+  void _showRideReques
+t(RideRequest ride) {
+                      
+  ^^^^^^^^^^^
+lib/screens/home_scree
+n.dart:118:28: Error: 
+Type 'RideRequest' 
+not found.
+  Future<void> _accept
+Ride(RideRequest 
+ride) async {
+                      
+     ^^^^^^^^^^^
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY RENDERING LIBRARY Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 28 pixels on the bottom.
+
+The relevant error-causing widget was:
+  Column
+  Column:file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/lib/screens/profile_screen.dart:317:20
+
+The overflowing RenderFlex has an orientation of Axis.vertical.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#6a479 OVERFLOWING:
+  creator: Column ΓåÉ MediaQuery ΓåÉ Padding ΓåÉ SafeArea ΓåÉ Padding ΓåÉ DecoratedBox ΓåÉ ConstrainedBox ΓåÉ
+    Container ΓåÉ Stack ΓåÉ Column ΓåÉ Padding ΓåÉ _SingleChildViewport ΓåÉ Γï»
+  parentData: offset=Offset(0.0, 56.0) (can use size)
+  constraints: BoxConstraints(w=1200.0, h=224.0)
+  size: Size(1200.0, 224.0)
+  direction: vertical
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: center
+  verticalDirection: down
+  spacing: 0.0
+ΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñΓùóΓùñ
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+00:05 +7 -3: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: on successful fetch tapping edit button shows a snackbar [E]
+  Test failed. See exception logs above.
+  The test description was: tapping edit button shows a snackbar
+  
+test/screens/home_scre
+en_test.dart:39:9: 
+Error: Undefined name 
+'authServiceProvider'.
+        authServicePro
+vider.overrideWithValu
+e(mockAuthService),
+        
+^^^^^^^^^^^^^^^^^^^
+test/screens/home_scre
+en_test.dart:30:32: 
+Error: The method 'get
+LatestRideRequest' 
+isn't defined for the 
+type 
+'MockRideService'.
+ - 'MockRideService' 
+is from 'test/screens/
+home_screen_test.dart'
+.
+Try correcting the 
+name to the name of 
+an existing method, 
+or defining a method 
+named 'getLatestRideRe
+quest'.
+    when(() => mockRid
+eService.getLatestRide
+Request())
+                      
+         
+^^^^^^^^^^^^^^^^^^^^
+test/screens/home_scre
+en_test.dart:32:32: 
+Error: The getter 
+'currentUser' isn't 
+defined for the type 
+'MockAuthService'.
+ - 'MockAuthService' 
+is from 'test/screens/
+home_screen_test.dart'
+.
+Try correcting the 
+name to the name of 
+an existing getter, 
+or defining a getter 
+or field named 
+'currentUser'.
+    when(() => mockAut
+hService.currentUser).
+thenReturn(null);
+                      
+         ^^^^^^^^^^^
+lib/screens/home_scree
+n.dart:30:3: Error: 
+'CabiMapController' 
+isn't a type.
+  CabiMapController? 
+_cabiMapController;
+  ^^^^^^^^^^^^^^^^^
+lib/screens/home_scree
+n.dart:34:3: Error: 
+'RideRequest' isn't a 
+type.
+  RideRequest? 
+_activeRide;
+  ^^^^^^^^^^^
+lib/screens/home_scree
+n.dart:52:47: Error: 
+The method 
+'getCurrentLocation' 
+isn't defined for the 
+type 
+'LocationService'.
+ - 'LocationService' 
+is from 'package:drive
+r_app/services/locatio
+n_service.dart' ('lib/
+services/location_serv
+ice.dart').
+Try correcting the 
+name to the name of 
+an existing method, 
+or defining a method 
+named 
+'getCurrentLocation'.
+      final position 
+= await _locationServi
+ce.getCurrentLocation(
+);
+                      
+                      
+  ^^^^^^^^^^^^^^^^^^
+lib/screens/home_scree
+n.dart:92:42: Error: 
+The method 'getLatestR
+ideRequest' isn't 
+defined for the type 
+'RideService'.
+ - 'RideService' is 
+from 'package:driver_a
+pp/services/ride_servi
+ce.dart' ('lib/service
+s/ride_service.dart').
+Try correcting the 
+name to the name of 
+an existing method, 
+or defining a method 
+named 'getLatestRideRe
+quest'.
+      final newRide = 
+await _rideService.get
+LatestRideRequest();
+                      
+                   
+^^^^^^^^^^^^^^^^^^^^
+lib/screens/home_scree
+n.dart:101:25: Error: 
+'RideRequest' isn't a 
+type.
+  void _showRideReques
+t(RideRequest ride) {
+                      
+  ^^^^^^^^^^^
+lib/screens/home_scree
+n.dart:105:29: Error: 
+The method 
+'RideRequestDialog' 
+isn't defined for the 
+type 
+'_HomeScreenState'.
+ - '_HomeScreenState' 
+is from 'package:drive
+r_app/screens/home_scr
+een.dart' ('lib/screen
+s/home_screen.dart').
+Try correcting the 
+name to the name of 
+an existing method, 
+or defining a method 
+named 
+'RideRequestDialog'.
+      builder: 
+(context) => 
+RideRequestDialog(
+                      
+      
+^^^^^^^^^^^^^^^^^
+lib/screens/home_scree
+n.dart:118:28: Error: 
+'RideRequest' isn't a 
+type.
+  Future<void> _accept
+Ride(RideRequest 
+ride) async {
+                      
+     ^^^^^^^^^^^
+lib/screens/home_scree
+n.dart:120:26: Error: 
+The method 
+'updateRideStatus' 
+isn't defined for the 
+type 'RideService'.
+ - 'RideService' is 
+from 'package:driver_a
+pp/services/ride_servi
+ce.dart' ('lib/service
+s/ride_service.dart').
+Try correcting the 
+name to the name of 
+an existing method, 
+or defining a method 
+named 
+'updateRideStatus'.
+      await _rideServi
+ce.updateRideStatus(ri
+de.id, 'accepted');
+                      
+   ^^^^^^^^^^^^^^^^
+lib/screens/home_scree
+n.dart:134:26: Error: 
+The method 
+'CabiMapController' 
+isn't defined for the 
+type 
+'_HomeScreenState'.
+ - '_HomeScreenState' 
+is from 'package:drive
+r_app/screens/home_scr
+een.dart' ('lib/screen
+s/home_screen.dart').
+Try correcting the 
+name to the name of 
+an existing method, 
+or defining a method 
+named 
+'CabiMapController'.
+    
+_cabiMapController = C
+abiMapController(contr
+oller);
+                      
+   ^^^^^^^^^^^^^^^^^
+lib/screens/home_scree
+n.dart:196:22: Error: 
+The method 
+'ActiveTripCard' 
+isn't defined for the 
+type 
+'_HomeScreenState'.
+ - '_HomeScreenState' 
+is from 'package:drive
+r_app/screens/home_scr
+een.dart' ('lib/screen
+s/home_screen.dart').
+Try correcting the 
+name to the name of 
+an existing method, 
+or defining a method 
+named 
+'ActiveTripCard'.
+              child: 
+ActiveTripCard(
+                     
+^^^^^^^^^^^^^^
+00:06 +7 -4: loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/home_screen_test.dart [E]
+  Failed to load "D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/home_screen_test.dart":
+  Compilation failed for testPath=D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/home_screen_test.dart: lib/screens/home_screen.dart:10:8: Error: Error when reading 'lib/widgets/cabi_map_controller.dart': The system cannot find the file specified
+  import '../widgets/cabi_map_controller.dart';
+         ^
+  lib/screens/home_screen.dart:11:8: Error: Error when reading 'lib/widgets/active_trip_card.dart': The system cannot find the file specified
+  import '../widgets/active_trip_card.dart';
+         ^
+  lib/screens/home_screen.dart:12:8: Error: Error when reading 'lib/widgets/ride_request_dialog.dart': The system cannot find the file specified
+  import '../widgets/ride_request_dialog.dart';
+         ^
+  lib/screens/home_screen.dart:30:3: Error: Type 'CabiMapController' not found.
+    CabiMapController? _cabiMapController;
+    ^^^^^^^^^^^^^^^^^
+  lib/screens/home_screen.dart:34:3: Error: Type 'RideRequest' not found.
+    RideRequest? _activeRide;
+    ^^^^^^^^^^^
+  lib/screens/home_screen.dart:101:25: Error: Type 'RideRequest' not found.
+    void _showRideRequest(RideRequest ride) {
+                          ^^^^^^^^^^^
+  lib/screens/home_screen.dart:118:28: Error: Type 'RideRequest' not found.
+    Future<void> _acceptRide(RideRequest ride) async {
+                             ^^^^^^^^^^^
+  test/screens/home_screen_test.dart:39:9: Error: Undefined name 'authServiceProvider'.
+          authServiceProvider.overrideWithValue(mockAuthService),
+          ^^^^^^^^^^^^^^^^^^^
+  test/screens/home_screen_test.dart:30:32: Error: The method 'getLatestRideRequest' isn't defined for the type 'MockRideService'.
+   - 'MockRideService' is from 'test/screens/home_screen_test.dart'.
+  Try correcting the name to the name of an existing method, or defining a method named 'getLatestRideRequest'.
+      when(() => mockRideService.getLatestRideRequest())
+                                 ^^^^^^^^^^^^^^^^^^^^
+  test/screens/home_screen_test.dart:32:32: Error: The getter 'currentUser' isn't defined for the type 'MockAuthService'.
+   - 'MockAuthService' is from 'test/screens/home_screen_test.dart'.
+  Try correcting the name to the name of an existing getter, or defining a getter or field named 'currentUser'.
+      when(() => mockAuthService.currentUser).thenReturn(null);
+                                 ^^^^^^^^^^^
+  lib/screens/home_screen.dart:30:3: Error: 'CabiMapController' isn't a type.
+    CabiMapController? _cabiMapController;
+    ^^^^^^^^^^^^^^^^^
+  lib/screens/home_screen.dart:34:3: Error: 'RideRequest' isn't a type.
+    RideRequest? _activeRide;
+    ^^^^^^^^^^^
+  lib/screens/home_screen.dart:52:47: Error: The method 'getCurrentLocation' isn't defined for the type 'LocationService'.
+   - 'LocationService' is from 'package:driver_app/services/location_service.dart' ('lib/services/location_service.dart').
+  Try correcting the name to the name of an existing method, or defining a method named 'getCurrentLocation'.
+        final position = await _locationService.getCurrentLocation();
+                                                ^^^^^^^^^^^^^^^^^^
+  lib/screens/home_screen.dart:92:42: Error: The method 'getLatestRideRequest' isn't defined for the type 'RideService'.
+   - 'RideService' is from 'package:driver_app/services/ride_service.dart' ('lib/services/ride_service.dart').
+  Try correcting the name to the name of an existing method, or defining a method named 'getLatestRideRequest'.
+        final newRide = await _rideService.getLatestRideRequest();
+                                           ^^^^^^^^^^^^^^^^^^^^
+  lib/screens/home_screen.dart:101:25: Error: 'RideRequest' isn't a type.
+    void _showRideRequest(RideRequest ride) {
+                          ^^^^^^^^^^^
+  lib/screens/home_screen.dart:105:29: Error: The method 'RideRequestDialog' isn't defined for the type '_HomeScreenState'.
+   - '_HomeScreenState' is from 'package:driver_app/screens/home_screen.dart' ('lib/screens/home_screen.dart').
+  Try correcting the name to the name of an existing method, or defining a method named 'RideRequestDialog'.
+        builder: (context) => RideRequestDialog(
+                              ^^^^^^^^^^^^^^^^^
+  lib/screens/home_screen.dart:118:28: Error: 'RideRequest' isn't a type.
+    Future<void> _acceptRide(RideRequest ride) async {
+                             ^^^^^^^^^^^
+  lib/screens/home_screen.dart:120:26: Error: The method 'updateRideStatus' isn't defined for the type 'RideService'.
+   - 'RideService' is from 'package:driver_app/services/ride_service.dart' ('lib/services/ride_service.dart').
+  Try correcting the name to the name of an existing method, or defining a method named 'updateRideStatus'.
+        await _rideService.updateRideStatus(ride.id, 'accepted');
+                           ^^^^^^^^^^^^^^^^
+  lib/screens/home_screen.dart:134:26: Error: The method 'CabiMapController' isn't defined for the type '_HomeScreenState'.
+   - '_HomeScreenState' is from 'package:driver_app/screens/home_screen.dart' ('lib/screens/home_screen.dart').
+  Try correcting the name to the name of an existing method, or defining a method named 'CabiMapController'.
+      _cabiMapController = CabiMapController(controller);
+                           ^^^^^^^^^^^^^^^^^
+  lib/screens/home_screen.dart:196:22: Error: The method 'ActiveTripCard' isn't defined for the type '_HomeScreenState'.
+   - '_HomeScreenState' is from 'package:driver_app/screens/home_screen.dart' ('lib/screens/home_screen.dart').
+  Try correcting the name to the name of an existing method, or defining a method named 'ActiveTripCard'.
+                child: ActiveTripCard(
+                       ^^^^^^^^^^^^^^
+  .
+00:06 +7 -4: Some tests failed.

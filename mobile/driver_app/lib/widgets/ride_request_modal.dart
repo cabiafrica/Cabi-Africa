@@ -49,9 +49,56 @@ class RideRequestModal extends StatelessWidget {
       }
     }
 
-    void handleReject() {
-      service.rejectRide(requestData['rideId'], driverId);
+    void handleReject({String? reason}) {
+      // If passenger is not verified, add default reason
+      final rejectReason = reason ?? 
+          (requestData['isVerifiedPassenger'] == false 
+              ? 'unverified passenger' 
+              : null);
+      service.rejectRide(requestData['rideId'], driverId, rejectReason);
       rideProvider.clearRideRequest();
+    }
+
+    void showRejectDialog() {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Reject Ride'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (requestData['isVerifiedPassenger'] == false) ...[
+                const Text('This passenger is not verified. Would you like to reject with reason?'),
+                const SizedBox(height: 16),
+              ],
+              const Text('Are you sure you want to reject this ride?'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            if (requestData['isVerifiedPassenger'] == false)
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  handleReject(reason: 'unverified passenger');
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                child: const Text('Reject (Unverified)'),
+              ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                handleReject();
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('Reject'),
+            ),
+          ],
+        ),
+      );
     }
 
     return Container(
@@ -72,6 +119,54 @@ class RideRequestModal extends StatelessWidget {
                 Text('Pickup: ${requestData['pickupAddress']}'),
                 Text('Distance to pickup: ${requestData['distanceToPickup']}'),
                 Text('Passenger Rating: ${requestData['passengerRating']} ★'),
+                
+                // Show passenger verification status
+                if (requestData['isVerifiedPassenger'] == true) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.green[100],
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.verified, size: 16, color: Colors.green[700]),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Verified Passenger',
+                          style: TextStyle(color: Colors.green[700], fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ] else ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.orange[100],
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.warning, size: 16, color: Colors.orange[700]),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Unverified',
+                          style: TextStyle(color: Colors.orange[700], fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'This passenger has not verified their identity',
+                    style: TextStyle(color: Colors.orange[700], fontSize: 12),
+                  ),
+                ],
                 if ((requestData['passengerBadges'] as List?)?.isNotEmpty ??
                     false) ...[
                   const SizedBox(height: 12),
@@ -105,7 +200,7 @@ class RideRequestModal extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     ElevatedButton(
-                      onPressed: handleReject,
+                      onPressed: showRejectDialog,
                       style:
                           ElevatedButton.styleFrom(backgroundColor: Colors.red),
                       child: const Text('Reject'),

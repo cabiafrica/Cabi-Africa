@@ -213,9 +213,9 @@ async function prepareForLaunch() {
                         'VERIFICATION_DOCUMENTS_VIEW', 'VERIFICATION_DOCUMENTS_APPROVE',
                         'VERIFICATION_BIOMETRIC_VIEW', 'VERIFICATION_BIOMETRIC_APPROVE',
 
-                        // Organization & MLM
+                        // Organization & Referral Program
                         'ORGANIZATION_VIEW', 'ORGANIZATION_EDIT', 'ORGANIZATION_APPROVE',
-                        'MLM_FORMULA_VIEW', 'MLM_FORMULA_EDIT',
+                        'REFERRAL_FORMULA_VIEW', 'REFERRAL_FORMULA_EDIT',
                         'REFERRAL_TRACKING_VIEW',
 
                         // Marketing

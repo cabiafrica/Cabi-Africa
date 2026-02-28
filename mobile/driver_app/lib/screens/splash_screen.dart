@@ -73,8 +73,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    const primaryGold = Color(0xFFFFD700);
+    const prestigeBlack = Color(0xFF0A0A0A);
+
     return Scaffold(
-      backgroundColor: Colors.black, // Match login theme
+      backgroundColor: prestigeBlack,
       body: Center(
         child: AnimatedBuilder(
           animation: _controller,
@@ -86,26 +89,28 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Logo Container (Similar to Login Header)
+                    // New Dawn Luxury Logo Container
                     Container(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                          color: const Color(0xFFFFD700), // Taxi Gold
-                          shape: BoxShape.circle, // Circular for premium feel
+                          shape: BoxShape.circle,
+                          border: Border.all(color: primaryGold, width: 2),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFFD700)
-                                  .withValues(alpha: 0.3),
+                              color: primaryGold.withValues(alpha: 0.2),
                               blurRadius: 30,
-                              spreadRadius: 5,
+                              spreadRadius: 2,
                             )
                           ]),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/images/cabi_logo.jpg',
-                          width: 64,
-                          height: 64,
+                          'assets/images/cabi_logo.png', // Reimagined "C" logo
+                          width: 80,
+                          height: 80,
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.directions_car,
+                                  color: primaryGold, size: 40),
                         ),
                       ),
                     ),
@@ -114,21 +119,32 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     Text(
                       'CABI AFRICA',
                       style: GoogleFonts.outfit(
-                        color: const Color(0xFFFFD700), // Gold on Black
+                        color: primaryGold,
                         fontWeight: FontWeight.bold,
-                        fontSize: 36,
-                        letterSpacing: 3.0,
+                        fontSize: 22,
+                        letterSpacing: 4.0,
                       ),
                     ),
                     const SizedBox(height: 12),
-                    // Tagline or Loader
+                    // Sub-Branding
                     Text(
-                      'DRIVER APP',
+                      'D R I V E R   |   N E W   D A W N',
                       style: GoogleFonts.inter(
                         color: Colors.white.withValues(alpha: 0.6),
-                        fontSize: 14,
-                        letterSpacing: 2.0,
+                        fontSize: 10,
+                        letterSpacing: 4.0,
                         fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 48),
+                    // Elegant Tagline
+                    Text(
+                      'Drive. Earn. Thrive.',
+                      style: GoogleFonts.outfit(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w300,
                       ),
                     ),
                   ],

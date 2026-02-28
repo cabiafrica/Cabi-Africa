@@ -324,4 +324,78 @@ export class ReferralService {
       { driverId: 'd-2', email: 'driver2@example.com', name: 'Jane Smith', amount: 500, referralCount: 1 },
     ];
   }
+
+  async applyReferralCode(userId: string, code: string, userType: string) {
+    // 1. Validate code
+    const referrer = await this.prisma.user.findFirst({
+      where: { referralCode: code.toUpperCase() }
+    });
+
+    if (!referrer) {
+      throw new Error('Invalid referral code');
+    }
+
+    if (referrer.id === userId) {
+      throw new Error('Cannot refer yourself');
+    }
+
+    // 2. Update user with referrer
+    // Check if already referred?
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (user?.referredById) {
+      throw new Error('User already has a referrer');
+    }
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { referredById: referrer.id }
+    });
+
+    // 3. Trigger initial rewards if applicable
+    // (For now just linking is enough for tracking)
+    this.logger.log(`User ${userId} applied referral code ${code} from ${referrer.id}`);
+
+    return { success: true, referrerId: referrer.id };
+  }
+
+  async getReferralCode(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { referralCode: true }
+    });
+    return { code: user?.referralCode };
+  }
+
+  async getDownline(userId: string, maxLevel = 2) {
+    return this.fetchDownlineRecursive(userId, 1, maxLevel);
+  }
+
+  private async fetchDownlineRecursive(userId: string, currentLevel: number, maxLevel: number): Promise<any[]> {
+    if (currentLevel > maxLevel) return [];
+
+    const users = await this.prisma.user.findMany({
+      where: { referredById: userId },
+      select: {
+        id: true,
+        fullName: true,
+        role: true,
+        createdAt: true,
+        status: true,
+      }
+    });
+
+    const downline = await Promise.all(users.map(async (user) => {
+      const children = await this.fetchDownlineRecursive(user.id, currentLevel + 1, maxLevel);
+      return {
+        id: user.id,
+        name: user.fullName,
+        status: (user as any).status || 'ACTIVE',
+        level: currentLevel,
+        joinedAt: user.createdAt,
+        children: children
+      };
+    }));
+
+    return downline;
+  }
 }

@@ -5,13 +5,14 @@
 @tailwind utilities;
 
 :root {
-  --primary: #3B82F6;
-  --primary-dark: #2563EB;
+  --primary: #FFD700;
+  /* Prestige Gold */
+  --primary-dark: #E6C200;
   --secondary: #F59E0B;
-  --background: #0f172a;
-  /* Slate 900 */
-  --surface: #1e293b;
-  /* Slate 800 */
+  --background: #0A0A0A;
+  /* Deep Prestige Black */
+  --surface: #141414;
+  /* Elevated Black Surface */
   --text-main: #f1f5f9;
   /* Slate 100 */
   --text-muted: #94a3b8;
@@ -85,11 +86,11 @@ body {
 }
 
 .btn-primary {
-  @apply btn bg-primary text-white hover:bg-primary-dark;
+  @apply btn bg-primary text-black hover:bg-primary-dark font-semibold;
 }
 
 .btn-outline {
-  @apply btn border border-primary text-primary hover:bg-primary hover:text-white;
+  @apply btn border border-primary text-primary hover:bg-primary hover:text-black;
 }
 
 /* Base styles for inputs */

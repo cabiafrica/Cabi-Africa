@@ -81,6 +81,27 @@ export class ReferralController {
         return { message: 'Referral configuration updated successfully' };
     }
 
+    @Post('apply')
+    async applyReferralCode(@Body() body: { userId: string, code: string, userType: string }) {
+        if (!body.userId || !body.code) {
+            throw new HttpException('User ID and Code Required', 400);
+        }
+        try {
+            await this.referralService.applyReferralCode(body.userId, body.code, body.userType || 'passenger');
+            return { success: true, message: 'Referral code applied successfully' };
+        } catch (e) {
+            throw new HttpException(e.message, 400);
+        }
+    }
+
+    @Get('code')
+    async getReferralCode(@Query('userId') userId: string) {
+        if (!userId) {
+            throw new HttpException('User ID is required', 400);
+        }
+        return this.referralService.getReferralCode(userId);
+    }
+
     @Get('promo-config')
     async getPromoConfig() {
         return this.referralService.getPromoConfig();
@@ -90,5 +111,13 @@ export class ReferralController {
     async updatePromoConfig(@Body() config: any) {
         await this.referralService.updatePromoConfig(config);
         return { message: 'Promotional configuration updated successfully' };
+    }
+
+    @Get('downline')
+    async getDownline(@Query('userId') userId: string) {
+        if (!userId) {
+            throw new HttpException('User ID is required', 400);
+        }
+        return this.referralService.getDownline(userId);
     }
 }

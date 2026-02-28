@@ -1,0 +1,345 @@
+﻿flutter : Package amplify_s
+ecure_storage:linux 
+references amplify_secure_s
+torage_dart:linux as the 
+default plugin, but the 
+package does not exist, or 
+is not a plugin package.
+At line:1 char:1
++ flutter test test/screens
+/my_earnings_screen_test.da
+rt test/screens/p ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (Pac  
+  kage amplify...plugin    
+ package.:String) [], R    
+emoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: linux: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+Package amplify_secure_stor
+age:windows references ampl
+ify_secure_storage_dart:win
+dows as the default 
+plugin, but the package 
+does not exist, or is not 
+a plugin package.
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: windows: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+Package amplify_secure_stor
+age:linux references amplif
+y_secure_storage_dart:linux
+ as the default plugin, 
+but the package does not 
+exist, or is not a plugin 
+package.
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: linux: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+Package amplify_secure_stor
+age:windows references ampl
+ify_secure_storage_dart:win
+dows as the default 
+plugin, but the package 
+does not exist, or is not 
+a plugin package.
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: windows: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+Package amplify_secure_stor
+age:linux references amplif
+y_secure_storage_dart:linux
+ as the default plugin, 
+but the package does not 
+exist, or is not a plugin 
+package.
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: linux: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+Package amplify_secure_stor
+age:windows references ampl
+ify_secure_storage_dart:win
+dows as the default 
+plugin, but the package 
+does not exist, or is not 
+a plugin package.
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: windows: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+Package amplify_secure_stor
+age:linux references amplif
+y_secure_storage_dart:linux
+ as the default plugin, 
+but the package does not 
+exist, or is not a plugin 
+package.
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: linux: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+Package amplify_secure_stor
+age:windows references ampl
+ify_secure_storage_dart:win
+dows as the default 
+plugin, but the package 
+does not exist, or is not 
+a plugin package.
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: windows: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+00:00 +0: loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart
+Package amplify_secure_stor
+age:linux references amplif
+y_secure_storage_dart:linux
+ as the default plugin, 
+but the package does not 
+exist, or is not a plugin 
+package.
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: linux: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+Package amplify_secure_stor
+age:windows references ampl
+ify_secure_storage_dart:win
+dows as the default 
+plugin, but the package 
+does not exist, or is not 
+a plugin package.
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: windows: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+Package amplify_secure_stor
+age:linux references amplif
+y_secure_storage_dart:linux
+ as the default plugin, 
+but the package does not 
+exist, or is not a plugin 
+package.
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: linux: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+Package amplify_secure_stor
+age:windows references ampl
+ify_secure_storage_dart:win
+dows as the default 
+plugin, but the package 
+does not exist, or is not 
+a plugin package.
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: windows: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+00:00 +0: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart: shows loading indicator while fetching earnings
+00:01 +1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: shows loading indicator while fetching profile
+00:01 +2: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: shows loading indicator while fetching profile
+00:01 +3: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: shows loading indicator while fetching profile
+00:02 +4: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart: on successful fetch tapping "Request Payout" shows confirmation dialog and calls service
+00:02 +5: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart: on successful fetch tapping "Request Payout" shows confirmation dialog and calls service
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following TestFailure was thrown running a test:
+Expected: at least one matching candidate
+  Actual: _TextContainingWidgetFinder:<Found 0 widgets with text containing successfully: []>
+   Which: means none were found but some were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart:173:11)
+<asynchronous suspension>
+#5      main.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart:140:9)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart line 173
+The test description was:
+  tapping "Request Payout" shows confirmation dialog and calls service
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+00:03 +5 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: on successful fetch displays all profile information correctly
+00:03 +5 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart: on successful fetch tapping "Request Payout" shows confirmation dialog and calls service [E]
+  Test failed. See exception logs above.
+  The test description was: tapping "Request Payout" shows confirmation dialog and calls service
+  
+00:03 +5 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: on successful fetch displays all profile information correctly
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following TestFailure was thrown running a test:
+Expected: at least one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Active": []>
+   Which: means none were found but some were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/profile_screen_test.dart:97:9)
+<asynchronous suspension>
+#5      main.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/profile_screen_test.dart:86:7)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/profile_screen_test.dart line 97
+The test description was:
+  displays all profile information correctly
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+00:03 +5 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: on successful fetch displays all profile information correctly [E]
+  Test failed. See exception logs above.
+  The test description was: displays all profile information correctly
+  
+00:03 +5 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart: on successful fetch tapping edit button shows a snackbar
+Package amplify_secure_stor
+age:linux references amplif
+y_secure_storage_dart:linux
+ as the default plugin, 
+but the package does not 
+exist, or is not a plugin 
+package.
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: linux: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+Package amplify_secure_stor
+age:windows references ampl
+ify_secure_storage_dart:win
+dows as the default 
+plugin, but the package 
+does not exist, or is not 
+a plugin package.
+Ask the maintainers of 
+amplify_secure_storage to 
+either avoid referencing a 
+default implementation via 
+`platforms: windows: 
+default_package: amplify_se
+cure_storage_dart` or 
+create a plugin named ampli
+fy_secure_storage_dart.
+
+00:06 +6 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/home_screen_test.dart: HomeScreen shows loading initially if position is null
+00:07 +7 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/home_screen_test.dart: HomeScreen toggle online/offline status
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following assertion was thrown running a test:
+pumpAndSettle timed out
+
+When the exception was thrown, this was the stack:
+#0      WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:717:11)
+<asynchronous suspension>
+#1      TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#2      main.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/home_screen_test.dart:64:5)
+<asynchronous suspension>
+#3      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#4      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  HomeScreen toggle online/offline status
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+00:13 +7 -3: D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/home_screen_test.dart: HomeScreen toggle online/offline status [E]
+  Test failed. See exception logs above.
+  The test description was: HomeScreen toggle online/offline status
+  
+00:13 +7 -3: Some tests failed.

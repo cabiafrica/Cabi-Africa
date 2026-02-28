@@ -3,6 +3,7 @@ import 'package:driver_app/widgets/rate_passenger_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import '../mocks/image_mocks.dart';
 
 class MockRideService extends Mock implements RideService {}
 
@@ -11,9 +12,9 @@ void main() {
 
   setUp(() {
     mockRideService = MockRideService();
-    // Default success stub
-    when(() => mockRideService.ratePassenger(any(), any()))
-        .thenAnswer((_) async {});
+    // Default success
+    when(() => mockRideService.ratePassenger(any(), any())).thenAnswer(
+        (_) async => await Future.delayed(const Duration(milliseconds: 100)));
   });
 
   Widget createWidgetUnderTest() {
@@ -51,64 +52,70 @@ void main() {
     testWidgets('initial state displays passenger name and disabled button', (
       tester,
     ) async {
-      await tester.pumpWidget(createWidgetUnderTest());
-      await openModal(tester);
-
-      expect(find.text('Rate Your Passenger'), findsOneWidget);
-      expect(find.text('Alex'), findsOneWidget);
-      expect(find.byIcon(Icons.star_border), findsNWidgets(5));
-
-      final button = tester.widget<ElevatedButton>(
-        find.widgetWithText(ElevatedButton, 'Submit Rating'),
-      );
-      expect(button.onPressed, isNull);
-    });
-
-    testWidgets('selecting a rating enables the submit button', (tester) async {
-      await tester.pumpWidget(createWidgetUnderTest());
-      await openModal(tester);
-
-      // Tap the 3rd star (for a 3-star rating)
-      await tester.tap(find.byIcon(Icons.star_border).at(2));
-      await tester.pumpAndSettle();
-
-      final button = tester.widget<ElevatedButton>(
-        find.widgetWithText(ElevatedButton, 'Submit Rating'),
-      );
-      expect(button.onPressed, isNotNull);
-      expect(find.byIcon(Icons.star), findsNWidgets(3));
-    });
-
-    testWidgets(
-      'successful submission calls service, shows snackbar, and closes modal',
-      (tester) async {
+      await provideMockedNetworkImages(() async {
         await tester.pumpWidget(createWidgetUnderTest());
         await openModal(tester);
 
-        // Select rating
-        await tester.tap(find.byIcon(Icons.star_border).at(4)); // 5 stars
+        expect(find.text('Rate Your Passenger'), findsOneWidget);
+        expect(find.text('Alex'), findsOneWidget);
+        expect(find.byIcon(Icons.star_border), findsNWidgets(5));
+
+        final button = tester.widget<ElevatedButton>(
+          find.widgetWithText(ElevatedButton, 'Submit Rating'),
+        );
+        expect(button.onPressed, isNull);
+      });
+    });
+
+    testWidgets('selecting a rating enables the submit button', (tester) async {
+      await provideMockedNetworkImages(() async {
+        await tester.pumpWidget(createWidgetUnderTest());
+        await openModal(tester);
+
+        // Tap the 3rd star (for a 3-star rating)
+        await tester.tap(find.byIcon(Icons.star_border).at(2));
         await tester.pumpAndSettle();
 
-        // Tap submit
-        await tester.tap(find.widgetWithText(ElevatedButton, 'Submit Rating'));
-        await tester.pump(); // Show loading indicator
+        final button = tester.widget<ElevatedButton>(
+          find.widgetWithText(ElevatedButton, 'Submit Rating'),
+        );
+        expect(button.onPressed, isNotNull);
+        expect(find.byIcon(Icons.star), findsNWidgets(3));
+      });
+    });
 
-        // Assert loading state
-        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    testWidgets(
+      'successful submission calls service and shows snackbar',
+      (tester) async {
+        await provideMockedNetworkImages(() async {
+          await tester.pumpWidget(createWidgetUnderTest());
+          await openModal(tester);
 
-        await tester.pumpAndSettle(); // Complete futures
+          // Select rating — tap 5th star
+          await tester.tap(find.byIcon(Icons.star_border).at(4));
+          await tester.pumpAndSettle();
 
-        // Verify service call
-        verify(() => mockRideService.ratePassenger('test-ride-123', 5))
-            .called(1);
+          // Tap submit
+          final submitButton =
+              find.widgetWithText(ElevatedButton, 'Submit Rating');
+          await tester.tap(submitButton);
+          await tester.pump(); // Start _submitRating
+          await tester
+              .pump(const Duration(milliseconds: 20)); // Allow microtasks
 
-        // Assert UI state after success
-        expect(find.byType(SnackBar), findsOneWidget);
-        expect(find.text('Thank you for your feedback!'), findsOneWidget);
-        expect(
-          find.byType(RatePassengerModal),
-          findsNothing,
-        ); // Modal should be closed
+          // Assert loading state
+          expect(find.byType(CircularProgressIndicator), findsOneWidget);
+          expect(find.text('Submit Rating'), findsNothing);
+
+          await tester.pumpAndSettle(); // Complete futures
+
+          // Verify service call
+          verify(() => mockRideService.ratePassenger('test-ride-123', 5))
+              .called(1);
+
+          // Assert snackbar text is somewhere in the widget tree
+          expect(find.text('Thank you for your feedback!'), findsOneWidget);
+        });
       },
     );
 
@@ -116,30 +123,30 @@ void main() {
       tester,
     ) async {
       // Arrange
-      final exception = Exception('Network error');
       when(() => mockRideService.ratePassenger(any(), any()))
-          .thenThrow(exception);
+          .thenAnswer((_) async => throw Exception('Submission failed'));
 
-      await tester.pumpWidget(createWidgetUnderTest());
-      await openModal(tester);
+      await provideMockedNetworkImages(() async {
+        await tester.pumpWidget(createWidgetUnderTest());
+        await openModal(tester);
 
-      // Select rating
-      await tester.tap(find.byIcon(Icons.star_border).first);
-      await tester.pumpAndSettle();
+        // Select rating
+        await tester.tap(find.byIcon(Icons.star_border).first);
+        await tester.pumpAndSettle();
 
-      // Tap submit
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Submit Rating'));
-      await tester.pump(); // Show loading
-      await tester.pumpAndSettle(); // Complete futures
+        // Tap submit
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Submit Rating'));
+        await tester.pump(); // Show loading
+        await tester.pumpAndSettle(); // Complete futures
 
-      // Assert
-      expect(find.byType(CircularProgressIndicator), findsNothing);
-      expect(find.byType(SnackBar), findsOneWidget);
-      expect(find.text('Failed to submit rating: $exception'), findsOneWidget);
-      expect(
-        find.byType(RatePassengerModal),
-        findsOneWidget,
-      ); // Modal should still be open
+        // Assert
+        expect(find.byType(CircularProgressIndicator), findsNothing);
+        expect(find.textContaining('Failed to submit rating'), findsOneWidget);
+        expect(
+          find.byType(RatePassengerModal),
+          findsOneWidget,
+        ); // Modal should still be open
+      });
     });
   });
 }

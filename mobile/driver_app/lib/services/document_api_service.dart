@@ -1,3 +1,4 @@
+import '../config/app_config.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,9 +9,7 @@ final dioProvider = Provider(
   (ref) {
     // Backend is on port 3000 (driver-lead-service default?) or via gateway.
     // Assuming 3000 based on previous checks.
-    final baseUrl = defaultTargetPlatform == TargetPlatform.android
-        ? 'http://10.0.2.2:3010/api/v1'
-        : 'http://localhost:3010/api/v1';
+    final baseUrl = 'http://${AppConfig.host}:3010/api/v1';
     return Dio(BaseOptions(baseUrl: baseUrl));
   },
 );

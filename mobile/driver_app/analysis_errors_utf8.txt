@@ -1,0 +1,8 @@
+﻿Analyzing driver_app...
+
+  error - test\screens\referral_commissions_screen_test.dart:22:44 - The returned type 'Authenticated' isn't returnable from a 'AuthNotifier' function, as required by the closure's context. - return_of_invalid_type_from_closure
+  error - test\screens\sacco_screen_test.dart:22:44 - The returned type 'Authenticated' isn't returnable from a 'AuthNotifier' function, as required by the closure's context. - return_of_invalid_type_from_closure
+   info - test\screens\referral_commissions_screen_test.dart:22:44 - Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation. - prefer_const_constructors
+   info - test\screens\sacco_screen_test.dart:22:44 - Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation. - prefer_const_constructors
+
+4 issues found.

@@ -184,7 +184,7 @@
   - [ ] Refund process verified
 
 - [ ] **Commission System**
-  - [ ] MLM formulas verified
+  - [ ] Referral formulas verified
   - [ ] Commission calculations tested
   - [ ] Payout process configured
 

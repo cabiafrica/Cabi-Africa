@@ -3,22 +3,84 @@ import 'package:passenger_app/theme/app_theme.dart';
 import 'package:passenger_app/widgets/profile_avatar_with_qr.dart';
 import 'package:passenger_app/widgets/menu_grid_item.dart';
 import 'package:passenger_app/screens/login_screen.dart';
+import 'package:passenger_app/services/settings_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
+
+  @override
+  State<MenuScreen> createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> {
+  final SettingsService _settingsService = SettingsService();
+  String _toursUrl = '';
+  bool _isLoadingToursUrl = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadToursUrl();
+  }
+
+  Future<void> _loadToursUrl() async {
+    final url = await _settingsService.getToursUrl();
+    if (mounted) {
+      setState(() {
+        _toursUrl = url;
+        _isLoadingToursUrl = false;
+      });
+    }
+  }
+
+  Future<void> _launchToursUrl() async {
+    if (_toursUrl.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Tours booking is not yet configured. Please check back later.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    final uri = Uri.tryParse(_toursUrl);
+    if (uri == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tours link is invalid. Please contact support.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not open tours website. Please try again.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.darkBackground,
       appBar: AppBar(
         title: const Text('Menu',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.darkBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.black),
+          icon: const Icon(Icons.close, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -105,7 +167,7 @@ class MenuScreen extends StatelessWidget {
                       onTap: () => Navigator.pushNamed(context,
                           '/referral_status')), // Assuming mapping exists or will create
                 ],
-                backgroundColor: Colors.red.shade50), // Light Red background
+                backgroundColor: AppTheme.darkSurface), // Dark Surface background
 
             const SizedBox(height: 24),
 
@@ -134,6 +196,12 @@ class MenuScreen extends StatelessWidget {
                       title: 'About',
                       baseColor: Colors.teal,
                       onTap: () {}),
+                  // Tours Button — URL configured by admin
+                  MenuGridItem(
+                      icon: Icons.travel_explore,
+                      title: 'Tours',
+                      baseColor: Colors.orange,
+                      onTap: _isLoadingToursUrl ? () {} : _launchToursUrl),
                   MenuGridItem(
                       icon: Icons.logout,
                       title: 'Logout',
@@ -147,14 +215,14 @@ class MenuScreen extends StatelessWidget {
                       }),
                 ],
                 backgroundColor:
-                    const Color(0xFFFFFDE7)), // Light Yellow background
+                    AppTheme.darkSurface), // Dark Surface background
 
             const SizedBox(height: 40),
             // Footer Version
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
-              color: Colors.grey[100],
+              color: AppTheme.darkBackground,
               child: const Center(
                 child: Text(
                   'SW Version : 1.0.0 (5)',
@@ -178,7 +246,7 @@ class MenuScreen extends StatelessWidget {
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF1A1A1A),
+            color: Colors.white,
           ),
         ),
       ),

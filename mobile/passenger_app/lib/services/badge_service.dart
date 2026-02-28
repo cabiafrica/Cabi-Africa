@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../config/app_config.dart';
 
 class Badge {
   final String id;
@@ -46,15 +47,7 @@ class Badge {
 }
 
 class BadgeService {
-  String get _baseUrl {
-    if (kIsWeb) {
-      return 'http://localhost:3334/api';
-    }
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:3334/api';
-    }
-    return 'http://localhost:3334/api';
-  }
+  String get _baseUrl => AppConfig.dispatchApiUrl;
 
   Future<List<Badge>> getUserBadges(String userId) async {
     try {

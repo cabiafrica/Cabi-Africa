@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../services/auth_service.dart';
-import 'package:core_ui/core_ui.dart';
 
 class RegistrationScreen extends StatefulWidget {
   final AuthService? authService;
@@ -130,145 +129,269 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const primaryColor = Color(0xFFFFD700); // Prestige Gold
+    const backgroundColor = Color(0xFF0A0A0A); // Deep Black
+    const surfaceColor = Color(0xFF141414); // Elevated Black
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Account')),
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        title: const Text(
+          'CREATE ACCOUNT',
+          style: TextStyle(
+            color: primaryColor,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+            fontSize: 16,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: primaryColor),
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const SizedBox(height: 10),
               Center(
                 child: GestureDetector(
                   onTap: _pickImage,
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.grey[200],
-                    backgroundImage: _profileImage != null
-                        ? FileImage(_profileImage!)
-                        : null,
-                    child: _profileImage == null
-                        ? const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.camera_alt,
-                                  size: 30, color: Colors.grey),
-                              Text('Add Photo', style: TextStyle(fontSize: 10)),
-                            ],
-                          )
-                        : null,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: primaryColor.withValues(alpha: 0.5), width: 1),
+                      boxShadow: [
+                        BoxShadow(
+                          color: primaryColor.withValues(alpha: 0.1),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      radius: 55,
+                      backgroundColor: surfaceColor,
+                      backgroundImage: _profileImage != null
+                          ? FileImage(_profileImage!)
+                          : null,
+                      child: _profileImage == null
+                          ? const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.camera_enhance_outlined,
+                                    size: 32, color: primaryColor),
+                                SizedBox(height: 4),
+                                Text(
+                                  'PHOTO',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : null,
+                    ),
                   ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'PERSONAL DETAILS',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white54,
+                  fontSize: 12,
+                  letterSpacing: 1,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 24),
               Row(
                 children: [
                   Expanded(
-                    child: TextFormField(
+                    child: _buildTextField(
                       controller: _firstNameController,
-                      decoration:
-                          const InputDecoration(labelText: 'First Name'),
+                      label: 'First Name',
+                      hint: 'John',
                       validator: (value) =>
                           (value == null || value.isEmpty) ? 'Required' : null,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: TextFormField(
+                    child: _buildTextField(
                       controller: _lastNameController,
-                      decoration: const InputDecoration(labelText: 'Last Name'),
+                      label: 'Last Name',
+                      hint: 'Doe',
                       validator: (value) =>
                           (value == null || value.isEmpty) ? 'Required' : null,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              TextFormField(
+              const SizedBox(height: 20),
+              _buildTextField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email Address'),
+                label: 'Email Address',
+                hint: 'john.doe@prestige.com',
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) => (value == null || !value.contains('@'))
                     ? 'Please enter a valid email'
                     : null,
               ),
-              const SizedBox(height: 16),
-              TextFormField(
+              const SizedBox(height: 20),
+              _buildTextField(
                 controller: _phoneController,
-                decoration:
-                    const InputDecoration(labelText: 'Phone Number (+254...)'),
+                label: 'Phone Number',
+                hint: '+254...',
                 keyboardType: TextInputType.phone,
                 validator: _validatePhone,
               ),
-              const SizedBox(height: 16),
-              TextFormField(
+              const SizedBox(height: 20),
+              _buildTextField(
                 controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  ),
-                ),
-                obscureText: !_isPasswordVisible,
+                label: 'Password',
+                hint: '••••••••',
+                isPassword: true,
+                isObscured: !_isPasswordVisible,
+                onToggleVisibility: () =>
+                    setState(() => _isPasswordVisible = !_isPasswordVisible),
                 validator: _validatePassword,
               ),
-              const SizedBox(height: 16),
-              TextFormField(
+              const SizedBox(height: 20),
+              _buildTextField(
                 controller: _confirmPasswordController,
-                decoration: InputDecoration(
-                  labelText: 'Confirm Password',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isConfirmPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                      });
-                    },
-                  ),
-                ),
-                obscureText: !_isConfirmPasswordVisible,
+                label: 'Confirm Password',
+                hint: '••••••••',
+                isPassword: true,
+                isObscured: !_isConfirmPasswordVisible,
+                onToggleVisibility: () => setState(() =>
+                    _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty)
                     return 'Please confirm your password';
-                  }
-                  if (value != _passwordController.text) {
+                  if (value != _passwordController.text)
                     return 'Passwords do not match';
-                  }
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
-              TextFormField(
+              const SizedBox(height: 20),
+              _buildTextField(
                 controller: _referralController,
-                decoration: const InputDecoration(
-                  labelText: 'Referral Code (Optional)',
-                ),
+                label: 'Referral Code (Optional)',
+                hint: 'LUXURY2026',
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 40),
               _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : PrimaryButton(
+                  ? const Center(
+                      child: CircularProgressIndicator(color: primaryColor))
+                  : ElevatedButton(
                       onPressed: _submitRegistration,
-                      label: 'Register',
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        elevation: 10,
+                        shadowColor: primaryColor.withValues(alpha: 0.3),
+                      ),
+                      child: const Text(
+                        'COMPLETE REGISTRATION',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
                     ),
+              const SizedBox(height: 30),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    TextInputType? keyboardType,
+    bool isPassword = false,
+    bool isObscured = false,
+    VoidCallback? onToggleVisibility,
+    String? Function(String?)? validator,
+  }) {
+    const primaryColor = Color(0xFFFFD700);
+    const surfaceColor = Color(0xFF141414);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            label.toUpperCase(),
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
+          ),
+        ),
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          obscureText: isObscured,
+          style: const TextStyle(color: Colors.white, fontSize: 15),
+          validator: validator,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.2)),
+            filled: true,
+            fillColor: surfaceColor,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            suffixIcon: isPassword
+                ? IconButton(
+                    icon: Icon(
+                      isObscured
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      color: primaryColor.withValues(alpha: 0.5),
+                    ),
+                    onPressed: onToggleVisibility,
+                  )
+                : null,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide:
+                  BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide:
+                  BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: primaryColor, width: 1),
+            ),
+            errorStyle: const TextStyle(color: Colors.redAccent, fontSize: 11),
+          ),
+        ),
+      ],
     );
   }
 }

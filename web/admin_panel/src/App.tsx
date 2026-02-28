@@ -38,6 +38,7 @@ import { FraudDetectionDashboard } from './components/dashboard/FraudDetectionDa
 import { Header } from './components/layout/Header';
 import { DashboardAnalytics } from './components/dashboard/DashboardAnalytics';
 import { GamificationManagement } from './components/settings/GamificationManagement';
+import { AppSettingsManagement } from './components/settings/AppSettingsManagement';
 import { JobActivitiesDashboard } from './components/operations/JobActivitiesDashboard';
 
 // New Role Pages
@@ -124,6 +125,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
       { icon: '🚗', label: 'Services', view: '/vehicle-categories', permission: 'VEHICLES_VIEW' },
       { icon: '🏅', label: 'Badges', view: '/badge-management', permission: 'SYSTEM_SETTINGS_EDIT' },
       { icon: '🎮', label: 'Gamification', view: '/gamification', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: '⚙️', label: 'App Settings', view: '/app-settings', permission: 'SYSTEM_SETTINGS_EDIT' },
     ]
   },
   {
@@ -216,33 +218,33 @@ function App() {
 
   return (
     <div className={`flex h-screen transition-colors duration-200 ${darkMode ? 'dark bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
-      <aside className="sidebar w-64 flex-shrink-0 flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-200">
-        <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col items-center text-center">
-          <h1 className="text-xl font-bold tracking-wider text-slate-900 dark:text-white">CABI ADMIN</h1>
-          <div className="mt-1 text-xs text-slate-500 dark:text-slate-400 mb-6">Control Center</div>
+      <aside className="sidebar w-64 flex-shrink-0 flex flex-col bg-slate-950 border-r border-white/5 shadow-2xl transition-colors duration-200">
+        <div className="p-8 border-b border-white/5 flex flex-col items-center text-center">
+          <h1 className="text-xl font-black tracking-[0.3em] text-primary">CABI ADMIN</h1>
+          <div className="mt-1 text-[10px] text-slate-500 uppercase tracking-[0.2em] mb-6">Security Terminal</div>
 
           <img
-            src={user?.profilePictureUrl || "https://ui-avatars.com/api/?name=" + (user?.fullName || "Admin") + "&background=random"}
+            src={user?.profilePictureUrl || "https://ui-avatars.com/api/?name=" + (user?.fullName || "Admin") + "&background=FFD700&color=000"}
             alt="Profile"
-            className="w-16 h-16 rounded-full object-cover ring-2 ring-slate-200 dark:ring-slate-700 mb-3"
+            className="w-16 h-16 rounded-full object-cover ring-1 ring-primary/30 mb-3 grayscale hover:grayscale-0 transition-all duration-500"
           />
-          <div className="font-medium text-slate-900 dark:text-slate-200">{user?.fullName || 'Admin User'}</div>
-          <div className="text-xs text-slate-500 dark:text-slate-400 mb-4">{user?.email || 'admin@cabialpha.com'}</div>
+          <div className="font-semibold text-slate-200">{user?.fullName || 'Admin User'}</div>
+          <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-4">{user?.role || 'Senior Administrator'}</div>
 
           <div className="flex gap-2 w-full justify-center">
             <button
               onClick={toggleTheme}
-              className="p-2 text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-full transition-all duration-200 text-slate-600 dark:text-slate-300"
+              className="p-2 text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-white/10 rounded-full transition-all duration-200 text-slate-400"
               title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
               {darkMode ? '☀️' : '🌙'}
             </button>
             <button
               onClick={logout}
-              className="flex items-center gap-2 px-4 py-2 text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-red-50 hover:dark:bg-red-900/20 hover:text-red-600 hover:dark:text-red-400 border border-slate-200 dark:border-slate-700 rounded-full transition-all duration-200 group text-slate-600 dark:text-slate-300"
+              className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-slate-900 hover:bg-primary hover:text-black border border-white/10 rounded-full transition-all duration-300 group text-slate-400"
             >
               <span>Log Out</span>
-              <span className="group-hover:translate-x-1 transition-transform">↪️</span>
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
             </button>
           </div>
         </div>
@@ -275,7 +277,7 @@ function App() {
                           navigate(item.view);
                         }
                       }}
-                      className={`w-full text-left px-6 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-3 transition-colors border-l-4 ${isActive(item.view) ? 'bg-blue-50 dark:bg-slate-800 border-blue-600 dark:border-blue-500 text-blue-700 dark:text-blue-400 font-medium' : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'}`}
+                      className={`w-full text-left px-6 py-3 hover:bg-white/5 flex items-center gap-3 transition-colors border-l-2 ${isActive(item.view) ? 'bg-primary/5 border-primary text-primary font-semibold' : 'border-transparent text-slate-500 hover:text-slate-200'}`}
                     >
                       <span className="text-lg">{item.icon}</span>
                       <span className="text-sm">{item.label}</span>
@@ -297,7 +299,7 @@ function App() {
             {(user?.role === 'admin' || hasPermission('DISPATCH_DASHBOARD_VIEW') || hasPermission('view_dashboard')) && (
               <button
                 onClick={() => window.open('http://localhost:3002', '_blank')}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 rounded-lg transition-all duration-200 group shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 hover:border-blue-600"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:bg-primary hover:text-black rounded-lg transition-all duration-300 group border border-white/5"
                 title="Launch Dispatch Management Panel"
               >
                 <span className="text-base group-hover:scale-110 transition-transform">🖥️</span>
@@ -308,7 +310,7 @@ function App() {
             {(user?.role === 'admin' || hasPermission('USER_PORTAL_DASHBOARD_VIEW') || hasPermission('view_dashboard')) && (
               <button
                 onClick={() => window.open('http://localhost:3000', '_blank')}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 rounded-lg transition-all duration-200 group shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 hover:border-indigo-600"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:bg-white hover:text-black rounded-lg transition-all duration-300 group border border-white/5"
                 title="View User Portal Dashboard"
               >
                 <span className="text-base group-hover:scale-110 transition-transform">👤</span>
@@ -385,6 +387,7 @@ function App() {
               <Route path="/bi-dashboard" element={<BIDashboard />} />
               <Route path="/fraud-alerts" element={<FraudDetectionDashboard />} />
               <Route path="/gamification" element={<GamificationManagement />} />
+              <Route path="/app-settings" element={<AppSettingsManagement />} />
             </Routes>
           </div>
         </div>
