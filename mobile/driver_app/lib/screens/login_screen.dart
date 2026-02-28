@@ -224,7 +224,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
-                                  'Sign Up',
+                                  'Register to Drive',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -343,7 +343,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               borderRadius: BorderRadius.circular(12)),
                         ),
                         child: const Text(
-                            'Register'), // Changed from 'Go to Registration Portal'
+                            'Register to Drive'), // Changed from 'Go to Registration Portal'
                       ),
                     ],
 
