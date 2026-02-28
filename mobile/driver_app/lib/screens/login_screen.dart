@@ -154,7 +154,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                     // Title
                     const Text(
-                      'Drive with Pride',
+                      'DRIVE WITH PRIDE.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
