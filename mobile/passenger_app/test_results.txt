@@ -1,0 +1,383 @@
+﻿00:00 +0: loading D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/accessibility_test.dart
+00:00 +0: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/accessibility_test.dart: Accessibility Tests HomeScreen has accessible elements
+00:00 +1: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/accessibility_test.dart: Accessibility Tests HomeScreen has accessible elements
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY WIDGETS LIBRARY Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following ProviderNotFoundException was thrown building HomeScreen(dirty, dependencies:
+[MediaQuery], state: _HomeScreenState#3d9f2):
+Error: Could not find the correct Provider<AuthProvider> above this HomeScreen Widget
+
+This happens because you used a `BuildContext` that does not include the provider
+of your choice. There are a few common scenarios:
+
+- You added a new provider in your `main.dart` and performed a hot-reload.
+  To fix, perform a hot-restart.
+
+- The provider you are trying to read is in a different route.
+
+  Providers are "scoped". So if you insert of provider inside a route, then
+  other routes will not be able to access that provider.
+
+- You used a `BuildContext` that is an ancestor of the provider you are trying to read.
+
+  Make sure that HomeScreen is under your MultiProvider/Provider<AuthProvider>.
+  This usually happens when you are creating a provider and trying to read it immediately.
+
+  For example, instead of:
+
+  ```
+  Widget build(BuildContext context) {
+    return Provider<Example>(
+      create: (_) => Example(),
+      // Will throw a ProviderNotFoundError, because `context` is associated
+      // to the widget that is the parent of `Provider<Example>`
+      child: Text(context.watch<Example>().toString()),
+    );
+  }
+  ```
+
+  consider using `builder` like so:
+
+  ```
+  Widget build(BuildContext context) {
+    return Provider<Example>(
+      create: (_) => Example(),
+      // we use `builder` to obtain a new `BuildContext` that has access to the provider
+      builder: (context, child) {
+        // No longer throws
+        return Text(context.watch<Example>().toString());
+      }
+    );
+  }
+  ```
+
+If none of these solutions work, consider asking for help on StackOverflow:
+https://stackoverflow.com/questions/tagged/flutter
+
+The relevant error-causing widget was:
+  HomeScreen
+  HomeScreen:file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/passenger_app/test/accessibility_test.dart:10:55
+
+When the exception was thrown, this was the stack:
+#0      Provider._inheritedElementOf (package:provider/src/provider.dart:377:7)
+#1      Provider.of (package:provider/src/provider.dart:327:30)
+#2      _HomeScreenState.build (package:passenger_app/screens/home_screen.dart:489:70)
+#3      StatefulElement.build (package:flutter/src/widgets/framework.dart:5934:27)
+#4      ConsumerStatefulElement.build (package:flutter_riverpod/src/consumer.dart:539:20)
+#5      ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5820:15)
+#6      StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5985:11)
+#7      Element.rebuild (package:flutter/src/widgets/framework.dart:5532:7)
+#8      ComponentElement._firstBuild (package:flutter/src/widgets/framework.dart:5802:5)
+#9      StatefulElement._firstBuild (package:flutter/src/widgets/framework.dart:5976:11)
+#10     ComponentElement.mount (package:flutter/src/widgets/framework.dart:5796:5)
+...     Normal element mounting (260 frames)
+#270    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4590:20)
+#271    MultiChildRenderObjectElement.inflateWidget (package:flutter/src/widgets/framework.dart:7269:36)
+#272    MultiChildRenderObjectElement.mount (package:flutter/src/widgets/framework.dart:7285:32)
+...     Normal element mounting (465 frames)
+#737    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4590:20)
+#738    Element.updateChild (package:flutter/src/widgets/framework.dart:4053:20)
+#739    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5844:16)
+#740    Element.rebuild (package:flutter/src/widgets/framework.dart:5532:7)
+#741    ProxyElement.update (package:flutter/src/widgets/framework.dart:6152:5)
+#742    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#743    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#744    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5844:16)
+#745    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5985:11)
+#746    Element.rebuild (package:flutter/src/widgets/framework.dart:5532:7)
+#747    StatefulElement.update (package:flutter/src/widgets/framework.dart:6010:5)
+#748    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#749    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5844:16)
+#750    Element.rebuild (package:flutter/src/widgets/framework.dart:5532:7)
+#751    ProxyElement.update (package:flutter/src/widgets/framework.dart:6152:5)
+#752    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#753    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#754    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5844:16)
+#755    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5985:11)
+#756    Element.rebuild (package:flutter/src/widgets/framework.dart:5532:7)
+#757    StatefulElement.update (package:flutter/src/widgets/framework.dart:6010:5)
+#758    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#759    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5844:16)
+#760    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5985:11)
+#761    Element.rebuild (package:flutter/src/widgets/framework.dart:5532:7)
+#762    StatefulElement.update (package:flutter/src/widgets/framework.dart:6010:5)
+#763    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#764    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5844:16)
+#765    Element.rebuild (package:flutter/src/widgets/framework.dart:5532:7)
+#766    ProxyElement.update (package:flutter/src/widgets/framework.dart:6152:5)
+#767    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#768    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5844:16)
+#769    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5985:11)
+#770    Element.rebuild (package:flutter/src/widgets/framework.dart:5532:7)
+#771    StatefulElement.update (package:flutter/src/widgets/framework.dart:6010:5)
+#772    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#773    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5844:16)
+#774    Element.rebuild (package:flutter/src/widgets/framework.dart:5532:7)
+#775    ProxyElement.update (package:flutter/src/widgets/framework.dart:6152:5)
+#776    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#777    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5844:16)
+#778    Element.rebuild (package:flutter/src/widgets/framework.dart:5532:7)
+#779    ProxyElement.update (package:flutter/src/widgets/framework.dart:6152:5)
+#780    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#781    _RawViewElement._updateChild (package:flutter/src/widgets/view.dart:481:16)
+#782    _RawViewElement.update (package:flutter/src/widgets/view.dart:568:5)
+#783    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#784    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5844:16)
+#785    Element.rebuild (package:flutter/src/widgets/framework.dart:5532:7)
+#786    StatelessElement.update (package:flutter/src/widgets/framework.dart:5898:5)
+#787    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#788    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5844:16)
+#789    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5985:11)
+#790    Element.rebuild (package:flutter/src/widgets/framework.dart:5532:7)
+#791    StatefulElement.update (package:flutter/src/widgets/framework.dart:6010:5)
+#792    Element.updateChild (package:flutter/src/widgets/framework.dart:4037:15)
+#793    RootElement._rebuild (package:flutter/src/widgets/binding.dart:1782:16)
+#794    RootElement.update (package:flutter/src/widgets/binding.dart:1760:5)
+#795    RootElement.performRebuild (package:flutter/src/widgets/binding.dart:1774:7)
+#796    Element.rebuild (package:flutter/src/widgets/framework.dart:5532:7)
+#797    BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2750:15)
+#798    BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2807:11)
+#799    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3111:18)
+#800    AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:1506:19)
+#801    RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:495:5)
+#802    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1434:15)
+#803    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1347:9)
+#804    AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:1335:9)
+#807    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#808    AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1324:27)
+#809    WidgetTester.pumpWidget.<anonymous closure> (package:flutter_test/src/widget_tester.dart:598:22)
+#812    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#813    WidgetTester.pumpWidget (package:flutter_test/src/widget_tester.dart:595:27)
+#814    main.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/passenger_app/test/accessibility_test.dart:10:20)
+#815    testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#816    TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following ProviderNotFoundException was thrown running a test:
+Error: Could not find the correct Provider<AuthProvider> above this HomeScreen Widget
+
+This happens because you used a `BuildContext` that does not include the provider
+of your choice. There are a few common scenarios:
+
+- You added a new provider in your `main.dart` and performed a hot-reload.
+  To fix, perform a hot-restart.
+
+- The provider you are trying to read is in a different route.
+
+  Providers are "scoped". So if you insert of provider inside a route, then
+  other routes will not be able to access that provider.
+
+- You used a `BuildContext` that is an ancestor of the provider you are trying to read.
+
+  Make sure that HomeScreen is under your MultiProvider/Provider<AuthProvider>.
+  This usually happens when you are creating a provider and trying to read it immediately.
+
+  For example, instead of:
+
+  ```
+  Widget build(BuildContext context) {
+    return Provider<Example>(
+      create: (_) => Example(),
+      // Will throw a ProviderNotFoundError, because `context` is associated
+      // to the widget that is the parent of `Provider<Example>`
+      child: Text(context.watch<Example>().toString()),
+    );
+  }
+  ```
+
+  consider using `builder` like so:
+
+  ```
+  Widget build(BuildContext context) {
+    return Provider<Example>(
+      create: (_) => Example(),
+      // we use `builder` to obtain a new `BuildContext` that has access to the provider
+      builder: (context, child) {
+        // No longer throws
+        return Text(context.watch<Example>().toString());
+      }
+    );
+  }
+  ```
+
+If none of these solutions work, consider asking for help on StackOverflow:
+https://stackoverflow.com/questions/tagged/flutter
+
+When the exception was thrown, this was the stack:
+#0      Provider._inheritedElementOf (package:provider/src/provider.dart:377:7)
+#1      Provider.of (package:provider/src/provider.dart:327:30)
+#2      _HomeScreenState._checkActiveRide (package:passenger_app/screens/home_screen.dart:162:34)
+#3      _HomeScreenState.initState.<anonymous closure> (package:passenger_app/screens/home_screen.dart:94:7)
+#4      SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1434:15)
+#5      SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1361:11)
+#6      AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:1335:9)
+#9      TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#10     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1324:27)
+#11     WidgetTester.pumpWidget.<anonymous closure> (package:flutter_test/src/widget_tester.dart:598:22)
+#14     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#15     WidgetTester.pumpWidget (package:flutter_test/src/widget_tester.dart:595:27)
+#16     main.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/passenger_app/test/accessibility_test.dart:10:20)
+#17     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#18     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+The test description was:
+  HomeScreen has accessible elements
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+00:01 +1 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/accessibility_test.dart: Accessibility Tests HomeScreen has accessible elements [E]
+  Test failed. See exception logs above.
+  The test description was: HomeScreen has accessible elements
+  
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following StateError was thrown running a test (but after the test had completed):
+Bad state: No ProviderScope found
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/framework.dart:110:7)
+#1      ConsumerStatefulElement.read (package:flutter_riverpod/src/consumer.dart:620:26)
+#2      _HomeScreenState._updateNearbyDrivers (package:passenger_app/screens/home_screen.dart:329:29)
+#3      _HomeScreenState.initState.<anonymous closure> (package:passenger_app/screens/home_screen.dart:96:7)
+#4      SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1434:15)
+#5      SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1361:11)
+#6      AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:1335:9)
+#9      TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#10     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1324:27)
+#11     WidgetTester.pumpWidget.<anonymous closure> (package:flutter_test/src/widget_tester.dart:598:22)
+#14     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#15     WidgetTester.pumpWidget (package:flutter_test/src/widget_tester.dart:595:27)
+#16     main.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/passenger_app/test/accessibility_test.dart:10:20)
+#17     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#18     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+  Test failed. See exception logs above.
+  The test description was: HomeScreen has accessible elements
+  
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following TestFailure was thrown running a test (but after the test had completed):
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Where to?": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#0      fail (package:matcher/src/expect/expect.dart:149:31)
+#1      _expect (package:matcher/src/expect/expect.dart:144:3)
+#2      expect (package:matcher/src/expect/expect.dart:56:3)
+#3      expect (package:flutter_test/src/widget_tester.dart:473:18)
+#4      main.<anonymous closure>.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/passenger_app/test/accessibility_test.dart:14:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+  Test failed. See exception logs above.
+  The test description was: HomeScreen has accessible elements
+  
+00:01 +1 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/accessibility_test.dart: Accessibility Tests SearchScreen has accessible text field
+00:03 +2 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/login_screen_test.dart: shows error messages for empty fields
+00:05 +3 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/loyalty_dashboard_screen_test.dart: LoyaltyDashboardScreen displays all required components
+00:05 +4 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/login_screen_test.dart: navigates to HomeScreen on successful login
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+type 'Null' is not a subtype of type 'Future<dynamic>'
+00:06 +5 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/login_screen_test.dart: shows error message on failed login
+00:07 +6 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/otp_verification_screen_test.dart: validates OTP field
+00:09 +7 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/payout_history_screen_test.dart: PayoutHistoryScreen displays transactions
+00:09 +8 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/payout_history_screen_test.dart: PayoutHistoryScreen displays transactions
+00:09 +9 -1: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/payout_history_screen_test.dart: PayoutHistoryScreen displays transactions
+ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "KES 1250.00": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/passenger_app/test/payout_history_screen_test.dart:15:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/passenger_app/test/payout_history_screen_test.dart line 15
+The test description was:
+  PayoutHistoryScreen displays transactions
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+00:10 +9 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/payout_history_screen_test.dart: PayoutHistoryScreen displays transactions [E]
+  Test failed. See exception logs above.
+  The test description was: PayoutHistoryScreen displays transactions
+  
+00:11 +9 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/payout_methods_screen_test.dart: PayoutMethodsScreen displays methods and actions
+00:13 +10 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/profile_screen_test.dart: renders initial state
+00:15 +11 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/providers/cart_provider_test.dart: CartProvider Initial state is empty
+00:15 +12 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/providers/cart_provider_test.dart: CartProvider addItem adds an item and notifies listeners
+00:15 +13 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/providers/cart_provider_test.dart: CartProvider removeItem removes an item and notifies listeners
+00:15 +14 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/providers/cart_provider_test.dart: CartProvider clearCart removes all items and notifies listeners
+00:16 +15 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/rate_passenger_screen_test.dart: RatePassengerScreen updates rating and submits
+00:18 +16 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/redeem_points_screen_test.dart: RedeemPointsScreen displays rewards and handles redemption
+00:20 +17 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/registration_screen_test.dart: validates empty fields
+00:22 +18 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/ride_history_screen_test.dart: RideHistoryScreen displays list and navigates to details
+00:22 +19 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/registration_screen_test.dart: validates invalid phone and password
+00:23 +20 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/registration_screen_test.dart: shows success message on successful registration
+00:23 +21 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/registration_screen_test.dart: shows error message on failed registration
+00:24 +22 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/scheduled_trips_screen_test.dart: ScheduledTripsScreen displays mock scheduled ride
+00:26 +23 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/search_screen_test.dart: SearchScreen renders correctly and shows location list
+00:28 +24 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/search_screen_test.dart: tapping a location pops the screen with the selected data
+00:31 +25 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/share_trip_service_test.dart: ShareTripService can be instantiated
+00:32 +26 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/trip_details_screen_test.dart: TripDetailsScreen displays route and financial breakdown
+00:33 +27 -2: D:/IBN/PROJECTS/Cabi Africa/mobile/passenger_app/test/withdrawal_request_sheet_test.dart: WithdrawalRequestSheet validates input and triggers callback
+00:34 +28 -2: Some tests failed.
