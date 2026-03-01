@@ -106,7 +106,7 @@ class SettingsScreen extends StatelessWidget {
       child: SwitchListTile(
         value: value,
         onChanged: onChanged,
-        activeColor: primaryColor,
+        activeThumbColor: primaryColor,
         activeTrackColor: primaryColor.withValues(alpha: 0.2),
         inactiveTrackColor: Colors.white10,
         secondary: Icon(icon, color: primaryColor, size: 20),

@@ -41,19 +41,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
     tryAutoLogin();
   }
 
-  Future<void> login(String phone, String otp) async {
+  Future<void> login(String email, String password) async {
     try {
       state = const AuthLoading();
-      final result = await _authService.verifyOtp(phone: phone, otp: otp);
+      final result = await _authService.signIn(email: email, password: password);
       if (!result.isSignedIn) {
-        throw Exception(result.error ?? 'Verification failed');
+        throw Exception(result.error ?? 'Login failed');
       }
       final token = result.token!;
 
       await _storage.write(key: 'authToken', value: token);
 
       // --- Analytics Tracking ---
-      await _analyticsService.setUserId(phone); // Use phone as a stable user ID
+      await _analyticsService.setUserId(email); // Use email as a stable user ID
       await _analyticsService.setUserProperty('account_type', 'passenger');
       await _analyticsService.logEvent('login_success');
       // --------------------------

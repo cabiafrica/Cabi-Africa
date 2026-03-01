@@ -120,7 +120,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // Email Input
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFF141414),
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(color: Colors.white10),
                   ),
@@ -137,10 +137,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       filled: true,
-                      fillColor: Color(0xFF141414),
+                      fillColor: Colors.transparent,
                       contentPadding: EdgeInsets.all(20),
                     ),
-                    style: const TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.white),
                     validator: (value) =>
                         (value == null || !value.contains('@'))
                             ? 'Please enter a valid email address'
@@ -152,7 +152,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // Password Input
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFF141414),
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(color: Colors.white10),
                   ),
@@ -182,10 +182,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       filled: true,
-                      fillColor: const Color(0xFF141414),
+                      fillColor: Colors.transparent,
                       contentPadding: const EdgeInsets.all(20),
                     ),
-                    style: const TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.white),
                     validator: (value) =>
                         value!.isEmpty ? 'Please enter your password' : null,
                   ),
