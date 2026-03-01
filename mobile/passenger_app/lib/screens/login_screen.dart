@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart' as legacy_provider;
 import '../providers/auth_provider.dart';
 import 'home_screen.dart';
 import 'registration_screen.dart';
@@ -30,25 +29,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _errorMessage = null;
     });
 
-    final authService = ref.read(authServiceProvider);
-    final result = await authService.signIn(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-    );
-
-    setState(() => _isLoading = false);
-
-    if (result.isSignedIn && mounted) {
-      // Update legacy provider for compatibility
-      legacy_provider.Provider.of<AuthProvider>(context, listen: false)
-          .login(result.token ?? 'mock_token', result.user);
-
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
-    } else {
-      setState(() => _errorMessage =
-          result.error ?? 'Login failed. Please check your credentials.');
+    try {
+      await ref.read(passengerAuthProvider.notifier).login(
+            _emailController.text.trim(),
+            _passwordController.text,
+          );
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
+    } catch (e) {
+      setState(
+          () => _errorMessage = e.toString().replaceFirst('Exception: ', ''));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 

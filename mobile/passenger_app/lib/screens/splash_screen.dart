@@ -1,36 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Defer tryAutoLogin to after the first frame to avoid setState during build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final auth = Provider.of<AuthProvider>(context, listen: false);
-      auth.tryAutoLogin().then((_) {
-        if (mounted) {
-          if (auth.isAuthenticated) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
-            );
-          } else {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const LoginScreen()),
-            );
-          }
-        }
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(passengerAuthProvider.notifier).tryAutoLogin();
+      if (!mounted) return;
+      final authState = ref.read(passengerAuthProvider);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => authState is Authenticated
+              ? const HomeScreen()
+              : const LoginScreen(),
+        ),
+      );
     });
   }
 
@@ -65,8 +60,10 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                   child: Image.asset(
                     'assets/images/cabi_logo.png',
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.taxi_alert, color: primaryGold, size: 40),
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.taxi_alert,
+                        color: primaryGold,
+                        size: 40),
                   ),
                 ),
                 const SizedBox(height: 32),
