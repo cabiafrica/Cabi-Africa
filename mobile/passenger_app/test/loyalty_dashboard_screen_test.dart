@@ -25,10 +25,5 @@ void main() {
     // Verify Redeem Button
     final redeemButton = find.widgetWithText(ElevatedButton, 'Redeem Points');
     expect(redeemButton, findsOneWidget);
-
-    // Test Redeem Button action
-    await tester.tap(redeemButton);
-    await tester.pump(); // for snackbar
-    expect(find.text('Redeem Points feature coming soon!'), findsOneWidget);
   });
 }

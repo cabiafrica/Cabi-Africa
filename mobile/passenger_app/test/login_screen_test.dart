@@ -30,6 +30,38 @@ class MockHttpClient extends Mock implements HttpClient {
   @override
   Future<HttpClientRequest> get(String host, int port, String path) =>
       _mockRequest(Uri(host: host, port: port, path: path));
+  @override
+  Future<HttpClientRequest> postUrl(Uri url) => _mockRequest(url);
+  @override
+  Future<HttpClientRequest> post(String host, int port, String path) =>
+      _mockRequest(Uri(host: host, port: port, path: path));
+  @override
+  Future<HttpClientRequest> openUrl(String method, Uri url) =>
+      _mockRequest(url);
+  @override
+  Future<HttpClientRequest> open(
+          String method, String host, int port, String path) =>
+      _mockRequest(Uri(host: host, port: port, path: path));
+  @override
+  Future<HttpClientRequest> putUrl(Uri url) => _mockRequest(url);
+  @override
+  Future<HttpClientRequest> put(String host, int port, String path) =>
+      _mockRequest(Uri(host: host, port: port, path: path));
+  @override
+  Future<HttpClientRequest> deleteUrl(Uri url) => _mockRequest(url);
+  @override
+  Future<HttpClientRequest> delete(String host, int port, String path) =>
+      _mockRequest(Uri(host: host, port: port, path: path));
+  @override
+  Future<HttpClientRequest> patchUrl(Uri url) => _mockRequest(url);
+  @override
+  Future<HttpClientRequest> patch(String host, int port, String path) =>
+      _mockRequest(Uri(host: host, port: port, path: path));
+  @override
+  Future<HttpClientRequest> headUrl(Uri url) => _mockRequest(url);
+  @override
+  Future<HttpClientRequest> head(String host, int port, String path) =>
+      _mockRequest(Uri(host: host, port: port, path: path));
 
   Future<HttpClientRequest> _mockRequest(Uri url) async {
     final isApi = url.port == 3333 || url.port == 3000;
@@ -37,9 +69,14 @@ class MockHttpClient extends Mock implements HttpClient {
   }
 }
 
+class MockHttpHeaders extends Mock implements HttpHeaders {}
+
 class MockHttpClientRequest extends Mock implements HttpClientRequest {
   final bool isApi;
   MockHttpClientRequest(this.isApi);
+
+  @override
+  HttpHeaders get headers => MockHttpHeaders();
 
   @override
   Future<HttpClientResponse> close() async {
@@ -150,6 +187,12 @@ void main() {
     // Default response for getCurrentRide
     when(() => mockRideService.getCurrentRide(any(), any()))
         .thenAnswer((_) async => null);
+    when(() => mockRideService.getNearbyDrivers(
+            lat: any(named: 'lat'),
+            lng: any(named: 'lng'),
+            vehicleType: any(named: 'vehicleType'),
+            maxDistanceKm: any(named: 'maxDistanceKm')))
+        .thenAnswer((_) async => []);
   });
 
   Widget createWidgetUnderTest() {
@@ -212,11 +255,14 @@ void main() {
         find.byType(TextFormField).first, 'test@example.com');
     await tester.enterText(find.byType(TextFormField).last, 'wrong');
     await tester.tap(find.byType(ElevatedButton));
-    await tester.pumpAndSettle();
+    await tester.pump(); // simulate click
+    await tester
+        .pump(const Duration(milliseconds: 100)); // allow snackbar to render
 
     expect(
       find.text('Login failed. Please check your credentials.'),
       findsOneWidget,
     );
+    await tester.pumpAndSettle(const Duration(seconds: 4)); // clear snackbar
   });
 }

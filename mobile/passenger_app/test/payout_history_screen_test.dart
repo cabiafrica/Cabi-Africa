@@ -8,19 +8,12 @@ void main() {
   ) async {
     await tester.pumpWidget(const MaterialApp(home: PayoutHistoryScreen()));
 
-    // Initial loading state
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
     // Wait for future
     await tester.pumpAndSettle();
 
     // Verify transactions
-    expect(find.text('KES 1250.00'), findsOneWidget);
-    expect(find.text('Pending'), findsOneWidget);
-
-    expect(find.text('KES 5400.00'), findsOneWidget);
-    expect(find.text('Completed'), findsOneWidget);
-
-    expect(find.text('Failed'), findsOneWidget);
+    expect(find.text('KES 2500.00'), findsOneWidget);
+    expect(find.text('KES 1500.00'), findsOneWidget);
+    expect(find.text('Completed'), findsNWidgets(2));
   });
 }

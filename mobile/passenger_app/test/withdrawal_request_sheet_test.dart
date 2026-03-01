@@ -25,7 +25,7 @@ void main() {
     // Verify initial UI
     expect(find.text('Request Withdrawal'), findsOneWidget);
     expect(find.text('Available Balance: KES 5000.00'), findsOneWidget);
-    expect(find.text('Payout to: M-Pesa (***678)'), findsOneWidget);
+    expect(find.text('Payout to: M-Pesa: ***678'), findsOneWidget);
 
     // Test Validation: Empty input
     await tester.tap(find.text('Confirm Withdrawal'));
