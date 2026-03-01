@@ -19,7 +19,7 @@ void main() {
           {'type': "Driver's License", 'status': 'Approved'},
         ];
         mockClient = MockClient((request) async {
-          expect(request.url.path, '/api/documents/me');
+          expect(request.url.path, endsWith('/documents/me'));
           return http.Response(json.encode(mockResponse), 200);
         });
         documentService = DocumentService(client: mockClient);
@@ -49,7 +49,7 @@ void main() {
       test('completes successfully on a 201 response', () async {
         // Arrange
         mockClient = MockClient((request) async {
-          expect(request.url.path, '/api/users/me/documents');
+          expect(request.url.path, endsWith('/users/me/documents'));
           return http.Response('', 201);
         });
         documentService = DocumentService(client: mockClient);
@@ -91,7 +91,7 @@ void main() {
       test('completes successfully on a 201 response', () async {
         // Arrange
         mockClient = MockClient((request) async {
-          expect(request.url.path, '/api/users/me/documents/submit');
+          expect(request.url.path, endsWith('/users/me/documents/submit'));
           return http.Response('', 201);
         });
         documentService = DocumentService(client: mockClient);

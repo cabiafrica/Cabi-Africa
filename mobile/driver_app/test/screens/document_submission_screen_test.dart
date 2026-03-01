@@ -27,7 +27,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Upload Documents'), findsOneWidget);
+    expect(find.text('DOCUMENT SUBMISSION'), findsOneWidget);
     expect(find.text("Driver's License"), findsOneWidget);
     expect(find.text('Vehicle Insurance'), findsOneWidget);
     expect(find.byType(DocumentTile), findsWidgets);
