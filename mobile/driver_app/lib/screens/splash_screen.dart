@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:driver_app/providers/auth_provider.dart';
-import 'package:driver_app/screens/home_screen.dart';
+import 'package:driver_app/screens/main_shell.dart';
 import 'package:driver_app/screens/login_screen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -48,7 +48,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       if (mounted) {
         Widget nextScreen = const LoginScreen();
         if (authState is Authenticated) {
-          nextScreen = const HomeScreen();
+          nextScreen = const MainShell();
         }
 
         Navigator.pushReplacement(
