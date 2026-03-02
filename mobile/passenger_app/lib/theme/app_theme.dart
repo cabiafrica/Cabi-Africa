@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// Optimizing GoogleFonts for Cabi apps
+// This ensures that even if fetching fails, the app doesn't hang.
+
 class AppTheme {
   // Premium Color Palette - Updated to match Login "Taxi Gold" Theme
   static const Color primaryColor = Color(0xFFFFD700); // Taxi Gold
