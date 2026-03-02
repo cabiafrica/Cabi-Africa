@@ -130,13 +130,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         const SizedBox(height: 20),
                         const Text(
-                          'CABI AFRICA',
+                          'CABI DRIVE',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: primaryColor,
                             fontWeight: FontWeight.bold,
-                            fontSize: 22,
-                            letterSpacing: 4.0,
+                            fontSize: 26,
+                            letterSpacing: 5.0,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'By Cabi Africa',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: 12,
                           ),
                         ),
                         const Text(

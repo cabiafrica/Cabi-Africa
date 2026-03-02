@@ -117,18 +117,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     const SizedBox(height: 32),
                     // App Name
                     Text(
-                      'CABI AFRICA',
+                      'CABI DRIVE',
                       style: GoogleFonts.outfit(
                         color: primaryGold,
                         fontWeight: FontWeight.bold,
-                        fontSize: 22,
-                        letterSpacing: 4.0,
+                        fontSize: 26,
+                        letterSpacing: 5.0,
                       ),
                     ),
                     const SizedBox(height: 12),
                     // Sub-Branding
                     Text(
-                      'D R I V E R   |   N E W   D A W N',
+                      'B Y   C A B I   A F R I C A',
                       style: GoogleFonts.inter(
                         color: Colors.white.withValues(alpha: 0.6),
                         fontSize: 10,
