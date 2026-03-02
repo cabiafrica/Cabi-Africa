@@ -55,42 +55,50 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Cabi Logo
-                // Replacing Icon with a placeholder for the actual logo asset
-                Container(
-                  height: 120,
-                  width: 120,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: primaryColor, width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: primaryColor.withValues(alpha: 0.2),
-                        blurRadius: 25,
-                        spreadRadius: 2,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center, // Centering logic
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Cabi Logo
+                      Center(
+                        child: Container(
+                          height: 90, // Reduced from 120 (25% reduction)
+                          width: 90,  // Reduced from 120 (25% reduction)
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: primaryColor, width: 2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: primaryColor.withValues(alpha: 0.2),
+                                blurRadius: 20,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                          child: ClipOval(
+                            child: Image.asset(
+                              'assets/images/cabi_logo.png',
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => const Icon(
+                                  Icons.taxi_alert_outlined,
+                                  color: primaryColor,
+                                  size: 30), // Smaller icon for smaller container
+                            ),
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
-                  child: ClipOval(
-                    child: Image.asset(
-                      'assets/images/cabi_logo.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                          Icons.taxi_alert_outlined,
-                          color: primaryColor,
-                          size: 40),
-                    ),
-                  ),
-                ),
                 // If you have the asset: Image.asset('assets/images/logo.png', height: 100),
 
                 const SizedBox(height: 30),
@@ -163,15 +171,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
                           color: Colors.grey,
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
+                        onPressed: () =>
+                            setState(() => _obscurePassword = !_obscurePassword),
                       ),
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
@@ -181,12 +186,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       contentPadding: const EdgeInsets.all(20),
                     ),
                     style: const TextStyle(color: Colors.white),
-                    validator: (value) =>
-                        value!.isEmpty ? 'Please enter your password' : null,
+                    validator: (value) => (value == null || value.length < 6)
+                        ? 'Password must be at least 6 characters'
+                        : null,
                   ),
                 ),
 
-                const SizedBox(height: 10),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -244,10 +249,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ],
                 ),
-              ],
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
