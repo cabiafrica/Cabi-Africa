@@ -47,13 +47,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  Future<void> login(String email, String password) async {
+  Future<void> login(String email, String password,
+      {bool rememberMe = true}) async {
     try {
       state = const AuthLoading();
       final result = await _authService.signIn(email, password);
 
       if (result.isSignedIn && result.token != null) {
-        await _storage.write(key: 'authToken', value: result.token);
+        if (rememberMe) {
+          await _storage.write(key: 'authToken', value: result.token);
+        } else {
+          await _storage.delete(
+              key: 'authToken'); // Ensure old sessions are wiped
+        }
         state = Authenticated(result.token!, result.user);
       } else {
         state = const Unauthenticated();

@@ -21,6 +21,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _isLoginTab = true; // Toggle state
   String? _errorMessage;
   bool _obscurePassword = true;
+  bool _rememberMe = true;
+
+  String _humanizeError(dynamic error) {
+    final err = error.toString().toLowerCase();
+    if (err.contains('invalid login credentials')) {
+      return "Incorrect email or password. Please try again.";
+    }
+    if (err.contains('email not confirmed')) {
+      return "Your email hasn't been verified yet. Please check your inbox.";
+    }
+    if (err.contains('connection error') ||
+        err.contains('failed host lookup') ||
+        err.contains('socketexception')) {
+      return "Unable to connect to the server. Please check your internet connection.";
+    }
+    if (err.contains('timeout')) {
+      return "Connection timed out. Please try again.";
+    }
+    return error
+        .toString()
+        .replaceFirst(RegExp(r'Exception: ', caseSensitive: false), '');
+  }
 
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) {
@@ -34,8 +56,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     try {
       await ref.read(authProvider.notifier).login(
-            _emailController.text,
+            _emailController.text.trim(),
             _passwordController.text,
+            rememberMe: _rememberMe,
           );
 
       if (mounted) {
@@ -45,7 +68,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } catch (e) {
       setState(() {
-        _errorMessage = e.toString();
+        _errorMessage = _humanizeError(e);
       });
     } finally {
       if (mounted) {
@@ -292,16 +315,51 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         validator: (value) =>
                             value!.isEmpty ? 'Required' : null,
                       ),
-                      Align(
-                        alignment: Alignment.center, // Center align this too
-                        child: TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Forgot Password?',
-                            style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.7)),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: Checkbox(
+                                  value: _rememberMe,
+                                  onChanged: (val) =>
+                                      setState(() => _rememberMe = val ?? true),
+                                  activeColor: primaryColor,
+                                  checkColor: Colors.black,
+                                  side: const BorderSide(color: Colors.white30),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4)),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () =>
+                                    setState(() => _rememberMe = !_rememberMe),
+                                child: Text(
+                                  "Remember Me",
+                                  style: TextStyle(
+                                      color:
+                                          Colors.white.withValues(alpha: 0.6),
+                                      fontSize: 13),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
+                          TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              'Forgot Password?',
+                              style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.7),
+                                  fontSize: 13),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       if (_isLoading)
