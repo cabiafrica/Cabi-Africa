@@ -1,5 +1,5 @@
 name: passenger_app
-description: The passenger-facing application for the Cabi ride-hailing service.
+description: Cabi Go - The passenger ride-hailing app by Cabi Africa.
 publish_to: 'none'
 version: 1.0.0
 

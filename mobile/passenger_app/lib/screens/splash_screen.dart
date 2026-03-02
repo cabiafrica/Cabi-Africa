@@ -69,27 +69,27 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 const SizedBox(height: 32),
                 // Elegant Branding
                 const Text(
-                  "CABI AFRICA",
+                  "CABI GO",
                   style: TextStyle(
                     color: primaryGold,
-                    fontSize: 18,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 4.0,
+                    letterSpacing: 5.0,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "P A S S E N G E R",
+                  "B Y  C A B I  A F R I C A",
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontSize: 10,
-                    letterSpacing: 6.0,
+                    color: Colors.white.withValues(alpha: 0.5),
+                    fontSize: 9,
+                    letterSpacing: 4.0,
                   ),
                 ),
                 const SizedBox(height: 48),
                 // Subtle Tagline
                 const Text(
-                  "Your Ride. Your Dawn.",
+                  "Where will you go today?",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -116,7 +116,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  "Entering the New Dawn...",
+                  "Launching Cabi Go...",
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.3),
                     fontSize: 10,
