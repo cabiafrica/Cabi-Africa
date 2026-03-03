@@ -15,18 +15,38 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ref.read(passengerAuthProvider.notifier).tryAutoLogin();
-      if (!mounted) return;
-      final authState = ref.read(passengerAuthProvider);
+    _navigateToNext();
+  }
+
+  Future<void> _navigateToNext() async {
+    // Start auto-login in background
+    final autoLoginFuture =
+        ref.read(passengerAuthProvider.notifier).tryAutoLogin();
+
+    // Set a minimum duration for the splash screen (e.g., 2 seconds)
+    // to give it a feels of "premium" loading rather than a glitchy flash.
+    final delayFuture = Future.delayed(const Duration(seconds: 2));
+
+    // Wait for BOTH auto-login and the minimum delay
+    await Future.wait([autoLoginFuture, delayFuture]);
+
+    if (!mounted) return;
+    final authState = ref.read(passengerAuthProvider);
+
+    if (mounted) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => authState is Authenticated
-              ? const HomeScreen()
-              : const LoginScreen(),
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 800),
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              authState is Authenticated
+                  ? const HomeScreen()
+                  : const LoginScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
         ),
       );
-    });
+    }
   }
 
   @override

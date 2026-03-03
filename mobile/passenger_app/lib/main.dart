@@ -7,8 +7,19 @@ import 'theme/app_theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase safely
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint(
+        "Firebase initialization failed: $e. Proceeding without Firebase.");
+  }
+
   // Ensure theme and fonts don't block the UI thread during startup
   // We allow fetching but with a fallback mindset
   GoogleFonts.config.allowRuntimeFetching = true;
