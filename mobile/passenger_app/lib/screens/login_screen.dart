@@ -86,9 +86,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               constraints: BoxConstraints(
                 minHeight: constraints.maxHeight,
               ),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 60),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 60),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -283,8 +285,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     fontWeight: FontWeight.bold)),
                           ),
                         ],
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
