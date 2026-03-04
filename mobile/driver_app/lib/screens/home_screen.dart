@@ -97,6 +97,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           CabiMap(
             initialCenter: _driverLocation,
             initialZoom: 14.0,
+            theme: CabiMapTheme.dark,
             markers: [
               CabiMapMarker.driver(
                 position: _driverLocation,

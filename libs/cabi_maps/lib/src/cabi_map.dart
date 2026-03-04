@@ -4,6 +4,15 @@ import 'package:latlong2/latlong.dart';
 import 'map_marker.dart';
 import 'map_controller.dart';
 
+/// Map theme for Cabi maps
+enum CabiMapTheme {
+  /// Dark theme - CartoDB Dark Matter (Uber-style)
+  dark,
+
+  /// Light theme - CartoDB Positron
+  light,
+}
+
 /// Custom map widget for Cabi platform
 /// Uses OpenStreetMap for free, unlimited usage
 class CabiMap extends StatefulWidget {
@@ -15,6 +24,7 @@ class CabiMap extends StatefulWidget {
   final Function(LatLng)? onLongPress;
   final bool showUserLocation;
   final bool enableInteraction;
+  final CabiMapTheme theme;
 
   final Function(CabiMapController)? onMapCreated;
 
@@ -29,6 +39,7 @@ class CabiMap extends StatefulWidget {
     this.onMapCreated,
     this.showUserLocation = true,
     this.enableInteraction = true,
+    this.theme = CabiMapTheme.dark,
   });
 
   @override
@@ -69,11 +80,14 @@ class _CabiMapState extends State<CabiMap> {
         ),
       ),
       children: [
-        // OpenStreetMap tile layer
+        // Map tile layer (theme-aware)
         TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          urlTemplate: widget.theme == CabiMapTheme.dark
+              ? 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png'
+              : 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
           userAgentPackageName: 'com.cabi.app',
           maxZoom: 19,
+          retinaMode: true,
         ),
 
         // Route polyline if provided

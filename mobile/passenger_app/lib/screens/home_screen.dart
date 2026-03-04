@@ -433,6 +433,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           CabiMap(
             initialCenter: _passengerLocation,
             initialZoom: 15.0,
+            theme: CabiMapTheme.dark,
             markers: _getMarkers(),
             routePoints: _getRoute(),
             showUserLocation: true,
