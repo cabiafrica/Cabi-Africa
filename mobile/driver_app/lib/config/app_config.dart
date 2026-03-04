@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 
 class AppConfig {
   static String get host => kIsWeb
-      ? 'localhost'
+      ? '192.168.100.35'
       : (defaultTargetPlatform == TargetPlatform.android
-          ? '10.0.2.2'
-          : 'localhost');
+          ? '192.168.100.35'
+          : '192.168.100.35');
   // In a real app, this would be loaded from an environment-specific
   // configuration file (e.g., .env) and not hardcoded.
   static String get driverRegistrationUrl =>
