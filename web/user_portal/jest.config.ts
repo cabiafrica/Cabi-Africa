@@ -1,20 +1,26 @@
 import nextJest from 'next/jest';
 
 const createJestConfig = nextJest({
-  dir: './',
+  dir: __dirname,
 });
 
 // Add any custom config to be passed to Jest
 const customJestConfig = {
   displayName: 'user-portal',
-  preset: '../../../jest.preset.js',
-  // transform: {
-  //   '^(?!.*\\.[tj]sx?$': '@nx/react/plugins/jest',
-  //   '^\\.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/next/babel'] }],
-  // },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/Cabi Alpha/web/user_portal',
+  testEnvironment: 'jsdom',
+  testPathIgnorePatterns: ['<rootDir>/backend/'],
+  coverageDirectory: '../../coverage/web/user_portal',
+  // Next.js jest config merges rootDir with these options. We need to make sure 
+  // they resolve correctly when run by Nx which passes the workspace root.
 };
 
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-module.exports = createJestConfig(customJestConfig);
+module.exports = async () => {
+  const nextConfig = await createJestConfig(customJestConfig)();
+  // We need to override rootDir because next/jest hardcodes it to the project root
+  // which breaks the preset path resolution when run by Nx from the workspace root.
+  return {
+    ...nextConfig,
+    rootDir: __dirname,
+  };
+};

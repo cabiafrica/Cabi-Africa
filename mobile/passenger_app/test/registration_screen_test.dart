@@ -14,14 +14,21 @@ void main() {
     mockAuthService = MockAuthService();
   });
 
-  Widget createWidgetUnderTest() {
+  Widget createWidgetUnderTest(WidgetTester tester) {
+    tester.view.physicalSize = const Size(1080, 4000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
     return MaterialApp(
       home: RegistrationScreen(authService: mockAuthService),
     );
   }
 
   testWidgets('validates empty fields', (tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pumpWidget(createWidgetUnderTest(tester));
 
     await tester.ensureVisible(find.byType(ElevatedButton));
     await tester.tap(find.byType(ElevatedButton));
@@ -35,7 +42,7 @@ void main() {
   });
 
   testWidgets('validates invalid phone and password', (tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pumpWidget(createWidgetUnderTest(tester));
 
     await tester.enterText(find.byType(TextFormField).at(3), '123'); // Phone
     await tester.enterText(
@@ -65,7 +72,7 @@ void main() {
         .thenAnswer(
             (_) async => AuthResult(isSignedIn: true, user: {'id': '1'}));
 
-    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pumpWidget(createWidgetUnderTest(tester));
 
     await tester.enterText(find.byType(TextFormField).at(0), 'John');
     await tester.enterText(find.byType(TextFormField).at(1), 'Doe');
@@ -98,7 +105,7 @@ void main() {
         .thenAnswer((_) async =>
             AuthResult(isSignedIn: false, error: 'Email already exists'));
 
-    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pumpWidget(createWidgetUnderTest(tester));
 
     await tester.enterText(find.byType(TextFormField).at(0), 'John');
     await tester.enterText(find.byType(TextFormField).at(1), 'Doe');

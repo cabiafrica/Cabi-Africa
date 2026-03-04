@@ -24,8 +24,8 @@ void main() {
     );
 
     // Initial frame — logo visible
-    expect(find.text('CABI AFRICA'), findsOneWidget);
-    expect(find.text('D R I V E R   |   N E W   D A W N'), findsOneWidget);
+    expect(find.text('CABI DRIVE'), findsOneWidget);
+    expect(find.text('B Y   C A B I   A F R I C A'), findsOneWidget);
 
     // Advance past the 3-second Future.delayed to let initState complete.
     // This drains the pending timer so the test teardown assertion passes.
@@ -37,8 +37,17 @@ void main() {
 
   // ── LoginScreen ───────────────────────────────────────────────────────────
   testWidgets('LoginScreen renders form fields', (tester) async {
+    tester.view.physicalSize = const Size(1080, 4000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
     await tester.pumpWidget(
-      const MaterialApp(home: LoginScreen()),
+      const ProviderScope(
+        child: MaterialApp(home: LoginScreen()),
+      ),
     );
     await tester.pumpAndSettle();
 

@@ -1,6 +1,7 @@
+/** @jest-environment jsdom */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { DriverRegistrationForm } from './DriverRegistrationForm';
+import { DriverRegistrationForm } from '../../../components/forms/DriverRegistrationForm';
 
 // Mock react-google-recaptcha-v3
 const mockExecuteRecaptcha = jest.fn();

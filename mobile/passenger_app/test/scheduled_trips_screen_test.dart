@@ -3,6 +3,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:passenger_app/screens/scheduled_trips_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:passenger_app/services/ride_service.dart';
+import 'package:passenger_app/providers/providers.dart';
+
+class MockRideService extends RideService {
+  @override
+  Future<List<Map<String, dynamic>>> getScheduledRides() async {
+    return [
+      {
+        'destination': 'Two Rivers Mall',
+        'pickupTime':
+            DateTime.now().add(const Duration(days: 1)).toIso8601String(),
+      }
+    ];
+  }
+}
 
 void main() {
   testWidgets('ScheduledTripsScreen displays mock scheduled ride', (
@@ -12,7 +27,12 @@ void main() {
     SharedPreferences.setMockInitialValues({});
 
     await tester.pumpWidget(
-      const ProviderScope(child: MaterialApp(home: ScheduledTripsScreen())),
+      ProviderScope(
+        overrides: [
+          rideServiceProvider.overrideWithValue(MockRideService()),
+        ],
+        child: const MaterialApp(home: ScheduledTripsScreen()),
+      ),
     );
 
     // Show loading indicator initially
