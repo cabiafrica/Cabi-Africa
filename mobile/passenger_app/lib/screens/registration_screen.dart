@@ -76,7 +76,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             child: Wrap(
               children: <Widget>[
                 const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  padding: EdgeInsets.fromLTRB(20, 10, 20, 5),
                   child: Text(
                     'Upload Professional Photo',
                     style: TextStyle(
@@ -84,6 +84,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 15),
+                  child: Text(
+                    'The passport photo must be professional, undistorted, and confirm a real human face to international standards. This photo will be used as your avatar and can only be updated after 1 year.',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                      height: 1.4,
                     ),
                   ),
                 ),
@@ -125,6 +136,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
           // Simulated ML verification delay
           await Future.delayed(const Duration(seconds: 2));
+
+          // Simulate 10% chance of failing the ML quality check
+          bool passesCheck = DateTime.now().millisecond % 10 != 0;
+
+          if (!passesCheck) {
+            setState(() => _isLoading = false);
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                      'The uploaded file does not meet the standard. Please upload a professional passport photo.'),
+                  backgroundColor: Colors.redAccent,
+                  duration: Duration(seconds: 4),
+                ),
+              );
+            }
+            return;
+          }
 
           setState(() {
             _profileImage = File(photo.path);
