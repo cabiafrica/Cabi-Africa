@@ -5,6 +5,21 @@ import 'package:passenger_app/screens/scheduled_trips_screen.dart';
 import 'package:passenger_app/services/ride_service.dart';
 import 'package:passenger_app/providers/providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:passenger_app/services/ride_service.dart';
+import 'package:passenger_app/providers/providers.dart';
+
+class MockRideService extends RideService {
+  @override
+  Future<List<Map<String, dynamic>>> getScheduledRides() async {
+    return [
+      {
+        'destination': 'Two Rivers Mall',
+        'pickupTime':
+            DateTime.now().add(const Duration(days: 1)).toIso8601String(),
+      }
+    ];
+  }
+}
 
 class MockRideService extends RideService {
   @override

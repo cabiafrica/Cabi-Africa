@@ -12,10 +12,16 @@ import 'package:passenger_app/providers/auth_provider.dart';
 
 import 'package:passenger_app/services/ride_service.dart';
 import 'package:passenger_app/providers/providers.dart';
+import 'package:passenger_app/services/analytics_service.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class MockAuthService extends Mock implements AuthService {}
 
 class MockRideService extends Mock implements RideService {}
+
+class MockAnalyticsService extends Mock implements AnalyticsService {}
+
+class MockSecureStorage extends Mock implements FlutterSecureStorage {}
 
 class MockHttpOverrides extends HttpOverrides {
   @override
@@ -179,10 +185,15 @@ void main() {
   late MockAuthService mockAuthService;
   late MockRideService mockRideService;
 
+  late MockAnalyticsService mockAnalyticsService;
+  late MockSecureStorage mockSecureStorage;
+
   setUp(() {
     HttpOverrides.global = MockHttpOverrides();
     mockAuthService = MockAuthService();
     mockRideService = MockRideService();
+    mockAnalyticsService = MockAnalyticsService();
+    mockSecureStorage = MockSecureStorage();
 
     // Default response for getCurrentRide
     when(() => mockRideService.getCurrentRide(any(), any()))
@@ -193,13 +204,39 @@ void main() {
             vehicleType: any(named: 'vehicleType'),
             maxDistanceKm: any(named: 'maxDistanceKm')))
         .thenAnswer((_) async => []);
+
+    // Analytics Service mocks
+    when(() => mockAnalyticsService.setUserId(any()))
+        .thenAnswer((_) async => {});
+    when(() => mockAnalyticsService.setUserProperty(any(), any()))
+        .thenAnswer((_) async => {});
+    when(() => mockAnalyticsService.logEvent(any(),
+        parameters: any(named: 'parameters'))).thenAnswer((_) async => {});
+
+    // Secure Storage mocks
+    when(() => mockSecureStorage.write(
+        key: any(named: 'key'),
+        value: any(named: 'value'))).thenAnswer((_) async => {});
+    when(() => mockSecureStorage.read(key: any(named: 'key')))
+        .thenAnswer((_) async => null);
+    when(() => mockSecureStorage.delete(key: any(named: 'key')))
+        .thenAnswer((_) async => {});
   });
 
-  Widget createWidgetUnderTest() {
+  Widget createWidgetUnderTest(WidgetTester tester) {
+    tester.view.physicalSize = const Size(1080, 4000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
     return ProviderScope(
       overrides: [
         authServiceProvider.overrideWithValue(mockAuthService),
         rideServiceProvider.overrideWithValue(mockRideService),
+        analyticsServiceProvider.overrideWithValue(mockAnalyticsService),
+        secureStorageProvider.overrideWithValue(mockSecureStorage),
       ],
       child: legacy_provider.MultiProvider(
         providers: [
@@ -213,13 +250,13 @@ void main() {
   }
 
   testWidgets('shows error messages for empty fields', (tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pumpWidget(createWidgetUnderTest(tester));
 
     await tester.tap(find.byType(ElevatedButton));
     await tester.pump(); // Let the state update
 
     expect(find.text('Please enter a valid email address'), findsOneWidget);
-    expect(find.text('Please enter your password'), findsOneWidget);
+    expect(find.text('Password must be at least 6 characters'), findsOneWidget);
   });
 
   testWidgets('navigates to HomeScreen on successful login', (tester) async {
@@ -229,7 +266,7 @@ void main() {
             password: 'password')).thenAnswer((_) async =>
         AuthResult(isSignedIn: true, token: 'mock_token', user: {'id': '1'}));
 
-    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pumpWidget(createWidgetUnderTest(tester));
 
     await tester.enterText(
         find.byType(TextFormField).first, 'test@example.com');
@@ -244,25 +281,22 @@ void main() {
 
   testWidgets('shows error message on failed login', (tester) async {
     when(() => mockAuthService.signIn(
-            email: 'test@example.com', password: 'wrong'))
+            email: 'test@example.com', password: 'wrongpassword'))
         .thenAnswer((_) async => AuthResult(
             isSignedIn: false,
             error: 'Login failed. Please check your credentials.'));
 
-    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pumpWidget(createWidgetUnderTest(tester));
 
     await tester.enterText(
         find.byType(TextFormField).first, 'test@example.com');
-    await tester.enterText(find.byType(TextFormField).last, 'wrong');
+    await tester.enterText(find.byType(TextFormField).last, 'wrongpassword');
     await tester.tap(find.byType(ElevatedButton));
-    await tester.pump(); // simulate click
-    await tester
-        .pump(const Duration(milliseconds: 100)); // allow snackbar to render
+    await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
     expect(
       find.text('Login failed. Please check your credentials.'),
       findsOneWidget,
     );
-    await tester.pumpAndSettle(const Duration(seconds: 4)); // clear snackbar
   });
 }

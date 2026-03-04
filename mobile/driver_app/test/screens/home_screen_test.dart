@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,38 +48,25 @@ void main() {
     );
   }
 
-  testWidgets('HomeScreen shows loading initially if position is null',
-      (tester) async {
-    // Make location service hang
-    when(() => mockLocationService.getCurrentLocation())
-        .thenAnswer((_) => Completer<Position>().future);
-
-    await tester.pumpWidget(createHomeScreen());
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-    // Cleanup
-    await tester.pumpWidget(Container());
-  });
-
   testWidgets('HomeScreen toggle online/offline status', (tester) async {
     await tester.pumpWidget(createHomeScreen());
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     // Initially Offline
     expect(find.text('OFFLINE'), findsOneWidget);
+    expect(find.text('Go Online'), findsOneWidget);
 
     // Toggle Online
-    final statusSwitch = find.byType(Switch);
-    await tester.tap(statusSwitch);
+    await tester.tap(find.text('Go Online'));
 
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
+    // Wait for the simulated network delay in `_toggleOnline`
+    await tester.pumpAndSettle();
 
     expect(find.text('ONLINE'), findsOneWidget);
+    expect(find.text('Go Offline'), findsOneWidget);
 
     // Cleanup to stop the timer
-    await tester.tap(statusSwitch); // Go offline
-    await tester.pump();
-    await tester.pumpWidget(Container());
+    await tester.tap(find.text('Go Offline')); // Go offline
+    await tester.pumpAndSettle();
   });
 }

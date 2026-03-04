@@ -323,8 +323,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 value!.isEmpty ? 'Required' : null,
                           ),
                           const SizedBox(height: 12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               Row(
                                 mainAxisSize: MainAxisSize.min,

@@ -196,8 +196,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
 
                           // Remember Me & Forgot Password
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -276,8 +277,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
 
                           const SizedBox(height: 30),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               Text("Don't have an account? ",
                                   style: TextStyle(color: Colors.grey[400])),

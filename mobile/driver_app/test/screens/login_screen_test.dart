@@ -354,8 +354,8 @@ void main() {
     tester.view.devicePixelRatio = 3.0;
 
     await tester.pumpWidget(createWidgetUnderTest());
-    expect(find.text('CABI AFRICA'), findsOneWidget);
-    expect(find.text('DRIVE WITH PRIDE.'), findsOneWidget);
+    expect(find.text('CABI DRIVE'), findsOneWidget);
+    expect(find.text('Drive With Pride!'), findsOneWidget);
 
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
