@@ -421,6 +421,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("HomeScreen: building widget tree...");
     const primaryColor = AppTheme.primaryColor;
 
     return Scaffold(

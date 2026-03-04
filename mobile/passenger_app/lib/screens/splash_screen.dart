@@ -1,37 +1,57 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Defer tryAutoLogin to after the first frame to avoid setState during build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final auth = Provider.of<AuthProvider>(context, listen: false);
-      auth.tryAutoLogin().then((_) {
-        if (mounted) {
-          if (auth.isAuthenticated) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
-            );
-          } else {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const LoginScreen()),
-            );
-          }
-        }
-      });
-    });
+    _navigateToNext();
+  }
+
+  Future<void> _navigateToNext() async {
+    try {
+      // Start auto-login in background
+      final autoLoginFuture =
+          ref.read(passengerAuthProvider.notifier).tryAutoLogin();
+
+      // Set a minimum duration for the splash screen (e.g., 2 seconds)
+      // to give it a feels of "premium" loading rather than a glitchy flash.
+      final delayFuture = Future.delayed(const Duration(seconds: 2));
+
+      // Wait for BOTH auto-login and the minimum delay
+      await Future.wait([autoLoginFuture, delayFuture]);
+
+      if (!mounted) return;
+      final authState = ref.read(passengerAuthProvider);
+
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 800),
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                authState is Authenticated
+                    ? const HomeScreen()
+                    : const LoginScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint("Splash: Error during initialization: $e");
+    }
   }
 
   @override
@@ -65,34 +85,36 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                   child: Image.asset(
                     'assets/images/cabi_logo.png',
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.taxi_alert, color: primaryGold, size: 40),
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.taxi_alert,
+                        color: primaryGold,
+                        size: 40),
                   ),
                 ),
                 const SizedBox(height: 32),
                 // Elegant Branding
                 const Text(
-                  "CABI AFRICA",
+                  "CABI GO",
                   style: TextStyle(
                     color: primaryGold,
-                    fontSize: 18,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 4.0,
+                    letterSpacing: 5.0,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "P A S S E N G E R",
+                  "B Y  C A B I  A F R I C A",
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontSize: 10,
-                    letterSpacing: 6.0,
+                    color: Colors.white.withValues(alpha: 0.5),
+                    fontSize: 9,
+                    letterSpacing: 4.0,
                   ),
                 ),
                 const SizedBox(height: 48),
                 // Subtle Tagline
                 const Text(
-                  "Your Ride. Your Dawn.",
+                  "Where will you go today?",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -119,7 +141,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  "Entering the New Dawn...",
+                  "Launching Cabi Go...",
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.3),
                     fontSize: 10,

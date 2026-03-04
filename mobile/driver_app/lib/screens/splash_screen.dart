@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:driver_app/providers/auth_provider.dart';
-import 'package:driver_app/screens/home_screen.dart';
+import 'package:driver_app/screens/main_shell.dart';
 import 'package:driver_app/screens/login_screen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -40,28 +40,32 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     _controller.forward();
 
-    // Navigate after delay and auto-login check
-    Future.delayed(const Duration(seconds: 3), () async {
-      await ref.read(authProvider.notifier).tryAutoLogin();
+    // Start auto-login in background
+    final autoLoginFuture = ref.read(authProvider.notifier).tryAutoLogin();
+
+    // Set a minimum duration for the splash screen (e.g., 2 seconds)
+    final delayFuture = Future.delayed(const Duration(seconds: 2));
+
+    // Wait for BOTH auto-login and the minimum delay
+    Future.wait([autoLoginFuture, delayFuture]).then((_) {
+      if (!mounted) return;
       final authState = ref.read(authProvider);
 
-      if (mounted) {
-        Widget nextScreen = const LoginScreen();
-        if (authState is Authenticated) {
-          nextScreen = const HomeScreen();
-        }
-
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (_, __, ___) => nextScreen,
-            transitionsBuilder: (_, animation, __, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: const Duration(milliseconds: 800),
-          ),
-        );
+      Widget nextScreen = const LoginScreen();
+      if (authState is Authenticated) {
+        nextScreen = const MainShell();
       }
+
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => nextScreen,
+          transitionsBuilder: (_, animation, __, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 800),
+        ),
+      );
     });
   }
 
@@ -117,18 +121,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     const SizedBox(height: 32),
                     // App Name
                     Text(
-                      'CABI AFRICA',
+                      'CABI DRIVE',
                       style: GoogleFonts.outfit(
                         color: primaryGold,
                         fontWeight: FontWeight.bold,
-                        fontSize: 22,
-                        letterSpacing: 4.0,
+                        fontSize: 26,
+                        letterSpacing: 5.0,
                       ),
                     ),
                     const SizedBox(height: 12),
                     // Sub-Branding
                     Text(
-                      'D R I V E R   |   N E W   D A W N',
+                      'B Y   C A B I   A F R I C A',
                       style: GoogleFonts.inter(
                         color: Colors.white.withValues(alpha: 0.6),
                         fontSize: 10,

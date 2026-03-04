@@ -4,7 +4,7 @@ import '../config/app_config.dart';
 import 'package:http/http.dart' as http;
 
 class UserService {
-  static String get _baseUrl => '${AppConfig.authApiUrl}';
+  static String get _baseUrl => AppConfig.authApiUrl;
   final http.Client _client;
 
   UserService({http.Client? client}) : _client = client ?? http.Client();

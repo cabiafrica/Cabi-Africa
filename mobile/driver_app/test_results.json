@@ -1,0 +1,727 @@
+﻿{"protocolVersion":"0.1.1","runnerVersion":null,"pid":12064,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/models/document_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/models/document_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2}
+{"suite":{"id":2,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/providers/active_ride_provider_test.dart"},"type":"suite","time":8}
+{"test":{"id":3,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/providers/active_ride_provider_test.dart","suiteID":2,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":8}
+{"count":44,"time":12,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3790}
+{"group":{"id":4,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":3794}
+{"group":{"id":5,"suiteID":0,"parentID":4,"name":"Document","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":5,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/models/document_test.dart"},"type":"group","time":3795}
+{"test":{"id":6,"name":"Document constructor sets default values correctly","suiteID":0,"groupIDs":[4,5],"metadata":{"skip":false,"skipReason":null},"line":6,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/models/document_test.dart"},"type":"testStart","time":3795}
+{"testID":6,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3846}
+{"test":{"id":7,"name":"Document constructor sets all provided values correctly","suiteID":0,"groupIDs":[4,5],"metadata":{"skip":false,"skipReason":null},"line":19,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/models/document_test.dart"},"type":"testStart","time":3847}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3851}
+{"suite":{"id":8,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/providers/auth_provider_test.dart"},"type":"suite","time":3947}
+{"test":{"id":9,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/providers/auth_provider_test.dart","suiteID":8,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":3947}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":3,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":4714}
+{"group":{"id":10,"suiteID":2,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":4714}
+{"group":{"id":11,"suiteID":2,"parentID":10,"name":"ActiveRideProvider","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":5,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/active_ride_provider_test.dart"},"type":"group","time":4715}
+{"test":{"id":12,"name":"ActiveRideProvider initial state is correct","suiteID":2,"groupIDs":[10,11],"metadata":{"skip":false,"skipReason":null},"line":12,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/active_ride_provider_test.dart"},"type":"testStart","time":4715}
+{"testID":12,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4780}
+{"test":{"id":13,"name":"ActiveRideProvider startRide updates state correctly","suiteID":2,"groupIDs":[10,11],"metadata":{"skip":false,"skipReason":null},"line":17,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/active_ride_provider_test.dart"},"type":"testStart","time":4780}
+{"testID":13,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4790}
+{"test":{"id":14,"name":"ActiveRideProvider endRide clears the active ride","suiteID":2,"groupIDs":[10,11],"metadata":{"skip":false,"skipReason":null},"line":24,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/active_ride_provider_test.dart"},"type":"testStart","time":4791}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":14,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4800}
+{"test":{"id":15,"name":"ActiveRideProvider updateRideStatus updates the status of the active ride","suiteID":2,"groupIDs":[10,11],"metadata":{"skip":false,"skipReason":null},"line":31,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/active_ride_provider_test.dart"},"type":"testStart","time":4800}
+{"testID":15,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4807}
+{"suite":{"id":16,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/providers/ride_request_provider_test.dart"},"type":"suite","time":4832}
+{"test":{"id":17,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/providers/ride_request_provider_test.dart","suiteID":16,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":4832}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":9,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":5547}
+{"group":{"id":18,"suiteID":8,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":5548}
+{"test":{"id":19,"name":"(setUpAll)","suiteID":8,"groupIDs":[18],"metadata":{"skip":false,"skipReason":null},"line":25,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/auth_provider_test.dart"},"type":"testStart","time":5548}
+{"testID":19,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":5582}
+{"group":{"id":20,"suiteID":8,"parentID":18,"name":"AuthProvider Tests","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":64,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/auth_provider_test.dart"},"type":"group","time":5583}
+{"test":{"id":21,"name":"AuthProvider Tests initial state is AuthInitial, then Unauthenticated after auto-login check","suiteID":8,"groupIDs":[18,20],"metadata":{"skip":false,"skipReason":null},"line":74,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/auth_provider_test.dart"},"type":"testStart","time":5583}
+{"testID":21,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5660}
+{"test":{"id":22,"name":"AuthProvider Tests login success updates state and stores token","suiteID":8,"groupIDs":[18,20],"metadata":{"skip":false,"skipReason":null},"line":84,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/auth_provider_test.dart"},"type":"testStart","time":5661}
+{"testID":22,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5678}
+{"test":{"id":23,"name":"AuthProvider Tests login failure does not update state","suiteID":8,"groupIDs":[18,20],"metadata":{"skip":false,"skipReason":null},"line":119,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/auth_provider_test.dart"},"type":"testStart","time":5679}
+{"testID":23,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5691}
+{"test":{"id":24,"name":"AuthProvider Tests logout clears state and deletes token","suiteID":8,"groupIDs":[18,20],"metadata":{"skip":false,"skipReason":null},"line":136,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/auth_provider_test.dart"},"type":"testStart","time":5691}
+{"testID":24,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5700}
+{"test":{"id":25,"name":"AuthProvider Tests tryAutoLogin succeeds if token exists in storage","suiteID":8,"groupIDs":[18,20],"metadata":{"skip":false,"skipReason":null},"line":151,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/auth_provider_test.dart"},"type":"testStart","time":5701}
+{"testID":25,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5708}
+{"test":{"id":26,"name":"(tearDownAll)","suiteID":8,"groupIDs":[18],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":5709}
+{"testID":26,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":5712}
+{"suite":{"id":27,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/providers/sos_alert_provider_test.dart"},"type":"suite","time":5733}
+{"test":{"id":28,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/providers/sos_alert_provider_test.dart","suiteID":27,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":5733}
+{"testID":17,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":6300}
+{"group":{"id":29,"suiteID":16,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":6301}
+{"group":{"id":30,"suiteID":16,"parentID":29,"name":"RideRequestProvider","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":6,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/ride_request_provider_test.dart"},"type":"group","time":6301}
+{"test":{"id":31,"name":"RideRequestProvider initial state is correct","suiteID":16,"groupIDs":[29,30],"metadata":{"skip":false,"skipReason":null},"line":13,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/ride_request_provider_test.dart"},"type":"testStart","time":6301}
+{"testID":31,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6357}
+{"test":{"id":32,"name":"RideRequestProvider setRideRequest updates state and starts timer","suiteID":16,"groupIDs":[29,30],"metadata":{"skip":false,"skipReason":null},"line":18,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/ride_request_provider_test.dart"},"type":"testStart","time":6357}
+{"testID":32,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6366}
+{"test":{"id":33,"name":"RideRequestProvider clearRideRequest clears state and stops timer","suiteID":16,"groupIDs":[29,30],"metadata":{"skip":false,"skipReason":null},"line":29,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/ride_request_provider_test.dart"},"type":"testStart","time":6366}
+{"testID":33,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6373}
+{"test":{"id":34,"name":"RideRequestProvider timer automatically clears request after 30 seconds","suiteID":16,"groupIDs":[29,30],"metadata":{"skip":false,"skipReason":null},"line":42,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/ride_request_provider_test.dart"},"type":"testStart","time":6374}
+{"testID":34,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6390}
+{"suite":{"id":35,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/providers/sos_provider_test.dart"},"type":"suite","time":6414}
+{"test":{"id":36,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/providers/sos_provider_test.dart","suiteID":35,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":6415}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":28,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":7517}
+{"group":{"id":37,"suiteID":27,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":7517}
+{"group":{"id":38,"suiteID":27,"parentID":37,"name":"SOSAlertProvider","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":5,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/sos_alert_provider_test.dart"},"type":"group","time":7518}
+{"test":{"id":39,"name":"SOSAlertProvider initial state is correct","suiteID":27,"groupIDs":[37,38],"metadata":{"skip":false,"skipReason":null},"line":12,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/sos_alert_provider_test.dart"},"type":"testStart","time":7518}
+{"testID":39,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7563}
+{"test":{"id":40,"name":"SOSAlertProvider setAlert updates state and notifies listeners","suiteID":27,"groupIDs":[37,38],"metadata":{"skip":false,"skipReason":null},"line":17,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/sos_alert_provider_test.dart"},"type":"testStart","time":7564}
+{"testID":40,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7576}
+{"test":{"id":41,"name":"SOSAlertProvider clearAlert clears state and notifies listeners","suiteID":27,"groupIDs":[37,38],"metadata":{"skip":false,"skipReason":null},"line":29,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/sos_alert_provider_test.dart"},"type":"testStart","time":7577}
+{"testID":41,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7582}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"suite":{"id":42,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/document_history_screen_test.dart"},"type":"suite","time":7623}
+{"test":{"id":43,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/document_history_screen_test.dart","suiteID":42,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":7623}
+{"testID":36,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":8568}
+{"group":{"id":44,"suiteID":35,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":8568}
+{"group":{"id":45,"suiteID":35,"parentID":44,"name":"SOSProvider","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":5,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/sos_provider_test.dart"},"type":"group","time":8569}
+{"test":{"id":46,"name":"SOSProvider initial state is correct","suiteID":35,"groupIDs":[44,45],"metadata":{"skip":false,"skipReason":null},"line":12,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/sos_provider_test.dart"},"type":"testStart","time":8569}
+{"testID":46,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8611}
+{"test":{"id":47,"name":"SOSProvider activateSOS sets isSOSActive to true and notifies listeners","suiteID":35,"groupIDs":[44,45],"metadata":{"skip":false,"skipReason":null},"line":16,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/sos_provider_test.dart"},"type":"testStart","time":8612}
+{"testID":47,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8624}
+{"test":{"id":48,"name":"SOSProvider deactivateSOS sets isSOSActive to false and notifies listeners","suiteID":35,"groupIDs":[44,45],"metadata":{"skip":false,"skipReason":null},"line":26,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/providers/sos_provider_test.dart"},"type":"testStart","time":8624}
+{"testID":48,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8630}
+{"suite":{"id":49,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/document_submission_screen_test.dart"},"type":"suite","time":8659}
+{"test":{"id":50,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/document_submission_screen_test.dart","suiteID":49,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":8659}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":43,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":9671}
+{"group":{"id":51,"suiteID":42,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":9674}
+{"test":{"id":52,"name":"(setUpAll)","suiteID":42,"groupIDs":[51],"metadata":{"skip":false,"skipReason":null},"line":33,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/document_history_screen_test.dart"},"type":"testStart","time":9674}
+{"testID":52,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":9724}
+{"test":{"id":53,"name":"shows loading indicator while fetching document history","suiteID":42,"groupIDs":[51],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":53,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/document_history_screen_test.dart"},"type":"testStart","time":9725}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":50,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":10759}
+{"group":{"id":54,"suiteID":49,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":10760}
+{"test":{"id":55,"name":"DocumentSubmissionScreen displays document list","suiteID":49,"groupIDs":[54],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":17,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/document_submission_screen_test.dart"},"type":"testStart","time":10760}
+{"testID":53,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11124}
+{"test":{"id":56,"name":"displays an error message when fetching fails","suiteID":42,"groupIDs":[51],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":70,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/document_history_screen_test.dart"},"type":"testStart","time":11124}
+{"testID":56,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11258}
+{"group":{"id":57,"suiteID":42,"parentID":51,"name":"on successful fetch","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":90,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/document_history_screen_test.dart"},"type":"group","time":11259}
+{"test":{"id":58,"name":"on successful fetch displays document history list correctly","suiteID":42,"groupIDs":[51,57],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":98,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/document_history_screen_test.dart"},"type":"testStart","time":11259}
+{"testID":58,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":11711}
+{"test":{"id":59,"name":"on successful fetch tapping filter updates the data","suiteID":42,"groupIDs":[51,57],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":122,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/document_history_screen_test.dart"},"type":"testStart","time":11711}
+{"testID":59,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":12282}
+{"test":{"id":60,"name":"(tearDownAll)","suiteID":42,"groupIDs":[51],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":12282}
+{"testID":60,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":12286}
+{"suite":{"id":61,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/earnings_screen_test.dart"},"type":"suite","time":12317}
+{"test":{"id":62,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/earnings_screen_test.dart","suiteID":61,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":12317}
+{"testID":55,"messageType":"print","message":"ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ\nThe following TestFailure was thrown running a test:\nExpected: exactly one matching candidate\n  Actual: _TextWidgetFinder:<Found 0 widgets with text \"Upload Documents\": []>\n   Which: means none were found but one was expected\n\nWhen the exception was thrown, this was the stack:\n#4      main.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/document_submission_screen_test.dart:30:5)\n<asynchronous suspension>\n#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)\n<asynchronous suspension>\n<asynchronous suspension>\n(elided one frame from package:stack_trace)\n\nThis was caught by the test expectation on the following line:\n  file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/document_submission_screen_test.dart line 30\nThe test description was:\n  DocumentSubmissionScreen displays document list\nΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ","type":"print","time":12854}
+{"testID":55,"error":"Test failed. See exception logs above.\nThe test description was: DocumentSubmissionScreen displays document list","stackTrace":"","isFailure":false,"type":"error","time":12861}
+{"testID":55,"result":"error","skipped":false,"hidden":false,"type":"testDone","time":12862}
+{"test":{"id":63,"name":"Tapping a document tile triggers upload (mocked)","suiteID":49,"groupIDs":[54],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":36,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/document_submission_screen_test.dart"},"type":"testStart","time":12862}
+{"testID":63,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":13302}
+{"suite":{"id":64,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/emergency_contacts_screen_test.dart"},"type":"suite","time":13362}
+{"test":{"id":65,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/emergency_contacts_screen_test.dart","suiteID":64,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":13362}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":62,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":14417}
+{"group":{"id":66,"suiteID":61,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":14418}
+{"group":{"id":67,"suiteID":61,"parentID":66,"name":"EarningsScreen","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":10,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/earnings_screen_test.dart"},"type":"group","time":14418}
+{"test":{"id":68,"name":"EarningsScreen renders the AppBar with correct title","suiteID":61,"groupIDs":[66,67],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":15,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/earnings_screen_test.dart"},"type":"testStart","time":14418}
+{"testID":65,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":14983}
+{"suite":{"id":69,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/home_screen_test.dart"},"type":"suite","time":15008}
+{"test":{"id":70,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/home_screen_test.dart","suiteID":69,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":15008}
+{"testID":68,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":15813}
+{"test":{"id":71,"name":"EarningsScreen shows today's earnings banner text","suiteID":61,"groupIDs":[66,67],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":20,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/earnings_screen_test.dart"},"type":"testStart","time":15813}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":71,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":15965}
+{"test":{"id":72,"name":"EarningsScreen shows all four navigation cards","suiteID":61,"groupIDs":[66,67],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":26,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/earnings_screen_test.dart"},"type":"testStart","time":15965}
+{"testID":72,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":16066}
+{"test":{"id":73,"name":"EarningsScreen shows boost tip banner","suiteID":61,"groupIDs":[66,67],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":34,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/earnings_screen_test.dart"},"type":"testStart","time":16067}
+{"testID":73,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":16166}
+{"test":{"id":74,"name":"EarningsScreen shows stat chip values in the summary banner","suiteID":61,"groupIDs":[66,67],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":39,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/earnings_screen_test.dart"},"type":"testStart","time":16166}
+{"testID":74,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":16266}
+{"suite":{"id":75,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/login_screen_test.dart"},"type":"suite","time":16300}
+{"test":{"id":76,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/login_screen_test.dart","suiteID":75,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":16301}
+{"testID":70,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":16940}
+{"group":{"id":77,"suiteID":69,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":16940}
+{"test":{"id":78,"name":"HomeScreen shows loading initially if position is null","suiteID":69,"groupIDs":[77],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":52,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/home_screen_test.dart"},"type":"testStart","time":16940}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":78,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":18361}
+{"test":{"id":79,"name":"HomeScreen toggle online/offline status","suiteID":69,"groupIDs":[77],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":65,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/home_screen_test.dart"},"type":"testStart","time":18362}
+{"testID":76,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":18518}
+{"group":{"id":80,"suiteID":75,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":18519}
+{"test":{"id":81,"name":"(setUpAll)","suiteID":75,"groupIDs":[80],"metadata":{"skip":false,"skipReason":null},"line":305,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/login_screen_test.dart"},"type":"testStart","time":18519}
+{"testID":81,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":18557}
+{"test":{"id":82,"name":"renders login screen with all elements","suiteID":75,"groupIDs":[80],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":352,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/login_screen_test.dart"},"type":"testStart","time":18557}
+{"testID":79,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":18632}
+{"suite":{"id":83,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/manage_payout_method_screen_test.dart"},"type":"suite","time":18680}
+{"test":{"id":84,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/manage_payout_method_screen_test.dart","suiteID":83,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":18680}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":84,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":20128}
+{"suite":{"id":85,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/menu_screen_test.dart"},"type":"suite","time":20156}
+{"test":{"id":86,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/menu_screen_test.dart","suiteID":85,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":20156}
+{"testID":82,"messageType":"print","message":"ΓòÉΓòÉΓòí EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK Γò₧ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ\nThe following TestFailure was thrown running a test:\nExpected: exactly one matching candidate\n  Actual: _TextWidgetFinder:<Found 0 widgets with text \"Drive with Us\": []>\n   Which: means none were found but one was expected\n\nWhen the exception was thrown, this was the stack:\n#4      main.<anonymous closure> (file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/login_screen_test.dart:358:5)\n<asynchronous suspension>\n#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)\n<asynchronous suspension>\n#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)\n<asynchronous suspension>\n<asynchronous suspension>\n(elided one frame from package:stack_trace)\n\nThis was caught by the test expectation on the following line:\n  file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/login_screen_test.dart line 358\nThe test description was:\n  renders login screen with all elements\nΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ","type":"print","time":20771}
+{"testID":82,"error":"Test failed. See exception logs above.\nThe test description was: renders login screen with all elements","stackTrace":"","isFailure":false,"type":"error","time":20784}
+{"testID":82,"result":"error","skipped":false,"hidden":false,"type":"testDone","time":20785}
+{"test":{"id":87,"name":"validates email and password","suiteID":75,"groupIDs":[80],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":364,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/login_screen_test.dart"},"type":"testStart","time":20785}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":87,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":21373}
+{"test":{"id":88,"name":"shows error message on failed login","suiteID":75,"groupIDs":[80],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":379,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/login_screen_test.dart"},"type":"testStart","time":21373}
+{"testID":88,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":21850}
+{"test":{"id":89,"name":"navigates to HomeScreen on successful login","suiteID":75,"groupIDs":[80],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":402,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/login_screen_test.dart"},"type":"testStart","time":21850}
+{"testID":86,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":22148}
+{"group":{"id":90,"suiteID":85,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":22148}
+{"test":{"id":91,"name":"MenuScreen renders user profile header","suiteID":85,"groupIDs":[90],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":17,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/menu_screen_test.dart"},"type":"testStart","time":22148}
+{"testID":89,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":22336}
+{"test":{"id":92,"name":"(tearDownAll)","suiteID":75,"groupIDs":[80],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":22336}
+{"testID":92,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":22340}
+{"suite":{"id":93,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart"},"type":"suite","time":22379}
+{"test":{"id":94,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart","suiteID":93,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":22379}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":91,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":23868}
+{"test":{"id":95,"name":"MenuScreen contains Wallet menu item","suiteID":85,"groupIDs":[90],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":24,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/menu_screen_test.dart"},"type":"testStart","time":23868}
+{"testID":95,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":24079}
+{"test":{"id":96,"name":"MenuScreen contains Earnings menu item","suiteID":85,"groupIDs":[90],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":31,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/menu_screen_test.dart"},"type":"testStart","time":24080}
+{"testID":96,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":24233}
+{"test":{"id":97,"name":"MenuScreen contains Ratings menu item","suiteID":85,"groupIDs":[90],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":38,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/menu_screen_test.dart"},"type":"testStart","time":24233}
+{"testID":94,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":24298}
+{"group":{"id":98,"suiteID":93,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":24299}
+{"test":{"id":99,"name":"shows loading indicator while fetching earnings","suiteID":93,"groupIDs":[98],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":70,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart"},"type":"testStart","time":24299}
+{"testID":97,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":24399}
+{"test":{"id":100,"name":"MenuScreen can scroll to show all items","suiteID":85,"groupIDs":[90],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":45,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/menu_screen_test.dart"},"type":"testStart","time":24399}
+{"testID":100,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":24640}
+{"suite":{"id":101,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart"},"type":"suite","time":24680}
+{"test":{"id":102,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/profile_screen_test.dart","suiteID":101,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":24680}
+{"testID":99,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":25484}
+{"test":{"id":103,"name":"displays an error message when fetching fails","suiteID":93,"groupIDs":[98],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":86,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart"},"type":"testStart","time":25484}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":103,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":25598}
+{"group":{"id":104,"suiteID":93,"parentID":98,"name":"on successful fetch","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":105,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart"},"type":"group","time":25598}
+{"test":{"id":105,"name":"on successful fetch displays earnings summary and recent transactions","suiteID":93,"groupIDs":[98,104],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":112,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart"},"type":"testStart","time":25599}
+{"testID":105,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26004}
+{"test":{"id":106,"name":"on successful fetch tapping \"Request Payout\" shows confirmation dialog and calls service","suiteID":93,"groupIDs":[98,104],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":132,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/my_earnings_screen_test.dart"},"type":"testStart","time":26005}
+{"testID":102,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":26500}
+{"group":{"id":107,"suiteID":101,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":26500}
+{"test":{"id":108,"name":"shows loading indicator while fetching profile","suiteID":101,"groupIDs":[107],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":40,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/profile_screen_test.dart"},"type":"testStart","time":26500}
+{"testID":106,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":26604}
+{"suite":{"id":109,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/ratings_screen_test.dart"},"type":"suite","time":26649}
+{"test":{"id":110,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/ratings_screen_test.dart","suiteID":109,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":26649}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":108,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27843}
+{"test":{"id":111,"name":"displays an error message when fetching fails","suiteID":101,"groupIDs":[107],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":54,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/profile_screen_test.dart"},"type":"testStart","time":27844}
+{"testID":111,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":27957}
+{"group":{"id":112,"suiteID":101,"parentID":107,"name":"on successful fetch","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":73,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/profile_screen_test.dart"},"type":"group","time":27958}
+{"test":{"id":113,"name":"on successful fetch displays all profile information correctly","suiteID":101,"groupIDs":[107,112],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":80,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/profile_screen_test.dart"},"type":"testStart","time":27958}
+{"testID":113,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":28601}
+{"test":{"id":114,"name":"on successful fetch tapping edit button shows a snackbar","suiteID":101,"groupIDs":[107,112],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":98,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/profile_screen_test.dart"},"type":"testStart","time":28603}
+{"testID":110,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":28647}
+{"group":{"id":115,"suiteID":109,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":28648}
+{"test":{"id":116,"name":"RatingsScreen shows loading indicator initially","suiteID":109,"groupIDs":[115],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":33,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/ratings_screen_test.dart"},"type":"testStart","time":28648}
+{"testID":114,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29015}
+{"suite":{"id":117,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart"},"type":"suite","time":29052}
+{"test":{"id":118,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart","suiteID":117,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":29052}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":116,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":29975}
+{"test":{"id":119,"name":"RatingsScreen renders overall rating after data loads","suiteID":109,"groupIDs":[115],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":53,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/ratings_screen_test.dart"},"type":"testStart","time":29976}
+{"testID":119,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":30059}
+{"test":{"id":120,"name":"RatingsScreen has AppBar with title","suiteID":109,"groupIDs":[115],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":63,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/ratings_screen_test.dart"},"type":"testStart","time":30059}
+{"testID":120,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":30114}
+{"test":{"id":121,"name":"RatingsScreen shows category breakdown section","suiteID":109,"groupIDs":[115],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":70,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/ratings_screen_test.dart"},"type":"testStart","time":30114}
+{"testID":121,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":30199}
+{"test":{"id":122,"name":"RatingsScreen shows recent reviews section","suiteID":109,"groupIDs":[115],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":78,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/ratings_screen_test.dart"},"type":"testStart","time":30199}
+{"testID":122,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":30265}
+{"suite":{"id":123,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/sacco_screen_test.dart"},"type":"suite","time":30300}
+{"test":{"id":124,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/sacco_screen_test.dart","suiteID":123,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":30300}
+{"testID":118,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":30856}
+{"group":{"id":125,"suiteID":117,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":30857}
+{"group":{"id":126,"suiteID":117,"parentID":125,"name":"ReferralCommissionsScreen","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":40,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart"},"type":"group","time":30857}
+{"test":{"id":127,"name":"ReferralCommissionsScreen shows stats and referral code","suiteID":117,"groupIDs":[125,126],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":41,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart"},"type":"testStart","time":30857}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":124,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":32174}
+{"group":{"id":128,"suiteID":123,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":32174}
+{"group":{"id":129,"suiteID":123,"parentID":128,"name":"SaccoScreen","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":40,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/sacco_screen_test.dart"},"type":"group","time":32174}
+{"test":{"id":130,"name":"SaccoScreen shows loading indicator and then balance","suiteID":123,"groupIDs":[128,129],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":41,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/sacco_screen_test.dart"},"type":"testStart","time":32174}
+{"testID":127,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":32444}
+{"test":{"id":131,"name":"ReferralCommissionsScreen shows history list","suiteID":117,"groupIDs":[125,126],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":64,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart"},"type":"testStart","time":32444}
+{"testID":131,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":32691}
+{"test":{"id":132,"name":"ReferralCommissionsScreen tapping share copies to clipboard","suiteID":117,"groupIDs":[125,126],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":91,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/referral_commissions_screen_test.dart"},"type":"testStart","time":32692}
+{"testID":132,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33028}
+{"suite":{"id":133,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/saved_places_screen_test.dart"},"type":"suite","time":33060}
+{"test":{"id":134,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/saved_places_screen_test.dart","suiteID":133,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":33061}
+{"testID":130,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":33714}
+{"test":{"id":135,"name":"SaccoScreen shows transactions list","suiteID":123,"groupIDs":[128,129],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":61,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/sacco_screen_test.dart"},"type":"testStart","time":33715}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":135,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":34060}
+{"test":{"id":136,"name":"SaccoScreen tapping apply loan shows snackbar","suiteID":123,"groupIDs":[128,129],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":84,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/sacco_screen_test.dart"},"type":"testStart","time":34060}
+{"testID":136,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":34575}
+{"suite":{"id":137,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/weekly_statements_screen_test.dart"},"type":"suite","time":34631}
+{"test":{"id":138,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/screens/weekly_statements_screen_test.dart","suiteID":137,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":34631}
+{"testID":134,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":35837}
+{"group":{"id":139,"suiteID":133,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":35838}
+{"test":{"id":140,"name":"SavedPlacesScreen renders AppBar title","suiteID":133,"groupIDs":[139],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":8,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/saved_places_screen_test.dart"},"type":"testStart","time":35838}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":140,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":38394}
+{"test":{"id":141,"name":"SavedPlacesScreen shows default places","suiteID":133,"groupIDs":[139],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":14,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/saved_places_screen_test.dart"},"type":"testStart","time":38395}
+{"testID":138,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":38413}
+{"group":{"id":142,"suiteID":137,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":38413}
+{"test":{"id":143,"name":"shows loading indicator while fetching statements","suiteID":137,"groupIDs":[142],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":47,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/weekly_statements_screen_test.dart"},"type":"testStart","time":38414}
+{"testID":141,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":38594}
+{"test":{"id":144,"name":"SavedPlacesScreen has a FAB to add places","suiteID":133,"groupIDs":[139],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":23,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/saved_places_screen_test.dart"},"type":"testStart","time":38595}
+{"testID":144,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":38748}
+{"test":{"id":145,"name":"Tapping FAB opens add-place sheet","suiteID":133,"groupIDs":[139],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":29,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/saved_places_screen_test.dart"},"type":"testStart","time":38749}
+{"testID":145,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":39658}
+{"suite":{"id":146,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/audio_stream_service_test.dart"},"type":"suite","time":39735}
+{"test":{"id":147,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/audio_stream_service_test.dart","suiteID":146,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":39736}
+{"testID":143,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":39981}
+{"test":{"id":148,"name":"displays an error message when fetching fails","suiteID":137,"groupIDs":[142],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":63,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/weekly_statements_screen_test.dart"},"type":"testStart","time":39982}
+{"testID":148,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":40113}
+{"test":{"id":149,"name":"displays a message when no statements are found","suiteID":137,"groupIDs":[142],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":82,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/weekly_statements_screen_test.dart"},"type":"testStart","time":40114}
+{"testID":149,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":40240}
+{"group":{"id":150,"suiteID":137,"parentID":142,"name":"on successful fetch","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":100,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/weekly_statements_screen_test.dart"},"type":"group","time":40240}
+{"test":{"id":151,"name":"on successful fetch displays a list of weekly statements","suiteID":137,"groupIDs":[142,150],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":107,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/weekly_statements_screen_test.dart"},"type":"testStart","time":40240}
+{"testID":151,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":40841}
+{"test":{"id":152,"name":"on successful fetch tapping a statement shows a snackbar","suiteID":137,"groupIDs":[142,150],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":124,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/screens/weekly_statements_screen_test.dart"},"type":"testStart","time":40842}
+{"testID":152,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":41408}
+{"suite":{"id":153,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/document_service_test.dart"},"type":"suite","time":41447}
+{"test":{"id":154,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/document_service_test.dart","suiteID":153,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":41447}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":147,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":42528}
+{"group":{"id":155,"suiteID":146,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":42529}
+{"group":{"id":156,"suiteID":146,"parentID":155,"name":"AudioStreamService","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":30,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/audio_stream_service_test.dart"},"type":"group","time":42529}
+{"test":{"id":157,"name":"AudioStreamService startStreaming returns false and does not connect if permission is denied","suiteID":146,"groupIDs":[155,156],"metadata":{"skip":false,"skipReason":null},"line":31,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/audio_stream_service_test.dart"},"type":"testStart","time":42529}
+{"testID":157,"messageType":"print","message":"Microphone permission not granted.","type":"print","time":42629}
+{"testID":157,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":42644}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"test":{"id":158,"name":"AudioStreamService startStreaming returns true and connects to WebSocket if permission is granted","suiteID":146,"groupIDs":[155,156],"metadata":{"skip":false,"skipReason":null},"line":47,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/audio_stream_service_test.dart"},"type":"testStart","time":42647}
+{"testID":158,"messageType":"print","message":"Simulating audio stream start...","type":"print","time":42683}
+{"testID":158,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":42691}
+{"test":{"id":159,"name":"AudioStreamService stopStreaming closes the WebSocket sink if it exists","suiteID":146,"groupIDs":[155,156],"metadata":{"skip":false,"skipReason":null},"line":63,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/audio_stream_service_test.dart"},"type":"testStart","time":42692}
+{"testID":159,"messageType":"print","message":"Simulating audio stream start...","type":"print","time":42706}
+{"testID":159,"messageType":"print","message":"Audio stream stopped.","type":"print","time":42708}
+{"testID":159,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":42709}
+{"test":{"id":160,"name":"AudioStreamService stopStreaming does not throw error if channel does not exist","suiteID":146,"groupIDs":[155,156],"metadata":{"skip":false,"skipReason":null},"line":75,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/audio_stream_service_test.dart"},"type":"testStart","time":42709}
+{"testID":160,"messageType":"print","message":"Audio stream stopped.","type":"print","time":42716}
+{"testID":160,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":42719}
+{"suite":{"id":161,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/notification_service_test.dart"},"type":"suite","time":42759}
+{"test":{"id":162,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/notification_service_test.dart","suiteID":161,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":42760}
+{"testID":154,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":43947}
+{"group":{"id":163,"suiteID":153,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":null,"column":null,"url":null},"type":"group","time":43947}
+{"group":{"id":164,"suiteID":153,"parentID":163,"name":"DocumentService","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":14,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/document_service_test.dart"},"type":"group","time":43948}
+{"group":{"id":165,"suiteID":153,"parentID":164,"name":"DocumentService fetchDocumentStatus","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":15,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/document_service_test.dart"},"type":"group","time":43948}
+{"test":{"id":166,"name":"DocumentService fetchDocumentStatus returns a list of documents on a successful call (200)","suiteID":153,"groupIDs":[163,164,165],"metadata":{"skip":false,"skipReason":null},"line":16,"column":7,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/document_service_test.dart"},"type":"testStart","time":43948}
+{"testID":166,"error":"Expected: '/api/documents/me'\n  Actual: '/api/v1/documents/me'\n   Which: is different.\n          Expected: /api/documents/ ...\n            Actual: /api/v1/documen ...\n                         ^\n           Differ at offset 5\n","stackTrace":"package:matcher                                     expect\npackage:flutter_test/src/widget_tester.dart 473:18  expect\ntest\\services\\document_service_test.dart 22:11      main.<fn>.<fn>.<fn>.<fn>\npackage:http/src/mock_client.dart 54:36             new MockClient.<fn>\n","isFailure":true,"type":"error","time":44092}
+{"testID":166,"result":"failure","skipped":false,"hidden":false,"type":"testDone","time":44092}
+{"test":{"id":167,"name":"DocumentService fetchDocumentStatus throws an exception on a failed call","suiteID":153,"groupIDs":[163,164,165],"metadata":{"skip":false,"skipReason":null},"line":35,"column":7,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/document_service_test.dart"},"type":"testStart","time":44093}
+{"testID":167,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":44124}
+{"group":{"id":168,"suiteID":153,"parentID":164,"name":"DocumentService uploadDocument","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":48,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/document_service_test.dart"},"type":"group","time":44125}
+{"test":{"id":169,"name":"DocumentService uploadDocument completes successfully on a 201 response","suiteID":153,"groupIDs":[163,164,168],"metadata":{"skip":false,"skipReason":null},"line":49,"column":7,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/document_service_test.dart"},"type":"testStart","time":44125}
+{"testID":169,"error":"Expected: '/api/users/me/documents'\n  Actual: '/api/v1/users/me/documents'\n   Which: is different.\n          Expected: /api/users/me/d ...\n            Actual: /api/v1/users/m ...\n                         ^\n           Differ at offset 5\n","stackTrace":"package:matcher                                     expect\npackage:flutter_test/src/widget_tester.dart 473:18  expect\ntest\\services\\document_service_test.dart 52:11      main.<fn>.<fn>.<fn>.<fn>\npackage:http/src/mock_client.dart 54:36             new MockClient.<fn>\n","isFailure":true,"type":"error","time":44276}
+{"testID":169,"result":"failure","skipped":false,"hidden":false,"type":"testDone","time":44277}
+{"test":{"id":170,"name":"DocumentService uploadDocument throws an exception on a non-201 response","suiteID":153,"groupIDs":[163,164,168],"metadata":{"skip":false,"skipReason":null},"line":74,"column":7,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/document_service_test.dart"},"type":"testStart","time":44278}
+{"testID":170,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":44295}
+{"group":{"id":171,"suiteID":153,"parentID":164,"name":"DocumentService submitForReview","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":90,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/document_service_test.dart"},"type":"group","time":44295}
+{"test":{"id":172,"name":"DocumentService submitForReview completes successfully on a 201 response","suiteID":153,"groupIDs":[163,164,171],"metadata":{"skip":false,"skipReason":null},"line":91,"column":7,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/document_service_test.dart"},"type":"testStart","time":44296}
+{"testID":172,"error":"Expected: '/api/users/me/documents/submit'\n  Actual: '/api/v1/users/me/documents/submit'\n   Which: is different.\n          Expected: /api/users/me/d ...\n            Actual: /api/v1/users/m ...\n                         ^\n           Differ at offset 5\n","stackTrace":"package:matcher                                     expect\npackage:flutter_test/src/widget_tester.dart 473:18  expect\ntest\\services\\document_service_test.dart 94:11      main.<fn>.<fn>.<fn>.<fn>\npackage:http/src/mock_client.dart 54:36             new MockClient.<fn>\n","isFailure":true,"type":"error","time":44314}
+{"testID":172,"result":"failure","skipped":false,"hidden":false,"type":"testDone","time":44315}
+{"test":{"id":173,"name":"DocumentService submitForReview throws an exception on a non-201 response","suiteID":153,"groupIDs":[163,164,171],"metadata":{"skip":false,"skipReason":null},"line":103,"column":7,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/document_service_test.dart"},"type":"testStart","time":44315}
+{"testID":173,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":44326}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"suite":{"id":174,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/payout_api_service_test.dart"},"type":"suite","time":44498}
+{"test":{"id":175,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/payout_api_service_test.dart","suiteID":174,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":44498}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":162,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":45596}
+{"group":{"id":176,"suiteID":161,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":45596}
+{"group":{"id":177,"suiteID":161,"parentID":176,"name":"NotificationService","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":5,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/notification_service_test.dart"},"type":"group","time":45597}
+{"test":{"id":178,"name":"NotificationService sosAlertStream receives data when simulateSosAlert is called","suiteID":161,"groupIDs":[176,177],"metadata":{"skip":false,"skipReason":null},"line":16,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/notification_service_test.dart"},"type":"testStart","time":45597}
+{"testID":178,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":45680}
+{"test":{"id":179,"name":"NotificationService initialize runs without error","suiteID":161,"groupIDs":[176,177],"metadata":{"skip":false,"skipReason":null},"line":31,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/notification_service_test.dart"},"type":"testStart","time":45681}
+{"testID":179,"messageType":"print","message":"Notification Service Initialized","type":"print","time":45693}
+{"testID":179,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":45693}
+{"test":{"id":180,"name":"NotificationService dispose closes streams","suiteID":161,"groupIDs":[176,177],"metadata":{"skip":false,"skipReason":null},"line":35,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/notification_service_test.dart"},"type":"testStart","time":45694}
+{"testID":180,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":45699}
+{"suite":{"id":181,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/ratings_service_test.dart"},"type":"suite","time":45741}
+{"test":{"id":182,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/ratings_service_test.dart","suiteID":181,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":45741}
+{"testID":175,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":46427}
+{"group":{"id":183,"suiteID":174,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":46427}
+{"group":{"id":184,"suiteID":174,"parentID":183,"name":"PayoutApiService","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":20,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/payout_api_service_test.dart"},"type":"group","time":46427}
+{"test":{"id":185,"name":"PayoutApiService getAvailableEarnings returns mock value after delay","suiteID":174,"groupIDs":[183,184],"metadata":{"skip":false,"skipReason":null},"line":21,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/payout_api_service_test.dart"},"type":"testStart","time":46428}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":185,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":46976}
+{"test":{"id":186,"name":"PayoutApiService requestPayout calls post with correct data and returns PayoutDto","suiteID":174,"groupIDs":[183,184],"metadata":{"skip":false,"skipReason":null},"line":27,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/payout_api_service_test.dart"},"type":"testStart","time":46976}
+{"testID":186,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":47032}
+{"suite":{"id":187,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/referral_service_test.dart"},"type":"suite","time":47058}
+{"test":{"id":188,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/referral_service_test.dart","suiteID":187,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":47058}
+{"testID":182,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":47510}
+{"group":{"id":189,"suiteID":181,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":7,"line":null,"column":null,"url":null},"type":"group","time":47511}
+{"group":{"id":190,"suiteID":181,"parentID":189,"name":"RatingsService","metadata":{"skip":false,"skipReason":null},"testCount":7,"line":5,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ratings_service_test.dart"},"type":"group","time":47511}
+{"test":{"id":191,"name":"RatingsService fetchRatings returns RatingsData with a positive overall rating","suiteID":181,"groupIDs":[189,190],"metadata":{"skip":false,"skipReason":null},"line":12,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ratings_service_test.dart"},"type":"testStart","time":47511}
+{"testID":191,"messageType":"print","message":"Fetching ratings for driver driver-001...","type":"print","time":47544}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":191,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":48359}
+{"test":{"id":192,"name":"RatingsService fetchRatings returns a non-zero totalRatings count","suiteID":181,"groupIDs":[189,190],"metadata":{"skip":false,"skipReason":null},"line":20,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ratings_service_test.dart"},"type":"testStart","time":48359}
+{"testID":192,"messageType":"print","message":"Fetching ratings for driver driver-001...","type":"print","time":48362}
+{"testID":188,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":48463}
+{"group":{"id":193,"suiteID":187,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":8,"line":null,"column":null,"url":null},"type":"group","time":48463}
+{"test":{"id":194,"name":"(setUpAll)","suiteID":187,"groupIDs":[193],"metadata":{"skip":false,"skipReason":null},"line":18,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/referral_service_test.dart"},"type":"testStart","time":48464}
+{"testID":194,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":48496}
+{"group":{"id":195,"suiteID":187,"parentID":193,"name":"ReferralService","metadata":{"skip":false,"skipReason":null},"testCount":8,"line":27,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/referral_service_test.dart"},"type":"group","time":48496}
+{"test":{"id":196,"name":"ReferralService getReferralStats returns parsed map on 200","suiteID":187,"groupIDs":[193,195],"metadata":{"skip":false,"skipReason":null},"line":31,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/referral_service_test.dart"},"type":"testStart","time":48496}
+{"testID":196,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":48537}
+{"test":{"id":197,"name":"ReferralService getReferralStats returns error map on 500","suiteID":187,"groupIDs":[193,195],"metadata":{"skip":false,"skipReason":null},"line":43,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/referral_service_test.dart"},"type":"testStart","time":48538}
+{"testID":197,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":48544}
+{"test":{"id":198,"name":"ReferralService getReferralStats returns error map on network exception","suiteID":187,"groupIDs":[193,195],"metadata":{"skip":false,"skipReason":null},"line":50,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/referral_service_test.dart"},"type":"testStart","time":48544}
+{"testID":198,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":48548}
+{"test":{"id":199,"name":"ReferralService getReferralCode returns code from response","suiteID":187,"groupIDs":[193,195],"metadata":{"skip":false,"skipReason":null},"line":58,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/referral_service_test.dart"},"type":"testStart","time":48549}
+{"testID":199,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":48555}
+{"test":{"id":200,"name":"ReferralService getReferralCode returns fallback string on non-200","suiteID":187,"groupIDs":[193,195],"metadata":{"skip":false,"skipReason":null},"line":66,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/referral_service_test.dart"},"type":"testStart","time":48555}
+{"testID":200,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":48559}
+{"test":{"id":201,"name":"ReferralService getReferralCode returns fallback on network error","suiteID":187,"groupIDs":[193,195],"metadata":{"skip":false,"skipReason":null},"line":73,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/referral_service_test.dart"},"type":"testStart","time":48560}
+{"testID":201,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":48563}
+{"test":{"id":202,"name":"ReferralService getDownline returns list of referrals on success","suiteID":187,"groupIDs":[193,195],"metadata":{"skip":false,"skipReason":null},"line":81,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/referral_service_test.dart"},"type":"testStart","time":48564}
+{"testID":202,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":48569}
+{"test":{"id":203,"name":"ReferralService getDownline returns empty list on error","suiteID":187,"groupIDs":[193,195],"metadata":{"skip":false,"skipReason":null},"line":92,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/referral_service_test.dart"},"type":"testStart","time":48569}
+{"testID":203,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":48575}
+{"test":{"id":204,"name":"(tearDownAll)","suiteID":187,"groupIDs":[193],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":48575}
+{"testID":204,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":48578}
+{"suite":{"id":205,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"suite","time":48602}
+{"test":{"id":206,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/ride_service_test.dart","suiteID":205,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":48602}
+{"testID":192,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":49164}
+{"test":{"id":207,"name":"RatingsService fetchRatings returns 4 category ratings","suiteID":181,"groupIDs":[189,190],"metadata":{"skip":false,"skipReason":null},"line":26,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ratings_service_test.dart"},"type":"testStart","time":49165}
+{"testID":207,"messageType":"print","message":"Fetching ratings for driver driver-001...","type":"print","time":49169}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":207,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":49978}
+{"test":{"id":208,"name":"RatingsService all category scores are between 1 and 5","suiteID":181,"groupIDs":[189,190],"metadata":{"skip":false,"skipReason":null},"line":32,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ratings_service_test.dart"},"type":"testStart","time":49979}
+{"testID":208,"messageType":"print","message":"Fetching ratings for driver driver-001...","type":"print","time":49981}
+{"testID":206,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":50121}
+{"group":{"id":209,"suiteID":205,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":13,"line":null,"column":null,"url":null},"type":"group","time":50121}
+{"test":{"id":210,"name":"(setUpAll)","suiteID":205,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":23,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50121}
+{"testID":210,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":50152}
+{"group":{"id":211,"suiteID":205,"parentID":209,"name":"RideService","metadata":{"skip":false,"skipReason":null},"testCount":13,"line":33,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"group","time":50152}
+{"test":{"id":212,"name":"RideService getDriverStatus returns true when backend says isOnline","suiteID":205,"groupIDs":[209,211],"metadata":{"skip":false,"skipReason":null},"line":38,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50153}
+{"testID":212,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50198}
+{"test":{"id":213,"name":"RideService getDriverStatus returns false on non-200 response","suiteID":205,"groupIDs":[209,211],"metadata":{"skip":false,"skipReason":null},"line":46,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50199}
+{"testID":213,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50204}
+{"test":{"id":214,"name":"RideService getDriverStatus returns false on network error","suiteID":205,"groupIDs":[209,211],"metadata":{"skip":false,"skipReason":null},"line":54,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50205}
+{"testID":214,"messageType":"print","message":"Error fetching driver status: Exception: Network error","type":"print","time":50212}
+{"testID":214,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50213}
+{"test":{"id":215,"name":"RideService toggleOnlineStatus completes without throwing","suiteID":205,"groupIDs":[209,211],"metadata":{"skip":false,"skipReason":null},"line":63,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50213}
+{"testID":215,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50225}
+{"test":{"id":216,"name":"RideService acceptRide completes successfully on a 200 response","suiteID":205,"groupIDs":[209,211],"metadata":{"skip":false,"skipReason":null},"line":72,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50225}
+{"testID":216,"messageType":"print","message":"Ride test-ride-123 accepted via backend.","type":"print","time":50230}
+{"testID":216,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50231}
+{"test":{"id":217,"name":"RideService acceptRide completes successfully on a 201 response","suiteID":205,"groupIDs":[209,211],"metadata":{"skip":false,"skipReason":null},"line":80,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50231}
+{"testID":217,"messageType":"print","message":"Ride test-ride-123 accepted via backend.","type":"print","time":50236}
+{"testID":217,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50237}
+{"test":{"id":218,"name":"RideService rejectRide completes successfully","suiteID":205,"groupIDs":[209,211],"metadata":{"skip":false,"skipReason":null},"line":89,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50237}
+{"testID":218,"messageType":"print","message":"Ride test-ride-123 rejected via backend. Reason: none","type":"print","time":50241}
+{"testID":218,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50242}
+{"test":{"id":219,"name":"RideService rejectRide sends reason when provided","suiteID":205,"groupIDs":[209,211],"metadata":{"skip":false,"skipReason":null},"line":97,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50242}
+{"testID":219,"messageType":"print","message":"Ride test-ride-123 rejected via backend. Reason: Too far away","type":"print","time":50253}
+{"testID":219,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50253}
+{"test":{"id":220,"name":"RideService startTrip completes successfully","suiteID":205,"groupIDs":[209,211],"metadata":{"skip":false,"skipReason":null},"line":114,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50254}
+{"testID":220,"messageType":"print","message":"Ride test-ride-123 started via backend.","type":"print","time":50259}
+{"testID":220,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50260}
+{"test":{"id":221,"name":"RideService completeTrip returns 450.0 on success","suiteID":205,"groupIDs":[209,211],"metadata":{"skip":false,"skipReason":null},"line":123,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50261}
+{"testID":221,"messageType":"print","message":"Trip test-ride-123 completed via backend.","type":"print","time":50268}
+{"testID":221,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50269}
+{"test":{"id":222,"name":"RideService completeTrip returns 450.0 fallback on network error","suiteID":205,"groupIDs":[209,211],"metadata":{"skip":false,"skipReason":null},"line":132,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50269}
+{"testID":222,"messageType":"print","message":"Error completing trip: Exception: Network error","type":"print","time":50273}
+{"testID":222,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50274}
+{"test":{"id":223,"name":"RideService confirmCashPayment completes without throwing","suiteID":205,"groupIDs":[209,211],"metadata":{"skip":false,"skipReason":null},"line":142,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50274}
+{"testID":223,"messageType":"print","message":"Cash payment confirmed for trip test-ride-123.","type":"print","time":50278}
+{"testID":223,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50279}
+{"test":{"id":224,"name":"RideService submitRating sends rating and comment","suiteID":205,"groupIDs":[209,211],"metadata":{"skip":false,"skipReason":null},"line":151,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ride_service_test.dart"},"type":"testStart","time":50279}
+{"testID":224,"messageType":"print","message":"Ride test-ride-123 rated 5.0 stars.","type":"print","time":50284}
+{"testID":224,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50285}
+{"test":{"id":225,"name":"(tearDownAll)","suiteID":205,"groupIDs":[209],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":50285}
+{"testID":225,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":50288}
+{"suite":{"id":226,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/sacco_service_test.dart"},"type":"suite","time":50311}
+{"test":{"id":227,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/sacco_service_test.dart","suiteID":226,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":50312}
+{"testID":208,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":50784}
+{"test":{"id":228,"name":"RatingsService fetchRatings returns at least one passenger review","suiteID":181,"groupIDs":[189,190],"metadata":{"skip":false,"skipReason":null},"line":41,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ratings_service_test.dart"},"type":"testStart","time":50785}
+{"testID":228,"messageType":"print","message":"Fetching ratings for driver driver-001...","type":"print","time":50788}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":228,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":51601}
+{"test":{"id":229,"name":"RatingsService each review has a non-empty passengerName and a valid rating","suiteID":181,"groupIDs":[189,190],"metadata":{"skip":false,"skipReason":null},"line":47,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ratings_service_test.dart"},"type":"testStart","time":51601}
+{"testID":227,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":51607}
+{"group":{"id":230,"suiteID":226,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":7,"line":null,"column":null,"url":null},"type":"group","time":51607}
+{"test":{"id":231,"name":"(setUpAll)","suiteID":226,"groupIDs":[230],"metadata":{"skip":false,"skipReason":null},"line":18,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/sacco_service_test.dart"},"type":"testStart","time":51607}
+{"testID":229,"messageType":"print","message":"Fetching ratings for driver driver-001...","type":"print","time":51608}
+{"testID":231,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":51638}
+{"group":{"id":232,"suiteID":226,"parentID":230,"name":"SaccoService","metadata":{"skip":false,"skipReason":null},"testCount":7,"line":27,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/sacco_service_test.dart"},"type":"group","time":51638}
+{"test":{"id":233,"name":"SaccoService getSaccoHealth returns status on success","suiteID":226,"groupIDs":[230,232],"metadata":{"skip":false,"skipReason":null},"line":31,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/sacco_service_test.dart"},"type":"testStart","time":51638}
+{"testID":233,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":51690}
+{"test":{"id":234,"name":"SaccoService getSaccoHealth returns error map on exception","suiteID":226,"groupIDs":[230,232],"metadata":{"skip":false,"skipReason":null},"line":39,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/sacco_service_test.dart"},"type":"testStart","time":51690}
+{"testID":234,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":51694}
+{"test":{"id":235,"name":"SaccoService getSavingsBalance returns balance map on 200","suiteID":226,"groupIDs":[230,232],"metadata":{"skip":false,"skipReason":null},"line":47,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/sacco_service_test.dart"},"type":"testStart","time":51695}
+{"testID":235,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":51702}
+{"test":{"id":236,"name":"SaccoService getSavingsBalance returns zero fallback on non-200","suiteID":226,"groupIDs":[230,232],"metadata":{"skip":false,"skipReason":null},"line":58,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/sacco_service_test.dart"},"type":"testStart","time":51703}
+{"testID":236,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":51708}
+{"test":{"id":237,"name":"SaccoService getSavingsBalance returns zero fallback on network error","suiteID":226,"groupIDs":[230,232],"metadata":{"skip":false,"skipReason":null},"line":65,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/sacco_service_test.dart"},"type":"testStart","time":51708}
+{"testID":237,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":51714}
+{"test":{"id":238,"name":"SaccoService getTransactions returns list of SaccoTransaction on 200","suiteID":226,"groupIDs":[230,232],"metadata":{"skip":false,"skipReason":null},"line":74,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/sacco_service_test.dart"},"type":"testStart","time":51715}
+{"testID":238,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":51722}
+{"test":{"id":239,"name":"SaccoService getTransactions returns empty list on error","suiteID":226,"groupIDs":[230,232],"metadata":{"skip":false,"skipReason":null},"line":96,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/sacco_service_test.dart"},"type":"testStart","time":51723}
+{"testID":239,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":51727}
+{"test":{"id":240,"name":"(tearDownAll)","suiteID":226,"groupIDs":[230],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":51727}
+{"testID":240,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":51730}
+{"suite":{"id":241,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/sos_service_test.dart"},"type":"suite","time":51752}
+{"test":{"id":242,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/sos_service_test.dart","suiteID":241,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":51752}
+{"testID":229,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":52408}
+{"test":{"id":243,"name":"RatingsService each review has a non-empty id and date","suiteID":181,"groupIDs":[189,190],"metadata":{"skip":false,"skipReason":null},"line":58,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/ratings_service_test.dart"},"type":"testStart","time":52408}
+{"testID":243,"messageType":"print","message":"Fetching ratings for driver driver-001...","type":"print","time":52412}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":242,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":53091}
+{"group":{"id":244,"suiteID":241,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":53091}
+{"group":{"id":245,"suiteID":241,"parentID":244,"name":"SosService","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":10,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/sos_service_test.dart"},"type":"group","time":53091}
+{"test":{"id":246,"name":"SosService activateSos completes normally on successful request (200)","suiteID":241,"groupIDs":[244,245],"metadata":{"skip":false,"skipReason":null},"line":19,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/sos_service_test.dart"},"type":"testStart","time":53091}
+{"testID":246,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":53179}
+{"test":{"id":247,"name":"SosService activateSos throws Exception on failed request (500)","suiteID":241,"groupIDs":[244,245],"metadata":{"skip":false,"skipReason":null},"line":35,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/sos_service_test.dart"},"type":"testStart","time":53180}
+{"testID":247,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":53189}
+{"test":{"id":248,"name":"SosService connectAudioStream returns a WebSocketChannel","suiteID":241,"groupIDs":[244,245],"metadata":{"skip":false,"skipReason":null},"line":50,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/sos_service_test.dart"},"type":"testStart","time":53189}
+{"testID":248,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":53196}
+{"suite":{"id":249,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/user_service_test.dart"},"type":"suite","time":53219}
+{"test":{"id":250,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/services/user_service_test.dart","suiteID":249,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":53219}
+{"testID":243,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":53228}
+{"suite":{"id":251,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/viewmodels/document_history_viewmodel_test.dart"},"type":"suite","time":53357}
+{"test":{"id":252,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/viewmodels/document_history_viewmodel_test.dart","suiteID":251,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":53357}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":250,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":54786}
+{"group":{"id":253,"suiteID":249,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":54786}
+{"group":{"id":254,"suiteID":249,"parentID":253,"name":"UserService","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":20,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/user_service_test.dart"},"type":"group","time":54786}
+{"test":{"id":255,"name":"UserService getUserProfile returns mock data","suiteID":249,"groupIDs":[253,254],"metadata":{"skip":false,"skipReason":null},"line":21,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/user_service_test.dart"},"type":"testStart","time":54786}
+{"testID":255,"messageType":"print","message":"Checking user profile for biometric requirement...","type":"print","time":54833}
+{"testID":252,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":55442}
+{"group":{"id":256,"suiteID":251,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":55442}
+{"group":{"id":257,"suiteID":251,"parentID":256,"name":"DocumentHistoryViewModel","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":16,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/viewmodels/document_history_viewmodel_test.dart"},"type":"group","time":55442}
+{"test":{"id":258,"name":"DocumentHistoryViewModel Initial state is loading, then successfully fetches and filters history","suiteID":251,"groupIDs":[256,257],"metadata":{"skip":false,"skipReason":null},"line":43,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/viewmodels/document_history_viewmodel_test.dart"},"type":"testStart","time":55442}
+{"testID":258,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":55523}
+{"test":{"id":259,"name":"DocumentHistoryViewModel Handles error during history fetch","suiteID":251,"groupIDs":[256,257],"metadata":{"skip":false,"skipReason":null},"line":74,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/viewmodels/document_history_viewmodel_test.dart"},"type":"testStart","time":55523}
+{"testID":259,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":55528}
+{"test":{"id":260,"name":"DocumentHistoryViewModel Handles case where no history exists for the specified document type","suiteID":251,"groupIDs":[256,257],"metadata":{"skip":false,"skipReason":null},"line":93,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/viewmodels/document_history_viewmodel_test.dart"},"type":"testStart","time":55529}
+{"testID":260,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":55536}
+{"suite":{"id":261,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/viewmodels/document_submission_viewmodel_test.dart"},"type":"suite","time":55561}
+{"test":{"id":262,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/viewmodels/document_submission_viewmodel_test.dart","suiteID":261,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":55561}
+{"testID":255,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":55851}
+{"test":{"id":263,"name":"UserService postBiometricSuccess sends POST request and completes on 200","suiteID":249,"groupIDs":[253,254],"metadata":{"skip":false,"skipReason":null},"line":28,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/user_service_test.dart"},"type":"testStart","time":55852}
+{"testID":263,"messageType":"print","message":"Biometric success posted to backend.","type":"print","time":55909}
+{"testID":263,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":55910}
+{"test":{"id":264,"name":"UserService postBiometricSuccess throws HttpException on non-200","suiteID":249,"groupIDs":[253,254],"metadata":{"skip":false,"skipReason":null},"line":41,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/user_service_test.dart"},"type":"testStart","time":55910}
+{"testID":264,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":55921}
+{"test":{"id":265,"name":"UserService postBiometricFailure sends POST request and completes on 200","suiteID":249,"groupIDs":[253,254],"metadata":{"skip":false,"skipReason":null},"line":49,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/user_service_test.dart"},"type":"testStart","time":55922}
+{"testID":265,"messageType":"print","message":"Biometric failure posted to backend, user should be suspended.","type":"print","time":55926}
+{"testID":265,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":55928}
+{"test":{"id":266,"name":"UserService postBiometricFailure throws HttpException on non-200","suiteID":249,"groupIDs":[253,254],"metadata":{"skip":false,"skipReason":null},"line":62,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/services/user_service_test.dart"},"type":"testStart","time":55928}
+{"testID":266,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":55934}
+{"suite":{"id":267,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/auth_wrapper_test.dart"},"type":"suite","time":55961}
+{"test":{"id":268,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/auth_wrapper_test.dart","suiteID":267,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":55961}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":262,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":57384}
+{"group":{"id":269,"suiteID":261,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":null,"column":null,"url":null},"type":"group","time":57385}
+{"test":{"id":270,"name":"(setUpAll)","suiteID":261,"groupIDs":[269],"metadata":{"skip":false,"skipReason":null},"line":13,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/viewmodels/document_submission_viewmodel_test.dart"},"type":"testStart","time":57385}
+{"testID":270,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":57427}
+{"group":{"id":271,"suiteID":261,"parentID":269,"name":"DocumentSubmissionViewModel","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":22,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/viewmodels/document_submission_viewmodel_test.dart"},"type":"group","time":57428}
+{"test":{"id":272,"name":"DocumentSubmissionViewModel Initial state is loading, then fetches documents successfully","suiteID":261,"groupIDs":[269,271],"metadata":{"skip":false,"skipReason":null},"line":23,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/viewmodels/document_submission_viewmodel_test.dart"},"type":"testStart","time":57428}
+{"testID":272,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":57473}
+{"test":{"id":273,"name":"DocumentSubmissionViewModel Handles error during initial fetch","suiteID":261,"groupIDs":[269,271],"metadata":{"skip":false,"skipReason":null},"line":63,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/viewmodels/document_submission_viewmodel_test.dart"},"type":"testStart","time":57474}
+{"testID":273,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":57480}
+{"test":{"id":274,"name":"DocumentSubmissionViewModel uploadDocument success case","suiteID":261,"groupIDs":[269,271],"metadata":{"skip":false,"skipReason":null},"line":80,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/viewmodels/document_submission_viewmodel_test.dart"},"type":"testStart","time":57481}
+{"testID":274,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":57503}
+{"test":{"id":275,"name":"DocumentSubmissionViewModel uploadDocument failure case","suiteID":261,"groupIDs":[269,271],"metadata":{"skip":false,"skipReason":null},"line":111,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/viewmodels/document_submission_viewmodel_test.dart"},"type":"testStart","time":57504}
+{"testID":275,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":57511}
+{"test":{"id":276,"name":"DocumentSubmissionViewModel submitForReview success case","suiteID":261,"groupIDs":[269,271],"metadata":{"skip":false,"skipReason":null},"line":142,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/viewmodels/document_submission_viewmodel_test.dart"},"type":"testStart","time":57511}
+{"testID":276,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":57517}
+{"test":{"id":277,"name":"DocumentSubmissionViewModel canSubmit computed property works correctly","suiteID":261,"groupIDs":[269,271],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/viewmodels/document_submission_viewmodel_test.dart"},"type":"testStart","time":57518}
+{"testID":277,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":57523}
+{"test":{"id":278,"name":"(tearDownAll)","suiteID":261,"groupIDs":[269],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":57524}
+{"testID":278,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":57527}
+{"suite":{"id":279,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/driver_details_panel_test.dart"},"type":"suite","time":57557}
+{"test":{"id":280,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/driver_details_panel_test.dart","suiteID":279,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":57557}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":268,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":58375}
+{"group":{"id":281,"suiteID":267,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":58375}
+{"test":{"id":282,"name":"(setUpAll)","suiteID":267,"groupIDs":[281],"metadata":{"skip":false,"skipReason":null},"line":67,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/auth_wrapper_test.dart"},"type":"testStart","time":58376}
+{"testID":282,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":58425}
+{"group":{"id":283,"suiteID":267,"parentID":281,"name":"AuthWrapper","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":80,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/auth_wrapper_test.dart"},"type":"group","time":58425}
+{"test":{"id":284,"name":"AuthWrapper shows loading indicator for AuthInitial state","suiteID":267,"groupIDs":[281,283],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":81,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/auth_wrapper_test.dart"},"type":"testStart","time":58425}
+{"testID":280,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":59081}
+{"suite":{"id":285,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/driver_trip_summary_panel_test.dart"},"type":"suite","time":59106}
+{"test":{"id":286,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/driver_trip_summary_panel_test.dart","suiteID":285,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":59106}
+{"testID":284,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":59577}
+{"test":{"id":287,"name":"AuthWrapper shows LoginScreen for Unauthenticated state","suiteID":267,"groupIDs":[281,283],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":95,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/auth_wrapper_test.dart"},"type":"testStart","time":59577}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":287,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":60392}
+{"test":{"id":288,"name":"AuthWrapper shows HomeScreen for Authenticated state","suiteID":267,"groupIDs":[281,283],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":110,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/auth_wrapper_test.dart"},"type":"testStart","time":60392}
+{"testID":288,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":60658}
+{"test":{"id":289,"name":"(tearDownAll)","suiteID":267,"groupIDs":[281],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":60658}
+{"testID":289,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":60663}
+{"suite":{"id":290,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/en_route_to_destination_panel_test.dart"},"type":"suite","time":60710}
+{"test":{"id":291,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/en_route_to_destination_panel_test.dart","suiteID":290,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":60710}
+{"testID":286,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":60721}
+{"suite":{"id":292,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/in_trip_panel_test.dart"},"type":"suite","time":60753}
+{"test":{"id":293,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/in_trip_panel_test.dart","suiteID":292,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":60753}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":291,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":62077}
+{"suite":{"id":294,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/rate_passenger_modal_test.dart"},"type":"suite","time":62101}
+{"test":{"id":295,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/rate_passenger_modal_test.dart","suiteID":294,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":62101}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":293,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":63229}
+{"group":{"id":296,"suiteID":292,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":63229}
+{"test":{"id":297,"name":"(setUpAll)","suiteID":292,"groupIDs":[296],"metadata":{"skip":false,"skipReason":null},"line":17,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/in_trip_panel_test.dart"},"type":"testStart","time":63229}
+{"testID":297,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":63276}
+{"test":{"id":298,"name":"InTripPanel renders correctly with ride data","suiteID":292,"groupIDs":[296],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":57,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/in_trip_panel_test.dart"},"type":"testStart","time":63276}
+{"testID":295,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":64233}
+{"group":{"id":299,"suiteID":294,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":null,"column":null,"url":null},"type":"group","time":64234}
+{"group":{"id":300,"suiteID":294,"parentID":299,"name":"RatePassengerModal","metadata":{"skip":false,"skipReason":null},"testCount":4,"line":51,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/rate_passenger_modal_test.dart"},"type":"group","time":64234}
+{"test":{"id":301,"name":"RatePassengerModal initial state displays passenger name and disabled button","suiteID":294,"groupIDs":[299,300],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":52,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/rate_passenger_modal_test.dart"},"type":"testStart","time":64234}
+{"testID":298,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":64602}
+{"test":{"id":302,"name":"tapping Complete Trip calls rideService.completeTrip","suiteID":292,"groupIDs":[296],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":67,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/in_trip_panel_test.dart"},"type":"testStart","time":64602}
+{"testID":302,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":64920}
+{"test":{"id":303,"name":"shows snackbar after successful trip completion","suiteID":292,"groupIDs":[296],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":77,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/in_trip_panel_test.dart"},"type":"testStart","time":64921}
+{"testID":303,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":65024}
+{"test":{"id":304,"name":"(tearDownAll)","suiteID":292,"groupIDs":[296],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":65024}
+{"testID":304,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":65028}
+{"suite":{"id":305,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/rate_passenger_panel_test.dart"},"type":"suite","time":65095}
+{"test":{"id":306,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/rate_passenger_panel_test.dart","suiteID":305,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":65096}
+{"testID":301,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":65891}
+{"test":{"id":307,"name":"RatePassengerModal selecting a rating enables the submit button","suiteID":294,"groupIDs":[299,300],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":70,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/rate_passenger_modal_test.dart"},"type":"testStart","time":65891}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":307,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":66223}
+{"test":{"id":308,"name":"RatePassengerModal successful submission calls service and shows snackbar","suiteID":294,"groupIDs":[299,300],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":87,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/rate_passenger_modal_test.dart"},"type":"testStart","time":66223}
+{"testID":308,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":66611}
+{"test":{"id":309,"name":"RatePassengerModal failed submission shows error snackbar and keeps modal open","suiteID":294,"groupIDs":[299,300],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":122,"root_column":5,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/rate_passenger_modal_test.dart"},"type":"testStart","time":66612}
+{"testID":306,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":66811}
+{"suite":{"id":310,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/ride_request_modal_test.dart"},"type":"suite","time":66838}
+{"test":{"id":311,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/ride_request_modal_test.dart","suiteID":310,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":66838}
+{"testID":309,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":66849}
+{"suite":{"id":312,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/trip_in_progress_panel_test.dart"},"type":"suite","time":66890}
+{"test":{"id":313,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/trip_in_progress_panel_test.dart","suiteID":312,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":66890}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":311,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":68540}
+{"group":{"id":314,"suiteID":310,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":68540}
+{"test":{"id":315,"name":"(setUpAll)","suiteID":310,"groupIDs":[314],"metadata":{"skip":false,"skipReason":null},"line":29,"column":3,"url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/ride_request_modal_test.dart"},"type":"testStart","time":68540}
+{"testID":315,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":68584}
+{"test":{"id":316,"name":"renders ride details correctly","suiteID":310,"groupIDs":[314],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":61,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/ride_request_modal_test.dart"},"type":"testStart","time":68584}
+{"testID":313,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":69396}
+{"group":{"id":317,"suiteID":312,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":69396}
+{"test":{"id":318,"name":"TripInProgressPanel displays details and has actionable buttons","suiteID":312,"groupIDs":[317],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":28,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/trip_in_progress_panel_test.dart"},"type":"testStart","time":69396}
+{"testID":316,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":70029}
+{"test":{"id":319,"name":"shows Verified Passenger badge for verified passengers","suiteID":310,"groupIDs":[314],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":73,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/ride_request_modal_test.dart"},"type":"testStart","time":70029}
+{"testID":319,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":70113}
+{"test":{"id":320,"name":"shows Unverified badge for unverified passengers","suiteID":310,"groupIDs":[314],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":80,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/ride_request_modal_test.dart"},"type":"testStart","time":70114}
+{"testID":320,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":70193}
+{"test":{"id":321,"name":"tapping Reject opens confirmation dialog","suiteID":310,"groupIDs":[314],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":103,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/ride_request_modal_test.dart"},"type":"testStart","time":70193}
+{"testID":321,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":70596}
+{"test":{"id":322,"name":"tapping Accept calls rideService.acceptRide","suiteID":310,"groupIDs":[314],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":114,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/ride_request_modal_test.dart"},"type":"testStart","time":70596}
+{"testID":318,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":70861}
+{"test":{"id":323,"name":"tapping END TRIP calls the onEndTrip callback","suiteID":312,"groupIDs":[317],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":43,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/trip_in_progress_panel_test.dart"},"type":"testStart","time":70861}
+{"testID":323,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":71115}
+{"test":{"id":324,"name":"tapping SOS icon calls the onSOS callback","suiteID":312,"groupIDs":[317],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":56,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/trip_in_progress_panel_test.dart"},"type":"testStart","time":71116}
+{"testID":324,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":71252}
+{"test":{"id":325,"name":"shows booking type banner when bookingType is not ONE_WAY","suiteID":312,"groupIDs":[317],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":69,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/trip_in_progress_panel_test.dart"},"type":"testStart","time":71252}
+{"testID":322,"messageType":"print","message":"Backend startTrip failed: 400 - ","type":"print","time":71350}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19734/16500.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19734/16500.png","type":"print","time":71352}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19735/16500.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19735/16500.png","type":"print","time":71353}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19734/16501.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19734/16501.png","type":"print","time":71355}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19735/16501.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19735/16501.png","type":"print","time":71356}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19734/16499.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19734/16499.png","type":"print","time":71358}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19735/16499.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19735/16499.png","type":"print","time":71359}
+{"testID":325,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":71359}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19733/16500.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19733/16500.png","type":"print","time":71360}
+{"test":{"id":326,"name":"does NOT show booking type banner for ONE_WAY trips","suiteID":312,"groupIDs":[317],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":94,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/trip_in_progress_panel_test.dart"},"type":"testStart","time":71360}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19736/16500.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19736/16500.png","type":"print","time":71362}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19733/16501.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19733/16501.png","type":"print","time":71362}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19736/16501.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19736/16501.png","type":"print","time":71365}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19734/16502.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19734/16502.png","type":"print","time":71367}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19735/16502.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19735/16502.png","type":"print","time":71373}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19736/16502.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19736/16502.png","type":"print","time":71375}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19733/16499.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19733/16499.png","type":"print","time":71376}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19736/16499.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19736/16499.png","type":"print","time":71378}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19733/16502.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19733/16502.png","type":"print","time":71378}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19737/16501.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19737/16501.png","type":"print","time":71379}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19732/16501.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19732/16501.png","type":"print","time":71379}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19735/16498.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19735/16498.png","type":"print","time":71381}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19735/16503.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19735/16503.png","type":"print","time":71383}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19732/16500.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19732/16500.png","type":"print","time":71385}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19734/16503.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19734/16503.png","type":"print","time":71388}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19737/16500.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19737/16500.png","type":"print","time":71388}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19734/16498.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19734/16498.png","type":"print","time":71389}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19737/16499.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19737/16499.png","type":"print","time":71390}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19736/16498.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19736/16498.png","type":"print","time":71391}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19732/16502.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19732/16502.png","type":"print","time":71391}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19736/16503.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19736/16503.png","type":"print","time":71392}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19733/16498.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19733/16498.png","type":"print","time":71393}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19737/16502.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19737/16502.png","type":"print","time":71393}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19733/16503.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19733/16503.png","type":"print","time":71395}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19732/16499.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19732/16499.png","type":"print","time":71396}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19737/16503.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19737/16503.png","type":"print","time":71396}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19732/16498.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19732/16498.png","type":"print","time":71399}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19737/16498.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19737/16498.png","type":"print","time":71402}
+{"testID":322,"messageType":"print","message":"ClientException: Request to https://tile.openstreetmap.org/15/19732/16503.png failed with status 400: ., uri=https://tile.openstreetmap.org/15/19732/16503.png","type":"print","time":71404}
+{"testID":322,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":71439}
+{"test":{"id":327,"name":"(tearDownAll)","suiteID":310,"groupIDs":[314],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":71439}
+{"testID":327,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":71467}
+{"testID":326,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":71475}
+{"suite":{"id":328,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/waiting_for_passenger_panel_test.dart"},"type":"suite","time":71512}
+{"test":{"id":329,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widgets/waiting_for_passenger_panel_test.dart","suiteID":328,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":71512}
+{"suite":{"id":330,"platform":"vm","path":"D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widget_test.dart"},"type":"suite","time":71531}
+{"test":{"id":331,"name":"loading D:/IBN/PROJECTS/Cabi Africa/mobile/driver_app/test/widget_test.dart","suiteID":330,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":71532}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null}}]
+{"testID":329,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":73150}
+{"group":{"id":332,"suiteID":328,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":3,"line":null,"column":null,"url":null},"type":"group","time":73150}
+{"test":{"id":333,"name":"WaitingForPassengerPanel renders passenger name","suiteID":328,"groupIDs":[332],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":27,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/waiting_for_passenger_panel_test.dart"},"type":"testStart","time":73150}
+{"testID":331,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":73936}
+{"group":{"id":334,"suiteID":330,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":2,"line":null,"column":null,"url":null},"type":"group","time":73937}
+{"test":{"id":335,"name":"SplashScreen renders logo and app name","suiteID":330,"groupIDs":[334],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":19,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widget_test.dart"},"type":"testStart","time":73937}
+{"testID":333,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":74372}
+{"test":{"id":336,"name":"WaitingForPassengerPanel tapping Start Trip shows PIN dialog","suiteID":328,"groupIDs":[332],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":36,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/waiting_for_passenger_panel_test.dart"},"type":"testStart","time":74373}
+{"testID":336,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":75004}
+{"test":{"id":337,"name":"WaitingForPassengerPanel builds without crashing with empty map","suiteID":328,"groupIDs":[332],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":47,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widgets/waiting_for_passenger_panel_test.dart"},"type":"testStart","time":75005}
+{"testID":337,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":75090}
+{"testID":335,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":75298}
+{"test":{"id":338,"name":"LoginScreen renders form fields","suiteID":330,"groupIDs":[334],"metadata":{"skip":false,"skipReason":null},"line":174,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":39,"root_column":3,"root_url":"file:///D:/IBN/PROJECTS/Cabi%20Africa/mobile/driver_app/test/widget_test.dart"},"type":"testStart","time":75299}
+{"testID":338,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":75891}
+{"success":false,"type":"done","time":75969}

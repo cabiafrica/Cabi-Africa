@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 import 'package:driver_app/services/user_service.dart';
+import 'package:driver_app/config/app_config.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
 
@@ -32,7 +33,7 @@ void main() {
       await expectLater(userService.postBiometricSuccess(), completes);
 
       verify(() => mockClient.post(
-            Uri.parse('http://10.0.2.2:3333/api/users/verify-biometric'),
+            Uri.parse('${AppConfig.authApiUrl}/users/verify-biometric'),
             headers: any(named: 'headers'),
           )).called(1);
     });
@@ -53,7 +54,7 @@ void main() {
       await expectLater(userService.postBiometricFailure(), completes);
 
       verify(() => mockClient.post(
-            Uri.parse('http://10.0.2.2:3333/api/users/biometric-failed'),
+            Uri.parse('${AppConfig.authApiUrl}/users/biometric-failed'),
             headers: any(named: 'headers'),
           )).called(1);
     });

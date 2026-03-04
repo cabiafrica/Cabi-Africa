@@ -355,7 +355,7 @@ void main() {
 
     await tester.pumpWidget(createWidgetUnderTest());
     expect(find.text('CABI AFRICA'), findsOneWidget);
-    expect(find.text('Drive with Us'), findsOneWidget);
+    expect(find.text('DRIVE WITH PRIDE.'), findsOneWidget);
 
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);

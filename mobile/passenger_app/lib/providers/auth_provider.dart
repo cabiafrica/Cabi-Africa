@@ -41,16 +41,24 @@ class AuthNotifier extends StateNotifier<AuthState> {
     tryAutoLogin();
   }
 
-  Future<void> login(String email, String password) async {
+  Future<void> login(String email, String password,
+      {bool rememberMe = true}) async {
     try {
       state = const AuthLoading();
-      final result = await _authService.signIn(email: email, password: password);
+      final result =
+          await _authService.signIn(email: email, password: password);
       if (!result.isSignedIn) {
         throw Exception(result.error ?? 'Login failed');
       }
       final token = result.token!;
 
-      await _storage.write(key: 'authToken', value: token);
+      // Persistent Storage: Only store if 'Remember Me' is checked
+      if (rememberMe) {
+        await _storage.write(key: 'authToken', value: token);
+      } else {
+        await _storage.delete(
+            key: 'authToken'); // Ensure any previous session is cleared
+      }
 
       // --- Analytics Tracking ---
       await _analyticsService.setUserId(email); // Use email as a stable user ID

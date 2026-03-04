@@ -37,7 +37,7 @@ void main() {
     await tester.tap(find.text('Submit Rating'));
     await tester.pump(); // Start submission (loading)
     await tester.pump(const Duration(seconds: 1)); // Finish mock submission
-    await tester.pumpAndSettle(); // Navigation
+    await tester.pump(); // Pump again to render snackbar
 
     // Verify success snackbar
     expect(find.text('Rating submitted. Thank you!'), findsOneWidget);

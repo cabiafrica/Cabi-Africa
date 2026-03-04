@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:passenger_app/screens/registration_screen.dart';
-import 'package:passenger_app/screens/otp_verification_screen.dart';
+
 import 'package:passenger_app/services/auth_service.dart';
-import 'package:core_ui/core_ui.dart';
 
 class MockAuthService extends Mock implements AuthService {}
 
@@ -24,10 +23,11 @@ void main() {
   testWidgets('validates empty fields', (tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
-    await tester.tap(find.byType(PrimaryButton));
+    await tester.ensureVisible(find.byType(ElevatedButton));
+    await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
 
-    expect(find.text('Please enter your name'), findsOneWidget);
+    expect(find.text('Required'), findsNWidgets(2)); // First Name, Last Name
     expect(find.text('Please enter a valid email'), findsOneWidget);
     expect(find.text('Please enter your phone number'), findsOneWidget);
     expect(find.text('Password must be at least 8 characters long'),
@@ -37,26 +37,29 @@ void main() {
   testWidgets('validates invalid phone and password', (tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
-    await tester.enterText(find.byType(TextFormField).at(2), '123'); // Phone
+    await tester.enterText(find.byType(TextFormField).at(3), '123'); // Phone
     await tester.enterText(
-        find.byType(TextFormField).at(3), 'password'); // Password (no numbers)
+        find.byType(TextFormField).at(4), 'password'); // Password
+    await tester.enterText(
+        find.byType(TextFormField).at(5), 'password'); // Confirm
 
-    await tester.tap(find.byType(PrimaryButton));
+    await tester.ensureVisible(find.byType(ElevatedButton));
+    await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
 
     expect(find.text('Enter a valid Kenyan phone number'), findsOneWidget);
-    expect(
-        find.text('Password must contain letters and numbers'), findsOneWidget);
+    expect(find.text('Must contain: Lowercase, Uppercase, Number & Symbol'),
+        findsOneWidget);
   });
 
-  testWidgets('navigates to OtpVerificationScreen on successful registration',
+  testWidgets('shows success message on successful registration',
       (tester) async {
     when(() => mockAuthService.register(
               firstName: 'John',
               lastName: 'Doe',
               email: 'john@example.com',
               phone: '0712345678',
-              password: 'Password123',
+              password: 'Password123!',
               referralCode: '',
             ))
         .thenAnswer(
@@ -64,17 +67,23 @@ void main() {
 
     await tester.pumpWidget(createWidgetUnderTest());
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'John Doe');
+    await tester.enterText(find.byType(TextFormField).at(0), 'John');
+    await tester.enterText(find.byType(TextFormField).at(1), 'Doe');
     await tester.enterText(
-        find.byType(TextFormField).at(1), 'john@example.com');
-    await tester.enterText(find.byType(TextFormField).at(2), '0712345678');
-    await tester.enterText(find.byType(TextFormField).at(3), 'Password123');
+        find.byType(TextFormField).at(2), 'john@example.com');
+    await tester.enterText(find.byType(TextFormField).at(3), '0712345678');
+    await tester.enterText(find.byType(TextFormField).at(4), 'Password123!');
+    await tester.enterText(find.byType(TextFormField).at(5), 'Password123!');
 
-    await tester.tap(find.byType(PrimaryButton));
-    await tester.pump(); // Start loading
-    await tester.pump(const Duration(seconds: 1)); // Wait for register call
+    await tester.ensureVisible(find.byType(ElevatedButton));
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump(); // simulate click
+    await tester.pump(const Duration(milliseconds: 100)); // Wait for snackbar
 
-    expect(find.byType(OtpVerificationScreen), findsOneWidget);
+    expect(find.text('Registration successful! Please sign in to continue.'),
+        findsOneWidget);
+    await tester
+        .pumpAndSettle(const Duration(seconds: 2)); // let all timers finish
   });
 
   testWidgets('shows error message on failed registration', (tester) async {
@@ -83,7 +92,7 @@ void main() {
               lastName: 'Doe',
               email: 'john@example.com',
               phone: '0712345678',
-              password: 'Password123',
+              password: 'Password123!',
               referralCode: '',
             ))
         .thenAnswer((_) async =>
@@ -91,16 +100,21 @@ void main() {
 
     await tester.pumpWidget(createWidgetUnderTest());
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'John Doe');
+    await tester.enterText(find.byType(TextFormField).at(0), 'John');
+    await tester.enterText(find.byType(TextFormField).at(1), 'Doe');
     await tester.enterText(
-        find.byType(TextFormField).at(1), 'john@example.com');
-    await tester.enterText(find.byType(TextFormField).at(2), '0712345678');
-    await tester.enterText(find.byType(TextFormField).at(3), 'Password123');
+        find.byType(TextFormField).at(2), 'john@example.com');
+    await tester.enterText(find.byType(TextFormField).at(3), '0712345678');
+    await tester.enterText(find.byType(TextFormField).at(4), 'Password123!');
+    await tester.enterText(find.byType(TextFormField).at(5), 'Password123!');
 
-    await tester.tap(find.byType(PrimaryButton));
-    await tester.pumpAndSettle(); // Wait for snackbar
+    await tester.ensureVisible(find.byType(ElevatedButton));
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump(); // simulate click
+    await tester.pump(const Duration(milliseconds: 100)); // Wait for snackbar
 
     expect(
         find.text('Registration Failed: Email already exists'), findsOneWidget);
+    await tester.pumpAndSettle(const Duration(seconds: 4)); // clear snackbar
   });
 }

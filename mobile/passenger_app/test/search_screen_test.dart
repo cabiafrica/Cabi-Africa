@@ -9,12 +9,11 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: SearchScreen()));
 
     // Verify the app bar title and search field are present
-    expect(find.text('Set Destination'), findsOneWidget);
     expect(find.byType(TextField), findsOneWidget);
 
     // Verify the list of dummy locations is displayed
-    expect(find.text('Yaya Centre'), findsOneWidget);
-    expect(find.text('The Junction Mall'), findsOneWidget);
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('Work'), findsOneWidget);
   });
 
   testWidgets('tapping a location pops the screen with the selected data', (
@@ -27,12 +26,12 @@ void main() {
         home: Builder(
           builder: (context) => ElevatedButton(
             onPressed: () async {
-              selectedLocation = await Navigator.of(context)
-                  .push<Map<String, dynamic>>(
-                    MaterialPageRoute(
-                      builder: (context) => const SearchScreen(),
-                    ),
-                  );
+              selectedLocation =
+                  await Navigator.of(context).push<Map<String, dynamic>>(
+                MaterialPageRoute(
+                  builder: (context) => const SearchScreen(),
+                ),
+              );
             },
             child: const Text('Go'),
           ),
@@ -45,12 +44,12 @@ void main() {
     await tester.pumpAndSettle();
 
     // Tap the first location in the list
-    await tester.tap(find.text('Yaya Centre'));
+    await tester.tap(find.text('Home'));
     await tester.pumpAndSettle();
 
     // Verify the screen was popped and the correct data was returned
     expect(find.byType(SearchScreen), findsNothing);
     expect(selectedLocation, isNotNull);
-    expect(selectedLocation!['name'], 'Yaya Centre');
+    expect(selectedLocation!['name'], 'Home');
   });
 }

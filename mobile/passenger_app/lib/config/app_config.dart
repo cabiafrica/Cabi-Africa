@@ -1,11 +1,18 @@
 import 'package:flutter/foundation.dart';
 
 class AppConfig {
-  static String get host => kIsWeb ? 'localhost' : '192.168.100.35';
+  static String get host => kIsWeb
+      ? 'localhost'
+      : (defaultTargetPlatform == TargetPlatform.android
+          ? '10.0.2.2'
+          : 'localhost');
 
   // API Base URLs
-  // API Base URLs
   static String get dispatchApiUrl => 'http://$host:3334/api';
+  // Port 3010 is used by driver-lead-service which handles mobile auth.
+  // Port 3333 is the auth-gateway, but some monorepos consolidate.
+  // Based on backend/driver-lead-service/src/main.ts, the port is 3010
+  // and the prefix is api/v1.
   static String get authApiUrl => 'http://$host:3010/api/v1';
   static String get verificationApiUrl =>
       'http://$host:3003/api/v1/verification';

@@ -25,7 +25,7 @@ void main() {
 
     // Initial frame — logo visible
     expect(find.text('CABI AFRICA'), findsOneWidget);
-    expect(find.text('DRIVER APP'), findsOneWidget);
+    expect(find.text('D R I V E R   |   N E W   D A W N'), findsOneWidget);
 
     // Advance past the 3-second Future.delayed to let initState complete.
     // This drains the pending timer so the test teardown assertion passes.

@@ -167,7 +167,8 @@ class _MenuScreenState extends State<MenuScreen> {
                       onTap: () => Navigator.pushNamed(context,
                           '/referral_status')), // Assuming mapping exists or will create
                 ],
-                backgroundColor: AppTheme.darkSurface), // Dark Surface background
+                backgroundColor:
+                    AppTheme.darkSurface), // Dark Surface background
 
             const SizedBox(height: 24),
 
@@ -225,7 +226,7 @@ class _MenuScreenState extends State<MenuScreen> {
               color: AppTheme.darkBackground,
               child: const Center(
                 child: Text(
-                  'SW Version : 1.0.0 (5)',
+                  'Cabi Go • v1.0.0 (5)',
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ),
