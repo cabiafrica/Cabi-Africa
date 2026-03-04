@@ -63,21 +63,91 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   Future<void> _pickImage() async {
-    try {
-      final XFile? photo = await _picker.pickImage(
-        source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.front,
-      );
-      if (photo != null) {
-        setState(() {
-          _profileImage = File(photo.path);
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error capturing photo: $e')),
+    final ImageSource? source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: const Color(0xFF1A1A1A),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12.0),
+            child: Wrap(
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  child: Text(
+                    'Upload Professional Photo',
+                    style: TextStyle(
+                      color: Color(0xFFFFD700),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.photo_library, color: Colors.white),
+                  title: const Text('Choose from Gallery',
+                      style: TextStyle(color: Colors.white)),
+                  onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.photo_camera, color: Colors.white),
+                  title: const Text('Take a Photo',
+                      style: TextStyle(color: Colors.white)),
+                  onTap: () => Navigator.of(context).pop(ImageSource.camera),
+                ),
+              ],
+            ),
+          ),
         );
+      },
+    );
+
+    if (source != null) {
+      try {
+        final XFile? photo = await _picker.pickImage(
+          source: source,
+          preferredCameraDevice: CameraDevice.front,
+        );
+        if (photo != null) {
+          setState(() => _isLoading = true);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Verifying passport photo quality...'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+
+          // Simulated ML verification delay
+          await Future.delayed(const Duration(seconds: 2));
+
+          setState(() {
+            _profileImage = File(photo.path);
+            _isLoading = false;
+          });
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Photo verified successfully!'),
+                backgroundColor: Colors.green,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error getting photo: $e')),
+          );
+        }
       }
     }
   }
