@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 
 class AppConfig {
   static String get host => kIsWeb
-      ? 'localhost'
+      ? '192.168.100.35'
       : (defaultTargetPlatform == TargetPlatform.android
-          ? '10.0.2.2'
-          : 'localhost');
+          ? '192.168.100.35'
+          : '192.168.100.35');
 
   // API Base URLs
   static String get dispatchApiUrl => 'http://$host:3334/api';
