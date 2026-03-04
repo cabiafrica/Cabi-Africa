@@ -32,18 +32,17 @@ class CabiPassengerApp extends ConsumerWidget {
         legacy_provider.ChangeNotifierProvider(create: (_) => AuthProvider()),
         legacy_provider.ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child: MaterialApp(
-        title: 'Cabi - Book a Ride',
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system, // Or watch a provider
-        home: const SplashScreen(),
-        debugShowCheckedModeBanner: false,
-        // Shorebird auto-update can be disabled here if needed for debugging startup
-        // This is a placeholder for potential Shorebird configuration in Dart code
-        // For actual Shorebird configuration, refer to shorebird.yaml or Shorebird API.
-        // # auto_update: false
-        // auto_update: false
+      child: legacy_provider.Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: 'Cabi - Book a Ride',
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeProvider.themeMode,
+            home: const SplashScreen(),
+            debugShowCheckedModeBanner: false,
+          );
+        },
       ),
     );
   }

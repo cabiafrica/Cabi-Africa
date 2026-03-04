@@ -83,8 +83,8 @@ class _CabiMapState extends State<CabiMap> {
         // Map tile layer (theme-aware)
         TileLayer(
           urlTemplate: widget.theme == CabiMapTheme.dark
-              ? 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png'
-              : 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
+              ? 'https://basemaps.cartocdn.com/rastertiles/dark_nolabels/{z}/{x}/{y}@2x.png'
+              : 'https://basemaps.cartocdn.com/rastertiles/light_nolabels/{z}/{x}/{y}@2x.png',
           userAgentPackageName: 'com.cabi.app',
           maxZoom: 19,
           retinaMode: true,
