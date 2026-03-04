@@ -66,6 +66,19 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           transitionDuration: const Duration(milliseconds: 800),
         ),
       );
+    }).catchError((e) {
+      if (!mounted) return;
+      debugPrint("Splash error: $e");
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => const LoginScreen(),
+          transitionsBuilder: (_, animation, __, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 800),
+        ),
+      );
     });
   }
 
