@@ -976,80 +976,89 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      GridView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 1.4,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                        ),
-                        itemCount: _vehicleTypes.length,
-                        itemBuilder: (ctx, index) {
-                          final v = _vehicleTypes[index];
-                          final isSelected = v['id'] == _selectedVehicleId;
-                          return InkWell(
-                            onTap: () {
-                              setState(() {
-                                _selectedVehicleId = v['id'];
-                                // Map UI vehicle ID to backend vehicle type
-                                switch (v['id']) {
-                                  case 'standard':
-                                    _selectedVehicleType = 'STANDARD';
-                                    break;
-                                  case 'xl':
-                                    _selectedVehicleType = 'XL';
-                                    break;
-                                  case 'bany':
-                                    _selectedVehicleType = 'BODA';
-                                    break;
-                                  default:
-                                    _selectedVehicleType = 'STANDARD';
-                                }
-                                _updateNearbyDrivers(); // Refresh nearby drivers count
-                              });
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? primaryColor.withValues(alpha: 0.15)
-                                    : Colors.white,
-                                border: Border.all(
-                                    color: isSelected
-                                        ? primaryColor
-                                        : Colors.grey.shade200,
-                                    width: 2),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child:
-                                        Image.network(v['image'], height: 40),
-                                  ),
-                                  const Spacer(),
-                                  Text(v['time'],
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.green)),
-                                  Text(v['name'],
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)),
-                                  Text(v['price'],
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey.shade600)),
-                                ],
-                              ),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          int crossAxisCount =
+                              constraints.maxWidth > 600 ? 3 : 2;
+                          if (constraints.maxWidth > 900) crossAxisCount = 4;
+
+                          return GridView.builder(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: crossAxisCount,
+                              childAspectRatio: crossAxisCount > 2 ? 1.0 : 1.4,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
                             ),
+                            itemCount: _vehicleTypes.length,
+                            itemBuilder: (ctx, index) {
+                              final v = _vehicleTypes[index];
+                              final isSelected = v['id'] == _selectedVehicleId;
+                              return InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedVehicleId = v['id'];
+                                    // Map UI vehicle ID to backend vehicle type
+                                    switch (v['id']) {
+                                      case 'standard':
+                                        _selectedVehicleType = 'STANDARD';
+                                        break;
+                                      case 'xl':
+                                        _selectedVehicleType = 'XL';
+                                        break;
+                                      case 'bany':
+                                        _selectedVehicleType = 'BODA';
+                                        break;
+                                      default:
+                                        _selectedVehicleType = 'STANDARD';
+                                    }
+                                    _updateNearbyDrivers(); // Refresh nearby drivers count
+                                  });
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? primaryColor.withValues(alpha: 0.15)
+                                        : Colors.white,
+                                    border: Border.all(
+                                        color: isSelected
+                                            ? primaryColor
+                                            : Colors.grey.shade200,
+                                        width: 2),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Image.network(v['image'],
+                                            height: 40),
+                                      ),
+                                      const Spacer(),
+                                      Text(v['time'],
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green)),
+                                      Text(v['name'],
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold)),
+                                      Text(v['price'],
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey.shade600)),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),

@@ -258,18 +258,38 @@ class _MenuScreenState extends State<MenuScreen> {
 
   Widget _buildGridSection(BuildContext context, List<Widget> items,
       {Color backgroundColor = Colors.white}) {
-    return Container(
-      color: backgroundColor,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: GridView.count(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        crossAxisCount: 3,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        childAspectRatio: 0.85,
-        children: items,
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate crossAxisCount based on screen width
+        // Mobile: 3 columns, Tablet: 4-6 columns
+        int crossAxisCount = 3;
+        if (constraints.maxWidth > 900) {
+          crossAxisCount = 6;
+        } else if (constraints.maxWidth > 600) {
+          crossAxisCount = 4;
+        }
+
+        // Adjust childAspectRatio based on crossAxisCount and width
+        // to maintain a consistent look
+        double childAspectRatio = 0.85;
+        if (crossAxisCount > 3) {
+          childAspectRatio = 1.0; // Squarer items on larger screens
+        }
+
+        return Container(
+          color: backgroundColor,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            childAspectRatio: childAspectRatio,
+            children: items,
+          ),
+        );
+      },
     );
   }
 }
