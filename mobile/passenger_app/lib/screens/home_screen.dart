@@ -421,6 +421,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("HomeScreen: building widget tree...");
     const primaryColor = AppTheme.primaryColor;
 
     return Scaffold(
@@ -432,6 +433,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           CabiMap(
             initialCenter: _passengerLocation,
             initialZoom: 15.0,
+            theme: Theme.of(context).brightness == Brightness.dark
+                ? CabiMapTheme.dark
+                : CabiMapTheme.light,
             markers: _getMarkers(),
             routePoints: _getRoute(),
             showUserLocation: true,

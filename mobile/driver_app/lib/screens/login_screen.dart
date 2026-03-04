@@ -114,12 +114,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
           ),
           SafeArea(
-            child: SingleChildScrollView(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 500),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 16.0),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -188,9 +188,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         const SizedBox(height: 40),
 
-                        // Title
                         const Text(
-                          'DRIVE WITH PRIDE.',
+                          'Drive With Pride!',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
@@ -262,7 +261,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Text(
-                                      'Register to Drive',
+                                      'Sign Up',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -422,8 +421,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12)),
                             ),
-                            child: const Text(
-                                'Register to Drive'), // Changed from 'Go to Registration Portal'
+                            child: const Text('Sign Up'),
                           ),
                         ],
 

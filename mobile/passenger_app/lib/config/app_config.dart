@@ -1,12 +1,16 @@
 import 'package:flutter/foundation.dart';
 
 class AppConfig {
-  static String get host => kIsWeb ? 'localhost' : '192.168.100.35';
+  static String get host => kIsWeb
+      ? 'localhost'
+      : (defaultTargetPlatform == TargetPlatform.android
+          ? '10.0.2.2'
+          : 'localhost');
 
   // API Base URLs
-  // API Base URLs
   static String get dispatchApiUrl => 'http://$host:3334/api';
-  static String get authApiUrl => 'http://$host:3010/api/v1';
+  // Using auth-gateway for unified authentication.
+  static String get authApiUrl => 'http://$host:3333/api';
   static String get verificationApiUrl =>
       'http://$host:3003/api/v1/verification';
   static String get contentApiUrl => 'http://$host:3001/api';

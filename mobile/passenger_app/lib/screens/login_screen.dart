@@ -76,6 +76,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     const primaryColor = Color(0xFFFFD700); // Prestige Gold
     const backgroundColor = Color(0xFF0A0A0A); // Deep Black
 
+    debugPrint("LoginScreen: building widget tree...");
+
     return Scaffold(
       backgroundColor: backgroundColor,
       body: LayoutBuilder(
@@ -88,203 +90,212 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 500),
+                  constraints: const BoxConstraints(maxWidth: 400),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 60),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Cabi Logo
-                      Center(
-                        child: Container(
-                          height: 90,
-                          width: 90,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: primaryColor, width: 2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: primaryColor.withValues(alpha: 0.2),
-                                blurRadius: 20,
-                                spreadRadius: 2,
-                              ),
-                            ],
-                          ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/images/cabi_logo.png',
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.taxi_alert_outlined,
-                                      color: primaryColor, size: 30),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                      const Text(
-                        "Welcome to Cabi Go",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Where will you go today?",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16, color: Colors.grey[400]),
-                      ),
-                      const SizedBox(height: 40),
-
-                      // Email Input
-                      _buildInputContainer(
-                        child: TextFormField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: _buildInputDecoration(
-                            label: 'Email Address',
-                            icon: Icons.email_outlined,
-                            primaryColor: primaryColor,
-                          ),
-                          style: const TextStyle(color: Colors.white),
-                          validator: (value) =>
-                              (value == null || !value.contains('@'))
-                                  ? 'Please enter a valid email address'
-                                  : null,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Password Input
-                      _buildInputContainer(
-                        child: TextFormField(
-                          controller: _passwordController,
-                          obscureText: _obscurePassword,
-                          decoration: _buildInputDecoration(
-                            label: 'Password',
-                            icon: Icons.lock_outline,
-                            primaryColor: primaryColor,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
-                                color: Colors.grey,
-                              ),
-                              onPressed: () => setState(
-                                  () => _obscurePassword = !_obscurePassword),
-                            ),
-                          ),
-                          style: const TextStyle(color: Colors.white),
-                          validator: (value) =>
-                              (value == null || value.length < 6)
-                                  ? 'Password must be at least 6 characters'
-                                  : null,
-                        ),
-                      ),
-
-                      // Remember Me & Forgot Password
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: Checkbox(
-                                  value: _rememberMe,
-                                  onChanged: (val) =>
-                                      setState(() => _rememberMe = val ?? true),
-                                  activeColor: primaryColor,
-                                  checkColor: Colors.black,
-                                  side: const BorderSide(color: Colors.white30),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(4)),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              GestureDetector(
-                                onTap: () =>
-                                    setState(() => _rememberMe = !_rememberMe),
-                                child: Text(
-                                  "Remember Me",
-                                  style: TextStyle(
-                                      color: Colors.grey[400], fontSize: 14),
-                                ),
-                              ),
-                            ],
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text("Forgot Password?",
-                                style: TextStyle(
-                                    color: primaryColor, fontSize: 14)),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 30),
-                      if (_errorMessage != null)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: Text(_errorMessage!,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.redAccent)),
-                        ),
-
-                      // Button
-                      ElevatedButton(
-                        onPressed: _isLoading ? null : _signIn,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryColor,
-                          foregroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(vertical: 18),
-                          elevation: 5,
-                          shadowColor: primaryColor.withValues(alpha: 0.4),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                        ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                    color: Colors.black, strokeWidth: 2),
-                              )
-                            : const Text("Sign In",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold)),
-                      ),
-
-                      const SizedBox(height: 30),
-                      Row(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30, vertical: 60),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text("Don't have an account? ",
-                              style: TextStyle(color: Colors.grey[400])),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) =>
-                                          const RegistrationScreen()));
-                            },
-                            child: const Text("Sign Up",
-                                style: TextStyle(
-                                    color: primaryColor,
-                                    fontWeight: FontWeight.bold)),
+                          // Cabi Logo
+                          Center(
+                            child: Container(
+                              height: 90,
+                              width: 90,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border:
+                                    Border.all(color: primaryColor, width: 2),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: primaryColor.withValues(alpha: 0.2),
+                                    blurRadius: 20,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
+                              ),
+                              child: ClipOval(
+                                child: Image.asset(
+                                  'assets/images/cabi_logo.png',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      const Icon(Icons.taxi_alert_outlined,
+                                          color: primaryColor, size: 30),
+                                ),
+                              ),
+                            ),
                           ),
-                        ],
+                          const SizedBox(height: 30),
+                          const Text(
+                            "Welcome to Cabi Go",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Where will you go today?",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 16, color: Colors.grey[400]),
+                          ),
+                          const SizedBox(height: 40),
+
+                          // Email Input
+                          _buildInputContainer(
+                            child: TextFormField(
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: _buildInputDecoration(
+                                label: 'Email Address',
+                                icon: Icons.email_outlined,
+                                primaryColor: primaryColor,
+                              ),
+                              style: const TextStyle(color: Colors.white),
+                              validator: (value) =>
+                                  (value == null || !value.contains('@'))
+                                      ? 'Please enter a valid email address'
+                                      : null,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Password Input
+                          _buildInputContainer(
+                            child: TextFormField(
+                              controller: _passwordController,
+                              obscureText: _obscurePassword,
+                              decoration: _buildInputDecoration(
+                                label: 'Password',
+                                icon: Icons.lock_outline,
+                                primaryColor: primaryColor,
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscurePassword
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
+                                    color: Colors.grey,
+                                  ),
+                                  onPressed: () => setState(() =>
+                                      _obscurePassword = !_obscurePassword),
+                                ),
+                              ),
+                              style: const TextStyle(color: Colors.white),
+                              validator: (value) =>
+                                  (value == null || value.length < 6)
+                                      ? 'Password must be at least 6 characters'
+                                      : null,
+                            ),
+                          ),
+
+                          // Remember Me & Forgot Password
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: Checkbox(
+                                      value: _rememberMe,
+                                      onChanged: (val) => setState(
+                                          () => _rememberMe = val ?? true),
+                                      activeColor: primaryColor,
+                                      checkColor: Colors.black,
+                                      side: const BorderSide(
+                                          color: Colors.white30),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4)),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  GestureDetector(
+                                    onTap: () => setState(
+                                        () => _rememberMe = !_rememberMe),
+                                    child: Text(
+                                      "Remember Me",
+                                      style: TextStyle(
+                                          color: Colors.grey[400],
+                                          fontSize: 14),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              TextButton(
+                                onPressed: () {},
+                                child: const Text("Forgot Password?",
+                                    style: TextStyle(
+                                        color: primaryColor, fontSize: 14)),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 30),
+                          if (_errorMessage != null)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 20),
+                              child: Text(_errorMessage!,
+                                  textAlign: TextAlign.center,
+                                  style:
+                                      const TextStyle(color: Colors.redAccent)),
+                            ),
+
+                          // Button
+                          ElevatedButton(
+                            onPressed: _isLoading ? null : _signIn,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                              foregroundColor: Colors.black,
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              elevation: 5,
+                              shadowColor: primaryColor.withValues(alpha: 0.4),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                        color: Colors.black, strokeWidth: 2),
+                                  )
+                                : const Text("Sign In",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold)),
+                          ),
+
+                          const SizedBox(height: 30),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("Don't have an account? ",
+                                  style: TextStyle(color: Colors.grey[400])),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) =>
+                                              const RegistrationScreen()));
+                                },
+                                child: const Text("Sign Up",
+                                    style: TextStyle(
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),

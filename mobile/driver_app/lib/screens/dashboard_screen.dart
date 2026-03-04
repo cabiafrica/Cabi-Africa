@@ -7,13 +7,16 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Dashboard',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
-        backgroundColor: Colors.white,
+        title: Text('Dashboard',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface)),
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.onSurface),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -21,12 +24,12 @@ class DashboardScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Overview Section
-            const Text(
+            Text(
               'Performance Overview',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 16),
@@ -43,24 +46,28 @@ class DashboardScreen extends StatelessWidget {
               childAspectRatio: 1.5,
               children: [
                 _buildMetricCard(
+                  context,
                   'Acceptance Rate',
                   '94%',
                   Colors.green,
                   Icons.check_circle_outline,
                 ),
                 _buildMetricCard(
+                  context,
                   'Cancellation Rate',
                   '2%',
                   Colors.orange,
                   Icons.cancel_outlined,
                 ),
                 _buildMetricCard(
+                  context,
                   'Hours Online',
                   '32.5h',
                   Colors.blue,
                   Icons.timer_outlined,
                 ),
                 _buildMetricCard(
+                  context,
                   'Total Trips',
                   '1,240',
                   Colors.purple,
@@ -74,12 +81,12 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMetricCard(
-      String title, String value, Color color, IconData icon) {
+  Widget _buildMetricCard(BuildContext context, String title, String value,
+      Color color, IconData icon) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
@@ -111,10 +118,10 @@ class DashboardScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],

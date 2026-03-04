@@ -40,28 +40,45 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     _controller.forward();
 
-    // Navigate after delay and auto-login check
-    Future.delayed(const Duration(seconds: 3), () async {
-      await ref.read(authProvider.notifier).tryAutoLogin();
+    // Start auto-login in background
+    final autoLoginFuture = ref.read(authProvider.notifier).tryAutoLogin();
+
+    // Set a minimum duration for the splash screen (e.g., 2 seconds)
+    final delayFuture = Future.delayed(const Duration(seconds: 2));
+
+    // Wait for BOTH auto-login and the minimum delay
+    Future.wait([autoLoginFuture, delayFuture]).then((_) {
+      if (!mounted) return;
       final authState = ref.read(authProvider);
 
-      if (mounted) {
-        Widget nextScreen = const LoginScreen();
-        if (authState is Authenticated) {
-          nextScreen = const MainShell();
-        }
-
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (_, __, ___) => nextScreen,
-            transitionsBuilder: (_, animation, __, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: const Duration(milliseconds: 800),
-          ),
-        );
+      Widget nextScreen = const LoginScreen();
+      if (authState is Authenticated) {
+        nextScreen = const MainShell();
       }
+
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => nextScreen,
+          transitionsBuilder: (_, animation, __, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 800),
+        ),
+      );
+    }).catchError((e) {
+      if (!mounted) return;
+      debugPrint("Splash error: $e");
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => const LoginScreen(),
+          transitionsBuilder: (_, animation, __, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 800),
+        ),
+      );
     });
   }
 

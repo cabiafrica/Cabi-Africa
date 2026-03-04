@@ -19,33 +19,38 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> _navigateToNext() async {
-    // Start auto-login in background
-    final autoLoginFuture =
-        ref.read(passengerAuthProvider.notifier).tryAutoLogin();
+    try {
+      // Start auto-login in background
+      final autoLoginFuture =
+          ref.read(passengerAuthProvider.notifier).tryAutoLogin();
 
-    // Set a minimum duration for the splash screen (e.g., 2 seconds)
-    // to give it a feels of "premium" loading rather than a glitchy flash.
-    final delayFuture = Future.delayed(const Duration(seconds: 2));
+      // Set a minimum duration for the splash screen (e.g., 2 seconds)
+      // to give it a feels of "premium" loading rather than a glitchy flash.
+      final delayFuture = Future.delayed(const Duration(seconds: 2));
 
-    // Wait for BOTH auto-login and the minimum delay
-    await Future.wait([autoLoginFuture, delayFuture]);
+      // Wait for BOTH auto-login and the minimum delay
+      await Future.wait([autoLoginFuture, delayFuture]);
 
-    if (!mounted) return;
-    final authState = ref.read(passengerAuthProvider);
+      if (!mounted) return;
+      final authState = ref.read(passengerAuthProvider);
 
-    if (mounted) {
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 800),
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              authState is Authenticated
-                  ? const HomeScreen()
-                  : const LoginScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        ),
-      );
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 800),
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                authState is Authenticated
+                    ? const HomeScreen()
+                    : const LoginScreen(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint("Splash: Error during initialization: $e");
     }
   }
 

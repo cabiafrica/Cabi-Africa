@@ -72,12 +72,12 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.darkBackground,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Menu',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         centerTitle: true,
-        backgroundColor: AppTheme.darkBackground,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close, color: Colors.white),
@@ -167,8 +167,9 @@ class _MenuScreenState extends State<MenuScreen> {
                       onTap: () => Navigator.pushNamed(context,
                           '/referral_status')), // Assuming mapping exists or will create
                 ],
-                backgroundColor:
-                    AppTheme.darkSurface), // Dark Surface background
+                backgroundColor: Theme.of(context)
+                    .colorScheme
+                    .surface), // Dynamic Surface background
 
             const SizedBox(height: 24),
 
@@ -215,15 +216,16 @@ class _MenuScreenState extends State<MenuScreen> {
                         );
                       }),
                 ],
-                backgroundColor:
-                    AppTheme.darkSurface), // Dark Surface background
+                backgroundColor: Theme.of(context)
+                    .colorScheme
+                    .surface), // Dynamic Surface background
 
             const SizedBox(height: 40),
             // Footer Version
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
-              color: AppTheme.darkBackground,
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: const Center(
                 child: Text(
                   'Cabi Go • v1.0.0 (5)',
@@ -244,10 +246,10 @@ class _MenuScreenState extends State<MenuScreen> {
         alignment: Alignment.centerLeft,
         child: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ),
