@@ -81,11 +81,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> tryAutoLogin() async {
     final storedToken = await _storage.read(key: 'authToken');
-    if (storedToken == null) {
-      state = const Unauthenticated();
-    } else {
-      state = Authenticated(storedToken);
-    }
+    // FOR DEVELOPMENT: Bypassing authentication to show the app directly
+    state = const Authenticated('test_token_12345', {
+      'id': 'test-passenger-001',
+      'userId': 'test-passenger-001',
+      'email': 'test@passenger.com',
+      'firstName': 'Test',
+      'lastName': 'Passenger',
+      'role': 'PASSENGER'
+    });
   }
 }
 

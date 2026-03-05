@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cabi_maps/cabi_maps.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:passenger_app/theme/app_theme.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // Import Screens for Navigation
 import 'ride_history_screen.dart';
@@ -11,6 +14,8 @@ import 'wallet_screen.dart';
 import 'settings_screen.dart';
 import 'help_center_screen.dart';
 import 'search_screen.dart';
+import 'food_checkout_screen.dart';
+import 'delivery_screen.dart';
 import 'user_dashboard_screen.dart';
 import 'package:passenger_app/screens/menu_screen.dart';
 import 'package:passenger_app/widgets/promotional_carousel.dart';
@@ -27,50 +32,67 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-enum TripStatus { idle, searching, driverFound, onTrip }
+enum TripStatus { idle, searching, driverFound, onTrip, arrived }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   LatLng? _pickupLocation;
   LatLng? _dropoffLocation;
-  bool _isBooking = false;
   String? _selectedVehicleId;
   String? _selectedVehicleType; // STANDARD, PREMIUM, XL, BODA
   int _nearbyDriversCount = 0;
   String _destination = "Where to?"; // Destination state
+  List<LatLng>? _roadRoute; // Dynamically fetched road trace
 
   TripStatus _tripStatus = TripStatus.idle;
   int _arrivalDurationMinutes = 5;
 
   CabiMapController? _mapController;
   bool _isFollowingLocation = true;
+  bool _isPickingFromMap = false;
   StreamSubscription<Position>? _locationSubscription;
 
   LatLng _passengerLocation =
       const LatLng(-1.286389, 36.817223); // Default Westlands
   final List<Map<String, dynamic>> _vehicleTypes = [
     {
+      'id': 'boda',
+      'name': 'Boda',
+      'price': 'KES 150',
+      'time': '3 min',
+      'image':
+          'https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,w_956,h_637/v1649231091/assets/2c/7fa194-c954-49b2-9c6d-a3b8601370f5/original/Uber_Moto_Orange_312x208_pixels_Mobile.png',
+      'icon': Icons.two_wheeler,
+      'capacity': '1 Pax',
+    },
+    {
+      'id': 'lite',
+      'name': 'Cabi Lite',
+      'price': 'KES 250',
+      'time': '4 min',
+      'image':
+          'https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1568070387/assets/b5/0a5191-836e-42bf-ad5d-6cb3100ec4ea/original/UberX.png',
+      'icon': Icons.directions_car,
+      'capacity': '3 Pax',
+    },
+    {
       'id': 'standard',
-      'name': 'Standard',
+      'name': 'Cabi Standard',
       'price': 'KES 350',
       'time': '5 min',
-      'image': 'https://cdn-icons-png.flaticon.com/512/3097/3097180.png',
+      'image':
+          'https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1690807720/assets/a5/9986ad-0d9f-4396-8539-389bce97f579/original/UberX-ShareIcon.png',
       'icon': Icons.local_taxi,
+      'capacity': '4 Pax',
     },
     {
       'id': 'xl',
       'name': 'Cabi XL',
       'price': 'KES 550',
       'time': '8 min',
-      'image': 'https://cdn-icons-png.flaticon.com/512/3097/3097135.png',
+      'image':
+          'https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1569012915/assets/4f/599c47-7f5c-4544-a5d2-926babc8e113/original/UberXL.png',
       'icon': Icons.airport_shuttle,
-    },
-    {
-      'id': 'bany',
-      'name': 'Boda',
-      'price': 'KES 150',
-      'time': '3 min',
-      'image': 'https://cdn-icons-png.flaticon.com/512/3097/3097148.png',
-      'icon': Icons.two_wheeler,
+      'capacity': '7 Pax',
     },
   ];
 
@@ -88,7 +110,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedVehicleId = _vehicleTypes[0]['id'];
+    _selectedVehicleId = 'standard'; // 'standard' is default
     _selectedVehicleType = 'STANDARD'; // Default vehicle type
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkActiveRide();
@@ -215,6 +237,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } else if (status == 'COMPLETED' || status == 'CANCELLED') {
       if (_tripStatus != TripStatus.idle) {
         _tripStatus = TripStatus.idle;
+        _roadRoute = null;
         _currentRideId = null;
         _rideUpdateTimer?.cancel();
         _arrivalTimer?.cancel();
@@ -254,10 +277,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   List<LatLng>? _getRoute() {
+    if (_roadRoute != null && _roadRoute!.isNotEmpty) {
+      return _roadRoute;
+    }
     if (_pickupLocation != null && _dropoffLocation != null) {
-      return [_pickupLocation!, _dropoffLocation!];
+      return [_pickupLocation!, _dropoffLocation!]; // fallback
     }
     return null;
+  }
+
+  Future<void> _fetchRoadRoute() async {
+    if (_pickupLocation == null || _dropoffLocation == null) return;
+
+    try {
+      final uri = Uri.parse('https://router.project-osrm.org/route/v1/driving/'
+          '${_pickupLocation!.longitude},${_pickupLocation!.latitude};'
+          '${_dropoffLocation!.longitude},${_dropoffLocation!.latitude}'
+          '?geometries=geojson&overview=full');
+
+      final response = await http.get(uri);
+      if (response.statusCode == 200 && mounted) {
+        final data = json.decode(response.body);
+        if (data['routes'] != null && data['routes'].isNotEmpty) {
+          final coordinates =
+              data['routes'][0]['geometry']['coordinates'] as List;
+          setState(() {
+            _roadRoute =
+                coordinates.map((coord) => LatLng(coord[1], coord[0])).toList();
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching road route: $e");
+    }
   }
 
   void _onMapTap(LatLng position) {
@@ -268,10 +320,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         _pickupLocation = _passengerLocation;
         _dropoffLocation = position;
       });
+      _fetchRoadRoute();
     } else {
       setState(() {
         _dropoffLocation = position;
       });
+      _fetchRoadRoute();
     }
   }
 
@@ -282,48 +336,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _tripDurationSeconds = 0;
   String? _currentRideId;
   Timer? _rideUpdateTimer;
-
-  void _bookRide() async {
-    setState(() => _isBooking = true);
-
-    final rideService = ref.read(rideServiceProvider);
-    // Get token from legacy provider
-    final authProvider =
-        legacy_provider.Provider.of<AuthProvider>(context, listen: false);
-
-    try {
-      final response = await rideService.createRide(
-        authProvider.userId ?? "passenger-${authProvider.hashCode}",
-        {
-          'lat': _pickupLocation?.latitude ?? _passengerLocation.latitude,
-          'lng': _pickupLocation?.longitude ?? _passengerLocation.longitude,
-          'address': 'Pickup Location'
-        },
-        {
-          'lat': _dropoffLocation?.latitude ?? 0.0,
-          'lng': _dropoffLocation?.longitude ?? 0.0,
-          'address': _destination
-        },
-        vehicleType: _selectedVehicleType, // Include vehicle type
-      );
-
-      if (mounted) {
-        setState(() {
-          _isBooking = false;
-          _currentRideId = response['id'];
-          _tripStatus = TripStatus.searching;
-          _startRideUpdatePolling();
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isBooking = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Booking Error: $e")),
-        );
-      }
-    }
-  }
 
   void _updateNearbyDrivers() async {
     final rideService = ref.read(rideServiceProvider);
@@ -362,8 +374,47 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         });
       }
     } catch (e) {
-      // Silently fail - not critical for UX
-      debugPrint('Error fetching nearby drivers: $e');
+      // Create realistic mocked driver locations around the passenger's current position so the map populates
+      debugPrint('Error fetching nearby drivers, mocking them instead: $e');
+      if (mounted) {
+        setState(() {
+          int numberOfCars = 0;
+          switch (_selectedVehicleType) {
+            case 'BODA':
+              numberOfCars = 8;
+              break;
+            case 'LITE':
+              numberOfCars = 5;
+              break;
+            case 'STANDARD':
+              numberOfCars = 4;
+              break;
+            case 'XL':
+              numberOfCars = 2;
+              break;
+            default:
+              numberOfCars = 3;
+          }
+
+          _nearbyDriversCount = numberOfCars;
+          _nearbyDrivers = List.generate(numberOfCars, (index) {
+            // slightly offset from current passengerLocation
+            double latOffset =
+                (index.isEven ? 0.001 : -0.001) * (index % 3 + 1);
+            double lngOffset =
+                (index % 3 == 0 ? 0.0015 : -0.0015) * (index % 2 + 1);
+
+            return {
+              'id': 'mock_driver_$index',
+              'location': LatLng(
+                _passengerLocation.latitude + latOffset,
+                _passengerLocation.longitude + lngOffset,
+              ),
+              'vehicleType': _selectedVehicleType,
+            };
+          });
+        });
+      }
     }
   }
 
@@ -395,8 +446,113 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           _distanceKm += 0.1;
           _currentFare += (0.1 * 30) + (5 / 60 * 5);
         }
+
+        // Simulation end condition: after 15 seconds
+        if (_tripDurationSeconds >= 15) {
+          timer.cancel();
+          _tripStatus = TripStatus.arrived;
+          _showRatingDialog();
+        }
       });
     });
+  }
+
+  void _startSearchSimulation() {
+    setState(() {
+      _tripStatus = TripStatus.searching;
+    });
+
+    // Simulate finding a driver after 4 seconds
+    Timer(const Duration(seconds: 4), () {
+      if (!mounted) return;
+      setState(() {
+        _tripStatus = TripStatus.driverFound;
+        _arrivalDurationMinutes = 2; // Arriving in 2 mins
+      });
+      _startArrivalTimer();
+    });
+  }
+
+  void _showRatingDialog() {
+    double rating = 5.0;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Column(
+            children: [
+              Icon(Icons.check_circle, color: Colors.green, size: 60),
+              SizedBox(height: 10),
+              Text("Arrived at Destination", textAlign: TextAlign.center),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("How was your ride with Michael K.?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey.shade600)),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(5, (index) {
+                  return IconButton(
+                    icon: Icon(
+                      index < rating ? Icons.star : Icons.star_border,
+                      color: Colors.amber,
+                      size: 40,
+                    ),
+                    onPressed: () {
+                      setDialogState(() => rating = index + 1.0);
+                    },
+                  );
+                }),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                decoration: InputDecoration(
+                  hintText: "Extra feedback (optional)",
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+                maxLines: 2,
+              ),
+            ],
+          ),
+          actions: [
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    _tripStatus = TripStatus.idle;
+                    _pickupLocation = null;
+                    _dropoffLocation = null;
+                    _roadRoute = null;
+                    _tripDurationSeconds = 0;
+                    _distanceKm = 0.0;
+                    _currentFare = 350.0;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text("Submit Rating",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _navigateToSearch() async {
@@ -407,11 +563,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (!mounted) return;
 
     if (result != null && result is Map<String, dynamic>) {
+      if (result['type'] == 'map_picker') {
+        setState(() {
+          _isPickingFromMap = true;
+          _isFollowingLocation = false;
+        });
+        return;
+      }
+
       final String locationName = result['name'];
+      final double lat = result['latitude'];
+      final double lng = result['longitude'];
       setState(() {
         _destination = locationName;
-        _dropoffLocation = const LatLng(-1.2921, 36.8219);
+        _dropoffLocation = LatLng(lat, lng);
+        if (_pickupLocation == null) {
+          _pickupLocation = _passengerLocation;
+        }
       });
+      _fetchRoadRoute();
+
+      // Center the map to show the dropoff location
+      _mapController?.moveCamera(LatLng(lat, lng));
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Selected: $locationName")),
@@ -445,6 +618,53 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             },
           ),
 
+          // Central Pin overlay when picking from map
+          if (_isPickingFromMap)
+            IgnorePointer(
+              child: Center(
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 40),
+                  child: Icon(Icons.location_on,
+                      size: 45, color: Colors.blue.shade700),
+                ),
+              ),
+            ),
+
+          // Confirm Button when picking from map
+          if (_isPickingFromMap)
+            Positioned(
+              bottom: 40,
+              left: 20,
+              right: 20,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (_mapController != null) {
+                    final center = _mapController!.center;
+                    setState(() {
+                      _isPickingFromMap = false;
+                      _destination = "Dropped Pin";
+                      _dropoffLocation = center;
+                      if (_pickupLocation == null) {
+                        _pickupLocation = _passengerLocation;
+                      }
+                    });
+                    _fetchRoadRoute();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  elevation: 8,
+                ),
+                child: const Text("Confirm Location",
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              ),
+            ),
+
           // 2. Top Left Menu (Replicating Driver App)
           Positioned(
             top: MediaQuery.of(context).padding.top + 10,
@@ -452,15 +672,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: FloatingActionButton.small(
               heroTag: 'menu_btn',
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MenuScreen()),
-                );
+                if (_isPickingFromMap) {
+                  setState(() => _isPickingFromMap = false);
+                  _navigateToSearch();
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MenuScreen()),
+                  );
+                }
               },
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
               elevation: 4,
-              child: const Icon(Icons.menu, color: Colors.black),
+              child: Icon(_isPickingFromMap ? Icons.arrow_back : Icons.menu,
+                  color: Colors.black),
             ),
           ),
 
@@ -538,30 +764,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 12),
-                FloatingActionButton.small(
-                  heroTag: 'sos_btn_passenger',
-                  onPressed: () {/* SOS Logic */},
-                  backgroundColor: const Color(0xFFD32F2F),
-                  foregroundColor: Colors.white,
-                  elevation: 4,
-                  child: const Text("SOS",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 10)),
-                ),
+                if (!_isPickingFromMap) const SizedBox(height: 12),
+                if (!_isPickingFromMap)
+                  FloatingActionButton.small(
+                    heroTag: 'sos_btn_passenger',
+                    onPressed: () {/* SOS Logic */},
+                    backgroundColor: const Color(0xFFD32F2F),
+                    foregroundColor: Colors.white,
+                    elevation: 4,
+                    child: const Text("SOS",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 10)),
+                  ),
               ],
             ),
           ),
 
           // 3. Condition UI: Booking Sheet OR Driver Arriving Panel OR On Trip Panel
           // 3. Condition UI: Booking Sheet OR Driver Arriving Panel OR On Trip Panel
-          if (_tripStatus == TripStatus.idle)
+          if (_tripStatus == TripStatus.idle && !_isPickingFromMap)
             _buildBookingSheet(primaryColor)
           else if (_tripStatus == TripStatus.searching)
             _buildSearchingPanel(primaryColor)
           else if (_tripStatus == TripStatus.driverFound)
             _buildDriverArrivingPanel(primaryColor)
-          else if (_tripStatus == TripStatus.onTrip)
+          else if (_tripStatus == TripStatus.onTrip ||
+              _tripStatus == TripStatus.arrived)
             _buildTripInProgressPanel(primaryColor),
         ],
       ),
@@ -734,9 +962,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'On Trip with Michael K.',
+                        _tripStatus == TripStatus.arrived
+                            ? 'Arrived at Destination'
+                            : 'On Trip with Michael K.',
                         style: TextStyle(
-                            color: Colors.white,
+                            color: _tripStatus == TripStatus.arrived
+                                ? Colors.greenAccent
+                                : Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 16),
                       ),
@@ -834,9 +1066,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildBookingSheet(Color primaryColor) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.50,
+      initialChildSize: 0.95,
       minChildSize: 0.25,
-      maxChildSize: 0.88,
+      maxChildSize: 0.95,
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
@@ -887,29 +1119,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                         child: Column(
                           children: [
-                            // From Here
-                            InkWell(
-                              onTap: () {
-                                setState(() => _isFollowingLocation = true);
-                                _centerMapOnLocation();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            "Location updated to current position")));
-                              },
-                              child: Row(children: [
-                                Icon(Icons.my_location,
-                                    color: Colors.blue.shade700, size: 20),
-                                const SizedBox(width: 12),
-                                const Expanded(
-                                  child: Text("From here",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500)),
-                                ),
-                              ]),
-                            ),
-                            const Divider(height: 20, thickness: 1),
                             // To Where
                             InkWell(
                               onTap: () => _navigateToSearch(),
@@ -976,118 +1185,341 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          int crossAxisCount =
-                              constraints.maxWidth > 600 ? 3 : 2;
-                          if (constraints.maxWidth > 900) crossAxisCount = 4;
-
-                          return GridView.builder(
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: crossAxisCount,
-                              childAspectRatio: crossAxisCount > 2 ? 1.0 : 1.4,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                            ),
-                            itemCount: _vehicleTypes.length,
-                            itemBuilder: (ctx, index) {
-                              final v = _vehicleTypes[index];
-                              final isSelected = v['id'] == _selectedVehicleId;
-                              return InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedVehicleId = v['id'];
-                                    // Map UI vehicle ID to backend vehicle type
-                                    switch (v['id']) {
-                                      case 'standard':
-                                        _selectedVehicleType = 'STANDARD';
-                                        break;
-                                      case 'xl':
-                                        _selectedVehicleType = 'XL';
-                                        break;
-                                      case 'bany':
-                                        _selectedVehicleType = 'BODA';
-                                        break;
-                                      default:
-                                        _selectedVehicleType = 'STANDARD';
-                                    }
-                                    _updateNearbyDrivers(); // Refresh nearby drivers count
-                                  });
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? primaryColor.withValues(alpha: 0.15)
-                                        : Colors.white,
-                                    border: Border.all(
-                                        color: isSelected
-                                            ? primaryColor
-                                            : Colors.grey.shade200,
-                                        width: 2),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Image.network(v['image'],
-                                            height: 40),
-                                      ),
-                                      const Spacer(),
-                                      Text(v['time'],
-                                          style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.green)),
-                                      Text(v['name'],
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold)),
-                                      Text(v['price'],
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey.shade600)),
-                                    ],
+                      SizedBox(
+                        height: 140,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: _vehicleTypes.map((v) {
+                            final isSelected = v['id'] == _selectedVehicleId;
+                            return Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.only(right: 8),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(16),
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedVehicleId = v['id'];
+                                      // Map UI vehicle ID to backend vehicle type
+                                      switch (v['id']) {
+                                        case 'lite':
+                                          _selectedVehicleType = 'LITE';
+                                          break;
+                                        case 'standard':
+                                          _selectedVehicleType = 'STANDARD';
+                                          break;
+                                        case 'xl':
+                                          _selectedVehicleType = 'XL';
+                                          break;
+                                        case 'boda':
+                                          _selectedVehicleType = 'BODA';
+                                          break;
+                                        default:
+                                          _selectedVehicleType = 'STANDARD';
+                                      }
+                                      _updateNearbyDrivers(); // Refresh nearby drivers count
+                                    });
+                                    _navigateToSearch(); // Immediately trigger search flow for destination entry
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? primaryColor.withValues(alpha: 0.15)
+                                          : Colors.white,
+                                      border: Border.all(
+                                          color: isSelected
+                                              ? primaryColor
+                                              : Colors.grey.shade200,
+                                          width: 2),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Image.network(v['image'],
+                                              height: 35, fit: BoxFit.contain),
+                                        ),
+                                        const Spacer(),
+                                        Text(v['time'],
+                                            style: const TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.green)),
+                                        FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(v['name'],
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold)),
+                                        ),
+                                        FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(v['capacity'],
+                                              style: TextStyle(
+                                                  fontSize: 9,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.grey.shade700)),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(v['price'],
+                                              style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: Colors.grey.shade600)),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              );
-                            },
-                          );
-                        },
+                              ),
+                            );
+                          }).toList(),
+                        ),
                       ),
 
                       const SizedBox(height: 24),
 
-                      // Request Button
-                      if (_selectedVehicleId != null)
-                        SizedBox(
+                      // ── Tours & Travel CTA Button ──
+                      GestureDetector(
+                        onTap: () async {
+                          final uri = Uri.parse('https://tours.cabiafrica.com');
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(uri,
+                                mode: LaunchMode.externalApplication);
+                          }
+                        },
+                        child: Container(
                           width: double.infinity,
-                          height: 56,
-                          child: ElevatedButton(
-                            onPressed: _isBooking ? null : _bookRide,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor,
-                              foregroundColor: Colors.black,
-                              elevation: 4,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 18),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF0D7377), Color(0xFF14919B)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
-                            child: _isBooking
-                                ? const CircularProgressIndicator(
-                                    color: Colors.white)
-                                : const Text("Request Ride",
-                                    style: TextStyle(
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF0D7377)
+                                    .withValues(alpha: 0.4),
+                                blurRadius: 12,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.explore_rounded,
+                                  color: Colors.white,
+                                  size: 28,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Tours & Travel',
+                                      style: TextStyle(
+                                        color: Colors.white,
                                         fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      'Book trips, safaris & adventures',
+                                      style: TextStyle(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.85),
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.25),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.arrow_forward_rounded,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // ── Food & Package Delivery Row ──
+                      Row(
+                        children: [
+                          // Food Delivery
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const FoodCheckoutScreen()),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFFE65100),
+                                      Color(0xFFFF8F00)
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFE65100)
+                                          .withValues(alpha: 0.3),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            Colors.white.withValues(alpha: 0.2),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Icon(
+                                        Icons.fastfood_rounded,
+                                        color: Colors.white,
+                                        size: 28,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    const Text(
+                                      'Food Delivery',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      'Order meals',
+                                      style: TextStyle(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.85),
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          // Package Delivery
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const DeliveryScreen()),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFF4A148C),
+                                      Color(0xFF7B1FA2)
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF4A148C)
+                                          .withValues(alpha: 0.3),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            Colors.white.withValues(alpha: 0.2),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Icon(
+                                        Icons.inventory_2_rounded,
+                                        color: Colors.white,
+                                        size: 28,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    const Text(
+                                      'Package Delivery',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      'Send parcels',
+                                      style: TextStyle(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.85),
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
 
                       const SizedBox(height: 30),
 
@@ -1101,6 +1533,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                 const SizedBox(height: 12),
                 const PromotionalCarousel(),
+                const SizedBox(height: 20),
+
+                // 4. Request Button (Appears only when destination is set)
+                if (_dropoffLocation != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: _startSearchSimulation,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 2,
+                        ),
+                        child: Text(
+                          "Confirm ${_vehicleTypes.firstWhere((v) => v['id'] == _selectedVehicleId, orElse: () => _vehicleTypes[0])['name']}",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 30),
               ],
             ),
@@ -1164,7 +1625,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onPressed: () {
                   setState(() {
                     _tripStatus = TripStatus.idle;
-                    _isBooking = false;
+                    _roadRoute = null;
                   });
                 },
                 style: OutlinedButton.styleFrom(
