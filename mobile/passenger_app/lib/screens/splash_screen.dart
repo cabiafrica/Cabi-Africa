@@ -121,11 +121,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                           ),
                         ],
                       ),
-                      child: Image.asset(
-                        'assets/images/cabi_logo.png',
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.taxi_alert,
-                                color: primaryGold, size: 40),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/cabi_logo.png',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.taxi_alert,
+                                  color: primaryGold, size: 40),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 32),
