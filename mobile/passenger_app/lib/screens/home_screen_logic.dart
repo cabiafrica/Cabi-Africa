@@ -322,11 +322,56 @@ extension HomeScreenLogic on _HomeScreenState {
     });
   }
 
-  void _startSearchSimulation() {
+  Future<void> _startSearchSimulation() async {
+    final authProvider =
+        legacy_provider.Provider.of<AuthProvider>(context, listen: false);
+    if (authProvider.userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please sign in to Request a Ride')),
+      );
+      return;
+    }
+
     setState(() {
       _tripStatus = TripStatus.searching;
     });
 
+    try {
+      final rideService = ref.read(rideServiceProvider);
+      final ride = await rideService.createRide(
+        authProvider.userId!,
+        {
+          'lat': _pickupLocation?.latitude ?? _passengerLocation.latitude,
+          'lng': _pickupLocation?.longitude ?? _passengerLocation.longitude,
+          'address': "Current Location"
+        },
+        {
+          'lat': _dropoffLocation!.latitude,
+          'lng': _dropoffLocation!.longitude,
+          'address': _destination
+        },
+        vehicleType: _selectedVehicleType,
+      );
+
+      if (ride != null && ride['id'] != 'mock-ride-id') {
+        if (mounted) {
+          setState(() {
+            _currentRideId = ride['id'];
+          });
+          _startRideUpdatePolling();
+        }
+      } else {
+        // Fallback to simulation if backend returns mock-ride-id (default fallback in service)
+        _runSimulationFallback();
+      }
+    } catch (e) {
+      debugPrint("Error requesting real ride: $e");
+      _runSimulationFallback();
+    }
+  }
+
+  void _runSimulationFallback() {
+    if (!mounted) return;
     // Simulate finding a driver after 4 seconds
     Timer(const Duration(seconds: 4), () {
       if (!mounted) return;

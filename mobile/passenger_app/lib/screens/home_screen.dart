@@ -69,8 +69,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'name': 'Boda',
       'price': 'KES 150',
       'time': '3 min',
-      'image':
-          'https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,w_956,h_637/v1649231091/assets/2c/7fa194-c954-49b2-9c6d-a3b8601370f5/original/Uber_Moto_Orange_312x208_pixels_Mobile.png',
+      'image': 'assets/images/boda.png',
       'icon': Icons.two_wheeler,
       'capacity': '1 Pax',
     },
@@ -79,8 +78,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'name': 'Cabi Lite',
       'price': 'KES 250',
       'time': '4 min',
-      'image':
-          'https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1568070387/assets/b5/0a5191-836e-42bf-ad5d-6cb3100ec4ea/original/UberX.png',
+      'image': 'assets/images/lite.png',
       'icon': Icons.directions_car,
       'capacity': '3 Pax',
     },
@@ -89,8 +87,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'name': 'Cabi Standard',
       'price': 'KES 350',
       'time': '5 min',
-      'image':
-          'https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1690807720/assets/a5/9986ad-0d9f-4396-8539-389bce97f579/original/UberX-ShareIcon.png',
+      'image': 'assets/images/standard.png',
       'icon': Icons.local_taxi,
       'capacity': '4 Pax',
     },
@@ -99,8 +96,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'name': 'Cabi XL',
       'price': 'KES 550',
       'time': '8 min',
-      'image':
-          'https://www.uber-assets.com/image/upload/f_auto,q_auto:eco,c_fill,h_368,w_552/v1569012915/assets/4f/599c47-7f5c-4544-a5d2-926babc8e113/original/UberXL.png',
+      'image': 'assets/images/xl.png',
       'icon': Icons.airport_shuttle,
       'capacity': '7 Pax',
     },

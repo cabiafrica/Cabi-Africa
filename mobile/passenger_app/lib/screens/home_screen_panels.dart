@@ -1,7 +1,6 @@
 part of 'home_screen.dart';
 
 extension HomeScreenPanels on _HomeScreenState {
-
   Widget _buildDriverArrivingPanel(Color primaryColor) {
     return Positioned(
       bottom: 0,
@@ -445,8 +444,16 @@ extension HomeScreenPanels on _HomeScreenState {
                                       children: [
                                         Align(
                                           alignment: Alignment.centerRight,
-                                          child: Image.network(v['image'],
-                                              height: 35, fit: BoxFit.contain),
+                                          child: Image.asset(
+                                            v['image'],
+                                            height: 45,
+                                            fit: BoxFit.contain,
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    Icon(v['icon'],
+                                                        size: 35,
+                                                        color: Colors.grey),
+                                          ),
                                         ),
                                         const Spacer(),
                                         Text(v['time'],
@@ -903,6 +910,4 @@ extension HomeScreenPanels on _HomeScreenState {
       ),
     );
   }
-
 }
-
