@@ -3,6 +3,12 @@ import 'package:passenger_app/theme/app_theme.dart';
 import 'package:passenger_app/widgets/profile_avatar_with_qr.dart';
 import 'package:passenger_app/widgets/menu_grid_item.dart';
 import 'package:passenger_app/screens/login_screen.dart';
+import 'package:passenger_app/screens/trip_history_screen.dart';
+import 'package:passenger_app/screens/saved_places_screen.dart';
+import 'package:passenger_app/screens/referral_status_screen.dart';
+import 'package:passenger_app/screens/wallet_screen.dart';
+import 'package:passenger_app/screens/settings_screen.dart';
+import 'package:passenger_app/screens/help_screen.dart';
 import 'package:passenger_app/services/settings_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -148,24 +154,26 @@ class _MenuScreenState extends State<MenuScreen> {
                       icon: Icons.history,
                       title: 'My Trips',
                       baseColor: Colors.deepOrange,
-                      onTap: () =>
-                          Navigator.pushNamed(context, '/ride_history')),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const TripHistoryScreen()))),
                   MenuGridItem(
                       icon: Icons.favorite,
                       title: 'Saved Places',
                       baseColor: Colors.red,
-                      onTap: () {
-                        // Placeholder until saved_places_screen is integrated or created if missing
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Saved Places coming soon')));
-                      }),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const SavedPlacesScreen()))),
                   MenuGridItem(
                       icon: Icons.card_giftcard,
                       title: 'Referrals',
                       baseColor: Colors.pink,
-                      onTap: () => Navigator.pushNamed(context,
-                          '/referral_status')), // Assuming mapping exists or will create
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const ReferralStatusScreen()))),
                 ],
                 backgroundColor: Theme.of(context)
                     .colorScheme
@@ -182,22 +190,44 @@ class _MenuScreenState extends State<MenuScreen> {
                       icon: Icons.account_balance_wallet,
                       title: 'Wallet',
                       baseColor: Colors.indigo,
-                      onTap: () => Navigator.pushNamed(context, '/wallet')),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const WalletScreen()))),
                   MenuGridItem(
                       icon: Icons.settings,
                       title: 'Settings',
                       baseColor: Colors.grey.shade700,
-                      onTap: () => Navigator.pushNamed(context, '/settings')),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const SettingsScreen()))),
                   MenuGridItem(
                       icon: Icons.headset_mic,
                       title: 'Support',
                       baseColor: Colors.blue,
-                      onTap: () => Navigator.pushNamed(context, '/help')),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const HelpScreen()))),
                   MenuGridItem(
                       icon: Icons.info,
                       title: 'About',
                       baseColor: Colors.teal,
-                      onTap: () {}),
+                      onTap: () {
+                        showAboutDialog(
+                          context: context,
+                          applicationName: 'Cabi Go',
+                          applicationVersion: 'v1.0.0',
+                          applicationLegalese: '© 2025 Cabi Africa',
+                          children: [
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Cabi Go is your reliable ride-hailing, food delivery, and package delivery app.',
+                            ),
+                          ],
+                        );
+                      }),
                   // Tours Button — URL configured by admin
                   MenuGridItem(
                       icon: Icons.travel_explore,

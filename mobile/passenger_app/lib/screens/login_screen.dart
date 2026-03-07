@@ -22,24 +22,48 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   String _humanizeError(dynamic error) {
     final err = error.toString().toLowerCase();
-    if (err.contains('invalid login credentials')) {
-      return "Incorrect email or password. Please check your details and try again.";
+
+    // Credential errors
+    if (err.contains('invalid credentials') ||
+        err.contains('invalid login credentials') ||
+        err.contains('401')) {
+      return "The email or password you entered isn't correct. Please try again.";
     }
-    if (err.contains('email not confirmed')) {
-      return "Your email hasn't been verified yet. Please check your inbox.";
+
+    // Verification errors
+    if (err.contains('email not confirmed') || err.contains('not verified')) {
+      return "Your account needs to be activated first. Please check your email inbox for a link.";
     }
+
+    // Connection errors (technical indicators)
     if (err.contains('connection error') ||
         err.contains('failed host lookup') ||
-        err.contains('socketexception')) {
-      return "Unable to connect to the server. Please check your internet connection.";
+        err.contains('socketexception') ||
+        err.contains('errno 111') ||
+        err.contains('connection refused')) {
+      return "We can't reach the Cabi servers right now. Please check if your internet is working.";
     }
+
+    // Timeout errors
     if (err.contains('timeout')) {
-      return "Connection timed out. Please try again.";
+      return "This is taking longer than expected. Please check your signal and try again.";
     }
-    // Remove "Exception: " prefix if present
-    return error
+
+    // General/Server errors
+    if (err.contains('500') || err.contains('internalservererror')) {
+      return "Something went wrong on our end. Our team is looking into it—please try again shortly.";
+    }
+
+    // Default: Strip technical prefix if it exists, otherwise use a friendly fallback
+    String cleanMessage = error
         .toString()
         .replaceFirst(RegExp(r'Exception: ', caseSensitive: false), '');
+
+    if (cleanMessage.length < 5 || cleanMessage.contains('{')) {
+      return "We ran into an unexpected issue. Please try signing in again.";
+    }
+
+    return cleanMessage;
   }
 
   Future<void> _signIn() async {

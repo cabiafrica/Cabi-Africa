@@ -80,11 +80,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> tryAutoLogin() async {
-    final storedToken = await _storage.read(key: 'authToken');
-    if (storedToken == null) {
+    try {
+      final storedToken = await _storage.read(key: 'authToken');
+      if (storedToken != null) {
+        // In a real app, you might want to validate the token with the backend here.
+        // For now, we'll assume it's valid if present, but we won't have the user object
+        // unless we fetch it.
+        state = Authenticated(storedToken);
+      } else {
+        state = const Unauthenticated();
+      }
+    } catch (e) {
       state = const Unauthenticated();
-    } else {
-      state = Authenticated(storedToken);
     }
   }
 }
