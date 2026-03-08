@@ -355,150 +355,6 @@ extension HomeScreenPanels on _HomeScreenState {
 
                       const SizedBox(height: 24),
 
-                      // 2. Choose a ride (Grid Layout)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text("Choose a ride",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18)),
-                          if (_nearbyDriversCount > 0)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.green.shade50,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.local_taxi,
-                                      size: 16, color: Colors.green.shade700),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '$_nearbyDriversCount nearby',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.green.shade700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        height: 140,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: _vehicleTypes.map((v) {
-                            final isSelected = v['id'] == _selectedVehicleId;
-                            return Expanded(
-                              child: Container(
-                                margin: const EdgeInsets.only(right: 8),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(16),
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedVehicleId = v['id'];
-                                      // Map UI vehicle ID to backend vehicle type
-                                      switch (v['id']) {
-                                        case 'lite':
-                                          _selectedVehicleType = 'LITE';
-                                          break;
-                                        case 'standard':
-                                          _selectedVehicleType = 'STANDARD';
-                                          break;
-                                        case 'xl':
-                                          _selectedVehicleType = 'XL';
-                                          break;
-                                        case 'boda':
-                                          _selectedVehicleType = 'BODA';
-                                          break;
-                                        default:
-                                          _selectedVehicleType = 'STANDARD';
-                                      }
-                                      _updateNearbyDrivers(); // Refresh nearby drivers count
-                                    });
-                                    _navigateToSearch(); // Immediately trigger search flow for destination entry
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? primaryColor.withValues(alpha: 0.15)
-                                          : Colors.white,
-                                      border: Border.all(
-                                          color: isSelected
-                                              ? primaryColor
-                                              : Colors.grey.shade200,
-                                          width: 2),
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Image.asset(
-                                            v['image'],
-                                            height: 45,
-                                            fit: BoxFit.contain,
-                                            errorBuilder:
-                                                (context, error, stackTrace) =>
-                                                    Icon(v['icon'],
-                                                        size: 35,
-                                                        color: Colors.grey),
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        Text(v['time'],
-                                            style: const TextStyle(
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.green)),
-                                        FittedBox(
-                                          fit: BoxFit.scaleDown,
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(v['name'],
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold)),
-                                        ),
-                                        FittedBox(
-                                          fit: BoxFit.scaleDown,
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(v['capacity'],
-                                              style: TextStyle(
-                                                  fontSize: 9,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.grey.shade700)),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        FittedBox(
-                                          fit: BoxFit.scaleDown,
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(v['price'],
-                                              style: TextStyle(
-                                                  fontSize: 11,
-                                                  color: Colors.grey.shade600)),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
                       // ── Tours & Travel CTA Button ──
                       GestureDetector(
                         onTap: () async {
@@ -748,33 +604,6 @@ extension HomeScreenPanels on _HomeScreenState {
                 const PromotionalCarousel(),
                 const SizedBox(height: 20),
 
-                // 4. Request Button (Appears only when destination is set)
-                if (_dropoffLocation != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        onPressed: _startSearchSimulation,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          elevation: 2,
-                        ),
-                        child: Text(
-                          "Confirm ${_vehicleTypes.firstWhere((v) => v['id'] == _selectedVehicleId, orElse: () => _vehicleTypes[0])['name']}",
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                 const SizedBox(height: 30),
               ],
             ),
@@ -907,6 +736,269 @@ extension HomeScreenPanels on _HomeScreenState {
                 MaterialPageRoute(builder: (_) => const HelpCenterScreen())),
           ),
         ],
+      ),
+    );
+  }
+
+  // ── Service Selection Panel ──────────────────────────────────────────────
+  Widget _buildServiceSelectionPanel(Color primaryColor) {
+    // Pricing tables
+    const Map<String, Map<String, double>> pricing = {
+      'boda': {'base': 50, 'perKm': 20},
+      'lite': {'base': 100, 'perKm': 35},
+      'standard': {'base': 150, 'perKm': 45},
+      'xl': {'base': 200, 'perKm': 55},
+    };
+
+    String _calcPrice(String vehicleId) {
+      final p = pricing[vehicleId] ?? {'base': 100.0, 'perKm': 35.0};
+      final base = p['base']!;
+      final perKm = p['perKm']!;
+      final dist = _distanceKm > 0 ? _distanceKm : 5.0; // use 5 km if unknown
+      final low = (base + dist * perKm).round();
+      final high = (low * 1.15).round();
+      return 'KES $low – $high';
+    }
+
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Color(0xFF0F0F0F),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          boxShadow: [
+            BoxShadow(color: Colors.black54, blurRadius: 30, spreadRadius: 5)
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 14),
+              width: 44,
+              height: 5,
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+
+            // Header
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Choose a Service',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'To: $_destination',
+                          style: const TextStyle(
+                              color: Colors.white54, fontSize: 13),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Back to search
+                  GestureDetector(
+                    onTap: () => setState(() => _tripStatus = TripStatus.idle),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white12,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.close,
+                          color: Colors.white70, size: 20),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Service List
+            ..._vehicleTypes.map((v) {
+              final id = v['id'] as String;
+              final isSelected = id == (_selectedVehicleId ?? 'standard');
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedVehicleId = id;
+                    switch (id) {
+                      case 'lite':
+                        _selectedVehicleType = 'LITE';
+                        break;
+                      case 'standard':
+                        _selectedVehicleType = 'STANDARD';
+                        break;
+                      case 'xl':
+                        _selectedVehicleType = 'XL';
+                        break;
+                      case 'boda':
+                        _selectedVehicleType = 'BODA';
+                        break;
+                      default:
+                        _selectedVehicleType = 'STANDARD';
+                    }
+                  });
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? const Color(0xFF1A1A1A)
+                        : const Color(0xFF161616),
+                    border: Border.all(
+                      color: isSelected ? primaryColor : Colors.white12,
+                      width: isSelected ? 2 : 1,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    children: [
+                      // Icon
+                      Container(
+                        width: 52,
+                        height: 52,
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? primaryColor.withValues(alpha: 0.15)
+                              : Colors.white10,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Image.asset(
+                          v['image'] as String,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => Icon(
+                            v['icon'] as IconData,
+                            color: isSelected ? primaryColor : Colors.white54,
+                            size: 28,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Name + capacity + ETA
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              v['name'] as String,
+                              style: TextStyle(
+                                color:
+                                    isSelected ? Colors.white : Colors.white70,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Row(
+                              children: [
+                                Icon(Icons.people_outline,
+                                    size: 13, color: Colors.white38),
+                                const SizedBox(width: 4),
+                                Text(v['capacity'] as String,
+                                    style: const TextStyle(
+                                        color: Colors.white38, fontSize: 12)),
+                                const SizedBox(width: 12),
+                                Icon(Icons.access_time,
+                                    size: 13, color: Colors.green.shade400),
+                                const SizedBox(width: 4),
+                                Text(v['time'] as String,
+                                    style: TextStyle(
+                                        color: Colors.green.shade400,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Price
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            _calcPrice(id),
+                            style: TextStyle(
+                              color: isSelected ? primaryColor : Colors.white54,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                          if (isSelected)
+                            Container(
+                              margin: const EdgeInsets.only(top: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: primaryColor.withValues(alpha: 0.18),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                'Selected',
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    color: primaryColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+
+            const SizedBox(height: 16),
+
+            // Book Button
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
+              child: SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _startSearchSimulation,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'Book ${_vehicleTypes.firstWhere((v) => v['id'] == (_selectedVehicleId ?? 'standard'), orElse: () => _vehicleTypes[1])['name']}',
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

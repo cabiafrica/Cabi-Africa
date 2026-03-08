@@ -34,7 +34,14 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-enum TripStatus { idle, searching, driverFound, onTrip, arrived }
+enum TripStatus {
+  idle,
+  selectingService,
+  searching,
+  driverFound,
+  onTrip,
+  arrived
+}
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   LatLng? _pickupLocation;
@@ -326,6 +333,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           // 3. Condition UI: Booking Sheet OR Driver Arriving Panel OR On Trip Panel
           if (_tripStatus == TripStatus.idle && !_isPickingFromMap)
             _buildBookingSheet(primaryColor)
+          else if (_tripStatus == TripStatus.selectingService)
+            _buildServiceSelectionPanel(primaryColor)
           else if (_tripStatus == TripStatus.searching)
             _buildSearchingPanel(primaryColor)
           else if (_tripStatus == TripStatus.driverFound)

@@ -35,6 +35,12 @@ class _SearchScreenState extends State<SearchScreen> {
     },
   ];
 
+  // Dark theme colors
+  static const _bgColor = Color(0xFF0D0D0D);
+  static const _cardColor = Color(0xFF181818);
+  static const _dividerColor = Color(0xFF2A2A2A);
+  static const _goldColor = Color(0xFFFFD700);
+
   @override
   void dispose() {
     _debounce?.cancel();
@@ -55,7 +61,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     setState(() => _isLoading = true);
 
-    _debounce = Timer(const Duration(milliseconds: 500), () {
+    _debounce = Timer(const Duration(milliseconds: 400), () {
       _searchLocation(query.trim());
     });
   }
@@ -120,7 +126,6 @@ class _SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    // Build a short display name
     final String displayName = _buildShortName(location);
 
     Navigator.of(context).pop({
@@ -134,7 +139,6 @@ class _SearchScreenState extends State<SearchScreen> {
     final address = location['address'] as Map<String, dynamic>?;
     if (address == null) {
       final fullName = location['name'] as String;
-      // Shorten long display names
       final parts = fullName.split(',');
       if (parts.length > 2) {
         return '${parts[0].trim()}, ${parts[1].trim()}';
@@ -142,7 +146,6 @@ class _SearchScreenState extends State<SearchScreen> {
       return fullName;
     }
 
-    // Build from address components
     final components = <String>[];
     final road = address['road'] ?? address['pedestrian'] ?? address['highway'];
     final suburb = address['suburb'] ?? address['neighbourhood'];
@@ -181,12 +184,12 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: _bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
+        backgroundColor: Colors.black,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         title: TextField(
@@ -194,15 +197,15 @@ class _SearchScreenState extends State<SearchScreen> {
           decoration: InputDecoration(
             hintText: 'Search for a destination...',
             hintStyle: TextStyle(
-              color: Colors.grey.shade400,
+              color: Colors.white38,
               fontSize: 16,
               fontWeight: FontWeight.w400,
             ),
             border: InputBorder.none,
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
-                    icon: Icon(Icons.clear_rounded,
-                        color: Colors.grey.shade500, size: 20),
+                    icon: const Icon(Icons.clear_rounded,
+                        color: Colors.white38, size: 20),
                     onPressed: () {
                       _searchController.clear();
                       _onSearchChanged('');
@@ -211,19 +214,20 @@ class _SearchScreenState extends State<SearchScreen> {
                 : null,
           ),
           style: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
+              fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
           autofocus: true,
           onChanged: _onSearchChanged,
           textInputAction: TextInputAction.search,
+          cursorColor: _goldColor,
         ),
       ),
       body: Column(
         children: [
-          // Loading indicator
+          // Gold loading bar
           if (_isLoading)
             const LinearProgressIndicator(
               backgroundColor: Colors.transparent,
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFD700)),
+              valueColor: AlwaysStoppedAnimation<Color>(_goldColor),
               minHeight: 2,
             ),
 
@@ -244,18 +248,18 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.cloud_off_rounded,
-                  size: 56, color: Colors.grey.shade300),
+              const Icon(Icons.cloud_off_rounded,
+                  size: 56, color: Colors.white24),
               const SizedBox(height: 16),
               Text(
                 _errorMessage!,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey.shade600, fontSize: 15),
+                style: const TextStyle(color: Colors.white54, fontSize: 15),
               ),
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => _searchLocation(_searchController.text.trim()),
-                child: const Text('Retry'),
+                child: const Text('Retry', style: TextStyle(color: _goldColor)),
               ),
             ],
           ),
@@ -263,13 +267,11 @@ class _SearchScreenState extends State<SearchScreen> {
       );
     }
 
-    // Search results
+    // Search results with quick-pick top chip
     if (_suggestions.isNotEmpty) {
-      return ListView.separated(
+      return ListView.builder(
         padding: const EdgeInsets.symmetric(vertical: 8),
         itemCount: _suggestions.length,
-        separatorBuilder: (_, __) =>
-            Divider(height: 1, indent: 64, color: Colors.grey.shade200),
         itemBuilder: (context, index) {
           final suggestion = _suggestions[index];
           final fullName = suggestion['name'] as String;
@@ -277,47 +279,110 @@ class _SearchScreenState extends State<SearchScreen> {
           final title = parts.isNotEmpty ? parts[0].trim() : fullName;
           final subtitle =
               parts.length > 1 ? parts.sublist(1).join(',').trim() : '';
+          final isFirst = index == 0;
 
-          return ListTile(
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                _getLocationIcon(suggestion),
-                color: Colors.grey.shade700,
-                size: 20,
-              ),
-            ),
-            title: Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 15,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            subtitle: subtitle.isNotEmpty
-                ? Text(
-                    subtitle,
-                    style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Quick-pick chip for first result
+              if (isFirst)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                  child: GestureDetector(
+                    onTap: () => _selectLocation(suggestion),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: _goldColor.withValues(alpha: 0.08),
+                        border: Border.all(
+                            color: _goldColor.withValues(alpha: 0.5)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.flash_on_rounded,
+                              color: _goldColor, size: 18),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Quick Pick',
+                                    style: TextStyle(
+                                        color: _goldColor,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 0.8)),
+                                const SizedBox(height: 2),
+                                Text(title,
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios_rounded,
+                              color: _goldColor, size: 14),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+              // Regular item
+              Container(
+                color: index == 0 ? Colors.transparent : null,
+                child: ListTile(
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: _cardColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      _getLocationIcon(suggestion),
+                      color: Colors.white54,
+                      size: 20,
+                    ),
+                  ),
+                  title: Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                  )
-                : null,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            onTap: () => _selectLocation(suggestion),
+                  ),
+                  subtitle: subtitle.isNotEmpty
+                      ? Text(
+                          subtitle,
+                          style: const TextStyle(
+                              color: Colors.white38, fontSize: 13),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      : null,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  onTap: () => _selectLocation(suggestion),
+                ),
+              ),
+              if (index < _suggestions.length - 1)
+                const Divider(height: 1, indent: 64, color: _dividerColor),
+            ],
           );
         },
       );
     }
 
-    // Empty search - no query typed yet
+    // Empty — no query typed yet
     if (_searchController.text.isEmpty && !_isLoading) {
       return ListView(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -327,21 +392,24 @@ class _SearchScreenState extends State<SearchScreen> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: _cardColor,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child:
-                  const Icon(Icons.map_rounded, color: Colors.black, size: 20),
+              child: const Icon(Icons.map_rounded,
+                  color: Colors.white70, size: 20),
             ),
             title: const Text(
               'Set location on map',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15),
             ),
             onTap: () {
               Navigator.of(context).pop({'type': 'map_picker'});
             },
           ),
-          const Divider(indent: 16, endIndent: 16),
+          const Divider(indent: 16, endIndent: 16, color: _dividerColor),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
@@ -350,7 +418,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
-                color: Colors.grey.shade500,
+                color: Colors.white38,
               ),
             ),
           ),
@@ -359,20 +427,22 @@ class _SearchScreenState extends State<SearchScreen> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.amber.shade50,
+                    color: _goldColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(place['icon'] as IconData,
-                      color: const Color(0xFFD4A017), size: 20),
+                      color: _goldColor, size: 20),
                 ),
                 title: Text(
                   place['name'] as String,
                   style: const TextStyle(
-                      fontWeight: FontWeight.w600, fontSize: 15),
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15),
                 ),
                 subtitle: Text(
                   place['display_name'] as String,
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
+                  style: const TextStyle(color: Colors.white38, fontSize: 13),
                 ),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -383,16 +453,16 @@ class _SearchScreenState extends State<SearchScreen> {
                   );
                 },
               )),
-          const Divider(indent: 16, endIndent: 16),
+          const Divider(indent: 16, endIndent: 16, color: _dividerColor),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
+            child: const Text(
               'TIP',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
-                color: Colors.grey.shade500,
+                color: Colors.white38,
               ),
             ),
           ),
@@ -401,19 +471,22 @@ class _SearchScreenState extends State<SearchScreen> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.blue.shade50,
+                color: Colors.blue.shade900.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(Icons.lightbulb_outline_rounded,
-                  color: Colors.blue.shade400, size: 20),
+                  color: Colors.blue.shade300, size: 20),
             ),
             title: const Text(
               'Type a place name or address',
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+              style: TextStyle(
+                  color: Colors.white70,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14),
             ),
-            subtitle: Text(
+            subtitle: const Text(
               'e.g. "Westlands", "JKIA", "Kenyatta Avenue"',
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
+              style: TextStyle(color: Colors.white38, fontSize: 13),
             ),
           ),
         ],
@@ -428,20 +501,20 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.search_off_rounded,
-                  size: 56, color: Colors.grey.shade300),
+              const Icon(Icons.search_off_rounded,
+                  size: 56, color: Colors.white24),
               const SizedBox(height: 16),
-              Text(
+              const Text(
                 'No locations found',
                 style: TextStyle(
-                    color: Colors.grey.shade600,
+                    color: Colors.white60,
                     fontSize: 16,
                     fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 4),
-              Text(
+              const Text(
                 'Try a different search term',
-                style: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                style: TextStyle(color: Colors.white38, fontSize: 14),
               ),
             ],
           ),

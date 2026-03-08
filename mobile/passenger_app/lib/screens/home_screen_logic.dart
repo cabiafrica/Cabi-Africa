@@ -490,15 +490,13 @@ extension HomeScreenLogic on _HomeScreenState {
         if (_pickupLocation == null) {
           _pickupLocation = _passengerLocation;
         }
+        // Show service selection panel right after destination is set
+        _tripStatus = TripStatus.selectingService;
       });
       _fetchRoadRoute();
 
       // Center the map to show the dropoff location
       _mapController?.moveCamera(LatLng(lat, lng));
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Selected: $locationName")),
-      );
     }
   }
 }
