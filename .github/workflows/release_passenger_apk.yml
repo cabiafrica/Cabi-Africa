@@ -1,0 +1,63 @@
+name: Build and Release Passenger APK
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger on version tags (e.g., v1.0.0)
+  workflow_dispatch: # Allow manual triggering from GitHub UI
+
+jobs:
+  build:
+    name: Build & Release Release APK
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./mobile/passenger_app
+
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v4
+
+      - name: ☕ Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'latest'
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Get Packages
+        run: flutter pub get
+
+      - name: 🏗️ Build APK
+        run: flutter build apk --release
+
+      - name: 📦 Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: passenger-app-release
+          path: mobile/passenger_app/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: 🚀 Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: mobile/passenger_app/build/app/outputs/flutter-apk/app-release.apk
+          name: Release ${{ github.ref_name }}
+          body: |
+            Automatic build for version ${{ github.ref_name }}.
+            
+            ### Changes in this release:
+            - Latest Passenger App features
+            - UI/UX Improvements
+            - Enhanced Performance
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
