@@ -188,10 +188,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         final firstName = _firstNameController.text.trim();
         final lastName = _lastNameController.text.trim();
 
+        final email = _emailController.text.trim();
         final result = await _authService.register(
           firstName: firstName,
           lastName: lastName,
-          email: _emailController.text,
+          email: email.isEmpty ? null : email,
           phone: _phoneController.text,
           password: _passwordController.text,
           referralCode: _referralController.text,
@@ -340,12 +341,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               const SizedBox(height: 20),
               _buildTextField(
                 controller: _emailController,
-                label: 'Email Address',
+                label: 'Email Address (Optional)',
                 hint: 'john.doe@prestige.com',
                 keyboardType: TextInputType.emailAddress,
-                validator: (value) => (value == null || !value.contains('@'))
-                    ? 'Please enter a valid email'
-                    : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) return null;
+                  if (!value.contains('@')) return 'Please enter a valid email';
+                  return null;
+                },
               ),
               const SizedBox(height: 20),
               _buildTextField(

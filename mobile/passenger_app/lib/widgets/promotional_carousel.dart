@@ -21,23 +21,23 @@ class PromotionalCarousel extends StatelessWidget {
         items: [
           _buildBannerItem(
             'Explore the City\nTop 10 Hidden Gems',
-            'https://via.placeholder.com/600x250/C62828/FFFFFF?text=Explore+City',
-            Colors.red.shade900,
+            'assets/images/hidden_gems_bg.png',
+            Colors.black,
           ),
           _buildBannerItem(
             'Food Delivered Fast\nTry Cabi Eats Today',
-            'https://via.placeholder.com/600x250/FFD700/000000?text=Cabi+Eats',
-            Colors.amber.shade800,
+            'assets/images/food_bg.png',
+            Colors.black,
           ),
           _buildBannerItem(
             'Send Packages\nSecure & Reliable',
-            'https://via.placeholder.com/600x250/2E7D32/FFFFFF?text=Cabi+Send',
-            Colors.green.shade900,
+            'assets/images/package_bg.png',
+            Colors.black,
           ),
           _buildBannerItem(
             'Ride in Style\nGet 20% off Premium',
-            'https://via.placeholder.com/600x250/1565C0/FFFFFF?text=Premium+Rides',
-            Colors.blue.shade900,
+            'assets/images/tours_bg.png',
+            Colors.black,
           ),
         ],
       ),
@@ -51,7 +51,7 @@ class PromotionalCarousel extends StatelessWidget {
         color: overlayColor,
         borderRadius: BorderRadius.circular(16),
         image: DecorationImage(
-          image: NetworkImage(imageUrl),
+          image: AssetImage(imageUrl),
           fit: BoxFit.cover,
         ),
       ),

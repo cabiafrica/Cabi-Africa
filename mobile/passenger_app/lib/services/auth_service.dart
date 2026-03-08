@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../config/app_config.dart';
@@ -15,18 +16,23 @@ class AuthService {
   String get baseUrl => AppConfig.authApiUrl;
 
   Future<AuthResult> signIn(
-      {required String email, required String password}) async {
+      {required String identifier, required String password}) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/auth/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
-      );
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/auth/login'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'email':
+                  identifier, // Backend usually takes 'email' as the field name even for phone/username
+              'password': password
+            }),
+          )
+          .timeout(const Duration(seconds: 12)); // Faster timeout for better UX
 
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Backend returns { twoFactorRequired, accessToken }
         final token = data['accessToken'] ?? data['token'];
         return AuthResult(
           isSignedIn: token != null,
@@ -34,6 +40,7 @@ class AuthService {
           token: token,
         );
       } else {
+        // Immediate error from backend
         String errorMessage = 'Login failed';
         if (data['message'] != null) {
           if (data['message'] is List) {
@@ -47,6 +54,12 @@ class AuthService {
           error: errorMessage,
         );
       }
+    } on TimeoutException {
+      return AuthResult(
+        isSignedIn: false,
+        error:
+            'Login request timed out. Please check your internet connection.',
+      );
     } catch (e) {
       return AuthResult(
         isSignedIn: false,
@@ -58,25 +71,28 @@ class AuthService {
   Future<AuthResult> register({
     required String firstName,
     required String lastName,
-    required String email,
+    String? email,
     required String phone,
     required String password,
     String? referralCode,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/auth/register'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'firstName': firstName,
-          'lastName': lastName,
-          'email': email,
-          'phone': phone,
-          'password': password,
-          'role': 'passenger',
-          'referralCode': referralCode,
-        }),
-      );
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/auth/register'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'firstName': firstName,
+              'lastName': lastName,
+              'email': email ??
+                  '${phone}@cabi.africa', // Fallback email if using phone registration
+              'phone': phone,
+              'password': password,
+              'role': 'passenger',
+              'referralCode': referralCode,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
 
       final data = jsonDecode(response.body);
 
@@ -99,6 +115,11 @@ class AuthService {
           error: errorMessage,
         );
       }
+    } on TimeoutException {
+      return AuthResult(
+        isSignedIn: false,
+        error: 'Registration timed out. Please try again.',
+      );
     } catch (e) {
       return AuthResult(
         isSignedIn: false,

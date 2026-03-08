@@ -262,7 +262,7 @@ void main() {
   testWidgets('navigates to HomeScreen on successful login', (tester) async {
     when(() =>
         mockAuthService.signIn(
-            email: 'test@example.com',
+            identifier: 'test@example.com',
             password: 'password')).thenAnswer((_) async =>
         AuthResult(isSignedIn: true, token: 'mock_token', user: {'id': '1'}));
 
@@ -281,7 +281,7 @@ void main() {
 
   testWidgets('shows error message on failed login', (tester) async {
     when(() => mockAuthService.signIn(
-            email: 'test@example.com', password: 'wrongpassword'))
+            identifier: 'test@example.com', password: 'wrongpassword'))
         .thenAnswer((_) async => AuthResult(
             isSignedIn: false,
             error: 'Login failed. Please check your credentials.'));

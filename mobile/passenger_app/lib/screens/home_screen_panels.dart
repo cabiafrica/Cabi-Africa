@@ -369,10 +369,13 @@ extension HomeScreenPanels on _HomeScreenState {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 18),
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF0D7377), Color(0xFF14919B)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+                            image: const DecorationImage(
+                              image: AssetImage('assets/images/tours_bg.png'),
+                              fit: BoxFit.cover,
+                              colorFilter: ColorFilter.mode(
+                                Colors.black38,
+                                BlendMode.darken,
+                              ),
                             ),
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
@@ -460,13 +463,14 @@ extension HomeScreenPanels on _HomeScreenState {
                               child: Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFFE65100),
-                                      Color(0xFFFF8F00)
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
+                                  image: const DecorationImage(
+                                    image:
+                                        AssetImage('assets/images/food_bg.png'),
+                                    fit: BoxFit.cover,
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.black45,
+                                      BlendMode.darken,
+                                    ),
                                   ),
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
@@ -531,13 +535,14 @@ extension HomeScreenPanels on _HomeScreenState {
                               child: Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFF4A148C),
-                                      Color(0xFF7B1FA2)
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
+                                  image: const DecorationImage(
+                                    image: AssetImage(
+                                        'assets/images/package_bg.png'),
+                                    fit: BoxFit.cover,
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.black45,
+                                      BlendMode.darken,
+                                    ),
                                   ),
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
@@ -858,116 +863,132 @@ extension HomeScreenPanels on _HomeScreenState {
                     }
                   });
                 },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? const Color(0xFF1A1A1A)
-                        : const Color(0xFF161616),
-                    border: Border.all(
-                      color: isSelected ? primaryColor : Colors.white12,
-                      width: isSelected ? 2 : 1,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      // Icon
-                      Container(
-                        width: 52,
-                        height: 52,
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? primaryColor.withValues(alpha: 0.15)
-                              : Colors.white10,
-                          borderRadius: BorderRadius.circular(12),
+                child: Builder(
+                  builder: (context) {
+                    Color categoryColor = primaryColor;
+                    if (id == 'boda') categoryColor = Colors.green.shade400;
+                    if (id == 'lite') categoryColor = Colors.blue.shade400;
+                    if (id == 'standard') categoryColor = primaryColor;
+                    if (id == 'xl') categoryColor = Colors.purple.shade400;
+
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? categoryColor.withValues(alpha: 0.1)
+                            : const Color(0xFF161616),
+                        border: Border.all(
+                          color: isSelected ? categoryColor : Colors.white12,
+                          width: isSelected ? 2 : 1,
                         ),
-                        child: Image.asset(
-                          v['image'] as String,
-                          fit: BoxFit.contain,
-                          errorBuilder: (_, __, ___) => Icon(
-                            v['icon'] as IconData,
-                            color: isSelected ? primaryColor : Colors.white54,
-                            size: 28,
-                          ),
-                        ),
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      const SizedBox(width: 16),
-                      // Name + capacity + ETA
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              v['name'] as String,
-                              style: TextStyle(
+                      child: Row(
+                        children: [
+                          // Icon
+                          Container(
+                            width: 52,
+                            height: 52,
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? categoryColor.withValues(alpha: 0.15)
+                                  : Colors.white10,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Image.asset(
+                              v['image'] as String,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => Icon(
+                                v['icon'] as IconData,
                                 color:
-                                    isSelected ? Colors.white : Colors.white70,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
+                                    isSelected ? categoryColor : Colors.white54,
+                                size: 28,
                               ),
                             ),
-                            const SizedBox(height: 3),
-                            Row(
+                          ),
+                          const SizedBox(width: 16),
+                          // Name + capacity + ETA
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.people_outline,
-                                    size: 13, color: Colors.white38),
-                                const SizedBox(width: 4),
-                                Text(v['capacity'] as String,
-                                    style: const TextStyle(
-                                        color: Colors.white38, fontSize: 12)),
-                                const SizedBox(width: 12),
-                                Icon(Icons.access_time,
-                                    size: 13, color: Colors.green.shade400),
-                                const SizedBox(width: 4),
-                                Text(v['time'] as String,
-                                    style: TextStyle(
-                                        color: Colors.green.shade400,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600)),
+                                Text(
+                                  v['name'] as String,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : Colors.white70,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Row(
+                                  children: [
+                                    Icon(Icons.people_outline,
+                                        size: 13, color: Colors.white38),
+                                    const SizedBox(width: 4),
+                                    Text(v['capacity'] as String,
+                                        style: const TextStyle(
+                                            color: Colors.white38,
+                                            fontSize: 12)),
+                                    const SizedBox(width: 12),
+                                    Icon(Icons.access_time,
+                                        size: 13, color: Colors.green.shade400),
+                                    const SizedBox(width: 4),
+                                    Text(v['time'] as String,
+                                        style: TextStyle(
+                                            color: Colors.green.shade400,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600)),
+                                  ],
+                                ),
                               ],
                             ),
-                          ],
-                        ),
-                      ),
-                      // Price
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            _calcPrice(id),
-                            style: TextStyle(
-                              color: isSelected ? primaryColor : Colors.white54,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                            ),
                           ),
-                          if (isSelected)
-                            Container(
-                              margin: const EdgeInsets.only(top: 4),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: primaryColor.withValues(alpha: 0.18),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                'Selected',
+                          // Price
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                _calcPrice(id),
                                 style: TextStyle(
-                                    fontSize: 10,
-                                    color: primaryColor,
-                                    fontWeight: FontWeight.bold),
+                                  color: isSelected
+                                      ? categoryColor
+                                      : Colors.white54,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
                               ),
-                            ),
+                              if (isSelected)
+                                Container(
+                                  margin: const EdgeInsets.only(top: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        categoryColor.withValues(alpha: 0.18),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    'Selected',
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: categoryColor,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
               );
             }),

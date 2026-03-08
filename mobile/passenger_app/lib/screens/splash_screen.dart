@@ -40,11 +40,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     _controller.forward();
 
-    // Start auto-login in background
-    final autoLoginFuture =
-        ref.read(passengerAuthProvider.notifier).tryAutoLogin();
+    // Start auto-login in background with safety timeout
+    final autoLoginFuture = ref
+        .read(passengerAuthProvider.notifier)
+        .tryAutoLogin()
+        .timeout(const Duration(seconds: 5), onTimeout: () {});
 
-    // Set a minimum duration for the splash screen (e.g., 2 seconds)
+    // Set a minimum duration for the splash screen
     final delayFuture = Future.delayed(const Duration(seconds: 2));
 
     // Wait for BOTH auto-login and the minimum delay
@@ -113,21 +115,31 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       height: 120,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        border: Border.all(
+                            color: primaryGold, width: 2), // Golden ring
                         boxShadow: [
                           BoxShadow(
-                            color: primaryGold.withValues(alpha: 0.15),
-                            blurRadius: 40,
-                            spreadRadius: 5,
+                            color: primaryGold.withValues(
+                                alpha: 0.25), // Increased glow
+                            blurRadius: 30,
+                            spreadRadius: 2,
                           ),
                         ],
                       ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/cabi_logo.png',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.taxi_alert,
-                                  color: primaryGold, size: 40),
+                      child: Padding(
+                        padding: const EdgeInsets.all(
+                            4), // Space between ring and logo
+                        child: ClipOval(
+                          child: Container(
+                            color: Colors.black12,
+                            child: Image.asset(
+                              'assets/images/cabi_logo.png',
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.taxi_alert,
+                                      color: primaryGold, size: 40),
+                            ),
+                          ),
                         ),
                       ),
                     ),

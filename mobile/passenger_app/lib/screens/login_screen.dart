@@ -12,7 +12,8 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _emailController = TextEditingController();
+  final _identifierController =
+      TextEditingController(); // Replaces _emailController
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
@@ -23,44 +24,46 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   String _humanizeError(dynamic error) {
     final err = error.toString().toLowerCase();
 
-    // Credential errors
-    if (err.contains('invalid credentials') ||
-        err.contains('invalid login credentials') ||
-        err.contains('401')) {
-      return "The email or password you entered isn't correct. Please try again.";
-    }
-
-    // Verification errors
-    if (err.contains('email not confirmed') || err.contains('not verified')) {
-      return "Your account needs to be activated first. Please check your email inbox for a link.";
-    }
-
-    // Connection errors (technical indicators)
+    // Connection errors (technical indicators) - check first for speed
     if (err.contains('connection error') ||
         err.contains('failed host lookup') ||
         err.contains('socketexception') ||
         err.contains('errno 111') ||
-        err.contains('connection refused')) {
-      return "We can't reach the Cabi servers right now. Please check if your internet is working.";
+        err.contains('connection refused') ||
+        err.contains('network is unreachable')) {
+      return "Unable to connect to Cabi servers. Please check your internet connection and try again.";
     }
 
     // Timeout errors
     if (err.contains('timeout')) {
-      return "This is taking longer than expected. Please check your signal and try again.";
+      return "The request is taking too long. Please check your signal and try again.";
+    }
+
+    // Credential errors
+    if (err.contains('invalid credentials') ||
+        err.contains('invalid login credentials') ||
+        err.contains('401') ||
+        err.contains('unauthorized')) {
+      return "The credentials you entered are incorrect. Please try again.";
+    }
+
+    // Verification errors
+    if (err.contains('email not confirmed') || err.contains('not verified')) {
+      return "Your account is not yet active. Please check your email or phone for verification.";
     }
 
     // General/Server errors
     if (err.contains('500') || err.contains('internalservererror')) {
-      return "Something went wrong on our end. Our team is looking into it—please try again shortly.";
+      return "Something went wrong on our end. Please try again shortly.";
     }
 
-    // Default: Strip technical prefix if it exists, otherwise use a friendly fallback
+    // Default: Strip technical prefix if it exists
     String cleanMessage = error
         .toString()
         .replaceFirst(RegExp(r'Exception: ', caseSensitive: false), '');
 
     if (cleanMessage.length < 5 || cleanMessage.contains('{')) {
-      return "We ran into an unexpected issue. Please try signing in again.";
+      return "An unexpected error occurred. Please try again.";
     }
 
     return cleanMessage;
@@ -75,8 +78,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     try {
+      // Use the updated auth notifier which now takes 'identifier'
       await ref.read(passengerAuthProvider.notifier).login(
-            _emailController.text.trim(),
+            _identifierController.text.trim(),
             _passwordController.text,
             rememberMe: _rememberMe,
           );
@@ -99,8 +103,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // Cabi Global Colors (New Dawn)
     const primaryColor = Color(0xFFFFD700); // Prestige Gold
     const backgroundColor = Color(0xFF0A0A0A); // Deep Black
-
-    debugPrint("LoginScreen: building widget tree...");
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -172,21 +174,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           const SizedBox(height: 40),
 
-                          // Email Input
+                          // Identifier Input (Email or Phone)
                           _buildInputContainer(
                             child: TextFormField(
-                              controller: _emailController,
-                              keyboardType: TextInputType.emailAddress,
+                              controller: _identifierController,
+                              keyboardType: TextInputType.text,
                               decoration: _buildInputDecoration(
-                                label: 'Email Address',
-                                icon: Icons.email_outlined,
+                                label: 'Email or Phone Number',
+                                icon: Icons.person_outline,
                                 primaryColor: primaryColor,
                               ),
                               style: const TextStyle(color: Colors.white),
-                              validator: (value) =>
-                                  (value == null || !value.contains('@'))
-                                      ? 'Please enter a valid email address'
-                                      : null,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your email or phone number';
+                                }
+                                return null;
+                              },
                             ),
                           ),
                           const SizedBox(height: 20),

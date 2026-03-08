@@ -46,7 +46,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       state = const AuthLoading();
       final result =
-          await _authService.signIn(email: email, password: password);
+          await _authService.signIn(identifier: email, password: password);
       if (!result.isSignedIn) {
         throw Exception(result.error ?? 'Login failed');
       }
@@ -81,7 +81,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> tryAutoLogin() async {
     try {
-      final storedToken = await _storage.read(key: 'authToken');
+      final storedToken = await _storage
+          .read(key: 'authToken')
+          .timeout(const Duration(seconds: 4));
       if (storedToken != null) {
         // In a real app, you might want to validate the token with the backend here.
         // For now, we'll assume it's valid if present, but we won't have the user object
