@@ -265,36 +265,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         child: CircleAvatar(
                           radius: 20,
                           backgroundColor: Colors.grey[300],
-                          backgroundImage: (legacy_provider.Provider.of<
-                                          AuthProvider>(context)
-                                      .user?['passportPhotoUrl'] !=
-                                  null)
-                              ? NetworkImage(
-                                  legacy_provider.Provider.of<AuthProvider>(
-                                          context)
-                                      .user!['passportPhotoUrl'])
-                              : (legacy_provider.Provider.of<AuthProvider>(
-                                              context)
-                                          .user?['isIdentityVerified'] ==
-                                      true
-                                  ? const NetworkImage(
-                                      'https://i.pravatar.cc/150?u=passenger') // Fallback valid
-                                  : null), // Blank if not verified and no photo
-                          child: (legacy_provider.Provider.of<AuthProvider>(
-                                              context)
-                                          .user?['passportPhotoUrl'] ==
-                                      null &&
-                                  legacy_provider.Provider.of<AuthProvider>(
-                                              context)
-                                          .user?['isIdentityVerified'] !=
-                                      true)
-                              ? const Icon(Icons.person, color: Colors.grey)
-                              : null,
+                          backgroundImage: () {
+                            final authState = ref.watch(passengerAuthProvider);
+                            if (authState is Authenticated) {
+                              final user = authState.user;
+                              if (user?['passportPhotoUrl'] != null) {
+                                return NetworkImage(user!['passportPhotoUrl']);
+                              } else if (user?['isIdentityVerified'] == true) {
+                                return const NetworkImage(
+                                    'https://i.pravatar.cc/150?u=passenger');
+                              }
+                            }
+                            return null;
+                          }(),
+                          child: () {
+                            final authState = ref.watch(passengerAuthProvider);
+                            if (authState is Authenticated) {
+                              final user = authState.user;
+                              if (user?['passportPhotoUrl'] == null &&
+                                  user?['isIdentityVerified'] != true) {
+                                return const Icon(Icons.person,
+                                    color: Colors.grey);
+                              }
+                              return null;
+                            }
+                            return const Icon(Icons.person, color: Colors.grey);
+                          }(),
                         ),
                       ),
-                      if (legacy_provider.Provider.of<AuthProvider>(context)
-                              .user?['isIdentityVerified'] !=
-                          true)
+                      if (() {
+                        final authState = ref.watch(passengerAuthProvider);
+                        if (authState is Authenticated) {
+                          return authState.user?['isIdentityVerified'] != true;
+                        }
+                        return true;
+                      }())
                         Positioned(
                           right: 0,
                           top: 0,

@@ -30,6 +30,7 @@ export class AuthController {
         user,
       };
     } catch (error) {
+      console.error('Login error:', error);
       throw new UnauthorizedException('Invalid credentials.');
     }
   }

@@ -53,12 +53,15 @@ extension HomeScreenLogic on _HomeScreenState {
   }
 
   void _checkActiveRide() async {
-    final authProvider =
-        legacy_provider.Provider.of<AuthProvider>(context, listen: false);
-    if (authProvider.userId != null) {
+    final authState = ref.read(passengerAuthProvider);
+    String? userId;
+    if (authState is Authenticated) {
+      userId = authState.userId;
+    }
+
+    if (userId != null) {
       final rideService = ref.read(rideServiceProvider);
-      final ride =
-          await rideService.getCurrentRide(authProvider.userId!, 'PASSENGER');
+      final ride = await rideService.getCurrentRide(userId, 'PASSENGER');
       if (ride != null && mounted) {
         setState(() {
           _currentRideId = ride['id'];
@@ -78,12 +81,15 @@ extension HomeScreenLogic on _HomeScreenState {
 
   void _pollRideUpdates() async {
     if (_currentRideId == null) return;
-    final authProvider =
-        legacy_provider.Provider.of<AuthProvider>(context, listen: false);
-    if (authProvider.userId != null) {
+    final authState = ref.read(passengerAuthProvider);
+    String? userId;
+    if (authState is Authenticated) {
+      userId = authState.userId;
+    }
+
+    if (userId != null) {
       final rideService = ref.read(rideServiceProvider);
-      final ride =
-          await rideService.getCurrentRide(authProvider.userId!, 'PASSENGER');
+      final ride = await rideService.getCurrentRide(userId, 'PASSENGER');
       if (ride != null && mounted) {
         setState(() {
           _updateTripStatusFromBackend(ride);
@@ -323,9 +329,13 @@ extension HomeScreenLogic on _HomeScreenState {
   }
 
   Future<void> _startSearchSimulation() async {
-    final authProvider =
-        legacy_provider.Provider.of<AuthProvider>(context, listen: false);
-    if (authProvider.userId == null) {
+    final authState = ref.read(passengerAuthProvider);
+    String? userId;
+    if (authState is Authenticated) {
+      userId = authState.userId;
+    }
+
+    if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please sign in to Request a Ride')),
       );
@@ -339,7 +349,7 @@ extension HomeScreenLogic on _HomeScreenState {
     try {
       final rideService = ref.read(rideServiceProvider);
       final ride = await rideService.createRide(
-        authProvider.userId!,
+        userId,
         {
           'lat': _pickupLocation?.latitude ?? _passengerLocation.latitude,
           'lng': _pickupLocation?.longitude ?? _passengerLocation.longitude,

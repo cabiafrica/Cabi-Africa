@@ -8,92 +8,63 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum UserStatus {
-  PROSPECT
-  PENDING
-  ACTIVE
-  SUSPENDED
-  REJECTED
-}
-
 model User {
-  id               String     @id @default(uuid())
-  email            String     @unique
-  phone            String     @unique
-  password         String
-  fullName         String
-  city             String?
-  username         String?    @unique
-  nickname         String?
-  middleName       String?
-  idNumber         String?    @unique
-  passportPhotoUrl String?    @db.Text // Stores compressed image URL or base64
-  privacySettings  Json?      @default("{}") // { showEmail: boolean, showPhone: boolean, showRealName: boolean }
-  role             LegacyRole @default(PASSENGER)
-  status           UserStatus @default(PROSPECT)
-
-  // 2FA and Security
-  isTwoFactorEnabled    Boolean   @default(false)
-  twoFactorSecret       String?
-  recoveryCodes         String[]
-  forgotEmailOtp        String?
-  forgotEmailOtpExpires DateTime?
-  lastActiveAt          DateTime?
-
-  // RBAC Relations
-  userRoles           UserRole[]
-  userPermissions     UserPermission[]
-  assignedRoles       UserRole[]       @relation("AssignedRoles")
-  assignedPermissions UserPermission[] @relation("AssignedPermissions")
-
-  // Verification Status
-  isEmailVerified    Boolean @default(false)
-  isPhoneVerified   Boolean @default(false)
-  isIdentityVerified Boolean @default(false)
-
-  // Passenger Verification (new fields)
-  isVerifiedPassenger Boolean @default(false) // Badge after full verification
-  passengerTripCount Int @default(0) // Track trips taken (1 free trip allowed)
-  maxFreeTrips Int @default(1) // Maximum trips before verification required
-  lastVerificationAt DateTime?
-  verificationLevel PassengerVerificationLevel @default(BASIC) // BASIC, SELFIE, BIOMETRIC
-  
-  // Fingerprint/biometric data reference
-  fingerprintDataUrl String? @db.Text // Reference to stored biometric template
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Gamification & Stats
-  totalRidesAsPassenger Int             @default(0)
-  averageRating         Float?
-  badges                UserBadge[]
-  ridePreference        RidePreference?
-
-  // Relations
-  ridesAsPassenger       Ride[]                  @relation("PassengerRides")
-  driverProfile          DriverProfile?
-  documentVerifications  DocumentVerification[]
+  id                     String                     @id @default(uuid())
+  email                  String                     @unique
+  phone                  String                     @unique
+  password               String
+  fullName               String
+  createdAt              DateTime                   @default(now())
+  updatedAt              DateTime                   @updatedAt
+  nickname               String?
+  privacySettings        Json?                      @default("{}")
+  referralCode           String?                    @unique
+  referredById           String?
+  username               String?                    @unique
+  idNumber               String?                    @unique
+  middleName             String?
+  passportPhotoUrl       String?
+  isEmailVerified        Boolean                    @default(false)
+  isPhoneVerified        Boolean                    @default(false)
+  isIdentityVerified     Boolean                    @default(false)
+  role                   LegacyRole                 @default(PASSENGER)
+  city                   String?
+  status                 UserStatus                 @default(PROSPECT)
+  forgotEmailOtp         String?
+  forgotEmailOtpExpires  DateTime?
+  isTwoFactorEnabled     Boolean                    @default(false)
+  lastActiveAt           DateTime?
+  recoveryCodes          String[]
+  twoFactorSecret        String?
+  averageRating          Float?
+  totalRidesAsPassenger  Int                        @default(0)
+  fingerprintDataUrl     String?
+  isVerifiedPassenger    Boolean                    @default(false)
+  lastVerificationAt     DateTime?
+  maxFreeTrips           Int                        @default(1)
+  passengerTripCount     Int                        @default(0)
+  verificationLevel      PassengerVerificationLevel @default(BASIC)
   biometricVerifications BiometricVerification[]
+  documentVerifications  DocumentVerification[]
+  driverProfile          DriverProfile?
   loginHistory           LoginHistory[]
-
-  // Referrals
-  referralCode String? @unique
-  referredById String?
-  referredBy   User?   @relation("UserReferrals", fields: [referredById], references: [id])
-  referrals    User[]  @relation("UserReferrals")
-
-  // Organization Membership
-  orgMemberProfile OrganizationMember?
-
-  // Occurrence Book Relations
-  occurrencesAsPassenger Occurrence[]          @relation("PassengerOccurrences")
-  registeredOccurrences  Occurrence[]          @relation("RegisteredOccurrences")
-  resolvedOccurrences    Occurrence[]          @relation("ResolvedOccurrences")
-  uploadedMedia          OccurrenceMedia[]     @relation("UploadedOccurrenceMedia")
-  filedObjections        OccurrenceObjection[] @relation("FiledObjections")
-  reviewedObjections     OccurrenceObjection[] @relation("ReviewedObjections")
-  auditActions           OccurrenceAuditLog[]  @relation("OccurrenceAuditActions")
+  auditActions           OccurrenceAuditLog[]       @relation("OccurrenceAuditActions")
+  uploadedMedia          OccurrenceMedia[]          @relation("UploadedOccurrenceMedia")
+  filedObjections        OccurrenceObjection[]      @relation("FiledObjections")
+  reviewedObjections     OccurrenceObjection[]      @relation("ReviewedObjections")
+  occurrencesAsPassenger Occurrence[]               @relation("PassengerOccurrences")
+  registeredOccurrences  Occurrence[]               @relation("RegisteredOccurrences")
+  resolvedOccurrences    Occurrence[]               @relation("ResolvedOccurrences")
+  orgMemberProfile       OrganizationMember?
+  ridePreference         RidePreference?
+  ridesAsPassenger       Ride[]                     @relation("PassengerRides")
+  badges                 UserBadge[]
+  assignedPermissions    UserPermission[]           @relation("AssignedPermissions")
+  userPermissions        UserPermission[]
+  assignedRoles          UserRole[]                 @relation("AssignedRoles")
+  userRoles              UserRole[]
+  referredBy             User?                      @relation("UserReferrals", fields: [referredById], references: [id])
+  referrals              User[]                     @relation("UserReferrals")
 
   @@index([role])
   @@index([createdAt])
@@ -107,33 +78,24 @@ model User {
 model LoginHistory {
   id         String    @id @default(uuid())
   userId     String
-  user       User      @relation(fields: [userId], references: [id])
   ipAddress  String
   userAgent  String
   location   String?
   reportedAt DateTime?
   reviewedAt DateTime?
   createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id])
 
   @@map("login_history")
 }
 
-// ... existing enums
-
-enum OrganizationStatus {
-  UNVERIFIED
-  PENDING
-  VERIFIED
-}
-
 model Organization {
-  id                         String             @id @default(uuid())
+  id                         String               @id @default(uuid())
   name                       String
-  founderName                String?
-  email                      String             @unique
-  bio                        String?            @db.Text
-  logoUrl                    String?            @db.Text // Compressed logo image
-  bannerUrl                  String?            @db.Text // Compressed banner image
+  email                      String               @unique
+  bio                        String?
+  logoUrl                    String?
+  bannerUrl                  String?
   primaryColor               String?
   secondaryColor             String?
   website                    String?
@@ -141,22 +103,19 @@ model Organization {
   facebook                   String?
   instagram                  String?
   linkedin                   String?
-  registrationNumber         String             @unique
-  registrationCertificateUrl String?            @db.Text // Compressed certificate document
-  status                     OrganizationStatus @default(UNVERIFIED)
-
-  // Sub-organization hierarchy
-  parentId String?
-  parent   Organization?  @relation("SubOrgs", fields: [parentId], references: [id])
-  children Organization[] @relation("SubOrgs")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  members     OrganizationMember[]
-  drivers     DriverProfile[]
-  invitations Invitation[]
-  userRoles   UserRole[]
+  registrationNumber         String               @unique
+  registrationCertificateUrl String?
+  status                     OrganizationStatus   @default(UNVERIFIED)
+  parentId                   String?
+  createdAt                  DateTime             @default(now())
+  updatedAt                  DateTime             @updatedAt
+  founderName                String?
+  drivers                    DriverProfile[]
+  invitations                Invitation[]
+  members                    OrganizationMember[]
+  parent                     Organization?        @relation("SubOrgs", fields: [parentId], references: [id])
+  children                   Organization[]       @relation("SubOrgs")
+  userRoles                  UserRole[]
 
   @@map("organizations")
 }
@@ -164,84 +123,64 @@ model Organization {
 model OrganizationMember {
   id                  String       @id @default(uuid())
   organizationId      String
-  organization        Organization @relation(fields: [organizationId], references: [id])
   name                String
   contact             String
   position            String
   duties              String?
   isBiometricVerified Boolean      @default(false)
-
-  // Hunter Features
-  userId          String?      @unique
-  user            User?        @relation(fields: [userId], references: [id])
-  canHunt         Boolean      @default(false)
-  sentInvitations Invitation[] @relation("HunterInvitations")
+  canHunt             Boolean      @default(false)
+  userId              String?      @unique
+  sentInvitations     Invitation[] @relation("HunterInvitations")
+  organization        Organization @relation(fields: [organizationId], references: [id])
+  user                User?        @relation(fields: [userId], references: [id])
 
   @@map("organization_members")
 }
 
 model DriverGroup {
-  id          String   @id @default(uuid())
-  name        String
-  description String?  @db.Text
-  
-  // Hierarchy support
+  id            String          @id @default(uuid())
+  name          String
+  description   String?
   parentGroupId String?
-  parentGroup   DriverGroup?  @relation("SubGroups", fields: [parentGroupId], references: [id])
-  subgroups     DriverGroup[] @relation("SubGroups")
-  
-  // Members
-  drivers DriverProfile[]
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  parentGroup   DriverGroup?    @relation("SubGroups", fields: [parentGroupId], references: [id])
+  subgroups     DriverGroup[]   @relation("SubGroups")
+  drivers       DriverProfile[]
+
   @@map("driver_groups")
 }
 
-// In DriverProfile - updating existing model
 model DriverProfile {
-  id                  String  @id @default(uuid())
-  userId              String  @unique
-  user                User    @relation(fields: [userId], references: [id])
-  licenseNumber       String  @unique
-  isOnline            Boolean @default(false)
-  currentLocation     Json? // { lat: number, lng: number }
-  isBiometricVerified Boolean @default(false)
-
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
-  
-  // Group membership
-  driverGroupId String?
-  driverGroup   DriverGroup? @relation(fields: [driverGroupId], references: [id])
-  
-  // Referral tracking
-  referrerId String?
-  referrer   DriverProfile?  @relation("DriverReferrals", fields: [referrerId], references: [id])
-  referrals  DriverProfile[] @relation("DriverReferrals")
-
-  // Gamification & Stats
-  totalRidesCompleted Int         @default(0)
+  id                  String                   @id @default(uuid())
+  userId              String                   @unique
+  licenseNumber       String                   @unique
+  isOnline            Boolean                  @default(false)
+  currentLocation     Json?
+  isBiometricVerified Boolean                  @default(false)
+  organizationId      String?
+  acceptanceRate      Float?
   averageRating       Float?
-  acceptanceRate      Float? // Percentage of accepted ride requests
-  badges              UserBadge[]
-  badgeStatus         DriverBadgeStatus[]
-
-  // Savings & Sacco
-  savingsPreference   DriverSavingsPreference?
-  transactionLedger   TransactionLedger[]
-
-  // Relations
-  vehicle             Vehicle?
-  ridesAsDriver       Ride[]       @relation("DriverRides")
-  receivedInvitations Invitation[]
+  totalRidesCompleted Int                      @default(0)
+  driverGroupId       String?
+  referrerId          String?
+  commissionLedger    CommissionLedger[]
+  commissionSource    CommissionLedger[]       @relation("CommissionSource")
   documents           Document[]
-  occurrences         Occurrence[] @relation("DriverOccurrences")
-  
-  commissionLedger CommissionLedger[]
-  commissionSource CommissionLedger[] @relation("CommissionSource")
-  saccoLedger      SaccoLedger[]
+  badgeStatus         DriverBadgeStatus[]
+  driverGroup         DriverGroup?             @relation(fields: [driverGroupId], references: [id])
+  organization        Organization?            @relation(fields: [organizationId], references: [id])
+  referrer            DriverProfile?           @relation("DriverReferrals", fields: [referrerId], references: [id])
+  referrals           DriverProfile[]          @relation("DriverReferrals")
+  user                User                     @relation(fields: [userId], references: [id])
+  savingsPreference   DriverSavingsPreference?
+  receivedInvitations Invitation[]
+  occurrences         Occurrence[]             @relation("DriverOccurrences")
+  ridesAsDriver       Ride[]                   @relation("DriverRides")
+  saccoLedger         SaccoLedger[]
+  transactionLedger   TransactionLedger[]
+  badges              UserBadge[]
+  vehicle             Vehicle?
 
   @@index([isOnline])
   @@index([organizationId])
@@ -253,19 +192,516 @@ model DriverProfile {
 model Document {
   id              String         @id @default(uuid())
   driverProfileId String
-  driverProfile   DriverProfile  @relation(fields: [driverProfileId], references: [id])
   type            DocumentType
-  url             String         @db.Text // Stores compressed image URL
-  thumbnailUrl    String?        @db.Text // Optional thumbnail
-  fileSize        Int? // File size in bytes
-  mimeType        String? // image/jpeg, image/png, etc.
+  url             String
   status          DocumentStatus @default(PENDING)
-  rejectionReason String?        @db.Text
+  rejectionReason String?
   expiresAt       DateTime?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
+  thumbnailUrl    String?
+  fileSize        Int?
+  mimeType        String?
+  driverProfile   DriverProfile  @relation(fields: [driverProfileId], references: [id])
 
   @@map("documents")
+}
+
+model Vehicle {
+  id                      String         @id @default(uuid())
+  driverProfileId         String         @unique
+  make                    String
+  model                   String
+  year                    Int
+  plateNumber             String         @unique
+  type                    VehicleType    @default(STANDARD)
+  backPhotoUrl            String?
+  color                   String?
+  frontPhotoUrl           String?
+  inspectionReportUrl     String?
+  insuranceCertificateUrl String?
+  insuranceExpiry         DateTime?
+  insurancePolicyNumber   String?
+  logbookNumber           String?        @unique
+  sidePhotoUrl            String?
+  insuranceType           InsuranceType?
+  usage                   VehicleUsage   @default(TAXI)
+  logbookImageUrl         String?
+  ownerName               String?
+  ownerPhone              String?
+  capacity                Float?
+  capacityUnit            String?
+  occurrences             Occurrence[]   @relation("VehicleOccurrences")
+  driverProfile           DriverProfile  @relation(fields: [driverProfileId], references: [id])
+
+  @@map("vehicles")
+}
+
+model Ride {
+  id                   String         @id @default(uuid())
+  passengerId          String
+  driverId             String?
+  status               RideStatus     @default(REQUESTED)
+  pickupLocation       Json
+  dropoffLocation      Json
+  fare                 Decimal?       @db.Decimal(10, 2)
+  distance             Float?
+  duration             Int?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  baseFare             Decimal?       @db.Decimal(10, 2)
+  matchingCompletedAt  DateTime?
+  matchingDurationMs   Int?
+  matchingStartedAt    DateTime?
+  requestedVehicleType VehicleType?
+  surgeMultiplier      Float?         @default(1.0)
+  occurrences          Occurrence[]   @relation("RideOccurrences")
+  driver               DriverProfile? @relation("DriverRides", fields: [driverId], references: [id])
+  passenger            User           @relation("PassengerRides", fields: [passengerId], references: [id])
+
+  @@index([passengerId])
+  @@index([driverId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("rides")
+}
+
+model Role {
+  id           String       @id @default(uuid())
+  name         String       @unique
+  displayName  String
+  description  String?
+  type         RoleType
+  platform     Platform
+  permissions  Permission[]
+  parentRoleId String?
+  isActive     Boolean      @default(true)
+  isSystem     Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  parentRole   Role?        @relation("RoleHierarchy", fields: [parentRoleId], references: [id])
+  childRoles   Role[]       @relation("RoleHierarchy")
+  userRoles    UserRole[]
+
+  @@map("roles")
+}
+
+model UserRole {
+  id             String        @id @default(uuid())
+  userId         String
+  roleId         String
+  organizationId String?
+  assignedById   String?
+  assignedAt     DateTime      @default(now())
+  expiresAt      DateTime?
+  isActive       Boolean       @default(true)
+  assignedBy     User?         @relation("AssignedRoles", fields: [assignedById], references: [id])
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  role           Role          @relation(fields: [roleId], references: [id])
+  user           User          @relation(fields: [userId], references: [id])
+
+  @@unique([userId, roleId, organizationId])
+  @@map("user_roles")
+}
+
+model UserPermission {
+  id           String     @id @default(uuid())
+  userId       String
+  permission   Permission
+  isGranted    Boolean    @default(true)
+  assignedById String?
+  assignedAt   DateTime   @default(now())
+  assignedBy   User?      @relation("AssignedPermissions", fields: [assignedById], references: [id])
+  user         User       @relation(fields: [userId], references: [id])
+
+  @@unique([userId, permission])
+  @@map("user_permissions")
+}
+
+model Invitation {
+  id             String             @id @default(uuid())
+  organizationId String
+  hunterId       String
+  driverId       String
+  status         InvitationStatus   @default(PENDING)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  driver         DriverProfile      @relation(fields: [driverId], references: [id])
+  hunter         OrganizationMember @relation("HunterInvitations", fields: [hunterId], references: [id])
+  organization   Organization       @relation(fields: [organizationId], references: [id])
+
+  @@map("invitations")
+}
+
+model DocumentVerification {
+  id                     String                   @id @default(uuid())
+  userId                 String
+  documentType           VerificationDocumentType
+  documentImageUrl       String
+  fileSize               Int?
+  mimeType               String?
+  extractedData          Json?
+  isValid                Boolean                  @default(false)
+  validationErrors       Json?
+  confidenceScore        Float?
+  status                 VerificationStatus       @default(PENDING)
+  verifiedAt             DateTime?
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  biometricVerifications BiometricVerification[]
+  user                   User                     @relation(fields: [userId], references: [id])
+
+  @@map("document_verifications")
+}
+
+model BiometricVerification {
+  id                     String               @id @default(uuid())
+  userId                 String
+  documentVerificationId String
+  selfieImageUrl         String
+  fileSize               Int?
+  mimeType               String?
+  matchScore             Float?
+  livenessScore          Float?
+  isMatch                Boolean              @default(false)
+  isLive                 Boolean              @default(false)
+  status                 VerificationStatus   @default(PENDING)
+  verifiedAt             DateTime?
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+  documentVerification   DocumentVerification @relation(fields: [documentVerificationId], references: [id])
+  user                   User                 @relation(fields: [userId], references: [id])
+
+  @@map("biometric_verifications")
+}
+
+model Occurrence {
+  id                String                @id @default(uuid())
+  obNumber          String                @unique @map("ob_number")
+  category          OccurrenceCategory
+  severity          OccurrenceSeverity
+  title             String                @db.VarChar(255)
+  description       String
+  driverId          String?               @map("driver_id")
+  passengerId       String?               @map("passenger_id")
+  vehicleId         String?               @map("vehicle_id")
+  rideId            String?               @map("ride_id")
+  occurrenceDate    DateTime              @map("occurrence_date") @db.Date
+  occurrenceTime    DateTime              @map("occurrence_time") @db.Time(6)
+  occurredAt        DateTime              @map("occurred_at")
+  locationLat       Decimal?              @map("location_lat") @db.Decimal(10, 8)
+  locationLng       Decimal?              @map("location_lng") @db.Decimal(11, 8)
+  locationAddress   String?               @map("location_address")
+  locationPlaceName String?               @map("location_place_name") @db.VarChar(255)
+  locationCity      String?               @map("location_city") @db.VarChar(100)
+  locationCountry   String                @default("Kenya") @map("location_country") @db.VarChar(100)
+  locationDetails   Json?                 @map("location_details")
+  source            String
+  sourceReferenceId String?               @map("source_reference_id")
+  registeredById    String                @map("registered_by")
+  registeredAt      DateTime              @default(now()) @map("registered_at")
+  status            OccurrenceStatus      @default(OPEN)
+  resolvedAt        DateTime?             @map("resolved_at")
+  resolvedById      String?               @map("resolved_by")
+  resolutionNotes   String?               @map("resolution_notes")
+  tags              String[]
+  isFlagged         Boolean               @default(false) @map("is_flagged")
+  flagReason        String?               @map("flag_reason")
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @updatedAt @map("updated_at")
+  auditLog          OccurrenceAuditLog[]
+  media             OccurrenceMedia[]
+  objections        OccurrenceObjection[]
+  driver            DriverProfile?        @relation("DriverOccurrences", fields: [driverId], references: [id])
+  passenger         User?                 @relation("PassengerOccurrences", fields: [passengerId], references: [id])
+  registeredBy      User                  @relation("RegisteredOccurrences", fields: [registeredById], references: [id])
+  resolvedBy        User?                 @relation("ResolvedOccurrences", fields: [resolvedById], references: [id])
+  ride              Ride?                 @relation("RideOccurrences", fields: [rideId], references: [id])
+  vehicle           Vehicle?              @relation("VehicleOccurrences", fields: [vehicleId], references: [id])
+
+  @@index([status])
+  @@index([severity])
+  @@index([category])
+  @@index([occurrenceDate])
+  @@index([driverId])
+  @@index([passengerId])
+  @@map("occurrences")
+}
+
+model OccurrenceMedia {
+  id           String     @id @default(uuid())
+  occurrenceId String     @map("occurrence_id")
+  mediaType    String     @map("media_type")
+  fileUrl      String     @map("file_url")
+  thumbnailUrl String?    @map("thumbnail_url")
+  fileSize     Int?       @map("file_size")
+  mimeType     String?    @map("mime_type") @db.VarChar(100)
+  duration     Int?
+  uploadedById String?    @map("uploaded_by")
+  uploadedAt   DateTime   @default(now()) @map("uploaded_at")
+  description  String?
+  metadata     Json?
+  occurrence   Occurrence @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+  uploadedBy   User?      @relation("UploadedOccurrenceMedia", fields: [uploadedById], references: [id])
+
+  @@map("occurrence_media")
+}
+
+model OccurrenceObjection {
+  id                 String          @id @default(uuid())
+  occurrenceId       String          @map("occurrence_id")
+  objectorId         String          @map("objector_id")
+  objectionText      String          @map("objection_text")
+  supportingEvidence Json?           @map("supporting_evidence")
+  status             ObjectionStatus @default(PENDING)
+  reviewedById       String?         @map("reviewed_by")
+  reviewedAt         DateTime?       @map("reviewed_at")
+  reviewNotes        String?         @map("review_notes")
+  outcome            String?         @db.VarChar(50)
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @updatedAt @map("updated_at")
+  objector           User            @relation("FiledObjections", fields: [objectorId], references: [id])
+  occurrence         Occurrence      @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+  reviewedBy         User?           @relation("ReviewedObjections", fields: [reviewedById], references: [id])
+
+  @@map("occurrence_objections")
+}
+
+model OccurrenceAuditLog {
+  id           String     @id @default(uuid())
+  occurrenceId String     @map("occurrence_id")
+  action       String     @db.VarChar(50)
+  actorId      String?    @map("actor_id")
+  changes      Json?
+  notes        String?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  actor        User?      @relation("OccurrenceAuditActions", fields: [actorId], references: [id])
+  occurrence   Occurrence @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+
+  @@map("occurrence_audit_log")
+}
+
+model Badge {
+  id                  String               @id @default(uuid())
+  code                String               @unique
+  name                String
+  description         String
+  iconUrl             String?
+  category            BadgeCategory
+  tier                BadgeTier            @default(BRONZE)
+  criteria            Json
+  isActive            Boolean              @default(true)
+  createdAt           DateTime             @default(now())
+  badgeRewardMappings BadgeRewardMapping[]
+  sosConfigs          SosConfig[]
+  userBadges          UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  id              String         @id @default(uuid())
+  userId          String
+  badgeId         String
+  earnedAt        DateTime       @default(now())
+  progress        Int?
+  driverProfileId String?
+  badge           Badge          @relation(fields: [badgeId], references: [id])
+  DriverProfile   DriverProfile? @relation(fields: [driverProfileId], references: [id])
+  user            User           @relation(fields: [userId], references: [id])
+
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+model Reward {
+  id                  String               @id @default(uuid())
+  code                String               @unique
+  name                String
+  description         String
+  type                RewardType
+  value               Json
+  isActive            Boolean              @default(true)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  badgeRewardMappings BadgeRewardMapping[]
+
+  @@map("rewards")
+}
+
+model BadgeRewardMapping {
+  id        String   @id @default(uuid())
+  badgeId   String
+  rewardId  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  badge     Badge    @relation(fields: [badgeId], references: [id])
+  reward    Reward   @relation(fields: [rewardId], references: [id])
+
+  @@unique([badgeId, rewardId])
+  @@map("badge_reward_mappings")
+}
+
+model DriverBadgeStatus {
+  id              String        @id @default(uuid())
+  driverProfileId String
+  badgeTier       BadgeTier
+  isActive        Boolean       @default(true)
+  earnedAt        DateTime      @default(now())
+  expiresAt       DateTime?
+  lastValidatedAt DateTime?
+  metricsSnapshot Json?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  driverProfile   DriverProfile @relation(fields: [driverProfileId], references: [id])
+
+  @@unique([driverProfileId, badgeTier])
+  @@map("driver_badge_status")
+}
+
+model DriverSavingsPreference {
+  id                   String        @id @default(uuid())
+  driverProfileId      String        @unique
+  personalSavingRate   Float         @default(0.0)
+  isAutoSavingsEnabled Boolean       @default(false)
+  preferredZoneIds     String[]      @default([])
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  driverProfile        DriverProfile @relation(fields: [driverProfileId], references: [id])
+
+  @@map("driver_savings_preferences")
+}
+
+model TransactionLedger {
+  id                    String        @id @default(uuid())
+  tripId                String?
+  driverProfileId       String
+  baseFare              Decimal       @db.Decimal(10, 2)
+  platformCommission    Decimal       @db.Decimal(10, 2)
+  platformNet           Decimal       @db.Decimal(10, 2)
+  saccoAdminFee         Decimal       @db.Decimal(10, 2)
+  badgeBonusActive      Boolean       @default(false)
+  badgeBonusAmount      Decimal       @db.Decimal(10, 2)
+  personalSavingsAmount Decimal       @db.Decimal(10, 2)
+  driverShare           Decimal       @db.Decimal(10, 2)
+  driverNetTakeHome     Decimal       @db.Decimal(10, 2)
+  totalSaccoDeposit     Decimal       @db.Decimal(10, 2)
+  commissionRebate      Decimal       @db.Decimal(10, 2)
+  isFlagged             Boolean       @default(false)
+  flagReason            String?
+  createdAt             DateTime      @default(now())
+  driverProfile         DriverProfile @relation(fields: [driverProfileId], references: [id])
+
+  @@index([driverProfileId])
+  @@index([tripId])
+  @@index([createdAt])
+  @@map("transaction_ledger")
+}
+
+model RidePreference {
+  id                    String        @id @default(uuid())
+  userId                String        @unique
+  preferredVehicleTypes VehicleType[]
+  maxWaitMinutes        Int           @default(10)
+  maxDistanceKm         Float         @default(5.0)
+  quietRide             Boolean       @default(false)
+  musicAllowed          Boolean       @default(true)
+  acPreferred           Boolean       @default(false)
+  petFriendly           Boolean       @default(false)
+  favoriteDriverIds     String[]
+  blockedDriverIds      String[]
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  user                  User          @relation(fields: [userId], references: [id])
+
+  @@map("ride_preferences")
+}
+
+model SosConfig {
+  id        String         @id @default(uuid())
+  type      SosPenaltyType @default(FEE)
+  feeAmount Decimal?       @db.Decimal(10, 2)
+  badgeId   String?
+  isActive  Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  badge     Badge?         @relation(fields: [badgeId], references: [id])
+
+  @@map("sos_config")
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model PassengerVerificationConfig {
+  id                            String   @id @default(uuid())
+  requireNationalId             Boolean  @default(true)
+  requirePassengerPhoto         Boolean  @default(true)
+  requireSelfieVerification     Boolean  @default(true)
+  requireFingerprint            Boolean  @default(false)
+  selfieReverificationDays      Int      @default(30)
+  fingerprintReverificationDays Int      @default(90)
+  maxTripsBeforeVerification    Int      @default(1)
+  maxTripsWithUnverified        Int      @default(1)
+  verifiedPassengerPrivileges   Json     @default("{}")
+  autoVerifyOnDocumentUpload    Boolean  @default(true)
+  requireAdminApproval          Boolean  @default(false)
+  isActive                      Boolean  @default(true)
+  createdAt                     DateTime @default(now())
+  updatedAt                     DateTime @updatedAt
+
+  @@map("passenger_verification_config")
+}
+
+model CommissionLedger {
+  id              String          @id @default(uuid())
+  driverId        String
+  amount          Decimal         @db.Decimal(10, 2)
+  type            LedgerEntryType
+  transactionType String
+  reason          String?
+  sourceDriverId  String?
+  createdAt       DateTime        @default(now())
+  driverProfile   DriverProfile   @relation(fields: [driverId], references: [id])
+  sourceDriver    DriverProfile?  @relation("CommissionSource", fields: [sourceDriverId], references: [id])
+
+  @@index([driverId])
+  @@index([createdAt])
+  @@map("commission_ledger")
+}
+
+model SaccoLedger {
+  id            String        @id @default(uuid())
+  driverId      String
+  amount        Decimal       @db.Decimal(10, 2)
+  type          String
+  relatedTripId String?
+  createdAt     DateTime      @default(now())
+  driverProfile DriverProfile @relation(fields: [driverId], references: [id])
+
+  @@index([driverId])
+  @@map("sacco_ledger")
+}
+
+enum UserStatus {
+  PROSPECT
+  PENDING
+  ACTIVE
+  SUSPENDED
+  REJECTED
+}
+
+enum OrganizationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
 }
 
 enum DocumentType {
@@ -288,42 +724,6 @@ enum DocumentStatus {
   EXPIRED
 }
 
-// ... existing models (User, Vehicle, Ride) and enums
-model Vehicle {
-  id                      String         @id @default(uuid())
-  driverProfileId         String         @unique
-  driverProfile           DriverProfile  @relation(fields: [driverProfileId], references: [id])
-  make                    String
-  model                   String
-  year                    Int
-  color                   String?
-  plateNumber             String         @unique
-  logbookNumber           String?        @unique
-  insurancePolicyNumber   String?
-  insuranceExpiry         DateTime?
-  insuranceCertificateUrl String?        @db.Text // Compressed document URL
-  logbookImageUrl         String?        @db.Text // Compressed document URL
-  inspectionReportUrl     String?        @db.Text // Compressed document URL
-  frontPhotoUrl           String?        @db.Text // Compressed image URL
-  backPhotoUrl            String?        @db.Text // Compressed image URL
-  sidePhotoUrl            String?        @db.Text // Compressed image URL
-  type                    VehicleType    @default(STANDARD)
-  usage                   VehicleUsage   @default(TAXI)
-  insuranceType           InsuranceType?
-
-  // Owner Details
-  ownerName  String?
-  ownerPhone String?
-
-  // Capacity Details
-  capacity     Float?
-  capacityUnit String? // 'PASSENGERS', 'TONS', 'KG'
-
-  occurrences Occurrence[] @relation("VehicleOccurrences")
-
-  @@map("vehicles")
-}
-
 enum VehicleUsage {
   TAXI
   COMMERCIAL
@@ -337,41 +737,6 @@ enum InsuranceType {
   PRIVATE
 }
 
-model Ride {
-  id          String         @id @default(uuid())
-  passengerId String
-  passenger   User           @relation("PassengerRides", fields: [passengerId], references: [id])
-  driverId    String?
-  driver      DriverProfile? @relation("DriverRides", fields: [driverId], references: [id])
-
-  status RideStatus @default(REQUESTED)
-
-  pickupLocation  Json // { lat, lng, address }
-  dropoffLocation Json // { lat, lng, address }
-
-  fare     Decimal? @db.Decimal(10, 2)
-  distance Float? // In km
-  duration Int? // In minutes
-
-  // Matching & Pricing
-  requestedVehicleType VehicleType?
-  matchingStartedAt    DateTime?
-  matchingCompletedAt  DateTime?
-  matchingDurationMs   Int? // Time to find driver in milliseconds
-  surgeMultiplier      Float?       @default(1.0)
-  baseFare             Decimal?     @db.Decimal(10, 2)
-
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  occurrences Occurrence[] @relation("RideOccurrences")
-
-  @@index([passengerId])
-  @@index([driverId])
-  @@index([status])
-  @@index([createdAt])
-  @@map("rides")
-}
-
 enum LegacyRole {
   PASSENGER
   DRIVER
@@ -380,15 +745,12 @@ enum LegacyRole {
 }
 
 enum Permission {
-  // SITE MANAGEMENT
   SITE_SETUP_VIEW
   SITE_SETUP_EDIT
   FEATURES_INTEGRATIONS_VIEW
   FEATURES_INTEGRATIONS_EDIT
   ORG_STRUCTURE_VIEW
   ORG_STRUCTURE_EDIT
-
-  // USER MANAGEMENT
   GROUPS_ROLES_VIEW
   GROUPS_ROLES_EDIT
   LOCATIONS_VIEW
@@ -399,8 +761,6 @@ enum Permission {
   PEOPLE_DELETE
   INVITATIONS_VIEW
   INVITATIONS_SEND
-
-  // CONTENT MANAGEMENT
   SKILLS_VIEW
   SKILLS_EDIT
   METRICS_VIEW
@@ -412,45 +772,33 @@ enum Permission {
   LIBRARY_CONTENT_VIEW
   LIBRARY_CONTENT_EDIT
   LIBRARY_CONTENT_PUBLISH
-
-  // ASSESSMENT
   ASSESSMENT_DEFINITIONS_VIEW
   ASSESSMENT_DEFINITIONS_EDIT
   THIRD_PARTY_PACKAGES_VIEW
   THIRD_PARTY_PACKAGES_MANAGE
-
-  // TRAINING
   GROUP_TRAINING_VIEW
   GROUP_TRAINING_EDIT
   PUBLISHED_CONTENT_VIEW
   PUBLISHED_CONTENT_MANAGE
   AUTOMATION_TRIGGERS_VIEW
   AUTOMATION_TRIGGERS_EDIT
-
-  // DASHBOARD & NOTIFICATIONS
   NOTIFICATIONS_VIEW
   NOTIFICATIONS_MANAGE
   DASHBOARD_PERSONALIZE
   TASK_VIEW_ACCESS
   LEARNING_VIEW_ACCESS
-
-  // OPERATIONS & REPORTING
   REPORT_BUILDER_ACCESS
   PATHWAY_ACTIVITY_VIEW
   ASSESSMENT_RESULTS_VIEW
   SKILLS_COMPETENCIES_VIEW
   AUDIT_ACTIVITY_VIEW
   REPORT_PUBLISHING_ACCESS
-
-  // RIDE OPERATIONS (Dispatch Panel)
   DISPATCH_DASHBOARD_VIEW
   DISPATCH_RIDE_ASSIGN
   DISPATCH_RIDE_MONITOR
   DISPATCH_DRIVER_MANAGE
   DISPATCH_REAL_TIME_MAP
   DISPATCH_ANALYTICS_VIEW
-
-  // DRIVER MANAGEMENT
   DRIVER_APPLICATIONS_VIEW
   DRIVER_APPLICATIONS_APPROVE
   DRIVER_APPLICATIONS_REJECT
@@ -459,27 +807,19 @@ enum Permission {
   DRIVER_PROFILE_EDIT
   DRIVER_SUSPEND
   DRIVER_ACTIVATE
-
-  // PASSENGER MANAGEMENT
   PASSENGER_PROFILES_VIEW
   PASSENGER_PROFILES_EDIT
   PASSENGER_SUSPEND
   PASSENGER_ACTIVATE
-
-  // VEHICLE MANAGEMENT
   VEHICLES_VIEW
   VEHICLES_EDIT
   VEHICLES_APPROVE
   VEHICLES_SUSPEND
-
-  // OCCURRENCE BOOK
   OCCURRENCE_VIEW
   OCCURRENCE_CREATE
   OCCURRENCE_EDIT
   OCCURRENCE_RESOLVE
   OCCURRENCE_OBJECTION_REVIEW
-
-  // FINANCIAL
   PAYMENTS_VIEW
   PAYMENTS_PROCESS
   FARE_MANAGEMENT_VIEW
@@ -487,29 +827,21 @@ enum Permission {
   COMMISSION_VIEW
   COMMISSION_EDIT
   FINANCIAL_REPORTS_VIEW
-
-  // VERIFICATION
   VERIFICATION_DOCUMENTS_VIEW
   VERIFICATION_DOCUMENTS_APPROVE
   VERIFICATION_BIOMETRIC_VIEW
   VERIFICATION_BIOMETRIC_APPROVE
-
-  // ORGANIZATION & REFERRAL PROGRAM
   ORGANIZATION_VIEW
   ORGANIZATION_EDIT
   ORGANIZATION_APPROVE
   REFERRAL_FORMULA_VIEW
   REFERRAL_FORMULA_EDIT
   REFERRAL_TRACKING_VIEW
-
-  // MARKETING (User Portal)
   MARKETING_CONTENT_VIEW
   MARKETING_CONTENT_EDIT
   MARKETING_ANALYTICS_VIEW
   BLOG_POSTS_VIEW
   BLOG_POSTS_EDIT
-
-  // SYSTEM ADMINISTRATION
   SYSTEM_SETTINGS_VIEW
   SYSTEM_SETTINGS_EDIT
   USER_ROLES_ASSIGN
@@ -518,7 +850,6 @@ enum Permission {
 }
 
 enum RoleType {
-  // ADMIN PANEL ROLES
   SUPER_ADMIN
   ADMIN
   CONTENT_MANAGER
@@ -527,25 +858,17 @@ enum RoleType {
   FINANCIAL_MANAGER
   VERIFICATION_OFFICER
   SUPPORT_AGENT
-
-  // DISPATCH PANEL ROLES
   DISPATCHER
   SENIOR_DISPATCHER
   DISPATCH_SUPERVISOR
   DISPATCH_ANALYST
-
-  // USER PORTAL ROLES
   MARKETING_ADMIN
   CONTENT_EDITOR
   BLOG_WRITER
-
-  // DRIVER/PASSENGER ROLES
   DRIVER
   PASSENGER
   ORGANIZATION_ADMIN
   ORGANIZATION_MEMBER
-
-  // LEGACY/UTILITY ROLES
   VIEWER
   AUDITOR
   GUEST
@@ -557,71 +880,6 @@ enum Platform {
   USER_PORTAL
   MOBILE_APP
   ALL
-}
-
-model Role {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  displayName String
-  description String?  @db.Text
-  type        RoleType
-  platform    Platform
-
-  // Permissions
-  permissions Permission[]
-
-  // Hierarchy
-  parentRoleId String?
-  parentRole   Role?   @relation("RoleHierarchy", fields: [parentRoleId], references: [id])
-  childRoles   Role[]  @relation("RoleHierarchy")
-
-  isActive Boolean @default(true)
-  isSystem Boolean @default(false) // System roles cannot be deleted
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  userRoles UserRole[]
-
-  @@map("roles")
-}
-
-model UserRole {
-  id     String @id @default(uuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-  roleId String
-  role   Role   @relation(fields: [roleId], references: [id])
-
-  // Scope (optional - for multi-tenancy)
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
-
-  assignedById String?
-  assignedBy   User?     @relation("AssignedRoles", fields: [assignedById], references: [id])
-  assignedAt   DateTime  @default(now())
-  expiresAt    DateTime?
-
-  isActive Boolean @default(true)
-
-  @@unique([userId, roleId, organizationId])
-  @@map("user_roles")
-}
-
-model UserPermission {
-  id         String     @id @default(uuid())
-  userId     String
-  user       User       @relation(fields: [userId], references: [id])
-  permission Permission
-  isGranted  Boolean    @default(true) // true = Grant (add), false = Revoke (override)
-
-  assignedById String?
-  assignedBy   User?    @relation("AssignedPermissions", fields: [assignedById], references: [id])
-  assignedAt   DateTime @default(now())
-
-  @@unique([userId, permission])
-  @@map("user_permissions")
 }
 
 enum VehicleType {
@@ -641,89 +899,16 @@ enum RideStatus {
   CANCELLED
 }
 
-model Invitation {
-  id             String       @id @default(uuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-
-  hunterId String
-  hunter   OrganizationMember @relation("HunterInvitations", fields: [hunterId], references: [id])
-
-  driverId String
-  driver   DriverProfile @relation(fields: [driverId], references: [id])
-
-  status    InvitationStatus @default(PENDING)
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-
-  @@map("invitations")
-}
-
 enum InvitationStatus {
   PENDING
   ACCEPTED
   REJECTED
 }
 
-// Document Verification Models
-model DocumentVerification {
-  id               String                   @id @default(uuid())
-  userId           String
-  user             User                     @relation(fields: [userId], references: [id])
-  documentType     VerificationDocumentType
-  documentImageUrl String                   @db.Text // Compressed image URL
-  fileSize         Int? // File size in bytes
-  mimeType         String? // image/jpeg, image/png
-
-  // OCR Extracted Data
-  extractedData Json? // Stores OCR results
-
-  // Validation Results
-  isValid          Boolean @default(false)
-  validationErrors Json? // Array of validation errors
-  confidenceScore  Float? // OCR confidence 0-1
-
-  status     VerificationStatus @default(PENDING)
-  verifiedAt DateTime?
-  createdAt  DateTime           @default(now())
-  updatedAt  DateTime           @updatedAt
-
-  // Relation to biometric verification
-  biometricVerifications BiometricVerification[]
-
-  @@map("document_verifications")
-}
-
-model BiometricVerification {
-  id                     String               @id @default(uuid())
-  userId                 String
-  user                   User                 @relation(fields: [userId], references: [id])
-  documentVerificationId String
-  documentVerification   DocumentVerification @relation(fields: [documentVerificationId], references: [id])
-
-  selfieImageUrl String  @db.Text // Compressed selfie URL
-  fileSize       Int? // File size in bytes
-  mimeType       String? // image/jpeg
-
-  // Verification Results
-  matchScore    Float? // Face match score 0-1
-  livenessScore Float? // Liveness detection 0-1
-  isMatch       Boolean @default(false)
-  isLive        Boolean @default(false)
-
-  status     VerificationStatus @default(PENDING)
-  verifiedAt DateTime?
-  createdAt  DateTime           @default(now())
-  updatedAt  DateTime           @updatedAt
-
-  @@map("biometric_verifications")
-}
-
 enum VerificationDocumentType {
   NATIONAL_ID
   PASSPORT
   DRIVERS_LICENSE
-  // Passenger-specific document types
   PASSENGER_ID
   PASSENGER_PASSPORT_PHOTO
   PASSENGER_SELFIE
@@ -731,10 +916,10 @@ enum VerificationDocumentType {
 }
 
 enum PassengerVerificationLevel {
-  NONE // Not started
-  BASIC // ID verified
-  SELFIE // Selfie verified
-  BIOMETRIC // Fingerprint verified
+  NONE
+  BASIC
+  SELFIE
+  BIOMETRIC
 }
 
 enum VerificationStatus {
@@ -744,10 +929,6 @@ enum VerificationStatus {
   FAILED
   EXPIRED
 }
-
-// ============================================
-// OCCURRENCE BOOK SYSTEM
-// ============================================
 
 enum OccurrenceCategory {
   CRIME
@@ -765,10 +946,10 @@ enum OccurrenceCategory {
 }
 
 enum OccurrenceSeverity {
-  CRITICAL // SEV-1
-  HIGH // SEV-2
-  MEDIUM // SEV-3
-  LOW // SEV-4
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
 }
 
 enum OccurrenceStatus {
@@ -785,151 +966,13 @@ enum ObjectionStatus {
   REJECTED
 }
 
-model Occurrence {
-  id       String @id @default(uuid())
-  obNumber String @unique @map("ob_number")
-
-  // Categorization
-  category    OccurrenceCategory
-  severity    OccurrenceSeverity
-  title       String             @db.VarChar(255)
-  description String             @db.Text
-
-  // Involved parties
-  driverId    String?        @map("driver_id")
-  driver      DriverProfile? @relation("DriverOccurrences", fields: [driverId], references: [id])
-  passengerId String?        @map("passenger_id")
-  passenger   User?          @relation("PassengerOccurrences", fields: [passengerId], references: [id])
-  vehicleId   String?        @map("vehicle_id")
-  vehicle     Vehicle?       @relation("VehicleOccurrences", fields: [vehicleId], references: [id])
-  rideId      String?        @map("ride_id")
-  ride        Ride?          @relation("RideOccurrences", fields: [rideId], references: [id])
-
-  // TIME, DATE, and PLACE (Critical Fields)
-  occurrenceDate DateTime @map("occurrence_date") @db.Date
-  occurrenceTime DateTime @map("occurrence_time") @db.Time
-  occurredAt     DateTime @map("occurred_at")
-
-  // Location Details
-  locationLat       Decimal? @map("location_lat") @db.Decimal(10, 8)
-  locationLng       Decimal? @map("location_lng") @db.Decimal(11, 8)
-  locationAddress   String?  @map("location_address") @db.Text
-  locationPlaceName String?  @map("location_place_name") @db.VarChar(255)
-  locationCity      String?  @map("location_city") @db.VarChar(100)
-  locationCountry   String   @default("Kenya") @map("location_country") @db.VarChar(100)
-  locationDetails   Json?    @map("location_details")
-
-  // Source
-  source            String // 'SOS', 'RATING', 'COMMENT', 'MANUAL', 'AUTO'
-  sourceReferenceId String? @map("source_reference_id")
-
-  // Registrar
-  registeredById String   @map("registered_by")
-  registeredBy   User     @relation("RegisteredOccurrences", fields: [registeredById], references: [id])
-  registeredAt   DateTime @default(now()) @map("registered_at")
-
-  // Status
-  status          OccurrenceStatus @default(OPEN)
-  resolvedAt      DateTime?        @map("resolved_at")
-  resolvedById    String?          @map("resolved_by")
-  resolvedBy      User?            @relation("ResolvedOccurrences", fields: [resolvedById], references: [id])
-  resolutionNotes String?          @map("resolution_notes") @db.Text
-
-  // Metadata
-  tags       String[]
-  isFlagged  Boolean  @default(false) @map("is_flagged")
-  flagReason String?  @map("flag_reason") @db.Text
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  // Relations
-  media      OccurrenceMedia[]
-  objections OccurrenceObjection[]
-  auditLog   OccurrenceAuditLog[]
-
-  @@index([status])
-  @@index([severity])
-  @@index([category])
-  @@index([occurrenceDate])
-  @@index([driverId])
-  @@index([passengerId])
-  @@map("occurrences")
-}
-
-model OccurrenceMedia {
-  id           String     @id @default(uuid())
-  occurrenceId String     @map("occurrence_id")
-  occurrence   Occurrence @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
-
-  mediaType    String  @map("media_type") // 'PHOTO', 'VIDEO', 'AUDIO', 'DOCUMENT'
-  fileUrl      String  @map("file_url") @db.Text
-  thumbnailUrl String? @map("thumbnail_url") @db.Text
-  fileSize     Int?    @map("file_size")
-  mimeType     String? @map("mime_type") @db.VarChar(100)
-  duration     Int? // For audio/video in seconds
-
-  uploadedById String?  @map("uploaded_by")
-  uploadedBy   User?    @relation("UploadedOccurrenceMedia", fields: [uploadedById], references: [id])
-  uploadedAt   DateTime @default(now()) @map("uploaded_at")
-
-  description String? @db.Text
-  metadata    Json?
-
-  @@map("occurrence_media")
-}
-
-model OccurrenceObjection {
-  id           String     @id @default(uuid())
-  occurrenceId String     @map("occurrence_id")
-  occurrence   Occurrence @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
-
-  objectorId         String @map("objector_id")
-  objector           User   @relation("FiledObjections", fields: [objectorId], references: [id])
-  objectionText      String @map("objection_text") @db.Text
-  supportingEvidence Json?  @map("supporting_evidence")
-
-  status ObjectionStatus @default(PENDING)
-
-  reviewedById String?   @map("reviewed_by")
-  reviewedBy   User?     @relation("ReviewedObjections", fields: [reviewedById], references: [id])
-  reviewedAt   DateTime? @map("reviewed_at")
-  reviewNotes  String?   @map("review_notes") @db.Text
-  outcome      String?   @db.VarChar(50)
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("occurrence_objections")
-}
-
-model OccurrenceAuditLog {
-  id           String     @id @default(uuid())
-  occurrenceId String     @map("occurrence_id")
-  occurrence   Occurrence @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
-
-  action  String  @db.VarChar(50)
-  actorId String? @map("actor_id")
-  actor   User?   @relation("OccurrenceAuditActions", fields: [actorId], references: [id])
-  changes Json?
-  notes   String? @db.Text
-
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@map("occurrence_audit_log")
-}
-
-// ============================================
-// BADGE SYSTEM
-// ============================================
-
 enum BadgeCategory {
-  ACHIEVEMENT // Ride milestones
-  QUALITY // High ratings
-  LOYALTY // Long-term usage
-  SAFETY // Safety features usage
-  SOCIAL // Referrals, sharing
-  SPECIAL // Limited edition, events
+  ACHIEVEMENT
+  QUALITY
+  LOYALTY
+  SAFETY
+  SOCIAL
+  SPECIAL
 }
 
 enum BadgeTier {
@@ -938,245 +981,27 @@ enum BadgeTier {
   GOLD
   PLATINUM
   DIAMOND
-
-  // Gamified Sacco System Tiers
-  ROOKIE       // First 50 trips - grace period
-  STAR_DRIVER  // 100+ trips, 4.5+ rating
-  ROAD_MASTER  // 500+ trips, 4.7+ rating, <5% cancellation
-  ELITE        // Top 10% performers - invitation only
+  ROOKIE
+  STAR_DRIVER
+  ROAD_MASTER
+  ELITE
 }
-
-model Badge {
-  id          String        @id @default(uuid())
-  code        String        @unique // e.g., "FIRST_RIDE", "CENTURY_CLUB"
-  name        String
-  description String        @db.Text
-  iconUrl     String?       @db.Text
-  category    BadgeCategory
-  tier        BadgeTier     @default(BRONZE)
-
-  // Earning criteria (stored as JSON for flexibility)
-  criteria Json // { type: "RIDES_COMPLETED", threshold: 100 }
-
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-
-  userBadges          UserBadge[]
-  badgeRewardMappings BadgeRewardMapping[]
-  sosConfigs          SosConfig[]
-
-  @@map("badges")
-}
-
-model UserBadge {
-  id      String @id @default(uuid())
-  userId  String
-  user    User   @relation(fields: [userId], references: [id])
-  badgeId String
-  badge   Badge  @relation(fields: [badgeId], references: [id])
-
-  earnedAt        DateTime       @default(now())
-  progress        Int? // For progressive badges (e.g., 75/100 rides)
-  DriverProfile   DriverProfile? @relation(fields: [driverProfileId], references: [id])
-  driverProfileId String?
-
-  @@unique([userId, badgeId])
-  @@map("user_badges")
-}
-
-// ============================================
-// GAMIFIED SACCO SYSTEM - REWARDS & PRIVILEGES
-// ============================================
 
 enum RewardType {
-  PRIORITY_DISPATCH    // Priority in driver matching queue
-  ZONE_SELECTION       // Geofencing zone preference access
-  COMMISSION_REBATE    // Reduced platform commission
-  SACCO_BONUS          // Additional Sacco contribution (3%)
-  SACCO_MATCH          // Platform matching of savings
-  CREDIT_LIMIT_BOOST  // Higher loan limits
-  LOAN_RATE_REDUCTION // Lower interest rates on loans
-  PASSENGER_DISCOUNT  // Discounted fares for passengers
+  PRIORITY_DISPATCH
+  ZONE_SELECTION
+  COMMISSION_REBATE
+  SACCO_BONUS
+  SACCO_MATCH
+  CREDIT_LIMIT_BOOST
+  LOAN_RATE_REDUCTION
+  PASSENGER_DISCOUNT
 }
-
-model Reward {
-  id          String     @id @default(uuid())
-  code        String     @unique // e.g., "PRIORITY_DISPATCH", "ZONE_ACCESS"
-  name        String
-  description String     @db.Text
-  type        RewardType
-  value       Json       // { percentage: 3, maxAmount: null } or { maxZones: 3 }
-
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  badgeRewardMappings BadgeRewardMapping[]
-
-  @@map("rewards")
-}
-
-model BadgeRewardMapping {
-  id        String   @id @default(uuid())
-  badgeId   String
-  badge     Badge    @relation(fields: [badgeId], references: [id])
-  rewardId  String
-  reward    Reward   @relation(fields: [rewardId], references: [id])
-
-  isActive Boolean @default(true)
-  createdAt DateTime @default(now())
-
-  @@unique([badgeId, rewardId])
-  @@map("badge_reward_mappings")
-}
-
-// Driver Badge Status - tracks active/inactive status and expiry
-model DriverBadgeStatus {
-  id                String    @id @default(uuid())
-  driverProfileId   String
-  driverProfile     DriverProfile @relation(fields: [driverProfileId], references: [id])
-  badgeTier         BadgeTier // ROOKIE, STAR_DRIVER, ROAD_MASTER, ELITE
-
-  isActive         Boolean   @default(true)
-  earnedAt          DateTime  @default(now())
-  expiresAt         DateTime? // Nullable - null means no expiry
-  lastValidatedAt   DateTime? // Last time badge criteria were checked
-
-  // Metrics snapshot at time of earning
-  metricsSnapshot   Json?     // { totalRides: 100, averageRating: 4.5, cancellationRate: 3.2 }
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([driverProfileId, badgeTier])
-  @@map("driver_badge_status")
-}
-
-// Driver Savings Preferences
-model DriverSavingsPreference {
-  id                  String   @id @default(uuid())
-  driverProfileId     String   @unique
-  driverProfile       DriverProfile @relation(fields: [driverProfileId], references: [id])
-
-  personalSavingRate  Float    @default(0.0) // 0-30% of driver share, voluntary deduction
-  isAutoSavingsEnabled Boolean @default(false)
-
-  // Preferred zones for geofencing (if applicable)
-  preferredZoneIds    String[] @default([])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("driver_savings_preferences")
-}
-
-// Transaction Ledger - tracks all commission/sacco calculations
-model TransactionLedger {
-  id                    String   @id @default(uuid())
-  tripId                String?
-  driverProfileId       String
-  driverProfile         DriverProfile @relation(fields: [driverProfileId], references: [id])
-
-  baseFare              Decimal  @db.Decimal(10, 2)
-
-  // Commission breakdown (all amounts in KES)
-  platformCommission    Decimal  @db.Decimal(10, 2)     // 20% of fare
-  platformNet           Decimal  @db.Decimal(10, 2)     // 15% (or 17-20% based on badge)
-  saccoAdminFee         Decimal  @db.Decimal(10, 2)     // 2% compulsory
-
-  // Badge-related amounts
-  badgeBonusActive      Boolean  @default(false)
-  badgeBonusAmount      Decimal  @db.Decimal(10, 2)     // 3% if active
-
-  // Driver savings
-  personalSavingsAmount Decimal  @db.Decimal(10, 2)     // Voluntary savings from driver share
-
-  // Final amounts
-  driverShare           Decimal  @db.Decimal(10, 2)     // 80% of fare
-  driverNetTakeHome     Decimal  @db.Decimal(10, 2)   // After all deductions
-  totalSaccoDeposit    Decimal  @db.Decimal(10, 2)    // 2% + 3% + personal
-
-  // Commission rebate (if badge holder)
-  commissionRebate      Decimal  @db.Decimal(10, 2)    // Reduced platform take
-
-  // Status
-  isFlagged             Boolean  @default(false) // Flagged if deductions > 50%
-  flagReason            String?  @db.Text
-
-  createdAt DateTime @default(now())
-
-  @@index([driverProfileId])
-  @@index([tripId])
-  @@index([createdAt])
-  @@map("transaction_ledger")
-}
-
-// ============================================
-// RIDE PREFERENCES
-// ============================================
-
-model RidePreference {
-  id     String @id @default(uuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
-
-  // Matching preferences
-  preferredVehicleTypes VehicleType[]
-  maxWaitMinutes        Int           @default(10)
-  maxDistanceKm         Float         @default(5.0)
-
-  // Ride preferences
-  quietRide    Boolean @default(false)
-  musicAllowed Boolean @default(true)
-  acPreferred  Boolean @default(false)
-  petFriendly  Boolean @default(false)
-
-  // Favorite drivers
-  favoriteDriverIds String[]
-  blockedDriverIds  String[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("ride_preferences")
-}
-
-// ============================================
-// SYSTEM CONFIGURATION
-// ============================================
 
 enum SosPenaltyType {
   FEE
   REVOKE_BADGE
 }
-
-model SosConfig {
-  id        String         @id @default(uuid())
-  type      SosPenaltyType @default(FEE)
-  feeAmount Decimal?       @db.Decimal(10, 2) // KES amount for monetary fine
-  badgeId   String?        // Badge to revoke if type is REVOKE_BADGE
-  badge     Badge?         @relation(fields: [badgeId], references: [id])
-  
-  isActive  Boolean        @default(true)
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  
-  @@map("sos_config")
-}
-
-model Setting {
-  id        String   @id @default(uuid())
-  key       String   @unique
-  value     Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("settings")
-}
-
-// ============================================
-// PASSENGER VERIFICATION CONFIGURATION
-// ============================================
 
 enum RequiredVerificationMethod {
   NONE
@@ -1185,68 +1010,7 @@ enum RequiredVerificationMethod {
   ID_SELFIE_FINGERPRINT
 }
 
-model PassengerVerificationConfig {
-  id                        String   @id @default(uuid())
-  
-  // Required verification methods
-  requireNationalId         Boolean  @default(true)
-  requirePassengerPhoto     Boolean  @default(true)
-  requireSelfieVerification Boolean  @default(true)
-  requireFingerprint        Boolean  @default(false) // Optional biometric
-  
-  // Verification frequency (re-verification required)
-  selfieReverificationDays Int      @default(30) // Days before re-verification required
-  fingerprintReverificationDays Int  @default(90) // Days before re-verification required
-  
-  // Trip limits
-  maxTripsBeforeVerification Int   @default(1) // Trips allowed before forced verification
-  maxTripsWithUnverified      Int   @default(1) // Maximum trips with unverified account
-  
-  // Privileges for verified passengers
-  verifiedPassengerPrivileges Json @default("{}") // { priorityMatching: true, ... }
-  
-  // Admin settings
-  autoVerifyOnDocumentUpload Boolean @default(true)
-  requireAdminApproval       Boolean @default(false)
-  
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("passenger_verification_config")
-}
-
 enum LedgerEntryType {
   CREDIT
   DEBIT
-}
-
-model CommissionLedger {
-  id              String          @id @default(uuid())
-  driverId        String
-  driverProfile   DriverProfile   @relation(fields: [driverId], references: [id])
-  amount          Decimal         @db.Decimal(10, 2)
-  type            LedgerEntryType
-  transactionType String
-  reason          String?
-  sourceDriverId  String?
-  sourceDriver    DriverProfile?  @relation("CommissionSource", fields: [sourceDriverId], references: [id])
-  createdAt       DateTime        @default(now())
-
-  @@index([driverId])
-  @@index([createdAt])
-  @@map("commission_ledger")
-}
-
-model SaccoLedger {
-  id            String        @id @default(uuid())
-  driverId      String
-  driverProfile DriverProfile @relation(fields: [driverId], references: [id])
-  amount        Decimal       @db.Decimal(10, 2)
-  type          String
-  relatedTripId String?
-  createdAt     DateTime      @default(now())
-
-  @@index([driverId])
-  @@map("sacco_ledger")
 }

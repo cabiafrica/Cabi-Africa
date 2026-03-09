@@ -13,7 +13,7 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -119,8 +119,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                             color: primaryGold, width: 2), // Golden ring
                         boxShadow: [
                           BoxShadow(
-                            color: primaryGold.withValues(
-                                alpha: 0.25), // Increased glow
+                            color:
+                                primaryGold.withOpacity(0.25), // Increased glow
                             blurRadius: 30,
                             spreadRadius: 2,
                           ),
@@ -159,7 +159,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     Text(
                       'B Y   C A B I   A F R I C A',
                       style: GoogleFonts.inter(
-                        color: Colors.white.withValues(alpha: 0.6),
+                        color: Colors.white.withOpacity(0.6),
                         fontSize: 10,
                         letterSpacing: 4.0,
                         fontWeight: FontWeight.w500,
