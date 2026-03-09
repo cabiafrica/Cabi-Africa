@@ -48,15 +48,31 @@ class PromotionalCarousel extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: overlayColor,
+        color: const Color(0xFF1A1A1A), // Dark fallback color
         borderRadius: BorderRadius.circular(16),
-        image: DecorationImage(
-          image: AssetImage(imageUrl),
-          fit: BoxFit.cover,
-        ),
       ),
       child: Stack(
         children: [
+          // Background Image with fallback
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Image.asset(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  color: Colors.black45,
+                  child: const Center(
+                    child: Icon(Icons.image_not_supported_outlined,
+                        color: Colors.white24, size: 40),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Overlay Gradient
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
@@ -70,6 +86,7 @@ class PromotionalCarousel extends StatelessWidget {
               ),
             ),
           ),
+          // Text Content
           Positioned(
             bottom: 16,
             left: 16,

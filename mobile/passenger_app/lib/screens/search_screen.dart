@@ -186,18 +186,18 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       backgroundColor: _bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
         title: TextField(
           controller: _searchController,
           decoration: InputDecoration(
             hintText: 'Search for a destination...',
-            hintStyle: TextStyle(
-              color: Colors.white38,
+            hintStyle: const TextStyle(
+              color: Colors.black38,
               fontSize: 16,
               fontWeight: FontWeight.w400,
             ),
@@ -205,7 +205,7 @@ class _SearchScreenState extends State<SearchScreen> {
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
                     icon: const Icon(Icons.clear_rounded,
-                        color: Colors.white38, size: 20),
+                        color: Colors.black38, size: 20),
                     onPressed: () {
                       _searchController.clear();
                       _onSearchChanged('');
@@ -214,11 +214,11 @@ class _SearchScreenState extends State<SearchScreen> {
                 : null,
           ),
           style: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
+              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
           autofocus: true,
           onChanged: _onSearchChanged,
           textInputAction: TextInputAction.search,
-          cursorColor: _goldColor,
+          cursorColor: Colors.black,
         ),
       ),
       body: Column(

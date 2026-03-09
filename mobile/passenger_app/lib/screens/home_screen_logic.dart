@@ -15,7 +15,7 @@ extension HomeScreenLogic on _HomeScreenState {
     try {
       final position = await Geolocator.getCurrentPosition();
       if (mounted) {
-        setState(() {
+        _updateState(() {
           _passengerLocation = LatLng(position.latitude, position.longitude);
         });
         _centerMapOnLocation();
@@ -32,7 +32,7 @@ extension HomeScreenLogic on _HomeScreenState {
       ),
     ).listen((Position position) {
       if (mounted) {
-        setState(() {
+        _updateState(() {
           _passengerLocation = LatLng(position.latitude, position.longitude);
         });
         // Update nearby drivers when location changes significantly (already filtered by distanceFilter)
@@ -63,7 +63,7 @@ extension HomeScreenLogic on _HomeScreenState {
       final rideService = ref.read(rideServiceProvider);
       final ride = await rideService.getCurrentRide(userId, 'PASSENGER');
       if (ride != null && mounted) {
-        setState(() {
+        _updateState(() {
           _currentRideId = ride['id'];
           _updateTripStatusFromBackend(ride);
           _startRideUpdatePolling();
@@ -91,7 +91,7 @@ extension HomeScreenLogic on _HomeScreenState {
       final rideService = ref.read(rideServiceProvider);
       final ride = await rideService.getCurrentRide(userId, 'PASSENGER');
       if (ride != null && mounted) {
-        setState(() {
+        _updateState(() {
           _updateTripStatusFromBackend(ride);
         });
       }
@@ -180,7 +180,7 @@ extension HomeScreenLogic on _HomeScreenState {
         if (data['routes'] != null && data['routes'].isNotEmpty) {
           final coordinates =
               data['routes'][0]['geometry']['coordinates'] as List;
-          setState(() {
+          _updateState(() {
             _roadRoute =
                 coordinates.map((coord) => LatLng(coord[1], coord[0])).toList();
           });
@@ -195,13 +195,13 @@ extension HomeScreenLogic on _HomeScreenState {
     if (_tripStatus != TripStatus.idle) return; // Disable map tap during trip
 
     if (_pickupLocation == null) {
-      setState(() {
+      _updateState(() {
         _pickupLocation = _passengerLocation;
         _dropoffLocation = position;
       });
       _fetchRoadRoute();
     } else {
-      setState(() {
+      _updateState(() {
         _dropoffLocation = position;
       });
       _fetchRoadRoute();
@@ -219,7 +219,7 @@ extension HomeScreenLogic on _HomeScreenState {
       );
 
       if (mounted) {
-        setState(() {
+        _updateState(() {
           _nearbyDriversCount = drivers.length;
           _nearbyDrivers = drivers.map((d) {
             // Handle location from backend (Map) vs Mock (LatLng)
@@ -248,7 +248,7 @@ extension HomeScreenLogic on _HomeScreenState {
       // Create realistic mocked driver locations around the passenger's current position so the map populates
       debugPrint('Error fetching nearby drivers, mocking them instead: $e');
       if (mounted) {
-        setState(() {
+        _updateState(() {
           int numberOfCars = 0;
           switch (_selectedVehicleType) {
             case 'BODA':
@@ -293,13 +293,13 @@ extension HomeScreenLogic on _HomeScreenState {
     _arrivalTimer?.cancel();
     _arrivalTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
       if (_arrivalDurationMinutes > 1) {
-        setState(() {
+        _updateState(() {
           _arrivalDurationMinutes--;
         });
       } else {
         timer.cancel();
         if (mounted) {
-          setState(() {
+          _updateState(() {
             _tripStatus = TripStatus.onTrip;
             _startTripSimulation();
           });
@@ -311,15 +311,17 @@ extension HomeScreenLogic on _HomeScreenState {
   void _startTripSimulation() {
     _tripTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) return;
-      setState(() {
+      _updateState(() {
         _tripDurationSeconds++;
-        if (_tripDurationSeconds % 5 == 0) {
-          _distanceKm += 0.1;
-          _currentFare += (0.1 * 30) + (5 / 60 * 5);
-        }
+        // Increase distance and fare every second for a more dynamic simulation
+        _distanceKm += 0.02; // Smoothly increase distance
+        // Dynamic fare: Base + (Dist * Rate) + (Time * Rate)
+        // Let's use Cabi Standard rates as prototype: 150 Base + 45/km + 5/min
+        _currentFare =
+            150.0 + (_distanceKm * 45.0) + ((_tripDurationSeconds / 60) * 5.0);
 
-        // Simulation end condition: after 15 seconds
-        if (_tripDurationSeconds >= 15) {
+        // Simulation end condition: after 30 seconds to allow observing the increase
+        if (_tripDurationSeconds >= 30) {
           timer.cancel();
           _tripStatus = TripStatus.arrived;
           _showRatingDialog();
@@ -342,7 +344,7 @@ extension HomeScreenLogic on _HomeScreenState {
       return;
     }
 
-    setState(() {
+    _updateState(() {
       _tripStatus = TripStatus.searching;
     });
 
@@ -363,9 +365,9 @@ extension HomeScreenLogic on _HomeScreenState {
         vehicleType: _selectedVehicleType,
       );
 
-      if (ride != null && ride['id'] != 'mock-ride-id') {
+      if (ride['id'] != 'mock-ride-id') {
         if (mounted) {
-          setState(() {
+          _updateState(() {
             _currentRideId = ride['id'];
           });
           _startRideUpdatePolling();
@@ -385,7 +387,7 @@ extension HomeScreenLogic on _HomeScreenState {
     // Simulate finding a driver after 4 seconds
     Timer(const Duration(seconds: 4), () {
       if (!mounted) return;
-      setState(() {
+      _updateState(() {
         _tripStatus = TripStatus.driverFound;
         _arrivalDurationMinutes = 2; // Arriving in 2 mins
       });
@@ -394,7 +396,7 @@ extension HomeScreenLogic on _HomeScreenState {
   }
 
   void _showRatingDialog() {
-    double rating = 5.0;
+    double rating = 3.0;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -448,7 +450,7 @@ extension HomeScreenLogic on _HomeScreenState {
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  setState(() {
+                  _updateState(() {
                     _tripStatus = TripStatus.idle;
                     _pickupLocation = null;
                     _dropoffLocation = null;
@@ -484,7 +486,7 @@ extension HomeScreenLogic on _HomeScreenState {
 
     if (result != null && result is Map<String, dynamic>) {
       if (result['type'] == 'map_picker') {
-        setState(() {
+        _updateState(() {
           _isPickingFromMap = true;
           _isFollowingLocation = false;
         });
@@ -494,7 +496,7 @@ extension HomeScreenLogic on _HomeScreenState {
       final String locationName = result['name'];
       final double lat = result['latitude'];
       final double lng = result['longitude'];
-      setState(() {
+      _updateState(() {
         _destination = locationName;
         _dropoffLocation = LatLng(lat, lng);
         if (_pickupLocation == null) {

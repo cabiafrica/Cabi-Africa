@@ -110,7 +110,7 @@ extension HomeScreenPanels on _HomeScreenState {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  setState(() {
+                  _updateState(() {
                     _tripStatus = TripStatus.idle;
                   });
                 },
@@ -178,8 +178,9 @@ extension HomeScreenPanels on _HomeScreenState {
                             fontSize: 16),
                       ),
                       Text(
-                        'To: Westlands • ${_distanceKm.toStringAsFixed(1)} km',
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                        'To: $_destination • ${_distanceKm.toStringAsFixed(2)} km',
+                        style: const TextStyle(
+                            color: Colors.white70, fontSize: 13),
                       ),
                     ],
                   ),
@@ -279,12 +280,6 @@ extension HomeScreenPanels on _HomeScreenState {
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.98),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 20,
-                  spreadRadius: 5),
-            ],
           ),
           child: SingleChildScrollView(
             controller: scrollController,
@@ -319,8 +314,10 @@ extension HomeScreenPanels on _HomeScreenState {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
+                          border:
+                              Border.all(color: Colors.grey.shade300, width: 1),
                         ),
                         child: Column(
                           children: [
@@ -335,15 +332,10 @@ extension HomeScreenPanels on _HomeScreenState {
                                   Expanded(
                                     child: Text(
                                       _destination,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 18,
-                                          fontWeight:
-                                              _destination != "Where to?"
-                                                  ? FontWeight.bold
-                                                  : FontWeight.w500,
-                                          color: _destination != "Where to?"
-                                              ? Colors.black
-                                              : Colors.grey.shade600),
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
                                     ),
                                   ),
                                 ],
@@ -372,20 +364,8 @@ extension HomeScreenPanels on _HomeScreenState {
                             image: const DecorationImage(
                               image: AssetImage('assets/images/tours_bg.png'),
                               fit: BoxFit.cover,
-                              colorFilter: ColorFilter.mode(
-                                Colors.black38,
-                                BlendMode.darken,
-                              ),
                             ),
                             borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF0D7377)
-                                    .withValues(alpha: 0.4),
-                                blurRadius: 12,
-                                offset: const Offset(0, 6),
-                              ),
-                            ],
                           ),
                           child: Row(
                             children: [
@@ -467,20 +447,8 @@ extension HomeScreenPanels on _HomeScreenState {
                                     image:
                                         AssetImage('assets/images/food_bg.png'),
                                     fit: BoxFit.cover,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.black45,
-                                      BlendMode.darken,
-                                    ),
                                   ),
                                   borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFFE65100)
-                                          .withValues(alpha: 0.3),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
                                 ),
                                 child: Column(
                                   children: [
@@ -539,20 +507,8 @@ extension HomeScreenPanels on _HomeScreenState {
                                     image: AssetImage(
                                         'assets/images/package_bg.png'),
                                     fit: BoxFit.cover,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.black45,
-                                      BlendMode.darken,
-                                    ),
                                   ),
                                   borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFF4A148C)
-                                          .withValues(alpha: 0.3),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
                                 ),
                                 child: Column(
                                   children: [
@@ -670,7 +626,7 @@ extension HomeScreenPanels on _HomeScreenState {
               height: 50,
               child: OutlinedButton(
                 onPressed: () {
-                  setState(() {
+                  _updateState(() {
                     _tripStatus = TripStatus.idle;
                     _roadRoute = null;
                   });
@@ -820,7 +776,8 @@ extension HomeScreenPanels on _HomeScreenState {
                   ),
                   // Back to search
                   GestureDetector(
-                    onTap: () => setState(() => _tripStatus = TripStatus.idle),
+                    onTap: () =>
+                        _updateState(() => _tripStatus = TripStatus.idle),
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -843,7 +800,7 @@ extension HomeScreenPanels on _HomeScreenState {
               final isSelected = id == (_selectedVehicleId ?? 'standard');
               return GestureDetector(
                 onTap: () {
-                  setState(() {
+                  _updateState(() {
                     _selectedVehicleId = id;
                     switch (id) {
                       case 'lite':

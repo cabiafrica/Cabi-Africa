@@ -21,7 +21,6 @@ import 'package:passenger_app/screens/menu_screen.dart';
 import 'package:passenger_app/widgets/promotional_carousel.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart' as legacy_provider;
 import '../providers/auth_provider.dart';
 import '../providers/providers.dart';
 part 'home_screen_panels.dart';
@@ -139,6 +138,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _tripTimer?.cancel();
     _locationSubscription?.cancel();
     super.dispose();
+  }
+
+  void _updateState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
   }
 
   @override

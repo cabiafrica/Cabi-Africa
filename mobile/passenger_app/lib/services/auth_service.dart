@@ -85,7 +85,7 @@ class AuthService {
               'firstName': firstName,
               'lastName': lastName,
               'email': email ??
-                  '${phone}@cabi.africa', // Fallback email if using phone registration
+                  '$phone@cabi.africa', // Fallback email if using phone registration
               'phone': phone,
               'password': password,
               'role': 'passenger',
