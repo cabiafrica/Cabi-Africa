@@ -5,6 +5,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:cabi_maps/cabi_maps.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart' as legacy_provider;
+import '../providers/ride_request_provider.dart';
+import '../widgets/ride_request_modal.dart';
+import '../providers/auth_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -298,6 +302,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ],
               ),
             ),
+          ),
+          
+          // ── Ride Request Modal Overlay ──────────────────────────
+          legacy_provider.Consumer<RideRequestProvider>(
+            builder: (context, rideProvider, _) {
+              if (rideProvider.currentRideRequest != null) {
+                final authState = ref.read(authProvider);
+                final driverId = (authState is Authenticated) ? (authState.userId ?? 'unknown') : 'unknown';
+                
+                return RideRequestModal(
+                  requestData: rideProvider.currentRideRequest!,
+                  driverId: driverId,
+                );
+              }
+              return const SizedBox.shrink();
+            },
           ),
         ],
       ),

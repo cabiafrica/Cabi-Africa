@@ -10,7 +10,8 @@ import 'package:driver_app/services/ride_service.dart';
 class TripInProgressScreen extends StatefulWidget {
   final String? rideId;
   final String? driverId;
-  const TripInProgressScreen({super.key, this.rideId, this.driverId});
+  final RideService? rideService; // optional for testing
+  const TripInProgressScreen({super.key, this.rideId, this.driverId, this.rideService});
 
   @override
   State<TripInProgressScreen> createState() => _TripInProgressScreenState();
@@ -23,7 +24,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
   double _distanceKm = 0.0;
   int _durationSeconds = 0;
   bool _isTripEnded = false;
-  final _rideService = RideService();
+  late final RideService _rideService;
 
   // Mock Locations
   LatLng _driverLocation = const LatLng(-1.286389, 36.817223); // CBD
@@ -32,6 +33,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
   @override
   void initState() {
     super.initState();
+    _rideService = widget.rideService ?? RideService();
     _startBackendTrip();
     _startTripSimulation();
   }
@@ -47,7 +49,6 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
     _tripTimer?.cancel();
     super.dispose();
   }
-
   void _startTripSimulation() {
     _tripTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_isTripEnded) {
@@ -106,78 +107,44 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Center(
-              child: Text(
-                'Waybill Breakdown',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+      isScrollControlled: true,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateBottom) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
-            ),
-            const SizedBox(height: 24),
-            _buildWaybillRow('Base Fare', 'KES 150.00'),
-            _buildWaybillRow('Distance (${_distanceKm.toStringAsFixed(1)} km)',
-                'KES ${(_distanceKm * 30).toStringAsFixed(2)}'),
-            _buildWaybillRow(
-                'Time (${(_durationSeconds / 60).toStringAsFixed(0)} min)',
-                'KES ${((_durationSeconds / 60) * 5).toStringAsFixed(2)}'),
-            const Divider(height: 32),
-            _buildWaybillRow(
-                'Total Estimate', 'KES ${_currentFare.toStringAsFixed(2)}',
-                isBold: true),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/home', (route) => false),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
-                  foregroundColor: Colors.black,
-                ),
-                child: const Text('Close',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Waybill Breakdown', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Text('Base Fare: KES ${_currentFare.toStringAsFixed(2)}'),
+                  Text('Distance: ${_distanceKm.toStringAsFixed(2)} km'),
+                  Text('Duration: ${_formatDuration(_durationSeconds)}'),
+                  const Divider(),
+                  Text('Total Fare: KES ${_currentFare.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Close'),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
-  Widget _buildWaybillRow(String label, String value, {bool isBold = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label,
-              style: TextStyle(
-                color: Colors.grey[700],
-                fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-                fontSize: isBold ? 18 : 14,
-              )),
-          Text(value,
-              style: TextStyle(
-                fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
-                fontSize: isBold ? 18 : 14,
-                color: isBold ? Colors.black : Colors.black87,
-              )),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -237,7 +204,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: Colors.black.withOpacity(0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   )
