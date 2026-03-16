@@ -8,9 +8,10 @@ import 'package:passenger_app/screens/saved_places_screen.dart';
 import 'package:passenger_app/screens/referral_status_screen.dart';
 import 'package:passenger_app/screens/wallet_screen.dart';
 import 'package:passenger_app/screens/settings_screen.dart';
-import 'package:passenger_app/screens/help_screen.dart';
+import 'package:passenger_app/screens/help_center_screen.dart';
 import 'package:passenger_app/services/settings_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:passenger_app/screens/profile_screen.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -94,52 +95,58 @@ class _MenuScreenState extends State<MenuScreen> {
         child: Column(
           children: [
             // Menu Header (Profile)
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-              decoration: const BoxDecoration(
-                color: AppTheme.primaryColor,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
+            InkWell(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
               ),
-              child: Row(
-                children: [
-                  const ProfileAvatarWithQr(
-                    imageUrl: 'https://i.pravatar.cc/150?u=passenger',
-                    isNetworkImage: true,
-                    radius: 30,
-                    qrData: 'passenger:jane_doe_u1234',
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+                decoration: const BoxDecoration(
+                  color: AppTheme.primaryColor,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Jane Doe',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Text(
-                              'Gold Member',
-                              style: TextStyle(
-                                color: Colors.black.withValues(alpha: 0.7),
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                ),
+                child: Row(
+                  children: [
+                    const ProfileAvatarWithQr(
+                      imageUrl: 'https://i.pravatar.cc/150?u=passenger',
+                      isNetworkImage: true,
+                      radius: 30,
+                      qrData: 'passenger:jane_doe_u1234',
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Jane Doe',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Text(
+                                'Gold Member',
+                                style: TextStyle(
+                                  color: Colors.black.withValues(alpha: 0.7),
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -209,7 +216,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const HelpScreen()))),
+                              builder: (_) => const HelpCenterScreen()))),
                   MenuGridItem(
                       icon: Icons.info,
                       title: 'About',

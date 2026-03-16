@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import 'privacy_settings_screen.dart';
+import 'trusted_contacts_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -52,6 +53,19 @@ class SettingsScreen extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => const PrivacySettingsScreen()),
+            ),
+          ),
+          const SizedBox(height: 32),
+          _buildSettingsSection('SAFETY'),
+          const SizedBox(height: 12),
+          _buildNavigationTile(
+            title: 'Trusted Contacts',
+            subtitle: 'Share your prestige trips with loved ones',
+            icon: Icons.people_outline_rounded,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const TrustedContactsScreen()),
             ),
           ),
           const SizedBox(height: 40),

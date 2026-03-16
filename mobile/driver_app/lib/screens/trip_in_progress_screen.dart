@@ -132,8 +132,17 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Close'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        if (_isTripEnded) {
+                          Navigator.of(context).pushReplacementNamed('/home');
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _isTripEnded ? Colors.green : null,
+                        foregroundColor: _isTripEnded ? Colors.white : null,
+                      ),
+                      child: Text(_isTripEnded ? 'Confirm Payment Received' : 'Close'),
                     ),
                   ),
                 ],

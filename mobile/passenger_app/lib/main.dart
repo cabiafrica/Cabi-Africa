@@ -11,8 +11,17 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Ensure theme and fonts don't block the UI thread during startup
-  // We allow fetching but with a fallback mindset
-  GoogleFonts.config.allowRuntimeFetching = true;
+  // Allow runtime fetching in development/production but disable in integration tests to prevent timeouts
+  const isTest = bool.fromEnvironment('dart.vm.test', defaultValue: false);
+  const isIntegrationTest = bool.fromEnvironment('integration_test', defaultValue: false);
+  
+  if (isTest || isIntegrationTest) {
+    GoogleFonts.config.allowRuntimeFetching = false;
+    AppTheme.useGoogleFonts = false;
+  } else {
+    GoogleFonts.config.allowRuntimeFetching = true;
+    AppTheme.useGoogleFonts = true;
+  }
   runApp(
     const ProviderScope(
       child: CabiPassengerApp(),

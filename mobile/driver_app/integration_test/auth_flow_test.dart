@@ -256,10 +256,13 @@ void main() {
       expect(find.text('Base Fare'), findsOneWidget);
       debugPrint("[TEST] SUCCESS: Waybill Breakdown displayed after trip end.");
 
-      // Close waybill
-      await tester.tap(find.text('Close'));
+      // Confirm payment and reset
+      await tester.tap(find.text('Confirm Payment Received'));
       await tester.pumpAndSettle();
-      debugPrint("[TEST] SUCCESS: Full trip lifecycle completed.");
+
+      // Should Navigate to home screen
+      expect(find.byType(HomeScreen), findsOneWidget);
+      debugPrint("[TEST] SUCCESS: Full trip lifecycle completed, returned to Home.");
     });
 
 

@@ -66,7 +66,7 @@ class TripOfferWidget extends StatelessWidget {
                   ),
                   OutlinedButton(
                     onPressed: onDecline,
-                    child: const Text('Decline'),
+                    child: const Text('Pass'),
                   ),
                 ],
               ),

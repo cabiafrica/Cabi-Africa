@@ -49,29 +49,29 @@ class RideRequestModal extends StatelessWidget {
       }
     }
 
-    void handleReject({String? reason}) {
+    void handlePass({String? reason}) {
       // If passenger is not verified, add default reason
-      final rejectReason = reason ?? 
+      final passReason = reason ?? 
           (requestData['isVerifiedPassenger'] == false 
               ? 'unverified passenger' 
               : null);
-      service.rejectRide(requestData['rideId'], driverId, rejectReason);
+      service.rejectRide(requestData['rideId'], driverId, passReason);
       rideProvider.clearRideRequest();
     }
 
-    void showRejectDialog() {
+    void showPassDialog() {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Reject Ride'),
+          title: const Text('Pass Trip'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (requestData['isVerifiedPassenger'] == false) ...[
-                const Text('This passenger is not verified. Would you like to reject with reason?'),
+                const Text('This passenger is not verified. Would you like to pass on this trip with a reason?'),
                 const SizedBox(height: 16),
               ],
-              const Text('Are you sure you want to reject this ride?'),
+              const Text('Are you sure you want to pass this trip to the next available driver?'),
             ],
           ),
           actions: [
@@ -83,18 +83,18 @@ class RideRequestModal extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  handleReject(reason: 'unverified passenger');
+                  handlePass(reason: 'unverified passenger');
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                child: const Text('Reject (Unverified)'),
+                child: const Text('Pass (Unverified)'),
               ),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
-                handleReject();
+                handlePass();
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text('Reject'),
+              child: const Text('Pass'),
             ),
           ],
         ),
@@ -200,10 +200,10 @@ class RideRequestModal extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     ElevatedButton(
-                      onPressed: showRejectDialog,
+                      onPressed: showPassDialog,
                       style:
                           ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                      child: const Text('Reject'),
+                      child: const Text('Pass'),
                     ),
                     ElevatedButton(
                       onPressed: handleAccept,

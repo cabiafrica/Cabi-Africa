@@ -272,7 +272,7 @@ extension HomeScreenPanels on _HomeScreenState {
 
   Widget _buildBookingSheet(Color primaryColor) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.95,
+      initialChildSize: 0.4,
       minChildSize: 0.25,
       maxChildSize: 0.95,
       builder: (context, scrollController) {

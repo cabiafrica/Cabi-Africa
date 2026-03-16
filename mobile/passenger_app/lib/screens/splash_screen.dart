@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../theme/app_theme.dart';
 import '../providers/auth_provider.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
@@ -147,7 +147,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     // App Name
                     Text(
                       'CABI GO',
-                      style: GoogleFonts.outfit(
+                      style: AppTheme.outfit(
                         color: primaryGold,
                         fontWeight: FontWeight.bold,
                         fontSize: 26,
@@ -158,7 +158,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     // Sub-Branding
                     Text(
                       'B Y   C A B I   A F R I C A',
-                      style: GoogleFonts.inter(
+                      style: AppTheme.inter(
                         color: Colors.white.withOpacity(0.6),
                         fontSize: 10,
                         letterSpacing: 4.0,
@@ -169,7 +169,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     // Elegant Tagline
                     Text(
                       'Where will you go today?',
-                      style: GoogleFonts.outfit(
+                      style: AppTheme.outfit(
                         color: Colors.white,
                         fontSize: 14,
                         fontStyle: FontStyle.italic,

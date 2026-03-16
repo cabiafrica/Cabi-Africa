@@ -5,7 +5,54 @@ import 'package:google_fonts/google_fonts.dart';
 // This ensures that even if fetching fails, the app doesn't hang.
 
 class AppTheme {
-  // Premium Color Palette - Updated to match Login "Taxi Gold" Theme
+  static bool useGoogleFonts = !const bool.fromEnvironment('integration_test', defaultValue: false);
+
+  static TextStyle _getStyle(TextStyle? Function({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<Shadow>? shadows,
+    List<FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) fontFunc, {
+    double? fontSize,
+    FontWeight? fontWeight,
+    Color? color,
+  }) {
+    if (!useGoogleFonts) {
+      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color);
+    }
+    return fontFunc(fontSize: fontSize, fontWeight: fontWeight, color: color)!;
+  }
+
+  static TextStyle outfit({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle}) {
+    if (!useGoogleFonts) {
+      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle);
+    }
+    return GoogleFonts.outfit(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle);
+  }
+
+  static TextStyle inter({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle}) {
+    if (!useGoogleFonts) {
+      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle);
+    }
+    return GoogleFonts.inter(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle);
+  }
+
+  // Premium Color Palette
   static const Color primaryColor = Color(0xFFFFD700); // Taxi Gold
   static const Color primaryDark = Color(0xFFE6C200);
   static const Color primaryLight = Color(0xFFFFE57F);
@@ -28,9 +75,9 @@ class AppTheme {
   static const Color darkTextSecondary = Color(0xFF9CA3AF);
   static const Color darkDivider = Color(0xFF1F1F1F);
 
-  static final ThemeData lightTheme = ThemeData(
+  static ThemeData get lightTheme => ThemeData(
     useMaterial3: true,
-    fontFamily: GoogleFonts.outfit().fontFamily,
+    fontFamily: useGoogleFonts ? GoogleFonts.outfit().fontFamily : null,
     colorScheme: const ColorScheme.light(
       primary: primaryColor,
       secondary: secondaryAmber,
@@ -65,7 +112,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+        textStyle: _getStyle(GoogleFonts.outfit, fontWeight: FontWeight.w600, fontSize: 16),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
@@ -74,7 +121,7 @@ class AppTheme {
         side: const BorderSide(color: primaryColor, width: 1.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+        textStyle: _getStyle(GoogleFonts.outfit, fontWeight: FontWeight.w600, fontSize: 16),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -99,22 +146,22 @@ class AppTheme {
       thickness: 1,
     ),
     textTheme: TextTheme(
-      headlineLarge: GoogleFonts.outfit(
+      headlineLarge: _getStyle(GoogleFonts.outfit,
           fontSize: 32, fontWeight: FontWeight.bold, color: lightTextPrimary),
-      headlineMedium: GoogleFonts.outfit(
+      headlineMedium: _getStyle(GoogleFonts.outfit,
           fontSize: 24, fontWeight: FontWeight.bold, color: lightTextPrimary),
-      headlineSmall: GoogleFonts.outfit(
+      headlineSmall: _getStyle(GoogleFonts.outfit,
           fontSize: 20, fontWeight: FontWeight.w600, color: lightTextPrimary),
-      titleLarge: GoogleFonts.outfit(
+      titleLarge: _getStyle(GoogleFonts.outfit,
           fontSize: 18, fontWeight: FontWeight.w600, color: lightTextPrimary),
-      bodyLarge: GoogleFonts.outfit(fontSize: 16, color: lightTextPrimary),
-      bodyMedium: GoogleFonts.outfit(fontSize: 14, color: lightTextSecondary),
+      bodyLarge: _getStyle(GoogleFonts.outfit, fontSize: 16, color: lightTextPrimary),
+      bodyMedium: _getStyle(GoogleFonts.outfit, fontSize: 14, color: lightTextSecondary),
     ),
   );
 
-  static final ThemeData darkTheme = ThemeData(
+  static ThemeData get darkTheme => ThemeData(
     useMaterial3: true,
-    fontFamily: GoogleFonts.outfit().fontFamily,
+    fontFamily: useGoogleFonts ? GoogleFonts.outfit().fontFamily : null,
     colorScheme: const ColorScheme.dark(
       primary: primaryColor,
       secondary: secondaryAmber,
@@ -149,7 +196,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+        textStyle: _getStyle(GoogleFonts.outfit, fontWeight: FontWeight.w600, fontSize: 16),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
@@ -158,7 +205,7 @@ class AppTheme {
         side: const BorderSide(color: Colors.white, width: 1.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+        textStyle: _getStyle(GoogleFonts.outfit, fontWeight: FontWeight.w600, fontSize: 16),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -184,16 +231,16 @@ class AppTheme {
       thickness: 1,
     ),
     textTheme: TextTheme(
-      headlineLarge: GoogleFonts.outfit(
+      headlineLarge: _getStyle(GoogleFonts.outfit,
           fontSize: 32, fontWeight: FontWeight.bold, color: darkTextPrimary),
-      headlineMedium: GoogleFonts.outfit(
+      headlineMedium: _getStyle(GoogleFonts.outfit,
           fontSize: 24, fontWeight: FontWeight.bold, color: darkTextPrimary),
-      headlineSmall: GoogleFonts.outfit(
+      headlineSmall: _getStyle(GoogleFonts.outfit,
           fontSize: 20, fontWeight: FontWeight.w600, color: darkTextPrimary),
-      titleLarge: GoogleFonts.outfit(
+      titleLarge: _getStyle(GoogleFonts.outfit,
           fontSize: 18, fontWeight: FontWeight.w600, color: darkTextPrimary),
-      bodyLarge: GoogleFonts.outfit(fontSize: 16, color: darkTextPrimary),
-      bodyMedium: GoogleFonts.outfit(fontSize: 14, color: darkTextSecondary),
+      bodyLarge: _getStyle(GoogleFonts.outfit, fontSize: 16, color: darkTextPrimary),
+      bodyMedium: _getStyle(GoogleFonts.outfit, fontSize: 14, color: darkTextSecondary),
     ),
   );
 }

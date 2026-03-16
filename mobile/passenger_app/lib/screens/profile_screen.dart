@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as legacy_provider;
 import '../services/auth_service.dart';
 import '../providers/auth_provider.dart';
+import 'login_screen.dart';
 import 'loyalty_dashboard_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -66,9 +68,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _logout() {
-    // We use read here as we are in a callback and don't need to listen for changes.
-    Provider.of<AuthProvider>(context, listen: false).logout();
-    // The AuthWrapper will handle navigation back to the login screen.
+    // Clear legacy AuthProvider
+    legacy_provider.Provider.of<AuthProvider>(context, listen: false).logout();
+    // Clear Riverpod state
+    ProviderScope.containerOf(context, listen: false)
+        .read(passengerAuthProvider.notifier)
+        .logout();
+    // Navigate to Login (replace all routes)
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      (_) => false,
+    );
   }
 
   @override
