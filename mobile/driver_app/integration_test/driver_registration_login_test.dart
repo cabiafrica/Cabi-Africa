@@ -28,6 +28,11 @@ class SimpleMapNotifier extends map_prov.MapNotifier {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+Future<void> _dismissKeyboard(WidgetTester tester) async {
+  FocusManager.instance.primaryFocus?.unfocus();
+  await tester.pumpAndSettle();
+}
+
 /// Boot the full app with dependency injection overrides.
 Widget _buildApp({
   required MockAuthService mockAuth,
@@ -155,7 +160,10 @@ void main() {
       await _waitForLoginScreen(tester);
 
       // Tap Start Driving with empty fields
-      await tester.tap(find.text('Start Driving'));
+      await _dismissKeyboard(tester);
+      final startBtn = find.text('Start Driving');
+      await tester.ensureVisible(startBtn);
+      await tester.tap(startBtn);
       await tester.pumpAndSettle();
 
       // Validation messages appear
@@ -179,7 +187,10 @@ void main() {
 
       await tester.enterText(find.byType(TextFormField).at(0), 'notanemail');
       await tester.enterText(find.byType(TextFormField).at(1), 'password123');
-      await tester.tap(find.text('Start Driving'));
+      await _dismissKeyboard(tester);
+      final startBtn = find.text('Start Driving');
+      await tester.ensureVisible(startBtn);
+      await tester.tap(startBtn);
       await tester.pumpAndSettle();
 
       expect(find.text('Invalid email'), findsOneWidget);
@@ -209,7 +220,10 @@ void main() {
       await tester.enterText(find.byType(TextFormField).at(1), 'Secure@123');
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Start Driving'));
+      await _dismissKeyboard(tester);
+      final startBtn = find.text('Start Driving');
+      await tester.ensureVisible(startBtn);
+      await tester.tap(startBtn);
 
       // Wait for navigation
       for (int i = 0; i < 15; i++) {
@@ -240,7 +254,10 @@ void main() {
       await tester.enterText(find.byType(TextFormField).at(1), 'wrongpass');
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Start Driving'));
+      await _dismissKeyboard(tester);
+      final startBtn = find.text('Start Driving');
+      await tester.ensureVisible(startBtn);
+      await tester.tap(startBtn);
       await tester.pumpAndSettle();
 
       expect(
@@ -267,14 +284,19 @@ void main() {
       await _waitForLoginScreen(tester);
 
       // Uncheck Remember Me
+      await _dismissKeyboard(tester);
       final checkbox = find.byType(Checkbox);
       expect(checkbox, findsOneWidget);
+      await tester.ensureVisible(checkbox);
       await tester.tap(checkbox);
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(TextFormField).at(0), 'temp@cabi.africa');
       await tester.enterText(find.byType(TextFormField).at(1), 'Pass@456');
-      await tester.tap(find.text('Start Driving'));
+      await _dismissKeyboard(tester);
+      final startBtn = find.text('Start Driving');
+      await tester.ensureVisible(startBtn);
+      await tester.tap(startBtn);
 
       for (int i = 0; i < 15; i++) {
         await tester.pump(const Duration(seconds: 1));
@@ -323,10 +345,18 @@ void main() {
           mockAuth: mockAuth, mockRide: mockRide, mockStorage: mockStorage));
       await _waitForLoginScreen(tester);
 
-      // Password field is obscured by default
-      final passwordField = find.byType(TextFormField).at(1);
-      final formFieldWidget = tester.widget<TextFormField>(passwordField);
-      expect(formFieldWidget.obscureText, isTrue);
+      // Password field is obscured by default — check via the underlying EditableText
+      bool isObscured() {
+        final editableText = tester.widget<EditableText>(
+          find.descendant(
+            of: find.byType(TextFormField).at(1),
+            matching: find.byType(EditableText),
+          ),
+        );
+        return editableText.obscureText;
+      }
+
+      expect(isObscured(), isTrue);
 
       // Tap the visibility icon to reveal
       final visibilityIcon = find.byIcon(Icons.visibility_outlined);
@@ -334,14 +364,12 @@ void main() {
       await tester.tap(visibilityIcon);
       await tester.pumpAndSettle();
 
-      final revealedField = tester.widget<TextFormField>(passwordField);
-      expect(revealedField.obscureText, isFalse);
+      expect(isObscured(), isFalse);
 
       // Tap again to hide
       await tester.tap(find.byIcon(Icons.visibility_off_outlined));
       await tester.pumpAndSettle();
-      final rehiddenField = tester.widget<TextFormField>(passwordField);
-      expect(rehiddenField.obscureText, isTrue);
+      expect(isObscured(), isTrue);
 
       debugPrint('[TEST 9] ✅ Password visibility toggle works.');
     });
@@ -357,7 +385,9 @@ void main() {
 
       await tester.enterText(find.byType(TextFormField).at(0), 'driver@cabi.africa');
       await tester.enterText(find.byType(TextFormField).at(1), 'Pass@123');
-      await tester.tap(find.text('Start Driving'));
+      final startBtn = find.text('Start Driving');
+      await tester.ensureVisible(startBtn);
+      await tester.tap(startBtn);
       await tester.pumpAndSettle();
 
       expect(
