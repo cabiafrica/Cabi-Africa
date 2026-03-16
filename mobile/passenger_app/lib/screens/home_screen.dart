@@ -47,7 +47,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   LatLng? _dropoffLocation;
   String? _selectedVehicleId;
   String? _selectedVehicleType; // STANDARD, PREMIUM, XL, BODA
-  int _nearbyDriversCount = 0;
+
   String _destination = "Where to?"; // Destination state
   List<LatLng>? _roadRoute; // Dynamically fetched road trace
 
@@ -198,9 +198,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       _isPickingFromMap = false;
                       _destination = "Dropped Pin";
                       _dropoffLocation = center;
-                      if (_pickupLocation == null) {
-                        _pickupLocation = _passengerLocation;
-                      }
+                      _pickupLocation ??= _passengerLocation;
                     });
                     _fetchRoadRoute();
                   }

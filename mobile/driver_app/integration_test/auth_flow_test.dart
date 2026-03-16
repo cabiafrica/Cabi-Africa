@@ -1,4 +1,4 @@
-import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,9 +26,8 @@ class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
 
 // Simple Map Notifier to avoid SharedPreferences in tests
 class SimpleMapNotifier extends map_prov.MapNotifier {
-  SimpleMapNotifier() : super();
-  @override
-  Future<void> _loadMapPreference() async {
+  SimpleMapNotifier() : super() {
+    // Set default state immediately without loading SharedPreferences
     state = map_prov.MapType.cabi;
   }
 }

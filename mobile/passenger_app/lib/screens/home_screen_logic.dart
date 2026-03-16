@@ -220,7 +220,6 @@ extension HomeScreenLogic on _HomeScreenState {
 
       if (mounted) {
         _updateState(() {
-          _nearbyDriversCount = drivers.length;
           _nearbyDrivers = drivers.map((d) {
             // Handle location from backend (Map) vs Mock (LatLng)
             final loc = d['location'];
@@ -267,7 +266,6 @@ extension HomeScreenLogic on _HomeScreenState {
               numberOfCars = 3;
           }
 
-          _nearbyDriversCount = numberOfCars;
           _nearbyDrivers = List.generate(numberOfCars, (index) {
             // slightly offset from current passengerLocation
             double latOffset =
@@ -499,9 +497,7 @@ extension HomeScreenLogic on _HomeScreenState {
       _updateState(() {
         _destination = locationName;
         _dropoffLocation = LatLng(lat, lng);
-        if (_pickupLocation == null) {
-          _pickupLocation = _passengerLocation;
-        }
+        _pickupLocation ??= _passengerLocation;
         // Show service selection panel right after destination is set
         _tripStatus = TripStatus.selectingService;
       });

@@ -711,7 +711,7 @@ extension HomeScreenPanels on _HomeScreenState {
       'xl': {'base': 200, 'perKm': 55},
     };
 
-    String _calcPrice(String vehicleId) {
+    String calcPrice(String vehicleId) {
       final p = pricing[vehicleId] ?? {'base': 100.0, 'perKm': 35.0};
       final base = p['base']!;
       final perKm = p['perKm']!;

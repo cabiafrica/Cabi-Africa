@@ -120,7 +120,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         boxShadow: [
                           BoxShadow(
                             color:
-                                primaryGold.withOpacity(0.25), // Increased glow
+                                primaryGold.withValues(alpha: 0.25), // Increased glow
                             blurRadius: 30,
                             spreadRadius: 2,
                           ),
@@ -159,7 +159,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     Text(
                       'B Y   C A B I   A F R I C A',
                       style: AppTheme.inter(
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withValues(alpha: 0.6),
                         fontSize: 10,
                         letterSpacing: 4.0,
                         fontWeight: FontWeight.w500,
