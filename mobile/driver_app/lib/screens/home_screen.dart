@@ -235,9 +235,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                   // Stats row (when online)
                   if (_isOnline) ...[
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: const [
+                      children: [
                         _StatCard(label: 'Today', value: 'KES 0'),
                         _StatCard(label: 'Trips', value: '0'),
                         _StatCard(label: 'Rating', value: '5.0 ★'),

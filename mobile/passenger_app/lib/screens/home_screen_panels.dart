@@ -913,7 +913,7 @@ extension HomeScreenPanels on _HomeScreenState {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                _calcPrice(id),
+                                calcPrice(id),
                                 style: TextStyle(
                                   color: isSelected
                                       ? categoryColor
