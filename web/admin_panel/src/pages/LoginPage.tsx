@@ -157,7 +157,7 @@ export const LoginPage = () => {
               <Box
                 component="img"
                 src={logo}
-                alt="Cabi Logo"
+                alt="CABI Logo"
                 sx={{
                   maxWidth: '65%',
                   maxHeight: '65%',
@@ -174,7 +174,7 @@ export const LoginPage = () => {
               mb: 1,
               textShadow: '0 0 30px rgba(255, 215, 0, 0.2)'
             }}>
-              Cabi Africa
+              CABI Africa
             </Typography>
             <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', letterSpacing: '0.1em' }}>
               ADMIN PANEL

@@ -106,9 +106,9 @@ export class DriverLeadsService {
 
     // Update user status to ACTIVE and role to DRIVER
     await this.userService.updateUserStatus(driverId, 'ACTIVE');
-    await this.userService.promoteToDriver(driverId);
+    const profile = await this.userService.promoteToDriver(driverId);
 
-    return { success: true, message: 'Driver approved and activated' };
+    return { success: true, message: 'Driver approved and activated', profileId: profile.id };
   }
 
   async rejectDriver(driverId: string, reasons: string[]) {

@@ -1,6 +1,6 @@
 part of 'home_screen.dart';
 
-extension HomeScreenLogic on _HomeScreenState {
+extension _HomeScreenLogic on _HomeScreenState {
   Future<void> _initLocationTracking() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) return;

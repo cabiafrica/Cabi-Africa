@@ -25,7 +25,7 @@ export default function HomePage({ posts }: HomePageProps) {
   return (
     <div className="min-h-screen flex flex-col font-sans bg-slate-50 dark:bg-brand-black text-slate-900 dark:text-white transition-colors duration-300">
       <Head>
-        <title>Cabi - The Future of Ecosystem Mobility</title>
+        <title>CABI - The Future of Ecosystem Mobility</title>
         <meta name="description" content="Join the unified mobility ecosystem. For Passengers, Drivers, and Organizations." />
       </Head>
 
@@ -59,7 +59,7 @@ export default function HomePage({ posts }: HomePageProps) {
             <div className="flex justify-between items-end mb-16">
               <div>
                 <h2 className="text-4xl font-bold mb-4 text-slate-900 dark:text-white">Latest Intel</h2>
-                <p className="text-slate-500 dark:text-gray-500">Updates from the Cabi network.</p>
+                <p className="text-slate-500 dark:text-gray-500">Updates from the CABI network.</p>
               </div>
               <Link href="/blog" className="hidden md:block text-brand-yellow font-bold hover:text-white transition-colors">
                 View All Intel &rarr;

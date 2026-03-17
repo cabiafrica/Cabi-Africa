@@ -9,7 +9,7 @@ async function bootstrap() {
 
   // Swagger Setup
   const config = new DocumentBuilder()
-    .setTitle('Cabi Africa Driver Lead API')
+    .setTitle('CABI Africa Driver Lead API')
     .setDescription('API for managing driver leads and user profiles')
     .setVersion('1.0')
     .addBearerAuth()

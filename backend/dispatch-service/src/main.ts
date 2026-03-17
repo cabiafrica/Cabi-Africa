@@ -27,8 +27,8 @@ async function bootstrap() {
 
     // Swagger Setup
     const config = new DocumentBuilder()
-        .setTitle('Cabi Africa Dispatch API')
-        .setDescription('API documentation for Cabi Africa backend services including Dispatch, Driver Leads, and Settings.')
+        .setTitle('CABI Africa Dispatch API')
+        .setDescription('API documentation for CABI Africa backend services including Dispatch, Driver Leads, and Settings.')
         .setVersion('1.0')
         .addBearerAuth()
         .build();

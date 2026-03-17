@@ -1,6 +1,6 @@
 part of 'home_screen.dart';
 
-extension HomeScreenPanels on _HomeScreenState {
+extension _HomeScreenPanels on _HomeScreenState {
   Widget _buildDriverArrivingPanel(Color primaryColor) {
     return Positioned(
       bottom: 0,
