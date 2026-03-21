@@ -342,6 +342,24 @@ extension _HomeScreenLogic on _HomeScreenState {
       return;
     }
 
+    // 1. Face Identity Gate (MANDATORY BEFORE EVERY TRIP REQUEST)
+    bool verified = false;
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => FaceVerificationModal(
+        onVerified: () => verified = true,
+      ),
+    );
+
+    if (!verified) {
+      _updateState(() {
+        _tripStatus = TripStatus.idle;
+      });
+      return; 
+    }
+
     _updateState(() {
       _tripStatus = TripStatus.searching;
     });

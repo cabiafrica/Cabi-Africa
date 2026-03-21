@@ -10,6 +10,7 @@ class AppConfig {
   // configuration file (e.g., .env) and not hardcoded.
   static String get driverRegistrationUrl =>
       'http://$host:3000/drivers/register';
+  static String get userPortalUrl => 'http://$host:3000';
   static String get dispatchApiUrl => 'http://$host:3334/api';
   static String get dispatchSocketUrl => 'http://$host:3334';
   static String get authApiUrl => 'http://$host:3333/api';

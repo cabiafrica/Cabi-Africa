@@ -1,6 +1,5 @@
 import { Controller, Get, Patch, Param, Body, Post, Delete } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
-import { OrganizationStatus } from '@prisma/client';
 
 @Controller('organizations')
 export class OrganizationController {
@@ -14,9 +13,9 @@ export class OrganizationController {
     @Patch(':id/status')
     async updateStatus(
         @Param('id') id: string,
-        @Body('status') status: OrganizationStatus
+        @Body('isVerified') isVerified: boolean
     ) {
-        return this.orgService.updateStatus(id, status);
+        return this.orgService.updateStatus(id, isVerified);
     }
 
     // Subgroups

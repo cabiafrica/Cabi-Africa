@@ -25,7 +25,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
             children: [
               Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
               SizedBox(width: 12),
-              Text('Leave Organization?'),
+              Text('Leave Group?'),
             ],
           ),
           content: SingleChildScrollView(
@@ -34,15 +34,15 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
-                  'Are you sure you want to leave this organization?',
+                  'Are you sure you want to leave this community group?',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
                 const Text('By leaving, you will:'),
                 const SizedBox(height: 8),
-                _buildBulletPoint('Lose access to organization-specific benefits'),
-                _buildBulletPoint('No longer receive organization announcements'),
-                _buildBulletPoint('Be removed from all organization activities'),
+                _buildBulletPoint('Lose access to group-specific discussions'),
+                _buildBulletPoint('No longer receive group announcements'),
+                _buildBulletPoint('Be removed from all group activities'),
                 _buildBulletPoint('Revert to independent driver status'),
                 const SizedBox(height: 16),
                 Container(
@@ -58,7 +58,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
                       SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'You can join another organization or re-apply to this one later.',
+                          'You can join another group or re-apply to this one later.',
                           style: TextStyle(fontSize: 12, color: Colors.blue),
                         ),
                       ),
@@ -84,7 +84,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
                 Navigator.of(context).pop();
                 _leaveOrganization();
               },
-              child: const Text('Leave Organization'),
+              child: const Text('Leave Group'),
             ),
           ],
         );
@@ -248,7 +248,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
 
                   // Benefits Section
                   const Text(
-                    'Organization Benefits',
+                    'Group Benefits',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -256,7 +256,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
                   ),
                   const SizedBox(height: 12),
                   _buildBenefitCard('Access to group activities and events'),
-                  _buildBenefitCard('Organization announcements and updates'),
+                  _buildBenefitCard('Exclusive chat and forum access'),
                   _buildBenefitCard('Community support and networking'),
                   _buildBenefitCard('Collective bargaining power'),
                   const SizedBox(height: 32),
@@ -278,7 +278,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
                             Icon(Icons.exit_to_app, color: Colors.red),
                             SizedBox(width: 8),
                             Text(
-                              'Leave Organization',
+                              'Leave Group',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -289,7 +289,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          'You can leave this organization at any time. This action will remove you from all organization activities and benefits.',
+                          'You can leave this community group at any time. This action will remove you from all group activities and discussions.',
                           style: TextStyle(fontSize: 12, color: Colors.black87),
                         ),
                         const SizedBox(height: 16),
@@ -306,7 +306,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
                             ),
                             onPressed: _showLeaveConfirmationDialog,
                             child: const Text(
-                              'Leave Organization',
+                              'Leave Community Group',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

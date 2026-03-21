@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '@cabi/database';
+import { PrismaService } from '@cabi/backend/database';
+import { SaccoStatus } from '@prisma/client';
 
 /**
  * Represents the structure of the TripPaid event.
@@ -8,6 +9,17 @@ export interface TripPaidEvent {
     tripId: string;
     driverId: string;
     finalFare: number;
+}
+
+export interface CreateSaccoDto {
+    name: string;
+    email: string;
+    registrationNumber: string;
+    founderName: string;
+    certificateUrl?: string;
+    isExternal?: boolean;
+    apiBaseUrl?: string;
+    webhookUrl?: string;
 }
 
 @Injectable()
@@ -106,6 +118,95 @@ export class SaccoService {
             where: { driverId },
             orderBy: { createdAt: 'desc' },
             take: 50 // limit to recent 50
+        });
+    }
+
+    async createSacco(dto: CreateSaccoDto): Promise<any> {
+        this.logger.log(`Registering new SACCO: ${dto.name}`);
+        
+        // Check if registration number already exists
+        const existing = await this.prisma.sacco.findUnique({
+            where: { registrationNumber: dto.registrationNumber }
+        });
+
+        if (existing) {
+            throw new Error('SACCO with this registration number already exists');
+        }
+
+        // Create SACCO
+        // If no certificate provided, status is UNVERIFIED (invalid)
+        const status = dto.certificateUrl ? SaccoStatus.PENDING : SaccoStatus.UNVERIFIED;
+
+        return this.prisma.sacco.create({
+            data: {
+                name: dto.name,
+                email: dto.email,
+                registrationNumber: dto.registrationNumber,
+                founderName: dto.founderName,
+                registrationCertificateUrl: dto.certificateUrl,
+                status: status,
+                isExternal: dto.isExternal ?? true,
+                apiBaseUrl: dto.apiBaseUrl,
+                webhookUrl: dto.webhookUrl,
+            }
+        });
+    }
+
+    async joinSacco(driverId: string, saccoId: string): Promise<any> {
+        this.logger.log(`Driver ${driverId} joining SACCO ${saccoId}`);
+        
+        const org = await this.prisma.sacco.findUnique({
+            where: { id: saccoId }
+        });
+
+        if (!org || org.status !== SaccoStatus.VERIFIED) {
+            throw new Error('SACCO is not verified or does not exist');
+        }
+
+        return this.prisma.driverProfile.update({
+            where: { id: driverId },
+            data: { saccoId }
+        });
+    }
+
+    async leaveSacco(driverId: string): Promise<any> {
+        this.logger.log(`Driver ${driverId} leaving SACCO`);
+        
+        return this.prisma.driverProfile.update({
+            where: { id: driverId },
+            data: { saccoId: null }
+        });
+    }
+
+    async getSaccos(search?: string): Promise<any[]> {
+        return this.prisma.sacco.findMany({
+            where: {
+                status: SaccoStatus.VERIFIED,
+                OR: search ? [
+                    { name: { contains: search, mode: 'insensitive' } },
+                    { registrationNumber: { contains: search, mode: 'insensitive' } }
+                ] : undefined
+            },
+            include: {
+              _count: {
+                select: { drivers: true }
+              }
+            }
+        });
+    }
+
+    async getSaccoDetails(id: string): Promise<any> {
+        return this.prisma.sacco.findUnique({
+            where: { id },
+            include: {
+                drivers: {
+                    include: {
+                        user: {
+                            select: { fullName: true, phone: true }
+                        }
+                    }
+                }
+            }
         });
     }
 }

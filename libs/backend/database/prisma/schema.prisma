@@ -55,7 +55,7 @@ model User {
   occurrencesAsPassenger Occurrence[]               @relation("PassengerOccurrences")
   registeredOccurrences  Occurrence[]               @relation("RegisteredOccurrences")
   resolvedOccurrences    Occurrence[]               @relation("ResolvedOccurrences")
-  orgMemberProfile       OrganizationMember?
+  saccoOfficialProfile  SaccoOfficial?
   ridePreference         RidePreference?
   ridesAsPassenger       Ride[]                     @relation("PassengerRides")
   badges                 UserBadge[]
@@ -89,7 +89,7 @@ model LoginHistory {
   @@map("login_history")
 }
 
-model Organization {
+model Sacco {
   id                         String               @id @default(uuid())
   name                       String
   email                      String               @unique
@@ -105,24 +105,28 @@ model Organization {
   linkedin                   String?
   registrationNumber         String               @unique
   registrationCertificateUrl String?
-  status                     OrganizationStatus   @default(UNVERIFIED)
+  status                     SaccoStatus          @default(UNVERIFIED)
+  isExternal                 Boolean              @default(true)
+  apiBaseUrl                 String?
+  webhookUrl                 String?
+  apiSecret                  String?
   parentId                   String?
   createdAt                  DateTime             @default(now())
   updatedAt                  DateTime             @updatedAt
   founderName                String?
   drivers                    DriverProfile[]
   invitations                Invitation[]
-  members                    OrganizationMember[]
-  parent                     Organization?        @relation("SubOrgs", fields: [parentId], references: [id])
-  children                   Organization[]       @relation("SubOrgs")
+  officials                  SaccoOfficial[]
+  parent                     Sacco?               @relation("SubOrgs", fields: [parentId], references: [id])
+  children                   Sacco[]              @relation("SubOrgs")
   userRoles                  UserRole[]
 
-  @@map("organizations")
+  @@map("saccos")
 }
 
-model OrganizationMember {
+model SaccoOfficial {
   id                  String       @id @default(uuid())
-  organizationId      String
+  saccoId             String
   name                String
   contact             String
   position            String
@@ -130,25 +134,44 @@ model OrganizationMember {
   isBiometricVerified Boolean      @default(false)
   canHunt             Boolean      @default(false)
   userId              String?      @unique
-  sentInvitations     Invitation[] @relation("HunterInvitations")
-  organization        Organization @relation(fields: [organizationId], references: [id])
+  sentInvitations     Invitation[] @relation("OfficialInvitations")
+  sacco               Sacco        @relation(fields: [saccoId], references: [id])
   user                User?        @relation(fields: [userId], references: [id])
 
-  @@map("organization_members")
+  @@map("sacco_officials")
 }
 
-model DriverGroup {
-  id            String          @id @default(uuid())
-  name          String
-  description   String?
-  parentGroupId String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  parentGroup   DriverGroup?    @relation("SubGroups", fields: [parentGroupId], references: [id])
-  subgroups     DriverGroup[]   @relation("SubGroups")
-  drivers       DriverProfile[]
+model DriverOrganization {
+  id              String          @id @default(uuid())
+  name            String
+  description     String?
+  rules           String?
+  isPrivate       Boolean         @default(false)
+  memberCapacity  Int             @default(100)
+  isVerified      Boolean         @default(false)
+  parentOrgId     String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  parentOrg       DriverOrganization?    @relation("SubOrgs", fields: [parentOrgId], references: [id])
+  subOrgs         DriverOrganization[]   @relation("SubOrgs")
+  drivers         DriverProfile[]
+  announcements   DriverOrganizationAnnouncement[]
 
-  @@map("driver_groups")
+  @@map("driver_organizations")
+}
+
+model DriverOrganizationAnnouncement {
+  id               String             @id @default(uuid())
+  organizationId   String
+  title            String
+  content          String
+  authorId         String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  organization     DriverOrganization @relation(fields: [organizationId], references: [id])
+  author           DriverProfile      @relation(fields: [authorId], references: [id])
+
+  @@map("driver_organization_announcements")
 }
 
 model DriverProfile {
@@ -158,21 +181,22 @@ model DriverProfile {
   isOnline            Boolean                  @default(false)
   currentLocation     Json?
   isBiometricVerified Boolean                  @default(false)
-  organizationId      String?
+  saccoId             String?
   acceptanceRate      Float?
   averageRating       Float?
   totalRidesCompleted Int                      @default(0)
-  driverGroupId       String?
+  driverOrganizationId String?
   referrerId          String?
   commissionLedger    CommissionLedger[]
   commissionSource    CommissionLedger[]       @relation("CommissionSource")
   documents           Document[]
   badgeStatus         DriverBadgeStatus[]
-  driverGroup         DriverGroup?             @relation(fields: [driverGroupId], references: [id])
-  organization        Organization?            @relation(fields: [organizationId], references: [id])
+  driverOrganization  DriverOrganization?      @relation(fields: [driverOrganizationId], references: [id])
+  sacco               Sacco?                   @relation(fields: [saccoId], references: [id])
   referrer            DriverProfile?           @relation("DriverReferrals", fields: [referrerId], references: [id])
   referrals           DriverProfile[]          @relation("DriverReferrals")
   user                User                     @relation(fields: [userId], references: [id])
+  driverRegistration DriverRegistration?
   savingsPreference   DriverSavingsPreference?
   receivedInvitations Invitation[]
   occurrences         Occurrence[]             @relation("DriverOccurrences")
@@ -180,13 +204,28 @@ model DriverProfile {
   saccoLedger         SaccoLedger[]
   transactionLedger   TransactionLedger[]
   badges              UserBadge[]
-  vehicle             Vehicle?
+  ownedVehicle        Vehicle?              @relation("VehicleOwner")
+  coDrivenVehicle     Vehicle?              @relation("VehicleCoDriver")
+  authoredAnnouncements DriverOrganizationAnnouncement[]
 
   @@index([isOnline])
-  @@index([organizationId])
-  @@index([driverGroupId])
+  @@index([saccoId])
+  @@index([driverOrganizationId])
   @@index([referrerId])
   @@map("driver_profiles")
+}
+
+model DriverRegistration {
+  id              String             @id @default(uuid())
+  driverProfileId String             @unique @map("driver_profile_id")
+  aiScore         Float?             @map("ai_score")
+  status          RegistrationStatus @default(PENDING) @map("approval_status")
+  rejectionReasons String[]          @default([]) @map("rejection_reasons")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+  driverProfile   DriverProfile      @relation(fields: [driverProfileId], references: [id])
+
+  @@map("driver_registrations")
 }
 
 model Document {
@@ -209,7 +248,8 @@ model Document {
 
 model Vehicle {
   id                      String         @id @default(uuid())
-  driverProfileId         String         @unique
+  ownerId                 String         @unique @map("owner_id")
+  coDriverId              String?        @unique @map("co_driver_id")
   make                    String
   model                   String
   year                    Int
@@ -231,8 +271,14 @@ model Vehicle {
   ownerPhone              String?
   capacity                Float?
   capacityUnit            String?
+  serviceCategories       String[]       @default([]) @map("service_categories")
+  aiVerified              Boolean        @default(false) @map("ai_verified")
+  allowCoDriver           Boolean        @default(false) @map("allow_co_driver")
   occurrences             Occurrence[]   @relation("VehicleOccurrences")
-  driverProfile           DriverProfile  @relation(fields: [driverProfileId], references: [id])
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+  owner                   DriverProfile  @relation("VehicleOwner", fields: [ownerId], references: [id])
+  coDriver                DriverProfile? @relation("VehicleCoDriver", fields: [coDriverId], references: [id])
 
   @@map("vehicles")
 }
@@ -290,17 +336,17 @@ model UserRole {
   id             String        @id @default(uuid())
   userId         String
   roleId         String
-  organizationId String?
+  saccoId        String?
   assignedById   String?
   assignedAt     DateTime      @default(now())
   expiresAt      DateTime?
   isActive       Boolean       @default(true)
   assignedBy     User?         @relation("AssignedRoles", fields: [assignedById], references: [id])
-  organization   Organization? @relation(fields: [organizationId], references: [id])
+  sacco          Sacco?        @relation(fields: [saccoId], references: [id])
   role           Role          @relation(fields: [roleId], references: [id])
   user           User          @relation(fields: [userId], references: [id])
 
-  @@unique([userId, roleId, organizationId])
+  @@unique([userId, roleId, saccoId])
   @@map("user_roles")
 }
 
@@ -320,15 +366,15 @@ model UserPermission {
 
 model Invitation {
   id             String             @id @default(uuid())
-  organizationId String
-  hunterId       String
+  saccoId        String
+  officialId     String
   driverId       String
   status         InvitationStatus   @default(PENDING)
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
   driver         DriverProfile      @relation(fields: [driverId], references: [id])
-  hunter         OrganizationMember @relation("HunterInvitations", fields: [hunterId], references: [id])
-  organization   Organization       @relation(fields: [organizationId], references: [id])
+  official       SaccoOfficial      @relation("OfficialInvitations", fields: [officialId], references: [id])
+  sacco          Sacco              @relation(fields: [saccoId], references: [id])
 
   @@map("invitations")
 }
@@ -698,10 +744,12 @@ enum UserStatus {
   REJECTED
 }
 
-enum OrganizationStatus {
+enum SaccoStatus {
   UNVERIFIED
   PENDING
   VERIFIED
+  INACTIVE
+  EXPIRED
 }
 
 enum DocumentType {
@@ -715,6 +763,7 @@ enum DocumentType {
   VEHICLE_INSPECTION
   POLICE_CLEARANCE
   PSV_BADGE
+  GOVT_CERTIFICATE
 }
 
 enum DocumentStatus {
@@ -722,6 +771,12 @@ enum DocumentStatus {
   APPROVED
   REJECTED
   EXPIRED
+}
+
+enum RegistrationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum VehicleUsage {
@@ -831,9 +886,9 @@ enum Permission {
   VERIFICATION_DOCUMENTS_APPROVE
   VERIFICATION_BIOMETRIC_VIEW
   VERIFICATION_BIOMETRIC_APPROVE
-  ORGANIZATION_VIEW
-  ORGANIZATION_EDIT
-  ORGANIZATION_APPROVE
+  SACCO_VIEW
+  SACCO_EDIT
+  SACCO_APPROVE
   REFERRAL_FORMULA_VIEW
   REFERRAL_FORMULA_EDIT
   REFERRAL_TRACKING_VIEW
@@ -867,8 +922,8 @@ enum RoleType {
   BLOG_WRITER
   DRIVER
   PASSENGER
-  ORGANIZATION_ADMIN
-  ORGANIZATION_MEMBER
+  SACCO_ADMIN
+  SACCO_OFFICIAL
   VIEWER
   AUDITOR
   GUEST
@@ -912,6 +967,11 @@ enum VerificationDocumentType {
   PASSENGER_ID
   PASSENGER_PASSPORT_PHOTO
   PASSENGER_SELFIE
+  VEHICLE_LOGBOOK
+  VEHICLE_INSURANCE
+  VEHICLE_INSPECTION
+  PSV_BADGE
+  GOVT_CERTIFICATE
   FINGERPRINT
 }
 
@@ -927,6 +987,7 @@ enum VerificationStatus {
   PROCESSING
   VERIFIED
   FAILED
+  REQUIRES_REUPLOAD
   EXPIRED
 }
 

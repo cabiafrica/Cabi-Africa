@@ -9,6 +9,7 @@ import {
     HttpException,
     HttpStatus,
     Logger,
+    Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { BiometricVerificationService } from '../services/biometric-verification.service';
@@ -32,9 +33,10 @@ export class BiometricVerificationController {
     @Get('required/:userId')
     async isCheckRequired(
         @Param('userId') userId: string,
+        @Query('userType') userType: 'DRIVER' | 'PASSENGER' = 'DRIVER',
     ): Promise<{ required: boolean; reason?: string }> {
         try {
-            return await this.biometricVerificationService.isBiometricCheckRequired(userId);
+            return await this.biometricVerificationService.isBiometricCheckRequired(userId, userType);
         } catch (error) {
             this.logger.error('Error checking requirement:', error);
             throw new HttpException(

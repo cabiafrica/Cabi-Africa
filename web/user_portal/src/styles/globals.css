@@ -3,8 +3,16 @@
 @tailwind utilities;
 
 @layer base {
+    :root {
+        --color-brand-black: #0A0A0B;
+        --color-brand-yellow: #FACC15;
+        --color-brand-accent: #22D3EE;
+        --color-brand-indigo: #6366F1;
+    }
+
     body {
-        @apply bg-slate-50 text-slate-900 dark:bg-brand-black dark:text-white antialiased selection:bg-brand-yellow selection:text-brand-black transition-colors duration-300;
+        @apply bg-slate-50 text-slate-900 dark:bg-brand-black dark:text-white antialiased selection:bg-brand-yellow/30 selection:text-white transition-colors duration-500 overflow-x-hidden;
+        font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     }
 
     /* Custom Scrollbar */
@@ -13,20 +21,86 @@
     }
 
     ::-webkit-scrollbar-track {
-        @apply bg-brand-dark;
+        @apply bg-brand-black;
     }
 
     ::-webkit-scrollbar-thumb {
-        @apply bg-gray-700 rounded-full hover:bg-gray-600;
+        @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
     }
 }
 
 @layer utilities {
-    .glass {
-        @apply bg-white/70 dark:bg-white/5 backdrop-blur-lg border border-slate-200 dark:border-white/10;
+    /* Glassmorphism Variants */
+    .glass-premium {
+        @apply bg-white/60 dark:bg-black/40 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)];
     }
 
-    .text-gradient {
-        @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-yellow to-brand-accent;
+    .glass-interactive {
+        @apply glass-premium hover:bg-white/70 dark:hover:bg-black/60 hover:border-white/30 dark:hover:border-white/20 transition-all duration-500 active:scale-95;
+    }
+
+    /* Text Gradients */
+    .text-glow {
+        @apply bg-clip-text text-transparent bg-gradient-to-br from-white via-white/90 to-white/40;
+    }
+
+    .text-gradient-gold {
+        @apply bg-clip-text text-transparent bg-gradient-to-br from-brand-yellow via-brand-yellow/80 to-amber-600;
+    }
+
+    .text-gradient-cyan {
+        @apply bg-clip-text text-transparent bg-gradient-to-br from-brand-accent via-cyan-400 to-indigo-500;
+    }
+
+    /* Animations */
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .animate-glow {
+        animation: glow 4s ease-in-out infinite;
+    }
+
+    .animate-reveal {
+        animation: reveal 1s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+    }
+
+    .animation-delay-200 { animation-delay: 200ms; }
+    .animation-delay-400 { animation-delay: 400ms; }
+    .animation-delay-600 { animation-delay: 600ms; }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    @keyframes glow {
+        0%, 100% { opacity: 0.5; filter: blur(50px); }
+        50% { opacity: 0.8; filter: blur(70px); }
+    }
+
+    @keyframes scan {
+        0% { transform: translateY(0); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(400px); opacity: 0; }
+    }
+
+    @keyframes bounce-slow {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    @keyframes reveal {
+        0% { opacity: 0; transform: translateY(20px) scale(0.98); filter: blur(10px); }
+        100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+
+    /* Futurist Grid */
+    .grid-futurist {
+        background-image: 
+            linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-size: 60px 60px;
     }
 }

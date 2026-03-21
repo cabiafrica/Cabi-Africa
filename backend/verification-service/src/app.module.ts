@@ -10,9 +10,13 @@ import { BiometricVerificationService } from './services/biometric-verification.
 import { AiDocumentVerificationService } from './services/ai-document-verification.service';
 import { VerificationNotificationService } from './services/verification-notification.service';
 import { OcrService } from './services/ocr.service';
+import { VerificationAuditService } from './services/verification-audit.service';
+
+import { PrismaModule } from '@cabi/backend/database';
 
 @Module({
   imports: [
+    PrismaModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -30,6 +34,7 @@ import { OcrService } from './services/ocr.service';
     BiometricVerificationService,
     AiDocumentVerificationService,
     VerificationNotificationService,
+    VerificationAuditService,
   ],
 })
 export class AppModule { }

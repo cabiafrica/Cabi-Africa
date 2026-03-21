@@ -1,5 +1,7 @@
+import { VerificationDocumentType } from '@prisma/client';
+
 export class UploadDocumentDto {
-    documentType: 'NATIONAL_ID' | 'DRIVERS_LICENSE' | 'PASSPORT' | 'PASSENGER_ID' | 'PASSENGER_PASSPORT_PHOTO' | 'PASSENGER_SELFIE' | 'FINGERPRINT';
+    documentType: VerificationDocumentType;
     userId: string;
     idNumber?: string; // For passenger ID verification
     fullName?: string; // For passenger verification

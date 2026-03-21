@@ -3,7 +3,7 @@ import { useLocation, Routes, Route, useNavigate, Navigate } from 'react-router-
 import { useAuth } from './hooks/useAuth';
 import { LoginPage } from './pages/LoginPage';
 // Components 
-import { DriverApplicationsList } from './components/drivers/DriverApplicationsList';
+import { DriverApprovalDashboard } from './components/DriverApprovalDashboard';
 import { ReferralConfiguration as ReferralConfig } from './components/ReferralConfiguration';
 import { PromotionalConfig as PromoConfig } from './components/PromotionalConfig';
 import { BadgeManagement } from './components/management/BadgeManagement';
@@ -344,7 +344,7 @@ function App() {
                 </div>
               } />
 
-              <Route path="/applications" element={<DriverApplicationsList />} />
+              <Route path="/applications" element={<DriverApprovalDashboard />} />
               <Route path="/job-activities" element={<JobActivitiesDashboard />} />
 
               <Route path="/resolution-dashboard" element={<div className="card"> <h2 className="text-2xl font-bold mb-4">Resolution Dashboard</h2> <p>Dispute Resolution and Case Management</p> </div>} />

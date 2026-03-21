@@ -3,6 +3,7 @@ import * as crypto from 'crypto';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { BiometricVerificationStatus } from '../dto/biometric-verification.dto';
+import { VerificationAuditService, AuditAction } from './verification-audit.service';
 
 interface BiometricVerification {
     id: string;
@@ -24,7 +25,7 @@ export class BiometricVerificationService {
     private lastChecks: Map<string, Date> = new Map();
     private readonly uploadDir = path.join(process.cwd(), 'uploads', 'selfies');
 
-    constructor() {
+    constructor(private readonly auditService: VerificationAuditService) {
         this.ensureUploadDir();
     }
 
@@ -39,30 +40,37 @@ export class BiometricVerificationService {
     /**
      * Check if a user needs to perform a biometric check
      * Logic:
-     * 1. If never checked, return true
-     * 2. If random check needed (5% probability on every call)
-     * 3. If regular check needed (> 24 hours since last check)
+     * 1. DRIVER: Twice per day (every 12 hours)
+     * 2. PASSENGER: Pre-trip (every request) - simulated here as every call
      */
-    async isBiometricCheckRequired(userId: string): Promise<{ required: boolean; reason?: 'INITIAL' | 'RANDOM' | 'REGULAR' }> {
+    async isBiometricCheckRequired(userId: string, userType: 'DRIVER' | 'PASSENGER' = 'DRIVER'): Promise<{ required: boolean; reason?: string }> {
         const lastCheck = this.lastChecks.get(userId);
 
         // 1. Initial check (never checked before)
         if (!lastCheck) {
-            return { required: true, reason: 'INITIAL' };
+            return { required: true, reason: 'INITIAL_ENROLLMENT' };
         }
 
         const now = new Date();
         const timeDiff = now.getTime() - lastCheck.getTime();
         const hoursSinceLastCheck = timeDiff / (1000 * 60 * 60);
 
-        // 2. Regular check (e.g. every 24 hours)
-        if (hoursSinceLastCheck > 24) {
-            return { required: true, reason: 'REGULAR' };
+        if (userType === 'DRIVER') {
+            // Driver: Twice per day = every 12 hours
+            if (hoursSinceLastCheck >= 12) {
+                return { required: true, reason: 'DAILY_LIVENESS_EXPIRED' };
+            }
+        } else {
+            // Passenger: "Pre-trip" - meaning almost every time
+            // For simulation, we'll say if it's been more than 5 minutes since last check, they need it again for the trip
+            if (hoursSinceLastCheck > (5 / 60)) {
+                return { required: true, reason: 'PRE_TRIP_FACE_VERIFY' };
+            }
         }
 
-        // 3. Random check (5% chance)
-        if (Math.random() < 0.05) {
-            return { required: true, reason: 'RANDOM' };
+        // Random spot check (1% chance)
+        if (Math.random() < 0.01) {
+            return { required: true, reason: 'SPOT_CHECK' };
         }
 
         return { required: false };
@@ -115,6 +123,14 @@ export class BiometricVerificationService {
             };
 
             this.verifications.set(verificationId, verification);
+
+            // Audit the results
+            await this.auditService.log(userId, AuditAction.BIOMETRIC_UPLOAD, {
+              verificationId: verification.id,
+              livenessScore: verification.livenessScore,
+              matchScore: verification.matchScore,
+              status: verification.status,
+            });
 
             return verification;
         } catch (error) {

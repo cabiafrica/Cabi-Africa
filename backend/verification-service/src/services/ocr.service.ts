@@ -229,4 +229,149 @@ export class OcrService {
 
         return result;
     }
+
+    /**
+     * Parse Vehicle Logbook fields from extracted text
+     */
+    parseVehicleLogbook(text: string): any {
+        const result: any = {};
+
+        // Extract Registration Number (e.g., KCA 123A)
+        const regMatch = text.match(/\b([A-Z]{3}\s?\d{3}[A-Z])\b/i);
+        if (regMatch) {
+            result.registrationNumber = regMatch[1].toUpperCase().replace(/\s/g, '');
+        }
+
+        // Extract Make (Toyota, Nissan, etc.)
+        const makeMatch = text.match(/(?:Make)[:\s]+([A-Z]+)/i);
+        if (makeMatch) {
+            result.make = makeMatch[1].trim();
+        }
+
+        // Extract Model
+        const modelMatch = text.match(/(?:Model)[:\s]+([A-Z0-9]+)/i);
+        if (modelMatch) {
+            result.model = modelMatch[1].trim();
+        }
+
+        const yearMatch = text.match(/(?:Year of Manufacture|YOM|Year)[:\s]+(\d{4})/i);
+        if (yearMatch) {
+            result.yearOfManufacture = yearMatch[1];
+        }
+
+        const ownerMatch = text.match(/(?:Owner|Name)[:\s]+([A-Z\s]+)/i);
+        if (ownerMatch) {
+            result.ownerName = ownerMatch[1].trim();
+        }
+
+        return result;
+    }
+
+    /**
+     * Parse Vehicle Insurance fields from extracted text
+     */
+    parseVehicleInsurance(text: string): any {
+        const result: any = {};
+
+        const policyMatch = text.match(/(?:Policy Number|Policy No)[:\s]+([A-Z0-9\-]+)/i);
+        if (policyMatch) {
+            result.policyNumber = policyMatch[1].trim();
+        }
+
+        const regMatch = text.match(/\b([A-Z]{3}\s?\d{3}[A-Z])\b/i);
+        if (regMatch) {
+            result.registrationNumber = regMatch[1].toUpperCase().replace(/\s/g, '');
+        }
+
+        const insurerMatch = text.match(/(?:Insurer|Company|Insurance)[:\s]+([A-Z\s]+)/i);
+        if (insurerMatch) {
+            result.insurerName = insurerMatch[1].trim();
+        }
+
+        // Searching for Period of Insurance dates
+        const dateMatches = text.match(/\b(\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2})\b/g);
+        if (dateMatches && dateMatches.length > 0) {
+            result.expiryDate = dateMatches[dateMatches.length - 1]; // Assume the last date is expiry
+        }
+
+        return result;
+    }
+
+    /**
+     * Parse PSV Badge fields from extracted text
+     */
+    parsePsvBadge(text: string): any {
+        const result: any = {};
+
+        const badgeMatch = text.match(/(?:Badge No|S\/No)[:\s]+([A-Z0-9]+)/i);
+        if (badgeMatch) {
+            result.badgeNumber = badgeMatch[1].trim();
+        }
+
+        const idMatch = text.match(/\b(\d{8})\b/);
+        if (idMatch) {
+            result.idNumber = idMatch[1];
+        }
+
+        const nameMatch = text.match(/(?:Name|Driver)[:\s]+([A-Z\s]+)/i);
+        if (nameMatch) {
+            result.driverName = nameMatch[1].trim();
+        }
+
+        // Valid until date
+        const dateMatches = text.match(/\b(\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2})\b/g);
+        if (dateMatches && dateMatches.length > 0) {
+            result.expiryDate = dateMatches[0]; // Badge usually highlights expiry strongly
+        }
+
+        return result;
+    }
+
+    /**
+     * Parse Government Certificate fields from extracted text
+     */
+    parseGovtCertificate(text: string): any {
+        const result: any = {};
+
+        // Extract Certificate Number (often at the top or labeled "Certificate No.")
+        const certMatch = text.match(/(?:Certificate No|Cert No)[:\s]+([A-Z0-9\/]+)/i);
+        if (certMatch) {
+            result.certificateNumber = certMatch[1].trim();
+        }
+
+        // Extract Entity/Business Name
+        const entityMatch = text.match(/(?:Entity|Business|Sacco|Organization|Group)[:\s]+([A-Z0-9\s]+)/i);
+        if (entityMatch) {
+            result.entityName = entityMatch[1].trim();
+        } else {
+            // Attempt to find capitalized name at the top
+            const topNameMatch = text.match(/^\b([A-Z\s]{5,})\b/m);
+            if (topNameMatch) {
+                result.entityName = topNameMatch[1].trim();
+            }
+        }
+
+        // Extract Registration Number (Reg No. or CP/...)
+        const regMatch = text.match(/(?:Reg No|Registration Number)[:\s]+([A-Z0-9\/]+)/i);
+        if (regMatch) {
+            result.registrationNumber = regMatch[1].trim();
+        } else {
+            // Pattern for common registration formats like CP/2024/123
+            const ptnMatch = text.match(/\b([A-Z]{2}\/\d{4}\/\d+)\b/);
+            if (ptnMatch) {
+                result.registrationNumber = ptnMatch[1];
+            }
+        }
+
+        // Extract Issue Date
+        const dateMatches = text.match(/\b(\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2})\b/g);
+        if (dateMatches && dateMatches.length > 0) {
+            result.issueDate = dateMatches[0];
+            if (dateMatches.length > 1) {
+                result.expiryDate = dateMatches[1];
+            }
+        }
+
+        return result;
+    }
 }

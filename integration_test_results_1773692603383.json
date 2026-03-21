@@ -1,0 +1,206 @@
+{
+  "timestamp": "2026-03-16T20:23:23.382Z",
+  "duration": 15.95,
+  "summary": {
+    "totalTests": 5,
+    "passedTests": 2,
+    "failedTests": 3,
+    "successRate": "40.0%"
+  },
+  "testData": {
+    "driver": {
+      "email": "integration_test_driver_1773692587428@test.com",
+      "firstName": "Integration",
+      "lastName": "Test Driver",
+      "phone": "+254712345678",
+      "dateOfBirth": "1990-01-01",
+      "street": "123 Test Street",
+      "city": "Nairobi",
+      "county": "Nairobi",
+      "vehicleType": "STANDARD",
+      "licensePlate": "TEST1773692587428",
+      "nationalId": "123456789",
+      "drivingLicense": "DL1773692587428",
+      "password": "TestPassword@123",
+      "recaptchaToken": "test-token",
+      "agreeToTerms": true
+    },
+    "passenger": {
+      "email": "integration_test_passenger_1773692587428@test.com",
+      "firstName": "Integration",
+      "lastName": "Test",
+      "phone": "+254712878410",
+      "role": "passenger"
+    },
+    "driverId": null,
+    "passengerId": "b85eee1d-83d7-4c78-b4f1-d585a0899350",
+    "tripId": "fd04e034-01a4-441a-8358-bf8d97085010"
+  },
+  "results": {
+    "driverRegistration": {
+      "success": false,
+      "error": "Registration failed: {\"message\":[\"vehicleType must be one of the following values: car, motorcycle, tuktuk\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "data": null
+    },
+    "tripRequest": {
+      "success": true,
+      "error": null,
+      "data": {
+        "trip": {
+          "id": "fd04e034-01a4-441a-8358-bf8d97085010",
+          "passengerId": "b85eee1d-83d7-4c78-b4f1-d585a0899350",
+          "driverId": null,
+          "status": "REQUESTED",
+          "pickupLocation": {
+            "address": "Test Pickup Location",
+            "latitude": -1.2921,
+            "longitude": 36.8219
+          },
+          "dropoffLocation": {
+            "address": "Test Dropoff Location",
+            "latitude": -1.2864,
+            "longitude": 36.8172
+          },
+          "fare": "0",
+          "distance": 0,
+          "duration": 0,
+          "requestedVehicleType": "STANDARD",
+          "matchingStartedAt": "2026-03-16T20:23:11.453Z",
+          "matchingCompletedAt": null,
+          "matchingDurationMs": null,
+          "surgeMultiplier": 1,
+          "baseFare": null,
+          "createdAt": "2026-03-16T20:23:11.461Z",
+          "updatedAt": "2026-03-16T20:23:11.461Z",
+          "remainingTrips": 1,
+          "isVerified": false,
+          "verificationMessage": "You have 1 trip(s) remaining before verification is required."
+        },
+        "dispatch": {
+          "id": "fd04e034-01a4-441a-8358-bf8d97085010",
+          "passengerId": "b85eee1d-83d7-4c78-b4f1-d585a0899350",
+          "driverId": null,
+          "status": "REQUESTED",
+          "pickupLocation": {
+            "address": "Test Pickup Location",
+            "latitude": -1.2921,
+            "longitude": 36.8219
+          },
+          "dropoffLocation": {
+            "address": "Test Dropoff Location",
+            "latitude": -1.2864,
+            "longitude": 36.8172
+          },
+          "fare": "0",
+          "distance": 0,
+          "duration": 0,
+          "requestedVehicleType": "STANDARD",
+          "matchingStartedAt": "2026-03-16T20:23:11.453Z",
+          "matchingCompletedAt": null,
+          "matchingDurationMs": null,
+          "surgeMultiplier": 1,
+          "baseFare": null,
+          "createdAt": "2026-03-16T20:23:11.461Z",
+          "updatedAt": "2026-03-16T20:23:11.461Z",
+          "passenger": {
+            "id": "b85eee1d-83d7-4c78-b4f1-d585a0899350",
+            "email": "integration_test_passenger_1773692587428@test.com",
+            "phone": "+254712878410",
+            "password": "$2b$10$TLmv6yQL73lMiciXa/FjRuZVlym7yX3b.xsYpp4u8qXyPrJoIg.aS",
+            "fullName": "Integration Test",
+            "city": null,
+            "username": null,
+            "nickname": null,
+            "middleName": null,
+            "idNumber": null,
+            "passportPhotoUrl": null,
+            "privacySettings": {},
+            "role": "PASSENGER",
+            "status": "PROSPECT",
+            "isTwoFactorEnabled": false,
+            "twoFactorSecret": null,
+            "recoveryCodes": [],
+            "forgotEmailOtp": null,
+            "forgotEmailOtpExpires": null,
+            "lastActiveAt": null,
+            "isEmailVerified": false,
+            "isPhoneVerified": false,
+            "isIdentityVerified": false,
+            "isVerifiedPassenger": false,
+            "passengerTripCount": 0,
+            "maxFreeTrips": 1,
+            "lastVerificationAt": null,
+            "verificationLevel": "BASIC",
+            "fingerprintDataUrl": null,
+            "createdAt": "2026-03-16T20:23:10.912Z",
+            "updatedAt": "2026-03-16T20:23:10.912Z",
+            "totalRidesAsPassenger": 0,
+            "averageRating": null,
+            "referralCode": "CABI-RXWMDB",
+            "referredById": null,
+            "badges": []
+          },
+          "driver": null
+        }
+      }
+    },
+    "tripAssignment": {
+      "success": false,
+      "error": "Trip assignment failed: {\"message\":[\"driverId should not be empty\",\"driverId must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "data": null
+    },
+    "tripCompletion": {
+      "success": true,
+      "error": null,
+      "data": {
+        "completion": {
+          "id": "fd04e034-01a4-441a-8358-bf8d97085010",
+          "passengerId": "b85eee1d-83d7-4c78-b4f1-d585a0899350",
+          "driverId": null,
+          "status": "COMPLETED",
+          "pickupLocation": {
+            "address": "Test Pickup Location",
+            "latitude": -1.2921,
+            "longitude": 36.8219
+          },
+          "dropoffLocation": {
+            "address": "Test Dropoff Location",
+            "latitude": -1.2864,
+            "longitude": 36.8172
+          },
+          "fare": "350",
+          "distance": 0,
+          "duration": 0,
+          "requestedVehicleType": "STANDARD",
+          "matchingStartedAt": "2026-03-16T20:23:11.453Z",
+          "matchingCompletedAt": null,
+          "matchingDurationMs": null,
+          "surgeMultiplier": 1,
+          "baseFare": null,
+          "createdAt": "2026-03-16T20:23:11.461Z",
+          "updatedAt": "2026-03-16T20:23:18.481Z"
+        }
+      }
+    },
+    "crossSystemConsistency": {
+      "success": false,
+      "error": null,
+      "data": [
+        {
+          "check": "Driver data consistency",
+          "success": false,
+          "error": "Inconsistent driver data across services"
+        },
+        {
+          "check": "Trip data consistency",
+          "success": false,
+          "error": "Trip data inconsistent"
+        },
+        {
+          "check": "Revenue data consistency",
+          "success": false
+        }
+      ]
+    }
+  }
+}

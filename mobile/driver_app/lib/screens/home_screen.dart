@@ -9,6 +9,7 @@ import 'package:provider/provider.dart' as legacy_provider;
 import '../providers/ride_request_provider.dart';
 import '../widgets/ride_request_modal.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/face_verification_modal.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -20,6 +21,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _isOnline = false;
   bool _isLoading = false;
+  bool _isFaceVerified = false;
+  bool _isVerificationInProgress = false;
+  double _tripRadiusKm = 2.0; // User required Trip Radius feature
   LatLng _driverLocation =
       const LatLng(-1.286389, 36.817223); // Nairobi default
   CabiMapController? _mapController;
@@ -74,6 +78,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> _toggleOnline() async {
+    if (!_isOnline) {
+      // 1. Shift validation (mock) - Block if shift > 12h
+      // In production, this would be a call to a ShiftService or Backend
+      bool hasReachedShiftLimit() => DateTime.now().hour > 22 && DateTime.now().hour < 5; 
+      
+      if (hasReachedShiftLimit()) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Shift limit reached (12 hours). Please rest.'),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+        return;
+      }
+      // Note: _tripRadiusKm value would be sent to the backend here
+      debugPrint('Going online with radius: ${_tripRadiusKm}km');
+
+      // 2. Face Liveness Check (Daily mandatory per plan)
+      if (!_isFaceVerified) {
+        setState(() => _isVerificationInProgress = true);
+        
+        await _showFaceVerificationModal();
+        
+        if (!_isFaceVerified) {
+           setState(() => _isVerificationInProgress = false);
+           return; // Abort go-online if verified failed/closed
+        }
+        setState(() => _isVerificationInProgress = false);
+      }
+    }
+
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(milliseconds: 800));
     setState(() {
@@ -83,6 +120,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (_isOnline) {
       _mapController?.animateCamera(_driverLocation, zoom: 15.0);
     }
+  }
+
+  Future<void> _showFaceVerificationModal() async {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return FaceVerificationModal(
+          onVerified: () {
+            setState(() {
+              _isFaceVerified = true;
+            });
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -244,11 +298,51 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ],
                     ),
                     const SizedBox(height: 20),
+                  ] else ...[
+                    // Trip Radius Filter (when offline)
+                    Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Trip Radius Filter',
+                              style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14),
+                            ),
+                            Text(
+                              '${_tripRadiusKm.toStringAsFixed(1)} km',
+                              style: GoogleFonts.outfit(color: primaryGold, fontWeight: FontWeight.bold, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                        SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                            activeTrackColor: primaryGold,
+                            inactiveTrackColor: Colors.white12,
+                            thumbColor: primaryGold,
+                            overlayColor: primaryGold.withValues(alpha: 0.2),
+                            trackHeight: 4.0,
+                          ),
+                          child: Slider(
+                            value: _tripRadiusKm,
+                            min: 0.5,
+                            max: 5.0, // Per user specification: 500m to 5km
+                            divisions: 9, // 0.5km steps
+                            onChanged: (val) {
+                              setState(() {
+                                _tripRadiusKm = val;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
                   ],
 
                   // Go Online / Offline button
                   GestureDetector(
-                    onTap: _isLoading ? null : _toggleOnline,
+                    onTap: (_isLoading || _isVerificationInProgress) ? null : _toggleOnline,
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
@@ -256,7 +350,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       height: 58,
                       decoration: BoxDecoration(
                         color:
-                            _isOnline ? const Color(0xFF1A1A1A) : primaryGold,
+                            _isOnline 
+                                ? const Color(0xFF1A1A1A) 
+                                : (_isVerificationInProgress ? Colors.white10 : primaryGold),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: _isOnline
@@ -265,7 +361,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: _isOnline
+                            color: (_isOnline || _isVerificationInProgress)
                                 ? Colors.transparent
                                 : primaryGold.withValues(alpha: 0.35),
                             blurRadius: 20,
@@ -274,7 +370,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ],
                       ),
                       child: Center(
-                        child: _isLoading
+                        child: (_isLoading || _isVerificationInProgress)
                             ? SizedBox(
                                 width: 22,
                                 height: 22,
@@ -282,15 +378,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   strokeWidth: 2.5,
                                   color: _isOnline
                                       ? Colors.redAccent
-                                      : Colors.black,
+                                      : (_isVerificationInProgress ? Colors.white : Colors.black),
                                 ),
                               )
                             : Text(
-                                _isOnline ? 'Go Offline' : 'Go Online',
+                                _isOnline ? 'Go Offline' : (_isVerificationInProgress ? 'Verifying...' : 'Go Online'),
                                 style: GoogleFonts.outfit(
                                   color: _isOnline
                                       ? Colors.redAccent
-                                      : Colors.black,
+                                      : (_isVerificationInProgress ? Colors.white : Colors.black),
                                   fontWeight: FontWeight.w800,
                                   fontSize: 17,
                                   letterSpacing: 0.5,

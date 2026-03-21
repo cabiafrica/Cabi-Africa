@@ -1,36 +1,27 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { OcrService } from './ocr.service';
-import {
-    DocumentType,
-    VerificationStatus,
-    FieldMatchResult,
-    ValidationResult,
-} from '../types/document-types';
-import * as crypto from 'crypto';
+import { AiDocumentVerificationService } from './ai-document-verification.service';
+import { VerificationNotificationService } from './verification-notification.service';
+import { VerificationAuditService, AuditAction } from './verification-audit.service';
+import { PrismaService } from '@cabi/backend/database';
+import { 
+    VerificationDocumentType, 
+    VerificationStatus, 
+    RegistrationStatus 
+} from '@prisma/client';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-
-interface DocumentVerification {
-    id: string;
-    userId: string;
-    documentType: DocumentType;
-    extractedFields: any;
-    providedFields?: any;
-    matchResults?: FieldMatchResult[];
-    status: VerificationStatus;
-    imageUrl: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
 
 @Injectable()
 export class DocumentVerificationService {
     private readonly logger = new Logger(DocumentVerificationService.name);
-    private verifications: Map<string, DocumentVerification> = new Map();
     private readonly uploadDir = path.join(process.cwd(), 'uploads', 'documents');
 
-    constructor(private readonly ocrService: OcrService) {
-        // Ensure upload directory exists
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly aiService: AiDocumentVerificationService,
+        private readonly notificationService: VerificationNotificationService,
+        private readonly auditService: VerificationAuditService,
+    ) {
         this.ensureUploadDir();
     }
 
@@ -43,296 +34,265 @@ export class DocumentVerificationService {
     }
 
     /**
-     * Upload and process document
+     * Upload and process document with AI analysis
      */
     async uploadDocument(
         userId: string,
-        documentType: DocumentType,
+        documentType: VerificationDocumentType,
         file: Express.Multer.File,
-    ): Promise<DocumentVerification> {
+    ): Promise<any> {
         try {
-            this.logger.log(
-                `Processing document upload for user ${userId}, type: ${documentType}`,
-            );
+            this.logger.log(`Processing AI document upload for user ${userId}, type: ${documentType}`);
 
-            // Generate unique ID for verification
-            const verificationId = crypto.randomUUID();
+            // 1. Analyze with AI
+            const analysis = await this.aiService.analyzeDocument(file.buffer, documentType as any);
+            this.logger.debug(`AI Analysis Result: ${JSON.stringify(analysis)}`);
 
-            // Save file to disk (encrypted in production)
-            const fileName = `${verificationId}-${Date.now()}.${file.mimetype.split('/')[1]}`;
+            // 2. Save file to disk
+            const fileName = `${userId}-${documentType}-${Date.now()}.${file.mimetype.split('/')[1]}`;
             const filePath = path.join(this.uploadDir, fileName);
             await fs.writeFile(filePath, file.buffer);
 
-            // Extract text using OCR
-            const extractedText = await this.ocrService.extractText(file.buffer);
-            this.logger.debug(`Extracted text: ${extractedText.substring(0, 200)}...`);
+            // 3. Determine initial status based on AI result
+            let status: VerificationStatus = VerificationStatus.PENDING;
+            let rejectionReason: string | null = null;
 
-            // Parse fields based on document type
-            let extractedFields: any;
-            switch (documentType) {
-                case DocumentType.NATIONAL_ID:
-                    extractedFields = this.ocrService.parseNationalId(extractedText);
-                    break;
-                case DocumentType.DRIVERS_LICENSE:
-                    extractedFields = this.ocrService.parseDriversLicense(extractedText);
-                    break;
-                case DocumentType.PASSPORT:
-                    extractedFields = this.ocrService.parsePassport(extractedText);
-                    break;
-                default:
-                    throw new Error('Unsupported document type');
+            if (analysis.expiryStatus === 'EXPIRED') {
+                status = VerificationStatus.FAILED;
+                rejectionReason = 'Document is expired';
+            } else if (analysis.confidence < 0.7) {
+                status = VerificationStatus.FAILED;
+                rejectionReason = analysis.validationErrors.length > 0 
+                    ? analysis.validationErrors.join(', ') 
+                    : 'Document image quality is too low';
+            } else if (analysis.confidence >= 0.9 && analysis.isValid) {
+                status = VerificationStatus.VERIFIED;
+            } else {
+                status = VerificationStatus.PENDING;
             }
 
-            this.logger.log(`Extracted fields: ${JSON.stringify(extractedFields)}`);
+            // 4. Create/Update DocumentVerification in DB
+            const verification = await this.prisma.documentVerification.create({
+                data: {
+                    userId,
+                    documentType,
+                    documentImageUrl: filePath,
+                    extractedData: analysis.extractedFields as any,
+                    status,
+                    isValid: analysis.isValid,
+                    confidenceScore: analysis.confidence,
+                    verifiedAt: status === VerificationStatus.VERIFIED ? new Date() : null,
+                },
+            });
 
-            // Create verification record
-            const verification: DocumentVerification = {
-                id: verificationId,
-                userId,
+            // 5. Special handling for Driver Registration
+            const driverProfile = await this.prisma.driverProfile.findUnique({
+                where: { userId },
+                include: { driverRegistration: true }
+            });
+
+            if (driverProfile) {
+                // Update or create driver registration vetting record
+                const regStatus: RegistrationStatus = status === VerificationStatus.FAILED ? RegistrationStatus.REJECTED : RegistrationStatus.PENDING;
+                
+                if (driverProfile.driverRegistration) {
+                    await this.prisma.driverRegistration.update({
+                        where: { id: driverProfile.driverRegistration.id },
+                        data: {
+                            aiScore: analysis.confidence,
+                            status: regStatus,
+                            rejectionReasons: rejectionReason ? [rejectionReason] : [],
+                            updatedAt: new Date()
+                        }
+                    });
+                } else {
+                    await this.prisma.driverRegistration.create({
+                        data: {
+                            driverProfileId: driverProfile.id,
+                            aiScore: analysis.confidence,
+                            status: regStatus,
+                            rejectionReasons: rejectionReason ? [rejectionReason] : []
+                        }
+                    });
+                }
+
+                // If rejected, notify user
+                if (regStatus === RegistrationStatus.REJECTED) {
+                    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+                    if (user) {
+                        await this.notificationService.notifyVerificationRejected(
+                            userId,
+                            user.phone || '',
+                            user.email || '',
+                            rejectionReason || 'AI analysis failed'
+                        );
+                    }
+                }
+            }
+
+            // 5b. Special handling for Vehicle Documents
+            if (documentType === VerificationDocumentType.VEHICLE_LOGBOOK || documentType === VerificationDocumentType.VEHICLE_INSURANCE) {
+                const vehicle = await this.prisma.vehicle.findFirst({
+                    where: { 
+                        OR: [
+                            { owner: { userId } },
+                            { coDriver: { userId } }
+                        ]
+                    }
+                });
+
+                if (vehicle) {
+                    await this.prisma.vehicle.update({
+                        where: { id: vehicle.id },
+                        data: {
+                            aiVerified: analysis.isValid && analysis.confidence >= 0.8,
+                            updatedAt: new Date()
+                        }
+                    });
+
+                    // If it's a logbook, we might want to update the owner name if extracted
+                    if (documentType === VerificationDocumentType.VEHICLE_LOGBOOK && analysis.extractedFields.fullName) {
+                        await this.prisma.vehicle.update({
+                            where: { id: vehicle.id },
+                            data: { ownerName: analysis.extractedFields.fullName }
+                        });
+                    }
+
+                    // Auto-determine categories if not set
+                    if (vehicle.serviceCategories.length === 0 && analysis.isValid && analysis.confidence >= 0.8) {
+                        let categories: string[] = [];
+                        switch (vehicle.type as any) {
+                            case 'BODA': categories = ['BODA_EXPRESS', 'BODA_TAX']; break;
+                            case 'STANDARD': categories = ['CABI_GO', 'CABI_ECONOMY']; break;
+                            case 'XL': categories = ['CABI_XL', 'PARCEL_XL']; break;
+                            case 'PREMIUM': categories = ['CABI_PREMIUM', 'CABI_LUX']; break;
+                        }
+                        if (categories.length > 0) {
+                            await this.prisma.vehicle.update({
+                                where: { id: vehicle.id },
+                                data: { serviceCategories: categories }
+                            });
+                        }
+                    }
+                }
+            }
+
+            // 6. Audit
+            await this.auditService.log(userId, AuditAction.AI_ANALYSIS, {
+                verificationId: verification.id,
                 documentType,
-                extractedFields,
-                status: VerificationStatus.PENDING,
-                imageUrl: filePath,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            };
-
-            // Store in memory (use database in production)
-            this.verifications.set(verificationId, verification);
+                analysis,
+                status
+            });
 
             return verification;
         } catch (error) {
-            this.logger.error('Error uploading document:', error);
-            throw new Error('Failed to process document upload');
+            this.logger.error('Error in AI document processing:', error);
+            throw new Error(`Failed to process document: ${error.message}`);
         }
     }
 
     /**
-     * Validate provided fields against extracted fields
+     * Admin approval/rejection of document
      */
-    async validateDocument(
+    async adminReview(
         verificationId: string,
-        providedFields: any,
-    ): Promise<ValidationResult> {
-        const verification = this.verifications.get(verificationId);
+        status: VerificationStatus,
+        rejectionReason?: string,
+        categories?: string[]
+    ): Promise<any> {
+        const verification = await this.prisma.documentVerification.findUnique({
+            where: { id: verificationId }
+        });
+
         if (!verification) {
-            throw new NotFoundException('Verification not found');
+            throw new NotFoundException('Verification record not found');
         }
 
-        // Check if document is expired (User requirement: "passport is updated yearly")
-        if (this.isDocumentExpired(verification)) {
-            verification.status = VerificationStatus.REQUIRES_REUPLOAD;
-            this.verifications.set(verificationId, verification);
-            throw new Error('Document is expired or older than 1 year. Please upload a new document.');
-        }
-
-        this.logger.log(
-            `Validating fields for verification ${verificationId}`,
-        );
-
-        const matchResults: FieldMatchResult[] = [];
-        let allFieldsMatch = true;
-
-        // Compare each provided field with extracted field
-        for (const [field, providedValue] of Object.entries(providedFields)) {
-            const extractedValue = verification.extractedFields[field];
-
-            if (!extractedValue) {
-                this.logger.warn(`Field ${field} not found in extracted data`);
-                continue;
+        const updated = await this.prisma.documentVerification.update({
+            where: { id: verificationId },
+            data: {
+                status,
+                verifiedAt: status === VerificationStatus.VERIFIED ? new Date() : null,
+                updatedAt: new Date()
             }
+        });
 
-            const matched = this.compareFields(
-                field,
-                providedValue as string | number,
-                extractedValue as string | number,
-            );
+        const user = await this.prisma.user.findUnique({
+            where: { id: verification.userId }
+        });
 
-            matchResults.push({
-                field,
-                provided: providedValue as string | number,
-                extracted: extractedValue as string | number,
-                matched,
+        if (user) {
+            if (status === VerificationStatus.VERIFIED) {
+                await this.notificationService.notifyVerificationApproved(
+                    user.id,
+                    user.phone || '',
+                    user.email || ''
+                );
+            } else if (status === VerificationStatus.FAILED) {
+                await this.notificationService.notifyVerificationRejected(
+                    user.id,
+                    user.phone || '',
+                    user.email || '',
+                    rejectionReason || 'Document did not meet requirements'
+                );
+            }
+        }
+
+        // If it was a driver, update registration status too
+        if (status === VerificationStatus.VERIFIED || status === VerificationStatus.FAILED) {
+            const driverProfile = await this.prisma.driverProfile.findUnique({
+                where: { userId: verification.userId },
+                include: { driverRegistration: true }
             });
 
-            if (!matched) {
-                allFieldsMatch = false;
-            }
-        }
+            if (driverProfile) {
+                const regStatus = status === VerificationStatus.VERIFIED ? RegistrationStatus.APPROVED : RegistrationStatus.REJECTED;
+                if (driverProfile.driverRegistration) {
+                    await this.prisma.driverRegistration.update({
+                        where: { id: driverProfile.driverRegistration.id },
+                        data: {
+                            status: regStatus,
+                            rejectionReasons: status === VerificationStatus.FAILED ? [rejectionReason || 'Admin rejection'] : [],
+                            updatedAt: new Date()
+                        }
+                    });
+                }
 
-        // Update verification status
-        const status = allFieldsMatch
-            ? VerificationStatus.VERIFIED
-            : VerificationStatus.FAILED;
+                // Set driver profile status based on verification
+                if (status === VerificationStatus.VERIFIED) {
+                    await this.prisma.user.update({
+                        where: { id: verification.userId },
+                        data: { 
+                            status: 'ACTIVE' as any,
+                            isIdentityVerified: true
+                        }
+                    });
 
-        verification.providedFields = providedFields;
-        verification.matchResults = matchResults;
-        verification.status = status;
-        verification.updatedAt = new Date();
-
-        this.verifications.set(verificationId, verification);
-
-        return {
-            allFieldsMatch,
-            matchResults,
-            status,
-        };
-    }
-
-    /**
-     * Check if document is older than 1 year
-     */
-    private isDocumentExpired(verification: DocumentVerification): boolean {
-        const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
-        return verification.createdAt < oneYearAgo;
-    }
-
-    /**
-     * Compare two field values with fuzzy matching for names
-     */
-    private compareFields(
-        field: string,
-        provided: string | number,
-        extracted: string | number,
-    ): boolean {
-        // Exact match for numbers
-        if (typeof provided === 'number' || typeof extracted === 'number') {
-            return provided.toString() === extracted.toString();
-        }
-
-        const providedStr = provided.toString().toLowerCase().trim();
-        const extractedStr = extracted.toString().toLowerCase().trim();
-
-        // Exact match for ID numbers, license numbers, etc.
-        if (
-            field.includes('Number') ||
-            field.includes('number') ||
-            field.includes('ID') ||
-            field.includes('id')
-        ) {
-            // Remove hyphens and spaces for comparison
-            const cleanProvided = providedStr.replace(/[-\s]/g, '');
-            const cleanExtracted = extractedStr.replace(/[-\s]/g, '');
-            return cleanProvided === cleanExtracted;
-        }
-
-        // Fuzzy match for names (allow for OCR errors)
-        if (
-            field.includes('Name') ||
-            field.includes('name')
-        ) {
-            // Simple fuzzy matching: check if strings are similar
-            return this.calculateSimilarity(providedStr, extractedStr) > 0.8;
-        }
-
-        // Date comparison (normalize format)
-        if (
-            field.includes('Date') ||
-            field.includes('date') ||
-            field.includes('Birth') ||
-            field.includes('birth')
-        ) {
-            const providedDate = this.normalizeDate(providedStr);
-            const extractedDate = this.normalizeDate(extractedStr);
-            return providedDate === extractedDate;
-        }
-
-        // Default: case-insensitive exact match
-        return providedStr === extractedStr;
-    }
-
-    /**
-     * Calculate similarity between two strings (Levenshtein distance)
-     */
-    private calculateSimilarity(str1: string, str2: string): number {
-        const longer = str1.length > str2.length ? str1 : str2;
-        const shorter = str1.length > str2.length ? str2 : str1;
-
-        if (longer.length === 0) {
-            return 1.0;
-        }
-
-        const editDistance = this.levenshteinDistance(longer, shorter);
-        return (longer.length - editDistance) / longer.length;
-    }
-
-    /**
-     * Calculate Levenshtein distance between two strings
-     */
-    private levenshteinDistance(str1: string, str2: string): number {
-        const matrix: number[][] = [];
-
-        for (let i = 0; i <= str2.length; i++) {
-            matrix[i] = [i];
-        }
-
-        for (let j = 0; j <= str1.length; j++) {
-            matrix[0][j] = j;
-        }
-
-        for (let i = 1; i <= str2.length; i++) {
-            for (let j = 1; j <= str1.length; j++) {
-                if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
-                    matrix[i][j] = matrix[i - 1][j - 1];
-                } else {
-                    matrix[i][j] = Math.min(
-                        matrix[i - 1][j - 1] + 1,
-                        matrix[i][j - 1] + 1,
-                        matrix[i - 1][j] + 1,
-                    );
+                    // Update vehicle categories if provided
+                    if (categories && categories.length > 0) {
+                        await this.prisma.vehicle.update({
+                            where: { ownerId: driverProfile.id },
+                            data: { serviceCategories: categories }
+                        });
+                    }
                 }
             }
         }
 
-        return matrix[str2.length][str1.length];
+        return updated;
     }
 
-    /**
-     * Normalize date format for comparison
-     */
-    private normalizeDate(dateStr: string): string {
-        // Try to parse common date formats and convert to YYYY-MM-DD
-        const formats = [
-            /(\d{2})\/(\d{2})\/(\d{4})/, // DD/MM/YYYY
-            /(\d{4})-(\d{2})-(\d{2})/, // YYYY-MM-DD
-            /(\d{2})-(\d{2})-(\d{4})/, // DD-MM-YYYY
-        ];
-
-        for (const format of formats) {
-            const match = dateStr.match(format);
-            if (match) {
-                if (format === formats[0] || format === formats[2]) {
-                    // DD/MM/YYYY or DD-MM-YYYY
-                    return `${match[3]}-${match[2]}-${match[1]}`;
-                } else {
-                    // Already YYYY-MM-DD
-                    return dateStr;
-                }
-            }
-        }
-
-        return dateStr;
+    async getVerification(id: string) {
+        return this.prisma.documentVerification.findUnique({
+            where: { id }
+        });
     }
 
-    /**
-     * Get verification by ID
-     */
-    async getVerification(verificationId: string): Promise<DocumentVerification> {
-        const verification = this.verifications.get(verificationId);
-        if (!verification) {
-            throw new NotFoundException('Verification not found');
-        }
-        return verification;
-    }
-
-    /**
-     * Get all verifications for a user
-     */
-    async getUserVerifications(userId: string): Promise<DocumentVerification[]> {
-        return Array.from(this.verifications.values()).filter(
-            (v) => v.userId === userId,
-        );
+    async getUserVerifications(userId: string) {
+        return this.prisma.documentVerification.findMany({
+            where: { userId },
+            orderBy: { createdAt: 'desc' }
+        });
     }
 }

@@ -410,8 +410,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           const SizedBox(height: 20),
                           ElevatedButton(
                             onPressed: () async {
-                              final Uri url =
-                                  Uri.parse(AppConfig.driverRegistrationUrl);
+                              final Uri url = Uri.parse(
+                                  '${AppConfig.driverRegistrationUrl}?source=driver_app');
                               launchUrl(url,
                                   mode: LaunchMode.externalApplication);
                             },

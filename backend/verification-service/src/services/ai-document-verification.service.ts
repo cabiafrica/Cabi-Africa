@@ -42,18 +42,24 @@ export type DocumentType =
   | 'PASSPORT' 
   | 'DRIVERS_LICENSE' 
   | 'CERTIFICATE_OF_GOOD_CONDUCT'
+  | 'VEHICLE_LOGBOOK'
+  | 'VEHICLE_INSURANCE'
+  | 'PSV_BADGE'
   | 'ALIEN_CARD'
   | 'REFUGEE_ID'
+  | 'GOVT_CERTIFICATE'
   | 'UNKNOWN';
 
 export type DocumentQuality = 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR' | 'UNREADABLE';
+
+import { VerificationAuditService, AuditAction } from './verification-audit.service';
 
 @Injectable()
 export class AiDocumentVerificationService {
   private readonly logger = new Logger(AiDocumentVerificationService.name);
   private readonly uploadDir = path.join(process.cwd(), 'uploads', 'documents', 'ai-verified');
 
-  constructor() {
+  constructor(private readonly auditService: VerificationAuditService) {
     this.ensureUploadDir();
   }
 
@@ -100,7 +106,7 @@ export class AiDocumentVerificationService {
 
     this.logger.log(`Document analysis complete. Type: ${detectedType}, Valid: ${validationErrors.length === 0}`);
 
-    return {
+    const result: DocumentAnalysisResult = {
       documentType: detectedType,
       isValid: validationErrors.length === 0 && documentQuality !== 'UNREADABLE',
       confidence: ocrResult.confidence,
@@ -112,6 +118,16 @@ export class AiDocumentVerificationService {
       documentQuality,
       expiryStatus,
     };
+
+    // Audit the AI decision
+    await this.auditService.log('SYSTEM', AuditAction.AI_ANALYSIS, {
+      detectedType,
+      confidence: ocrResult.confidence,
+      isValid: result.isValid,
+      extractedFields,
+    });
+
+    return result;
   }
 
   /**
@@ -131,6 +147,17 @@ export class AiDocumentVerificationService {
       textLower.includes('conduct certificate')
     ) {
       return 'CERTIFICATE_OF_GOOD_CONDUCT';
+    }
+    
+    // Check for Govt Certificate (SACCO/Organization)
+    if (
+      textLower.includes('certificate of registration') ||
+      textLower.includes('co-operative societies') ||
+      textLower.includes('societies act') ||
+      textLower.includes('sacco') ||
+      textLower.includes('certificate no')
+    ) {
+      return 'GOVT_CERTIFICATE';
     }
 
     // Check for Passport
@@ -261,6 +288,18 @@ export class AiDocumentVerificationService {
         break;
       case 'CERTIFICATE_OF_GOOD_CONDUCT':
         this.parseCertificateOfGoodConduct(text, fields);
+        break;
+      case 'VEHICLE_LOGBOOK':
+        this.parseVehicleLogbook(text, fields);
+        break;
+      case 'VEHICLE_INSURANCE':
+        this.parseVehicleInsurance(text, fields);
+        break;
+      case 'PSV_BADGE':
+        this.parsePsvBadge(text, fields);
+        break;
+      case 'GOVT_CERTIFICATE':
+        this.parseGovtCertificate(text, fields);
         break;
       default:
         this.parseGenericDocument(text, fields);
@@ -424,6 +463,56 @@ export class AiDocumentVerificationService {
     // Try to find a name
     const nameMatch = text.match(/\b([A-Z]{2,}\s+[A-Z]{2,}\s+[A-Z]{2,})\b/);
     if (nameMatch) fields.fullName = nameMatch[1];
+  }
+
+  private parseVehicleLogbook(text: string, fields: ExtractedDocumentFields): void {
+    const regMatch = text.match(/\b([A-Z]{3}\s?\d{3}[A-Z])\b/i);
+    if (regMatch) fields.documentNumber = regMatch[1].toUpperCase().replace(/\s/g, '');
+    
+    const ownerMatch = text.match(/(?:OWNER|NAME)[:\s]+([A-Z\s]+)/i);
+    if (ownerMatch) fields.fullName = ownerMatch[1].trim();
+
+    const modelMatch = text.match(/(?:MODEL|MAKE)[:\s]+([A-Z0-9\s]+)/i);
+    if (modelMatch) fields.address = modelMatch[1].trim(); // Using address field generic storage
+  }
+
+  private parseVehicleInsurance(text: string, fields: ExtractedDocumentFields): void {
+      const regMatch = text.match(/\b([A-Z]{3}\s?\d{3}[A-Z])\b/i);
+      if (regMatch) fields.documentNumber = regMatch[1].toUpperCase().replace(/\s/g, '');
+
+      const expiryMatch = text.match(/\b(\d{2}\/\d{2}\/\d{4})\b/g);
+      if (expiryMatch && expiryMatch.length > 0) {
+          fields.expiryDate = expiryMatch[expiryMatch.length - 1];
+      }
+  }
+
+  private parsePsvBadge(text: string, fields: ExtractedDocumentFields): void {
+      const idMatch = text.match(/\b(\d{8})\b/);
+      if (idMatch) fields.idNumber = idMatch[1];
+      
+      const badgeMatch = text.match(/(?:BADGE|NO)[:\s]+([A-Z0-9]+)/i);
+      if (badgeMatch) fields.documentNumber = badgeMatch[1].trim();
+
+      const expiryMatch = text.match(/\b(\d{2}\/\d{2}\/\d{4})\b/);
+      if (expiryMatch) fields.expiryDate = expiryMatch[0];
+  }
+
+  private parseGovtCertificate(text: string, fields: ExtractedDocumentFields): void {
+      // Certificate Number
+      const certMatch = text.match(/(?:CERTIFICATE NO|CERT NO|REG NO)[:\s#]+([A-Z0-9\/]+)/i);
+      if (certMatch) fields.documentNumber = certMatch[1].trim();
+
+      // Entity Name
+      const nameMatch = text.match(/(?:NAME OF SOCIETY|NAME)[:\s]+([A-Z\s]+)/i);
+      if (nameMatch) fields.fullName = nameMatch[1].trim();
+
+      // Date of Registration
+      const dateMatch = text.match(/(?:DATED|REGISTRATION DATE)[:\s]+(\d{2}\/\d{2}\/\d{4})/i);
+      if (dateMatch) fields.dateOfIssue = dateMatch[1];
+      
+      // Expiry (if stated, though often lifetime for some, but some need annual renewal)
+      const expiryMatch = text.match(/(?:EXPIRES|VALID UNTIL|EXPIRY)[:\s]+(\d{2}\/\d{2}\/\d{4})/i);
+      if (expiryMatch) fields.expiryDate = expiryMatch[1];
   }
 
   /**

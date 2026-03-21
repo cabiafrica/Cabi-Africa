@@ -26,43 +26,66 @@ export default function FeatureSplit({ type }: FeatureSplitProps) {
     };
 
     return (
-        <section className="py-24 bg-brand-black overflow-hidden border-t border-white/5">
+        <section className="py-32 bg-brand-black overflow-hidden relative group/section">
             <div className="container mx-auto px-6">
-                <div className={`flex flex-col lg:flex-row items-center gap-16 ${isDriver ? '' : 'lg:flex-row-reverse'}`}>
+                <div className={`flex flex-col lg:flex-row items-center gap-20 lg:gap-32 ${isDriver ? '' : 'lg:flex-row-reverse'}`}>
 
                     {/* Image Side */}
                     <div className="w-full lg:w-1/2 relative group">
-                        <div className={`absolute -inset-4 bg-gradient-to-r ${isDriver ? 'from-brand-accent to-purple-600' : 'from-brand-yellow to-orange-500'} rounded-2xl opacity-20 group-hover:opacity-40 blur-xl transition duration-500`}></div>
-                        <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/10">
+                        {/* Futuristic Frame */}
+                        <div className={`absolute -inset-1 bg-gradient-to-tr ${isDriver ? 'from-brand-accent to-brand-indigo' : 'from-brand-yellow to-orange-500'} rounded-[2.5rem] opacity-20 blur-2xl group-hover:opacity-60 transition-all duration-1000 rotate-1 ease-in-out`}></div>
+                        
+                        <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden border border-white/10 group-hover:border-white/20 transition-all duration-700 shadow-2xl">
                             <Image
                                 src={content.image}
                                 alt={content.imageAlt}
                                 fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                className="object-cover transition-transform duration-[2s] group-hover:scale-110 group-hover:rotate-1"
                             />
-                            {/* Overlay Badge */}
-                            <div className="absolute bottom-6 left-6 bg-white/10 backdrop-blur-md px-6 py-3 rounded-lg border border-white/20">
-                                <span className={`text-sm font-bold ${isDriver ? 'text-brand-accent' : 'text-brand-yellow'} uppercase tracking-wide`}>
-                                    {isDriver ? 'For Drivers' : 'For Passengers'}
-                                </span>
+                            {/* Scanning Effect Overlay */}
+                            <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-white/40 to-transparent top-0 animate-[scan_4s_linear_infinite]" />
+                            
+                            {/* Glass Badge */}
+                            <div className="absolute bottom-8 left-8 glass-premium px-8 py-4 rounded-2xl animate-reveal border-brand-yellow/30">
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-3 h-3 rounded-full animate-pulse ${isDriver ? 'bg-brand-accent shadow-[0_0_15px_rgba(34,211,238,1)]' : 'bg-brand-yellow shadow-[0_0_15px_rgba(250,204,21,1)]'}`} />
+                                    <span className={`text-xs font-black uppercase tracking-[0.3em] ${isDriver ? 'text-brand-accent' : 'text-brand-yellow'}`}>
+                                        {isDriver ? 'Operation: Carrier' : 'Operation: Voyager'}
+                                    </span>
+                                </div>
                             </div>
                         </div>
+
+                        {/* Tech Accents */}
+                        <div className="absolute -top-6 -right-6 w-12 h-12 border-t-2 border-r-2 border-white/20 rounded-tr-3xl" />
+                        <div className="absolute -bottom-6 -left-6 w-12 h-12 border-b-2 border-l-2 border-white/20 rounded-bl-3xl" />
                     </div>
 
                     {/* Text Side */}
-                    <div className="w-full lg:w-1/2 text-left">
-                        <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                            {content.title}
+                    <div className="w-full lg:w-1/2 text-left animate-reveal">
+                        <div className="mb-8 flex items-center gap-4">
+                            <span className={`h-px w-12 ${isDriver ? 'bg-brand-accent' : 'bg-brand-yellow'} opacity-40`} />
+                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">Unit Classification</span>
+                        </div>
+                        <h2 className="text-5xl lg:text-7xl font-black text-white mb-8 leading-[1] tracking-tighter">
+                            {content.title.split(' ').slice(0, -1).join(' ')} <br/>
+                            <span className={`text-transparent bg-clip-text bg-gradient-to-r ${isDriver ? 'from-brand-accent to-brand-indigo' : 'from-brand-yellow to-amber-600'}`}>
+                                {content.title.split(' ').slice(-1)}
+                            </span>
                         </h2>
-                        <p className="text-xl text-gray-400 mb-8 leading-relaxed">
+                        <p className="text-xl text-white/40 mb-12 leading-relaxed max-w-xl font-medium">
                             {content.message}
                         </p>
                         <Link
                             href={content.buttonLink}
-                            className={`inline-flex items-center gap-3 text-lg font-bold border-b-2 border-transparent hover:border-current transition-all pb-1 ${isDriver ? 'text-brand-accent hover:text-white' : 'text-brand-yellow hover:text-white'
-                                }`}
+                            className={`group inline-flex items-center gap-6 px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-sm transition-all duration-500 hover:scale-105 active:scale-95 ${
+                                isDriver 
+                                ? 'bg-brand-accent text-black shadow-[0_20px_40px_-15px_rgba(34,211,238,0.3)]' 
+                                : 'bg-brand-yellow text-black shadow-[0_20px_40px_-15px_rgba(250,204,21,0.3)]'
+                            }`}
                         >
-                            {content.buttonText} <FaArrowRight />
+                            {content.buttonText} 
+                            <FaArrowRight className="transition-transform duration-500 group-hover:translate-x-2" />
                         </Link>
                     </div>
 

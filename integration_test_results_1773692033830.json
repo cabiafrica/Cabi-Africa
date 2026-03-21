@@ -1,0 +1,204 @@
+{
+  "timestamp": "2026-03-16T20:13:53.829Z",
+  "duration": 10.56,
+  "summary": {
+    "totalTests": 5,
+    "passedTests": 1,
+    "failedTests": 4,
+    "successRate": "20.0%"
+  },
+  "testData": {
+    "driver": {
+      "email": "integration_test_driver_1773692023260@test.com",
+      "firstName": "Integration",
+      "lastName": "Test Driver",
+      "phone": "+254712345678",
+      "dateOfBirth": "1990-01-01",
+      "street": "123 Test Street",
+      "city": "Nairobi",
+      "county": "Nairobi",
+      "vehicleType": "car",
+      "licensePlate": "TEST1773692023260",
+      "nationalId": "123456789",
+      "drivingLicense": "DL1773692023260",
+      "password": "TestPassword@123",
+      "recaptchaToken": "test-token",
+      "agreeToTerms": true
+    },
+    "passenger": {
+      "email": "integration_test_passenger_1773692023260@test.com",
+      "firstName": "Integration",
+      "lastName": "Test",
+      "phone": "+2547123327816",
+      "role": "passenger"
+    },
+    "driverId": "82def5f1-cda4-40dd-b77a-a2129d82a855",
+    "passengerId": null,
+    "tripId": null
+  },
+  "results": {
+    "driverRegistration": {
+      "success": true,
+      "error": null,
+      "data": {
+        "registered": {
+          "message": "Registration successful. Please download the app to continue.",
+          "userId": "82def5f1-cda4-40dd-b77a-a2129d82a855",
+          "status": "PENDING"
+        },
+        "verified": {
+          "data": [
+            {
+              "id": "82def5f1-cda4-40dd-b77a-a2129d82a855",
+              "fullName": "Integration Test Driver",
+              "phone": "+254712345678",
+              "email": "integration_test_driver_1770906061210@test.com",
+              "applicationDate": "2026-02-12T14:21:02.304Z",
+              "status": "PENDING"
+            },
+            {
+              "id": "e24f9933-f065-41de-a059-a5699e2e8629",
+              "fullName": "Test Driver",
+              "phone": "+254722942569",
+              "email": "test_driver_1771018942569@test.com",
+              "applicationDate": "2026-02-13T21:42:25.208Z",
+              "status": "PENDING"
+            },
+            {
+              "id": "5df71260-b725-49f9-b8b4-510048b0b58d",
+              "fullName": "Test Driver",
+              "phone": "+254722123456",
+              "email": "test1770899929168@test.com",
+              "applicationDate": "2026-02-12T12:38:51.063Z",
+              "status": "PENDING"
+            },
+            {
+              "id": "1ea74e70-b362-41b6-bb62-9c521409b5e3",
+              "fullName": "Test Driver",
+              "phone": "+254722955394",
+              "email": "test_driver_1770899955394@test.com",
+              "applicationDate": "2026-02-12T12:39:16.583Z",
+              "status": "PENDING"
+            },
+            {
+              "id": "820cc86b-fc71-467d-8a98-6c65e1694323",
+              "fullName": "Simulated Driver 1",
+              "phone": "+254700648006",
+              "email": "sim_driver_1771060374869@cabi.test",
+              "applicationDate": "2026-02-14T09:12:55.773Z",
+              "status": "PENDING"
+            },
+            {
+              "id": "e151961e-ca2b-47d3-b28f-cfc991be62ad",
+              "fullName": "Simulated Driver 6",
+              "phone": "+254700629677",
+              "email": "sim_driver_1771060389495@cabi.test",
+              "applicationDate": "2026-02-14T09:13:10.363Z",
+              "status": "PENDING"
+            },
+            {
+              "id": "2ea42780-c5c1-4090-ba41-12696381bc07",
+              "fullName": "Simulated Driver 2",
+              "phone": "+254700124542",
+              "email": "sim_driver_1771060377819@cabi.test",
+              "applicationDate": "2026-02-14T09:12:58.698Z",
+              "status": "PENDING"
+            },
+            {
+              "id": "e31e79c2-6365-48f2-a639-dffb43dac16b",
+              "fullName": "Simulated Driver 3",
+              "phone": "+254700592785",
+              "email": "sim_driver_1771060380698@cabi.test",
+              "applicationDate": "2026-02-14T09:13:01.566Z",
+              "status": "PENDING"
+            },
+            {
+              "id": "17e5d2a3-8034-4ad2-b1ab-9bb8d609cfa3",
+              "fullName": "Simulated Driver 4",
+              "phone": "+254700984812",
+              "email": "sim_driver_1771060383573@cabi.test",
+              "applicationDate": "2026-02-14T09:13:04.585Z",
+              "status": "PENDING"
+            },
+            {
+              "id": "d8ef99f0-cb3e-4811-935a-b82be8634c25",
+              "fullName": "Simulated Driver 5",
+              "phone": "+254700705306",
+              "email": "sim_driver_1771060386629@cabi.test",
+              "applicationDate": "2026-02-14T09:13:07.496Z",
+              "status": "PENDING"
+            },
+            {
+              "id": "25bac238-f525-4ec8-a709-aed83dfa21bd",
+              "fullName": "Simulated Driver 7",
+              "phone": "+254700425108",
+              "email": "sim_driver_1771060392369@cabi.test",
+              "applicationDate": "2026-02-14T09:13:13.224Z",
+              "status": "PENDING"
+            },
+            {
+              "id": "de90abef-de64-456d-a927-dd5eb8172b7c",
+              "fullName": "Simulated Driver 8",
+              "phone": "+254700626785",
+              "email": "sim_driver_1771060395237@cabi.test",
+              "applicationDate": "2026-02-14T09:13:16.114Z",
+              "status": "PENDING"
+            },
+            {
+              "id": "44dda78a-7192-4cb8-94db-7de3201f0aeb",
+              "fullName": "Simulated Driver 9",
+              "phone": "+254700694155",
+              "email": "sim_driver_1771060398127@cabi.test",
+              "applicationDate": "2026-02-14T09:13:19.005Z",
+              "status": "PENDING"
+            },
+            {
+              "id": "7f90c3fd-2c09-48b8-8127-22750138b87c",
+              "fullName": "Simulated Driver 10",
+              "phone": "+254700378612",
+              "email": "sim_driver_1771060401178@cabi.test",
+              "applicationDate": "2026-02-14T09:13:22.040Z",
+              "status": "PENDING"
+            }
+          ],
+          "total": 14
+        }
+      }
+    },
+    "tripRequest": {
+      "success": false,
+      "error": "Passenger registration failed: {\"message\":[\"phone must be a valid phone number\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "data": null
+    },
+    "tripAssignment": {
+      "success": false,
+      "error": "Trip assignment failed: {\"message\":\"Cannot POST /api/trips/null/assign\",\"error\":\"Not Found\",\"statusCode\":404}",
+      "data": null
+    },
+    "tripCompletion": {
+      "success": false,
+      "error": "Trip completion failed: {\"message\":\"Cannot POST /api/trips/null/complete\",\"error\":\"Not Found\",\"statusCode\":404}",
+      "data": null
+    },
+    "crossSystemConsistency": {
+      "success": false,
+      "error": null,
+      "data": [
+        {
+          "check": "Driver data consistency",
+          "success": false,
+          "error": "Inconsistent driver data across services"
+        },
+        {
+          "check": "Trip data consistency",
+          "success": false,
+          "error": "Trip data inconsistent"
+        },
+        {
+          "check": "Revenue data consistency",
+          "success": false
+        }
+      ]
+    }
+  }
+}

@@ -3,6 +3,7 @@ import 'package:driver_app/screens/login_screen.dart';
 import 'package:driver_app/widgets/promotional_carousel.dart';
 import 'support_screen.dart';
 import 'my_organization_screen.dart';
+import 'sacco_screen.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
@@ -228,14 +229,23 @@ class MenuScreen extends StatelessWidget {
                       iconColor: Colors.blueGrey,
                       route: '/vehicles'),
                   _MenuGridItem(
-                      icon: Icons.groups,
-                      label: 'My Sacco',
+                      icon: Icons.groups_rounded,
+                      label: 'My Groups',
                       color: Colors.teal.shade100,
                       iconColor: Colors.teal.shade800,
                       onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (_) => const MyOrganizationScreen()))),
+                  _MenuGridItem(
+                      icon: Icons.account_balance_outlined,
+                      label: 'My Sacco',
+                      color: Colors.orange.shade100,
+                      iconColor: Colors.orange.shade900,
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const SaccoScreen()))),
                   _MenuGridItem(
                       icon: Icons.settings_outlined,
                       label: 'Settings',

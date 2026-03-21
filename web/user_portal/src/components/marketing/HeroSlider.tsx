@@ -20,54 +20,72 @@ export default function HeroSlider() {
     const slides = [
         {
             id: 1,
-            title: "Move Beyond Expectations.",
-            subtitle: "The neural network for distributed ecosystem mobility across Africa.",
-            buttonText: "Join the Revolution",
+            title: "The Future of Mobility.",
+            subtitle: "Experience Africa's' first unified neural mobility ecosystem. Seamless, distributed, and strictly decentralized for the modern traveler.",
+            buttonText: "Launch Journey",
             buttonLink: "/register",
-            gradient: "from-brand-yellow to-brand-accent",
+            gradient: "from-brand-yellow via-amber-400 to-brand-accent",
             layout: "center",
             Graphic: () => (
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none opacity-20 animate-spin-slow">
-                    <div className="absolute inset-0 rounded-full border-2 border-brand-yellow/30 border-dashed"></div>
-                    <div className="absolute inset-8 rounded-full border border-brand-accent/30"></div>
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-brand-yellow rounded-full shadow-[0_0_20px_rgba(255,215,0,0.8)]"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] pointer-events-none opacity-30">
+                    <div className="absolute inset-0 rounded-full border border-brand-yellow/20 animate-[spin_20s_linear_infinite]"></div>
+                    <div className="absolute inset-20 rounded-full border border-brand-accent/20 animate-[spin_15s_linear_infinite_reverse]"></div>
+                    <div className="absolute inset-40 rounded-full border border-white/10 animate-[spin_10s_linear_infinite]"></div>
+                    {/* Glowing Orbs */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-brand-yellow rounded-full shadow-[0_0_30px_rgba(250,204,21,1)] animate-pulse"></div>
+                    <div className="absolute bottom-1/4 right-0 w-2 h-2 bg-brand-accent rounded-full shadow-[0_0_20px_rgba(34,211,238,1)] animate-bounce-slow"></div>
                 </div>
             )
         },
         {
             id: 2,
-            title: "Drive Your Own Destiny.",
-            subtitle: "Empowering drivers with fair rates, instant payouts, and unparalleled support.",
+            title: "Drive Your Destiny.",
+            subtitle: "Empowering next-gen drivers with institutional-grade payouts, real-time analytics, and hyper-local support.",
             buttonText: "Start Driving",
             buttonLink: "/drivers",
-            gradient: "from-[#F59E0B] to-[#EF4444]", // Amber to Red
-            layout: "left-graphic", // Graphic Left, Text Right
+            gradient: "from-cyan-400 via-brand-accent to-brand-indigo",
+            layout: "left-graphic",
             Graphic: () => (
-                <div className="relative w-full h-[400px] flex items-center justify-center">
-                    {/* Glass Card */}
-                    <div className="relative z-10 bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-3xl w-80 rotate-[-6deg] shadow-2xl animate-float">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white text-xl">
+                <div className="relative w-full h-[500px] flex items-center justify-center">
+                    {/* Futuristic Glass Card */}
+                    <div className="relative z-10 glass-premium p-10 rounded-[2.5rem] w-85 -rotate-6 shadow-2xl animate-float group">
+                        <div className="absolute -top-4 -right-4 bg-brand-yellow text-black text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter">Verified</div>
+                        <div className="flex items-center gap-5 mb-8">
+                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-yellow to-amber-600 flex items-center justify-center text-black text-2xl shadow-lg shadow-brand-yellow/20">
                                 <FaCar />
                             </div>
                             <div>
-                                <h4 className="text-white font-bold">Driver Pro</h4>
-                                <p className="text-gray-400 text-xs">Online Now</p>
+                                <h4 className="text-white font-black text-lg tracking-tight">Driver Elite</h4>
+                                <div className="flex items-center gap-2">
+                                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                    <p className="text-white/40 text-xs font-bold uppercase tracking-widest">Neural Link Active</p>
+                                </div>
                             </div>
                         </div>
-                        <div className="space-y-3">
-                            <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                                <div className="h-full w-3/4 bg-orange-400"></div>
+                        <div className="space-y-5">
+                            <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/10">
+                                <div className="h-full w-4/5 bg-gradient-to-r from-brand-yellow to-brand-accent animate-pulse"></div>
                             </div>
-                            <div className="flex justify-between text-sm text-gray-300">
-                                <span>Daily Earnings</span>
-                                <span className="text-green-400 font-bold">KSh 4,500</span>
+                            <div className="flex justify-between items-end">
+                                <div>
+                                    <p className="text-[10px] text-white/40 uppercase font-black tracking-widest mb-1">Weekly Yield</p>
+                                    <span className="text-2xl font-black text-white tracking-tighter">KSh 32,850</span>
+                                </div>
+                                <div className="text-brand-accent font-black text-sm flex items-center gap-1">
+                                    <FaChartLine /> +12%
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {/* Floating Elements */}
-                    <div className="absolute top-10 right-10 bg-black/50 backdrop-blur-md p-4 rounded-2xl border border-white/10 animate-float animation-delay-500 shadow-xl">
-                        <FaWallet className="text-3xl text-green-400" />
+                    {/* Floating Tech Modules */}
+                    <div className="absolute top-10 right-0 glass-premium p-5 rounded-2xl animate-float animation-delay-400 shadow-2xl">
+                        <FaWallet className="text-4xl text-brand-yellow shadow-glow" />
+                    </div>
+                    <div className="absolute bottom-20 left-10 glass-premium px-6 py-4 rounded-2xl border-brand-accent/30 animate-float animation-delay-600">
+                        <div className="flex items-center gap-3">
+                            <FaRoute className="text-brand-accent" />
+                            <span className="text-white font-black text-sm">4.98 Rating</span>
+                        </div>
                     </div>
                 </div>
             )
@@ -75,55 +93,60 @@ export default function HeroSlider() {
     ];
 
     return (
-        <div className="relative h-[90vh] overflow-hidden bg-brand-black">
+        <div className="relative min-h-[750px] lg:h-screen overflow-hidden bg-brand-black">
+            {/* Global Ambient Glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1/2 bg-brand-indigo/20 blur-[180px] pointer-events-none" />
+
             <Slider {...settings} className="h-full hero-slider">
                 {slides.map((slide) => {
                     const isCenter = slide.layout === 'center';
                     const isLeftGraphic = slide.layout === 'left-graphic';
-                    const isRightGraphic = slide.layout === 'right-graphic';
 
                     return (
-                        <div key={slide.id} className="relative h-[90vh] outline-none">
-                            {/* Background Elements */}
-                            <div className="absolute inset-0 bg-brand-black">
-                                <div className="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-gray-900/50 to-transparent"></div>
-                                <div className={`absolute -top-40 -right-40 w-[800px] h-[800px] bg-gradient-to-br ${slide.gradient} opacity-20 rounded-full blur-[150px]`}></div>
-                                {isLeftGraphic && (
-                                    <div className={`absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr ${slide.gradient} opacity-10 rounded-full blur-[120px]`}></div>
-                                )}
-                                <div className="absolute inset-0 bg-[url('/assets/grid.svg')] opacity-10 bg-repeat"></div>
+                        <div key={slide.id} className="relative min-h-[750px] lg:h-screen outline-none">
+                            {/* Background Layers */}
+                            <div className="absolute inset-0 bg-brand-black overflow-hidden">
+                                <div className={`absolute -top-[20%] -right-[10%] w-[1200px] h-[1200px] bg-gradient-to-br ${slide.gradient} opacity-10 rounded-full blur-[200px] animate-glow`}></div>
+                                <div className="absolute inset-0 grid-futurist opacity-10"></div>
+                                <div className="absolute inset-0 bg-gradient-to-b from-brand-black via-transparent to-brand-black opacity-80"></div>
                             </div>
 
-                            {/* Central Graphic for slide 1 */}
+                            {/* Center Graphic */}
                             {isCenter && <slide.Graphic />}
 
-                            <div className="container mx-auto px-6 h-full relative z-10">
-                                <div className={`flex flex-col md:flex-row h-full items-center gap-12 ${isLeftGraphic ? 'md:flex-row-reverse' : ''}`}>
+                            <div className="container mx-auto px-6 h-full relative z-20">
+                                <div className={`flex flex-col lg:flex-row h-full items-center gap-12 lg:gap-24 ${isLeftGraphic ? 'lg:flex-row-reverse' : ''} pt-32 lg:pt-0`}>
 
                                     {/* Text Content */}
-                                    <div className={`flex-1 flex flex-col justify-center ${isCenter ? 'items-center text-center w-full max-w-4xl mx-auto' : 'items-start text-left'}`}>
-                                        <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tight animate-slide-up text-white">
+                                    <div className={`flex-1 flex flex-col justify-center ${isCenter ? 'items-center text-center w-full max-w-5xl mx-auto' : 'items-start text-left'}`}>
+                                        <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full mb-6 lg:mb-8 animate-reveal">
+                                            <span className="w-2 h-2 bg-brand-yellow rounded-full animate-ping"></span>
+                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60">System Version 4.0.2</span>
+                                        </div>
+                                        <h1 className="text-4xl md:text-8xl lg:text-9xl font-black mb-6 lg:mb-8 leading-[0.95] lg:leading-[0.9] tracking-tighter animate-reveal text-white">
                                             {slide.title.split(' ').slice(0, -1).join(' ')} <br />
-                                            <span className={`text-transparent bg-clip-text bg-gradient-to-r ${slide.gradient}`}>
+                                            <span className={`text-transparent bg-clip-text bg-gradient-to-r ${slide.gradient} drop-shadow-[0_0_30px_rgba(250,204,21,0.3)]`}>
                                                 {slide.title.split(' ').slice(-1)}
                                             </span>
                                         </h1>
-                                        <p className="text-xl text-gray-300 mb-8 max-w-2xl leading-relaxed animate-slide-up animation-delay-200">
+                                        <p className="text-base lg:text-xl text-white/50 mb-10 lg:mb-12 max-w-2xl leading-relaxed animate-reveal animation-delay-200">
                                             {slide.subtitle}
                                         </p>
-                                        <div className="animate-slide-up animation-delay-400">
+                                        <div className="animate-reveal animation-delay-400">
                                             <Link
                                                 href={slide.buttonLink}
-                                                className="inline-flex items-center gap-2 bg-white text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-yellow transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(255,215,0,0.6)]"
+                                                className="group relative inline-flex items-center gap-4 bg-white px-8 lg:px-10 py-4 lg:py-5 rounded-xl lg:rounded-2xl font-black text-black text-lg lg:text-xl overflow-hidden transition-all duration-500 hover:pr-14 hover:shadow-[0_0_50px_rgba(255,255,255,0.4)] active:scale-95"
                                             >
-                                                {slide.buttonText} <FaArrowRight />
+                                                <span className="relative z-10">{slide.buttonText}</span>
+                                                <FaArrowRight className="relative z-10 transition-all duration-500 group-hover:translate-x-2" />
+                                                <div className="absolute inset-0 bg-brand-yellow translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                                             </Link>
                                         </div>
                                     </div>
 
-                                    {/* Sidebar Graphic (for Left/Right layouts) */}
+                                    {/* Sidebar Graphic */}
                                     {!isCenter && (
-                                        <div className="flex-1 w-full flex justify-center items-center">
+                                        <div className="flex-1 w-full flex justify-center items-center animate-reveal animation-delay-400 pb-12 lg:pb-0 scale-75 lg:scale-100 origin-center">
                                             <slide.Graphic />
                                         </div>
                                     )}

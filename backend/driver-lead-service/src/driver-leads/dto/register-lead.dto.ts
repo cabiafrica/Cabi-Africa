@@ -37,25 +37,26 @@ export class RegisterLeadDto {
   phone: string;
 
   @IsDateString()
-  @IsNotEmpty()
-  dateOfBirth: string;
+  @IsOptional()
+  dateOfBirth?: string;
 
   // Address Information
   @IsString()
-  @IsNotEmpty()
-  street: string;
+  @IsOptional()
+  street?: string;
 
   @IsString()
   @IsNotEmpty()
   city: string;
 
   @IsString()
-  @IsNotEmpty()
-  county: string;
+  @IsOptional()
+  county?: string;
 
   // Vehicle Information
   @IsEnum(VehicleType)
-  vehicleType: VehicleType;
+  @IsOptional()
+  vehicleType?: VehicleType;
 
   @IsString()
   @IsOptional()
@@ -72,17 +73,17 @@ export class RegisterLeadDto {
   vehicleYear?: number;
 
   @IsString()
-  @IsNotEmpty()
-  licensePlate: string;
+  @IsOptional()
+  licensePlate?: string;
 
   // Documents
   @IsString()
-  @IsNotEmpty()
-  nationalId: string;
+  @IsOptional()
+  nationalId?: string;
 
   @IsString()
-  @IsNotEmpty()
-  drivingLicense: string;
+  @IsOptional()
+  drivingLicense?: string;
 
   // Security & Validation
   @IsNotEmpty({ message: 'Password is required' })

@@ -18,7 +18,7 @@ import {
     DocumentVerificationResponseDto,
     ValidationResponseDto,
 } from '../dto/document-verification.dto';
-import { DocumentType } from '../types/document-types';
+import { VerificationDocumentType, VerificationStatus } from '@prisma/client';
 
 @Controller('api/v1/verification/document')
 export class DocumentVerificationController {
@@ -68,7 +68,7 @@ export class DocumentVerificationController {
             const verification =
                 await this.documentVerificationService.uploadDocument(
                     uploadDto.userId,
-                    uploadDto.documentType as DocumentType,
+                    uploadDto.documentType as any,
                     file,
                 );
 
@@ -76,7 +76,7 @@ export class DocumentVerificationController {
                 id: verification.id,
                 userId: verification.userId,
                 documentType: verification.documentType,
-                extractedFields: verification.extractedFields,
+                extractedFields: verification.extractedData,
                 status: verification.status,
                 createdAt: verification.createdAt,
             };
@@ -90,33 +90,24 @@ export class DocumentVerificationController {
     }
 
     /**
-     * Validate provided fields against extracted fields
-     * POST /api/v1/verification/document/validate
+     * Admin review of document
+     * POST /api/v1/verification/document/review
      */
-    @Post('validate')
-    async validateDocument(
-        @Body() validateDto: ValidateDocumentDto,
-    ): Promise<ValidationResponseDto> {
+    @Post('review')
+    async adminReview(
+        @Body() reviewDto: { verificationId: string; status: any; rejectionReason?: string; categories?: string[] },
+    ): Promise<any> {
         try {
-            this.logger.log(
-                `Validating document: ${validateDto.verificationId}`,
+            return await this.documentVerificationService.adminReview(
+                reviewDto.verificationId,
+                reviewDto.status,
+                reviewDto.rejectionReason,
+                reviewDto.categories,
             );
-
-            const result = await this.documentVerificationService.validateDocument(
-                validateDto.verificationId,
-                validateDto.providedFields,
-            );
-
-            return {
-                verificationId: validateDto.verificationId,
-                status: result.status,
-                allFieldsMatch: result.allFieldsMatch,
-                matchResults: result.matchResults,
-            };
         } catch (error) {
-            this.logger.error('Error validating document:', error);
+            this.logger.error('Error in admin review:', error);
             throw new HttpException(
-                error.message || 'Failed to validate document',
+                error.message || 'Failed to process admin review',
                 HttpStatus.INTERNAL_SERVER_ERROR,
             );
         }
@@ -134,11 +125,15 @@ export class DocumentVerificationController {
             const verification =
                 await this.documentVerificationService.getVerification(id);
 
+            if (!verification) {
+                throw new HttpException('Verification not found', HttpStatus.NOT_FOUND);
+            }
+
             return {
                 id: verification.id,
                 userId: verification.userId,
                 documentType: verification.documentType,
-                extractedFields: verification.extractedFields,
+                extractedFields: verification.extractedData,
                 status: verification.status,
                 createdAt: verification.createdAt,
             };
@@ -167,7 +162,7 @@ export class DocumentVerificationController {
                 id: v.id,
                 userId: v.userId,
                 documentType: v.documentType,
-                extractedFields: v.extractedFields,
+                extractedFields: v.extractedData,
                 status: v.status,
                 createdAt: v.createdAt,
             }));

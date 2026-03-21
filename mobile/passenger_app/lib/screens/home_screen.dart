@@ -23,6 +23,7 @@ import 'package:passenger_app/widgets/promotional_carousel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../providers/providers.dart';
+import '../widgets/face_verification_modal.dart';
 part 'home_screen_panels.dart';
 part 'home_screen_logic.dart';
 

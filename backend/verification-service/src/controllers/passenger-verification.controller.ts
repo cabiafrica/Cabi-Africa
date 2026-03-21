@@ -27,7 +27,7 @@ import {
     AdminVerificationConfigDto,
     SearchVerifiedPassengersDto,
 } from '../dto/passenger-verification.dto';
-import { DocumentType } from '../types/document-types';
+import { VerificationDocumentType as DocumentType } from '@prisma/client';
 
 interface PassengerVerificationConfig {
     requireNationalId: boolean;

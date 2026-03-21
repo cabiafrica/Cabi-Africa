@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-03-16T20:20:02.622Z",
+  "duration": 6.46,
+  "summary": {
+    "totalTests": 5,
+    "passedTests": 0,
+    "failedTests": 5,
+    "successRate": "0.0%"
+  },
+  "testData": {
+    "driver": {
+      "email": "integration_test_driver_1773692396163@test.com",
+      "firstName": "Integration",
+      "lastName": "Test Driver",
+      "phone": "+254712345678",
+      "dateOfBirth": "1990-01-01",
+      "street": "123 Test Street",
+      "city": "Nairobi",
+      "county": "Nairobi",
+      "vehicleType": "STANDARD",
+      "licensePlate": "TEST1773692396163",
+      "nationalId": "123456789",
+      "drivingLicense": "DL1773692396163",
+      "password": "TestPassword@123",
+      "recaptchaToken": "test-token",
+      "agreeToTerms": true
+    },
+    "passenger": {
+      "email": "integration_test_passenger_1773692396163@test.com",
+      "firstName": "Integration",
+      "lastName": "Test",
+      "phone": "+254712328370",
+      "role": "passenger"
+    },
+    "driverId": null,
+    "passengerId": null,
+    "tripId": null
+  },
+  "results": {
+    "driverRegistration": {
+      "success": false,
+      "error": "Registration failed: \"Error\"",
+      "data": null
+    },
+    "tripRequest": {
+      "success": false,
+      "error": "Passenger registration failed: \"Error\"",
+      "data": null
+    },
+    "tripAssignment": {
+      "success": false,
+      "error": "Trip assignment failed: {\"message\":[\"driverId should not be empty\",\"driverId must be a string\"],\"error\":\"Bad Request\",\"statusCode\":400}",
+      "data": null
+    },
+    "tripCompletion": {
+      "success": false,
+      "error": "Trip completion failed: {\"message\":\"Ride not found\",\"error\":\"Not Found\",\"statusCode\":404}",
+      "data": null
+    },
+    "crossSystemConsistency": {
+      "success": false,
+      "error": null,
+      "data": [
+        {
+          "check": "Driver data consistency",
+          "success": false,
+          "error": "Inconsistent driver data across services"
+        },
+        {
+          "check": "Trip data consistency",
+          "success": false,
+          "error": "Trip data inconsistent"
+        },
+        {
+          "check": "Revenue data consistency",
+          "success": false
+        }
+      ]
+    }
+  }
+}
