@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaUpload, FaCheckCircle, FaSpinner } from 'react-icons/fa';
+import { Upload, CheckCircle, Loader2, X, FileText, Image as ImageIcon, ShieldCheck } from 'lucide-react';
 
 export interface DocumentsData {
   nationalIdUrl: string;
@@ -23,15 +23,12 @@ export const Step2Documents: React.FC<Props> = ({ data, onChange, errors }) => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [verifError, setVerifError] = useState<string | null>(null);
 
+  const [files, setFiles] = useState<Partial<Record<keyof DocumentsData, File>>>({});
+
   const handleFileUpload = async (field: keyof DocumentsData, file: File) => {
-    // In a real app, you'd upload to S3 or similar and set the URL
-    // For this E2E test, we'll use local Blob URLs to show the image if needed,
-    // but the AI NEEDS the actual file.
+    setFiles(prev => ({ ...prev, [field]: file }));
     const url = URL.createObjectURL(file);
     onChange({ [field]: url });
-    
-    // Store the actual file in a local state if we want to send it later
-    // Or just upload immediately
   };
 
   const runAIVerification = async () => {
@@ -44,17 +41,11 @@ export const Step2Documents: React.FC<Props> = ({ data, onChange, errors }) => {
     setVerifError(null);
 
     try {
-      // Create FormData
-      const formData = new FormData();
-      formData.append('userId', data.userId);
-      formData.append('documentType', 'NATIONAL_ID'); // Specializing for this test
+      // Append all available files
+      Object.entries(files).forEach(([key, file]) => {
+          if (file) formData.append(key, file);
+      });
       
-      // Since handleFileUpload currently just sets a URL, 
-      // we need to actually have the file. 
-      // I'll update the renderUploadBox to pass the file object.
-      
-      // For the E2E test, I'll assume we have the files in a local state
-      // But for now, let's just implement the skeleton that calls the backend
       const response = await axios.post('http://localhost:3003/api/verification/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
@@ -83,20 +74,23 @@ export const Step2Documents: React.FC<Props> = ({ data, onChange, errors }) => {
         <div className="flex flex-col items-center justify-center space-y-3">
           {hasFile ? (
             <>
-              <FaCheckCircle className="text-4xl text-green-500" />
+              <CheckCircle className="text-4xl text-green-500" />
               <p className="font-medium text-green-700 dark:text-green-400">Document Uploaded</p>
               <button 
                 type="button" 
-                onClick={() => onChange({ [field]: '' })}
-                className="text-sm text-red-500 hover:underline"
+                onClick={() => {
+                    onChange({ [field]: '' });
+                    setFiles(prev => ({ ...prev, [field]: undefined }));
+                }}
+                className="text-sm text-red-500 hover:underline flex items-center gap-1"
               >
-                Remove
+                <X className="w-4 h-4" /> Remove
               </button>
             </>
           ) : (
             <>
               <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                <FaUpload />
+                <Upload className="w-6 h-6" />
               </div>
               <div>
                 <p className="font-medium text-gray-900 dark:text-white">{title} {isMandatory ? '*' : ''}</p>
@@ -153,7 +147,9 @@ export const Step2Documents: React.FC<Props> = ({ data, onChange, errors }) => {
       <div className="mt-8 bg-indigo-50 dark:bg-indigo-900/10 rounded-xl p-6 border border-indigo-100 dark:border-indigo-800/30">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <h4 className="font-semibold text-indigo-900 dark:text-indigo-100">AI Document Verification</h4>
+            <h4 className="font-semibold text-indigo-900 dark:text-indigo-100 flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5" /> AI Document Verification
+            </h4>
             <p className="text-sm text-indigo-700 dark:text-indigo-300">
               {data.aiVerified 
                 ? `Verification complete with ${data.aiScore}% confidence score.`
@@ -168,9 +164,9 @@ export const Step2Documents: React.FC<Props> = ({ data, onChange, errors }) => {
             className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap"
           >
             {isVerifying ? (
-              <><FaSpinner className="animate-spin" /> Verifying...</>
+              <><Loader2 className="animate-spin w-4 h-4" /> Verifying...</>
             ) : data.aiVerified ? (
-              <><FaCheckCircle /> Verified</>
+              <><CheckCircle className="w-4 h-4" /> Verified</>
             ) : (
               'Run AI Verification'
             )}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { User, Car, Check, Copy, Link as LinkIcon, Users, MapPin, Star } from 'lucide-react';
 
 interface NetworkMember {
     id: string;
@@ -55,9 +56,9 @@ export default function ReferralNetworkVisualizer({ referralCode = 'CABI-REF-202
                     w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center text-xl md:text-2xl
                     border-2 transition-all duration-300
                     ${member.level === 1 ? 'bg-brand-yellow/20 border-brand-yellow shadow-[0_0_15px_rgba(255,191,0,0.3)]' : 'bg-brand-accent/20 border-brand-accent shadow-[0_0_15px_rgba(0,242,254,0.3)]'}
-                    group-hover:scale-125 group-hover:z-50
+                    group-hover:scale-125 group-hover:z-50 overflow-hidden
                 `}>
-                    {member.avatar}
+                    {member.role === 'driver' ? <Car className="w-5 h-5 md:w-7 md:h-7 text-white" /> : <User className="w-5 h-5 md:w-7 md:h-7 text-white" />}
                 </div>
 
                 {/* Tooltip on hover */}
@@ -103,7 +104,7 @@ export default function ReferralNetworkVisualizer({ referralCode = 'CABI-REF-202
                                 {referralCode}
                             </div>
                             <button className="px-6 py-4 bg-brand-accent text-brand-black font-bold rounded-2xl hover:opacity-80 transition-all flex items-center gap-2 shadow-lg shadow-brand-accent/20">
-                                <span>🔗</span> Copy Link
+                                <Copy className="w-4 h-4" /> Copy Link
                             </button>
                         </div>
                     </div>
@@ -131,8 +132,8 @@ export default function ReferralNetworkVisualizer({ referralCode = 'CABI-REF-202
                 {/* Level 0: You (Center) */}
                 <div className="relative z-20 z-10">
                     <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-gradient-to-tr from-brand-yellow to-brand-accent p-1 shadow-[0_0_30px_rgba(255,191,0,0.4)] animate-pulse-slow">
-                        <div className="w-full h-full rounded-full bg-slate-100 dark:bg-brand-dark flex items-center justify-center text-3xl md:text-5xl border-4 border-white dark:border-brand-black">
-                            👤
+                        <div className="w-full h-full rounded-full bg-slate-100 dark:bg-brand-dark flex items-center justify-center border-4 border-white dark:border-brand-black">
+                            <User className="w-8 h-8 md:w-12 md:h-12 text-slate-400" />
                         </div>
                     </div>
                     <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 text-center">

@@ -1,13 +1,39 @@
-
 import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-// import { useLogout } from '@/hooks/useLogout'; // handled by useAuth
 import { useAuth } from '@/context/AuthContext';
 
 import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
 import ReferralNetworkVisualizer from '@/components/dashboard/ReferralNetworkVisualizer';
+import { 
+    Home, 
+    LayoutDashboard, 
+    BarChart3, 
+    Users, 
+    Car, 
+    Wallet, 
+    Settings, 
+    LogOut, 
+    User,
+    ChevronRight,
+    Search,
+    Bell,
+    ExternalLink,
+    DollarSign,
+    MapPin,
+    Star,
+    Clock,
+    Briefcase,
+    Heart,
+    Check,
+    Building2,
+    Plus,
+    Gift,
+    ShieldCheck,
+    CreditCard,
+    Zap
+} from 'lucide-react';
 
 export default function Dashboard() {
     const router = useRouter();
@@ -60,7 +86,7 @@ export default function Dashboard() {
 
                     <nav className="space-y-1 mb-10">
                         <Link href="/" className="group flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-gray-400 transition-all font-bold text-sm">
-                            <span className="text-lg group-hover:scale-110 transition-transform">🏠</span> Home
+                            <Home className="w-4 h-4 group-hover:scale-110 transition-transform" /> Home
                         </Link>
 
                         <div className="py-4">
@@ -69,38 +95,38 @@ export default function Dashboard() {
                                 onClick={() => setActiveTab('overview')}
                                 className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'overview' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
                             >
-                                <span className="text-lg">📊</span> Overview
+                                <LayoutDashboard className="w-4 h-4" /> Overview
                             </button>
                             <button
                                 onClick={() => setActiveTab('analytics')}
                                 className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'analytics' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
                             >
-                                <span className="text-lg">📈</span> Analytics
+                                <BarChart3 className="w-4 h-4" /> Analytics
                             </button>
                             <button
                                 onClick={() => setActiveTab('network')}
                                 className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'network' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
                             >
-                                <span className="text-lg">🕸️</span> My Network
+                                <Users className="w-4 h-4" /> My Network
                             </button>
                             <button
                                 onClick={() => setActiveTab('vehicles')}
                                 className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'vehicles' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
                             >
-                                <span className="text-lg">🚙</span> My Vehicles
+                                <Car className="w-4 h-4" /> My Vehicles
                             </button>
                             <button
                                 onClick={() => setActiveTab('wallet')}
                                 className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'wallet' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
                             >
-                                <span className="text-lg">💳</span> Wallet
+                                <Wallet className="w-4 h-4" /> Wallet
                             </button>
                         </div>
 
                         <div className="pt-4 border-t border-slate-200 dark:border-white/5">
                             <div className="text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest px-3 mb-2">Account</div>
                             <Link href="/settings/profile" className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-gray-400 transition-all font-bold text-sm">
-                                <span className="text-lg">👤</span> Profile Settings
+                                <Settings className="w-4 h-4" /> Profile Settings
                             </Link>
                         </div>
                     </nav>
@@ -124,7 +150,7 @@ export default function Dashboard() {
                             <span className="text-xs font-black uppercase tracking-[0.2em] text-brand-yellow">Dashboard</span>
                         </div>
                         <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                            Welcome back, <span className="text-brand-yellow">{user?.firstName || 'User'}</span>
+                            Welcome back, <span className="text-brand-yellow">{user?.firstName || user?.fullName || 'User'}</span>
                         </h1>
                         <p className="text-slate-500 dark:text-gray-400 mt-2 flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
@@ -138,12 +164,18 @@ export default function Dashboard() {
                             className="flex items-center gap-4 group focus:outline-none"
                         >
                             <div className="text-right hidden sm:block">
-                                <div className="text-sm font-black text-slate-900 dark:text-white group-hover:text-brand-yellow transition-colors">Cabi {user?.firstName}</div>
+                                <div className="text-sm font-black text-slate-900 dark:text-white group-hover:text-brand-yellow transition-colors tracking-tight">
+                                    {user?.fullName || (user?.firstName ? `${user.firstName} ${user.lastName}` : 'Cabi User')}
+                                </div>
                                 <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mt-1">Diamond Member</div>
                             </div>
                             <div className={`w-14 h-14 rounded-lg bg-gradient-to-tr from-brand-yellow to-brand-accent p-[2px] shadow-lg shadow-brand-yellow/10 group-hover:scale-105 transition-all ${showProfileMenu ? 'scale-105 rotate-3' : ''}`}>
                                 <div className="w-full h-full rounded-lg bg-white dark:bg-brand-black flex items-center justify-center text-2xl border-2 border-white dark:border-brand-black overflow-hidden relative">
-                                    👤
+                                    {user?.profilePictureUrl ? (
+                                        <img src={user.profilePictureUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <User className="w-6 h-6 text-slate-400" />
+                                    )}
                                     {showProfileMenu && <div className="absolute inset-0 bg-brand-yellow/20 backdrop-blur-[2px]"></div>}
                                 </div>
                             </div>
@@ -163,13 +195,13 @@ export default function Dashboard() {
                                     </div>
                                     <div className="p-2">
                                         <Link href="/settings/profile" className="flex items-center gap-3 p-4 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 transition-colors font-bold text-sm">
-                                            <span className="text-lg">👤</span> View Profile
+                                            <User className="w-4 h-4" /> View Profile
                                         </Link>
                                         <button
                                             onClick={logout}
                                             className="w-full flex items-center gap-3 p-4 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors font-bold text-sm"
                                         >
-                                            <span className="text-lg">🚪</span> Log Out
+                                            <LogOut className="w-4 h-4" /> Log Out
                                         </button>
                                     </div>
                                     <div className="p-4 bg-slate-50 dark:bg-black/20 text-center">
@@ -216,21 +248,21 @@ export default function Dashboard() {
                                     value: `KES ${userRole === 'driver' ? '124,450' : '12,450'}`,
                                     trend: '+12.5%',
                                     color: 'brand-yellow',
-                                    icon: '💰'
+                                    icon: <DollarSign className="w-5 h-5 text-brand-yellow" />
                                 },
                                 {
                                     label: userRole === 'driver' ? 'Trips Done' : 'Total Rides',
                                     value: userRole === 'driver' ? '412' : '42',
                                     trend: '+3.2%',
                                     color: 'brand-accent',
-                                    icon: userRole === 'driver' ? '🚗' : '📍'
+                                    icon: userRole === 'driver' ? <Car className="w-5 h-5 text-brand-accent" /> : <MapPin className="w-5 h-5 text-brand-accent" />
                                 },
                                 {
                                     label: userRole === 'driver' ? 'Driver Rating' : 'Loyalty Points',
                                     value: userRole === 'driver' ? '4.95' : '850',
                                     trend: 'Top 1%',
                                     color: 'brand-purple',
-                                    icon: '⭐'
+                                    icon: <Star className="w-5 h-5 text-brand-purple" />
                                 }
                             ].map((stat, idx) => (
                                 <div key={idx} className="glass p-8 rounded-2xl border border-slate-200 dark:border-white/5 hover:border-brand-yellow/30 transition-all duration-500 group relative overflow-hidden bg-white/40 dark:bg-white/5">
@@ -255,7 +287,7 @@ export default function Dashboard() {
                                     {/* Driver Stats */}
                                     <div className="glass p-8 rounded-xl border border-slate-200 dark:border-white/5">
                                         <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                                            <span className="text-brand-yellow text-2xl">⏳</span> Driving Performance
+                                            <Clock className="w-5 h-5 text-brand-yellow" /> Driving Performance
                                         </h2>
                                         <div className="space-y-6">
                                             <div className="flex justify-between items-center bg-slate-100 dark:bg-white/5 p-4 rounded-md">
@@ -304,7 +336,9 @@ export default function Dashboard() {
                                                 {isConnectingSacco ? (
                                                     <span className="animate-spin text-xl">◌</span>
                                                 ) : (
-                                                    <><span>🏢</span> View Sacco Portal (External API)</>
+                                                    <>
+                                                        <Building2 className="w-4 h-4" /> View Sacco Portal (External API)
+                                                    </>
                                                 )}
                                             </button>
                                         </div>
@@ -315,7 +349,7 @@ export default function Dashboard() {
                                     {/* Passenger History */}
                                     <div className="glass p-8 rounded-xl border border-slate-200 dark:border-white/5">
                                         <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                                            <span className="text-brand-accent text-2xl">📍</span> Frequent Places
+                                            <MapPin className="w-5 h-5 text-brand-accent" /> Frequent Places
                                         </h2>
                                         <div className="space-y-4">
                                             {[
@@ -325,7 +359,7 @@ export default function Dashboard() {
                                             ].map((place, idx) => (
                                                 <div key={idx} className="flex items-center gap-4 p-4 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-all cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-white/10">
                                                     <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-white/5 flex items-center justify-center text-xl grayscale hover:grayscale-0 transition-all">
-                                                        {place.icon}
+                                                        {place.icon === '🏠' ? <Home className="w-5 h-5" /> : place.icon === '💼' ? <Briefcase className="w-5 h-5" /> : <Heart className="w-5 h-5" /> }
                                                     </div>
                                                     <div>
                                                         <div className="font-bold">{place.name}</div>
@@ -377,7 +411,7 @@ export default function Dashboard() {
                                             </div>
 
                                             <Link href="#" className="w-full py-4 bg-brand-accent text-brand-black font-bold rounded-lg hover:opacity-80 transition-all flex items-center justify-center gap-3">
-                                                🏢 View Corporate Benefits
+                                                <Building2 className="w-4 h-4" /> View Corporate Benefits
                                             </Link>
                                         </div>
                                     </div>
@@ -454,8 +488,8 @@ export default function Dashboard() {
                             {[1, 2, 3].map((i) => (
                                 <div key={i} className="flex items-center justify-between p-4 bg-white dark:bg-white/5 rounded-md border border-slate-200 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/10 transition-colors">
                                     <div className="flex items-center gap-4">
-                                        <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-brand-dark flex items-center justify-center text-xl">
-                                            🚗
+                                        <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-brand-dark flex items-center justify-center">
+                                            <Car className="w-5 h-5 text-slate-400" />
                                         </div>
                                         <div>
                                             <div className="font-bold text-slate-900 dark:text-white">Trip to CBD</div>
@@ -499,8 +533,8 @@ export default function Dashboard() {
                                         <div className="absolute top-0 right-0 w-32 h-32 bg-brand-yellow/5 rounded-full blur-2xl -translate-y-16 translate-x-16"></div>
                                         <div className="flex justify-between items-start mb-6">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-14 h-14 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-3xl shadow-inner">
-                                                    🚗
+                                                <div className="w-14 h-14 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center shadow-inner">
+                                                    <Car className="w-8 h-8 text-brand-yellow" />
                                                 </div>
                                                 <div>
                                                     <h3 className="font-bold text-lg leading-tight">Toyota Fielder</h3>
@@ -530,7 +564,9 @@ export default function Dashboard() {
                                 </>
                             ) : (
                                 <div className="col-span-1 md:col-span-3 py-20 text-center border-2 border-dashed border-slate-200 dark:border-white/10 rounded-3xl bg-slate-50/50 dark:bg-white/5">
-                                    <div className="w-20 h-20 bg-slate-200 dark:bg-white/10 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">🚙</div>
+                                    <div className="w-20 h-20 bg-slate-200 dark:bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <Car className="w-10 h-10 text-slate-400 opacity-50" />
+                                    </div>
                                     <h3 className="text-2xl font-black mb-2">Start Your Engine</h3>
                                     <p className="text-slate-500 mb-8 max-w-md mx-auto">You haven't added any vehicles yet. Register a vehicle to start driving or manage a fleet on Cabi.</p>
                                     <div className="flex justify-center gap-4">
@@ -560,7 +596,9 @@ export default function Dashboard() {
                                     {isConnectingSacco ? (
                                         <span className="animate-spin text-lg">◌</span>
                                     ) : (
-                                        <><span>🏢</span> Sacco Link</>
+                                        <>
+                                            <Building2 className="w-4 h-4" /> Sacco Link
+                                        </>
                                     )}
                                 </button>
                                 <button className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-black font-black rounded-lg text-sm shadow-xl">Top Up</button>
@@ -584,7 +622,7 @@ export default function Dashboard() {
                                     <div className="flex gap-8">
                                         <div>
                                             <div className="text-[10px] uppercase font-black text-slate-500 mb-1">Card Holder</div>
-                                            <div className="text-sm font-bold">CABI USER</div>
+                                            <div className="text-sm font-bold uppercase tracking-widest">{user?.fullName || 'CABI USER'}</div>
                                         </div>
                                         <div>
                                             <div className="text-[10px] uppercase font-black text-slate-500 mb-1">Expires</div>
@@ -630,7 +668,7 @@ export default function Dashboard() {
                                     <div key={i} className="flex items-center justify-between p-6 glass rounded-xl border border-slate-200 dark:border-white/5">
                                         <div className="flex items-center gap-4">
                                             <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-xl ${tx.type === 'Ride' ? 'bg-slate-100 dark:bg-white/5' : tx.type === 'Deposit' ? 'bg-green-500/10' : 'bg-brand-yellow/10'}`}>
-                                                {tx.type === 'Ride' ? '🚗' : tx.type === 'Deposit' ? '📥' : '🎁'}
+                                                {tx.type === 'Ride' ? <Car className="w-5 h-5" /> : tx.type === 'Deposit' ? <Plus className="w-5 h-5 text-green-500" /> : <Gift className="w-5 h-5 text-brand-yellow" />}
                                             </div>
                                             <div>
                                                 <div className="font-bold">{tx.title}</div>

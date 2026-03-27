@@ -34,11 +34,13 @@ services:
       timeout: 3s
       retries: 3
 
-  # Verification Service
+  # Verification Service (Professionally Dockerized)
   verification-service:
     build:
-      context: ./backend/verification-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile.backend
+      args:
+        SERVICE_NAME: verification-service
     container_name: cabi_verification
     ports:
       - "3003:3003"
@@ -47,10 +49,6 @@ services:
       DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
       REDIS_URL: redis://redis:6379
       PORT: 3003
-      MAX_FILE_SIZE: 10485760
-      TESSERACT_WORKERS: 2
-      OCR_CONFIDENCE_THRESHOLD: 0.7
-      MAX_FREE_TRIPS: 1
     depends_on:
       postgres:
         condition: service_healthy
@@ -58,85 +56,65 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  # Dispatch Service
-  dispatch-service:
-    image: node:20-alpine
-    container_name: cabi_dispatch
-    working_dir: /app
-    command: sh -c "npm install && npm run start:prod"
-    ports:
-      - "3334:3334"
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
-      REDIS_URL: redis://redis:6379
-      PORT: 3334
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - ./backend/dispatch-service:/app
-    restart: unless-stopped
-
-  # Referral Service
+  # Referral Service (Professionally Dockerized)
   referral-service:
     build:
-      context: ./backend/referral-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile.backend
+      args:
+        SERVICE_NAME: referral-service
     container_name: cabi_referral
     ports:
       - "3337:3337"
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
       PORT: 3337
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - ./backend/referral-service:/app
-      - /app/node_modules
+    restart: unless-stopped
 
-  # Sacco Service
+  # Sacco Service (Professionally Dockerized)
   sacco-service:
     build:
-      context: ./backend/sacco-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile.backend
+      args:
+        SERVICE_NAME: sacco-service
     container_name: cabi_sacco
     ports:
       - "3338:3338"
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
       PORT: 3338
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - ./backend/sacco-service:/app
-      - /app/node_modules
+    restart: unless-stopped
 
-  # User Service (Added for Integration Testing)
-  user-service:
-    image: node:20-alpine
-    container_name: cabi_user_service
-    working_dir: /app
-    volumes:
-      - .:/app
-      - /app/node_modules
-    command: sh -c "if [ ! -d node_modules ]; then npm install; fi && npx nx serve backend-user-service --host=0.0.0.0 --port=3335"
+  # Auth Gateway (Professionally Dockerized)
+  auth-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      args:
+        SERVICE_NAME: auth-gateway
+    container_name: cabi_auth_gateway
     ports:
-      - "3335:3335"
+      - "3030:3030"
     environment:
+      NODE_ENV: production
       DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
-      REFERRAL_SERVICE_URL: http://referral-service:3337
-      SACCO_SERVICE_URL: http://sacco-service:3338
-      PORT: 3335
+      REDIS_URL: redis://redis:6379
+      PORT: 3030
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
 
 networks:
   default:

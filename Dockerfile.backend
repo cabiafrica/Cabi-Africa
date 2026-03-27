@@ -1,0 +1,42 @@
+# STAGE 1: Build the Monorepo dependencies and specific service
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install dependencies at root (Nx Monorepo Style)
+COPY package*.json ./
+COPY tsconfig*.json ./
+COPY nx.json ./
+RUN npm ci --legacy-peer-deps
+
+# Copy all code (includes libs/ and all apps/)
+COPY . .
+
+# Argument for which service to build (e.g., verification-service)
+ARG SERVICE_NAME
+ENV SERVICE_NAME=${SERVICE_NAME}
+
+# Build the specific service using Nx
+RUN npx nx build ${SERVICE_NAME} --configuration=production
+
+# STAGE 2: Run the built service in a lightweight environment
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+ARG SERVICE_NAME
+ENV NODE_ENV=production
+ENV SERVICE_NAME=${SERVICE_NAME}
+
+# Add non-root user for security
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nestjs
+
+# ONLY copy the specific build artifact from the builder stage
+COPY --from=builder /app/dist/apps/${SERVICE_NAME} ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
+
+USER nestjs
+
+# Note: CMD must use the main entry point from the Nx build output
+CMD ["sh", "-c", "node dist/main.js"]

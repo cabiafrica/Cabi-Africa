@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { ThemeToggle } from '../ThemeToggle';
 // import { useLogout } from '@/hooks/useLogout'; // handled by useAuth
 import { useAuth } from '@/context/AuthContext';
+import { ChevronDown, Menu, X, Rocket, ShieldCheck, Info, MessageSquare, HelpCircle, Phone, Home, Layers, Settings, LogOut } from 'lucide-react';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -82,10 +83,8 @@ export default function Header() {
                                     className="flex items-center gap-2 text-sm font-bold text-white/80 hover:text-white transition-all duration-500"
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                                 >
-                                    <span className="max-w-[80px] truncate">Hi {user?.firstName || 'User'}</span>
-                                    <svg className={`h-4 w-4 text-brand-yellow/70 transition-transform duration-500 ${isMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
-                                    </svg>
+                                    <span className="max-w-[80px] truncate">Hi {user?.firstName}</span>
+                                    <ChevronDown className={`h-4 w-4 text-brand-yellow/70 transition-transform duration-500 ${isMenuOpen ? 'rotate-180' : ''}`} />
                                 </button>
                             </div>
                         ) : (
@@ -112,13 +111,9 @@ export default function Header() {
                         >
                             <span className="sr-only">Open main menu</span>
                             {!isMenuOpen ? (
-                                <svg className="block h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
+                                <Menu className="block h-7 w-7" />
                             ) : (
-                                <svg className="block h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
+                                <X className="block h-7 w-7" />
                             )}
                         </button>
                     </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaSearch, FaCar, FaUserFriends, FaExclamationCircle } from 'react-icons/fa';
+import { Search, Car, Users, AlertCircle, CheckCircle, Loader2, Upload } from 'lucide-react';
 
 export interface VehicleData {
   searchQuery: string;
@@ -103,7 +103,7 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 text-indigo-600 rounded-full flex items-center justify-center text-xl">
-                <FaCar />
+                <Car className="w-6 h-6" />
               </div>
               <div>
                 <h4 className="text-xl font-bold text-gray-900 dark:text-white">{v.make} {v.model}</h4>
@@ -112,7 +112,7 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
             </div>
             <div className="text-right">
               <span className="inline-flex items-center gap-1 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full text-sm font-medium">
-                <FaUserFriends /> {v.currentDriverCount} / 2 Drivers
+                <Users className="w-4 h-4" /> {v.currentDriverCount} / 2 Drivers
               </span>
             </div>
           </div>
@@ -120,7 +120,7 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
           <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
             {canJoin ? (
               <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-lg flex items-start gap-3 border border-green-200 dark:border-green-800">
-                <FaCheckCircle className="text-green-500 mt-0.5" />
+                <CheckCircle className="text-green-500 mt-0.5 w-5 h-5" />
                 <div>
                   <h5 className="font-medium text-green-900 dark:text-green-100">Vehicle Available for Co-Driving</h5>
                   <p className="text-sm text-green-700 dark:text-green-400 mt-1">
@@ -133,7 +133,7 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
               </div>
             ) : (
               <div className="bg-red-50 dark:bg-red-900/10 p-4 rounded-lg flex items-start gap-3 border border-red-200 dark:border-red-800">
-                <FaExclamationCircle className="text-red-500 mt-0.5" />
+                <AlertCircle className="text-red-500 mt-0.5 w-5 h-5" />
                 <div>
                   <h5 className="font-medium text-red-900 dark:text-red-100">Cannot Link to Vehicle</h5>
                   <p className="text-sm text-red-700 dark:text-red-400 mt-1">
@@ -225,17 +225,17 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
 
         <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
            <h5 className="font-semibold text-gray-900 dark:text-white mb-4">Vehicle Documents</h5>
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <button type="button" className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                 <FaUpload className="mx-auto mb-2 text-indigo-500" />
+                 <Upload className="mx-auto mb-2 text-indigo-500 w-6 h-6" />
                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Vehicle Photos</span>
               </button>
               <button type="button" className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                 <FaUpload className="mx-auto mb-2 text-indigo-500" />
+                 <Upload className="mx-auto mb-2 text-indigo-500 w-6 h-6" />
                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Logbook</span>
               </button>
               <button type="button" className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                 <FaUpload className="mx-auto mb-2 text-indigo-500" />
+                 <Upload className="mx-auto mb-2 text-indigo-500 w-6 h-6" />
                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Insurance & Inspection</span>
               </button>
            </div>
@@ -281,7 +281,7 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
         <div className="flex gap-3">
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <FaSearch className="text-gray-400" />
+              <Search className="text-gray-400 w-5 h-5" />
             </div>
             <input
               type="text"
@@ -298,7 +298,7 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
             disabled={isSearching || !data.searchQuery}
             className="px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold rounded-xl hover:bg-gray-800 dark:hover:bg-gray-100 disabled:opacity-50 transition-colors"
           >
-            {isSearching ? <FaSearch className="animate-spin" /> : 'Search'}
+            {isSearching ? <Loader2 className="animate-spin w-5 h-5 mx-auto" /> : 'Search'}
           </button>
         </div>
         

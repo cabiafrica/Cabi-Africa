@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
-import { FaUser, FaCar, FaKey, FaArrowRight, FaCheckCircle, FaBuilding } from 'react-icons/fa';
+import { User, Car, Key, ArrowRight, CheckCircle, Building, ShieldCheck, Loader2, Mail, Phone, Lock } from 'lucide-react';
 import FileUpload from '../components/forms/FileUpload';
 import VideoEmbed from '../components/VideoEmbed';
 
@@ -91,7 +91,7 @@ export default function Register() {
 
             // Save user data to localStorage for dashboard access
             if (typeof window !== 'undefined') {
-                localStorage.setItem('user', JSON.stringify(result.user));
+                localStorage.setItem('authUser', JSON.stringify(result.user));
             }
 
             // Redirect to dashboard or success page
@@ -150,7 +150,7 @@ export default function Register() {
                                 {/* Driver Card */}
                                 <button onClick={() => setRole('driver')} className="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all hover:-translate-y-2 hover:border-brand-accent/50 text-left">
                                     <div className="h-14 w-14 bg-black rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform text-xl text-gray-300 group-hover:text-brand-accent border border-white/10">
-                                        <FaCar />
+                                        <Car className="w-7 h-7" />
                                     </div>
                                     <h3 className="text-xl font-bold mb-1">Driver</h3>
                                     <p className="text-gray-400 text-xs">Drive your own car, manage earnings, and build your own fleet.</p>
@@ -160,7 +160,7 @@ export default function Register() {
                                 <button onClick={() => setRole('vehicle_owner')} className="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all hover:-translate-y-2 hover:border-brand-yellow/50 text-left relative overflow-hidden">
                                     <div className="absolute top-0 right-0 bg-brand-yellow text-black text-[10px] font-bold px-2 py-1 rounded-bl-lg">EARN</div>
                                     <div className="h-14 w-14 bg-black rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform text-xl text-gray-300 group-hover:text-brand-yellow border border-white/10">
-                                        <FaKey />
+                                        <Key className="w-7 h-7" />
                                     </div>
                                     <h3 className="text-xl font-bold mb-1">Vehicle Owner</h3>
                                     <p className="text-gray-400 text-xs">List your vehicles, manage drivers, and earn passive income.</p>
@@ -170,7 +170,7 @@ export default function Register() {
                                 <div className="group p-6 rounded-2xl bg-white/5 border border-white/5 opacity-60 cursor-not-allowed relative overflow-hidden">
                                     <div className="absolute top-0 right-0 bg-gray-700 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">COMING SOON</div>
                                     <div className="h-14 w-14 bg-black rounded-full flex items-center justify-center mb-4 text-xl text-gray-600 border border-white/5">
-                                        <FaBuilding />
+                                        <Building className="w-7 h-7" />
                                     </div>
                                     <h3 className="text-xl font-bold mb-1 text-gray-500">Organization</h3>
                                     <p className="text-gray-500 text-xs">Manage fleets, drivers, saccos, or corporate travel accounts.</p>
@@ -294,7 +294,7 @@ export default function Register() {
                                             onClick={handleNextStep}
                                             className="w-full py-4 rounded-xl font-bold text-black text-lg transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1 shadow-lg bg-brand-accent hover:bg-cyan-300"
                                         >
-                                            Next Step: Documents <FaArrowRight className="text-sm" />
+                                            Next Step: Documents <ArrowRight className="w-5 h-5" />
                                         </button>
                                     </div>
                                 )}
@@ -366,7 +366,7 @@ export default function Register() {
                                                 <input type="text" {...register('referralCode')} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="Enter code if you have one" />
                                                 {referralValidation?.valid && (
                                                     <p className="text-sm text-green-500 flex items-center gap-1">
-                                                        <FaCheckCircle /> Referred by {referralValidation.referrerName}
+                                                        <CheckCircle className="w-4 h-4" /> Referred by {referralValidation.referrerName}
                                                     </p>
                                                 )}
                                                 <p className="text-xs text-gray-500 mt-1">
@@ -439,9 +439,9 @@ export default function Register() {
                                             ${role === 'vehicle_owner' ? 'bg-brand-yellow hover:bg-yellow-400' : role === 'driver' ? 'bg-brand-accent hover:bg-cyan-300' : 'bg-brand-yellow hover:bg-yellow-400'}
                                             `}
                                         >
-                                            {isLoading ? 'Creating Account...' : (
+                                            {isLoading ? <Loader2 className="animate-spin w-6 h-6" /> : (
                                                 <>
-                                                    Create Account <FaArrowRight className="text-sm" />
+                                                    Create Account <ArrowRight className="w-5 h-5" />
                                                 </>
                                             )}
                                         </button>

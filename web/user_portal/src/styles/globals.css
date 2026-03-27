@@ -11,7 +11,7 @@
     }
 
     body {
-        @apply bg-slate-50 text-slate-900 dark:bg-brand-black dark:text-white antialiased selection:bg-brand-yellow/30 selection:text-white transition-colors duration-500 overflow-x-hidden;
+        @apply bg-slate-50 text-slate-900 dark:bg-brand-black dark:text-white antialiased selection:bg-brand-yellow/30 selection:text-white transition-colors duration-500 overflow-x-hidden overflow-y-scroll;
         font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     }
 
