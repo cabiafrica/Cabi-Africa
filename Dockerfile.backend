@@ -12,6 +12,9 @@ RUN npm ci --legacy-peer-deps
 # Copy all code (includes libs/ and all apps/)
 COPY . .
 
+# Generate Prisma Client (Needs schema.prisma path)
+RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
+
 # Argument for which service to build (e.g., verification-service)
 ARG SERVICE_NAME
 ENV SERVICE_NAME=${SERVICE_NAME}

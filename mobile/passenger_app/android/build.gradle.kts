@@ -14,6 +14,18 @@ rootProject.layout.buildDirectory.value(newBuildDir)
 subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
+
+    afterEvaluate {
+        if (pluginManager.hasPlugin("com.android.library")) {
+            configure<com.android.build.gradle.LibraryExtension> {
+                if (namespace == null) {
+                    if (project.name == "flutter_jailbreak_detection") {
+                        namespace = "com.backdoor.flutter_jailbreak_detection"
+                    }
+                }
+            }
+        }
+    }
 }
 subprojects {
     project.evaluationDependsOn(":app")

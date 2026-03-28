@@ -114,6 +114,7 @@ describe('DriverRegistrationForm', () => {
     });
 
     // Temporarily override the hook for this specific test
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const recaptchaHook = require('react-google-recaptcha-v3');
     recaptchaHook.useGoogleReCaptcha = () => ({ executeRecaptcha: undefined });
 

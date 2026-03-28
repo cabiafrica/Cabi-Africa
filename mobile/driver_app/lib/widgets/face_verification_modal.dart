@@ -132,7 +132,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: primaryGold.withOpacity(1.0 - value),
+                          color: primaryGold.withValues(alpha: 1.0 - value),
                           width: 2,
                         ),
                       ),

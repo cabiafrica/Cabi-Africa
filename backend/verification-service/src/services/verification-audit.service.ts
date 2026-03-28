@@ -22,7 +22,11 @@ export interface AuditLog {
 @Injectable()
 export class VerificationAuditService {
   private readonly logger = new Logger(VerificationAuditService.name);
-  private readonly auditFile = path.join(process.cwd(), 'uploads', 'verification_audit.log');
+  private readonly auditFile = path.join(
+    process.cwd(),
+    'uploads',
+    'verification_audit.log',
+  );
 
   constructor() {
     this.ensureAuditFile();
@@ -47,7 +51,7 @@ export class VerificationAuditService {
     };
 
     this.logger.log(`Audit Log: [${action}] for user ${userId}`);
-    
+
     // Append to file (in production use a database)
     try {
       await fs.appendFile(this.auditFile, JSON.stringify(logEntry) + '\n');
@@ -61,9 +65,9 @@ export class VerificationAuditService {
       const content = await fs.readFile(this.auditFile, 'utf8');
       return content
         .split('\n')
-        .filter(line => line.trim().length > 0)
-        .map(line => JSON.parse(line))
-        .filter(log => log.userId === userId);
+        .filter((line) => line.trim().length > 0)
+        .map((line) => JSON.parse(line))
+        .filter((log) => log.userId === userId);
     } catch (error) {
       return [];
     }

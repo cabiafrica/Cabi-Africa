@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { LedgerEntryType, Prisma } from '@prisma/client';
-import { PrismaService } from '@cabi/database';
+import { PrismaService } from '@cabi/backend/database';
 
 const REFERRAL_CONFIG_KEY = 'referral_config';
 const PROMO_CONFIG_KEY = 'promo_config';

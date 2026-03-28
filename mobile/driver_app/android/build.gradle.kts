@@ -18,6 +18,11 @@ subprojects {
     afterEvaluate {
         if (pluginManager.hasPlugin("com.android.library")) {
             configure<com.android.build.gradle.LibraryExtension> {
+                if (namespace == null) {
+                    if (project.name == "flutter_jailbreak_detection") {
+                        namespace = "com.backdoor.flutter_jailbreak_detection"
+                    }
+                }
                 testOptions {
                     unitTests.all {
                         it.enabled = false

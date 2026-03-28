@@ -37,10 +37,10 @@ export interface ExtractedDocumentFields {
   photoUrl?: string;
 }
 
-export type DocumentType = 
-  | 'NATIONAL_ID' 
-  | 'PASSPORT' 
-  | 'DRIVERS_LICENSE' 
+export type DocumentType =
+  | 'NATIONAL_ID'
+  | 'PASSPORT'
+  | 'DRIVERS_LICENSE'
   | 'CERTIFICATE_OF_GOOD_CONDUCT'
   | 'VEHICLE_LOGBOOK'
   | 'VEHICLE_INSURANCE'
@@ -50,14 +50,27 @@ export type DocumentType =
   | 'GOVT_CERTIFICATE'
   | 'UNKNOWN';
 
-export type DocumentQuality = 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR' | 'UNREADABLE';
+export type DocumentQuality =
+  | 'EXCELLENT'
+  | 'GOOD'
+  | 'FAIR'
+  | 'POOR'
+  | 'UNREADABLE';
 
-import { VerificationAuditService, AuditAction } from './verification-audit.service';
+import {
+  VerificationAuditService,
+  AuditAction,
+} from './verification-audit.service';
 
 @Injectable()
 export class AiDocumentVerificationService {
   private readonly logger = new Logger(AiDocumentVerificationService.name);
-  private readonly uploadDir = path.join(process.cwd(), 'uploads', 'documents', 'ai-verified');
+  private readonly uploadDir = path.join(
+    process.cwd(),
+    'uploads',
+    'documents',
+    'ai-verified',
+  );
 
   constructor(private readonly auditService: VerificationAuditService) {
     this.ensureUploadDir();
@@ -84,19 +97,30 @@ export class AiDocumentVerificationService {
     const processedImage = await this.preprocessImage(imageBuffer);
 
     // Step 2: Detect document type using AI
-    const detectedType = expectedDocumentType || await this.detectDocumentType(processedImage);
+    const detectedType =
+      expectedDocumentType || (await this.detectDocumentType(processedImage));
 
     // Step 3: Extract text using OCR
     const ocrResult = await this.extractTextWithConfidence(processedImage);
 
     // Step 4: Parse fields based on document type
-    const extractedFields = this.parseDocumentFields(detectedType, ocrResult.text);
+    const extractedFields = this.parseDocumentFields(
+      detectedType,
+      ocrResult.text,
+    );
 
     // Step 5: Validate document
-    const validationErrors = this.validateDocument(detectedType, extractedFields, ocrResult.confidence);
+    const validationErrors = this.validateDocument(
+      detectedType,
+      extractedFields,
+      ocrResult.confidence,
+    );
 
     // Step 6: Check document quality
-    const documentQuality = await this.assessDocumentQuality(processedImage, ocrResult.confidence);
+    const documentQuality = await this.assessDocumentQuality(
+      processedImage,
+      ocrResult.confidence,
+    );
 
     // Step 7: Detect face if applicable
     const faceDetection = await this.detectFace(processedImage);
@@ -104,15 +128,22 @@ export class AiDocumentVerificationService {
     // Step 8: Check expiry status
     const expiryStatus = this.checkExpiryStatus(extractedFields.expiryDate);
 
-    this.logger.log(`Document analysis complete. Type: ${detectedType}, Valid: ${validationErrors.length === 0}`);
+    this.logger.log(
+      `Document analysis complete. Type: ${detectedType}, Valid: ${validationErrors.length === 0}`,
+    );
 
     const result: DocumentAnalysisResult = {
       documentType: detectedType,
-      isValid: validationErrors.length === 0 && documentQuality !== 'UNREADABLE',
+      isValid:
+        validationErrors.length === 0 && documentQuality !== 'UNREADABLE',
       confidence: ocrResult.confidence,
       extractedFields,
       validationErrors,
-      warnings: this.generateWarnings(documentQuality, validationErrors, extractedFields),
+      warnings: this.generateWarnings(
+        documentQuality,
+        validationErrors,
+        extractedFields,
+      ),
       faceDetected: faceDetection.detected,
       faceLocation: faceDetection.location,
       documentQuality,
@@ -134,10 +165,14 @@ export class AiDocumentVerificationService {
    * Detect document type using image analysis and text patterns
    */
   private async detectDocumentType(imageBuffer: Buffer): Promise<DocumentType> {
-    const { data: { text } } = await Tesseract.recognize(imageBuffer, 'eng+fra+deu');
+    const {
+      data: { text },
+    } = await Tesseract.recognize(imageBuffer, 'eng+fra+deu');
     const textLower = text.toLowerCase();
 
-    this.logger.log(`Detecting document type from text: ${text.substring(0, 100)}...`);
+    this.logger.log(
+      `Detecting document type from text: ${text.substring(0, 100)}...`,
+    );
 
     // Check for Certificate of Good Conduct
     if (
@@ -148,7 +183,7 @@ export class AiDocumentVerificationService {
     ) {
       return 'CERTIFICATE_OF_GOOD_CONDUCT';
     }
-    
+
     // Check for Govt Certificate (SACCO/Organization)
     if (
       textLower.includes('certificate of registration') ||
@@ -202,10 +237,7 @@ export class AiDocumentVerificationService {
     }
 
     // Check for Refugee ID
-    if (
-      textLower.includes('refugee') ||
-      textLower.includes('unhcr')
-    ) {
+    if (textLower.includes('refugee') || textLower.includes('unhcr')) {
       return 'REFUGEE_ID';
     }
 
@@ -218,9 +250,9 @@ export class AiDocumentVerificationService {
   private async preprocessImage(imageBuffer: Buffer): Promise<Buffer> {
     try {
       let processedImage = sharp(imageBuffer);
-      
+
       const metadata = await processedImage.metadata();
-      
+
       // Resize if too small
       if (metadata.width && metadata.width < 1200) {
         processedImage = processedImage.resize(1200);
@@ -271,7 +303,10 @@ export class AiDocumentVerificationService {
   /**
    * Parse document-specific fields based on type
    */
-  private parseDocumentFields(type: DocumentType, text: string): ExtractedDocumentFields {
+  private parseDocumentFields(
+    type: DocumentType,
+    text: string,
+  ): ExtractedDocumentFields {
     const fields: ExtractedDocumentFields = {};
 
     switch (type) {
@@ -377,7 +412,7 @@ export class AiDocumentVerificationService {
     // Name - Surname and Given Names
     const surnameMatch = text.match(/(?:SURNAME|FAMILY NAME)[:\s]+([A-Z\s]+)/i);
     const givenMatch = text.match(/(?:GIVEN NAMES|FORENAMES)[:\s]+([A-Z\s]+)/i);
-    
+
     if (surnameMatch || givenMatch) {
       const surname = surnameMatch?.[1]?.trim() || '';
       const given = givenMatch?.[1]?.trim() || '';
@@ -391,7 +426,10 @@ export class AiDocumentVerificationService {
     if (genderMatch) fields.gender = genderMatch[1].toUpperCase();
   }
 
-  private parseDriversLicense(text: string, fields: ExtractedDocumentFields): void {
+  private parseDriversLicense(
+    text: string,
+    fields: ExtractedDocumentFields,
+  ): void {
     // License numbers: DL-XXXXXXX
     const licenseMatch = text.match(/\b(DL-?\d{7,8})\b/i);
     if (licenseMatch) fields.licenseNumber = licenseMatch[1];
@@ -421,17 +459,25 @@ export class AiDocumentVerificationService {
 
     // Classes
     const classesMatch = text.match(/(?:CLASS|CLASSES)[:\s]+([A-Z]+)/i);
-    if (classesMatch) fields.licenseNumber = (fields.licenseNumber || '') + ' ' + classesMatch[1];
+    if (classesMatch)
+      fields.licenseNumber =
+        (fields.licenseNumber || '') + ' ' + classesMatch[1];
   }
 
-  private parseCertificateOfGoodConduct(text: string, fields: ExtractedDocumentFields): void {
+  private parseCertificateOfGoodConduct(
+    text: string,
+    fields: ExtractedDocumentFields,
+  ): void {
     // Certificate numbers
-    const certMatch = text.match(/\b(CGC|CCGC|CERT|Certificate)[\s#:]+([A-Z0-9]+)\b/i);
+    const certMatch = text.match(
+      /\b(CGC|CCGC|CERT|Certificate)[\s#:]+([A-Z0-9]+)\b/i,
+    );
     if (certMatch) fields.documentNumber = certMatch[2];
 
     // Reference number
     const refMatch = text.match(/(?:REF|REFERENCE)[:\s#]+([A-Z0-9\/]+)/i);
-    if (refMatch) fields.documentNumber = (fields.documentNumber || '') + ' ' + refMatch[1];
+    if (refMatch)
+      fields.documentNumber = (fields.documentNumber || '') + ' ' + refMatch[1];
 
     // Name
     const namePatterns = [
@@ -447,15 +493,22 @@ export class AiDocumentVerificationService {
     }
 
     // Date of issue
-    const dateMatch = text.match(/(?:DATE|ISSUED|DATED)[:\s]+(\d{2}\/\d{2}\/\d{4})/i);
+    const dateMatch = text.match(
+      /(?:DATE|ISSUED|DATED)[:\s]+(\d{2}\/\d{2}\/\d{4})/i,
+    );
     if (dateMatch) fields.dateOfIssue = dateMatch[1];
 
     // Expiry (usually 1 year for good conduct)
-    const expiryMatch = text.match(/(?:VALID|EXPIRES|EXPIRY)[:\s]+(\d{2}\/\d{2}\/\d{4})/i);
+    const expiryMatch = text.match(
+      /(?:VALID|EXPIRES|EXPIRY)[:\s]+(\d{2}\/\d{2}\/\d{4})/i,
+    );
     if (expiryMatch) fields.expiryDate = expiryMatch[1];
   }
 
-  private parseGenericDocument(text: string, fields: ExtractedDocumentFields): void {
+  private parseGenericDocument(
+    text: string,
+    fields: ExtractedDocumentFields,
+  ): void {
     // Try to extract any 8+ digit number as ID
     const idMatch = text.match(/\b(\d{8,})\b/);
     if (idMatch) fields.idNumber = idMatch[1];
@@ -465,10 +518,14 @@ export class AiDocumentVerificationService {
     if (nameMatch) fields.fullName = nameMatch[1];
   }
 
-  private parseVehicleLogbook(text: string, fields: ExtractedDocumentFields): void {
+  private parseVehicleLogbook(
+    text: string,
+    fields: ExtractedDocumentFields,
+  ): void {
     const regMatch = text.match(/\b([A-Z]{3}\s?\d{3}[A-Z])\b/i);
-    if (regMatch) fields.documentNumber = regMatch[1].toUpperCase().replace(/\s/g, '');
-    
+    if (regMatch)
+      fields.documentNumber = regMatch[1].toUpperCase().replace(/\s/g, '');
+
     const ownerMatch = text.match(/(?:OWNER|NAME)[:\s]+([A-Z\s]+)/i);
     if (ownerMatch) fields.fullName = ownerMatch[1].trim();
 
@@ -476,43 +533,56 @@ export class AiDocumentVerificationService {
     if (modelMatch) fields.address = modelMatch[1].trim(); // Using address field generic storage
   }
 
-  private parseVehicleInsurance(text: string, fields: ExtractedDocumentFields): void {
-      const regMatch = text.match(/\b([A-Z]{3}\s?\d{3}[A-Z])\b/i);
-      if (regMatch) fields.documentNumber = regMatch[1].toUpperCase().replace(/\s/g, '');
+  private parseVehicleInsurance(
+    text: string,
+    fields: ExtractedDocumentFields,
+  ): void {
+    const regMatch = text.match(/\b([A-Z]{3}\s?\d{3}[A-Z])\b/i);
+    if (regMatch)
+      fields.documentNumber = regMatch[1].toUpperCase().replace(/\s/g, '');
 
-      const expiryMatch = text.match(/\b(\d{2}\/\d{2}\/\d{4})\b/g);
-      if (expiryMatch && expiryMatch.length > 0) {
-          fields.expiryDate = expiryMatch[expiryMatch.length - 1];
-      }
+    const expiryMatch = text.match(/\b(\d{2}\/\d{2}\/\d{4})\b/g);
+    if (expiryMatch && expiryMatch.length > 0) {
+      fields.expiryDate = expiryMatch[expiryMatch.length - 1];
+    }
   }
 
   private parsePsvBadge(text: string, fields: ExtractedDocumentFields): void {
-      const idMatch = text.match(/\b(\d{8})\b/);
-      if (idMatch) fields.idNumber = idMatch[1];
-      
-      const badgeMatch = text.match(/(?:BADGE|NO)[:\s]+([A-Z0-9]+)/i);
-      if (badgeMatch) fields.documentNumber = badgeMatch[1].trim();
+    const idMatch = text.match(/\b(\d{8})\b/);
+    if (idMatch) fields.idNumber = idMatch[1];
 
-      const expiryMatch = text.match(/\b(\d{2}\/\d{2}\/\d{4})\b/);
-      if (expiryMatch) fields.expiryDate = expiryMatch[0];
+    const badgeMatch = text.match(/(?:BADGE|NO)[:\s]+([A-Z0-9]+)/i);
+    if (badgeMatch) fields.documentNumber = badgeMatch[1].trim();
+
+    const expiryMatch = text.match(/\b(\d{2}\/\d{2}\/\d{4})\b/);
+    if (expiryMatch) fields.expiryDate = expiryMatch[0];
   }
 
-  private parseGovtCertificate(text: string, fields: ExtractedDocumentFields): void {
-      // Certificate Number
-      const certMatch = text.match(/(?:CERTIFICATE NO|CERT NO|REG NO)[:\s#]+([A-Z0-9\/]+)/i);
-      if (certMatch) fields.documentNumber = certMatch[1].trim();
+  private parseGovtCertificate(
+    text: string,
+    fields: ExtractedDocumentFields,
+  ): void {
+    // Certificate Number
+    const certMatch = text.match(
+      /(?:CERTIFICATE NO|CERT NO|REG NO)[:\s#]+([A-Z0-9\/]+)/i,
+    );
+    if (certMatch) fields.documentNumber = certMatch[1].trim();
 
-      // Entity Name
-      const nameMatch = text.match(/(?:NAME OF SOCIETY|NAME)[:\s]+([A-Z\s]+)/i);
-      if (nameMatch) fields.fullName = nameMatch[1].trim();
+    // Entity Name
+    const nameMatch = text.match(/(?:NAME OF SOCIETY|NAME)[:\s]+([A-Z\s]+)/i);
+    if (nameMatch) fields.fullName = nameMatch[1].trim();
 
-      // Date of Registration
-      const dateMatch = text.match(/(?:DATED|REGISTRATION DATE)[:\s]+(\d{2}\/\d{2}\/\d{4})/i);
-      if (dateMatch) fields.dateOfIssue = dateMatch[1];
-      
-      // Expiry (if stated, though often lifetime for some, but some need annual renewal)
-      const expiryMatch = text.match(/(?:EXPIRES|VALID UNTIL|EXPIRY)[:\s]+(\d{2}\/\d{2}\/\d{4})/i);
-      if (expiryMatch) fields.expiryDate = expiryMatch[1];
+    // Date of Registration
+    const dateMatch = text.match(
+      /(?:DATED|REGISTRATION DATE)[:\s]+(\d{2}\/\d{2}\/\d{4})/i,
+    );
+    if (dateMatch) fields.dateOfIssue = dateMatch[1];
+
+    // Expiry (if stated, though often lifetime for some, but some need annual renewal)
+    const expiryMatch = text.match(
+      /(?:EXPIRES|VALID UNTIL|EXPIRY)[:\s]+(\d{2}\/\d{2}\/\d{4})/i,
+    );
+    if (expiryMatch) fields.expiryDate = expiryMatch[1];
   }
 
   /**
@@ -527,7 +597,9 @@ export class AiDocumentVerificationService {
 
     // Check OCR confidence
     if (confidence < 0.5) {
-      errors.push('Document image quality is too low for reliable verification');
+      errors.push(
+        'Document image quality is too low for reliable verification',
+      );
     }
 
     // Check required fields based on type
@@ -560,7 +632,10 @@ export class AiDocumentVerificationService {
     }
 
     // Validate passport number format
-    if (fields.passportNumber && !/^[A-Z]{1,2}\d{7,9}$/i.test(fields.passportNumber)) {
+    if (
+      fields.passportNumber &&
+      !/^[A-Z]{1,2}\d{7,9}$/i.test(fields.passportNumber)
+    ) {
       errors.push('Invalid passport number format');
     }
 
@@ -610,7 +685,7 @@ export class AiDocumentVerificationService {
         .resize(10, 10)
         .raw()
         .toBuffer({ resolveWithObject: true });
-      
+
       let sum = 0;
       for (let i = 0; i < data.length; i += 3) {
         sum += (data[i] + data[i + 1] + data[i + 2]) / 3;
@@ -625,11 +700,13 @@ export class AiDocumentVerificationService {
    * Detect face in document image
    * Note: In production, integrate with a face detection library like face-api.js
    */
-  private async detectFace(imageBuffer: Buffer): Promise<{ detected: boolean; location?: any }> {
+  private async detectFace(
+    imageBuffer: Buffer,
+  ): Promise<{ detected: boolean; location?: any }> {
     try {
       // Simplified face detection using image processing
       // In production, use AWS Rekognition, Google Vision API, or face-api.js
-      
+
       const { data } = await sharp(imageBuffer)
         .resize(100, 100)
         .raw()
@@ -638,23 +715,28 @@ export class AiDocumentVerificationService {
       // Simple heuristic: look for skin-tone like colors in upper portion
       let skinPixels = 0;
       const totalPixels = data.length / 3;
-      
+
       for (let i = 0; i < data.length; i += 3) {
         const r = data[i];
         const g = data[i + 1];
         const b = data[i + 2];
-        
+
         // Simple skin tone detection
-        if (r > 95 && g > 40 && b > 20 &&
-            r > g && r > b &&
-            Math.abs(r - g) > 15 &&
-            r - b > 15) {
+        if (
+          r > 95 &&
+          g > 40 &&
+          b > 20 &&
+          r > g &&
+          r > b &&
+          Math.abs(r - g) > 15 &&
+          r - b > 15
+        ) {
           skinPixels++;
         }
       }
 
       const skinRatio = skinPixels / totalPixels;
-      
+
       // If significant skin-tone pixels in upper portion, likely has face
       if (skinRatio > 0.1) {
         return {
@@ -673,14 +755,16 @@ export class AiDocumentVerificationService {
   /**
    * Check if document is expired
    */
-  private checkExpiryStatus(expiryDateStr?: string): 'VALID' | 'EXPIRING_SOON' | 'EXPIRED' | undefined {
+  private checkExpiryStatus(
+    expiryDateStr?: string,
+  ): 'VALID' | 'EXPIRING_SOON' | 'EXPIRED' | undefined {
     if (!expiryDateStr) return undefined;
 
     try {
       const [day, month, year] = expiryDateStr.split('/').map(Number);
       const expiryDate = new Date(year, month - 1, day);
       const now = new Date();
-      
+
       // Check if expired
       if (expiryDate < now) {
         return 'EXPIRED';
@@ -689,7 +773,7 @@ export class AiDocumentVerificationService {
       // Check if expiring within 30 days
       const thirtyDaysFromNow = new Date();
       thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-      
+
       if (expiryDate < thirtyDaysFromNow) {
         return 'EXPIRING_SOON';
       }
@@ -711,16 +795,22 @@ export class AiDocumentVerificationService {
     const warnings: string[] = [];
 
     if (quality === 'FAIR') {
-      warnings.push('Document image quality is fair. Please ensure good lighting for better verification.');
+      warnings.push(
+        'Document image quality is fair. Please ensure good lighting for better verification.',
+      );
     }
     if (quality === 'POOR') {
-      warnings.push('Document image quality is poor. Please retake with better lighting and focus.');
+      warnings.push(
+        'Document image quality is poor. Please retake with better lighting and focus.',
+      );
     }
 
     if (fields.expiryDate) {
       const status = this.checkExpiryStatus(fields.expiryDate);
       if (status === 'EXPIRING_SOON') {
-        warnings.push('Document is expiring soon. Please renew to avoid service interruption.');
+        warnings.push(
+          'Document is expiring soon. Please renew to avoid service interruption.',
+        );
       }
     }
 
@@ -742,7 +832,10 @@ export class AiDocumentVerificationService {
 
     // Compare full name
     if (providedFields.fullName && extractedFields.fullName) {
-      const match = this.compareNames(providedFields.fullName, extractedFields.fullName);
+      const match = this.compareNames(
+        providedFields.fullName,
+        extractedFields.fullName,
+      );
       fieldResults.push({ field: 'fullName', matches: match });
     }
 
@@ -757,10 +850,13 @@ export class AiDocumentVerificationService {
     if (providedFields.dateOfBirth && extractedFields.dateOfBirth) {
       const provided = this.normalizeDate(providedFields.dateOfBirth);
       const extracted = this.normalizeDate(extractedFields.dateOfBirth);
-      fieldResults.push({ field: 'dateOfBirth', matches: provided === extracted });
+      fieldResults.push({
+        field: 'dateOfBirth',
+        matches: provided === extracted,
+      });
     }
 
-    const allMatch = fieldResults.every(r => r.matches);
+    const allMatch = fieldResults.every((r) => r.matches);
 
     return { matches: allMatch, fieldResults };
   }
@@ -768,7 +864,7 @@ export class AiDocumentVerificationService {
   private compareNames(name1: string, name2: string): boolean {
     const n1 = name1.toLowerCase().trim();
     const n2 = name2.toLowerCase().trim();
-    
+
     // Exact match
     if (n1 === n2) return true;
 
@@ -776,8 +872,8 @@ export class AiDocumentVerificationService {
     const words1 = n1.split(/\s+/);
     const words2 = n2.split(/\s+/);
 
-    const allWords1In2 = words1.every(w => w.length > 2 && n2.includes(w));
-    const allWords2In1 = words2.every(w => w.length > 2 && n1.includes(w));
+    const allWords1In2 = words1.every((w) => w.length > 2 && n2.includes(w));
+    const allWords2In1 = words2.every((w) => w.length > 2 && n1.includes(w));
 
     return allWords1In2 || allWords2In1;
   }

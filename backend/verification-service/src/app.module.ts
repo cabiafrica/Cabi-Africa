@@ -37,4 +37,4 @@ import { PrismaModule } from '@cabi/backend/database';
     VerificationAuditService,
   ],
 })
-export class AppModule { }
+export class AppModule {}

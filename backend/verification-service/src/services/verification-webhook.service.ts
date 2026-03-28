@@ -3,7 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 
 export interface VerificationWebhookEvent {
-  event: 'passenger.verified' | 'passenger.unverified' | 'document.submitted' | 'document.approved' | 'document.rejected';
+  event:
+    | 'passenger.verified'
+    | 'passenger.unverified'
+    | 'document.submitted'
+    | 'document.approved'
+    | 'document.rejected';
   timestamp: string;
   data: {
     userId: string;
@@ -36,7 +41,7 @@ export class VerificationWebhookService {
 
     try {
       this.logger.log(`Sending webhook for event: ${event.event}`);
-      
+
       await axios.post(this.webhookUrl, event, {
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +58,11 @@ export class VerificationWebhookService {
     }
   }
 
-  async notifyPassengerVerified(userId: string, verificationLevel: string, documents: Record<string, any>): Promise<void> {
+  async notifyPassengerVerified(
+    userId: string,
+    verificationLevel: string,
+    documents: Record<string, any>,
+  ): Promise<void> {
     await this.sendWebhook({
       event: 'passenger.verified',
       timestamp: new Date().toISOString(),
@@ -65,7 +74,10 @@ export class VerificationWebhookService {
     });
   }
 
-  async notifyPassengerUnverified(userId: string, reason: string): Promise<void> {
+  async notifyPassengerUnverified(
+    userId: string,
+    reason: string,
+  ): Promise<void> {
     await this.sendWebhook({
       event: 'passenger.unverified',
       timestamp: new Date().toISOString(),
@@ -78,7 +90,11 @@ export class VerificationWebhookService {
     });
   }
 
-  async notifyDocumentSubmitted(userId: string, documentType: string, aiAnalysis?: Record<string, any>): Promise<void> {
+  async notifyDocumentSubmitted(
+    userId: string,
+    documentType: string,
+    aiAnalysis?: Record<string, any>,
+  ): Promise<void> {
     await this.sendWebhook({
       event: 'document.submitted',
       timestamp: new Date().toISOString(),
@@ -91,7 +107,10 @@ export class VerificationWebhookService {
     });
   }
 
-  async notifyDocumentApproved(userId: string, documentType: string): Promise<void> {
+  async notifyDocumentApproved(
+    userId: string,
+    documentType: string,
+  ): Promise<void> {
     await this.sendWebhook({
       event: 'document.approved',
       timestamp: new Date().toISOString(),
@@ -103,7 +122,11 @@ export class VerificationWebhookService {
     });
   }
 
-  async notifyDocumentRejected(userId: string, documentType: string, reason: string): Promise<void> {
+  async notifyDocumentRejected(
+    userId: string,
+    documentType: string,
+    reason: string,
+  ): Promise<void> {
     await this.sendWebhook({
       event: 'document.rejected',
       timestamp: new Date().toISOString(),

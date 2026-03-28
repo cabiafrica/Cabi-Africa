@@ -7,7 +7,7 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    return this.appService.getHello()
+    return this.appService.getHello();
   }
 
   @Get('health')
@@ -16,7 +16,7 @@ export class AppController {
       status: 'ok',
       timestamp: new Date().toISOString(),
       service: 'verification-service',
-      version: '1.0.0'
+      version: '1.0.0',
     };
   }
 
@@ -28,8 +28,8 @@ export class AppController {
       checks: {
         database: 'ok',
         storage: 'ok',
-        ocr: 'ok'
-      }
+        ocr: 'ok',
+      },
     };
   }
 
@@ -39,7 +39,7 @@ export class AppController {
       version: '1.0.0',
       build: process.env.BUILD_NUMBER || 'dev',
       environment: process.env.NODE_ENV || 'development',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 }

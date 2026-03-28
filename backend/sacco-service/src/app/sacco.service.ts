@@ -1,17 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
-import { SaccoStatus } from '@prisma/client';
+import { OrganizationStatus } from '@prisma/client';
+import { randomUUID } from 'crypto';
 
 /**
  * Represents the structure of the TripPaid event.
  */
-export interface TripPaidEvent {
+export class TripPaidEvent {
     tripId: string;
     driverId: string;
     finalFare: number;
 }
 
-export interface CreateSaccoDto {
+export class CreateSaccoDto {
     name: string;
     email: string;
     registrationNumber: string;
@@ -125,7 +126,7 @@ export class SaccoService {
         this.logger.log(`Registering new SACCO: ${dto.name}`);
         
         // Check if registration number already exists
-        const existing = await this.prisma.sacco.findUnique({
+        const existing = await this.prisma.organizations.findFirst({
             where: { registrationNumber: dto.registrationNumber }
         });
 
@@ -135,19 +136,18 @@ export class SaccoService {
 
         // Create SACCO
         // If no certificate provided, status is UNVERIFIED (invalid)
-        const status = dto.certificateUrl ? SaccoStatus.PENDING : SaccoStatus.UNVERIFIED;
+        const status = dto.certificateUrl ? OrganizationStatus.PENDING : OrganizationStatus.UNVERIFIED;
 
-        return this.prisma.sacco.create({
+        return this.prisma.organizations.create({
             data: {
+                id: randomUUID(),
                 name: dto.name,
                 email: dto.email,
                 registrationNumber: dto.registrationNumber,
                 founderName: dto.founderName,
                 registrationCertificateUrl: dto.certificateUrl,
                 status: status,
-                isExternal: dto.isExternal ?? true,
-                apiBaseUrl: dto.apiBaseUrl,
-                webhookUrl: dto.webhookUrl,
+                updatedAt: new Date(),
             }
         });
     }
@@ -155,17 +155,17 @@ export class SaccoService {
     async joinSacco(driverId: string, saccoId: string): Promise<any> {
         this.logger.log(`Driver ${driverId} joining SACCO ${saccoId}`);
         
-        const org = await this.prisma.sacco.findUnique({
+        const org = await this.prisma.organizations.findUnique({
             where: { id: saccoId }
         });
 
-        if (!org || org.status !== SaccoStatus.VERIFIED) {
+        if (!org || org.status !== OrganizationStatus.VERIFIED) {
             throw new Error('SACCO is not verified or does not exist');
         }
 
         return this.prisma.driverProfile.update({
-            where: { id: driverId },
-            data: { saccoId }
+            where: { userId: driverId },
+            data: { organizationId: saccoId }
         });
     }
 
@@ -173,15 +173,15 @@ export class SaccoService {
         this.logger.log(`Driver ${driverId} leaving SACCO`);
         
         return this.prisma.driverProfile.update({
-            where: { id: driverId },
-            data: { saccoId: null }
+            where: { userId: driverId },
+            data: { organizationId: null }
         });
     }
 
     async getSaccos(search?: string): Promise<any[]> {
-        return this.prisma.sacco.findMany({
+        return this.prisma.organizations.findMany({
             where: {
-                status: SaccoStatus.VERIFIED,
+                status: OrganizationStatus.VERIFIED,
                 OR: search ? [
                     { name: { contains: search, mode: 'insensitive' } },
                     { registrationNumber: { contains: search, mode: 'insensitive' } }
@@ -189,17 +189,17 @@ export class SaccoService {
             },
             include: {
               _count: {
-                select: { drivers: true }
+                select: { driver_profiles: true }
               }
             }
         });
     }
 
     async getSaccoDetails(id: string): Promise<any> {
-        return this.prisma.sacco.findUnique({
+        return this.prisma.organizations.findUnique({
             where: { id },
             include: {
-                drivers: {
+                driver_profiles: {
                     include: {
                         user: {
                             select: { fullName: true, phone: true }

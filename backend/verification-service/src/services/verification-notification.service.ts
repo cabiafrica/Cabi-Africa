@@ -12,7 +12,12 @@ export interface VerificationNotification {
   userId: string;
   phone?: string;
   email?: string;
-  event: 'VERIFICATION_REQUIRED' | 'VERIFICATION_APPROVED' | 'VERIFICATION_REJECTED' | 'DOCUMENT_REVIEWED' | 'TRIP_REJECTED';
+  event:
+    | 'VERIFICATION_REQUIRED'
+    | 'VERIFICATION_APPROVED'
+    | 'VERIFICATION_REJECTED'
+    | 'DOCUMENT_REVIEWED'
+    | 'TRIP_REJECTED';
   data: Record<string, any>;
 }
 
@@ -22,10 +27,14 @@ export class VerificationNotificationService {
 
   constructor(private configService: ConfigService) {}
 
-  async sendVerificationNotification(notification: VerificationNotification): Promise<void> {
+  async sendVerificationNotification(
+    notification: VerificationNotification,
+  ): Promise<void> {
     const { userId, phone, email, event, data } = notification;
 
-    this.logger.log(`Sending verification notification: ${event} to user ${userId}`);
+    this.logger.log(
+      `Sending verification notification: ${event} to user ${userId}`,
+    );
 
     // Send SMS notification
     if (phone) {
@@ -34,14 +43,23 @@ export class VerificationNotificationService {
 
     // Send email notification
     if (email) {
-      await this.sendEmail(email, this.getEmailSubject(event), this.getEmailTemplate(event, data));
+      await this.sendEmail(
+        email,
+        this.getEmailSubject(event),
+        this.getEmailTemplate(event, data),
+      );
     }
 
     // Send push notification (would integrate with FCM/APNs)
     await this.sendPush(userId, this.getPushTemplate(event, data));
   }
 
-  async notifyVerificationRequired(userId: string, phone: string, email: string, remainingTrips: number): Promise<void> {
+  async notifyVerificationRequired(
+    userId: string,
+    phone: string,
+    email: string,
+    remainingTrips: number,
+  ): Promise<void> {
     await this.sendVerificationNotification({
       userId,
       phone,
@@ -54,19 +72,29 @@ export class VerificationNotificationService {
     });
   }
 
-  async notifyVerificationApproved(userId: string, phone: string, email: string): Promise<void> {
+  async notifyVerificationApproved(
+    userId: string,
+    phone: string,
+    email: string,
+  ): Promise<void> {
     await this.sendVerificationNotification({
       userId,
       phone,
       email,
       event: 'VERIFICATION_APPROVED',
       data: {
-        message: 'Congratulations! Your account has been verified. You now enjoy priority service.',
+        message:
+          'Congratulations! Your account has been verified. You now enjoy priority service.',
       },
     });
   }
 
-  async notifyVerificationRejected(userId: string, phone: string, email: string, reason: string): Promise<void> {
+  async notifyVerificationRejected(
+    userId: string,
+    phone: string,
+    email: string,
+    reason: string,
+  ): Promise<void> {
     await this.sendVerificationNotification({
       userId,
       phone,
@@ -79,7 +107,13 @@ export class VerificationNotificationService {
     });
   }
 
-  async notifyTripRejected(userId: string, phone: string, email: string, driverName: string, reason: string): Promise<void> {
+  async notifyTripRejected(
+    userId: string,
+    phone: string,
+    email: string,
+    driverName: string,
+    reason: string,
+  ): Promise<void> {
     await this.sendVerificationNotification({
       userId,
       phone,
@@ -93,21 +127,26 @@ export class VerificationNotificationService {
     });
   }
 
-  async notifyDocumentUnderReview(userId: string, phone: string, email: string): Promise<void> {
+  async notifyDocumentUnderReview(
+    userId: string,
+    phone: string,
+    email: string,
+  ): Promise<void> {
     await this.sendVerificationNotification({
       userId,
       phone,
       email,
       event: 'DOCUMENT_REVIEWED',
       data: {
-        message: 'Your documents are under review. You will be notified once verification is complete.',
+        message:
+          'Your documents are under review. You will be notified once verification is complete.',
       },
     });
   }
 
   private async sendSms(phone: string, message: string): Promise<void> {
     this.logger.log(`[SMS] To: ${phone}, Message: ${message}`);
-    
+
     // In production, integrate with:
     // - Twilio
     // - Africa'S Talking
@@ -116,18 +155,25 @@ export class VerificationNotificationService {
     // await twilio.messages.create({ body: message, from: '+1234567890', to: phone });
   }
 
-  private async sendEmail(email: string, subject: string, body: string): Promise<void> {
+  private async sendEmail(
+    email: string,
+    subject: string,
+    body: string,
+  ): Promise<void> {
     this.logger.log(`[EMAIL] To: ${email}, Subject: ${subject}`);
-    
+
     // In production, integrate with:
     // - SendGrid
     // - AWS SES
     // - Nodemailer
   }
 
-  private async sendPush(userId: string, notification: { title: string; body: string }): Promise<void> {
+  private async sendPush(
+    userId: string,
+    notification: { title: string; body: string },
+  ): Promise<void> {
     this.logger.log(`[PUSH] To: ${userId}, Title: ${notification.title}`);
-    
+
     // In production, integrate with:
     // - Firebase Cloud Messaging (FCM)
     // - Apple Push Notification Service (APNs)
@@ -165,7 +211,7 @@ export class VerificationNotificationService {
 
   private getEmailTemplate(event: string, data: Record<string, any>): string {
     const baseUrl = this.configService.get('APP_URL') || 'https://cabi.africa';
-    
+
     return `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background-color: #2E7D32; padding: 20px; text-align: center;">
@@ -173,26 +219,34 @@ export class VerificationNotificationService {
         </div>
         
         <div style="padding: 20px; background-color: #f5f5f5;">
-          ${event === 'VERIFICATION_APPROVED' ? `
+          ${
+            event === 'VERIFICATION_APPROVED'
+              ? `
             <div style="text-align: center; margin-bottom: 20px;">
               <span style="font-size: 60px;">✅</span>
             </div>
             <h2 style="color: #2E7D32; text-align: center;">Congratulations!</h2>
-          ` : event === 'VERIFICATION_REJECTED' ? `
+          `
+              : event === 'VERIFICATION_REJECTED'
+                ? `
             <div style="text-align: center; margin-bottom: 20px;">
               <span style="font-size: 60px;">❌</span>
             </div>
             <h2 style="color: #d32f2f; text-align: center;">Verification Rejected</h2>
-          ` : `
+          `
+                : `
             <div style="text-align: center; margin-bottom: 20px;">
               <span style="font-size: 60px;">⚠️</span>
             </div>
             <h2 style="color: #f57c00; text-align: center;">Action Required</h2>
-          `}
+          `
+          }
           
           <p style="font-size: 16px; color: #333;">${data.message}</p>
           
-          ${event === 'VERIFICATION_REQUIRED' ? `
+          ${
+            event === 'VERIFICATION_REQUIRED'
+              ? `
             <div style="text-align: center; margin-top: 30px;">
               <a href="${baseUrl}/verify" style="background-color: #2E7D32; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
                 Verify Now
@@ -201,15 +255,21 @@ export class VerificationNotificationService {
             <p style="font-size: 14px; color: #666; margin-top: 20px;">
               You have ${data.remainingTrips} trip(s) remaining before verification is required.
             </p>
-          ` : ''}
+          `
+              : ''
+          }
           
-          ${event === 'VERIFICATION_REJECTED' ? `
+          ${
+            event === 'VERIFICATION_REJECTED'
+              ? `
             <div style="text-align: center; margin-top: 30px;">
               <a href="${baseUrl}/verify" style="background-color: #d32f2f; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
                 Submit New Documents
               </a>
             </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
         
         <div style="background-color: #333; color: white; padding: 20px; text-align: center; font-size: 12px;">
@@ -224,7 +284,10 @@ export class VerificationNotificationService {
     `;
   }
 
-  private getPushTemplate(event: string, data: Record<string, any>): { title: string; body: string } {
+  private getPushTemplate(
+    event: string,
+    data: Record<string, any>,
+  ): { title: string; body: string } {
     switch (event) {
       case 'VERIFICATION_REQUIRED':
         return {
