@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: 'standalone',
 
   // Ensure Next.js correctly traces files in a monorepo setup
   // outputFileTracingRoot: require('path').resolve(__dirname, '../../'),

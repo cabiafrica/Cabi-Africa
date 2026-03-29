@@ -1,0 +1,62 @@
+# ==============================================================================
+# CABI AFRICA - MULTI-SERVICE CLOUD BUILD
+# ==============================================================================
+# This file tells Google Cloud how to build and deploy your entire system.
+# ==============================================================================
+
+steps:
+  # 1. BUILD THE BACKEND (Auth Gateway)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest', '-f', 'Dockerfile.backend', '--build-arg', 'SERVICE_NAME=auth-gateway', '.']
+
+  # 2. PUSH THE BACKEND IMAGE
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest']
+
+  # 3. DEPLOY THE BACKEND TO CLOUD RUN
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'auth-gateway'
+      - '--image'
+      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest'
+      - '--update-env-vars=MPESA_ENABLED=false,NODE_ENV=production'
+
+  # 4. BUILD THE FRONTEND (User Portal)
+  # (Note: We use the standalone build optimized for Cloud Run)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest', '-f', 'web/user_portal/Dockerfile', '.']
+
+  # 5. PUSH THE FRONTEND IMAGE
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest']
+
+  # 6. DEPLOY THE FRONTEND TO CLOUD RUN
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'user-portal'
+      - '--image'
+      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--update-env-vars=NODE_ENV=production'
+
+images:
+  - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
+  - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest'
+
+timeout: '1200s'
