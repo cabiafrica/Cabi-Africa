@@ -30,11 +30,11 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-# Next.js standalone build lives in web/user_portal/.next/standalone
+# Next.js standalone build lives in dist/web/user_portal/.next/standalone
 # when using Nx + next output:standalone
-COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/dist/web/user_portal/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/dist/web/user_portal/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/dist/web/user_portal/.next/static ./.next/static
 
 USER nextjs
 EXPOSE 3000

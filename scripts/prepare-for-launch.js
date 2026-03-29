@@ -72,12 +72,12 @@ async function prepareForLaunch() {
 
         // Step 6: Clean Organizations
         console.log('🧹 Step 6: Cleaning Organizations...');
-        const orgMemberCount = await prisma.organizationMember.deleteMany({});
+        const orgMemberCount = await prisma.organization_members.deleteMany({});
         // Break parent-child relationships first
-        await prisma.organization.updateMany({
+        await prisma.organizations.updateMany({
             data: { parentId: null }
         });
-        const orgCount = await prisma.organization.deleteMany({});
+        const orgCount = await prisma.organizations.deleteMany({});
         console.log(`   ✓ Deleted ${orgCount.count} organizations`);
         console.log(`   ✓ Deleted ${orgMemberCount.count} organization memberships`);
         console.log('');
