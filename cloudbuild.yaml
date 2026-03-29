@@ -1,59 +1,84 @@
 # ==============================================================================
 # CABI AFRICA - MULTI-SERVICE CLOUD BUILD
 # ==============================================================================
-# This file tells Google Cloud how to build and deploy your entire system.
-# ==============================================================================
 
 steps:
-  # 1. BUILD THE BACKEND (Auth Gateway)
+  # ── STEP 1: Build Backend Image ──────────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest', '-f', 'Dockerfile.backend', '--build-arg', 'SERVICE_NAME=auth-gateway', '.']
+    id: 'build-backend'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
+      - '-f'
+      - 'Dockerfile.backend'
+      - '--build-arg'
+      - 'SERVICE_NAME=auth-gateway'
+      - '.'
 
-  # 2. PUSH THE BACKEND IMAGE
+  # ── STEP 2: Push Backend Image ───────────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest']
+    id: 'push-backend'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
 
-  # 3. DEPLOY THE BACKEND TO CLOUD RUN
+  # ── STEP 3: Deploy Backend to Cloud Run ──────────────────────────────────────
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-backend'
     entrypoint: gcloud
     args:
       - 'run'
       - 'deploy'
       - 'auth-gateway'
-      - '--image'
-      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
-      - '--region'
-      - 'us-central1'
-      - '--platform'
-      - 'managed'
+      - '--image=us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
+      - '--region=us-central1'
+      - '--platform=managed'
       - '--allow-unauthenticated'
+      - '--port=3333'
+      - '--memory=512Mi'
+      - '--cpu=1'
+      - '--min-instances=0'
+      - '--max-instances=3'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest'
-      - '--update-env-vars=MPESA_ENABLED=false,NODE_ENV=production'
+      - '--set-env-vars=MPESA_ENABLED=false,NODE_ENV=production'
 
-  # 4. BUILD THE FRONTEND (User Portal)
-  # (Note: We use the standalone build optimized for Cloud Run)
+  # ── STEP 4: Build Frontend Image ─────────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest', '-f', 'web/user_portal/Dockerfile', '.']
+    id: 'build-frontend'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest'
+      - '-f'
+      - 'web/user_portal/Dockerfile'
+      - '.'
 
-  # 5. PUSH THE FRONTEND IMAGE
+  # ── STEP 5: Push Frontend Image ──────────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest']
+    id: 'push-frontend'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest'
 
-  # 6. DEPLOY THE FRONTEND TO CLOUD RUN
+  # ── STEP 6: Deploy Frontend to Cloud Run ─────────────────────────────────────
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-frontend'
     entrypoint: gcloud
     args:
       - 'run'
       - 'deploy'
       - 'user-portal'
-      - '--image'
-      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest'
-      - '--region'
-      - 'us-central1'
-      - '--platform'
-      - 'managed'
+      - '--image=us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest'
+      - '--region=us-central1'
+      - '--platform=managed'
       - '--allow-unauthenticated'
-      - '--update-env-vars=NODE_ENV=production'
+      - '--port=3000'
+      - '--memory=512Mi'
+      - '--cpu=1'
+      - '--min-instances=0'
+      - '--max-instances=3'
+      - '--set-env-vars=NODE_ENV=production,NEXT_TELEMETRY_DISABLED=1'
 
 images:
   - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
@@ -61,5 +86,6 @@ images:
 
 options:
   logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_HIGHCPU_8'
 
-timeout: '1200s'
+timeout: '2400s'

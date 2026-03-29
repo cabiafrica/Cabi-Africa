@@ -1,28 +1,28 @@
-# STAGE 1: Build the Monorepo dependencies and specific service
+# STAGE 1: Build the Monorepo and specific service
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies at root (Nx Monorepo Style)
+# Install dependencies
 COPY package*.json ./
 COPY tsconfig*.json ./
 COPY nx.json ./
 RUN npm ci --legacy-peer-deps
 
-# Copy all code (includes libs/ and all apps/)
+# Copy all source code
 COPY . .
 
-# Generate Prisma Client (Needs schema.prisma path)
+# Generate Prisma Client
 RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
 
-# Argument for which service to build (e.g., verification-service)
+# Which service to build (e.g., auth-gateway)
 ARG SERVICE_NAME
 ENV SERVICE_NAME=${SERVICE_NAME}
 
-# Build the specific service using Nx
+# Build the specific service
 RUN npx nx build ${SERVICE_NAME} --configuration=production
 
-# STAGE 2: Run the built service in a lightweight environment
+# STAGE 2: Lightweight production runner
 FROM node:20-alpine AS runner
 
 WORKDIR /app
@@ -31,15 +31,22 @@ ARG SERVICE_NAME
 ENV NODE_ENV=production
 ENV SERVICE_NAME=${SERVICE_NAME}
 
-# Add non-root user for security
+# Security: non-root user
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nestjs
 
-# ONLY copy the specific build artifact from the builder stage
+# Copy ONLY the compiled output (not all node_modules)
 COPY --from=builder /app/dist/${SERVICE_NAME} ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
+
+# Copy the generated package.json for this service and install prod deps only
+COPY --from=builder /app/dist/${SERVICE_NAME}/package.json ./package.json
+RUN npm install --omit=dev --legacy-peer-deps 2>/dev/null || true
+
+# Also copy Prisma client (needed at runtime)
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 USER nestjs
 
-# Note: CMD must use the main entry point from the Nx build output
+# Cloud Run will inject PORT automatically
+EXPOSE 3333
 CMD ["sh", "-c", "node dist/main.js"]
