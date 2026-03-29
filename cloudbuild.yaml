@@ -229,7 +229,3 @@ availableSecrets:
   secretManager:
     - versionName: projects/cabi-africa/secrets/DATABASE_URL/versions/latest
       env: 'DATABASE_URL'
-    - versionName: projects/cabi-africa/secrets/DIRECT_URL/versions/latest
-      env: 'DIRECT_URL'
-    - versionName: projects/cabi-africa/secrets/JWT_SECRET/versions/latest
-      env: 'JWT_SECRET'
