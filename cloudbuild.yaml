@@ -23,19 +23,16 @@ steps:
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
 
   # ── STEP 2: Database Migrations ──────────────────────────────────────────────
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: 'node:20'
     id: 'db-migrate'
     entrypoint: 'bash'
-    secretEnv: ['DATABASE_URL']
+    secretEnv: ['DATABASE_URL', 'DIRECT_URL']
     args:
       - '-c'
       - |
-        docker run --rm \
-          -v /workspace:/workspace \
-          -w /workspace \
-          -e DATABASE_URL=$$DATABASE_URL \
-          us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest \
-          npx prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma
+        # Use the node builder to run migrations directly on the workspace files
+        npm install --no-save prisma@5.22.0 @prisma/client@5.22.0
+        DATABASE_URL=$$DATABASE_URL DIRECT_URL=$$DIRECT_URL npx prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma
 
   # ── STEP 3: Deploy Auth Gateway ─────────────────────────────────────────────
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -229,3 +226,5 @@ availableSecrets:
   secretManager:
     - versionName: projects/cabi-africa/secrets/DATABASE_URL/versions/latest
       env: 'DATABASE_URL'
+    - versionName: projects/cabi-africa/secrets/DIRECT_URL/versions/latest
+      env: 'DIRECT_URL'
