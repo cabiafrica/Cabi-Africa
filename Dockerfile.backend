@@ -35,7 +35,7 @@ ENV SERVICE_NAME=${SERVICE_NAME}
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nestjs
 
 # ONLY copy the specific build artifact from the builder stage
-COPY --from=builder /app/dist/apps/${SERVICE_NAME} ./dist
+COPY --from=builder /app/dist/${SERVICE_NAME} ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 
