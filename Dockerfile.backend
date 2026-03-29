@@ -1,9 +1,8 @@
-# STAGE 1: Build the Monorepo and specific service
+# STAGE 1: Build
 FROM node:20-alpine AS builder
-
 WORKDIR /app
 
-# Install dependencies
+# Install ALL dependencies first
 COPY package*.json ./
 COPY tsconfig*.json ./
 COPY nx.json ./
@@ -19,12 +18,11 @@ RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
 ARG SERVICE_NAME
 ENV SERVICE_NAME=${SERVICE_NAME}
 
-# Build the specific service
+# Build via Nx
 RUN npx nx build ${SERVICE_NAME} --configuration=production
 
-# STAGE 2: Lightweight production runner
+# STAGE 2: Production runner
 FROM node:20-alpine AS runner
-
 WORKDIR /app
 
 ARG SERVICE_NAME
@@ -34,19 +32,15 @@ ENV SERVICE_NAME=${SERVICE_NAME}
 # Security: non-root user
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nestjs
 
-# Copy ONLY the compiled output (not all node_modules)
-COPY --from=builder /app/dist/${SERVICE_NAME} ./dist
+# Copy compiled output
+COPY --from=builder --chown=nestjs:nodejs /app/dist/${SERVICE_NAME} ./dist
 
-# Copy the generated package.json for this service and install prod deps only
-COPY --from=builder /app/dist/${SERVICE_NAME}/package.json ./package.json
-RUN npm install --omit=dev --legacy-peer-deps 2>/dev/null || true
-
-# Also copy Prisma client (needed at runtime)
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+# Copy the FULL node_modules (avoids missing dependency crashes on startup)
+COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
 
 USER nestjs
 
-# Cloud Run will inject PORT automatically
+# Cloud Run injects PORT env var automatically
+# The app reads process.env.PORT and falls back to 3333
 EXPOSE 3333
-CMD ["sh", "-c", "node dist/main.js"]
+CMD ["node", "dist/main.js"]

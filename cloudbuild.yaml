@@ -36,10 +36,12 @@ steps:
       - '--platform=managed'
       - '--allow-unauthenticated'
       - '--port=3333'
-      - '--memory=512Mi'
+      - '--memory=1Gi'
       - '--cpu=1'
       - '--min-instances=0'
       - '--max-instances=3'
+      - '--startup-cpu-boost'
+      - '--timeout=300'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest'
       - '--set-env-vars=MPESA_ENABLED=false,NODE_ENV=production'
 
