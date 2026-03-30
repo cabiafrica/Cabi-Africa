@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Filter, X, ChevronDown } from 'lucide-react';
+import { Filter, ChevronDown } from 'lucide-react';
 
 export interface FilterOption {
     label: string;
@@ -22,7 +22,6 @@ interface AdvancedFiltersProps {
 const AdvancedFilters = ({ filters, onFilterChange, onClear }: AdvancedFiltersProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [activeFilters, setActiveFilters] = useState<Record<string, any>>({});
-    const [expandedFilter, setExpandedFilter] = useState<string | null>(null);
 
     const handleFilterChange = (filterId: string, value: any) => {
         const newFilters = { ...activeFilters };

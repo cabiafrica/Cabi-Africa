@@ -179,7 +179,7 @@ const MetricsOverview = ({ metrics, rideRequests, drivers }: MetricsOverviewProp
             <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-2xl p-6">
                 <h3 className="text-lg font-semibold text-white mb-4">Peak Demand Zones</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {metrics.peakDemandZones.map((zone, index) => (
+                    {metrics.peakDemandZones.map((zone) => (
                         <div
                             key={zone}
                             className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300"

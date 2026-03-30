@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Driver, RideRequest, SurgeZone } from '../types';
 import { CabiMap, MapMarker } from './CabiMap';
 
@@ -156,7 +156,7 @@ const LiveMap = ({ drivers, rideRequests, surgeZones }: LiveMapProps) => {
                                     <div className="mt-2 pt-2 border-t border-slate-700">
                                         <p className="font-semibold text-white">Current Trip:</p>
                                         <p>{selectedDriverRide.passengerName}</p>
-                                        <p className="text-slate-400">{selectedDriverRide.pickupAddress} → {selectedDriverRide.dropoffAddress}</p>
+                                        <p className="text-slate-400">{selectedDriverRide.pickupLocation.address} → {selectedDriverRide.dropoffLocation.address}</p>
                                     </div>
                                 )}
                             </div>

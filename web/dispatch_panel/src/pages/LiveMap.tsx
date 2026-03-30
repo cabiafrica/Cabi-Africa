@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { CabiMap, MapMarker } from '../../components/CabiMap';
+import { useEffect, useState } from 'react';
+import { CabiMap, MapMarker } from '../components/CabiMap';
 
 interface Driver {
     id: string;

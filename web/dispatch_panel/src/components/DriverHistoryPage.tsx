@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Star, Phone, Car, Calendar, DollarSign, TrendingUp, Award, Clock } from 'lucide-react';
+import { Star, Phone, Car, DollarSign, TrendingUp, Award } from 'lucide-react';
 import SearchBar from './SearchBar';
 import AdvancedFilters, { FilterConfig } from './AdvancedFilters';
 import { DriverHistory } from '../types';

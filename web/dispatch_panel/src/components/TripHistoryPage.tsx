@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Calendar, DollarSign, MapPin, Clock, Star, Phone, Mail, User, TrendingUp } from 'lucide-react';
+import { Calendar, MapPin, Star, Phone, User, TrendingUp } from 'lucide-react';
 import SearchBar from './SearchBar';
 import AdvancedFilters, { FilterConfig } from './AdvancedFilters';
 import { TripHistory } from '../types';

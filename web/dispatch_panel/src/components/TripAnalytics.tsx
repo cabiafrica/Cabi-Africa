@@ -252,7 +252,7 @@ const TripAnalytics = ({ analytics }: TripAnalyticsProps) => {
                         <YAxis dataKey="reason" type="category" stroke="#64748b" fontSize={12} width={180} />
                         <Tooltip content={<CustomTooltip />} />
                         <Bar dataKey="count" fill="#f59e0b" radius={[0, 8, 8, 0]}>
-                            {filteredCancellationReasons.map((entry: any, index: number) => (
+                            {filteredCancellationReasons.map((_: any, index: number) => (
                                 <Cell key={`cell-${index}`} fill={`hsl(${220 - index * 30}, 70%, 50%)`} />
                             ))}
                         </Bar>

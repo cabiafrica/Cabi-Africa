@@ -11,7 +11,6 @@ import TripAnalytics from './components/TripAnalytics';
 import TripHistoryPage from './components/TripHistoryPage';
 import DriverHistoryPage from './components/DriverHistoryPage';
 import PassengerManagementPage from './components/PassengerManagementPage';
-import { PERMISSIONS_LIST } from './constants/permissions';
 
 interface MenuItem {
     view: 'overview' | 'rides' | 'drivers' | 'map' | 'surge' | 'analytics' | 'trips' | 'driver-history' | 'passengers';
@@ -158,7 +157,7 @@ function App() {
                 setRideRequests(prev =>
                     prev.map(ride =>
                         ride.id === rideId
-                            ? { ...ride, status: 'DRIVER_ASSIGNED', assignedDriverId: driverId }
+                            ? { ...ride, status: 'assigned', assignedDriverId: driverId }
                             : ride
                     )
                 );
