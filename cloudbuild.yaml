@@ -22,19 +22,19 @@ steps:
       - 'push'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
 
+  # ── STEP 2: Database Migrations (SKIPPED - already applied to production DB) ──
+  # Migrations were applied directly via SQL. Cloud Build cannot reach Supabase
+  # port 6543 from the default VPC. Re-enable this step only when running from
+  # a VPC with Supabase access or using Supabase CLI migrations.
   - name: 'node:20'
     id: 'db-migrate'
     entrypoint: 'bash'
-    secretEnv: ['DATABASE_URL', 'DIRECT_URL']
     args:
       - '-c'
       - |
-        # Install prisma in a temp dir to avoid monorepo peer dep conflicts
-        mkdir -p /tmp/prisma-runner && cd /tmp/prisma-runner
-        npm init -y
-        npm install --no-save prisma@5.22.0 @prisma/client@5.22.0 --legacy-peer-deps
-        # Run migration pointing back to the workspace schema (path inlined to avoid Cloud Build substitution parsing)
-        ./node_modules/.bin/prisma migrate deploy --schema=/workspace/libs/backend/database/prisma/schema.prisma
+        echo "✅ Skipping DB migrations - already applied to production database"
+        echo "   Host: db.goasbgflheresuumhmvd.supabase.co"
+        echo "   To re-run: npx prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma"
 
   # ── STEP 3: Deploy Auth Gateway ─────────────────────────────────────────────
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
