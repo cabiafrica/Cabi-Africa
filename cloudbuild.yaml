@@ -33,9 +33,8 @@ steps:
         mkdir -p /tmp/prisma-runner && cd /tmp/prisma-runner
         npm init -y
         npm install --no-save prisma@5.22.0 @prisma/client@5.22.0 --legacy-peer-deps
-        # Run migration pointing back to the workspace schema
-        PRISMA_SCHEMA=/workspace/libs/backend/database/prisma/schema.prisma
-        ./node_modules/.bin/prisma migrate deploy --schema=$PRISMA_SCHEMA
+        # Run migration pointing back to the workspace schema (path inlined to avoid Cloud Build substitution parsing)
+        ./node_modules/.bin/prisma migrate deploy --schema=/workspace/libs/backend/database/prisma/schema.prisma
 
   # ── STEP 3: Deploy Auth Gateway ─────────────────────────────────────────────
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
