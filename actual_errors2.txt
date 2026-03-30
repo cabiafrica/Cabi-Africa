@@ -1,0 +1,134 @@
+﻿
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\backend\src\docs\stories\user-stories\lo
+yalty.service.ts: line 13, col 5, Error - 
+Unexpected empty constructor. 
+(@typescript-eslint/no-empty-function)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\backend\src\scheduled_ride\scheduled_rid
+e.service.spec.ts: line 154, col 7, Error 
+- Include a description after the 
+"@ts-expect-error" directive to explain 
+why the @ts-expect-error is necessary. 
+The description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\backend\src\scheduled_ride\scheduled_rid
+e.service.spec.ts: line 167, col 7, Error 
+- Include a description after the 
+"@ts-expect-error" directive to explain 
+why the @ts-expect-error is necessary. 
+The description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\backend\src\scheduled_ride\scheduled_rid
+e.service.spec.ts: line 179, col 7, Error 
+- Include a description after the 
+"@ts-expect-error" directive to explain 
+why the @ts-expect-error is necessary. 
+The description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\backend\src\scheduled_ride\scheduled_rid
+e.service.spec.ts: line 211, col 7, Error 
+- Include a description after the 
+"@ts-expect-error" directive to explain 
+why the @ts-expect-error is necessary. 
+The description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\backend\src\scheduled_ride\scheduled_rid
+e.service.spec.ts: line 251, col 7, Error 
+- Include a description after the 
+"@ts-expect-error" directive to explain 
+why the @ts-expect-error is necessary. 
+The description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\backend\src\scheduled_ride\scheduled_rid
+e.service.spec.ts: line 265, col 7, Error 
+- Include a description after the 
+"@ts-expect-error" directive to explain 
+why the @ts-expect-error is necessary. 
+The description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\backend\src\scheduled_ride\scheduled_rid
+e.service.spec.ts: line 279, col 7, Error 
+- Include a description after the 
+"@ts-expect-error" directive to explain 
+why the @ts-expect-error is necessary. 
+The description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\backend\src\scheduled_ride\scheduled_rid
+e.service.spec.ts: line 310, col 7, Error 
+- Include a description after the 
+"@ts-expect-error" directive to explain 
+why the @ts-expect-error is necessary. 
+The description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\backend\src\scheduled_ride\scheduled_rid
+e.service.spec.ts: line 333, col 7, Error 
+- Include a description after the 
+"@ts-expect-error" directive to explain 
+why the @ts-expect-error is necessary. 
+The description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\backend\src\scheduled_ride\scheduled_rid
+e.service.spec.ts: line 346, col 7, Error 
+- Include a description after the 
+"@ts-expect-error" directive to explain 
+why the @ts-expect-error is necessary. 
+The description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\src\pages\settings\profile.tsx: line 
+119, col 41, Error - Include a 
+description after the "@ts-expect-error" 
+directive to explain why the 
+@ts-expect-error is necessary. The 
+description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\src\pages\settings\profile.tsx: line 
+121, col 41, Error - Include a 
+description after the "@ts-expect-error" 
+directive to explain why the 
+@ts-expect-error is necessary. The 
+description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\src\pages\settings\profile.tsx: line 
+139, col 41, Error - Include a 
+description after the "@ts-expect-error" 
+directive to explain why the 
+@ts-expect-error is necessary. The 
+description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+D:\IBN\PROJECTS\Cabi Africa\web\user_porta
+l\src\pages\settings\profile.tsx: line 
+153, col 41, Error - Include a 
+description after the "@ts-expect-error" 
+directive to explain why the 
+@ts-expect-error is necessary. The 
+description must be 3 characters or 
+longer. 
+(@typescript-eslint/ban-ts-comment)
+
+

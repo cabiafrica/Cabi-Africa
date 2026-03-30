@@ -116,9 +116,9 @@ export default function ProfileSettings() {
                                     </label>
                                     <select
                                         name="gender"
-                                        // @ts-ignore
+                                        // @ts-expect-error - bypass testing mock
                                         value={profile.gender || ''}
-                                        // @ts-ignore
+                                        // @ts-expect-error - bypass testing mock
                                         onChange={handleInputChange}
                                         className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-brand-purple dark:bg-gray-700 dark:text-white"
                                     >
@@ -136,7 +136,7 @@ export default function ProfileSettings() {
                                     <input
                                         type="date"
                                         name="dob"
-                                        // @ts-ignore
+                                        // @ts-expect-error - bypass testing mock
                                         value={profile.dob || ''}
                                         onChange={handleInputChange}
                                         className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-brand-purple dark:bg-gray-700 dark:text-white"
@@ -150,7 +150,7 @@ export default function ProfileSettings() {
                                     <input
                                         type="text"
                                         name="idNumber"
-                                        // @ts-ignore
+                                        // @ts-expect-error - bypass testing mock
                                         value={profile.idNumber || ''}
                                         onChange={handleInputChange}
                                         placeholder="Enter ID Number"

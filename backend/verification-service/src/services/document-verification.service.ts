@@ -283,13 +283,17 @@ export class DocumentVerificationService {
         });
 
         // Update vehicle categories if provided
-        if (status === VerificationStatus.VERIFIED && categories && categories.length > 0) {
+        if (
+          status === VerificationStatus.VERIFIED &&
+          categories &&
+          categories.length > 0
+        ) {
           await this.prisma.vehicle.update({
             where: { ownerId: driverProfile.id },
-            data: { 
-                serviceCategories: categories,
-                // updatedAt: new Date() // Not present in schema
-             },
+            data: {
+              serviceCategories: categories,
+              // updatedAt: new Date() // Not present in schema
+            },
           });
         }
       }

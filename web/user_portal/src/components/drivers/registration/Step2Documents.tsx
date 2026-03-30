@@ -67,7 +67,7 @@ export const Step2Documents: React.FC<Props> = ({ data, onChange, errors }) => {
     }
   };
 
-  const renderUploadBox = (title: string, field: keyof DocumentsData, isMandatory: boolean = true) => {
+  const renderUploadBox = (title: string, field: keyof DocumentsData, isMandatory = true) => {
     const hasFile = !!data[field];
     return (
       <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${hasFile ? 'border-green-400 bg-green-50 dark:bg-green-900/10' : 'border-gray-300 dark:border-gray-700 hover:border-indigo-400'}`}>

@@ -36,7 +36,9 @@ export default function BookingSection() {
                 if (passengerId) {
                     checkActiveRide(passengerId);
                 }
-            } catch (e) { }
+            } catch (e) {
+                console.error('Failed to parse user', e);
+            }
         }
 
         return () => {
@@ -150,7 +152,9 @@ export default function BookingSection() {
                 try {
                     const user = JSON.parse(storedUser);
                     passengerId = user.userId || user.id || 'guest';
-                } catch (e) { }
+                } catch (e) {
+                    console.error('Failed to parse user', e);
+                }
             }
         }
 

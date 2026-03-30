@@ -133,7 +133,7 @@ describe('ScheduledRideService', () => {
         status: 'pending',
       };
 
-      // @ts-ignore - Accessing private property for test setup
+      // @ts-expect-error - Accessing private property for test setup
       service.scheduledRides = [dueRide];
 
       mockRideService.findBestDriverForRide.mockResolvedValue(mockDriver);
@@ -151,7 +151,7 @@ describe('ScheduledRideService', () => {
         expect.objectContaining({ userId: mockDriver.id }),
       );
 
-      // @ts-ignore
+      // @ts-expect-error - bypass testing mock
       const updatedRide = service.findRideById(dueRide.id);
       expect(updatedRide.status).toBe('confirmed');
       expect(updatedRide.driverId).toBe(mockDriver.id);
@@ -164,7 +164,7 @@ describe('ScheduledRideService', () => {
       jest.setSystemTime(now);
 
       const dueRide = { id: 'ride-due-no-driver', passengerId: 'passenger-x', pickupTime, destination: 'Nowhere', status: 'pending' };
-      // @ts-ignore
+      // @ts-expect-error - bypass testing mock
       service.scheduledRides = [dueRide];
 
       mockRideService.findBestDriverForRide.mockResolvedValue(null); // No driver found
@@ -176,7 +176,7 @@ describe('ScheduledRideService', () => {
       expect(rideService.findBestDriverForRide).toHaveBeenCalledWith(dueRide.id);
       expect(notificationService.sendNotification).not.toHaveBeenCalled();
 
-      // @ts-ignore
+      // @ts-expect-error - bypass testing mock
       const ride = service.findRideById(dueRide.id);
       expect(ride.status).toBe('pending'); // Status should not change
       expect(ride.driverId).toBeUndefined();
@@ -197,7 +197,7 @@ describe('ScheduledRideService', () => {
         dispatchAttempts: 2, // One attempt away from max (MAX_DISPATCH_ATTEMPTS is 3)
       };
 
-      // @ts-ignore - Accessing private property for test setup
+      // @ts-expect-error - Accessing private property for test setup
       service.scheduledRides = [rideToFail];
 
       mockRideService.findBestDriverForRide.mockResolvedValue(null); // Consistently fail to find a driver
@@ -208,7 +208,7 @@ describe('ScheduledRideService', () => {
       // Assert
       expect(rideService.findBestDriverForRide).toHaveBeenCalledWith(rideToFail.id);
 
-      // @ts-ignore
+      // @ts-expect-error - bypass testing mock
       const updatedRide = service.findRideById(rideToFail.id);
       expect(updatedRide.dispatchAttempts).toBe(3);
       expect(updatedRide.status).toBe('failed');
@@ -248,7 +248,7 @@ describe('ScheduledRideService', () => {
         status: 'pending',
         reminderSent: false,
       };
-      // @ts-ignore
+      // @ts-expect-error - bypass testing mock
       service.scheduledRides = [rideToRemind];
 
       // Act
@@ -262,7 +262,7 @@ describe('ScheduledRideService', () => {
         body: `Your ride to ${rideToRemind.destination} is scheduled in about an hour.`,
       });
 
-      // @ts-ignore
+      // @ts-expect-error - bypass testing mock
       const updatedRide = service.findRideById(rideToRemind.id);
       expect(updatedRide.reminderSent).toBe(true);
     });
@@ -276,7 +276,7 @@ describe('ScheduledRideService', () => {
       const rideAlreadyReminded = {
         id: 'ride-remind-2', passengerId: 'passenger-reminded', pickupTime, destination: 'The Place', status: 'pending', reminderSent: true,
       };
-      // @ts-ignore
+      // @ts-expect-error - bypass testing mock
       service.scheduledRides = [rideAlreadyReminded];
 
       // Act
@@ -307,7 +307,7 @@ describe('ScheduledRideService', () => {
 
     it('should allow an assigned driver to cancel a ride, apply penalty, and notify passenger', async () => {
       // Arrange
-      // @ts-ignore
+      // @ts-expect-error - bypass testing mock
       service.scheduledRides = [JSON.parse(JSON.stringify(confirmedRide))]; // Deep copy
 
       // Act
@@ -330,7 +330,7 @@ describe('ScheduledRideService', () => {
     it('should throw UnauthorizedException if a different driver tries to cancel', async () => {
       // Arrange
       const otherDriverId = 'driver-imposter';
-      // @ts-ignore
+      // @ts-expect-error - bypass testing mock
       service.scheduledRides = [confirmedRide];
 
       // Act & Assert
@@ -343,7 +343,7 @@ describe('ScheduledRideService', () => {
 
     it('should throw NotFoundException if the ride does not exist', async () => {
       // Arrange
-      // @ts-ignore
+      // @ts-expect-error - bypass testing mock
       service.scheduledRides = [];
 
       // Act & Assert
