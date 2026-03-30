@@ -13,10 +13,11 @@ async function bootstrap() {
   app.setGlobalPrefix(globalPrefix);
   app.enableCors();
   const port = process.env.PORT || 3333;
-  await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
-  );
+  await app.listen(port, '0.0.0.0');
+  
+  const url = await app.getUrl();
+  Logger.log(`🚀 Application is running on: ${url}/${globalPrefix}`);
+  Logger.log(`🌍 Cloud Run Service: auth-gateway listening on ${port}`);
 }
 
 bootstrap();

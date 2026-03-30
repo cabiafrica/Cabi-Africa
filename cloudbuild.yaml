@@ -22,7 +22,6 @@ steps:
       - 'push'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
 
-  # ── STEP 2: Database Migrations ──────────────────────────────────────────────
   - name: 'node:20'
     id: 'db-migrate'
     entrypoint: 'bash'
@@ -30,9 +29,9 @@ steps:
     args:
       - '-c'
       - |
-        # Use the node builder to run migrations directly on the workspace files
         npm install --no-save prisma@5.22.0 @prisma/client@5.22.0
-        DATABASE_URL=$$DATABASE_URL DIRECT_URL=$$DIRECT_URL npx prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma
+        # Use the absolute path to ensure the correct version is used
+        ./node_modules/.bin/prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma
 
   # ── STEP 3: Deploy Auth Gateway ─────────────────────────────────────────────
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -46,7 +45,7 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--allow-unauthenticated'
-      - '--port=3333'
+      - '--port=8080'
       - '--memory=1Gi'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest,JWT_SECRET=JWT_SECRET:latest'
       - '--set-env-vars=NODE_ENV=production,MPESA_ENABLED=false'
@@ -81,7 +80,7 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--allow-unauthenticated'
-      - '--port=3003'
+      - '--port=8080'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
 
@@ -115,7 +114,7 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--allow-unauthenticated'
-      - '--port=3002'
+      - '--port=8080'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
 
@@ -149,7 +148,7 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--allow-unauthenticated'
-      - '--port=3004'
+      - '--port=8080'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
 
