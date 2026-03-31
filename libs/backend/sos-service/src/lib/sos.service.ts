@@ -11,6 +11,14 @@ export interface SOSAlert {
     timestamp: Date;
     status: 'NEW' | 'ACKNOWLEDGED' | 'RESOLVED';
     handledBy?: string;
+    resolutionNotes?: string;
+    isMisuse?: boolean;
+}
+
+export interface SosPenaltyConfig {
+    type: 'SUSPENSION' | 'FEE';
+    suspensionDurationDays?: number;
+    feeAmount?: number;
 }
 
 @WebSocketGateway({ cors: true })
@@ -26,6 +34,7 @@ export class SOSGateway {
 @Injectable()
 export class SOSService {
     private alerts: SOSAlert[] = [];
+    private penaltyConfig: SosPenaltyConfig = { type: 'FEE', feeAmount: 500 };
 
     constructor(private readonly sosGateway: SOSGateway) {
         // Seed data
@@ -66,5 +75,27 @@ export class SOSService {
         alert.status = 'ACKNOWLEDGED';
         alert.handledBy = adminId;
         return alert;
+    }
+
+    async resolveAlert(alertId: string, notes: string, isMisuse: boolean) {
+        const alert = this.alerts.find(a => a.id === alertId);
+        if (!alert) throw new Error("Alert not found");
+        if (!notes.trim()) throw new Error("Resolution notes are required");
+        
+        alert.status = 'RESOLVED';
+        alert.resolutionNotes = notes;
+        alert.isMisuse = isMisuse;
+        
+        console.log(`[SOSService] Alert ${alertId} resolved. Status: ${isMisuse ? 'MISUSE' : 'LEGITIMATE'}`);
+        return alert;
+    }
+
+    async getPenaltyConfig() {
+        return this.penaltyConfig;
+    }
+
+    async updatePenaltyConfig(config: SosPenaltyConfig) {
+        this.penaltyConfig = config;
+        return this.penaltyConfig;
     }
 }

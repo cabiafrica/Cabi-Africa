@@ -43,60 +43,16 @@ export const DriverApprovalDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    // Simulate fetching pending registrations with AI scores
-    setRegistrations([
-      {
-        id: 'REQ-1001',
-        name: 'James Kamau',
-        email: 'james.k@example.com',
-        phone: '+254712345678',
-        status: 'PENDING',
-        overallAiScore: 95, // High score -> Auto approve eligible (but waiting on admin final click for demo)
-        appliedAt: '2026-03-18T10:30:00Z',
-        documents: [
-          { name: 'Passport Photo', url: '/demo/face.jpg', status: 'VERIFIED', aiScore: 98 },
-          { name: 'National ID', url: '/demo/id.jpg', status: 'VERIFIED', aiScore: 96 },
-          { name: 'Driving License', url: '/demo/dl.jpg', status: 'VERIFIED', aiScore: 92 },
-        ],
-        vehicle: {
-          make: 'Toyota', model: 'Prius', plate: 'KDA 123A', aiVerified: true, allowCoDriver: false
-        }
-      },
-      {
-        id: 'REQ-1002',
-        name: 'Sarah Ochieng',
-        email: 'sarah.o@example.com',
-        phone: '+254722987654',
-        status: 'MANUAL_REVIEW',
-        overallAiScore: 75, // Medium score -> Manual Review needed
-        appliedAt: '2026-03-18T11:15:00Z',
-        documents: [
-          { name: 'Passport Photo', url: '/demo/face.jpg', status: 'VERIFIED', aiScore: 85 },
-          { name: 'National ID', url: '/demo/id.jpg', status: 'VERIFIED', aiScore: 88 },
-          { name: 'Driving License', url: '/demo/dl.jpg', status: 'PENDING', aiScore: 52 }, // Low score on DL
-        ],
-        vehicle: {
-          make: 'Nissan', model: 'Note', plate: 'KDB 456B', aiVerified: true, allowCoDriver: true
-        }
-      },
-      {
-        id: 'REQ-1003',
-        name: 'Peter Njoroge',
-        email: 'peter.n@example.com',
-        phone: '+254733445566',
-        status: 'REJECTED',
-        overallAiScore: 45, // Low score -> Auto rejected
-        appliedAt: '2026-03-17T09:00:00Z',
-        documents: [
-          { name: 'Passport Photo', url: '/demo/face.jpg', status: 'REJECTED', aiScore: 40 },
-          { name: 'National ID', url: '/demo/id.jpg', status: 'REJECTED', aiScore: 45 },
-          { name: 'Driving License', url: '/demo/dl.jpg', status: 'REJECTED', aiScore: 50 },
-        ],
-        vehicle: {
-          make: 'Honda', model: 'Fit', plate: 'KCA 789C', aiVerified: false, allowCoDriver: false
-        }
+    const fetchApps = async () => {
+      try {
+        const res = await fetch('/api/admin/approvals/registrations');
+        const json = await res.json();
+        setRegistrations(json.data || []);
+      } catch (err) {
+        console.error('Failed to load apps');
       }
-    ]);
+    };
+    fetchApps();
   }, []);
 
   const getScoreColor = (score: number) => {

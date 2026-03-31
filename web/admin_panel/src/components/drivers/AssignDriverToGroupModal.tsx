@@ -1,243 +1,151 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import React, { useState } from 'react';
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Search, User, Users, Check } from 'lucide-react';
+  DialogContent,
+  DialogActions,
+  Button,
+  Box,
+  Typography,
+  TextField,
+  List,
+  ListItem,
+  ListItemText,
+  Checkbox,
+  Chip as Badge,
+  Divider,
+} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+
+interface Group {
+  id: string;
+  name: string;
+  memberCount: number;
+  type: string;
+}
 
 interface AssignDriverToGroupModalProps {
-  groupId: string;
-  groupName: string;
+  isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  driverId: string;
+  driverName: string;
+  currentGroups: string[];
+  onAssign: (groupIds: string[]) => Promise<void>;
 }
 
-interface Driver {
-  id: string;
-  user: {
-    fullName: string;
-    email: string;
-    phone: string;
-  };
-  licenseNumber: string;
-  isOnline: boolean;
-  currentGroup?: {
-    id: string;
-    name: string;
-  };
-}
+const MOCK_GROUPS: Group[] = [
+  { id: '1', name: 'Waitingi Drivers', memberCount: 15, type: 'OPERATIONAL' },
+  { id: '2', name: 'Nairobi CBD Sector', memberCount: 42, type: 'GEOGRAPHIC' },
+  { id: '3', name: 'Night Shift Elite', memberCount: 8, type: 'PERFORMANCE' },
+  { id: '4', name: 'New Recruits', memberCount: 120, type: 'ONBOARDING' },
+];
 
-export function AssignDriverToGroupModal({
-  groupId,
-  groupName,
+export const AssignDriverToGroupModal = ({
+  isOpen,
   onClose,
-  onSuccess,
-}: AssignDriverToGroupModalProps) {
-  const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [availableDrivers, setAvailableDrivers] = useState<Driver[]>([]);
-  const [selectedDriverId, setSelectedDriverId] = useState<string>('');
-  const [driversLoading, setDriversLoading] = useState(false);
+  driverId,
+  driverName,
+  currentGroups,
+  onAssign,
+}: AssignDriverToGroupModalProps) => {
+  const [selectedGroups, setSelectedGroups] = useState<string[]>(currentGroups);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const fetchAvailableDrivers = async () => {
+  const filteredGroups = MOCK_GROUPS.filter((group) =>
+    group.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const toggleGroup = (groupId: string) => {
+    setSelectedGroups((prev) =>
+      prev.includes(groupId)
+        ? prev.filter((id) => id !== groupId)
+        : [...prev, groupId]
+    );
+  };
+
+  const handleSave = async () => {
+    setIsSubmitting(true);
     try {
-      setDriversLoading(true);
-      const params = new URLSearchParams({
-        limit: '50',
-        ...(searchTerm && { search: searchTerm }),
-      });
-
-      const response = await fetch(`/api/admin/drivers/unassigned?${params}`);
-      const data = await response.json();
-      setAvailableDrivers(data.data);
+      await onAssign(selectedGroups);
+      onClose();
     } catch (error) {
-      console.error('Failed to fetch available drivers:', error);
+      console.error('Failed to assign groups:', error);
     } finally {
-      setDriversLoading(false);
+      setIsSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    fetchAvailableDrivers();
-  }, [searchTerm]);
-
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-  };
-
-  const handleAssignDriver = async () => {
-    if (!selectedDriverId) {
-      alert('Please select a driver to assign');
-      return;
-    }
-
-    setLoading(true);
-    
-    try {
-      const response = await fetch(`/api/admin/driver-groups/${groupId}/assign-driver`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ driverId: selectedDriverId }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to assign driver to group');
-      }
-
-      onSuccess();
-      setSelectedDriverId('');
-      setSearchTerm('');
-    } catch (error) {
-      console.error('Failed to assign driver:', error);
-      alert(error.message || 'Failed to assign driver to group');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const selectedDriver = availableDrivers.find(driver => driver.id === selectedDriverId);
 
   return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>Assign Driver to {groupName}</DialogTitle>
-          <DialogDescription>
-            Select a driver to assign to this group. Only unassigned drivers are shown.
-          </DialogDescription>
-        </DialogHeader>
+    <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Assign Driver to Groups</DialogTitle>
+      <DialogContent dividers>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body2" color="text.secondary">
+            Managing groups for: <strong>{driverName}</strong>
+          </Typography>
+        </Box>
 
-        <div className="space-y-6">
-          {/* Driver Search */}
-          <div className="space-y-2">
-            <Label htmlFor="driver-search">Search Drivers</Label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="driver-search"
-                placeholder="Search by name, email, or license number..."
-                value={searchTerm}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
+        <TextField
+          fullWidth
+          variant="outlined"
+          size="small"
+          placeholder="Search groups..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          InputProps={{
+            startAdornment: <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />,
+          }}
+          sx={{ mb: 2 }}
+        />
 
-          {/* Driver Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="driver-select">Select Driver</Label>
-            <Select
-              value={selectedDriverId}
-              onValueChange={setSelectedDriverId}
-              disabled={driversLoading}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Choose a driver to assign" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableDrivers.length === 0 ? (
-                  <div className="p-2 text-sm text-muted-foreground">
-                    {driversLoading ? 'Searching...' : 'No available drivers found'}
-                  </div>
-                ) : (
-                  availableDrivers.map((driver) => (
-                    <SelectItem key={driver.id} value={driver.id}>
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4" />
-                          <div>
-                            <p className="font-medium">{driver.user.fullName}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {driver.licenseNumber}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {driver.user.email} • {driver.user.phone}
-                            </p>
-                          </div>
-                        </div>
-                        {driver.currentGroup && (
-                          <Badge variant="secondary" className="ml-auto">
-                            Currently in {driver.currentGroup.name}
-                          </Badge>
-                        )}
-                        {driver.isOnline && (
-                          <Badge variant="default" className="ml-2">
-                            Online
-                          </Badge>
-                        )}
-                      </div>
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Selected Driver Summary */}
-          {selectedDriver && (
-            <div className="bg-muted/50 p-4 rounded-lg border">
-              <h4 className="font-medium mb-2">Selected Driver:</h4>
-              <div className="flex items-center gap-3">
-                <User className="h-8 w-8 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">{selectedDriver.user.fullName}</p>
-                  <p className="text-sm text-muted-foreground">
-                    License: {selectedDriver.licenseNumber}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Contact: {selectedDriver.user.email} • {selectedDriver.user.phone}
-                  </p>
-                </div>
-              </div>
-            </div>
+        <List sx={{ maxHeight: 300, overflow: 'auto' }}>
+          {filteredGroups.map((group) => (
+            <React.Fragment key={group.id}>
+              <ListItem
+                dense
+                onClick={() => toggleGroup(group.id)}
+                sx={{ borderRadius: 1 }}
+              >
+                <Checkbox
+                  edge="start"
+                  checked={selectedGroups.includes(group.id)}
+                  tabIndex={-1}
+                  disableRipple
+                />
+                <ListItemText
+                  primary={group.name}
+                  secondary={`${group.memberCount} members • ${group.type}`}
+                />
+                <Badge
+                  label={group.type}
+                  size="small"
+                  variant="outlined"
+                  sx={{ ml: 1, fontSize: '0.7rem' }}
+                />
+              </ListItem>
+              <Divider component="li" />
+            </React.Fragment>
+          ))}
+          {filteredGroups.length === 0 && (
+            <Typography variant="body2" color="text.secondary" align="center" sx={{ py: 4 }}>
+              No groups found matching your search.
+            </Typography>
           )}
-        </div>
-
-        <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            onClick={handleAssignDriver}
-            disabled={loading || !selectedDriverId}
-          >
-            {loading ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Assigning...
-              </>
-            ) : (
-              <>
-                <Check className="h-4 w-4 mr-2" />
-                Assign to {groupName}
-              </>
-            )}
-          </Button>
-        </DialogFooter>
+        </List>
       </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} disabled={isSubmitting}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSave}
+          variant="contained"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Saving...' : 'Save Changes'}
+        </Button>
+      </DialogActions>
     </Dialog>
   );
-}
+};

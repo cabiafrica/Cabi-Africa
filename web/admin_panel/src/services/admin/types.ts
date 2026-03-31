@@ -142,6 +142,23 @@ export interface Subgroup {
     memberCount: number;
 }
 
+export interface DriverGroup {
+    id: string;
+    name: string;
+    description?: string;
+    parentGroupId?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    parentGroup?: {
+        id: string;
+        name: string;
+    };
+    _count?: {
+        drivers: number;
+        subgroups: number;
+    };
+}
+
 export interface PlatformUser {
     id: string;
     name: string;

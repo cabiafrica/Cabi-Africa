@@ -44,6 +44,8 @@ import { JobActivitiesDashboard } from './components/operations/JobActivitiesDas
 // New Role Pages
 import RolesList from './pages/Roles/RolesList';
 import RoleEditor from './pages/Roles/RoleEditor';
+import { DriverGroupsPage } from './pages/DriverGroupsPage';
+import { SosIncidentDashboard } from './pages/SosIncidentDashboard';
 
 // Widgets
 import { RevenueWidget } from './components/widgets/RevenueWidget';
@@ -82,6 +84,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
       { icon: '🚗', label: 'Job Activities', view: '/job-activities', permission: 'DISPATCH_DASHBOARD_VIEW' },
       { icon: '📄', label: 'Driver Applications', view: '/applications', permission: 'DRIVER_APPLICATIONS_VIEW' },
       { icon: '🏢', label: 'Organization', view: '/organization-management', permission: 'ORGANIZATION_VIEW' },
+      { icon: '📁', label: 'Driver Groups', view: '/driver-groups', permission: 'ORGANIZATION_VIEW' },
       { icon: '📅', label: 'Scheduled Rides', view: '/scheduled-rides', permission: 'DISPATCH_RIDE_MONITOR' },
       { icon: '🎫', label: 'Support Tickets', view: '/support-tickets', permission: 'OCCURRENCE_VIEW' },
       { icon: '📊', label: 'Driver Performance', view: '/driver-performance', permission: 'DISPATCH_ANALYTICS_VIEW' },
@@ -347,8 +350,10 @@ function App() {
               <Route path="/applications" element={<DriverApprovalDashboard />} />
               <Route path="/job-activities" element={<JobActivitiesDashboard />} />
 
-              <Route path="/resolution-dashboard" element={<div className="card"> <h2 className="text-2xl font-bold mb-4">Resolution Dashboard</h2> <p>Dispute Resolution and Case Management</p> </div>} />
+              <Route path="/resolution-dashboard" element={<SosIncidentDashboard />} />
+              <Route path="/resolution-dashboard/:incidentId" element={<SosIncidentDashboard />} />
               <Route path="/organization-management" element={<OrganizationManagement />} />
+              <Route path="/driver-groups" element={<DriverGroupsPage />} />
               <Route path="/referral-config" element={<ReferralConfig />} />
               <Route path="/referral-dashboard" element={<ReferralDashboard />} />
               <Route path="/simulation-dashboard" element={<SimulationDashboard />} />

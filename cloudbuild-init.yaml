@@ -1,0 +1,13 @@
+steps:
+  - name: 'node:20'
+    id: 'db-init'
+    entrypoint: 'bash'
+    secretEnv: ['DATABASE_URL']
+    args:
+      - '-c'
+      - |
+        npm install --no-save prisma@5.22.0 @prisma/client@5.22.0 bcryptjs
+        # Generate Prisma client first
+        npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
+        # Run the script with the admin password
+        DATABASE_URL=$$DATABASE_URL node scripts/prepare-for-launch.js "iBNKenya@2026"

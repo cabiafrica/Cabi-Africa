@@ -2,7 +2,8 @@ import {
     DriverApplication,
     DriverApplicationDetails,
     Badge,
-    ExpiringDocumentResult
+    ExpiringDocumentResult,
+    DriverGroup
 } from './types';
 
 export class DriverService {
@@ -152,5 +153,38 @@ export class DriverService {
             { driverId: 'u101', driverName: 'Driver X', docType: 'INSURANCE', expiryDate: '2024-12-20' },
             { driverId: 'u105', driverName: 'Driver Z', docType: 'LICENSE', expiryDate: '2024-12-25' },
         ];
+    }
+
+    async getDriverGroups(): Promise<DriverGroup[]> {
+        try {
+            const res = await fetch('/api/admin/driver-groups');
+            if (res.ok) {
+                const data = await res.json();
+                return data.data;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        return [];
+    }
+
+    async createDriverGroup(groupData: any): Promise<DriverGroup> {
+        const res = await fetch('/api/admin/driver-groups', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(groupData)
+        });
+        if (!res.ok) throw new Error('Failed to create driver group');
+        const data = await res.json();
+        return data.data;
+    }
+
+    async assignDriverToGroup(groupId: string, driverId: string): Promise<void> {
+        const res = await fetch(`/api/admin/driver-groups/${groupId}/assign-driver`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ driverId })
+        });
+        if (!res.ok) throw new Error('Failed to assign driver to group');
     }
 }

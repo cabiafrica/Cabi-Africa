@@ -70,14 +70,22 @@ export class ReferralService {
             driverId?: string;
         }
     ): Promise<{ total: number; entries: CommissionLedgerEntry[] }> {
-        await new Promise(resolve => setTimeout(resolve, 600));
-        return {
-            total: 100,
-            entries: [
-                { id: 'tx-1', date: '2024-05-20T10:00:00Z', driverId: 'u1', amount: 50.00, type: 'CREDIT', description: 'Commission from u2', transactionType: 'REGISTRATION_FEE_COMMISSION' },
-                { id: 'tx-2', date: '2024-05-21T14:30:00Z', driverId: 'u3', amount: -10.00, type: 'DEBIT', description: 'Correction', transactionType: 'MANUAL_ADJUSTMENT' },
-            ]
-        };
+        const params = new URLSearchParams({
+            page: filters.page.toString(),
+            limit: filters.limit.toString()
+        });
+        if (filters.startDate) params.set('startDate', filters.startDate);
+        if (filters.endDate) params.set('endDate', filters.endDate);
+        if (filters.driverId) params.set('driverId', filters.driverId);
+
+        try {
+            const res = await fetch(`/api/admin/referral/ledger?${params.toString()}`);
+            if (res.ok) return await res.json();
+            throw new Error('Failed to fetch ledger');
+        } catch (e) {
+            console.error(e);
+            return { total: 0, entries: [] };
+        }
     }
 
     async getReferralDashboardStats() {

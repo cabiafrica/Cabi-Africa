@@ -15,17 +15,29 @@ import { RbacModule } from '@cabi/backend/rbac';
 
 import { AdminUsersController } from './admin-users.controller';
 import { AdminUsersService } from './admin-users.service';
+import { SOSController } from './sos.controller';
+import { SOSService } from './sos.service';
+import { DriverGroupController } from './driver-group.controller';
+import { DriverGroupService } from './driver-group.service';
+import { ReferralController } from './referral.controller';
+import { ReferralService } from './referral.service';
+import { DriverApprovalController } from './driver-approval.controller';
+import { DriverApprovalService } from './driver-approval.service';
 
 @Module({
   imports: [
     RbacModule,
   ],
-  controllers: [AdminController, AdminRolesController, AdminUsersController],
+  controllers: [AdminController, AdminRolesController, AdminUsersController, SOSController, DriverGroupController, ReferralController, DriverApprovalController],
   providers: [
     AdminService,
     AdminRolesService,
     AdminUsersService,
     Admin2FAService,
+    SOSService,
+    DriverGroupService,
+    ReferralService,
+    DriverApprovalService,
     AdminReadOnlyGuard,
     AdminPermissionGuard,
     {

@@ -1,29 +1,32 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
+import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
-  TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { 
-  MoreHorizontal,
-  Eye,
-  Edit,
-  Trash2,
-  Users,
-  Building2,
-} from 'lucide-react';
+  Paper,
+  Button,
+  Chip,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+  Box,
+  CircularProgress,
+  Divider,
+} from '@mui/material';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  MoreVert as MoreIcon,
+  Visibility as EyeIcon,
+  Edit as EditIcon,
+  Delete as TrashIcon,
+  Group as UsersIcon,
+  Business as BuildingIcon,
+} from '@mui/icons-material';
 import { DriverGroup } from '@/types/admin';
 
 interface DriverGroupsListProps {
@@ -43,138 +46,134 @@ export function DriverGroupsList({
   onEdit,
   onDelete,
 }: DriverGroupsListProps) {
-  const handleView = (group: DriverGroup) => {
-    onView?.(group);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [selectedGroup, setSelectedGroup] = React.useState<DriverGroup | null>(null);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, group: DriverGroup) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedGroup(group);
   };
 
-  const handleEdit = (group: DriverGroup) => {
-    onEdit?.(group);
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedGroup(null);
   };
 
-  const handleDelete = (group: DriverGroup) => {
-    if (window.confirm(`Are you sure you want to delete "${group.name}"?`)) {
-      onDelete?.(group);
-    }
-  };
+  const currentGroup = selectedGroup;
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        <span className="ml-2">Loading driver groups...</span>
-      </div>
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8 }}>
+        <CircularProgress />
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+          Loading driver groups...
+        </Typography>
+      </Box>
     );
   }
 
   if (groups.length === 0) {
     return (
-      <div className="text-center py-8">
-        <Building2 className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold mb-2">No driver groups found</h3>
-        <p className="text-muted-foreground mb-4">
+      <Box sx={{ textAlign: 'center', py: 8 }}>
+        <BuildingIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
+        <Typography variant="h6">No driver groups found</Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
           Get started by creating your first driver group.
-        </p>
-        <Button onClick={onRefresh}>Refresh</Button>
-      </div>
+        </Typography>
+        <Button variant="outlined" onClick={onRefresh}>Refresh</Button>
+      </Box>
     );
   }
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Group Name</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Parent Group</TableHead>
-            <TableHead>Members</TableHead>
-            <TableHead>Subgroups</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Created</TableHead>
-            <TableHead className="w-[70px]">Actions</TableHead>
+    <TableContainer component={Paper} variant="outlined">
+      <Table sx={{ minWidth: 650 }}>
+        <TableHead>
+          <TableRow sx={{ bgcolor: 'action.hover' }}>
+            <TableCell>Group Name</TableCell>
+            <TableCell>Description</TableCell>
+            <TableCell>Parent Group</TableCell>
+            <TableCell align="center">Members</TableCell>
+            <TableCell align="center">Subgroups</TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell>Created</TableCell>
+            <TableCell align="right">Actions</TableCell>
           </TableRow>
-        </TableHeader>
+        </TableHead>
         <TableBody>
           {groups.map((group) => (
-            <TableRow key={group.id} className="hover:bg-muted/50">
-              <TableCell className="font-medium">
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-muted-foreground" />
+            <TableRow key={group.id} hover>
+              <TableCell sx={{ fontWeight: 500 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <BuildingIcon color="disabled" fontSize="small" />
                   {group.name}
                   {group.parentGroupId && (
-                    <Badge variant="secondary" className="text-xs">
-                      Subgroup
-                    </Badge>
+                    <Chip label="Subgroup" size="small" variant="outlined" sx={{ fontSize: '0.7rem', height: 20 }} />
                   )}
-                </div>
+                </Box>
               </TableCell>
-              <TableCell className="max-w-xs truncate">
-                {group.description || (
-                  <span className="text-muted-foreground">No description</span>
-                )}
+              <TableCell sx={{ maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {group.description || <Typography variant="caption" color="text.disabled">No description</Typography>}
               </TableCell>
               <TableCell>
                 {group.parentGroup ? (
-                  <div className="flex items-center gap-1">
-                    <Building2 className="h-3 w-3 text-muted-foreground" />
-                    {group.parentGroup.name}
-                  </div>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <BuildingIcon color="disabled" sx={{ fontSize: 14 }} />
+                    <Typography variant="body2">{group.parentGroup.name}</Typography>
+                  </Box>
                 ) : (
-                  <Badge variant="outline">Root Group</Badge>
+                  <Chip label="Root" size="small" color="secondary" variant="outlined" sx={{ fontSize: '0.7rem', height: 20 }} />
                 )}
               </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1">
-                  <Users className="h-4 w-4 text-muted-foreground" />
+              <TableCell align="center">
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
+                  <UsersIcon color="disabled" sx={{ fontSize: 16 }} />
                   {group._count?.drivers || 0}
-                </div>
+                </Box>
               </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1">
-                  <Building2 className="h-4 w-4 text-muted-foreground" />
+              <TableCell align="center">
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
+                  <BuildingIcon color="disabled" sx={{ fontSize: 16 }} />
                   {group._count?.subgroups || 0}
-                </div>
+                </Box>
               </TableCell>
               <TableCell>
-                <Badge variant="default" className="bg-green-100 text-green-800">
-                  Active
-                </Badge>
+                <Chip label="Active" size="small" color="success" />
               </TableCell>
               <TableCell>
                 {new Date(group.createdAt).toLocaleDateString()}
               </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <span className="sr-only">Open menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => handleView(group)}>
-                      <Eye className="mr-2 h-4 w-4" />
-                      View Details
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleEdit(group)}>
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={() => handleDelete(group)}
-                      className="text-destructive focus:text-destructive"
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+              <TableCell align="right">
+                <IconButton size="small" onClick={(e) => handleMenuOpen(e, group)}>
+                  <MoreIcon />
+                </IconButton>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-    </div>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuItem onClick={() => { onView?.(currentGroup!); handleMenuClose(); }}>
+          <ListItemIcon><EyeIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>View Details</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={() => { onEdit?.(currentGroup!); handleMenuClose(); }}>
+          <ListItemIcon><EditIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>Edit Group</ListItemText>
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={() => { onDelete?.(currentGroup!); handleMenuClose(); }} sx={{ color: 'error.main' }}>
+          <ListItemIcon><TrashIcon fontSize="small" color="error" /></ListItemIcon>
+          <ListItemText>Delete Group</ListItemText>
+        </MenuItem>
+      </Menu>
+    </TableContainer>
   );
 }

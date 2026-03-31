@@ -3,29 +3,24 @@ import { Box, Button, CircularProgress, Grid, Paper, TextField, Typography } fro
 
 // Mock API functions
 const fetchReferralConfig = async () => {
-  console.log('[Mock] Fetching Referral config for UI');
-  // In a real app: await axios.get('/api/admin/referral/config');
-  return {
-    registrationFee: 1000,
-    registrationFeeSplit: { system: 60, upline1: 30, upline2: 10 },
-    fareCommissionSplit: { system: 70, upline1: 20, upline2: 10 },
-    saccoSavingsRate: 5,
-    earningBadgeIds: ['badge-pro-driver'],
-  };
+  const res = await fetch('/api/admin/referral/config');
+  if (!res.ok) throw new Error('Failed to fetch config');
+  const json = await res.json();
+  return json.data;
 };
 
 const updateReferralConfig = async (config: any) => {
-  console.log('[Mock] Updating Referral config from UI', config);
-  // In a real app: await axios.put('/api/admin/referral/config', config);
-  const regSplit = config.registrationFeeSplit;
-  if (regSplit.system + regSplit.upline1 + regSplit.upline2 !== 100) {
-    throw new Error('Registration fee splits must sum to 100.');
+  const res = await fetch('/api/admin/referral/config', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(config),
+  });
+  if (!res.ok) {
+     const json = await res.json();
+     throw new Error(json.message || 'Failed to update config');
   }
-  const fareSplit = config.fareCommissionSplit;
-  if (fareSplit.system + fareSplit.upline1 + fareSplit.upline2 !== 100) {
-    throw new Error('Fare commission splits must sum to 100.');
-  }
-  return config;
+  const json = await res.json();
+  return json.data;
 };
 
 const initialConfigState = {

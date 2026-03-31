@@ -1,12 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Search, Plus, Users, Building2 } from 'lucide-react';
-import { DriverGroupsList } from './DriverGroupsList';
-import { CreateDriverGroupModal } from './CreateDriverGroupModal';
+import {
+  Box,
+  Typography,
+  Button,
+  TextField,
+  Grid,
+  Card,
+  CardHeader,
+  CardContent,
+  CardActions,
+  Chip,
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+  Divider,
+} from '@mui/material';
+import {
+  Search as SearchIcon,
+  Add as PlusIcon,
+  Groups as UsersIcon,
+  Business as BuildingIcon,
+  Refresh as RefreshIcon,
+} from '@mui/icons-material';
 import { DriverGroup } from '@/types/admin';
+
+// Separate components
+import { DriverGroupsList } from '../components/drivers/DriverGroupsList';
+import { CreateDriverGroupModal } from '../components/drivers/CreateDriverGroupModal';
 
 interface DriverGroupsResponse {
   data: DriverGroup[];
@@ -17,6 +37,25 @@ interface DriverGroupsResponse {
     totalPages: number;
   };
 }
+
+const StatCard = ({ title, value, subtitle, icon: Icon }: any) => (
+  <Card sx={{ height: '100%' }}>
+    <CardHeader
+      title={title}
+      titleTypographyProps={{ variant: 'subtitle2', color: 'text.secondary' }}
+      action={<Icon color="disabled" />}
+      sx={{ pb: 0 }}
+    />
+    <CardContent>
+      <Typography variant="h4" component="div" fontWeight="bold">
+        {value}
+      </Typography>
+      <Typography variant="caption" color="text.secondary">
+        {subtitle}
+      </Typography>
+    </CardContent>
+  </Card>
+);
 
 export function DriverGroupsPage() {
   const [groups, setGroups] = useState<DriverGroup[]>([]);
@@ -40,10 +79,11 @@ export function DriverGroupsPage() {
       });
 
       const response = await fetch(`/api/admin/driver-groups?${params}`);
-      const data: DriverGroupsResponse = await response.json();
+      if (!response.ok) throw new Error('Failed to fetch groups');
       
-      setGroups(data.data);
-      setPagination(data.pagination);
+      const data: DriverGroupsResponse = await response.json();
+      setGroups(data.data || []);
+      setPagination(data.pagination || { total: 0, page: 1, limit: 10, totalPages: 0 });
     } catch (error) {
       console.error('Failed to fetch driver groups:', error);
     } finally {
@@ -76,83 +116,81 @@ export function DriverGroupsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <Box sx={{ p: 4 }}>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Driver Groups</h1>
-          <p className="text-muted-foreground">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box>
+          <Typography variant="h4" fontWeight="bold">Driver Groups</Typography>
+          <Typography variant="body2" color="text.secondary">
             Manage driver groups and hierarchical organization structure
-          </p>
-        </div>
-        <Button onClick={handleCreateGroup} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
+          </Typography>
+        </Box>
+        <Button
+          variant="contained"
+          startIcon={<PlusIcon />}
+          onClick={handleCreateGroup}
+        >
           Create Group
         </Button>
-      </div>
+      </Box>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Groups</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalGroups}</div>
-            <p className="text-xs text-muted-foreground">
-              Active driver groups
-            </p>
-          </CardContent>
-        </Card>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={4}>
+          <StatCard
+            title="Total Groups"
+            value={stats.totalGroups}
+            subtitle="Active driver groups"
+            icon={BuildingIcon}
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <StatCard
+            title="Total Drivers"
+            value={stats.totalDrivers}
+            subtitle="Drivers in all groups"
+            icon={UsersIcon}
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <StatCard
+            title="Subgroups"
+            value={stats.totalSubgroups}
+            subtitle="Nested groups"
+            icon={BuildingIcon}
+          />
+        </Grid>
+      </Grid>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Drivers</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalDrivers}</div>
-            <p className="text-xs text-muted-foreground">
-              Drivers in all groups
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Subgroups</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalSubgroups}</div>
-            <p className="text-xs text-muted-foreground">
-              Nested groups
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search driver groups..."
-          value={searchTerm}
-          onChange={(e) => handleSearch(e.target.value)}
-          className="pl-10"
+      {/* Search and List */}
+      <Card sx={{ mb: 4 }}>
+        <CardHeader
+          title="Management"
+          action={
+            <IconButton onClick={() => fetchDriverGroups()} disabled={loading}>
+              <RefreshIcon />
+            </IconButton>
+          }
         />
-      </div>
-
-      {/* Groups List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Driver Groups</CardTitle>
-          <CardDescription>
-            Manage your driver groups and hierarchical structure
-          </CardDescription>
-        </CardHeader>
+        <Divider />
         <CardContent>
+          <TextField
+            fullWidth
+            variant="outlined"
+            size="small"
+            placeholder="Search driver groups..."
+            value={searchTerm}
+            onChange={(e) => handleSearch(e.target.value)}
+            sx={{ mb: 3 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="disabled" />
+                </InputAdornment>
+              ),
+            }}
+          />
+
           <DriverGroupsList
             groups={groups}
             loading={loading}
@@ -169,6 +207,6 @@ export function DriverGroupsPage() {
           existingGroups={groups}
         />
       )}
-    </div>
+    </Box>
   );
 }

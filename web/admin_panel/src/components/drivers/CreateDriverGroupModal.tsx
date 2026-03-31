@@ -1,25 +1,21 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import {
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  FormControl,
+  InputLabel,
   Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  MenuItem,
+  Box,
+  Typography,
+  CircularProgress,
+} from '@mui/material';
+import BuildingIcon from '@mui/icons-material/Business';
 import { DriverGroup } from '@/types/admin';
-import { Building2 } from 'lucide-react';
 
 interface CreateDriverGroupModalProps {
   onClose: () => void;
@@ -49,7 +45,6 @@ export function CreateDriverGroupModal({
     e.preventDefault();
     
     if (!formData.name.trim()) {
-      alert('Group name is required');
       return;
     }
 
@@ -73,7 +68,7 @@ export function CreateDriverGroupModal({
       setFormData({ name: '', description: '', parentGroupId: null });
     } catch (error) {
       console.error('Failed to create driver group:', error);
-      alert(error.message || 'Failed to create driver group');
+      alert(error instanceof Error ? error.message : 'Failed to create driver group');
     } finally {
       setLoading(false);
     }
@@ -89,88 +84,76 @@ export function CreateDriverGroupModal({
     }));
   };
 
-  // Filter out child groups from parent options to prevent circular hierarchy
-  const availableParentGroups = existingGroups.filter(
-    group => !formData.parentGroupId || group.id !== formData.parentGroupId
-  );
-
   return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5" />
-            Create Driver Group
-          </DialogTitle>
-          <DialogDescription>
+    <Dialog open onClose={onClose} fullWidth maxWidth="xs">
+      <form onSubmit={handleSubmit}>
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <BuildingIcon color="primary" />
+          Create Driver Group
+        </DialogTitle>
+        <DialogContent dividers>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
             Create a new driver group to organize your drivers hierarchically.
             You can optionally select a parent group to create a subgroup.
-          </DialogDescription>
-        </DialogHeader>
+          </Typography>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Group Name *</Label>
-            <Input
-              id="name"
-              placeholder="Enter group name"
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <TextField
+              label="Group Name"
+              required
+              fullWidth
               value={formData.name}
               onChange={(e) => handleInputChange('name', e.target.value)}
               disabled={loading}
-              required
+              autoFocus
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              placeholder="Enter group description (optional)"
+            <TextField
+              label="Description"
+              multiline
+              rows={3}
+              fullWidth
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
               disabled={loading}
-              rows={3}
+              placeholder="Enter group description (optional)"
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="parentGroup">Parent Group</Label>
-            <Select
-              value={formData.parentGroupId || ''}
-              onValueChange={(value) => 
-                handleInputChange('parentGroupId', value === '' ? null : value)
-              }
-              disabled={loading}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select parent group (optional)" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">None (Root Group)</SelectItem>
-                {availableParentGroups.map((group) => (
-                  <SelectItem key={group.id} value={group.id}>
+            <FormControl fullWidth>
+              <InputLabel id="parent-group-label">Parent Group</InputLabel>
+              <Select
+                labelId="parent-group-label"
+                id="parent-group-select"
+                label="Parent Group"
+                value={formData.parentGroupId || 'none'}
+                onChange={(e) => 
+                  handleInputChange('parentGroupId', e.target.value === 'none' ? null : e.target.value)
+                }
+                disabled={loading}
+              >
+                <MenuItem value="none">None (Root Group)</MenuItem>
+                {existingGroups.map((group) => (
+                  <MenuItem key={group.id} value={group.id}>
                     {group.name}
-                  </SelectItem>
+                  </MenuItem>
                 ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Creating...' : 'Create Group'}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
+              </Select>
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, py: 2 }}>
+          <Button onClick={onClose} disabled={loading}>
+            Cancel
+          </Button>
+          <Button 
+            type="submit" 
+            variant="contained" 
+            disabled={loading || !formData.name.trim()}
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Create Group'}
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 }
