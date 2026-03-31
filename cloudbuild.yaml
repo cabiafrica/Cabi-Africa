@@ -1,5 +1,5 @@
 # ==============================================================================
-# CABI AFRICA - AUTH GATEWAY DEPLOY (FOCUSED BUILD)
+# CABI AFRICA - FULL PRODUCTION DEPLOY
 # ==============================================================================
 
 steps:
@@ -16,14 +16,10 @@ steps:
       - 'SERVICE_NAME=auth-gateway'
       - '.'
 
-  # ── STEP 2: Push Auth Gateway Image ───────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-auth-gateway'
-    args:
-      - 'push'
-      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
+    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest']
 
-  # ── STEP 3: Deploy Auth Gateway to Cloud Run ──────────────────────────────────
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy-auth-gateway'
     entrypoint: gcloud
@@ -42,11 +38,138 @@ steps:
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest,JWT_SECRET=JWT_SECRET:latest'
       - '--set-env-vars=NODE_ENV=production'
 
+  # ── STEP 2: Build Verification Service ───────────────────────────────────────
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-verification-service'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/verification-service:latest'
+      - '-f'
+      - 'Dockerfile.backend'
+      - '--build-arg'
+      - 'SERVICE_NAME=verification-service'
+      - '.'
+    waitFor: ['deploy-auth-gateway']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-verification-service'
+    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/verification-service:latest']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-verification-service'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'verification-service'
+      - '--image=us-central1-docker.pkg.dev/cabi-africa/cabi-repo/verification-service:latest'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--port=8080'
+      - '--memory=512Mi'
+      - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest'
+      - '--set-env-vars=NODE_ENV=production'
+
+  # ── STEP 3: Build Referral Service ───────────────────────────────────────────
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-referral-service'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/referral-service:latest'
+      - '-f'
+      - 'Dockerfile.backend'
+      - '--build-arg'
+      - 'SERVICE_NAME=referral-service'
+      - '.'
+    waitFor: ['deploy-auth-gateway']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-referral-service'
+    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/referral-service:latest']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-referral-service'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'referral-service'
+      - '--image=us-central1-docker.pkg.dev/cabi-africa/cabi-repo/referral-service:latest'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--port=8080'
+      - '--memory=512Mi'
+      - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
+      - '--set-env-vars=NODE_ENV=production'
+
+  # ── STEP 4: Build Sacco Service ──────────────────────────────────────────────
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-sacco-service'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/sacco-service:latest'
+      - '-f'
+      - 'Dockerfile.backend'
+      - '--build-arg'
+      - 'SERVICE_NAME=sacco-service'
+      - '.'
+    waitFor: ['deploy-auth-gateway']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-sacco-service'
+    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/sacco-service:latest']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-sacco-service'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'sacco-service'
+      - '--image=us-central1-docker.pkg.dev/cabi-africa/cabi-repo/sacco-service:latest'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--port=8080'
+      - '--memory=512Mi'
+      - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
+      - '--set-env-vars=NODE_ENV=production'
+
+  # ── STEP 5: Health Check (auth-gateway only - other services may not have /health yet) ──
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'verify-launch'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Verifying Auth Gateway health..."
+        URL=$(gcloud run services describe auth-gateway --region=us-central1 --format='value(status.url)')
+        RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" $${URL}/api/health)
+        if [ "$$RESPONSE" = "200" ]; then
+          echo "✅ Auth Gateway is healthy (HTTP 200)"
+        else
+          echo "⚠️  Auth Gateway returned HTTP $$RESPONSE — check logs"
+        fi
+        echo "✨ Deployment complete!"
+    waitFor:
+      - 'deploy-auth-gateway'
+      - 'deploy-verification-service'
+      - 'deploy-referral-service'
+      - 'deploy-sacco-service'
+
 images:
   - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
+  - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/verification-service:latest'
+  - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/referral-service:latest'
+  - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/sacco-service:latest'
 
 options:
   machineType: 'E2_HIGHCPU_8'
   logging: CLOUD_LOGGING_ONLY
 
-timeout: '1800s'
+timeout: '3600s'
