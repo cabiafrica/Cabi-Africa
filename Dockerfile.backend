@@ -1,5 +1,7 @@
 # STAGE 1: Build
 FROM node:20-alpine AS builder
+# Install OpenSSL for Prisma exactly as the warnings requested
+RUN apk add --no-cache openssl
 WORKDIR /app
 
 # Install ALL dependencies first
@@ -23,6 +25,7 @@ RUN npx nx build ${SERVICE_NAME} --configuration=production
 
 # STAGE 2: Production runner
 FROM node:20-alpine AS runner
+RUN apk add --no-cache openssl
 WORKDIR /app
 
 ARG SERVICE_NAME
