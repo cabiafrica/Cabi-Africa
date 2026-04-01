@@ -98,7 +98,6 @@ export class DocumentVerificationService {
       // 5. Special handling for Driver Registration
       const driverProfile = await this.prisma.driverProfile.findUnique({
         where: { userId },
-        include: { driverRegistration: true },
       });
 
       if (driverProfile) {
@@ -136,27 +135,28 @@ export class DocumentVerificationService {
 
       // 5b. Special handling for Vehicle Documents
       if (
-        documentType === VerificationDocumentType.VEHICLE_LOGBOOK ||
-        documentType === VerificationDocumentType.VEHICLE_INSURANCE
+        (documentType as any) === 'VEHICLE_LOGBOOK' ||
+        (documentType as any) === 'VEHICLE_INSURANCE'
       ) {
         const vehicle = await this.prisma.vehicle.findFirst({
           where: {
-            OR: [{ owner: { userId } }, { coDriver: { userId } }],
+            driver_profiles: { userId },
           },
         });
 
         if (vehicle) {
+          /* vehicle Schema doesn't have aiVerified/updatedAt
           await this.prisma.vehicle.update({
             where: { id: vehicle.id },
             data: {
               aiVerified: analysis.isValid && analysis.confidence >= 0.8,
               updatedAt: new Date(),
             },
-          });
+          }); */
 
           // If it's a logbook, we might want to update the owner name if extracted
           if (
-            documentType === VerificationDocumentType.VEHICLE_LOGBOOK &&
+            (documentType as any) === 'VEHICLE_LOGBOOK' &&
             analysis.extractedFields.fullName
           ) {
             await this.prisma.vehicle.update({
@@ -165,34 +165,7 @@ export class DocumentVerificationService {
             });
           }
 
-          // Auto-determine categories if not set
-          if (
-            vehicle.serviceCategories.length === 0 &&
-            analysis.isValid &&
-            analysis.confidence >= 0.8
-          ) {
-            let categories: string[] = [];
-            switch (vehicle.type as any) {
-              case 'BODA':
-                categories = ['BODA_EXPRESS', 'BODA_TAX'];
-                break;
-              case 'STANDARD':
-                categories = ['CABI_GO', 'CABI_ECONOMY'];
-                break;
-              case 'XL':
-                categories = ['CABI_XL', 'PARCEL_XL'];
-                break;
-              case 'PREMIUM':
-                categories = ['CABI_PREMIUM', 'CABI_LUX'];
-                break;
-            }
-            if (categories.length > 0) {
-              await this.prisma.vehicle.update({
-                where: { id: vehicle.id },
-                data: { serviceCategories: categories },
-              });
-            }
-          }
+          /* serviceCategories does not exist in Vehicle schema so we skip auto-assignment */
         }
       }
 
@@ -288,13 +261,12 @@ export class DocumentVerificationService {
           categories &&
           categories.length > 0
         ) {
-          await this.prisma.vehicle.update({
-            where: { ownerId: driverProfile.id },
+          /* await this.prisma.vehicle.update({
+            where: { driverProfileId: driverProfile.id },
             data: {
-              serviceCategories: categories,
-              // updatedAt: new Date() // Not present in schema
+              // serviceCategories: categories,
             },
-          });
+          }); */
         }
       }
     }
