@@ -14,9 +14,12 @@ async function bootstrap() {
         forbidNonWhitelisted: true,
     }));
 
-    // Enable CORS for admin panel access
+    // Production-ready CORS configuration
+    const isProduction = process.env.NODE_ENV === 'production';
     app.enableCors({
-        origin: ['http://localhost:3001', 'http://localhost:3002', 'http://localhost:3000'],
+        origin: isProduction 
+            ? [/https:\/\/.*\.cabi-africa\.com$/, /https:\/\/cabi-africa\.vercel\.app$/, /https:\/\/.*-746659778850\..*\.run\.app$/] 
+            : true,
         credentials: true,
     });
 

@@ -15,7 +15,7 @@ import {
 } from '@mui/icons-material';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@tremor/react';
 
-const API_BASE_URL = 'http://localhost:3333/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3333/api';
 
 interface RatingRule {
     stars: number;

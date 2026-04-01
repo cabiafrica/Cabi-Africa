@@ -217,42 +217,28 @@ Username: superadmin
 
 ---
 
-## 📦 Production Deployment
+## ☁️ Production Architecture (GCP)
 
-Ready to deploy? We've got you covered with comprehensive guides and automation:
+The platform is architected for **Google Cloud Platform (GCP)** using a serverless microservices pattern:
 
-### Quick Deploy:
-```powershell
-# Windows
-.\scripts\deploy-production.ps1
+### 🏗️ Service Ecosystem
+- **Backends (6):** `auth-gateway`, `verification`, `referral`, `sacco`, `dispatch`, `driver-leads` (Cloud Run)
+- **Frontends (3):** `admin-panel`, `dispatch-panel`, `user-portal` (Next.js/Vite on Cloud Run)
+- **Database:** Supabase PostgreSQL (Managed)
+- **CI/CD:** Google Cloud Build (Multistage Pipeline)
 
-# Linux/Mac
-./scripts/deploy-production.sh
+### 🚀 Deployment Command
+The entire stack can be launched via our master CI/CD pipeline:
+```bash
+# Deploys Backend -> Discovers URLs -> Bakes URL to Frontend -> Deploys Frontend
+gcloud builds submit --config cloudbuild.yaml .
 ```
 
-### Documentation:
-- **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** - Complete deployment guide
-  - Environment setup
-  - Build & deployment procedures
-  - Database migrations
-  - Multiple platform support (Vercel, AWS, Digital Ocean)
-  - CI/CD pipeline configuration
-  - Monitoring & logging
-  - Security hardening
-  - Rollback procedures
-
-### Automated CI/CD:
-- GitHub Actions workflow included (`.github/workflows/deploy-production.yml`)
-- Automated testing, building, and deployment
-- Health checks after deployment
-- Slack notifications
-
-### Deployment Platforms Supported:
-- ✅ **Vercel** (Frontend - Recommended)
-- ✅ **AWS** (Full stack - ECS/Fargate + S3/CloudFront)
-- ✅ **Digital Ocean** (App Platform)
-- ✅ **Custom** (Docker + Kubernetes)
+### 📚 Production Documentation
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System design & internal data flow
+- **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** - Environment variables & GCP setup
+- **[_docs_archive/](_docs_archive/)** - Historic test results & optimization logs
 
 ---
 
-**Built with ❤️ for East Africa**
+**Built with ❤️ for East Africa | Cabi Africa Engineering**

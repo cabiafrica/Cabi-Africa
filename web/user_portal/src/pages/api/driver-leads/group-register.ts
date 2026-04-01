@@ -86,7 +86,8 @@ export default async function handler(
         }
 
         // Call backend API to create driver group and process payment
-        const backendResponse = await fetch(`${process.env.BACKEND_URL || 'http://localhost:3010'}/api/v1/driver-groups`, {
+        const BACKEND_URL = process.env.NEXT_PUBLIC_DRIVER_LEAD_SERVICE_URL || 'http://localhost:3010';
+        const backendResponse = await fetch(`${BACKEND_URL}/api/v1/driver-groups`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -124,7 +125,8 @@ export default async function handler(
         const finalAmount = subtotal - discount;
 
         // Generate payment intent
-        const paymentResponse = await fetch(`${process.env.PAYMENT_SERVICE_URL || 'http://localhost:3333'}/api/payments/create-intent`, {
+        const PAYMENT_SERVICE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
+        const paymentResponse = await fetch(`${PAYMENT_SERVICE_URL}/payments/create-intent`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -158,7 +160,7 @@ export default async function handler(
             const driverData = data.drivers[i];
 
             // Create driver profile
-            const driverResponse = await fetch(`${process.env.BACKEND_URL || 'http://localhost:3010'}/api/v1/driver-leads/register`, {
+            const driverResponse = await fetch(`${BACKEND_URL}/api/v1/driver-leads/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -186,7 +188,8 @@ export default async function handler(
 
         // Trigger Referral command processing
         if (previousDriverId) {
-            await fetch(`${process.env.BACKEND_URL || 'http://localhost:3010'}/api/v1/referral/process-registration`, {
+            const referralUrl = process.env.NEXT_PUBLIC_REFERRAL_SERVICE_URL || 'http://localhost:3338';
+            await fetch(`${referralUrl}/api/referral/process-registration`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

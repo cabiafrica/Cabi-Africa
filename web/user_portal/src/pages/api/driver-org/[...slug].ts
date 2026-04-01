@@ -1,8 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxy from 'http-proxy';
 
+const REFERRAL_SERVICE_URL = process.env.REFERRAL_SERVICE_URL || 'http://localhost:3338';
+
 const proxy = httpProxy.createProxyServer({
-    target: 'http://localhost:3338',
+    target: REFERRAL_SERVICE_URL,
     changeOrigin: true,
 });
 
@@ -15,7 +17,7 @@ export const config = {
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
     return new Promise((resolve, reject) => {
         proxy.web(req, res, {
-            target: 'http://localhost:3338',
+            target: REFERRAL_SERVICE_URL,
         }, (err) => {
             if (err) {
                 console.error('Proxy error (Driver Org):', err);

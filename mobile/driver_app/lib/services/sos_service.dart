@@ -25,7 +25,7 @@ class SosService {
 
   WebSocketChannel connectAudioStream(String tripId) {
     // Mock WebSocket connection
-    final uri = Uri.parse('ws://${AppConfig.host}:3333/sos/audio/$tripId');
+    final uri = Uri.parse(AppConfig.getSosSocketUrl(tripId));
     return WebSocketChannel.connect(uri);
   }
 }

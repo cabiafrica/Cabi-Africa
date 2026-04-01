@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../../config/app_config.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -28,7 +29,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     try {
       final response = await http.post(
         Uri.parse(
-          'http://localhost:3000/auth/forgot-password',
+          '${AppConfig.authApiUrl}/auth/forgot-password',
         ), // Replace with your backend URL
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',

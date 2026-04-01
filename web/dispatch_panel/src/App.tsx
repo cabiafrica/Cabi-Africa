@@ -59,10 +59,10 @@ function App() {
 
     // Socket.io for Real-time Tracking
     useEffect(() => {
-        // Dispatch service is on localhost:3000 (proxied via /api/dispatch in development)
-        // However, WebSockets usually bypass the Vite proxy unless configured.
-        // We'll connect directly to the backend port for WebSockets.
-        const socket = io('http://localhost:3334/trip-tracking');
+        // Dispatch real-time service via environment variables
+        const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3334';
+        const namespace = import.meta.env.VITE_TRIP_TRACKING_NAMESPACE || '/trip-tracking';
+        const socket = io(`${socketUrl}${namespace}`);
 
         socket.on('connect', () => {
             console.log('Connected to Dispatch Real-time Gateway');

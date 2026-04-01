@@ -4,7 +4,7 @@ const nextConfig = {
   output: 'standalone',
 
   // Ensure Next.js correctly traces files in a monorepo setup
-  // outputFileTracingRoot: require('path').resolve(__dirname, '../../'),
+  outputFileTracingRoot: require('path').resolve(__dirname, '../../'),
 
   // Enable compression
   compress: true,

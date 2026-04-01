@@ -279,7 +279,8 @@ export const AuditLogPage = () => {
         });
       }
 
-      socketRef.current = io('http://localhost:3333', { path: '/audit-stream' });
+      const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3333';
+      socketRef.current = io(socketUrl, { path: '/audit-stream' });
 
       socketRef.current.on('connect', () => {
         console.log('[WebSocket] Connected to audit stream.');

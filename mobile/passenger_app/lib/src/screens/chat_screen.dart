@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
+import '../../config/app_config.dart';
 
 class Message {
   final String text;
@@ -39,8 +40,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _connectToSocket() {
-    // In a real app, this URL and token would come from a config/auth provider
-    _socket = io.io('http://localhost:3000', <String, dynamic>{
+    _socket = io.io(AppConfig.socketUrl, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
       'extraHeaders': {'Authorization': 'Bearer mock-jwt'},
@@ -75,7 +75,6 @@ class _ChatScreenState extends State<ChatScreen> {
         'tripId': widget.tripId,
         'message': _textController.text,
       });
-      // Add message locally for immediate feedback
       setState(() {
         _messages.add(
           Message(

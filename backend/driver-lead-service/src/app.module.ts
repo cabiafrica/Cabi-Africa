@@ -11,6 +11,7 @@ import { OrganizationModule } from './organization/organization.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { DriverLeadsModule } from './driver-leads.module';
 import { JwtStrategy } from './driver-leads/jwt.strategy';
+import { HealthController } from '@cabi/backend/common';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { JwtStrategy } from './driver-leads/jwt.strategy';
     AnalyticsModule,
     DriverLeadsModule,
   ],
-  controllers: [],
+  controllers: [HealthController],
   providers: [
     JwtStrategy,
     PrismaService,

@@ -16,9 +16,15 @@ COPY . .
 # Generate Prisma Client
 RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
 
-# Which service to build (e.g., auth-gateway)
+# Which service to build (e.g., auth-gateway, dispatch-service)
 ARG SERVICE_NAME
 ENV SERVICE_NAME=${SERVICE_NAME}
+
+# Whether the service lives in /backend/ subdirectory (vs root-level like auth-gateway)
+# Services in backend/: dispatch-service, driver-lead-service, verification-service, referral-service, sacco-service
+# Root-level services: auth-gateway
+ARG IS_BACKEND_SUB_SERVICE=true
+ENV IS_BACKEND_SUB_SERVICE=${IS_BACKEND_SUB_SERVICE}
 
 # Build via Nx
 RUN npx nx build ${SERVICE_NAME} --configuration=production
@@ -29,14 +35,17 @@ RUN apk add --no-cache openssl
 WORKDIR /app
 
 ARG SERVICE_NAME
+ARG IS_BACKEND_SUB_SERVICE=true
 ENV NODE_ENV=production
 ENV SERVICE_NAME=${SERVICE_NAME}
 
 # Security: non-root user
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nestjs
 
-# Copy compiled output
-COPY --from=builder --chown=nestjs:nodejs /app/dist/${SERVICE_NAME} ./dist
+# Copy compiled output — path differs by service type:
+#   - auth-gateway  → dist/auth-gateway
+#   - backend/* → dist/backend/{name}
+COPY --from=builder --chown=nestjs:nodejs /app/dist /app/dist
 
 # Copy the FULL node_modules (avoids missing dependency crashes on startup)
 COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
@@ -46,4 +55,11 @@ USER nestjs
 # Cloud Run injects PORT env var automatically
 # The app reads process.env.PORT and falls back to 3333
 EXPOSE 3333
-CMD ["node", "dist/main.js"]
+
+# Start the correct service based on IS_BACKEND_SUB_SERVICE flag
+CMD ["sh", "-c", \
+    "if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then \n\
+        node dist/backend/$SERVICE_NAME/main.js; \n\
+    else \n\
+        node dist/$SERVICE_NAME/main.js; \n\
+    fi"]

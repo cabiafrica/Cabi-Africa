@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxy from 'http-proxy';
 
-// Create a proxy instance with target set to the sacco service (port 3338)
+const SACCO_SERVICE_URL = process.env.SACCO_SERVICE_URL || 'http://localhost:3338';
+
 const proxy = httpProxy.createProxyServer({
-    target: 'http://localhost:3338',
+    target: SACCO_SERVICE_URL,
     changeOrigin: true,
 });
 
@@ -24,7 +25,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         // which matches sacco-service's routing!
         
         proxy.web(req, res, {
-            target: 'http://localhost:3338',
+            target: SACCO_SERVICE_URL,
         }, (err) => {
             if (err) {
                 console.error('Proxy error (SACCO):', err);

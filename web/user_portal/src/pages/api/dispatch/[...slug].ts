@@ -1,12 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxy from 'http-proxy';
 
-// Create a proxy instance with target set to the dispatch service
+const AUTH_GATEWAY_URL = process.env.AUTH_GATEWAY_URL || 'http://localhost:3334';
+
 const proxy = httpProxy.createProxyServer({
-    target: 'http://localhost:3334',
+    target: AUTH_GATEWAY_URL,
     changeOrigin: true,
     pathRewrite: {
-        '^/api/dispatch': '/api', // Rewrite /api/dispatch/drivers -> /api/drivers if dispatch service has /api/drivers
+        '^/api/dispatch': '/api',
     },
 });
 
@@ -32,7 +33,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         // Let's check dispatch.controller.ts
 
         proxy.web(req, res, {
-            target: 'http://localhost:3334',
+            target: AUTH_GATEWAY_URL,
         }, (err) => {
             if (err) {
                 console.error('Proxy error:', err);

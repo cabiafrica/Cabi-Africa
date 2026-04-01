@@ -11,7 +11,7 @@ import { AiDocumentVerificationService } from './services/ai-document-verificati
 import { VerificationNotificationService } from './services/verification-notification.service';
 import { OcrService } from './services/ocr.service';
 import { VerificationAuditService } from './services/verification-audit.service';
-
+import { HealthController } from '@cabi/backend/common';
 import { PrismaModule } from '@cabi/backend/database';
 
 @Module({
@@ -23,6 +23,7 @@ import { PrismaModule } from '@cabi/backend/database';
   ],
   controllers: [
     AppController,
+    HealthController,
     DocumentVerificationController,
     BiometricVerificationController,
     PassengerVerificationController,

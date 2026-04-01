@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuthContext } from '../AuthContext';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3334/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3334/api';
 
 export const useSettings = () => {
     const { user, updateUser } = useAuthContext();

@@ -1,32 +1,44 @@
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger } from '@nestjs/common';
-import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const logger = new Logger('Bootstrap');
-  const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule);
+    const globalPrefix = 'api';
+    app.setGlobalPrefix(globalPrefix);
 
-  // Enable CORS for frontend access
-  app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:4200'],
-    credentials: true,
-  });
+    // Global Validation Pipe
+    app.useGlobalPipes(new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        forbidNonWhitelisted: true,
+    }));
 
-  // Global validation pipe
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
+    // Dynamic CORS for Cloud Run
+    const isProd = process.env.NODE_ENV === 'production';
+    app.enableCors({
+        origin: isProd 
+            ? [/https:\/\/.*\.cabi-africa\.com$/, /https:\/\/.*\.run\.app$/] 
+            : true,
+        credentials: true,
+    });
 
-  const port = process.env.PORT || 3003;
-  await app.listen(port, '0.0.0.0');
+    // Swagger Setup
+    const config = new DocumentBuilder()
+        .setTitle('CABI Africa - Verification API')
+        .setDescription('High-assurance KYC, document validation and service state management.')
+        .setVersion('1.0')
+        .addBearerAuth()
+        .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
 
-  logger.log(`🚀 Verification Service running on: http://localhost:${port}`);
-  logger.log(`📚 API Docs: http://localhost:${port}/api/docs`);
-  logger.log(`🏥 Health: http://localhost:${port}/health`);
+    const port = process.env.PORT || 3003;
+    await app.listen(port, '0.0.0.0');
+    
+    Logger.log(`🛂 Verification Service live at: http://localhost:${port}/${globalPrefix}`);
+    Logger.log(`📚 API Docs: http://localhost:${port}/api/docs`);
 }
+
 bootstrap();

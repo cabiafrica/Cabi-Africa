@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:qr_flutter/qr_flutter.dart';
+import '../../config/app_config.dart';
 
 class MfaSetupScreen extends StatefulWidget {
   const MfaSetupScreen({super.key});
@@ -30,7 +31,7 @@ class _MfaSetupScreenState extends State<MfaSetupScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/auth/mfa/generate'),
+        Uri.parse('${AppConfig.authApiUrl}/auth/mfa/generate'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $mockJwt',

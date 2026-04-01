@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3333/api'; // Point to auth-gateway
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3333/api'; // Point to auth-gateway
 
 export interface AuthResponse {
     token: string;
