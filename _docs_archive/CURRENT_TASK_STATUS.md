@@ -35,5 +35,16 @@
 
 ## Documentation
 - [x] Create testing walkthrough with screenshots
-- [ ] Document any issues found
-- [ ] Provide recommendations for improvements
+- [x] Document any issues found (Hardcoded URLs, Localhost defaults, CI/CD Gaps)
+- [x] Provide recommendations (Standardize Vite Env Vars, Shared Dockerfile adoption)
+
+## Recent Findings (Production Audit)
+- Found widespread use of `http://localhost:3333` and `3334` across `admin_panel`, `dispatch_panel`, and `user_portal`.
+- Initial `cloudbuild.yaml` was missing several core microservices (Dispatch, Driver Lead).
+- `auth-gateway` previously defaulted to `localhost` even in production-bound code.
+
+## Recommendations
+1. **CI/CD Standardization**: All new services should adopt the `Dockerfile.backend` ARG-based build pattern to minimize image bloat and container drift.
+2. **Environment Variable Enforcement**: Integrate a lint rule or build-time check to prevent `localhost` strings from entering frontend source files.
+3. **Secret Management**: Move `DATABASE_URL` and `JWT_SECRET` entirely into Secret Manager (already partially implemented in updated `cloudbuild.yaml`).
+

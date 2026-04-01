@@ -11,5 +11,5 @@ yarn-error.log*
 .sh
 .ps1
 *.apk
-web/
 mobile/
+# web/ handled via specific ignore logic or included for builds
