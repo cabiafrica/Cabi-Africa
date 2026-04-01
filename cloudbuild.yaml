@@ -4,14 +4,15 @@
 
 steps:
   # ── STEP 0: Run Database Migrations ──────────────────────────────────────────
-  - name: 'node:20'
+  - name: 'gcr.io/cloud-builders/npm'
     id: 'run-migrations'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        npx --yes prisma@5 migrate deploy --schema=libs/backend/database/prisma/schema.prisma
-    secretEnv: ['DATABASE_URL']
+        npm install prisma --no-save --legacy-peer-deps
+        npx prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma
+    secretEnv: ['DATABASE_URL', 'DIRECT_URL']
 
   # ── STEP 1: Build Auth Gateway ────────────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
@@ -383,6 +384,8 @@ availableSecrets:
   secretManager:
     - versionName: projects/746659778850/secrets/DATABASE_URL/versions/latest
       env: 'DATABASE_URL'
+    - versionName: projects/746659778850/secrets/DIRECT_URL/versions/latest
+      env: 'DIRECT_URL'
 
 options:
   machineType: 'E2_HIGHCPU_8'
