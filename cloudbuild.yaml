@@ -384,10 +384,6 @@ availableSecrets:
   secretManager:
     - versionName: projects/746659778850/secrets/DATABASE_URL/versions/latest
       env: 'DATABASE_URL'
-    - versionName: projects/746659778850/secrets/DIRECT_URL/versions/latest
-      env: 'DIRECT_URL'
-    - versionName: projects/746659778850/secrets/JWT_SECRET/versions/latest
-      env: 'JWT_SECRET'
 
 options:
   machineType: 'E2_HIGHCPU_8'
