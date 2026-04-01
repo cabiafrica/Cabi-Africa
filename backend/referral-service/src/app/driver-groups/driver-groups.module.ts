@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { DriverGroupsController } from './driver-groups.controller';
 import { DriverGroupsService } from './driver-groups.service';
-import { PrismaModule } from '@cabi/database';
+import { PrismaModule } from '@cabi/backend/database';
 
 @Module({
   imports: [PrismaModule],

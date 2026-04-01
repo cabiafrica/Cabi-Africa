@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '@cabi/database';
+import { PrismaService } from '@cabi/backend/database';
 import { 
   CreateDriverGroupDto, 
   UpdateDriverGroupDto, 
