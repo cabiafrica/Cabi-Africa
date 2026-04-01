@@ -238,7 +238,7 @@ export class ReferralService {
       _sum: { amount: true },
       where: { amount: { gt: 0 } },
     });
-    const totalCommissionsAllTime = commissionSum._sum.amount || 0;
+    const totalCommissionsAllTime = Number(commissionSum._sum.amount || 0);
 
     const totalReferredDrivers = await this.prisma.driverProfile.count({
       where: { referrerId: { not: null } },

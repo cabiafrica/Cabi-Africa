@@ -105,7 +105,6 @@ export class DriverGroupsService {
             isOnline: true,
             totalRidesCompleted: true,
             averageRating: true,
-            createdAt: true,
           },
         },
       },
@@ -140,6 +139,8 @@ export class DriverGroupsService {
 
     return this.prisma.driver_groups.create({
       data: {
+        id: require('crypto').randomUUID(),
+        updatedAt: new Date(),
         name,
         description,
         parentGroupId,
@@ -372,7 +373,6 @@ export class DriverGroupsService {
           isOnline: true,
           totalRidesCompleted: true,
           averageRating: true,
-          createdAt: true,
           user: {
             select: {
               id: true,
@@ -383,7 +383,7 @@ export class DriverGroupsService {
           },
         },
         orderBy: {
-          createdAt: 'desc',
+          user: { createdAt: 'desc' },
         },
       }),
       this.prisma.driverProfile.count({
