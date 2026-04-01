@@ -25,18 +25,18 @@ export class DriverGroupsService {
       : {};
 
     const [groups, total] = await Promise.all([
-      this.prisma.driverGroup.findMany({
+      this.prisma.driver_groups.findMany({
         where,
         skip,
         take: limit,
         include: {
-          parentGroup: {
+          driver_groups: {
             select: {
               id: true,
               name: true,
             },
           },
-          subgroups: {
+          other_driver_groups: {
             select: {
               id: true,
               name: true,
@@ -44,8 +44,8 @@ export class DriverGroupsService {
           },
           _count: {
             select: {
-              drivers: true,
-              subgroups: true,
+              driver_profiles: true,
+              other_driver_groups: true,
             },
           },
         },
@@ -53,7 +53,7 @@ export class DriverGroupsService {
           createdAt: 'desc',
         },
       }),
-      this.prisma.driverGroup.count({ where }),
+      this.prisma.driver_groups.count({ where }),
     ]);
 
     return {
@@ -68,16 +68,16 @@ export class DriverGroupsService {
   }
 
   async findOne(id: string) {
-    const group = await this.prisma.driverGroup.findUnique({
+    const group = await this.prisma.driver_groups.findUnique({
       where: { id },
       include: {
-        parentGroup: {
+        driver_groups: {
           select: {
             id: true,
             name: true,
           },
         },
-        subgroups: {
+        other_driver_groups: {
           select: {
             id: true,
             name: true,
@@ -85,12 +85,12 @@ export class DriverGroupsService {
             createdAt: true,
             _count: {
               select: {
-                drivers: true,
+                driver_profiles: true,
               },
             },
           },
         },
-        drivers: {
+        driver_profiles: {
           select: {
             id: true,
             licenseNumber: true,
@@ -127,7 +127,7 @@ export class DriverGroupsService {
     }
 
     // Check if group name already exists (within same parent if applicable)
-    const existingGroup = await this.prisma.driverGroup.findFirst({
+    const existingGroup = await this.prisma.driver_groups.findFirst({
       where: {
         name,
         parentGroupId: parentGroupId || null,
@@ -138,14 +138,14 @@ export class DriverGroupsService {
       throw new BadRequestException('Group with this name already exists in this hierarchy level');
     }
 
-    return this.prisma.driverGroup.create({
+    return this.prisma.driver_groups.create({
       data: {
         name,
         description,
         parentGroupId,
       },
       include: {
-        parentGroup: {
+        driver_groups: {
           select: {
             id: true,
             name: true,
@@ -153,8 +153,8 @@ export class DriverGroupsService {
         },
         _count: {
           select: {
-            drivers: true,
-            subgroups: true,
+            driver_profiles: true,
+            other_driver_groups: true,
           },
         },
       },
@@ -165,7 +165,7 @@ export class DriverGroupsService {
     const { name, description, parentGroupId } = updateDriverGroupDto;
 
     // Check if group exists
-    const existingGroup = await this.prisma.driverGroup.findUnique({
+    const existingGroup = await this.prisma.driver_groups.findUnique({
       where: { id },
     });
 
@@ -179,7 +179,7 @@ export class DriverGroupsService {
       await this.validateHierarchy(parentGroupId, id);
       
       // Check for duplicate name in new hierarchy level
-      const duplicateGroup = await this.prisma.driverGroup.findFirst({
+      const duplicateGroup = await this.prisma.driver_groups.findFirst({
         where: {
           name: name || existingGroup.name,
           parentGroupId,
@@ -192,7 +192,7 @@ export class DriverGroupsService {
       }
     }
 
-    return this.prisma.driverGroup.update({
+    return this.prisma.driver_groups.update({
       where: { id },
       data: {
         name,
@@ -200,13 +200,13 @@ export class DriverGroupsService {
         parentGroupId,
       },
       include: {
-        parentGroup: {
+        driver_groups: {
           select: {
             id: true,
             name: true,
           },
         },
-        subgroups: {
+        other_driver_groups: {
           select: {
             id: true,
             name: true,
@@ -214,8 +214,8 @@ export class DriverGroupsService {
         },
         _count: {
           select: {
-            drivers: true,
-            subgroups: true,
+            driver_profiles: true,
+            other_driver_groups: true,
           },
         },
       },
@@ -223,13 +223,13 @@ export class DriverGroupsService {
   }
 
   async remove(id: string) {
-    const group = await this.prisma.driverGroup.findUnique({
+    const group = await this.prisma.driver_groups.findUnique({
       where: { id },
       include: {
         _count: {
           select: {
-            drivers: true,
-            subgroups: true,
+            driver_profiles: true,
+            other_driver_groups: true,
           },
         },
       },
@@ -240,20 +240,20 @@ export class DriverGroupsService {
     }
 
     // Check if group has members or subgroups
-    if (group._count.drivers > 0 || group._count.subgroups > 0) {
+    if (group._count.driver_profiles > 0 || group._count.other_driver_groups > 0) {
       throw new BadRequestException(
         'Cannot delete group with members or subgroups. Please remove them first.'
       );
     }
 
-    return this.prisma.driverGroup.delete({
+    return this.prisma.driver_groups.delete({
       where: { id },
     });
   }
 
   async assignDriver(groupId: string, driverId: string) {
     // Check if group exists
-    const group = await this.prisma.driverGroup.findUnique({
+    const group = await this.prisma.driver_groups.findUnique({
       where: { id: groupId },
     });
 
@@ -283,7 +283,7 @@ export class DriverGroupsService {
             phone: true,
           },
         },
-        driverGroup: {
+        driver_groups: {
           select: {
             id: true,
             name: true,
@@ -312,7 +312,7 @@ export class DriverGroupsService {
   }
 
   async getHierarchy(groupId: string) {
-    const group = await this.prisma.driverGroup.findUnique({
+    const group = await this.prisma.driver_groups.findUnique({
       where: { id: groupId },
     });
 
@@ -322,11 +322,11 @@ export class DriverGroupsService {
 
     // Get full hierarchy tree
     const getHierarchyTree = async (id: string): Promise<any> => {
-      const currentGroup = await this.prisma.driverGroup.findUnique({
+      const currentGroup = await this.prisma.driver_groups.findUnique({
         where: { id },
         include: {
-          subgroups: true,
-          drivers: {
+          other_driver_groups: true,
+          driver_profiles: {
             select: {
               id: true,
               licenseNumber: true,
@@ -348,8 +348,8 @@ export class DriverGroupsService {
 
       return {
         ...currentGroup,
-        subgroups: await Promise.all(
-          currentGroup.subgroups.map(subgroup => getHierarchyTree(subgroup.id))
+        other_driver_groups: await Promise.all(
+          currentGroup.other_driver_groups.map(subgroup => getHierarchyTree(subgroup.id))
         ),
       };
     };
@@ -407,7 +407,7 @@ export class DriverGroupsService {
     const checkCircular = async (id: string): Promise<boolean> => {
       if (id === excludeId) return false;
 
-      const parent = await this.prisma.driverGroup.findUnique({
+      const parent = await this.prisma.driver_groups.findUnique({
         where: { id },
         select: { parentGroupId: true },
       });
