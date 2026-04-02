@@ -188,7 +188,7 @@ export class RideService {
         driver: {
           include: {
             user: true,
-            vehicle: true
+            vehicles: true
           }
         }
       },
@@ -224,7 +224,7 @@ export class RideService {
     // Fetch driver with vehicle information
     const driver = await this.prisma.driverProfile.findUnique({
       where: { id: driverId },
-      include: { vehicle: true }
+      include: { vehicles: true }
     });
 
     if (!driver) {
@@ -232,10 +232,10 @@ export class RideService {
     }
 
     // Vehicle type validation
-    if (ride.requestedVehicleType && driver.vehicle) {
-      if (driver.vehicle.type !== ride.requestedVehicleType) {
+    if (ride.requestedVehicleType && driver.vehicles) {
+      if (driver.vehicles.type !== ride.requestedVehicleType) {
         throw new Error(
-          `Vehicle type mismatch. Ride requires ${ride.requestedVehicleType}, driver has ${driver.vehicle.type}`
+          `Vehicle type mismatch. Ride requires ${ride.requestedVehicleType}, driver has ${driver.vehicles.type}`
         );
       }
     }
@@ -631,7 +631,7 @@ export class RideService {
                   email: true
                 }
               },
-              vehicle: {
+              vehicles: {
                 select: {
                   id: true,
                   make: true,
@@ -658,11 +658,11 @@ export class RideService {
       driverName: ride.driver?.user.fullName || null,
       driverPhone: ride.driver?.user.phone || null,
       driverEmail: ride.driver?.user.email || null,
-      driverVehicle: ride.driver?.vehicle ? {
-        make: ride.driver.vehicle.make,
-        model: ride.driver.vehicle.model,
-        plateNumber: ride.driver.vehicle.plateNumber,
-        type: ride.driver.vehicle.type
+      driverVehicle: ride.driver?.vehicles ? {
+        make: ride.driver.vehicles.make,
+        model: ride.driver.vehicles.model,
+        plateNumber: ride.driver.vehicles.plateNumber,
+        type: ride.driver.vehicles.type
       } : null,
       status: ride.status,
       pickupLocation: ride.pickupLocation,

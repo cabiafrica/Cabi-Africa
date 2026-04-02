@@ -104,7 +104,7 @@ export class MatchingService {
                 isOnline: true,
                 currentLocation: { not: null },
                 ...(vehicleType && {
-                    vehicle: {
+                    vehicles: {
                         type: vehicleType,
                     },
                 }),
@@ -117,7 +117,7 @@ export class MatchingService {
                 }
             },
             include: {
-                vehicle: true,
+                vehicles: true,
                 user: {
                     select: {
                         id: true,
@@ -159,7 +159,7 @@ export class MatchingService {
                 // Get badge priority if enabled
                 let badgePriority = 0;
                 let badgeTier: BadgeTier | null = null;
-                const badgeStatus = driver.badgeStatus as any[];
+                const badgeStatus = (driver as any).badgeStatus as any[];
                 if (useBadgePriority && badgeStatus && badgeStatus.length > 0) {
                     const activeBadge = badgeStatus[0];
                     badgeTier = activeBadge.badgeTier as BadgeTier;
@@ -175,7 +175,7 @@ export class MatchingService {
                     distance,
                     estimatedArrivalMinutes,
                     rating: driver.averageRating,
-                    vehicleType: driver.vehicle?.type || VehicleType.STANDARD,
+                    vehicleType: driver.vehicles?.type || VehicleType.STANDARD,
                     location: { lat: location.lat, lng: location.lng },
                     badgePriority,
                     badgeTier,

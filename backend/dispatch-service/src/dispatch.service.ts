@@ -38,7 +38,7 @@ export class DispatchService {
                 driver: {
                     include: {
                         user: true,
-                        vehicle: true,
+                        vehicles: true,
                     },
                 },
             },
@@ -50,7 +50,7 @@ export class DispatchService {
         return this.prisma.driverProfile.findMany({
             include: {
                 user: true,
-                vehicle: true,
+                vehicles: true,
             },
         });
     }
@@ -118,7 +118,7 @@ export class DispatchService {
                 driver: {
                     include: {
                         user: true,
-                        vehicle: true,
+                        vehicles: true,
                     }
                 }
             },
