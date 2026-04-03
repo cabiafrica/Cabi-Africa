@@ -38,6 +38,7 @@ ARG SERVICE_NAME
 ARG IS_BACKEND_SUB_SERVICE=true
 ENV NODE_ENV=production
 ENV SERVICE_NAME=${SERVICE_NAME}
+ENV IS_BACKEND_SUB_SERVICE=${IS_BACKEND_SUB_SERVICE}
 
 # Security: non-root user
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nestjs
