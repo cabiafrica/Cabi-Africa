@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { DriverOrganization } from '@prisma/client';
+import { organizations, OrganizationStatus } from '@prisma/client';
 
 @Injectable()
 export class OrganizationService {
     constructor(private prisma: PrismaService) { }
 
     async findAll() {
-        const orgs = await this.prisma.driverOrganization.findMany({
+        const orgs = await this.prisma.organizations.findMany({
             include: {
                 _count: {
-                    select: { drivers: true }
+                    select: { driver_profiles: true }
                 }
             }
         });
@@ -19,25 +19,25 @@ export class OrganizationService {
             id: org.id,
             name: org.name,
             ownerId: 'N/A',
-            memberCount: org._count.drivers,
-            status: org.isVerified ? 'VERIFIED' : 'PENDING',
-            type: org.isPrivate ? 'PRIVATE' : 'PUBLIC',
+            memberCount: org._count.driver_profiles,
+            status: org.status,
+            type: 'PUBLIC',
         }));
     }
 
     async updateStatus(id: string, isVerified: boolean) {
-        return this.prisma.driverOrganization.update({
+        return this.prisma.organizations.update({
             where: { id },
-            data: { isVerified },
+            data: { status: isVerified ? 'VERIFIED' : 'UNVERIFIED' },
         });
     }
 
     // Subgroup Logic (Organizations with parentId)
     async findSubgroups(parenOrgId: string) {
-        const subgroups = await this.prisma.driverOrganization.findMany({
-            where: { parentOrgId: parenOrgId },
+        const subgroups = await this.prisma.organizations.findMany({
+            where: { parentId: parenOrgId },
             include: {
-                _count: { select: { drivers: true } }
+                _count: { select: { driver_profiles: true } }
             }
         });
 
@@ -45,32 +45,36 @@ export class OrganizationService {
             id: sg.id,
             orgId: parenOrgId,
             name: sg.name,
-            parentId: sg.parentOrgId,
-            memberCount: sg._count.drivers
+            parentId: sg.parentId,
+            memberCount: sg._count.driver_profiles
         }));
     }
 
     async createSubgroup(parentId: string, name: string) {
-        const parent = await this.prisma.driverOrganization.findUnique({ where: { id: parentId } });
+        const parent = await this.prisma.organizations.findUnique({ where: { id: parentId } });
         if (!parent) throw new NotFoundException('Parent organization not found');
 
-        return this.prisma.driverOrganization.create({
+        return this.prisma.organizations.create({
             data: {
+                id: Math.random().toString(36).substring(7),
                 name,
-                parentOrgId: parentId,
+                email: `${Math.random().toString(36).substring(7)}@demo.com`,
+                registrationNumber: Math.random().toString(36).substring(7),
+                parentId: parentId,
+                updatedAt: new Date(),
             }
         });
     }
 
     async updateSubgroup(id: string, name: string) {
-        return this.prisma.driverOrganization.update({
+        return this.prisma.organizations.update({
             where: { id },
             data: { name }
         });
     }
 
     async deleteSubgroup(id: string) {
-        return this.prisma.driverOrganization.delete({
+        return this.prisma.organizations.delete({
             where: { id }
         });
     }
