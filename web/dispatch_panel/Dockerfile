@@ -14,14 +14,14 @@ ENV VITE_API_URL=${VITE_API_URL}
 ENV VITE_SOCKET_URL=${VITE_SOCKET_URL}
 ENV VITE_TRIP_TRACKING_NAMESPACE=${VITE_TRIP_TRACKING_NAMESPACE}
 
-RUN npm run build
+RUN npx nx build dispatch-panel --configuration=production
 
 # Final stage — Nginx with dynamic backend URL substitution
 FROM nginx:stable-alpine
 RUN apk add --no-cache bash gettext
 
 # Copy static build output
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist/web/dispatch_panel /usr/share/nginx/html
 
 # Copy nginx template (uses ${BACKEND_URL} placeholder)
 COPY nginx.conf /etc/nginx/templates/default.conf.template

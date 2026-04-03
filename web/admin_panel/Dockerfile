@@ -16,11 +16,11 @@ ENV VITE_SOCKET_URL=${VITE_SOCKET_URL}
 ENV VITE_DRIVER_LEAD_SERVICE_URL=${VITE_DRIVER_LEAD_SERVICE_URL}
 ENV VITE_DISPATCH_SERVICE_URL=${VITE_DISPATCH_SERVICE_URL}
 
-RUN npm run build
+RUN npx nx build admin-panel --configuration=production
 
 # Final stage - using Nginx to serve static files
 FROM nginx:stable-alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist/web/admin_panel /usr/share/nginx/html
 # Use the custom nginx config from the parent directory (passed during build context)
 COPY --from=builder /app/nginx.conf /etc/nginx/conf.d/default.conf
 
