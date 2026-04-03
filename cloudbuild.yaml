@@ -230,24 +230,12 @@ steps:
       - '-c'
       - |
         echo "Mapping Production Endpoints..."
-        AUTH_URL=$(gcloud run services describe auth-gateway --region=us-central1 --format='value(status.url)')
-        VERIFY_URL=$(gcloud run services describe verification-service --region=us-central1 --format='value(status.url)')
-        DRIVER_URL=$(gcloud run services describe driver-lead-service --region=us-central1 --format='value(status.url)')
-        DISPATCH_URL=$(gcloud run services describe dispatch-service --region=us-central1 --format='value(status.url)')
-        SACCO_URL=$(gcloud run services describe sacco-service --region=us-central1 --format='value(status.url)')
-        REFERRAL_URL=$(gcloud run services describe referral-service --region=us-central1 --format='value(status.url)')
-        
-        # Write to temporary env file for subsequent build steps
-        echo "NEXT_PUBLIC_API_URL=$${AUTH_URL}/api" > .env.production
-        echo "NEXT_PUBLIC_SOCKET_URL=$${AUTH_URL}" >> .env.production
-        echo "NEXT_PUBLIC_VERIFICATION_SERVICE_URL=$${VERIFY_URL}" >> .env.production
-        echo "NEXT_PUBLIC_DRIVER_LEAD_SERVICE_URL=$${DRIVER_URL}" >> .env.production
-        echo "NEXT_PUBLIC_DISPATCH_SERVICE_URL=$${DISPATCH_URL}" >> .env.production
-        echo "NEXT_PUBLIC_SACCO_SERVICE_URL=$${SACCO_URL}" >> .env.production
-        echo "NEXT_PUBLIC_REFERRAL_SERVICE_URL=$${REFERRAL_URL}" >> .env.production
-        
-        # Log discovery result
-        cat .env.production
+        gcloud run services describe auth-gateway --region=us-central1 --format='value(status.url)' > auth_url.txt
+        gcloud run services describe verification-service --region=us-central1 --format='value(status.url)' > verify_url.txt
+        gcloud run services describe driver-lead-service --region=us-central1 --format='value(status.url)' > driver_url.txt
+        gcloud run services describe dispatch-service --region=us-central1 --format='value(status.url)' > dispatch_url.txt
+        gcloud run services describe sacco-service --region=us-central1 --format='value(status.url)' > sacco_url.txt
+        gcloud run services describe referral-service --region=us-central1 --format='value(status.url)' > referral_url.txt
     waitFor:
       - 'deploy-auth-gateway'
       - 'deploy-verification-service'
@@ -256,63 +244,62 @@ steps:
       - 'deploy-dispatch-service'
       - 'deploy-driver-lead-service'
 
-  # ── STEP 8: Build Frontend Portals (Portals are parallelizable) ───────────────
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  # ── STEP 8: Build Frontend Portals (Parallelized Docker Builds) ─────────────
+  - name: 'gcr.io/cloud-builders/docker'
     id: 'build-admin-panel'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        AUTH_URL=$(gcloud run services describe auth-gateway --region=us-central1 --format='value(status.url)')
-        DRIVER_URL=$(gcloud run services describe driver-lead-service --region=us-central1 --format='value(status.url)')
-        DISPATCH_URL=$(gcloud run services describe dispatch-service --region=us-central1 --format='value(status.url)')
-        echo "Building Admin Panel with API: $${AUTH_URL}/api"
+        AUTH_URL=$(cat auth_url.txt)
+        DRIVER_URL=$(cat driver_url.txt)
+        DISPATCH_URL=$(cat dispatch_url.txt)
         docker build -t us-central1-docker.pkg.dev/cabi-africa/cabi-repo/admin-panel:latest \
           -f web/admin_panel/Dockerfile \
-          --build-arg VITE_API_URL=$${AUTH_URL}/api \
-          --build-arg VITE_DRIVER_LEAD_SERVICE_URL=$${DRIVER_URL} \
-          --build-arg VITE_DISPATCH_SERVICE_URL=$${DISPATCH_URL} \
+          --build-arg VITE_API_URL=${AUTH_URL}/api \
+          --build-arg VITE_DRIVER_LEAD_SERVICE_URL=${DRIVER_URL} \
+          --build-arg VITE_DISPATCH_SERVICE_URL=${DISPATCH_URL} \
           .
-    waitFor: ['deploy-auth-gateway', 'deploy-dispatch-service', 'deploy-driver-lead-service']
+    waitFor: ['discover-endpoints']
 
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  - name: 'gcr.io/cloud-builders/docker'
     id: 'build-dispatch-panel'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        AUTH_URL=$(gcloud run services describe auth-gateway --region=us-central1 --format='value(status.url)')
-        DISPATCH_URL=$(gcloud run services describe dispatch-service --region=us-central1 --format='value(status.url)')
+        AUTH_URL=$(cat auth_url.txt)
+        DISPATCH_URL=$(cat dispatch_url.txt)
         docker build -t us-central1-docker.pkg.dev/cabi-africa/cabi-repo/dispatch-panel:latest \
           -f web/dispatch_panel/Dockerfile \
-          --build-arg VITE_API_URL=$${AUTH_URL}/api \
-          --build-arg VITE_DISPATCH_SERVICE_URL=$${DISPATCH_URL} \
+          --build-arg VITE_API_URL=${AUTH_URL}/api \
+          --build-arg VITE_DISPATCH_SERVICE_URL=${DISPATCH_URL} \
           .
-    waitFor: ['deploy-auth-gateway', 'deploy-dispatch-service']
+    waitFor: ['discover-endpoints']
 
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  - name: 'gcr.io/cloud-builders/docker'
     id: 'build-user-portal'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        AUTH_URL=$(gcloud run services describe auth-gateway --region=us-central1 --format='value(status.url)')
-        DRIVER_URL=$(gcloud run services describe driver-lead-service --region=us-central1 --format='value(status.url)')
-        DISPATCH_URL=$(gcloud run services describe dispatch-service --region=us-central1 --format='value(status.url)')
-        SACCO_URL=$(gcloud run services describe sacco-service --region=us-central1 --format='value(status.url)')
-        REFERRAL_URL=$(gcloud run services describe referral-service --region=us-central1 --format='value(status.url)')
+        AUTH_URL=$(cat auth_url.txt)
+        DRIVER_URL=$(cat driver_url.txt)
+        DISPATCH_URL=$(cat dispatch_url.txt)
+        SACCO_URL=$(cat sacco_url.txt)
+        REFERRAL_URL=$(cat referral_url.txt)
         docker build -t us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest \
           -f web/user_portal/Dockerfile \
-          --build-arg NEXT_PUBLIC_API_URL=$${AUTH_URL}/api \
-          --build-arg NEXT_PUBLIC_SOCKET_URL=$${AUTH_URL} \
-          --build-arg NEXT_PUBLIC_DRIVER_LEAD_SERVICE_URL=$${DRIVER_URL} \
-          --build-arg NEXT_PUBLIC_DISPATCH_SERVICE_URL=$${DISPATCH_URL} \
-          --build-arg NEXT_PUBLIC_SACCO_SERVICE_URL=$${SACCO_URL} \
-          --build-arg NEXT_PUBLIC_REFERRAL_SERVICE_URL=$${REFERRAL_URL} \
+          --build-arg NEXT_PUBLIC_API_URL=${AUTH_URL}/api \
+          --build-arg NEXT_PUBLIC_SOCKET_URL=${AUTH_URL} \
+          --build-arg NEXT_PUBLIC_DRIVER_LEAD_SERVICE_URL=${DRIVER_URL} \
+          --build-arg NEXT_PUBLIC_DISPATCH_SERVICE_URL=${DISPATCH_URL} \
+          --build-arg NEXT_PUBLIC_SACCO_SERVICE_URL=${SACCO_URL} \
+          --build-arg NEXT_PUBLIC_REFERRAL_SERVICE_URL=${REFERRAL_URL} \
           .
-    waitFor: ['deploy-auth-gateway', 'deploy-dispatch-service', 'deploy-driver-lead-service', 'deploy-sacco-service', 'deploy-referral-service']
+    waitFor: ['discover-endpoints']
 
-  # ── STEP 9A: Push Frontend Images to Artifact Registry ─────────────────────────
+  # ── STEP 9A: Push Frontend Images ───────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-admin-panel'
     args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/admin-panel:latest']
@@ -328,14 +315,13 @@ steps:
     args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest']
     waitFor: ['build-user-portal']
 
-  # ── STEP 9B: Deploy Frontends to Cloud Run ────────────────────────────────────
+  # ── STEP 9B: Deploy Frontends ────────────────────────────────────────────────
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy-admin-panel'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        AUTH_URL=$(gcloud run services describe auth-gateway --region=us-central1 --format='value(status.url)')
         gcloud run deploy admin-panel \
           --image=us-central1-docker.pkg.dev/cabi-africa/cabi-repo/admin-panel:latest \
           --region=us-central1 --platform=managed --allow-unauthenticated \
@@ -348,12 +334,12 @@ steps:
     args:
       - '-c'
       - |
-        AUTH_URL=$(gcloud run services describe auth-gateway --region=us-central1 --format='value(status.url)')
+        AUTH_URL=$(cat auth_url.txt)
         gcloud run deploy dispatch-panel \
           --image=us-central1-docker.pkg.dev/cabi-africa/cabi-repo/dispatch-panel:latest \
           --region=us-central1 --platform=managed --allow-unauthenticated \
           --port=80 --memory=256Mi \
-          --set-env-vars=BACKEND_URL=$${AUTH_URL}
+          --set-env-vars=BACKEND_URL=${AUTH_URL}
     waitFor: ['push-dispatch-panel']
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
