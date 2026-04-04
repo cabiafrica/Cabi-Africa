@@ -13,6 +13,19 @@ pnpm-lock.yaml
 yarn.lock
 
 # ===================================
+# Workspace Sub-Project Lockfiles
+# ===================================
+# Only the root package-lock.json should be committed.
+# Sub-workspace lockfiles conflict with npm workspace hoisting,
+# causing duplicate module paths and TypeScript type errors in Docker builds.
+web/admin_panel/package-lock.json
+web/dispatch_panel/package-lock.json
+web/user_portal/package-lock.json
+backend/*/package-lock.json
+libs/*/package-lock.json
+libs/**/package-lock.json
+
+# ===================================
 # Build Outputs
 # ===================================
 dist/
