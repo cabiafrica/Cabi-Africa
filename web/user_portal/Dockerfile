@@ -32,7 +32,8 @@ ENV NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL}
 RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
 
 # Build the Next.js app via Nx
-RUN npx nx build user-portal --configuration=production
+# Build the Next.js app directly bypassing Nx
+RUN cd web/user_portal && npx next build
 
 # STAGE 3: Lightweight production runner
 FROM node:20-alpine AS runner
@@ -47,9 +48,10 @@ RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
 # Next.js standalone build lives in dist/web/user_portal/.next/standalone
 # when using Nx + next output:standalone
-COPY --from=builder --chown=nextjs:nodejs /app/dist/web/user_portal/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/dist/web/user_portal/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/dist/web/user_portal/.next/static ./.next/static
+# Next.js standalone build from native location
+COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/static ./web/user_portal/.next/static
 
 USER nextjs
 EXPOSE 3000

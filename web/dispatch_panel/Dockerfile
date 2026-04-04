@@ -14,7 +14,8 @@ ENV VITE_API_URL=${VITE_API_URL}
 ENV VITE_SOCKET_URL=${VITE_SOCKET_URL}
 ENV VITE_TRIP_TRACKING_NAMESPACE=${VITE_TRIP_TRACKING_NAMESPACE}
 
-RUN npx nx build dispatch-panel --configuration=production
+# Build the application directly bypassing Nx to avoid internal exports issues
+RUN cd web/dispatch_panel && npx vite build --emptyOutDir --outDir ../../dist/web/dispatch_panel
 
 # Final stage — Nginx with dynamic backend URL substitution
 FROM nginx:stable-alpine

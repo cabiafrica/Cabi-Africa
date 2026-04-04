@@ -16,7 +16,8 @@ ENV VITE_SOCKET_URL=${VITE_SOCKET_URL}
 ENV VITE_DRIVER_LEAD_SERVICE_URL=${VITE_DRIVER_LEAD_SERVICE_URL}
 ENV VITE_DISPATCH_SERVICE_URL=${VITE_DISPATCH_SERVICE_URL}
 
-RUN npx nx build admin-panel --configuration=production
+# Build the application directly bypassing Nx to avoid internal exports issues
+RUN cd web/admin_panel && npx vite build --emptyOutDir --outDir ../../dist/web/admin_panel
 
 # Final stage - using Nginx to serve static files
 FROM nginx:stable-alpine
