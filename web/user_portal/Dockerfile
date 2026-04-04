@@ -2,6 +2,9 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
+COPY web/admin_panel/package*.json ./web/admin_panel/
+COPY web/dispatch_panel/package*.json ./web/dispatch_panel/
+COPY web/user_portal/package*.json ./web/user_portal/
 RUN npm install --legacy-peer-deps
 
 # STAGE 2: Build the Application
@@ -33,7 +36,8 @@ RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
 
 # Build the Next.js app via Nx
 # Build the Next.js app directly bypassing Nx
-RUN cd web/user_portal && npx next build
+# Build the Next.js app using the hoisted node_modules
+RUN npm run build -w user-portal
 
 # STAGE 3: Lightweight production runner
 FROM node:20-alpine AS runner

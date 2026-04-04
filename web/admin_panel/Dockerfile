@@ -2,6 +2,9 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
+COPY web/admin_panel/package*.json ./web/admin_panel/
+COPY web/dispatch_panel/package*.json ./web/dispatch_panel/
+COPY web/user_portal/package*.json ./web/user_portal/
 RUN npm install --legacy-peer-deps
 COPY . .
 
@@ -17,7 +20,8 @@ ENV VITE_DRIVER_LEAD_SERVICE_URL=${VITE_DRIVER_LEAD_SERVICE_URL}
 ENV VITE_DISPATCH_SERVICE_URL=${VITE_DISPATCH_SERVICE_URL}
 
 # Build the application directly bypassing Nx to avoid internal exports issues
-RUN cd web/admin_panel && npx vite build --emptyOutDir --outDir ../../dist/web/admin_panel
+# Build the application using the hoisted node_modules
+RUN npm run build -w admin-panel -- --emptyOutDir --outDir ../../dist/web/admin_panel
 
 # Final stage - using Nginx to serve static files
 FROM nginx:stable-alpine

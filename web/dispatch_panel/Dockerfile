@@ -2,6 +2,9 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
+COPY web/admin_panel/package*.json ./web/admin_panel/
+COPY web/dispatch_panel/package*.json ./web/dispatch_panel/
+COPY web/user_portal/package*.json ./web/user_portal/
 RUN npm install --legacy-peer-deps
 COPY . .
 
@@ -15,7 +18,8 @@ ENV VITE_SOCKET_URL=${VITE_SOCKET_URL}
 ENV VITE_TRIP_TRACKING_NAMESPACE=${VITE_TRIP_TRACKING_NAMESPACE}
 
 # Build the application directly bypassing Nx to avoid internal exports issues
-RUN cd web/dispatch_panel && npx vite build --emptyOutDir --outDir ../../dist/web/dispatch_panel
+# Build the application using the hoisted node_modules
+RUN npm run build -w dispatch-panel -- --emptyOutDir --outDir ../../dist/web/dispatch_panel
 
 # Final stage — Nginx with dynamic backend URL substitution
 FROM nginx:stable-alpine
