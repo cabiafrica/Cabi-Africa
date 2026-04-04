@@ -1,9 +1,9 @@
-node_modules
-dist
-.nx
-.git
-.vscode
-.env
+**/node_modules
+**/dist
+**/.nx
+**/.git
+**/.vscode
+**/.env
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -12,4 +12,3 @@ yarn-error.log*
 .ps1
 *.apk
 mobile/
-# web/ handled via specific ignore logic or included for builds
