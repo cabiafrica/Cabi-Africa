@@ -5,9 +5,6 @@ COPY package*.json ./
 COPY web/admin_panel/package*.json ./web/admin_panel/
 COPY web/dispatch_panel/package*.json ./web/dispatch_panel/
 COPY web/user_portal/package*.json ./web/user_portal/
-COPY backend/content-service/package*.json ./backend/content-service/
-COPY backend/dispatch-service/package*.json ./backend/dispatch-service/
-COPY backend/driver-lead-service/package*.json ./backend/driver-lead-service/
 COPY backend/referral-service/package*.json ./backend/referral-service/
 COPY backend/sacco-service/package*.json ./backend/sacco-service/
 COPY backend/verification-service/package*.json ./backend/verification-service/
