@@ -4,41 +4,47 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
-    const globalPrefix = 'api';
-    app.setGlobalPrefix(globalPrefix);
+  const app = await NestFactory.create(AppModule);
+  const globalPrefix = 'api';
+  app.setGlobalPrefix(globalPrefix);
 
-    // Global Validation Pipe
-    app.useGlobalPipes(new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-    }));
+  // Global Validation Pipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
-    // Dynamic CORS for Cloud Run
-    const isProd = process.env.NODE_ENV === 'production';
-    app.enableCors({
-        origin: isProd 
-            ? [/https:\/\/.*\.cabi-africa\.com$/, /https:\/\/.*\.run\.app$/] 
-            : true,
-        credentials: true,
-    });
+  // Dynamic CORS for Cloud Run
+  const isProd = process.env.NODE_ENV === 'production';
+  app.enableCors({
+    origin: isProd
+      ? [/https:\/\/.*\.cabi-africa\.com$/, /https:\/\/.*\.run\.app$/]
+      : true,
+    credentials: true,
+  });
 
-    // Swagger Setup
-    const config = new DocumentBuilder()
-        .setTitle('CABI Africa - Verification API')
-        .setDescription('High-assurance KYC, document validation and service state management.')
-        .setVersion('1.0')
-        .addBearerAuth()
-        .build();
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api/docs', app, document);
+  // Swagger Setup
+  const config = new DocumentBuilder()
+    .setTitle('CABI Africa - Verification API')
+    .setDescription(
+      'High-assurance KYC, document validation and service state management.',
+    )
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
 
-    const port = process.env.PORT || 3003;
-    await app.listen(port, '0.0.0.0');
-    
-    Logger.log(`🛂 Verification Service live at: http://localhost:${port}/${globalPrefix}`);
-    Logger.log(`📚 API Docs: http://localhost:${port}/api/docs`);
+  const port = process.env.PORT || 3003;
+  await app.listen(port, '0.0.0.0');
+
+  Logger.log(
+    `🛂 Verification Service live at: http://localhost:${port}/${globalPrefix}`,
+  );
+  Logger.log(`📚 API Docs: http://localhost:${port}/api/docs`);
 }
 
 bootstrap();

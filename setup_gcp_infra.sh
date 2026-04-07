@@ -38,8 +38,8 @@ fi
 # 4. Initialize Security Vault (Secret Manager)
 echo "🔒 Initializing Security Secrets..."
 
-# List of secrets found in your .env
-SECRETS=("DATABASE_URL" "DIRECT_URL" "MPESA_CONSUMER_KEY" "MPESA_CONSUMER_SECRET" "MPESA_PASSKEY")
+# List of required secrets
+SECRETS=("DATABASE_URL" "DIRECT_URL" "JWT_SECRET" "MPESA_CONSUMER_KEY" "MPESA_CONSUMER_SECRET" "MPESA_PASSKEY")
 
 for SECRET in "${SECRETS[@]}"
 do

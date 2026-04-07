@@ -232,10 +232,12 @@ export class RideService {
     }
 
     // Vehicle type validation
-    if (ride.requestedVehicleType && driver.vehicles) {
-      if (driver.vehicles.type !== ride.requestedVehicleType) {
+    const driverVehicles = Array.isArray(driver.vehicles) ? driver.vehicles : [driver.vehicles].filter(Boolean);
+    if (ride.requestedVehicleType && driverVehicles.length > 0) {
+      const primaryVehicle = driverVehicles[0];
+      if (primaryVehicle.type !== ride.requestedVehicleType) {
         throw new Error(
-          `Vehicle type mismatch. Ride requires ${ride.requestedVehicleType}, driver has ${driver.vehicles.type}`
+          `Vehicle type mismatch. Ride requires ${ride.requestedVehicleType}, driver has ${primaryVehicle.type}`
         );
       }
     }
@@ -658,12 +660,16 @@ export class RideService {
       driverName: ride.driver?.user.fullName || null,
       driverPhone: ride.driver?.user.phone || null,
       driverEmail: ride.driver?.user.email || null,
-      driverVehicle: ride.driver?.vehicles ? {
-        make: ride.driver.vehicles.make,
-        model: ride.driver.vehicles.model,
-        plateNumber: ride.driver.vehicles.plateNumber,
-        type: ride.driver.vehicles.type
-      } : null,
+      driverVehicle: (() => {
+        const vList = ride.driver?.vehicles;
+        const arr = Array.isArray(vList) ? vList : (vList ? [vList] : []);
+        return arr.length > 0 ? {
+          make: arr[0].make,
+          model: arr[0].model,
+          plateNumber: arr[0].plateNumber,
+          type: arr[0].type
+        } : null;
+      })(),
       status: ride.status,
       pickupLocation: ride.pickupLocation,
       dropoffLocation: ride.dropoffLocation,

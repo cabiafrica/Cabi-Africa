@@ -35,7 +35,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const form = formidable({});
         const [fields, files] = await form.parse(req);
 
-        const getValue = (key: string) => Array.isArray(fields[key]) ? fields[key]?.[0] : fields[key];
+        const getValue = (key: string): string | undefined => {
+            const val = fields[key];
+            return Array.isArray(val) ? val[0] : val;
+        };
 
         const make = getValue('make');
         const model = getValue('model');
@@ -68,8 +71,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Handle Files
         const getFileUrl = async (key: string) => {
-            if (files[key]) {
-                const f = Array.isArray(files[key]) ? files[key][0] : files[key];
+            const uploadedFile = files[key];
+            if (uploadedFile) {
+                const f = (Array.isArray(uploadedFile) ? uploadedFile[0] : uploadedFile) as formidable.File;
                 return await saveFile(f);
             }
             return null;

@@ -63,13 +63,13 @@
         "libs/shared/interfaces/index.ts"
       ],
       "@/components/*": [
-        "Cabi Alpha/components/*"
+        "web/user_portal/src/components/*"
       ],
       "@/user-portal/components/*": [
-        "Cabi Alpha/web/user_portal/src/components/*"
+        "web/user_portal/src/components/*"
       ],
       "@/admin-panel/src/*": [
-        "Cabi Alpha/web/admin_panel/src/*"
+        "web/admin_panel/src/*"
       ],
       "@/backend/services/*": [
         "libs/backend/src/services/*"

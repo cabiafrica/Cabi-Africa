@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import formidable from 'formidable';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 
 export const config = {
     api: {
@@ -38,7 +39,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const [fields, files] = await form.parse(req);
 
         // Helper to get single value from fields
-        const getValue = (key: string) => Array.isArray(fields[key]) ? fields[key]?.[0] : fields[key];
+        const getValue = (key: string): string => {
+            const val = fields[key];
+            return (Array.isArray(val) ? val[0] : val) as string;
+        };
 
         const role = getValue('role');
         const firstName = getValue('firstName');
@@ -242,20 +246,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             // Create Organization
-            const org = await prisma.organization.create({
+            const org = await prisma.organizations.create({
                 data: {
+                    id: crypto.randomUUID(),
                     name: orgName,
                     founderName,
                     email: `${orgName.replace(/\s+/g, '').toLowerCase()}@cabi.com`, // Generate placeholder org email
                     registrationNumber: `ORG-${Date.now()}`, // Generate placeholder
                     registrationCertificateUrl: certUrl,
-                    status: 'PENDING'
+                    status: 'PENDING',
+                    updatedAt: new Date()
                 }
             });
 
             // Add User as Organization Member
-            await prisma.organizationMember.create({
+            await prisma.organization_members.create({
                 data: {
+                    id: crypto.randomUUID(),
                     organizationId: org.id,
                     userId: newUser.id,
                     name: fullName,
@@ -266,8 +273,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             // Add other members (simplified for now - just as records if needed, or skip)
             if (member1Name) {
-                await prisma.organizationMember.create({
+                await prisma.organization_members.create({
                     data: {
+                        id: crypto.randomUUID(),
                         organizationId: org.id,
                         name: member1Name,
                         contact: getValue('member1Phone') || '',

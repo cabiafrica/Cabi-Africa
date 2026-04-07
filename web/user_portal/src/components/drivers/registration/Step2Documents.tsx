@@ -41,6 +41,7 @@ export const Step2Documents: React.FC<Props> = ({ data, onChange, errors }) => {
     setVerifError(null);
 
     try {
+      const formData = new FormData();
       // Append all available files
       Object.entries(files).forEach(([key, file]) => {
           if (file) formData.append(key, file);

@@ -25,6 +25,10 @@ export class OrgService {
         });
     }
 
+    async getDriverUnions(): Promise<Organization[]> {
+        return this.getOrganizations();
+    }
+
     async getSubgroupDetails(orgId: string, subgroupId: string): Promise<Subgroup | null> {
         const subgroups = await this.getSubgroups(orgId);
         return subgroups.find(sg => sg.id === subgroupId) || null;

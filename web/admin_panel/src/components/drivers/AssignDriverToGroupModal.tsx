@@ -27,10 +27,13 @@ interface Group {
 interface AssignDriverToGroupModalProps {
   isOpen: boolean;
   onClose: () => void;
-  driverId: string;
-  driverName: string;
-  currentGroups: string[];
-  onAssign: (groupIds: string[]) => Promise<void>;
+  driverId?: string;
+  driverName?: string;
+  currentGroups?: string[];
+  onAssign?: (groupIds: string[]) => Promise<void>;
+  groupId?: string;
+  groupName?: string;
+  onSuccess?: () => void;
 }
 
 const MOCK_GROUPS: Group[] = [
@@ -45,32 +48,42 @@ export const AssignDriverToGroupModal = ({
   onClose,
   driverId,
   driverName,
-  currentGroups,
+  currentGroups = [],
   onAssign,
+  groupId,
+  groupName,
+  onSuccess,
 }: AssignDriverToGroupModalProps) => {
-  const [selectedGroups, setSelectedGroups] = useState<string[]>(currentGroups);
+  const [selectedItems, setSelectedItems] = useState<string[]>(currentGroups);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isGroupToDriverMode = !!groupId;
 
   const filteredGroups = MOCK_GROUPS.filter((group) =>
     group.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const toggleGroup = (groupId: string) => {
-    setSelectedGroups((prev) =>
-      prev.includes(groupId)
-        ? prev.filter((id) => id !== groupId)
-        : [...prev, groupId]
+  const toggleItem = (itemId: string) => {
+    setSelectedItems((prev) =>
+      prev.includes(itemId)
+        ? prev.filter((id) => id !== itemId)
+        : [...prev, itemId]
     );
   };
 
   const handleSave = async () => {
     setIsSubmitting(true);
     try {
-      await onAssign(selectedGroups);
+      if (isGroupToDriverMode) {
+        // Mock assigning drivers to group
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        onSuccess?.();
+      } else {
+        await onAssign?.(selectedItems);
+      }
       onClose();
     } catch (error) {
-      console.error('Failed to assign groups:', error);
+      console.error('Failed to assign:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -100,33 +113,32 @@ export const AssignDriverToGroupModal = ({
         />
 
         <List sx={{ maxHeight: 300, overflow: 'auto' }}>
-          {filteredGroups.map((group) => (
-            <React.Fragment key={group.id}>
+          {(isGroupToDriverMode ? [] : filteredGroups).map((item: any) => (
+            <React.Fragment key={item.id}>
               <ListItem
                 dense
-                onClick={() => toggleGroup(group.id)}
+                onClick={() => toggleItem(item.id)}
                 sx={{ borderRadius: 1 }}
               >
                 <Checkbox
                   edge="start"
-                  checked={selectedGroups.includes(group.id)}
+                  checked={selectedItems.includes(item.id)}
                   tabIndex={-1}
                   disableRipple
                 />
                 <ListItemText
-                  primary={group.name}
-                  secondary={`${group.memberCount} members • ${group.type}`}
-                />
-                <Badge
-                  label={group.type}
-                  size="small"
-                  variant="outlined"
-                  sx={{ ml: 1, fontSize: '0.7rem' }}
+                  primary={item.name}
+                  secondary={isGroupToDriverMode ? 'Driver' : `${item.memberCount} members • ${item.type}`}
                 />
               </ListItem>
               <Divider component="li" />
             </React.Fragment>
           ))}
+          {isGroupToDriverMode && (
+             <Typography variant="body2" color="text.secondary" align="center" sx={{ py: 4 }}>
+                Driver search not implemented yet.
+             </Typography>
+          )}
           {filteredGroups.length === 0 && (
             <Typography variant="body2" color="text.secondary" align="center" sx={{ py: 4 }}>
               No groups found matching your search.

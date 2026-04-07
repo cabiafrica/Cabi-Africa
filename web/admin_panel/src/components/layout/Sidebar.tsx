@@ -4,7 +4,7 @@ import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Too
 import BlockIcon from '@mui/icons-material/Block';
 import PolicyIcon from '@mui/icons-material/Policy';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useAuthContext } from '@/context/AuthContext';
+import { useAuthContext } from '@/AuthContext';
 
 import logo from '@/assets/logo.png';
 

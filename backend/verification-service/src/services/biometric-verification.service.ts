@@ -96,7 +96,9 @@ export class BiometricVerificationService {
       const verificationId = crypto.randomUUID();
 
       // Save file to disk
-      const fileName = `${verificationId}-${Date.now()}.${file.mimetype.split('/')[1]}`;
+      const fileName = `${verificationId}-${Date.now()}.${
+        file.mimetype.split('/')[1]
+      }`;
       const filePath = path.join(this.uploadDir, fileName);
       await fs.writeFile(filePath, file.buffer);
 

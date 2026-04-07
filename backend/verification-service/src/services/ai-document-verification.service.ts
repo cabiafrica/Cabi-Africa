@@ -129,7 +129,9 @@ export class AiDocumentVerificationService {
     const expiryStatus = this.checkExpiryStatus(extractedFields.expiryDate);
 
     this.logger.log(
-      `Document analysis complete. Type: ${detectedType}, Valid: ${validationErrors.length === 0}`,
+      `Document analysis complete. Type: ${detectedType}, Valid: ${
+        validationErrors.length === 0
+      }`,
     );
 
     const result: DocumentAnalysisResult = {

@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 // Intentionally excluding sensitive data like password
                             }
                         },
-                        vehicle: true
+                        vehicles: true
                     }
                 },
                 passenger: {
@@ -53,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const start = ride.pickupLocation as any;
         const end = ride.dropoffLocation as any;
         const driverProfile = ride.driver;
-        const vehicle = driverProfile?.vehicle;
+        const vehicle = driverProfile?.vehicles?.[0];
 
         const responseData = {
             id: ride.id,

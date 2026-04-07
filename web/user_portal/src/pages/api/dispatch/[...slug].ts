@@ -6,9 +6,6 @@ const AUTH_GATEWAY_URL = process.env.AUTH_GATEWAY_URL || 'http://localhost:3334'
 const proxy = httpProxy.createProxyServer({
     target: AUTH_GATEWAY_URL,
     changeOrigin: true,
-    pathRewrite: {
-        '^/api/dispatch': '/api',
-    },
 });
 
 export const config = {
@@ -19,13 +16,9 @@ export const config = {
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
     return new Promise((resolve, reject) => {
-        // If dispatch service has URLs like /drivers, we want /api/dispatch/drivers -> /drivers? 
-        // Wait, dispatch-service main.ts sets globalPrefix='api'. So it expects /api/...
-        // So /api/dispatch/drivers -> /api/drivers
-
-        // Let's adjust pathRewrite
-        // req.url will be /api/dispatch/something
-        // We want target/api/somethng
+        if (req.url) {
+            req.url = req.url.replace(/^\/api\/dispatch/, '/api');
+        }
 
         // Actually, let's keep it simple.
         // If I send to http://localhost:3334/api/dispatch/... 

@@ -57,7 +57,9 @@ export class DocumentVerificationService {
       this.logger.debug(`AI Analysis Result: ${JSON.stringify(analysis)}`);
 
       // 2. Save file to disk
-      const fileName = `${userId}-${documentType}-${Date.now()}.${file.mimetype.split('/')[1]}`;
+      const fileName = `${userId}-${documentType}-${Date.now()}.${
+        file.mimetype.split('/')[1]
+      }`;
       const filePath = path.join(this.uploadDir, fileName);
       await fs.writeFile(filePath, file.buffer);
 
@@ -106,8 +108,8 @@ export class DocumentVerificationService {
           status === VerificationStatus.FAILED
             ? UserStatus.REJECTED
             : status === VerificationStatus.VERIFIED
-              ? UserStatus.ACTIVE
-              : UserStatus.PENDING;
+            ? UserStatus.ACTIVE
+            : UserStatus.PENDING;
 
         await this.prisma.user.update({
           where: { id: userId },

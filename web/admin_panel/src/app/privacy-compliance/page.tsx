@@ -131,7 +131,7 @@ export default function PrivacyCompliancePage() {
             {/* Stats Cards */}
             <Grid container spacing={3} mb={4}>
                 {stats.map((stat) => (
-                    <Grid item xs={12} sm={6} md={3} key={stat.label}>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }} key={stat.label}>
                         <Paper sx={{
                             p: 3,
                             borderRadius: 3,
@@ -277,11 +277,11 @@ export default function PrivacyCompliancePage() {
                         Compliance Requirements Summary
                     </Typography>
                     <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
+                        <Grid size={{ xs: 12, md: 6 }}>
                             <Typography variant="caption" component="div">• GDPR/CCPA: Data export must be fulfilled within 30-45 days.</Typography>
                             <Typography variant="caption" component="div">• Account Deletions: 30-day grace period before permanent erasure.</Typography>
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid size={{ xs: 12, md: 6 }}>
                             <Typography variant="caption" component="div">• Data Minimization: Only retain financial records as legally required.</Typography>
                             <Typography variant="caption" component="div">• Audit Trail: Every compliance action is logged in the System Audit.</Typography>
                         </Grid>

@@ -119,7 +119,7 @@ export interface SOSIncidentDetails {
     passenger: { id: string; name: string; phone: string; };
     upline1: { id: string; name: string; phone: string; };
     upline2: { id: string; name: string; phone: string; };
-    liveLocation: { lat: number; lon: number; };
+    liveLocation: { lat: number; lng: number; };
     logs: SOSIncidentLogEntry[];
 }
 
@@ -153,6 +153,7 @@ export interface DriverGroup {
         id: string;
         name: string;
     };
+    subgroups?: DriverGroup[];
     _count?: {
         drivers: number;
         subgroups: number;

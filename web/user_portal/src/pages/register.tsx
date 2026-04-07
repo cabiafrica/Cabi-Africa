@@ -141,7 +141,7 @@ export default function Register() {
                                 {/* Passenger Card */}
                                 <button onClick={() => setRole('passenger')} className="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all hover:-translate-y-2 hover:border-brand-yellow/50 text-left">
                                     <div className="h-14 w-14 bg-black rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform text-xl text-gray-300 group-hover:text-brand-yellow border border-white/10">
-                                        <FaUser />
+                                        <User className="w-7 h-7" />
                                     </div>
                                     <h3 className="text-xl font-bold mb-1">Passenger</h3>
                                     <p className="text-gray-400 text-xs">Book rides, track trips, and manage your personal travel history.</p>

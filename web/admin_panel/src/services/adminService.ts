@@ -89,6 +89,7 @@ class AdminService {
   addMemberToSubgroup = this.orgService.addMemberToSubgroup.bind(this.orgService);
   removeMemberFromSubgroup = this.orgService.removeMemberFromSubgroup.bind(this.orgService);
   getOrganizationAuditLog = this.orgService.getOrganizationAuditLog.bind(this.orgService);
+  getDriverUnions = this.orgService.getDriverUnions.bind(this.orgService);
 
   // --- Analytics Service Delegation ---
   getBIStats = this.analyticsService.getBIStats.bind(this.analyticsService);

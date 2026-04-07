@@ -62,7 +62,7 @@ export const SosIncidentDashboard = () => {
 
     socket.on('locationUpdate', (newLocation: { lat: number; lng: number }) => {
       console.log('[WebSocket] Received location update:', newLocation);
-      setIncident(prev => prev ? { ...prev, liveLocation: { lat: newLocation.lat, lon: (newLocation as any).lng || newLocation.lon } } : null);
+      setIncident(prev => prev ? { ...prev, liveLocation: { lat: newLocation.lat, lng: newLocation.lng } } : null);
     });
 
     socket.on('disconnect', () => {
@@ -225,11 +225,11 @@ export const SosIncidentDashboard = () => {
         <Grid size={{ xs: 12, md: 8 }}>
           <Box sx={{ height: '400px', width: '100%', position: 'relative' }}>
             <CabiMap 
-              center={[incident.liveLocation.lat, incident.liveLocation.lon]}
+              center={[incident.liveLocation.lat, incident.liveLocation.lng]}
               zoom={15}
               markers={[{
                 id: 'incident-location',
-                position: [incident.liveLocation.lat, incident.liveLocation.lon],
+                position: [incident.liveLocation.lat, incident.liveLocation.lng],
                 type: 'custom',
                 popup: 'SOS Location'
               }]}

@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             where: {
                 passengerId: passengerId as string,
                 status: {
-                    in: ['REQUESTED', 'ACCEPTED', 'IN_PROGRESS']
+                    in: ['REQUESTED', 'DRIVER_ASSIGNED', 'IN_PROGRESS']
                 }
             },
             include: {

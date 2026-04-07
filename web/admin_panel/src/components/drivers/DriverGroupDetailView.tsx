@@ -90,7 +90,7 @@ export function DriverGroupDetailView({ group, onClose, onRefresh }: DriverGroup
     onRefresh();
   };
 
-  const getHierarchyPath = (currentGroup: DriverGroup): string[] => {
+  const getHierarchyPath = (currentGroup: any): string[] => {
     const path: string[] = [currentGroup.name];
     if (currentGroup.parentGroup) {
       path.unshift(...getHierarchyPath(currentGroup.parentGroup));

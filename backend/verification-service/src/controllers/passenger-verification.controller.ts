@@ -146,8 +146,8 @@ export class PassengerVerificationController {
       const status = aiVerified
         ? 'VERIFIED'
         : verification.status === 'VERIFIED'
-          ? 'VERIFIED'
-          : 'PENDING';
+        ? 'VERIFIED'
+        : 'PENDING';
 
       state.idVerification = {
         id: verification.id,
@@ -166,7 +166,9 @@ export class PassengerVerificationController {
       if (aiVerified) {
         message = 'ID verified successfully with AI. Please upload your photo.';
       } else if (aiAnalysis && aiAnalysis.warnings.length > 0) {
-        message = `ID uploaded. ${aiAnalysis.warnings.join(' ')} Please proceed.`;
+        message = `ID uploaded. ${aiAnalysis.warnings.join(
+          ' ',
+        )} Please proceed.`;
       } else {
         message = requiresSelfie
           ? 'ID uploaded. Please upload photo and complete selfie verification.'
@@ -619,8 +621,8 @@ export class PassengerVerificationController {
           state.selfieVerification?.status === 'VERIFIED'
             ? 'SELFIE'
             : state.idVerification?.status === 'VERIFIED'
-              ? 'BASIC'
-              : 'NONE',
+            ? 'BASIC'
+            : 'NONE',
         fullName: state.idVerification?.fullName,
         idNumber: state.idVerification?.idNumber,
         photoUrl: state.photoVerification?.photoUrl,

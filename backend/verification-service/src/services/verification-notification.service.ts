@@ -228,13 +228,13 @@ export class VerificationNotificationService {
             <h2 style="color: #2E7D32; text-align: center;">Congratulations!</h2>
           `
               : event === 'VERIFICATION_REJECTED'
-                ? `
+              ? `
             <div style="text-align: center; margin-bottom: 20px;">
               <span style="font-size: 60px;">❌</span>
             </div>
             <h2 style="color: #d32f2f; text-align: center;">Verification Rejected</h2>
           `
-                : `
+              : `
             <div style="text-align: center; margin-bottom: 20px;">
               <span style="font-size: 60px;">⚠️</span>
             </div>
