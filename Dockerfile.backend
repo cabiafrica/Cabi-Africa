@@ -5,23 +5,7 @@ RUN apk add --no-cache openssl
 WORKDIR /app
 
 # Install ALL dependencies first
-COPY package*.json ./
-# Copy backend workspace metadata for sub-services that have their own package.json
-COPY backend/referral-service/package*.json ./backend/referral-service/
-COPY backend/sacco-service/package*.json ./backend/sacco-service/
-COPY backend/verification-service/package*.json ./backend/verification-service/
-# Copy frontend workspace metadata
-COPY web/admin_panel/package*.json ./web/admin_panel/
-COPY web/dispatch_panel/package*.json ./web/dispatch_panel/
-COPY web/user_portal/package*.json ./web/user_portal/
-# Copy lib workspace metadata
-COPY libs/backend/mpesa-service/package*.json ./libs/backend/mpesa-service/
-COPY libs/backend/payment-service/package*.json ./libs/backend/payment-service/
-COPY libs/backend/sacco-service/package*.json ./libs/backend/sacco-service/
-
-COPY tsconfig*.json ./
-COPY nx.json ./
-
+COPY . .
 RUN npm install --legacy-peer-deps
 
 # Copy all source code

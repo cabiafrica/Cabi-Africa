@@ -1,18 +1,8 @@
 # Build stage
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY package*.json ./
-COPY web/admin_panel/package*.json ./web/admin_panel/
-COPY web/dispatch_panel/package*.json ./web/dispatch_panel/
-COPY web/user_portal/package*.json ./web/user_portal/
-COPY backend/referral-service/package*.json ./backend/referral-service/
-COPY backend/sacco-service/package*.json ./backend/sacco-service/
-COPY backend/verification-service/package*.json ./backend/verification-service/
-COPY libs/backend/mpesa-service/package*.json ./libs/backend/mpesa-service/
-COPY libs/backend/payment-service/package*.json ./libs/backend/payment-service/
-COPY libs/backend/sacco-service/package*.json ./libs/backend/sacco-service/
-RUN npm install --legacy-peer-deps
 COPY . .
+RUN npm install --legacy-peer-deps
 
 # Build args for production URLs
 ARG VITE_API_URL
