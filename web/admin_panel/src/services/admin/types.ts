@@ -32,14 +32,22 @@ export interface DriverApplicationDetails extends DriverApplication {
 }
 
 export interface ReferralConfig {
-    enabled: boolean;
-    registrationFee: {
-        total: number;
-        systemCut: number;
-        upline1Cut: number;
-        upline2Cut: number;
+    signup: {
+        totalFee: number;
+        allocations: {
+            sacco: number;
+            directReferrer: number;
+            indirectReferrer: number;
+        }
     };
-    promoConfig?: PromoConfig;
+    driverPromo: {
+        enabled: boolean;
+        rules: { recipient: string; percentage: number }[];
+    };
+    passengerPromo: {
+        enabled: boolean;
+        rules: { recipient: string; percentage: number }[];
+    };
 }
 
 export interface PromoConfig {
@@ -120,6 +128,7 @@ export interface SOSIncidentDetails {
     upline1: { id: string; name: string; phone: string; };
     upline2: { id: string; name: string; phone: string; };
     liveLocation: { lat: number; lng: number; };
+    status: 'ACTIVE' | 'RESOLVED' | 'PENDING';
     logs: SOSIncidentLogEntry[];
 }
 

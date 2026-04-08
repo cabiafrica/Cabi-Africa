@@ -1,0 +1,5 @@
+{
+  "buildCommand": "npx nx build user-portal",
+  "outputDirectory": "dist/web/user-portal/.next",
+  "framework": "nextjs"
+}

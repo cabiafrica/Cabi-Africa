@@ -14,12 +14,28 @@ export class ReferralService {
             console.error(e);
         }
         return {
-            enabled: true,
-            registrationFee: {
-                total: 2000,
-                systemCut: 0.5,
-                upline1Cut: 0.3,
-                upline2Cut: 0.2
+            signup: {
+                totalFee: 2000,
+                allocations: {
+                    sacco: 500,
+                    directReferrer: 300,
+                    indirectReferrer: 200
+                }
+            },
+            driverPromo: {
+                enabled: true,
+                rules: [
+                    { recipient: 'Sacco', percentage: 2 },
+                    { recipient: 'Direct Referrer', percentage: 1.5 },
+                    { recipient: 'Indirect Referrer', percentage: 1 }
+                ]
+            },
+            passengerPromo: {
+                enabled: true,
+                rules: [
+                    { recipient: 'Direct Referrer', percentage: 2 },
+                    { recipient: 'Indirect Referrer', percentage: 1 }
+                ]
             }
         };
     }
