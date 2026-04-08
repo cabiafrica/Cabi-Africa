@@ -136,7 +136,7 @@ export function DriverGroupsPage() {
 
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <StatCard
             title="Total Groups"
             value={stats.totalGroups}
@@ -144,7 +144,7 @@ export function DriverGroupsPage() {
             icon={BuildingIcon}
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <StatCard
             title="Total Drivers"
             value={stats.totalDrivers}
@@ -152,7 +152,7 @@ export function DriverGroupsPage() {
             icon={UsersIcon}
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <StatCard
             title="Subgroups"
             value={stats.totalSubgroups}

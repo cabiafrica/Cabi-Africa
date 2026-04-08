@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { adminService, AdminUser } from '../services/adminService';
+import { adminService, AdminUser } from '../../services/adminService';
 
 export const SuspendedAccounts: React.FC = () => {
   const [users, setUsers] = useState<AdminUser[]>([]);

@@ -13,7 +13,9 @@ import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
   cors: {
-    origin: '*', // Adjust for production
+    origin: process.env.NODE_ENV === 'production'
+      ? [/https:\/\/.*\.cabi-africa\.com$/, /https:\/\/.*\.vercel\.app$/]
+      : true,
   },
 })
 export class ChatGateway

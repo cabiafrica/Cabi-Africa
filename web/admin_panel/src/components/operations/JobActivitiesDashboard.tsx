@@ -348,7 +348,7 @@ export function JobActivitiesDashboard() {
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow mb-6 border border-slate-200 dark:border-slate-700">
         <div className="p-4">
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <input
                 type="text"
                 className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
@@ -357,7 +357,7 @@ export function JobActivitiesDashboard() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid size={{ xs: 12, sm: 3 }}>
               <select
                 className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
                 value={statusFilter}
@@ -373,7 +373,7 @@ export function JobActivitiesDashboard() {
                 <option value="CANCELLED">Cancelled</option>
               </select>
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid size={{ xs: 12, sm: 3 }}>
               <input
                 type="date"
                 className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none placeholder-slate-400"
@@ -381,7 +381,7 @@ export function JobActivitiesDashboard() {
                 onChange={(e) => setDateFilter(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={2}>
+            <Grid size={{ xs: 12, sm: 2 }}>
               <Typography variant="body2" className="text-slate-500 dark:text-slate-400">
                 {filteredRides.length} results
               </Typography>
@@ -524,7 +524,7 @@ export function JobActivitiesDashboard() {
 
               {activeTab === 0 && (
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <Typography variant="subtitle2" color="textSecondary">
                       Ride ID
                     </Typography>

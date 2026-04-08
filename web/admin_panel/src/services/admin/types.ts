@@ -40,6 +40,12 @@ export interface ReferralConfig {
             indirectReferrer: number;
         }
     };
+    registrationFee: {
+        total: number;
+        systemCut: number;
+        upline1Cut: number;
+        upline2Cut: number;
+    };
     driverPromo: {
         enabled: boolean;
         rules: { recipient: string; percentage: number }[];

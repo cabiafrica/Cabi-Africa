@@ -85,7 +85,7 @@ export const ReferralConfigPage = () => {
       {error && <Typography color="error">{error}</Typography>}
       <Paper sx={{ p: 3, mt: 2 }}>
         <Grid container spacing={3}>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography variant="h6">Registration Fee</Typography>
             <TextField
               label="Total Fee (KES)"
@@ -95,18 +95,18 @@ export const ReferralConfigPage = () => {
               fullWidth
             />
           </Grid>
-          <Grid item xs={4}><TextField label="System Split (%)" type="number" value={config.registrationFeeSplit.system} onChange={(e) => handleChange('registrationFeeSplit.system', e.target.value)} /></Grid>
-          <Grid item xs={4}><TextField label="Upline 1 Split (%)" type="number" value={config.registrationFeeSplit.upline1} onChange={(e) => handleChange('registrationFeeSplit.upline1', e.target.value)} /></Grid>
-          <Grid item xs={4}><TextField label="Upline 2 Split (%)" type="number" value={config.registrationFeeSplit.upline2} onChange={(e) => handleChange('registrationFeeSplit.upline2', e.target.value)} /></Grid>
+          <Grid size={4}><TextField label="System Split (%)" type="number" value={config.registrationFeeSplit.system} onChange={(e) => handleChange('registrationFeeSplit.system', e.target.value)} /></Grid>
+          <Grid size={4}><TextField label="Upline 1 Split (%)" type="number" value={config.registrationFeeSplit.upline1} onChange={(e) => handleChange('registrationFeeSplit.upline1', e.target.value)} /></Grid>
+          <Grid size={4}><TextField label="Upline 2 Split (%)" type="number" value={config.registrationFeeSplit.upline2} onChange={(e) => handleChange('registrationFeeSplit.upline2', e.target.value)} /></Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography variant="h6" sx={{ mt: 3 }}>Fare Commission</Typography>
           </Grid>
-          <Grid item xs={4}><TextField label="System Split (%)" type="number" value={config.fareCommissionSplit.system} onChange={(e) => handleChange('fareCommissionSplit.system', e.target.value)} /></Grid>
-          <Grid item xs={4}><TextField label="Upline 1 Split (%)" type="number" value={config.fareCommissionSplit.upline1} onChange={(e) => handleChange('fareCommissionSplit.upline1', e.target.value)} /></Grid>
-          <Grid item xs={4}><TextField label="Upline 2 Split (%)" type="number" value={config.fareCommissionSplit.upline2} onChange={(e) => handleChange('fareCommissionSplit.upline2', e.target.value)} /></Grid>
+          <Grid size={4}><TextField label="System Split (%)" type="number" value={config.fareCommissionSplit.system} onChange={(e) => handleChange('fareCommissionSplit.system', e.target.value)} /></Grid>
+          <Grid size={4}><TextField label="Upline 1 Split (%)" type="number" value={config.fareCommissionSplit.upline1} onChange={(e) => handleChange('fareCommissionSplit.upline1', e.target.value)} /></Grid>
+          <Grid size={4}><TextField label="Upline 2 Split (%)" type="number" value={config.fareCommissionSplit.upline2} onChange={(e) => handleChange('fareCommissionSplit.upline2', e.target.value)} /></Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography variant="h6" sx={{ mt: 3 }}>Other Settings</Typography>
             <TextField
               label="SACCO Savings Rate (%)"
@@ -118,7 +118,7 @@ export const ReferralConfigPage = () => {
           </Grid>
 
           {/* TODO: Replace with a multi-select dropdown populated from a badge API */}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <TextField
               label="Earning Badge IDs (comma-separated)"
               value={config.earningBadgeIds.join(',')}
@@ -127,7 +127,7 @@ export const ReferralConfigPage = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sx={{ mt: 3, textAlign: 'right' }}>
+          <Grid size={12} sx={{ mt: 3, textAlign: 'right' }}>
             <Button
               variant="contained"
               color="primary"

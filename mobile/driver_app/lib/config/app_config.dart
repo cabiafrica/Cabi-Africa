@@ -39,7 +39,7 @@ class AppConfig {
       : 'http://$host:3338/api';
 
   static String getSosSocketUrl(String tripId) {
-    final wsProtocol = AppConfig.isProduction ? 'wss' : 'ws';
+    const wsProtocol = AppConfig.isProduction ? 'wss' : 'ws';
     final socketHost = AppConfig.isProduction 
         ? 'auth-gateway-746659778850.us-central1.run.app' 
         : '${AppConfig.host}:3333';

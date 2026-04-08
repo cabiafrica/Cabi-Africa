@@ -103,7 +103,7 @@ jobs:
       - name: Build backend services
         run: |
           npx nx run-many --target=build \
-            --projects=auth-gateway,admin-service,user-service,verification-service,dispatch-service,driver-lead-service \
+            --projects=auth-gateway,verification-service,dispatch-service,driver-lead-service,referral-service,sacco-service \
             --parallel=3 \
             --configuration=production
 
@@ -223,35 +223,58 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DISPATCH_PANEL_PROJECT_ID }}
 
+  # Deploy backends via Cloud Build
+  deploy-backends:
+    name: Deploy Backends via Cloud Build
+    needs: migrate-database
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Trigger Cloud Build
+        run: gcloud builds submit --config=cloudbuild.yaml --project=${{ secrets.GCP_PROJECT_ID }} --timeout=3600s
+
   # Health checks
   post-deployment-checks:
     name: Post-Deployment Health Checks
-    needs: [deploy-user-portal, deploy-admin-panel, deploy-dispatch-panel]
+    needs: [deploy-user-portal, deploy-admin-panel, deploy-dispatch-panel, deploy-backends]
     runs-on: ubuntu-latest
     steps:
       - name: Wait for deployments to stabilize
         run: sleep 30
 
-      - name: Check Backend API health
-        run: |
-          API_URL="${{ secrets.PRODUCTION_API_URL }}"
-          if [ -n "$API_URL" ]; then
-            curl -sf "$API_URL/health" --max-time 10 || echo "⚠️ Backend health check failed (non-blocking)"
-          else
-            echo "⚠️ PRODUCTION_API_URL not set, skipping backend health check"
-          fi
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Verify database connectivity via API
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Check Cloud Run backend health
         run: |
-          API_URL="${{ secrets.PRODUCTION_API_URL }}"
-          if [ -n "$API_URL" ]; then
-            curl -sf "$API_URL/health" --max-time 10 | jq -e '.database.status == "connected"' || echo "⚠️ DB connectivity check inconclusive"
-          fi
+          for svc in auth-gateway verification-service referral-service sacco-service dispatch-service driver-lead-service; do
+            URL=$(gcloud run services describe $svc --region=us-central1 --format='value(status.url)' 2>/dev/null)
+            if [ -n "$URL" ]; then
+              curl -sf "$URL/api/health" --max-time 10 && echo "✅ $svc is healthy" || echo "⚠️ $svc health check failed"
+            else
+              echo "⚠️ $svc not found on Cloud Run"
+            fi
+          done
 
       - name: Deployment summary
         run: |
           echo "🚀 Deployment completed!"
-          echo "Backend API: ${{ secrets.PRODUCTION_API_URL }}"
           echo "Commit: ${{ github.sha }}"
           echo "Branch: ${{ github.ref_name }}"
 

@@ -29,7 +29,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useAuthContext } from '../../context/AuthContext';
+import { useAuthContext } from '../AuthContext';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, solarizedlight, atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';

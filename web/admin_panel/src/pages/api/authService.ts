@@ -28,3 +28,6 @@ export const resetPassword = async (token: string, password: string): Promise<{ 
     const { data } = await axios.post(`${API_BASE_URL}/reset-password`, { token, password });
     return data;
 };
+
+// Alias used by ForgotPasswordPage
+export const requestPasswordReset = forgotPassword;

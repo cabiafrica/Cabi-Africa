@@ -376,6 +376,7 @@ export function DriverGroupDetailView({ group, onClose, onRefresh }: DriverGroup
       {/* Assign Driver Modal */}
       {showAssignModal && (
         <AssignDriverToGroupModal
+          isOpen={showAssignModal}
           groupId={group.id}
           groupName={group.name}
           onClose={() => setShowAssignModal(false)}

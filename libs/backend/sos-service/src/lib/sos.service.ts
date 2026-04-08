@@ -21,7 +21,13 @@ export interface SosPenaltyConfig {
     feeAmount?: number;
 }
 
-@WebSocketGateway({ cors: true })
+@WebSocketGateway({
+    cors: {
+        origin: process.env.NODE_ENV === 'production'
+            ? [/https:\/\/.*\.cabi-africa\.com$/, /https:\/\/.*\.vercel\.app$/]
+            : true,
+    },
+})
 export class SOSGateway {
     @WebSocketServer()
     server: Server;

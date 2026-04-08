@@ -74,6 +74,7 @@ class AdminService {
   getUserRideHistory = this.userService.getUserRideHistory.bind(this.userService);
   suspendUser = this.userService.suspendUser.bind(this.userService);
   reactivateUser = this.userService.reactivateUser.bind(this.userService);
+  unsuspendUser = this.userService.reactivateUser.bind(this.userService);
   getSuspendedUsers = this.userService.getSuspendedUsers.bind(this.userService);
   getDocumentHistory = this.userService.getDocumentHistory.bind(this.userService);
 

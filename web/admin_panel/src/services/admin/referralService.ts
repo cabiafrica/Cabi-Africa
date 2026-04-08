@@ -22,6 +22,12 @@ export class ReferralService {
                     indirectReferrer: 200
                 }
             },
+            registrationFee: {
+                total: 2000,
+                systemCut: 0.5,
+                upline1Cut: 0.3,
+                upline2Cut: 0.2
+            },
             driverPromo: {
                 enabled: true,
                 rules: [

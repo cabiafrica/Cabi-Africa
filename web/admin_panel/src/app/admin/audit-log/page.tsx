@@ -1,5 +1,5 @@
 import React from 'react';
-import { AuditLogViewer } from '../../../../components/viewers/AuditLogViewer';
+import { AuditLogViewer } from '../../../components/viewers/AuditLogViewer';
 
 export default function AuditLogPage() {
     return (

@@ -27,6 +27,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  DialogActions,
   ButtonBase,
   FormControlLabel,
   Switch,
@@ -209,6 +210,7 @@ export const AuditLogPage = () => {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [syntaxTheme, setSyntaxTheme] = useState(() => localStorage.getItem('auditLog_syntaxTheme') || 'vscDarkPlus');
   const [isPageVisible, setIsPageVisible] = useState(!document.hidden);
+  const [notification, setNotification] = useState<{ open: boolean; message: string; severity: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -358,6 +360,38 @@ export const AuditLogPage = () => {
     }, {} as Record<string, boolean>);
     setLineVisibility(initialVisibility);
   }, [actionTypes]);
+
+  const filteredEvents = useMemo(() => {
+    let sortableEvents = [...events];
+    sortableEvents.sort((a, b) => {
+      const aValue = a[orderBy] || '';
+      const bValue = b[orderBy] || '';
+      if (bValue < aValue) return order === 'asc' ? 1 : -1;
+      if (bValue > aValue) return order === 'asc' ? -1 : 1;
+      return 0;
+    });
+    return sortableEvents.filter(event => {
+      const matchesText =
+        filterText.trim() === '' ||
+        event.userId.toLowerCase().includes(filterText.toLowerCase()) ||
+        event.action.toLowerCase().includes(filterText.toLowerCase()) ||
+        (event.userFullName && event.userFullName.toLowerCase().includes(filterText.toLowerCase()));
+
+      if (!matchesText) return false;
+
+      const eventDate = new Date(event.timestamp);
+      if (startDate && new Date(startDate) > eventDate) {
+        return false;
+      }
+      if (endDate) {
+        const endOfDay = new Date(endDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        if (endOfDay < eventDate) return false;
+      }
+
+      return true;
+    });
+  }, [events, filterText, startDate, endDate, order, orderBy]);
 
   const summaryStats = useMemo(() => {
     const today = new Date();
@@ -533,37 +567,8 @@ export const AuditLogPage = () => {
     setNotification({ open: true, message, severity });
   };
 
-  const filteredEvents = useMemo(() => {
-    let sortableEvents = [...events];
-    sortableEvents.sort((a, b) => {
-      const aValue = a[orderBy] || '';
-      const bValue = b[orderBy] || '';
-      if (bValue < aValue) return order === 'asc' ? 1 : -1;
-      if (bValue > aValue) return order === 'asc' ? -1 : 1;
-      return 0;
-    });
-    return sortableEvents.filter(event => {
-      const matchesText =
-        filterText.trim() === '' ||
-        event.userId.toLowerCase().includes(filterText.toLowerCase()) ||
-        event.action.toLowerCase().includes(filterText.toLowerCase()) ||
-        (event.userFullName && event.userFullName.toLowerCase().includes(filterText.toLowerCase()));
+  // filteredEvents is now defined earlier (before summaryStats)
 
-      if (!matchesText) return false;
-
-      const eventDate = new Date(event.timestamp);
-      if (startDate && new Date(startDate) > eventDate) {
-        return false;
-      }
-      if (endDate) {
-        const endOfDay = new Date(endDate);
-        endOfDay.setHours(23, 59, 59, 999); // Include the entire end day
-        if (endOfDay < eventDate) return false;
-      }
-
-      return true;
-    });
-  }, [events, filterText, startDate, endDate, order, orderBy]);
 
   const chartData = useMemo(() => {
     const dataByDate = filteredEvents.reduce((acc, event) => {
@@ -596,7 +601,7 @@ export const AuditLogPage = () => {
       <Typography variant="h4" gutterBottom>Audit Log</Typography>
 
       <Grid container spacing={3} mb={2}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Paper
             component={ButtonBase}
             onClick={handleClearAllFilters}
@@ -606,7 +611,7 @@ export const AuditLogPage = () => {
             <Typography color="text.secondary">Total Events Displayed</Typography>
           </Paper>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Paper
             component={ButtonBase}
             onClick={() => {
@@ -620,7 +625,7 @@ export const AuditLogPage = () => {
             <Typography color="text.secondary">Events Today</Typography>
           </Paper>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Paper
             component={ButtonBase}
             onClick={() => summaryStats.mostFrequent !== 'N/A' && setFilterText(summaryStats.mostFrequent)}
@@ -631,7 +636,7 @@ export const AuditLogPage = () => {
             <Typography color="text.secondary">Most Frequent Event</Typography>
           </Paper>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <Paper
             component={ButtonBase}
             onClick={() => summaryStats.mostActiveUser !== 'N/A' && setFilterText(summaryStats.mostActiveUser)}
@@ -663,7 +668,7 @@ export const AuditLogPage = () => {
       </Paper>
       <Paper sx={{ p: 2, mb: 2 }}>
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} md={3}>
+          <Grid size={{ xs: 12, md: 3 }}>
             <TextField
               label="Filter by User ID, Name, or Action"
               variant="outlined"
@@ -673,7 +678,7 @@ export const AuditLogPage = () => {
               onChange={(e) => setFilterText(e.target.value)}
             />
           </Grid>
-          <Grid item xs={12} sm={4} md={2}>
+          <Grid size={{ xs: 12, sm: 4, md: 2 }}>
             <FormControl size="small" fullWidth>
               <InputLabel>Time Range</InputLabel>
               <Select value={quickFilter} label="Time Range" onChange={handleQuickFilterChange as any}>
@@ -685,7 +690,7 @@ export const AuditLogPage = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={6} sm={4} md={2}>
+          <Grid size={{ xs: 6, sm: 4, md: 2 }}>
             <TextField
               label="Start Date"
               type="date"
@@ -696,7 +701,7 @@ export const AuditLogPage = () => {
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-          <Grid item xs={6} sm={4} md={2}>
+          <Grid size={{ xs: 6, sm: 4, md: 2 }}>
             <TextField
               label="End Date"
               type="date"
@@ -707,13 +712,13 @@ export const AuditLogPage = () => {
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-          <Grid item xs={12} sm={4} md={1} textAlign="center">
+          <Grid size={{ xs: 12, sm: 4, md: 1 }} textAlign="center">
             <Button onClick={handleClearAllFilters} variant="text">Clear All Filters</Button>
           </Grid>
-          <Grid item xs={12} sm={4} md={2} textAlign="center">
+          <Grid size={{ xs: 12, sm: 4, md: 2 }} textAlign="center">
             <Button onClick={() => setIsResetConfirmOpen(true)} variant="text" color="secondary">Reset Preferences</Button>
           </Grid>
-          <Grid item xs={12} sm={6} md={2} textAlign={{ xs: 'left', md: 'right' }} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 2 }} textAlign={{ xs: 'left', md: 'right' }} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
             <FormControlLabel
               control={<Switch checked={isLive} onChange={(e) => setIsLive(e.target.checked)} />}
               label="Live Update"
@@ -724,7 +729,7 @@ export const AuditLogPage = () => {
               </IconButton>
             )}
           </Grid>
-          <Grid item xs={12} md={2} textAlign="right">
+          <Grid size={{ xs: 12, md: 2 }} textAlign="right">
             <Button variant="outlined" startIcon={<DownloadIcon />} onClick={handleExportCsv} disabled={filteredEvents.length === 0}>
               Export as CSV
             </Button>

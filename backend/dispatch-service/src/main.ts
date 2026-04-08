@@ -18,7 +18,11 @@ async function bootstrap() {
     const isProduction = process.env.NODE_ENV === 'production';
     app.enableCors({
         origin: isProduction 
-            ? [/https:\/\/.*\.cabi-africa\.com$/, /https:\/\/cabi-africa\.vercel\.app$/, /https:\/\/.*-746659778850\..*\.run\.app$/] 
+            ? [
+                /https:\/\/.*\.cabi-africa\.com$/,
+                /https:\/\/.*\.run\.app$/,
+                /https:\/\/.*\.vercel\.app$/,
+              ]
             : true,
         credentials: true,
     });

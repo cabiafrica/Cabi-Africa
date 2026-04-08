@@ -97,7 +97,7 @@ export const SosIncidentDashboard: React.FC<Props> = ({ incidentId, onBack }) =>
               <div className="bg-gray-200 h-96 w-full flex flex-col items-center justify-center relative">
                 <span className="text-4xl mb-4">🗺️</span>
                 <p className="text-gray-600 font-medium">Live Map Feed</p>
-                <p className="text-xs text-gray-500">Lat: {incident.liveLocation.lat}, Lon: {incident.liveLocation.lon}</p>
+                <p className="text-xs text-gray-500">Lat: {incident.liveLocation.lat}, Lon: {incident.liveLocation.lng}</p>
 
                 {/* Overlay Controls */}
                 <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur p-2 rounded-lg shadow-lg">
