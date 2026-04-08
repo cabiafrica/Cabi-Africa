@@ -5,22 +5,16 @@
 steps:
 
   # ── STEP 0: Run Database Migrations ──────────────────────────────────────────
-  - name: 'gcr.io/cloud-builders/npm'
+  - name: 'node:20'
     id: 'run-migrations'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        echo "Navigating to Prisma directory..."
-        cd libs/backend/database/prisma
-        echo "Current Directory: $(pwd)"
-        echo "Listing Migrations Directory:"
-        ls -R migrations
-        npm install prisma --no-save --legacy-peer-deps
-        echo "Running Prisma Migrate Status..."
-        npx prisma migrate status --schema=schema.prisma
-        echo "Running Prisma Migrate Deploy..."
-        npx prisma migrate deploy --schema=schema.prisma
+        echo "Prisma Migration Diagnostics..."
+        npm install prisma --no-save
+        npx prisma migrate status --schema=libs/backend/database/prisma/schema.prisma
+        npx prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma
     secretEnv: ['DATABASE_URL', 'DIRECT_URL']
 
   # ── STEP 1: Build Auth Gateway ────────────────────────────────────────────────
