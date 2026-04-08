@@ -1,0 +1,28 @@
+# Production runner for pre-built NX monorepo services
+FROM node:20-alpine
+RUN apk add --no-cache openssl
+WORKDIR /app
+
+ARG SERVICE_NAME
+ARG IS_BACKEND_SUB_SERVICE=true
+ENV NODE_ENV=production
+ENV SERVICE_NAME=${SERVICE_NAME}
+ENV IS_BACKEND_SUB_SERVICE=${IS_BACKEND_SUB_SERVICE}
+
+# Security: non-root user
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nestjs
+
+# Copy the entire dist and node_modules from the shared workspace
+COPY dist ./dist
+COPY node_modules ./node_modules
+
+USER nestjs
+EXPOSE 8080
+
+# Cloud Run injects PORT, but we explicitly start the main.js
+CMD ["sh", "-c", \
+    "if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then \n\
+        node dist/backend/$SERVICE_NAME/main.js; \n\
+    else \n\
+        node dist/$SERVICE_NAME/main.js; \n\
+    fi"]

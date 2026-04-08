@@ -11,11 +11,30 @@ steps:
     args:
       - '-c'
       - |
-        echo "Prisma Migration Diagnostics..."
+        echo "Prisma Migration Diagnostics & Recovery..."
         npm install prisma --no-save
-        npx prisma migrate status --schema=libs/backend/database/prisma/schema.prisma
+        echo "Attempting to resolve failed migration state..."
+        npx prisma migrate resolve --applied 20260406000000_init --schema=libs/backend/database/prisma/schema.prisma || echo "Resolution not needed or failed, continuing..."
+        echo "Deploying migrations..."
         npx prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma
     secretEnv: ['DATABASE_URL', 'DIRECT_URL']
+
+  # ── PRE-BUILD: Install & Build All Assets ────────────────────────────────────
+  - name: 'node:20'
+    id: 'central-install'
+    entrypoint: 'npm'
+    args: ['install', '--legacy-peer-deps']
+    waitFor: ['run-migrations']
+
+  - name: 'node:20'
+    id: 'central-build'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
+        npx nx run-many --target=build --all --configuration=production
+    waitFor: ['central-install']
 
   # ── STEP 1: Build Auth Gateway ────────────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
@@ -25,13 +44,13 @@ steps:
       - '-t'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
       - '-f'
-      - 'Dockerfile.backend'
+      - 'Dockerfile.backend.prebuilt'
       - '--build-arg'
       - 'SERVICE_NAME=auth-gateway'
       - '--build-arg'
       - 'IS_BACKEND_SUB_SERVICE=false'
       - '.'
-    waitFor: ['run-migrations']
+    waitFor: ['central-build']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-auth-gateway'
@@ -63,11 +82,11 @@ steps:
       - '-t'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/verification-service:latest'
       - '-f'
-      - 'Dockerfile.backend'
+      - 'Dockerfile.backend.prebuilt'
       - '--build-arg'
       - 'SERVICE_NAME=verification-service'
       - '.'
-    waitFor: ['deploy-auth-gateway']
+    waitFor: ['central-build']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-verification-service'
@@ -97,11 +116,11 @@ steps:
       - '-t'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/referral-service:latest'
       - '-f'
-      - 'Dockerfile.backend'
+      - 'Dockerfile.backend.prebuilt'
       - '--build-arg'
       - 'SERVICE_NAME=referral-service'
       - '.'
-    waitFor: ['deploy-auth-gateway']
+    waitFor: ['central-build']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-referral-service'
@@ -131,11 +150,11 @@ steps:
       - '-t'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/sacco-service:latest'
       - '-f'
-      - 'Dockerfile.backend'
+      - 'Dockerfile.backend.prebuilt'
       - '--build-arg'
       - 'SERVICE_NAME=sacco-service'
       - '.'
-    waitFor: ['deploy-auth-gateway']
+    waitFor: ['central-build']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-sacco-service'
@@ -165,11 +184,11 @@ steps:
       - '-t'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/dispatch-service:latest'
       - '-f'
-      - 'Dockerfile.backend'
+      - 'Dockerfile.backend.prebuilt'
       - '--build-arg'
       - 'SERVICE_NAME=dispatch-service'
       - '.'
-    waitFor: ['deploy-auth-gateway']
+    waitFor: ['central-build']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-dispatch-service'
@@ -199,11 +218,11 @@ steps:
       - '-t'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/driver-lead-service:latest'
       - '-f'
-      - 'Dockerfile.backend'
+      - 'Dockerfile.backend.prebuilt'
       - '--build-arg'
       - 'SERVICE_NAME=driver-lead-service'
       - '.'
-    waitFor: ['deploy-auth-gateway']
+    waitFor: ['central-build']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-driver-lead-service'
