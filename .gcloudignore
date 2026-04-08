@@ -1,0 +1,25 @@
+.gcloudignore
+.git
+.gitignore
+
+# Big files
+**/*.apk
+**/*.zip
+
+# Dependencies
+**/node_modules/
+node_modules/
+
+# Build outputs
+**/dist/
+**/build/
+.nx/
+.swc/
+.vscode/
+tests/
+mobile/
+sdk/
+Africa/
+_archive/
+_docs_archive/
+uploads/
