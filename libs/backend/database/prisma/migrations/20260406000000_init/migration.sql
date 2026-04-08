@@ -1,4 +1,4 @@
-﻿-- CreateEnum
+-- CreateEnum
 CREATE TYPE "UserStatus" AS ENUM ('PROSPECT', 'PENDING', 'ACTIVE', 'SUSPENDED', 'REJECTED');
 
 -- CreateEnum
@@ -964,4 +964,3 @@ ALTER TABLE "organization_members" ADD CONSTRAINT "organization_members_userId_f
 
 -- AddForeignKey
 ALTER TABLE "organizations" ADD CONSTRAINT "organizations_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "organizations"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
