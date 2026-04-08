@@ -11,7 +11,8 @@
             ],
             "defaultConfiguration": "production",
             "options": {
-                "outputPath": "dist/web/admin_panel"
+                "outputPath": "dist/web/admin_panel",
+                "emptyOutDir": true
             },
             "configurations": {
                 "development": {
