@@ -39,10 +39,10 @@ function Write-Log {
     }
     
     $Icons = @{
-        "INFO"    = "ℹ"
-        "SUCCESS" = "✓"
-        "WARNING" = "⚠"
-        "ERROR"   = "✗"
+        "INFO"    = "[i]"
+        "SUCCESS" = "[+]"
+        "WARNING" = "[!]"
+        "ERROR"   = "[x]"
     }
     
     $formattedMessage = "$($Icons[$Level]) $Message"
@@ -50,12 +50,31 @@ function Write-Log {
     "$((Get-Date).ToString('yyyy-MM-dd HH:mm:ss')) [$Level] $Message" | Out-File -Append -FilePath $LogFile
 }
 
+function Load-EnvFile {
+    param([string]$Path)
+    if (Test-Path $Path) {
+        Write-Log "Loading environment variables from $Path..." "INFO"
+        Get-Content $Path | ForEach-Object {
+            $line = $_.Trim()
+            if ($line -and -not $line.StartsWith("#")) {
+                $name, $value = $line -split '=', 2
+                if ($name -and $value) {
+                    $name = $name.Trim()
+                    $value = $value.Trim().Trim('"').Trim("'")
+                    [System.Environment]::SetEnvironmentVariable($name, $value)
+                    Set-Item "env:$name" $value
+                }
+            }
+        }
+    }
+}
+
 function Write-Header {
     param([string]$Title)
     
-    Write-Host "`n════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host "`n****************************************" -ForegroundColor Cyan
     Write-Host "  $Title" -ForegroundColor Cyan
-    Write-Host "════════════════════════════════════════`n" -ForegroundColor Cyan
+    Write-Host "****************************************`n" -ForegroundColor Cyan
 }
 
 function Test-Prerequisites {
@@ -192,7 +211,7 @@ function Build-Frontend {
 function Invoke-Migrations {
     Write-Header "Running Database Migrations"
     
-    if ($Environment -eq "production") {
+    if ($Environment -eq "production" -and -not $AutoDeploy) {
         Write-Log "About to run migrations on PRODUCTION database" "WARNING"
         $confirm = Read-Host "Continue? (yes/no)"
         if ($confirm -ne "yes") {
@@ -232,14 +251,14 @@ function New-SuperAdmin {
 function Show-DeploymentSummary {
     Write-Header "Deployment Summary"
     
-    Write-Host "✓ Tests Passed: 11/11" -ForegroundColor Green
-    Write-Host "✓ Backend Built: auth-gateway" -ForegroundColor Green
-    Write-Host "✓ Frontend Built: admin-panel" -ForegroundColor Green
-    Write-Host "✓ Migrations: Up to date" -ForegroundColor Green
-    Write-Host "✓ Super Admin: Configured" -ForegroundColor Green
+    Write-Host "[+] Tests Passed: 11/11" -ForegroundColor Green
+    Write-Host "[+] Backend Built: auth-gateway" -ForegroundColor Green
+    Write-Host "[+] Frontend Built: admin-panel" -ForegroundColor Green
+    Write-Host "[+] Migrations: Up to date" -ForegroundColor Green
+    Write-Host "[+] Super Admin: Configured" -ForegroundColor Green
     Write-Host ""
     
-    if ($Environment -eq "production") {
+    if ($Environment -eq "production" -and -not $AutoDeploy) {
         Write-Log "This will deploy to PRODUCTION" "WARNING"
         $proceed = Read-Host "Proceed with deployment? (yes/no)"
         if ($proceed -ne "yes") {
@@ -307,9 +326,9 @@ try {
     Clear-Host
     
     Write-Host ""
-    Write-Host "╔══════════════════════════════════════════╗" -ForegroundColor Blue
-    Write-Host "║   RBAC Production Deployment Script     ║" -ForegroundColor Blue
-    Write-Host "╚══════════════════════════════════════════╝" -ForegroundColor Blue
+    Write-Host "********************************************" -ForegroundColor Blue
+    Write-Host "*   RBAC Production Deployment Script     *" -ForegroundColor Blue
+    Write-Host "********************************************" -ForegroundColor Blue
     Write-Host ""
     Write-Host "Environment: $Environment" -ForegroundColor Yellow
     Write-Host "Timestamp: $Timestamp" -ForegroundColor Yellow
@@ -317,6 +336,12 @@ try {
     Write-Host ""
     
     # Run all steps
+    if ($Environment -eq "production") {
+        Load-EnvFile ".env.production"
+    } else {
+        Load-EnvFile ".env"
+    }
+    
     Test-Prerequisites
     
     if (-not $SkipTests) {
@@ -351,7 +376,7 @@ try {
     # Final summary
     Write-Header "Deployment Complete!"
     
-    Write-Host "✓ RBAC system built successfully" -ForegroundColor Green
+    Write-Host "[+] RBAC system built successfully" -ForegroundColor Green
     Write-Host "  Log file: $LogFile"
     Write-Host ""
     

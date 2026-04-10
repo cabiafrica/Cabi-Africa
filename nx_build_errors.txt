@@ -1,0 +1,32 @@
+﻿
+ NX   Running target build for project admin-panel and 1 task it depends on:
+
+
+
+> nx run user-service:build  [existing outputs match the cache, left as is]
+
+
+> nx run admin-panel:build:production
+
+[36mvite v6.2.5 [32mbuilding for production...[36m[39m
+[32m✓[39m 0 modules transformed.
+node.exe : [31m✗[39m Build failed in 18ms
+At C:\nvm4w\nodejs\npx.ps1:29 char:3
++   & $NODE_EXE $NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([31m✗[39m Build failed in 18ms:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[0m[7m[1m[31m NX [39m[22m[27m[0m  [31m[31mCould not resolve entry module "index.html".[39m[31m[39m
+Pass --verbose to see the stacktrace.
+
+
+
+ NX   Running target build for project admin-panel and 1 task it depends on failed
+
+Failed tasks:
+
+- admin-panel:build:production
+
+Hint: run the command with --verbose for more details.
+

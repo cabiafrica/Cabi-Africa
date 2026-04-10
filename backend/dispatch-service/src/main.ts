@@ -19,9 +19,10 @@ async function bootstrap() {
     app.enableCors({
         origin: isProduction 
             ? [
-                /https:\/\/.*\.cabi-africa\.com$/,
-                /https:\/\/.*\.run\.app$/,
-                /https:\/\/.*\.vercel\.app$/,
+                /https?:\/\/([^/]+\.)?cabi\.africa$/,
+                /https?:\/\/([^/]+\.)?cabi-africa\.com$/,
+                /https?:\/\/([^/]+\.)?run\.app$/,
+                /https?:\/\/([^/]+\.)?vercel\.app$/,
               ]
             : true,
         credentials: true,

@@ -11,7 +11,7 @@ import { Injectable } from '@nestjs/common';
 @WebSocketGateway({
     cors: {
         origin: process.env.NODE_ENV === 'production'
-            ? [/https:\/\/.*\.cabi-africa\.com$/, /https:\/\/.*\.vercel\.app$/]
+            ? [/https:\/\/.*\.cabi\.africa$/, /https:\/\/.*\.cabi-africa\.com$/, /https:\/\/.*\.vercel\.app$/]
             : true,
     },
     namespace: 'trip-tracking',
