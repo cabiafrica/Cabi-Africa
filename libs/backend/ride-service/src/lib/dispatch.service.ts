@@ -36,15 +36,8 @@ export class DispatchService {
     private surgeZones = new Map<string, number>(); // zoneId -> multiplier
 
     constructor() {
-        this.seedMockData();
         // Start Cron for Scheduled Rides (50.3)
         setInterval(() => this.processScheduledRides(), 60000);
-    }
-
-    private seedMockData() {
-        this.drivers.push({ id: 'd1', name: 'Alice', rating: 4.9, acceptanceRate: 0.95, location: { lat: 0, lng: 0 }, status: 'AVAILABLE', vehicleType: 'SEDAN' });
-        this.drivers.push({ id: 'd2', name: 'Bob', rating: 4.5, acceptanceRate: 0.80, location: { lat: 0.01, lng: 0.01 }, status: 'AVAILABLE', vehicleType: 'SEDAN' });
-        this.surgeZones.set('downtown', 1.5);
     }
 
     // Story 50.1: Driver Scoring

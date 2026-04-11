@@ -22,16 +22,49 @@ async function bootstrap() {
 
   // Security: Cloud Run Dynamic CORS
   const isProd = process.env.NODE_ENV === 'production';
+
+  // Enhanced CORS configuration
   app.enableCors({
-    origin: isProd 
-      ? [
-          /https?:\/\/([^/]+\.)?cabi\.africa$/,
-          /https?:\/\/([^/]+\.)?cabi-africa\.com$/,
-          /https?:\/\/([^/]+\.)?run\.app$/,
-          /https?:\/\/([^/]+\.)?vercel\.app$/,
-        ]
-      : true,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, or server-side calls)
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      // Explicitly allowed origins
+      const allowedOrigins = [
+        'https://cabi.africa',
+        'https://admin.cabi.africa',
+        'https://user.cabi.africa',
+        'https://dispatch.cabi.africa',
+        'https://cabi-africa.com',
+        'https://www.cabi-africa.com',
+        'https://cabi-admin-panel.vercel.app',
+      ];
+
+      // Regex patterns for subdomains and local dev
+      const allowedPatterns = [
+        /^https?:\/\/([^/]+\.)?cabi\.africa$/,
+        /^https?:\/\/([^/]+\.)?cabi-africa\.com$/,
+        /^https?:\/\/localhost(:\d+)?$/,
+        /^https?:\/\/([^/]+\.)?run\.app$/,
+        /^https?:\/\/([^/]+\.)?vercel\.app$/,
+      ];
+
+      const isAllowed = allowedOrigins.includes(origin) || 
+                        allowedPatterns.some(pattern => pattern.test(origin));
+
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        console.warn(`[CORS] Blocked request from unauthorized origin: ${origin}`);
+        callback(new Error('Not allowed by CORS'), false);
+      }
+    },
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
+    allowedHeaders: 'Content-Type, Accept, Authorization, X-Requested-With, Origin',
+    exposedHeaders: 'Authorization',
   });
 
   // API Documentation
