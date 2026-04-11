@@ -97,8 +97,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const newUser = await prisma.user.create({
                 data: {
-                    email,
-                    phone,
+                    email: email.toLowerCase().trim(),
+                    phone: phone.trim(),
                     password: hashedPassword,
                     fullName,
                     middleName,
@@ -110,12 +110,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     passportPhotoUrl
                 }
             });
+
+            // Auto-login: generate a token
+            const token = 'mock-jwt-token-' + newUser.id;
+
             // Mock Send Verification Email
             console.log(`[Mock Email Service] Sending Welcome/Verification Email to ${email} with subject: "Welcome to Cabi - Please Verify Your Email"`);
             // In a real implementation: await mailService.sendVerificationEmail(newUser);
 
             return res.status(201).json({
                 success: true,
+                message: 'Registration successful',
+                token,
                 user: {
                     id: newUser.id,
                     email: newUser.email,

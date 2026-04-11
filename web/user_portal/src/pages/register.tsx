@@ -25,6 +25,7 @@ interface FileUploads {
 export default function Register() {
     const [role, setRole] = useState<UserRole | null>(null);
     const router = useRouter();
+    const { login } = useAuth();
 
     const { register, handleSubmit, trigger, watch, formState: { errors } } = useForm();
     const [isLoading, setIsLoading] = useState(false);
@@ -89,13 +90,16 @@ export default function Register() {
             const result = await response.json();
             console.log("Registration Success:", result);
 
-            // Save user data to localStorage for dashboard access
-            if (typeof window !== 'undefined') {
-                localStorage.setItem('authUser', JSON.stringify(result.user));
+            // Perform login via context (handles storage and redirect)
+            if (result.token && result.user) {
+                login(result.token, result.user);
+            } else {
+                // Fallback for unexpected API response structure
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem('authUser', JSON.stringify(result.user));
+                }
+                router.push('/dashboard');
             }
-
-            // Redirect to dashboard or success page
-            router.push('/dashboard');
         } catch (error) {
             console.error("Registration Error:", error);
             alert("Failed to register. Please try again.");

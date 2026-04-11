@@ -8,14 +8,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        const { email, password } = req.body;
+        const { email: identifier, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({ message: 'Missing email or password' });
+        if (!identifier || !password) {
+            return res.status(400).json({ message: 'Missing email/phone or password' });
         }
 
-        const user = await prisma.user.findUnique({
-            where: { email }
+        const normalizedIdentifier = identifier.toLowerCase().trim();
+
+        // Support login by email OR phone
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { email: normalizedIdentifier },
+                    { phone: identifier.trim() },
+                    { email: identifier.trim() } // Fallback for case-sensitive matches if stored weirdly
+                ]
+            }
         });
 
         if (!user) {
