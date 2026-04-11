@@ -1,8 +1,8 @@
 # 🏗️ Cabi Africa: Core System Architecture
 
-**Last Updated:** 2026-03-20  
-**Version:** 1.0.0-Current  
-**Status:** Unified Production Architecture
+**Last Updated:** 2026-04-11  
+**Version:** 1.1.0  
+**Status:** 🟢 Production Finalized (.africa)
 
 ---
 
@@ -27,9 +27,10 @@ Based on modern enterprise standards, the Cabi Africa infrastructure handles fou
 4.  **Analytics & Support Layer**:
     *   **BI & Analytics**: Real-time data flows into the **Cabi Analytics Service** for business intelligence reporting.
     *   **Support Services**: Dedicated sidebars for **Firebase Push (FCM)**, **SMS Gateways**, and **Sentry Monitoring** for system observability.
-*   **Passengers**: Via the **CABI Go** Flutter app and **User Portal**.
-*   **Drivers**: Via the **CABI Drive** Flutter app and specialized **Onboarding Portals**.
-*   **Administrators & Dispatchers**: Via high-performance **Next.js Dashboards**.
+*   **Passengers**: Via the **CABI Go** Flutter app and **[app.cabi.africa](https://app.cabi.africa)**.
+*   **Drivers**: Via the **CABI Drive** Flutter app and **[app.cabi.africa/onboarding](https://app.cabi.africa/onboarding)**.
+*   **Administrators**: Via **[admin.cabi.africa](https://admin.cabi.africa)**.
+*   **Dispatchers**: Via **[dispatch.cabi.africa](https://dispatch.cabi.africa)**.
 
 ---
 

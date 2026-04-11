@@ -33,13 +33,12 @@ async function main() {
         console.log('✅ Driver & Vehicle Data cleaned.');
 
         console.log('5. Cleaning Organizations...');
-        await prisma.organizationMember.deleteMany({});
-        // Removing organizations might be tricky if self-referencing (sub-orgs)
-        // We first update parentId to null for all to break cycles if any, then delete.
-        await prisma.organization.updateMany({
+        // Correcting model names based on Prisma schema hints
+        await prisma.organization_members.deleteMany({});
+        await prisma.organizations.updateMany({
             data: { parentId: null }
         });
-        await prisma.organization.deleteMany({});
+        await prisma.organizations.deleteMany({});
         console.log('✅ Organizations cleaned.');
 
         console.log('6. Cleaning User Permissions & Roles...');
@@ -51,13 +50,8 @@ async function main() {
         await prisma.user.deleteMany({});
         console.log('✅ All Users deleted.');
 
-        // Optional: Clean Roles if they are not system roles?
-        // The user asked for "xample data". Roles are usually configuration.
-        // I will NOT delete Roles for now, as they are often treated as metadata/config.
-        // If necessary, I can add it later.
-
         console.log('🎉 Data cleanup completed successfully! All example data removed.');
-        console.log('ℹ️  Run "npm run script:recreate-super-admin" or "npx ts-node scripts/recreate-super-admin.js" to restore access.');
+        console.log('ℹ️  Run "npx ts-node scripts/recreate-super-admin.js" to restore access.');
 
     } catch (error) {
         console.error('❌ Cleanup failed:', error);

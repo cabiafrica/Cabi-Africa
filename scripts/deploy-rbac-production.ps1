@@ -50,7 +50,7 @@ function Write-Log {
     "$((Get-Date).ToString('yyyy-MM-dd HH:mm:ss')) [$Level] $Message" | Out-File -Append -FilePath $LogFile
 }
 
-function Load-EnvFile {
+function Import-EnvFile {
     param([string]$Path)
     if (Test-Path $Path) {
         Write-Log "Loading environment variables from $Path..." "INFO"
@@ -125,7 +125,7 @@ function Invoke-RBACTests {
     
     # Check if service is running
     try {
-        $response = Invoke-WebRequest -Uri "http://localhost:3333/api/health" -UseBasicParsing -TimeoutSec 5
+        Invoke-WebRequest -Uri "http://localhost:3333/api/health" -UseBasicParsing -TimeoutSec 5 | Out-Null
         Write-Log "Auth-gateway started (Job ID: $($authGatewayJob.Id))" "SUCCESS"
     }
     catch {
@@ -156,7 +156,7 @@ function Invoke-RBACTests {
     Write-Log "Auth-gateway stopped" "SUCCESS"
 }
 
-function Build-Backend {
+function Invoke-BackendBuild {
     Write-Header "Building Backend (Auth-Gateway)"
     
     Write-Log "Building auth-gateway for $Environment..." "INFO"
@@ -176,7 +176,7 @@ function Build-Backend {
     }
 }
 
-function Build-Frontend {
+function Invoke-FrontendBuild {
     Write-Header "Building Frontend (Admin Panel)"
     
     Write-Log "Building admin panel for $Environment..." "INFO"
@@ -301,7 +301,7 @@ function Test-Deployment {
     
     Write-Log "Verifying backend health..." "INFO"
     try {
-        $response = Invoke-WebRequest -Uri "$apiUrl/health" -UseBasicParsing -TimeoutSec 5
+        Invoke-WebRequest -Uri "$apiUrl/health" -UseBasicParsing -TimeoutSec 5 | Out-Null
         Write-Log "Backend is healthy" "SUCCESS"
     }
     catch {
@@ -313,7 +313,7 @@ function Test-Deployment {
     $frontendUrl = if ($env:FRONTEND_URL) { $env:FRONTEND_URL } else { "http://localhost:3001" }
     Write-Log "Checking frontend..." "INFO"
     try {
-        $response = Invoke-WebRequest -Uri $frontendUrl -UseBasicParsing -TimeoutSec 5
+        Invoke-WebRequest -Uri $frontendUrl -UseBasicParsing -TimeoutSec 5 | Out-Null
         Write-Log "Frontend is accessible" "SUCCESS"
     }
     catch {
@@ -337,9 +337,9 @@ try {
     
     # Run all steps
     if ($Environment -eq "production") {
-        Load-EnvFile ".env.production"
+        Import-EnvFile ".env.production"
     } else {
-        Load-EnvFile ".env"
+        Import-EnvFile ".env"
     }
     
     Test-Prerequisites
@@ -351,8 +351,8 @@ try {
         Write-Log "Tests skipped (-SkipTests flag)" "WARNING"
     }
     
-    Build-Backend
-    Build-Frontend
+    Invoke-BackendBuild
+    Invoke-FrontendBuild
     
     if ($Environment -eq "production") {
         Invoke-Migrations
