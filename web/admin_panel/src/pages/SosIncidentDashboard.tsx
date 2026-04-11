@@ -69,23 +69,14 @@ export const SosIncidentDashboard = () => {
       console.log('[WebSocket] Disconnected');
     });
 
-    // Mock server sending updates for demonstration
-    const intervalId = setInterval(() => {
-      const newLat = (Math.random() - 0.5) * 0.01;
-      const newLng = (Math.random() - 0.5) * 0.01;
-      socket.emit('locationUpdate', { lat: -1.286389 + newLat, lng: 36.817223 + newLng });
-    }, 5000);
-
-    // Cleanup function to disconnect socket and clear interval on component unmount
-    return () => { clearInterval(intervalId); socket.disconnect(); };
+    // Cleanup function to disconnect socket
+    return () => { socket.disconnect(); };
   }, [incidentId, isResolved]);
 
   const handleLogAction = async () => {
     if (!newLog.trim() || !incidentId) return;
     try {
       const addedLog = await adminService.logSosIncidentAction(incidentId, newLog);
-      // logSosIncidentAction usually doesn't return the log in these mocks, but let's assume it might or we refetch
-      // In types.ts SOSIncidentLogEntry is { timestamp, notes }
       const logEntry: SOSIncidentLogEntry = {
         timestamp: new Date().toISOString(),
         notes: newLog

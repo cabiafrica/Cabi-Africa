@@ -5,20 +5,7 @@ import {
 
 export class SafetyService {
     async getSosIncidentDetails(incidentId: string): Promise<SOSIncidentDetails> {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return {
-            id: incidentId,
-            driver: { id: 'driver-1', name: 'John Doe', phone: '0712345678' },
-            passenger: { id: 'pass-1', name: 'Jane Smith', phone: '0787654321' },
-            upline1: { id: 'upline-1', name: 'Upline One', phone: '0722000001' },
-            upline2: { id: 'upline-2', name: 'Upline Two', phone: '0722000002' },
-            liveLocation: { lat: -1.28, lng: 36.81 },
-            status: 'ACTIVE',
-            logs: [
-                { timestamp: '2024-05-22T12:00:00Z', notes: 'Initial alert received.' },
-                { timestamp: '2024-05-22T12:01:15Z', notes: 'Admin user super@cabi.com viewed the incident.' },
-            ],
-        };
+        throw new Error('Real implementation required or fetch failed');
     }
 
     async logSosIncidentAction(incidentId: string, notes: string): Promise<void> {

@@ -24,21 +24,11 @@ export class AnalyticsService {
     }
 
     async getLiveDrivers(): Promise<any[]> {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return Array.from({ length: 15 }).map((_, i) => ({
-            id: `d-${i}`,
-            lat: -1.2921 + (Math.random() * 0.1 - 0.05),
-            lng: 36.8219 + (Math.random() * 0.1 - 0.05),
-            status: Math.random() > 0.5 ? 'AVAILABLE' : 'ON_TRIP',
-            heading: Math.random() * 360
-        }));
+        return [];
     }
 
     async getFraudAlerts(): Promise<any[]> {
-        await new Promise(resolve => setTimeout(resolve, 600));
-        return [
-            { id: 'f-1', type: 'GPS_SPOOFING', user: 'Driver X', severity: 'HIGH', timestamp: new Date().toISOString() },
-        ];
+        return [];
     }
 
     async getCityKPIs(cityId: string): Promise<any> {

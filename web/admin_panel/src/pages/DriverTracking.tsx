@@ -17,54 +17,7 @@ interface Driver {
 }
 
 // Mock driver data - Nairobi locations
-const mockDrivers: Driver[] = [
-    {
-        id: 'drv-001',
-        name: 'John Kamau',
-        position: [-1.286389, 36.817223],
-        status: 'busy',
-        rating: 4.8,
-        totalTrips: 1234,
-        currentTrip: {
-            passengerId: 'pass-001',
-            passengerName: 'Jane Wanjiku',
-            pickup: [-1.286389, 36.817223],
-            dropoff: [-1.319167, 36.928611],
-        },
-    },
-    {
-        id: 'drv-002',
-        name: 'Peter Mwangi',
-        position: [-1.292066, 36.821946],
-        status: 'online',
-        rating: 4.9,
-        totalTrips: 2156,
-    },
-    {
-        id: 'drv-003',
-        name: 'Mary Njeri',
-        position: [-1.303209, 36.707047],
-        status: 'online',
-        rating: 4.7,
-        totalTrips: 987,
-    },
-    {
-        id: 'drv-004',
-        name: 'David Ochieng',
-        position: [-1.257677, 36.795206],
-        status: 'offline',
-        rating: 4.6,
-        totalTrips: 543,
-    },
-    {
-        id: 'drv-005',
-        name: 'Sarah Akinyi',
-        position: [-1.270000, 36.890000],
-        status: 'online',
-        rating: 5.0,
-        totalTrips: 3421,
-    },
-];
+const mockDrivers: Driver[] = [];
 
 export default function DriverTracking() {
     const [drivers, setDrivers] = useState<Driver[]>(mockDrivers);

@@ -8,16 +8,16 @@ interface MetricsOverviewProps {
 }
 
 const MetricsOverview = ({ metrics, rideRequests, drivers }: MetricsOverviewProps) => {
-    // Generate sample data for charts
+    // Generate data for charts - currently zeroed for clean production start
     const hourlyData = Array.from({ length: 24 }, (_, i) => ({
         hour: `${i}:00`,
-        rides: Math.floor(Math.random() * 50) + 10,
-        drivers: Math.floor(Math.random() * 30) + 15,
+        rides: 0,
+        drivers: 0,
     }));
 
     const recentData = Array.from({ length: 12 }, (_, i) => ({
         time: `${i * 5}m ago`,
-        requests: Math.floor(Math.random() * 20) + 5,
+        requests: 0,
     }));
 
     const pendingRides = rideRequests.filter(r => r.status === 'pending');

@@ -15,44 +15,7 @@ interface Driver {
 }
 
 // Mock data - Nairobi locations
-const mockDrivers: Driver[] = [
-    {
-        id: 'drv-001',
-        name: 'John Kamau',
-        position: [-1.286389, 36.817223], // Westlands
-        isOnline: true,
-        currentTrip: {
-            passengerId: 'pass-001',
-            passengerName: 'Jane Wanjiku',
-            pickup: [-1.286389, 36.817223],
-            dropoff: [-1.319167, 36.928611], // JKIA
-        },
-    },
-    {
-        id: 'drv-002',
-        name: 'Peter Mwangi',
-        position: [-1.292066, 36.821946], // CBD
-        isOnline: true,
-    },
-    {
-        id: 'drv-003',
-        name: 'Mary Njeri',
-        position: [-1.303209, 36.707047], // Karen
-        isOnline: true,
-    },
-    {
-        id: 'drv-004',
-        name: 'David Ochieng',
-        position: [-1.257677, 36.795206], // Parklands
-        isOnline: false,
-    },
-    {
-        id: 'drv-005',
-        name: 'Sarah Akinyi',
-        position: [-1.270000, 36.890000], // Gigiri
-        isOnline: true,
-    },
-];
+const mockDrivers: Driver[] = [];
 
 export default function LiveMapPage() {
     const [drivers, setDrivers] = useState<Driver[]>(mockDrivers);

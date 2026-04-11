@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { RideRequest, Driver, DispatchMetrics } from './types';
-import { mockRideRequests, mockDrivers, mockMetrics, mockSurgeZones, mockTripAnalytics, mockTripHistory, mockDriverHistory, mockPassengers } from './mockData';
 import MetricsOverview from './components/MetricsOverview';
 import RideRequestsList from './components/RideRequestsList';
 import DriversList from './components/DriversList';
@@ -52,9 +51,18 @@ import { LoginPage } from './components/LoginPage';
 function App() {
     const { isAuthenticated, logout, user, hasPermission } = useAuth();
     const [activeView, setActiveView] = useState<'overview' | 'rides' | 'drivers' | 'map' | 'surge' | 'analytics' | 'trips' | 'driver-history' | 'passengers'>('overview');
-    const [rideRequests, setRideRequests] = useState<RideRequest[]>(mockRideRequests);
-    const [drivers, setDrivers] = useState<Driver[]>(mockDrivers);
-    const [metrics, setMetrics] = useState<DispatchMetrics>(mockMetrics);
+    const [rideRequests, setRideRequests] = useState<RideRequest[]>([]);
+    const [drivers, setDrivers] = useState<Driver[]>([]);
+    const [metrics, setMetrics] = useState<DispatchMetrics>({
+        activeRides: 0,
+        pendingRequests: 0,
+        onlineDrivers: 0,
+        completedToday: 0,
+        averageWaitTime: 0,
+        averageMatchTime: 0,
+        peakDemandZones: [],
+        surgeAreas: 0,
+    });
     const [selectedRide, setSelectedRide] = useState<RideRequest | null>(null);
 
     // Socket.io for Real-time Tracking
@@ -85,15 +93,17 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const dispatchApiUrl = import.meta.env.VITE_DISPATCH_API_URL || '/api/dispatch';
+                
                 // Fetch Metrics
-                const metricsRes = await fetch('/api/dispatch/metrics');
+                const metricsRes = await fetch(`${dispatchApiUrl}/metrics`);
                 if (metricsRes.ok) {
                     const data = await metricsRes.json();
                     setMetrics(prev => ({ ...prev, ...data }));
                 }
 
                 // Fetch Rides
-                const ridesRes = await fetch('/api/dispatch/rides');
+                const ridesRes = await fetch(`${dispatchApiUrl}/rides`);
                 if (ridesRes.ok) {
                     const data = await ridesRes.json();
                     // Map backend data to frontend types
@@ -115,7 +125,7 @@ function App() {
                 }
 
                 // Fetch Drivers
-                const driversRes = await fetch('/api/dispatch/drivers');
+                const driversRes = await fetch(`${dispatchApiUrl}/drivers`);
                 if (driversRes.ok) {
                     const data = await driversRes.json();
                     const mappedDrivers = data.map((d: any) => ({
@@ -146,7 +156,8 @@ function App() {
 
     const handleAssignDriver = async (rideId: string, driverId: string) => {
         try {
-            const res = await fetch(`/api/dispatch/rides/${rideId}/assign`, {
+            const dispatchApiUrl = import.meta.env.VITE_DISPATCH_API_URL || '/api/dispatch';
+            const res = await fetch(`${dispatchApiUrl}/rides/${rideId}/assign`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ driverId })
@@ -244,9 +255,9 @@ function App() {
                                     {drivers.filter(d => d.status === 'online').length} online
                                 </span>
                             )}
-                            {item.view === 'surge' && mockSurgeZones.length > 0 && (
+                            {item.view === 'surge' && metrics.surgeAreas > 0 && (
                                 <span className="ml-auto bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                                    {mockSurgeZones.length}
+                                    {metrics.surgeAreas}
                                 </span>
                             )}
                         </button>
@@ -356,7 +367,17 @@ function App() {
                                     />
                                 )}
                                 {activeView === 'analytics' && (
-                                    <TripAnalytics analytics={mockTripAnalytics} />
+                                    <TripAnalytics analytics={{
+                                        totalTrips: 0,
+                                        completedTrips: 0,
+                                        cancelledTrips: 0,
+                                        completionRate: 0,
+                                        cancellationsByPassenger: 0,
+                                        cancellationsByDriver: 0,
+                                        cancellationsBySystem: 0,
+                                        cancellationReasons: [],
+                                        recentCancellations: [],
+                                    }} />
                                 )}
                                 {activeView === 'rides' && (
                                     <RideRequestsList
@@ -375,20 +396,20 @@ function App() {
                                     <LiveMap
                                         drivers={drivers}
                                         rideRequests={rideRequests}
-                                        surgeZones={mockSurgeZones}
+                                        surgeZones={[]}
                                     />
                                 )}
                                 {activeView === 'surge' && (
-                                    <SurgeMonitor surgeZones={mockSurgeZones} />
+                                    <SurgeMonitor surgeZones={[]} />
                                 )}
                                 {activeView === 'trips' && (
-                                    <TripHistoryPage trips={mockTripHistory} />
+                                    <TripHistoryPage trips={[]} />
                                 )}
                                 {activeView === 'driver-history' && (
-                                    <DriverHistoryPage drivers={mockDriverHistory} />
+                                    <DriverHistoryPage drivers={[]} />
                                 )}
                                 {activeView === 'passengers' && (
-                                    <PassengerManagementPage passengers={mockPassengers} />
+                                    <PassengerManagementPage passengers={[]} />
                                 )}
                             </>
                         );
