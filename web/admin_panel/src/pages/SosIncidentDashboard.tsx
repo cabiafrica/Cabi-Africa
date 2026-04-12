@@ -188,7 +188,7 @@ export const SosIncidentDashboard = () => {
       </Box>
       <Grid container spacing={3}>
         {/* Left Column: Details */}
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid item xs={12} md={4}>
           <Card>
             <CardHeader title="Driver Details" />
             <CardContent>
@@ -213,7 +213,7 @@ export const SosIncidentDashboard = () => {
         </Grid>
 
         {/* Right Column: Map and Actions */}
-        <Grid size={{ xs: 12, md: 8 }}>
+        <Grid item xs={12} md={8}>
           <Box sx={{ height: '400px', width: '100%', position: 'relative' }}>
             <CabiMap 
               center={[incident.liveLocation.lat, incident.liveLocation.lng]}

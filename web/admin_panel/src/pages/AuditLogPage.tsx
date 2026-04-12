@@ -601,7 +601,7 @@ export const AuditLogPage = () => {
       <Typography variant="h4" gutterBottom>Audit Log</Typography>
 
       <Grid container spacing={3} mb={2}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <Paper
             component={ButtonBase}
             onClick={handleClearAllFilters}
@@ -611,7 +611,7 @@ export const AuditLogPage = () => {
             <Typography color="text.secondary">Total Events Displayed</Typography>
           </Paper>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <Paper
             component={ButtonBase}
             onClick={() => {
@@ -625,7 +625,7 @@ export const AuditLogPage = () => {
             <Typography color="text.secondary">Events Today</Typography>
           </Paper>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <Paper
             component={ButtonBase}
             onClick={() => summaryStats.mostFrequent !== 'N/A' && setFilterText(summaryStats.mostFrequent)}
@@ -636,7 +636,7 @@ export const AuditLogPage = () => {
             <Typography color="text.secondary">Most Frequent Event</Typography>
           </Paper>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <Paper
             component={ButtonBase}
             onClick={() => summaryStats.mostActiveUser !== 'N/A' && setFilterText(summaryStats.mostActiveUser)}
@@ -668,7 +668,7 @@ export const AuditLogPage = () => {
       </Paper>
       <Paper sx={{ p: 2, mb: 2 }}>
         <Grid container spacing={2} alignItems="center">
-          <Grid size={{ xs: 12, md: 3 }}>
+          <Grid item xs={12} md={3}>
             <TextField
               label="Filter by User ID, Name, or Action"
               variant="outlined"
@@ -678,7 +678,7 @@ export const AuditLogPage = () => {
               onChange={(e) => setFilterText(e.target.value)}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 4, md: 2 }}>
+          <Grid item xs={12} sm={4} md={2}>
             <FormControl size="small" fullWidth>
               <InputLabel>Time Range</InputLabel>
               <Select value={quickFilter} label="Time Range" onChange={handleQuickFilterChange as any}>
@@ -690,7 +690,7 @@ export const AuditLogPage = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+          <Grid item xs={6} sm={4} md={2}>
             <TextField
               label="Start Date"
               type="date"
@@ -701,7 +701,7 @@ export const AuditLogPage = () => {
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-          <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+          <Grid item xs={6} sm={4} md={2}>
             <TextField
               label="End Date"
               type="date"
@@ -712,13 +712,13 @@ export const AuditLogPage = () => {
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 4, md: 1 }} textAlign="center">
+          <Grid item xs={12} sm={4} md={1} textAlign="center">
             <Button onClick={handleClearAllFilters} variant="text">Clear All Filters</Button>
           </Grid>
-          <Grid size={{ xs: 12, sm: 4, md: 2 }} textAlign="center">
+          <Grid item xs={12} sm={4} md={2} textAlign="center">
             <Button onClick={() => setIsResetConfirmOpen(true)} variant="text" color="secondary">Reset Preferences</Button>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 2 }} textAlign={{ xs: 'left', md: 'right' }} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
+          <Grid item xs={12} sm={6} md={2} textAlign={{ xs: 'left', md: 'right' }} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
             <FormControlLabel
               control={<Switch checked={isLive} onChange={(e) => setIsLive(e.target.checked)} />}
               label="Live Update"
@@ -729,7 +729,7 @@ export const AuditLogPage = () => {
               </IconButton>
             )}
           </Grid>
-          <Grid size={{ xs: 12, md: 2 }} textAlign="right">
+          <Grid item xs={12} md={2} textAlign="right">
             <Button variant="outlined" startIcon={<DownloadIcon />} onClick={handleExportCsv} disabled={filteredEvents.length === 0}>
               Export as CSV
             </Button>

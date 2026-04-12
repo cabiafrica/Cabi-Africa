@@ -143,7 +143,7 @@ export const ScheduledRideManagement: React.FC = () => {
 
             {/* Stats Cards */}
             <Grid container spacing={3} mb={4}>
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Grid item xs={12} sm={6} md={3}>
                     <Paper sx={{
                         p: 3,
                         background: alpha(theme.palette.primary.main, 0.05),
@@ -162,7 +162,7 @@ export const ScheduledRideManagement: React.FC = () => {
                         </Box>
                     </Paper>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Grid item xs={12} sm={6} md={3}>
                     <Paper sx={{
                         p: 3,
                         background: alpha(theme.palette.warning.main, 0.05),
@@ -181,7 +181,7 @@ export const ScheduledRideManagement: React.FC = () => {
                         </Box>
                     </Paper>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Grid item xs={12} sm={6} md={3}>
                     <Paper sx={{
                         p: 3,
                         background: alpha(theme.palette.info.main, 0.05),
@@ -200,7 +200,7 @@ export const ScheduledRideManagement: React.FC = () => {
                         </Box>
                     </Paper>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Grid item xs={12} sm={6} md={3}>
                     <Paper sx={{
                         p: 3,
                         background: alpha(theme.palette.success.main, 0.05),
@@ -226,7 +226,7 @@ export const ScheduledRideManagement: React.FC = () => {
             {/* Filters & Control */}
             <Paper sx={{ p: 2, mb: 4, borderRadius: 3, backdropFilter: 'blur(20px)', background: alpha(theme.palette.background.paper, 0.8) }}>
                 <Grid container spacing={2} alignItems="center">
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid item xs={12} md={6}>
                         <TextField
                             fullWidth
                             variant="outlined"
@@ -244,7 +244,7 @@ export const ScheduledRideManagement: React.FC = () => {
                             size="small"
                         />
                     </Grid>
-                    <Grid size={{ xs: 12, md: 4 }}>
+                    <Grid item xs={12} md={4}>
                         <FormControl fullWidth size="small">
                             <InputLabel>Filter Status</InputLabel>
                             <Select

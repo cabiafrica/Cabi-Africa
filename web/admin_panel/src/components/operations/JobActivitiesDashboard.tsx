@@ -302,7 +302,7 @@ export function JobActivitiesDashboard() {
 
       {/* Statistics Cards */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border border-slate-200 dark:border-slate-700">
             <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
               Total Rides
@@ -312,7 +312,7 @@ export function JobActivitiesDashboard() {
             </Typography>
           </div>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border border-slate-200 dark:border-slate-700">
             <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
               Active Rides
@@ -322,7 +322,7 @@ export function JobActivitiesDashboard() {
             </Typography>
           </div>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border border-slate-200 dark:border-slate-700">
             <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
               Completed
@@ -332,7 +332,7 @@ export function JobActivitiesDashboard() {
             </Typography>
           </div>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border border-slate-200 dark:border-slate-700">
             <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
               Total Revenue
@@ -348,7 +348,7 @@ export function JobActivitiesDashboard() {
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow mb-6 border border-slate-200 dark:border-slate-700">
         <div className="p-4">
           <Grid container spacing={2} alignItems="center">
-            <Grid size={{ xs: 12, sm: 4 }}>
+            <Grid item xs={12} sm={4}>
               <input
                 type="text"
                 className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
@@ -357,7 +357,7 @@ export function JobActivitiesDashboard() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 3 }}>
+            <Grid item xs={12} sm={3}>
               <select
                 className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
                 value={statusFilter}
@@ -373,7 +373,7 @@ export function JobActivitiesDashboard() {
                 <option value="CANCELLED">Cancelled</option>
               </select>
             </Grid>
-            <Grid size={{ xs: 12, sm: 3 }}>
+            <Grid item xs={12} sm={3}>
               <input
                 type="date"
                 className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none placeholder-slate-400"
@@ -381,7 +381,7 @@ export function JobActivitiesDashboard() {
                 onChange={(e) => setDateFilter(e.target.value)}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 2 }}>
+            <Grid item xs={12} sm={2}>
               <Typography variant="body2" className="text-slate-500 dark:text-slate-400">
                 {filteredRides.length} results
               </Typography>
@@ -524,7 +524,7 @@ export function JobActivitiesDashboard() {
 
               {activeTab === 0 && (
                 <Grid container spacing={2}>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid item xs={12} sm={6}>
                     <Typography variant="subtitle2" color="textSecondary">
                       Ride ID
                     </Typography>
@@ -532,7 +532,7 @@ export function JobActivitiesDashboard() {
                       {selectedRide.id}
                     </Typography>
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid item xs={12} sm={6}>
                     <Typography variant="subtitle2" color="textSecondary">
                       Status
                     </Typography>
@@ -540,7 +540,7 @@ export function JobActivitiesDashboard() {
                       {formatStatus(selectedRide.status)}
                     </Typography>
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid item xs={12} sm={6}>
                     <Typography variant="subtitle2" color="textSecondary">
                       <Person fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
                       Passenger
@@ -550,7 +550,7 @@ export function JobActivitiesDashboard() {
                       {selectedRide.passengerPhone}
                     </Typography>
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid item xs={12} sm={6}>
                     <Typography variant="subtitle2" color="textSecondary">
                       <DirectionsCar fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
                       Driver
@@ -560,7 +560,7 @@ export function JobActivitiesDashboard() {
                       {selectedRide.driverPhone || 'N/A'}
                     </Typography>
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 4 }}>
+                  <Grid item xs={12} sm={4}>
                     <Typography variant="subtitle2" color="textSecondary">
                       <AttachMoney fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
                       Fare
@@ -569,7 +569,7 @@ export function JobActivitiesDashboard() {
                       {selectedRide.fare ? `KES ${selectedRide.fare.toLocaleString()}` : 'N/A'}
                     </Typography>
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 4 }}>
+                  <Grid item xs={12} sm={4}>
                     <Typography variant="subtitle2" color="textSecondary">
                       Distance
                     </Typography>
@@ -577,7 +577,7 @@ export function JobActivitiesDashboard() {
                       {selectedRide.distance ? `${selectedRide.distance.toFixed(1)} km` : 'N/A'}
                     </Typography>
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 4 }}>
+                  <Grid item xs={12} sm={4}>
                     <Typography variant="subtitle2" color="textSecondary">
                       <Schedule fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
                       Duration
@@ -591,7 +591,7 @@ export function JobActivitiesDashboard() {
 
               {activeTab === 1 && (
                 <Grid container spacing={2}>
-                  <Grid size={{ xs: 12 }}>
+                  <Grid item xs={12}>
                     <Typography variant="subtitle2" color="textSecondary" gutterBottom>
                       <LocationOn fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
                       Pickup Location
@@ -601,7 +601,7 @@ export function JobActivitiesDashboard() {
                       {selectedRide.pickupLocation.lat.toFixed(6)}, {selectedRide.pickupLocation.lng.toFixed(6)}
                     </Typography>
                   </Grid>
-                  <Grid size={{ xs: 12 }}>
+                  <Grid item xs={12}>
                     <Typography variant="subtitle2" color="textSecondary" gutterBottom>
                       <LocationOn fontSize="small" sx={{ verticalAlign: 'middle', mr: 0.5 }} />
                       Dropoff Location
@@ -611,7 +611,7 @@ export function JobActivitiesDashboard() {
                       {selectedRide.dropoffLocation.lat.toFixed(6)}, {selectedRide.dropoffLocation.lng.toFixed(6)}
                     </Typography>
                   </Grid>
-                  <Grid size={{ xs: 12 }}>
+                  <Grid item xs={12}>
                     <Box
                       sx={{
                         height: 300,
@@ -633,7 +633,7 @@ export function JobActivitiesDashboard() {
 
               {activeTab === 2 && (
                 <Grid container spacing={2}>
-                  <Grid size={{ xs: 12 }}>
+                  <Grid item xs={12}>
                     <Typography variant="subtitle2" color="textSecondary">
                       Created At
                     </Typography>
@@ -641,7 +641,7 @@ export function JobActivitiesDashboard() {
                       {new Date(selectedRide.createdAt).toLocaleString()}
                     </Typography>
                   </Grid>
-                  <Grid size={{ xs: 12 }}>
+                  <Grid item xs={12}>
                     <Typography variant="subtitle2" color="textSecondary">
                       Last Updated
                     </Typography>
