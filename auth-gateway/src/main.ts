@@ -31,7 +31,10 @@ async function bootstrap() {
         return callback(null, true);
       }
 
-      // Explicitly allowed origins
+      // Normalize origin: remove trailing slash and convert to lowercase for comparison
+      const normalizedOrigin = origin.replace(/\/$/, '').toLowerCase();
+
+      // Explicitly allowed origins (normalized)
       const allowedOrigins = [
         'https://cabi.africa',
         'https://admin.cabi.africa',
@@ -47,23 +50,24 @@ async function bootstrap() {
         /^https?:\/\/([^/]+\.)?cabi\.africa$/,
         /^https?:\/\/([^/]+\.)?cabi-africa\.com$/,
         /^https?:\/\/localhost(:\d+)?$/,
+        /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
         /^https?:\/\/([^/]+\.)?run\.app$/,
         /^https?:\/\/([^/]+\.)?vercel\.app$/,
       ];
 
-      const isAllowed = allowedOrigins.includes(origin) || 
-                        allowedPatterns.some(pattern => pattern.test(origin));
+      const isAllowed = allowedOrigins.includes(normalizedOrigin) || 
+                        allowedPatterns.some(pattern => pattern.test(normalizedOrigin));
 
       if (isAllowed) {
         callback(null, true);
       } else {
-        console.warn(`[CORS] Blocked request from unauthorized origin: ${origin}`);
+        Logger.warn(`[CORS] Request blocked from unauthorized origin: ${origin} (Normalized: ${normalizedOrigin})`, 'SecurityGateway');
         callback(new Error('Not allowed by CORS'), false);
       }
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
-    allowedHeaders: 'Content-Type, Accept, Authorization, X-Requested-With, Origin',
+    allowedHeaders: 'Content-Type, Accept, Authorization, X-Requested-With, Origin, Access-Control-Allow-Origin',
     exposedHeaders: 'Authorization',
   });
 
