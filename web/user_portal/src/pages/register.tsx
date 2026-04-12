@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
+import { useAuth } from '../context/AuthContext';
 import { User, Car, Key, ArrowRight, CheckCircle, Building, ShieldCheck, Loader2, Mail, Phone, Lock } from 'lucide-react';
 import FileUpload from '../components/forms/FileUpload';
 import VideoEmbed from '../components/VideoEmbed';
