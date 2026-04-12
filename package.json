@@ -91,7 +91,11 @@
     "uuid": "^13.0.0",
     "zod": "^4.3.6",
     "react-quill": "^2.0.0",
-    "@tremor/react": "^3.18.7"
+    "@tremor/react": "^3.18.7",
+    "@mui/material": "^6.1.6",
+    "@mui/icons-material": "^6.1.6",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0"
   },
   "devDependencies": {
     "@nestjs/schematics": "10.2.3",
@@ -150,7 +154,10 @@
     "typescript": "~5.4.5",
     "vite": "6.2.5",
     "webpack": "5.104.1",
-    "webpack-cli": "6.0.1"
+    "webpack-cli": "6.0.1",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/user-event": "^14.5.1"
   },
   "prisma": {
     "seed": "ts-node libs/backend/database/prisma/seed.ts",

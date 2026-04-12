@@ -8,6 +8,23 @@
         "build": "vite build",
         "preview": "vite preview"
     },
-    "dependencies": {},
-    "devDependencies": {}
+    "dependencies": {
+        "@emotion/react": "^11.13.3",
+        "@emotion/styled": "^11.13.0",
+        "@mui/icons-material": "^6.1.6",
+        "@mui/material": "^6.1.6",
+        "@tremor/react": "^3.18.7",
+        "axios": "^1.6.0",
+        "lucide-react": "^0.294.0",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "react-router-dom": "^7.12.0"
+    },
+    "devDependencies": {
+        "@types/react": "18.2.33",
+        "@types/react-dom": "18.2.14",
+        "@vitejs/plugin-react": "4.3.4",
+        "typescript": "~5.4.5",
+        "vite": "6.2.5"
+    }
 }
