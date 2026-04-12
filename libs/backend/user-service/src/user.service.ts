@@ -96,7 +96,7 @@ export class UserService {
     const user = await this.prisma.user.findFirst({
       where: {
         OR: [
-          { email: identifier },
+          { email: { equals: identifier, mode: 'insensitive' } },
           { phone: identifier }
         ]
       },
@@ -118,7 +118,7 @@ export class UserService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new InternalServerErrorException('Invalid credentials.');
+      throw new Error('Invalid credentials.');
     }
 
     // Aggregate Permissions

@@ -14,15 +14,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(400).json({ message: 'Missing email/phone or password' });
         }
 
-        const normalizedIdentifier = identifier.toLowerCase().trim();
+        const trimmedIdentifier = identifier.trim();
 
         // Support login by email OR phone
         const user = await prisma.user.findFirst({
             where: {
                 OR: [
-                    { email: normalizedIdentifier },
-                    { phone: identifier.trim() },
-                    { email: identifier.trim() } // Fallback for case-sensitive matches if stored weirdly
+                    { email: { equals: trimmedIdentifier, mode: 'insensitive' } },
+                    { phone: trimmedIdentifier }
                 ]
             }
         });

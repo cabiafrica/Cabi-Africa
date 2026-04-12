@@ -1,9 +1,15 @@
 import { Controller, Post, Body, ValidationPipe, UnauthorizedException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 class LoginDto {
+  @IsNotEmpty({ message: 'Email or phone is required' })
+  @IsString()
   email: string;
+
+  @IsNotEmpty({ message: 'Password is required' })
+  @IsString()
   password: string;
 }
 
@@ -21,7 +27,7 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body(new ValidationPipe()) loginDto: LoginDto) {
     try {
       const user = await this.userService.login(loginDto.email, loginDto.password);
       return {
@@ -30,8 +36,8 @@ export class AuthController {
         user,
       };
     } catch (error) {
-      console.error('Login error:', error);
-      throw new UnauthorizedException('Invalid credentials.');
+      console.error('Login error:', error?.message || error);
+      throw new UnauthorizedException('Invalid email/phone or password.');
     }
   }
 }
