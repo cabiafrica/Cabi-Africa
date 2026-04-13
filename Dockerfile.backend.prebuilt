@@ -2,22 +2,17 @@
 # CABI AFRICA - MULTI-STAGE DOCKERFILE FOR NX MONOREPO SERVICES
 # ==============================================================================
 
-# ──────────────────────────────────────────────────────────────────────────────
 # Stage 1: Build the specific service
-# ──────────────────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
 
-# Install global tools
 RUN npm install -g nx@22.1.3
 
 WORKDIR /app
 
-# Copy package files and install dependencies
 COPY package*.json ./
 COPY package-lock.json ./
 RUN npm ci --legacy-peer-deps
 
-# Copy all source files needed for the build
 COPY nx.json ./
 COPY tsconfig.base.json ./
 COPY libs ./libs
@@ -25,28 +20,21 @@ COPY auth-gateway ./auth-gateway
 COPY backend ./backend
 COPY scripts ./scripts
 
-# Generate Prisma Client
 RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
 
-# Build only the requested service
 ARG SERVICE_NAME
 RUN npx nx build $SERVICE_NAME --configuration=production
 
-# ──────────────────────────────────────────────────────────────────────────────
 # Stage 2: Production Runner
-# ──────────────────────────────────────────────────────────────────────────────
 FROM node:20-alpine
 
 RUN apk add --no-cache openssl
 WORKDIR /app
 
-# Security: non-root user
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nestjs
 
-# Copy only the built artifacts from builder stage
 COPY --from=builder /app/dist ./dist
 
-# Set environment variables
 ARG SERVICE_NAME
 ARG IS_BACKEND_SUB_SERVICE=true
 
@@ -58,7 +46,6 @@ ENV NX_CACHE_BY_PROD=true
 USER nestjs
 EXPOSE 8080
 
-# Cloud Run injects PORT, start the appropriate main.js
 CMD ["sh", "-c", \
     "if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then \
         node dist/backend/$SERVICE_NAME/main.js; \
