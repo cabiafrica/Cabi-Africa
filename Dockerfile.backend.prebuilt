@@ -21,12 +21,10 @@ COPY scripts ./scripts
 RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
 
 ARG SERVICE_NAME
-ENV NX_MAX_PARALLEL=2
-ENV NODE_OPTIONS=--max-old-space-size=2048
-RUN npx nx build $SERVICE_NAME --configuration=production --parallel=1
+RUN npx nx build $SERVICE_NAME --configuration=production
 
 # Stage 2: Production Runner
-FROM node:20
+FROM node:20-slim
 
 WORKDIR /app
 
@@ -35,13 +33,11 @@ RUN groupadd --gid 1001 nodejs && useradd --uid 1001 --gid nodejs nestjs
 COPY --from=builder /app/dist ./dist
 
 ARG SERVICE_NAME
-ARG IS_BACKEND_SUB_SERVICE=true
-
 ENV SERVICE_NAME=${SERVICE_NAME}
-ENV IS_BACKEND_SUB_SERVICE=${IS_BACKEND_SUB_SERVICE}
 ENV NODE_ENV=production
 
 USER nestjs
+
 EXPOSE 8080
 
-CMD ["sh", "-c", "if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then node dist/backend/${SERVICE_NAME}/main.js; else node dist/${SERVICE_NAME}/main.js; fi"]
+ENTRYPOINT ["node", "dist/backend/${SERVICE_NAME}/main.js"]
