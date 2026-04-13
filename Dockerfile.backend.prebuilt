@@ -43,4 +43,4 @@ USER nestjs
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "node dist/backend/${SERVICE_NAME}/main.js 2>&1"]
+CMD ["sh", "-c", "echo 'Starting service...'; node dist/backend/${SERVICE_NAME}/main.js 2>&1"]
