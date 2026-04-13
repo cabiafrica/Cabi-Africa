@@ -10,6 +10,7 @@ steps:
     id: 'build-auth-gateway'
     args:
       - 'build'
+      - '--no-cache'
       - '-t'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
       - '-f'
@@ -54,6 +55,7 @@ steps:
     id: 'build-verification-service'
     args:
       - 'build'
+      - '--no-cache'
       - '-t'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/verification-service:latest'
       - '-f'
@@ -94,6 +96,7 @@ steps:
     id: 'build-referral-service'
     args:
       - 'build'
+      - '--no-cache'
       - '-t'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/referral-service:latest'
       - '-f'
@@ -134,6 +137,7 @@ steps:
     id: 'build-sacco-service'
     args:
       - 'build'
+      - '--no-cache'
       - '-t'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/sacco-service:latest'
       - '-f'
@@ -174,6 +178,7 @@ steps:
     id: 'build-dispatch-service'
     args:
       - 'build'
+      - '--no-cache'
       - '-t'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/dispatch-service:latest'
       - '-f'
@@ -214,6 +219,7 @@ steps:
     id: 'build-driver-lead-service'
     args:
       - 'build'
+      - '--no-cache'
       - '-t'
       - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/driver-lead-service:latest'
       - '-f'
