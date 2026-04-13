@@ -46,7 +46,7 @@ steps:
       - '--port=8080'
       - '--memory=1Gi'
       - '--cpu=1'
-      - '--timeout=300'
+      - '--timeout=600'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest,JWT_SECRET=JWT_SECRET:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-auth-gateway']
