@@ -42,5 +42,5 @@ USER nestjs
 
 EXPOSE 8080
 
-# Direct execution without shell wrapper
-CMD ["node", "dist/backend/${SERVICE_NAME}/main.js"]
+# Test if file exists first
+CMD ["sh", "-c", "test -f dist/backend/${SERVICE_NAME}/main.js && echo 'Found main.js' || echo 'main.js not found'; node dist/backend/${SERVICE_NAME}/main.js"]
