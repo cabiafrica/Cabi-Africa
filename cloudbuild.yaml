@@ -3,6 +3,7 @@
 # ==============================================================================
 # NOTE: Database migrations are handled by GitHub Actions (deploy-production.yml)
 # to prevent double-run race conditions.
+# Updated: Fixed --update flag issue (April 13, 2026)
 
 steps:
   # ── STEP 1: Build Auth Gateway ────────────────────────────────────────────────
