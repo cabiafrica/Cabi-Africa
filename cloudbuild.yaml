@@ -1,28 +1,10 @@
 # ==============================================================================
 # CABI AFRICA - FULL PRODUCTION DEPLOY
 # ==============================================================================
+# NOTE: Database migrations are handled by GitHub Actions (deploy-production.yml)
+# to prevent double-run race conditions.
 
 steps:
-
-  # ── PRE-BUILD: Install & Build All Assets ────────────────────────────────────
-  # NOTE: Database migrations are handled by GitHub Actions (deploy-production.yml)
-  # to prevent double-run race conditions. Do NOT add them back here.
-  - name: 'node:20'
-    id: 'central-install'
-    entrypoint: 'npm'
-    args: ['install', '--legacy-peer-deps']
-    waitFor: ['-']
-
-  - name: 'node:20'
-    id: 'central-build'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
-        npx nx run-many --target=build --all --configuration=production
-    waitFor: ['central-install']
-
   # ── STEP 1: Build Auth Gateway ────────────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-auth-gateway'
@@ -37,11 +19,16 @@ steps:
       - '--build-arg'
       - 'IS_BACKEND_SUB_SERVICE=false'
       - '.'
-    waitFor: ['central-build']
+    waitFor: ['-']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-auth-gateway'
-    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest']
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest',
+      ]
+    waitFor: ['build-auth-gateway']
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy-auth-gateway'
@@ -60,6 +47,7 @@ steps:
       - '--timeout=300'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest,JWT_SECRET=JWT_SECRET:latest'
       - '--set-env-vars=NODE_ENV=production'
+    waitFor: ['push-auth-gateway']
 
   # ── STEP 2: Build Verification Service ───────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
@@ -73,11 +61,16 @@ steps:
       - '--build-arg'
       - 'SERVICE_NAME=verification-service'
       - '.'
-    waitFor: ['central-build']
+    waitFor: ['-']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-verification-service'
-    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/verification-service:latest']
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/verification-service:latest',
+      ]
+    waitFor: ['build-verification-service']
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy-verification-service'
@@ -94,6 +87,7 @@ steps:
       - '--memory=512Mi'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
+    waitFor: ['push-verification-service']
 
   # ── STEP 3: Build Referral Service ───────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
@@ -107,11 +101,16 @@ steps:
       - '--build-arg'
       - 'SERVICE_NAME=referral-service'
       - '.'
-    waitFor: ['central-build']
+    waitFor: ['-']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-referral-service'
-    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/referral-service:latest']
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/referral-service:latest',
+      ]
+    waitFor: ['build-referral-service']
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy-referral-service'
@@ -128,6 +127,7 @@ steps:
       - '--memory=512Mi'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
+    waitFor: ['push-referral-service']
 
   # ── STEP 4: Build Sacco Service ──────────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
@@ -141,11 +141,16 @@ steps:
       - '--build-arg'
       - 'SERVICE_NAME=sacco-service'
       - '.'
-    waitFor: ['central-build']
+    waitFor: ['-']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-sacco-service'
-    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/sacco-service:latest']
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/sacco-service:latest',
+      ]
+    waitFor: ['build-sacco-service']
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy-sacco-service'
@@ -162,6 +167,7 @@ steps:
       - '--memory=512Mi'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
+    waitFor: ['push-sacco-service']
 
   # ── STEP 5: Build Dispatch Service ──────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
@@ -175,11 +181,16 @@ steps:
       - '--build-arg'
       - 'SERVICE_NAME=dispatch-service'
       - '.'
-    waitFor: ['central-build']
+    waitFor: ['-']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-dispatch-service'
-    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/dispatch-service:latest']
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/dispatch-service:latest',
+      ]
+    waitFor: ['build-dispatch-service']
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy-dispatch-service'
@@ -196,6 +207,7 @@ steps:
       - '--memory=1Gi'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
+    waitFor: ['push-dispatch-service']
 
   # ── STEP 6: Build Driver Lead Service ────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
@@ -209,11 +221,16 @@ steps:
       - '--build-arg'
       - 'SERVICE_NAME=driver-lead-service'
       - '.'
-    waitFor: ['central-build']
+    waitFor: ['-']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-driver-lead-service'
-    args: ['push', 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/driver-lead-service:latest']
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/driver-lead-service:latest',
+      ]
+    waitFor: ['build-driver-lead-service']
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy-driver-lead-service'
@@ -230,6 +247,7 @@ steps:
       - '--memory=512Mi'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,JWT_SECRET=JWT_SECRET:latest'
       - '--set-env-vars=NODE_ENV=production'
+    waitFor: ['push-driver-lead-service']
 
 images:
   - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
@@ -238,12 +256,6 @@ images:
   - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/sacco-service:latest'
   - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/dispatch-service:latest'
   - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/driver-lead-service:latest'
-
-options:
-  machineType: 'E2_HIGHCPU_8'
-  logging: CLOUD_LOGGING_ONLY
-
-timeout: '3600s'
 
 options:
   machineType: 'E2_HIGHCPU_8'
