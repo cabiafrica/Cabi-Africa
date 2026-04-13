@@ -42,4 +42,4 @@ USER nestjs
 
 EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c", "if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then node dist/backend/${SERVICE_NAME}/main.js; else node dist/${SERVICE_NAME}/main.js; fi"]
+ENTRYPOINT ["sh", "-c", "echo 'SERVICE_NAME=${SERVICE_NAME}'; echo 'IS_BACKEND_SUB_SERVICE=${IS_BACKEND_SUB_SERVICE}'; ls -la dist/; ls -la dist/backend/ 2>/dev/null || ls -la dist/auth-gateway/ 2>/dev/null; if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then node dist/backend/${SERVICE_NAME}/main.js; else node dist/${SERVICE_NAME}/main.js; fi"]
