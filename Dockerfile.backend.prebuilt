@@ -43,12 +43,14 @@ ENV IS_BACKEND_SUB_SERVICE=${IS_BACKEND_SUB_SERVICE}
 ENV NODE_ENV=production
 ENV NX_CACHE_BY_PROD=true
 ENV PORT=8080
+ENV NODE_ENV=production
 
 USER nestjs
 EXPOSE 8080
 
 CMD ["sh", "-c", \
-    "if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then \
+    "echo 'Starting $SERVICE_NAME on port $PORT...'; \
+    if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then \
         node dist/backend/$SERVICE_NAME/main.js; \
     else \
         node dist/$SERVICE_NAME/main.js; \
