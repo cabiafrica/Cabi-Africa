@@ -31,6 +31,7 @@ WORKDIR /app
 RUN groupadd --gid 1001 nodejs && useradd --uid 1001 --gid nodejs nestjs
 
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
 
 ARG SERVICE_NAME
 ARG IS_BACKEND_SUB_SERVICE=true
