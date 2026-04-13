@@ -260,10 +260,11 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--port=8080'
-      - '--memory=1Gi'
-      - '--cpu=1'
+      - '--memory=2Gi'
+      - '--cpu=2'
       - '--timeout=1800'
       - '--no-cpu-throttling'
+      - '--min-instances=1'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,JWT_SECRET=JWT_SECRET:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-driver-lead-service']
