@@ -24,7 +24,7 @@ ARG SERVICE_NAME
 RUN npx nx build $SERVICE_NAME --configuration=production
 
 # Stage 2: Production Runner
-FROM node:20-slim
+FROM node:20
 
 WORKDIR /app
 
@@ -42,4 +42,5 @@ USER nestjs
 
 EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c", "echo 'SERVICE_NAME=${SERVICE_NAME}'; echo 'IS_BACKEND_SUB_SERVICE=${IS_BACKEND_SUB_SERVICE}'; ls -la dist/; ls -la dist/backend/ 2>/dev/null || ls -la dist/auth-gateway/ 2>/dev/null; if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then node dist/backend/${SERVICE_NAME}/main.js; else node dist/${SERVICE_NAME}/main.js; fi"]
+# Direct execution without shell wrapper
+CMD ["node", "dist/backend/${SERVICE_NAME}/main.js"]
