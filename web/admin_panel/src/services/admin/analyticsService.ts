@@ -1,63 +1,37 @@
+import apiClient from '../apiClient';
 import { SimulationParams, SimulationResult } from './types';
 
 export class AnalyticsService {
     async getBIStats(): Promise<any> {
-        try {
-            const res = await fetch('/api/v1/analytics/bi-stats');
-            if (!res.ok) throw new Error('Failed to fetch stats');
-            return await res.json();
-        } catch (e) {
-            console.error(e);
-            return { grossBookings: 0, trips: 0, newUsers: 0, activeDrivers: 0, avgRating: 0 };
-        }
+        const res = await apiClient.get('/v1/analytics/bi-stats');
+        return res.data;
     }
 
     async getHeatMapData(type: 'DEMAND' | 'SUPPLY', serviceId: string = 'ALL'): Promise<any[]> {
-        try {
-            const res = await fetch(`/api/v1/analytics/heatmap?type=${type}`);
-            if (!res.ok) throw new Error('Heatmap fetch failed');
-            return await res.json();
-        } catch (e) {
-            console.error(e);
-            return [];
-        }
+        const res = await apiClient.get('/v1/analytics/heatmap', { 
+            params: { type, serviceId } 
+        });
+        return res.data;
     }
 
     async getLiveDrivers(): Promise<any[]> {
-        return [];
+        const res = await apiClient.get('/v1/analytics/live-drivers');
+        return res.data;
     }
 
     async getFraudAlerts(): Promise<any[]> {
-        return [];
+        const res = await apiClient.get('/v1/analytics/fraud-alerts');
+        return res.data;
     }
 
     async getCityKPIs(cityId: string): Promise<any> {
-        try {
-            const res = await fetch(`/api/v1/analytics/city-kpis/${cityId}`);
-            if (!res.ok) throw new Error('Failed to fetch city KPI');
-            return await res.json();
-        } catch (e) {
-            console.error(e);
-            return { activeDrivers: 0, totalTrips: 0, avgSurge: 1.0, complaints: 0 };
-        }
+        const res = await apiClient.get(`/v1/analytics/city-kpis/${cityId}`);
+        return res.data;
     }
 
     async runSimulation(params: SimulationParams): Promise<SimulationResult> {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        const revenueBase = 50000;
-        const earningsBase = 40000;
-        const ridesBase = 2500;
-        const revenueChange = (params.fareIncreasePercentage * 0.8) - (params.incentiveBoostPercentage * 0.2);
-        const earningsChange = (params.fareIncreasePercentage * 0.5) + (params.incentiveBoostPercentage * 0.5);
-        const demandChange = -(params.fareIncreasePercentage * 1.2) + (params.surgeCapMultiplier > 2 ? 5 : -5);
-
-        return {
-            projectedRevenue: revenueBase * (1 + revenueChange / 100),
-            revenueChange: Number(revenueChange.toFixed(1)),
-            projectedDriverEarnings: earningsBase * (1 + earningsChange / 100),
-            driverEarningsChange: Number(earningsChange.toFixed(1)),
-            projectedRides: Math.round(ridesBase * (1 + demandChange / 100)),
-            demandChange: Number(demandChange.toFixed(1))
-        };
+        const res = await apiClient.post('/v1/analytics/simulate', params);
+        return res.data;
     }
 }
+

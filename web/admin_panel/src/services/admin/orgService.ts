@@ -1,3 +1,4 @@
+import apiClient from '../apiClient';
 import {
     Organization,
     Subgroup,
@@ -7,85 +8,57 @@ import {
 
 export class OrgService {
     async getOrganizations(): Promise<Organization[]> {
-        try {
-            const res = await fetch('/api/v1/organizations');
-            if (!res.ok) throw new Error('Failed to fetch orgs');
-            return await res.json();
-        } catch (e) {
-            console.error(e);
-            return [];
-        }
+        const res = await apiClient.get('/v1/organizations');
+        return res.data;
     }
 
     async updateOrganizationStatus(orgId: string, status: 'ACTIVE' | 'HOLD' | 'TEMP_HOLD'): Promise<void> {
-        await fetch(`/api/v1/organizations/${orgId}/status`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status })
-        });
+        await apiClient.patch(`/v1/organizations/${orgId}/status`, { status });
     }
 
     async getDriverUnions(): Promise<Organization[]> {
-        return this.getOrganizations();
+        const res = await apiClient.get('/v1/organizations/unions');
+        return res.data;
     }
 
     async getSubgroupDetails(orgId: string, subgroupId: string): Promise<Subgroup | null> {
-        const subgroups = await this.getSubgroups(orgId);
-        return subgroups.find(sg => sg.id === subgroupId) || null;
+        const res = await apiClient.get(`/v1/organizations/${orgId}/subgroups/${subgroupId}`);
+        return res.data;
     }
 
     async getSubgroups(orgId: string): Promise<Subgroup[]> {
-        try {
-            const res = await fetch(`/api/v1/organizations/${orgId}/subgroups`);
-            if (!res.ok) throw new Error('Failed to fetch subgroups');
-            return await res.json();
-        } catch (e) {
-            console.error(e);
-            return [];
-        }
+        const res = await apiClient.get(`/v1/organizations/${orgId}/subgroups`);
+        return res.data;
     }
 
     async createSubgroup(orgId: string, name: string, parentId?: string): Promise<void> {
-        await fetch(`/api/v1/organizations/${orgId}/subgroups`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name })
-        });
+        await apiClient.post(`/v1/organizations/${orgId}/subgroups`, { name, parentId });
     }
 
     async updateSubgroup(subgroupId: string, updates: Partial<Subgroup>): Promise<void> {
-        await fetch(`/api/v1/organizations/subgroups/${subgroupId}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updates)
-        });
+        await apiClient.patch(`/v1/organizations/subgroups/${subgroupId}`, updates);
     }
 
     async deleteSubgroup(subgroupId: string): Promise<void> {
-        await fetch(`/api/v1/organizations/subgroups/${subgroupId}`, {
-            method: 'DELETE'
-        });
+        await apiClient.delete(`/v1/organizations/subgroups/${subgroupId}`);
     }
 
     async getSubgroupMembers(subgroupId: string): Promise<PlatformUser[]> {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return [
-            { id: 'u101', name: 'Driver X', email: 'driver.x@cabi.com', type: 'DRIVER', registrationDate: '2024-05-01', status: 'ACTIVE' },
-        ];
+        const res = await apiClient.get(`/v1/organizations/subgroups/${subgroupId}/members`);
+        return res.data;
     }
 
     async addMemberToSubgroup(subgroupId: string, userId: string): Promise<void> {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await apiClient.post(`/v1/organizations/subgroups/${subgroupId}/members`, { userId });
     }
 
     async removeMemberFromSubgroup(subgroupId: string, userId: string): Promise<void> {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await apiClient.delete(`/v1/organizations/subgroups/${subgroupId}/members/${userId}`);
     }
 
     async getOrganizationAuditLog(orgId: string): Promise<OrganizationLogEntry[]> {
-        await new Promise(resolve => setTimeout(resolve, 600));
-        return [
-            { id: 'log-1', action: 'CREATE_SUBGROUP', actorName: 'John Doe', target: 'Team Alpha', timestamp: new Date(Date.now() - 86400000).toISOString() },
-        ];
+        const res = await apiClient.get(`/v1/organizations/${orgId}/audit-log`);
+        return res.data;
     }
 }
+

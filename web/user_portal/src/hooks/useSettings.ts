@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '@/lib/apiClient';
 import { useAuth } from '../context/AuthContext';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3334/api';
 
 export const useSettings = () => {
     const { user, updateUser } = useAuth();
@@ -20,10 +18,7 @@ export const useSettings = () => {
         if (!user) return;
         setLoading(true);
         try {
-            const token = localStorage.getItem('authToken');
-            const response = await axios.get(`${API_URL}/settings/user/${user.id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await apiClient.get(`/settings/user/${user.id}`);
             setSettings(response.data);
             setLoading(false);
         } catch (err: any) {
@@ -35,16 +30,13 @@ export const useSettings = () => {
     const updateSettings = async (newSettings: any) => {
         if (!user) return;
         setLoading(true);
-        const token = localStorage.getItem('authToken');
 
         // Optimistic update
         const previousSettings = { ...settings };
         setSettings({ ...settings, ...newSettings });
 
         try {
-            const response = await axios.put(`${API_URL}/settings/user/${user.id}`, newSettings, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await apiClient.put(`/settings/user/${user.id}`, newSettings);
 
             const updatedData = response.data;
             setSettings(updatedData);
@@ -66,11 +58,8 @@ export const useSettings = () => {
     const updateRidePreferences = async (prefs: any) => {
         if (!user) return;
         setLoading(true);
-        const token = localStorage.getItem('authToken');
         try {
-            const response = await axios.put(`${API_URL}/settings/preferences/${user.id}`, prefs, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await apiClient.put(`/settings/preferences/${user.id}`, prefs);
             setLoading(false);
             return response.data;
         } catch (err: any) {

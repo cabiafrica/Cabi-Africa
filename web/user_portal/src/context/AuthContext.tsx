@@ -1,8 +1,6 @@
 import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/router';
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3334/api';
+import apiClient from '@/lib/apiClient';
 
 export interface AuthUser {
     id: string;
@@ -40,9 +38,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         try {
             const currentUser = JSON.parse(userDataString);
-            const response = await axios.get(`${API_URL}/settings/user/${currentUser.id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await apiClient.get(`/settings/user/${currentUser.id}`);
 
             const freshUser = { ...currentUser, ...response.data };
             localStorage.setItem('authUser', JSON.stringify(freshUser));
@@ -63,9 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setUser(parsedUser);
 
                 // Trigger background refresh if token exists
-                axios.get(`${API_URL}/settings/user/${parsedUser.id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                }).then(res => {
+                apiClient.get(`/settings/user/${parsedUser.id}`).then(res => {
                     const freshUser = { ...parsedUser, ...res.data };
                     localStorage.setItem('authUser', JSON.stringify(freshUser));
                     setUser(freshUser);

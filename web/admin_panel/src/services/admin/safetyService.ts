@@ -1,3 +1,4 @@
+import apiClient from '../apiClient';
 import {
     SOSIncidentDetails,
     SosPenaltyConfig
@@ -5,48 +6,29 @@ import {
 
 export class SafetyService {
     async getSosIncidentDetails(incidentId: string): Promise<SOSIncidentDetails> {
-        throw new Error('Real implementation required or fetch failed');
+        const res = await apiClient.get(`/safety/incidents/${incidentId}`);
+        return res.data;
     }
 
     async logSosIncidentAction(incidentId: string, notes: string): Promise<void> {
-        await new Promise(resolve => setTimeout(resolve, 800));
+        await apiClient.post(`/safety/incidents/${incidentId}/log`, { notes });
     }
 
     async resolveSosIncident(incidentId: string, outcome: 'LEGITIMATE' | 'MISUSE'): Promise<void> {
-        try {
-            const details = await this.getSosIncidentDetails(incidentId);
-            await this.resolveSos(details.driver.id, outcome === 'MISUSE');
-        } catch (e) {
-            console.error(e);
-            throw e;
-        }
+        await apiClient.post(`/safety/incidents/${incidentId}/resolve`, { outcome });
     }
 
     async resolveSos(userId: string, isMisuse: boolean): Promise<void> {
-        const res = await fetch('/api/safety/resolve-sos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, isMisuse }),
-        });
-        if (!res.ok) throw new Error('Failed to resolve SOS');
+        await apiClient.post('/safety/resolve-sos', { userId, isMisuse });
     }
 
     async getSosPenaltyConfig(): Promise<SosPenaltyConfig> {
-        try {
-            const res = await fetch('/api/safety/sos-config');
-            if (res.ok) return await res.json();
-        } catch (e) {
-            console.error('Failed to fetch SOS config', e);
-        }
-        return { type: 'FEE', feeAmount: 500 };
+        const res = await apiClient.get('/safety/sos-config');
+        return res.data;
     }
 
     async updateSosPenaltyConfig(config: SosPenaltyConfig): Promise<void> {
-        const res = await fetch('/api/safety/sos-config', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(config),
-        });
-        if (!res.ok) throw new Error('Failed to update SOS config');
+        await apiClient.put('/safety/sos-config', config);
     }
 }
+

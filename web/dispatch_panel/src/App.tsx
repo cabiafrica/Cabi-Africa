@@ -45,8 +45,7 @@ const MENU_ITEMS: MenuItem[] = [
     { view: 'passengers', label: 'Passenger Management', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS.passengers}</svg>, permission: 'PASSENGER_PROFILES_VIEW', group: 'management' },
 ];
 
-import { useAuth } from './AuthContext';
-import { LoginPage } from './components/LoginPage';
+import apiClient from './lib/apiClient';
 
 function App() {
     const { isAuthenticated, logout, user, hasPermission } = useAuth();
@@ -67,8 +66,7 @@ function App() {
 
     // Socket.io for Real-time Tracking
     useEffect(() => {
-        // Dispatch real-time service via environment variables
-        const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3334';
+        const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://auth-gateway-746659778850.us-central1.run.app';
         const namespace = import.meta.env.VITE_TRIP_TRACKING_NAMESPACE || '/trip-tracking';
         const socket = io(`${socketUrl}${namespace}`);
 
@@ -93,56 +91,44 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const dispatchApiUrl = import.meta.env.VITE_DISPATCH_API_URL || '/api/dispatch';
-                
                 // Fetch Metrics
-                const metricsRes = await fetch(`${dispatchApiUrl}/metrics`);
-                if (metricsRes.ok) {
-                    const data = await metricsRes.json();
-                    setMetrics(prev => ({ ...prev, ...data }));
-                }
+                const metricsRes = await apiClient.get('/dispatch/metrics');
+                setMetrics(prev => ({ ...prev, ...metricsRes.data }));
 
                 // Fetch Rides
-                const ridesRes = await fetch(`${dispatchApiUrl}/rides`);
-                if (ridesRes.ok) {
-                    const data = await ridesRes.json();
-                    // Map backend data to frontend types
-                    const mappedRides = data.map((r: any) => ({
-                        id: r.id,
-                        passengerId: r.passengerId,
-                        passengerName: r.passenger?.fullName || 'Unknown',
-                        passengerPhone: r.passenger?.phone || '',
-                        pickupLocation: typeof r.pickupLocation === 'string' ? JSON.parse(r.pickupLocation) : r.pickupLocation,
-                        dropoffLocation: typeof r.dropoffLocation === 'string' ? JSON.parse(r.dropoffLocation) : r.dropoffLocation,
-                        requestedAt: r.createdAt,
-                        status: r.status.toLowerCase(),
-                        assignedDriverId: r.driverId,
-                        estimatedFare: Number(r.fare) || 0,
-                        distance: r.distance || 0,
-                        priority: 'medium',
-                    }));
-                    setRideRequests(mappedRides);
-                }
+                const ridesRes = await apiClient.get('/dispatch/rides');
+                const mappedRides = ridesRes.data.map((r: any) => ({
+                    id: r.id,
+                    passengerId: r.passengerId,
+                    passengerName: r.passenger?.fullName || 'Unknown',
+                    passengerPhone: r.passenger?.phone || '',
+                    pickupLocation: typeof r.pickupLocation === 'string' ? JSON.parse(r.pickupLocation) : r.pickupLocation,
+                    dropoffLocation: typeof r.dropoffLocation === 'string' ? JSON.parse(r.dropoffLocation) : r.dropoffLocation,
+                    requestedAt: r.createdAt,
+                    status: (r.status || 'requested').toLowerCase(),
+                    assignedDriverId: r.driverId,
+                    estimatedFare: Number(r.fare) || 0,
+                    distance: r.distance || 0,
+                    priority: 'medium',
+                }));
+                setRideRequests(mappedRides);
 
                 // Fetch Drivers
-                const driversRes = await fetch(`${dispatchApiUrl}/drivers`);
-                if (driversRes.ok) {
-                    const data = await driversRes.json();
-                    const mappedDrivers = data.map((d: any) => ({
-                        id: d.id,
-                        name: d.user?.fullName || 'Unknown Driver',
-                        phone: d.user?.phone || '',
-                        vehicleType: d.vehicle?.type || 'Standard',
-                        vehiclePlate: d.vehicle?.plateNumber || '',
-                        rating: 5.0, // TODO: Fetch real rating
-                        status: d.isOnline ? 'online' : 'offline',
-                        currentLocation: typeof d.currentLocation === 'string' ? JSON.parse(d.currentLocation) : d.currentLocation || { lat: -1.286389, lng: 36.817223 },
-                        completedRides: 0,
-                        acceptanceRate: 100,
-                        score: 100
-                    }));
-                    setDrivers(mappedDrivers);
-                }
+                const driversRes = await apiClient.get('/dispatch/drivers');
+                const mappedDrivers = driversRes.data.map((d: any) => ({
+                    id: d.id,
+                    name: d.user?.fullName || 'Unknown Driver',
+                    phone: d.user?.phone || '',
+                    vehicleType: d.vehicle?.type || 'Standard',
+                    vehiclePlate: d.vehicle?.plateNumber || '',
+                    rating: 5.0,
+                    status: d.isOnline ? 'online' : 'offline',
+                    currentLocation: typeof d.currentLocation === 'string' ? JSON.parse(d.currentLocation) : d.currentLocation || { lat: -1.286389, lng: 36.817223 },
+                    completedRides: 0,
+                    acceptanceRate: 100,
+                    score: 100
+                }));
+                setDrivers(mappedDrivers);
             } catch (error) {
                 console.error("Failed to fetch dispatch data", error);
             }
@@ -156,14 +142,9 @@ function App() {
 
     const handleAssignDriver = async (rideId: string, driverId: string) => {
         try {
-            const dispatchApiUrl = import.meta.env.VITE_DISPATCH_API_URL || '/api/dispatch';
-            const res = await fetch(`${dispatchApiUrl}/rides/${rideId}/assign`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ driverId })
-            });
+            const res = await apiClient.post(`/dispatch/rides/${rideId}/assign`, { driverId });
 
-            if (res.ok) {
+            if (res.status === 200 || res.status === 201) {
                 // Optimistic update
                 setRideRequests(prev =>
                     prev.map(ride =>

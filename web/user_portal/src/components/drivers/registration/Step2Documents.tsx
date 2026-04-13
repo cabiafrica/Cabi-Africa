@@ -17,7 +17,7 @@ interface Props {
   errors: Partial<Record<keyof DocumentsData, string>>;
 }
 
-import axios from 'axios';
+import apiClient from '@/lib/apiClient';
 
 export const Step2Documents: React.FC<Props> = ({ data, onChange, errors }) => {
   const [isVerifying, setIsVerifying] = useState(false);
@@ -47,7 +47,7 @@ export const Step2Documents: React.FC<Props> = ({ data, onChange, errors }) => {
           if (file) formData.append(key, file);
       });
       
-      const response = await axios.post('http://localhost:3003/api/verification/upload', formData, {
+      const response = await apiClient.post('/verification/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
