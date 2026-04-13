@@ -49,7 +49,15 @@ USER nestjs
 EXPOSE 8080
 
 CMD ["sh", "-c", \
-    "echo 'Starting $SERVICE_NAME on port $PORT...'; \
+    "echo '===== Container Starting ====='; \
+    echo 'PORT=$PORT'; \
+    echo 'NODE_ENV=$NODE_ENV'; \
+    echo 'SERVICE_NAME=$SERVICE_NAME'; \
+    echo 'IS_BACKEND_SUB_SERVICE=$IS_BACKEND_SUB_SERVICE'; \
+    echo 'Listing dist structure:'; \
+    ls -la dist/; \
+    ls -la dist/backend/ 2>/dev/null || echo 'No backend dir'; \
+    echo '===== Starting Node ====='; \
     if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then \
         node dist/backend/$SERVICE_NAME/main.js; \
     else \
