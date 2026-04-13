@@ -26,12 +26,11 @@ ENV NODE_OPTIONS=--max-old-space-size=2048
 RUN npx nx build $SERVICE_NAME --configuration=production --parallel=1
 
 # Stage 2: Production Runner
-FROM node:20-alpine
+FROM node:20
 
-RUN apk add --no-cache openssl
 WORKDIR /app
 
-RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nestjs
+RUN groupadd --gid 1001 nodejs && useradd --uid 1001 --gid nodejs nestjs
 
 COPY --from=builder /app/dist ./dist
 
@@ -41,25 +40,9 @@ ARG IS_BACKEND_SUB_SERVICE=true
 ENV SERVICE_NAME=${SERVICE_NAME}
 ENV IS_BACKEND_SUB_SERVICE=${IS_BACKEND_SUB_SERVICE}
 ENV NODE_ENV=production
-ENV NX_CACHE_BY_PROD=true
 ENV PORT=8080
-ENV NODE_ENV=production
 
 USER nestjs
 EXPOSE 8080
 
-CMD ["sh", "-c", \
-    "echo '===== Container Starting ====='; \
-    echo 'PORT=$PORT'; \
-    echo 'NODE_ENV=$NODE_ENV'; \
-    echo 'SERVICE_NAME=$SERVICE_NAME'; \
-    echo 'IS_BACKEND_SUB_SERVICE=$IS_BACKEND_SUB_SERVICE'; \
-    echo 'Listing dist structure:'; \
-    ls -la dist/; \
-    ls -la dist/backend/ 2>/dev/null || echo 'No backend dir'; \
-    echo '===== Starting Node ====='; \
-    if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then \
-        node dist/backend/$SERVICE_NAME/main.js; \
-    else \
-        node dist/$SERVICE_NAME/main.js; \
-    fi"]
+CMD ["sh", "-c", "if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then node dist/backend/${SERVICE_NAME}/main.js; else node dist/${SERVICE_NAME}/main.js; fi"]

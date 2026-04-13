@@ -47,7 +47,7 @@ steps:
       - '--cpu=1'
       - '--timeout=600'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest,JWT_SECRET=JWT_SECRET:latest'
-      - '--set-env-vars=NODE_ENV=production'
+      - '--set-env-vars=NODE_ENV=production,PORT=8080'
     waitFor: ['push-auth-gateway']
 
   # ── STEP 2: Build Verification Service ───────────────────────────────────────
@@ -87,7 +87,7 @@ steps:
       - '--port=8080'
       - '--memory=512Mi'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest'
-      - '--set-env-vars=NODE_ENV=production'
+      - '--set-env-vars=NODE_ENV=production,PORT=8080'
     waitFor: ['push-verification-service']
 
   # ── STEP 3: Build Referral Service ───────────────────────────────────────────
@@ -127,7 +127,7 @@ steps:
       - '--port=8080'
       - '--memory=512Mi'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
-      - '--set-env-vars=NODE_ENV=production'
+      - '--set-env-vars=NODE_ENV=production,PORT=8080'
     waitFor: ['push-referral-service']
 
   # ── STEP 4: Build Sacco Service ──────────────────────────────────────────────
@@ -167,7 +167,7 @@ steps:
       - '--port=8080'
       - '--memory=512Mi'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
-      - '--set-env-vars=NODE_ENV=production'
+      - '--set-env-vars=NODE_ENV=production,PORT=8080'
     waitFor: ['push-sacco-service']
 
   # ── STEP 5: Build Dispatch Service ──────────────────────────────────────────
@@ -207,7 +207,7 @@ steps:
       - '--port=8080'
       - '--memory=1Gi'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
-      - '--set-env-vars=NODE_ENV=production'
+      - '--set-env-vars=NODE_ENV=production,PORT=8080'
     waitFor: ['push-dispatch-service']
 
   # ── STEP 6: Build Driver Lead Service ────────────────────────────────────────
@@ -247,7 +247,7 @@ steps:
       - '--port=8080'
       - '--memory=512Mi'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,JWT_SECRET=JWT_SECRET:latest'
-      - '--set-env-vars=NODE_ENV=production'
+      - '--set-env-vars=NODE_ENV=production,PORT=8080'
     waitFor: ['push-driver-lead-service']
 
 images:
