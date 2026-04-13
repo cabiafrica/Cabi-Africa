@@ -20,13 +20,10 @@ RUN npm ci --legacy-peer-deps
 # Copy all source files needed for the build
 COPY nx.json ./
 COPY tsconfig.base.json ./
-COPY tsconfig.json ./
 COPY libs ./libs
 COPY auth-gateway ./auth-gateway
 COPY backend ./backend
 COPY scripts ./scripts
-COPY .eslintrc.json ./
-COPY .prettierrc ./
 
 # Generate Prisma Client
 RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
