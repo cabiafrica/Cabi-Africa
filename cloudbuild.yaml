@@ -46,6 +46,7 @@ steps:
       - '--memory=1Gi'
       - '--cpu=1'
       - '--timeout=300'
+      - '--update'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest,JWT_SECRET=JWT_SECRET:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-auth-gateway']
@@ -87,6 +88,7 @@ steps:
       - '--allow-unauthenticated'
       - '--port=8080'
       - '--memory=512Mi'
+      - '--update'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-verification-service']
@@ -128,6 +130,7 @@ steps:
       - '--allow-unauthenticated'
       - '--port=8080'
       - '--memory=512Mi'
+      - '--update'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-referral-service']
@@ -169,6 +172,7 @@ steps:
       - '--allow-unauthenticated'
       - '--port=8080'
       - '--memory=512Mi'
+      - '--update'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-sacco-service']
@@ -210,6 +214,7 @@ steps:
       - '--allow-unauthenticated'
       - '--port=8080'
       - '--memory=1Gi'
+      - '--update'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-dispatch-service']
@@ -251,6 +256,7 @@ steps:
       - '--allow-unauthenticated'
       - '--port=8080'
       - '--memory=512Mi'
+      - '--update'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,JWT_SECRET=JWT_SECRET:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-driver-lead-service']
