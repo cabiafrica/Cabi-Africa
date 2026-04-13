@@ -21,6 +21,7 @@ COPY scripts ./scripts
 RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
 
 ARG SERVICE_NAME
+ENV NODE_OPTIONS=--max-old-space-size=2048
 RUN npx nx build $SERVICE_NAME --configuration=production
 
 # Stage 2: Production Runner
