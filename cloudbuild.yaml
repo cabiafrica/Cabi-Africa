@@ -1,12 +1,9 @@
 # ==============================================================================
 # CABI AFRICA - FULL PRODUCTION DEPLOY
 # ==============================================================================
-# NOTE: Database migrations are handled by GitHub Actions (deploy-production.yml)
-# to prevent double-run race conditions.
-# Updated: Fixed --update flag issue (April 13, 2026)
 
 steps:
-  # ── STEP 1: Build Auth Gateway ────────────────────────────────────────────────
+  # Auth Gateway
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-auth-gateway'
     args:
@@ -43,14 +40,15 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--port=8080'
-      - '--memory=1Gi'
-      - '--cpu=1'
-      - '--timeout=1200'
+      - '--memory=2Gi'
+      - '--cpu=2'
+      - '--timeout=1800'
+      - '--no-cpu-throttling'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest,JWT_SECRET=JWT_SECRET:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-auth-gateway']
 
-  # ── STEP 2: Build Verification Service ───────────────────────────────────────
+  # Verification Service
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-verification-service'
     args:
@@ -85,12 +83,15 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--port=8080'
-      - '--memory=512Mi'
+      - '--memory=1Gi'
+      - '--cpu=1'
+      - '--timeout=1800'
+      - '--no-cpu-throttling'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-verification-service']
 
-  # ── STEP 3: Build Referral Service ───────────────────────────────────────────
+  # Referral Service
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-referral-service'
     args:
@@ -125,12 +126,15 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--port=8080'
-      - '--memory=512Mi'
+      - '--memory=1Gi'
+      - '--cpu=1'
+      - '--timeout=1800'
+      - '--no-cpu-throttling'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-referral-service']
 
-  # ── STEP 4: Build Sacco Service ──────────────────────────────────────────────
+  # Sacco Service
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-sacco-service'
     args:
@@ -165,12 +169,15 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--port=8080'
-      - '--memory=512Mi'
+      - '--memory=1Gi'
+      - '--cpu=1'
+      - '--timeout=1800'
+      - '--no-cpu-throttling'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-sacco-service']
 
-  # ── STEP 5: Build Dispatch Service ──────────────────────────────────────────
+  # Dispatch Service
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-dispatch-service'
     args:
@@ -205,12 +212,15 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--port=8080'
-      - '--memory=1Gi'
+      - '--memory=2Gi'
+      - '--cpu=2'
+      - '--timeout=1800'
+      - '--no-cpu-throttling'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-dispatch-service']
 
-  # ── STEP 6: Build Driver Lead Service ────────────────────────────────────────
+  # Driver Lead Service
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-driver-lead-service'
     args:
@@ -245,7 +255,10 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--port=8080'
-      - '--memory=512Mi'
+      - '--memory=1Gi'
+      - '--cpu=1'
+      - '--timeout=1800'
+      - '--no-cpu-throttling'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,JWT_SECRET=JWT_SECRET:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-driver-lead-service']
