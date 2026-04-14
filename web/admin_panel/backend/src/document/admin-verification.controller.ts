@@ -9,8 +9,8 @@ export class AdminVerificationController {
   async getVerificationRequests(
     @Query('status') status?: string,
     @Query('search') search?: string,
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 20,
+    @Query('page') page = 1,
+    @Query('limit') limit = 20,
   ) {
     return this.verificationService.getVerificationRequests({
       status,

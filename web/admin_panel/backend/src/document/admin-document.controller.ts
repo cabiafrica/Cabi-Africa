@@ -14,7 +14,7 @@ export class AdminDocumentController {
   constructor(private readonly documentService: DocumentService) {}
 
   @Get('expiring')
-  findExpiringDocuments(@Query('days') days: string = '30') {
+  findExpiringDocuments(@Query('days') days = '30') {
     const daysAhead = parseInt(days, 10);
     if (isNaN(daysAhead)) {
       return this.documentService.getExpiringDocuments(30);

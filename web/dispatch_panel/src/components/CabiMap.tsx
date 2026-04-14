@@ -30,7 +30,7 @@ export interface CabiMapProps {
 }
 
 // Custom marker icons
-const createDriverIcon = (isOnline: boolean = true) => {
+const createDriverIcon = (isOnline = true) => {
     const color = isOnline ? '#10b981' : '#6b7280';
     return L.divIcon({
         className: 'custom-div-icon',

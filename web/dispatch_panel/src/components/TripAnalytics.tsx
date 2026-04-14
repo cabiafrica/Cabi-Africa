@@ -34,9 +34,9 @@ const TripAnalytics = ({ analytics }: TripAnalyticsProps) => {
 
     // Data for Cancellation Source Pie Chart
     const cancellationSourceData = [
-        { name: 'Passenger', value: analytics.cancellationsByPassenger, color: '#f59e0b', source: 'passenger' as 'passenger' },
-        { name: 'Driver', value: analytics.cancellationsByDriver, color: '#3b82f6', source: 'driver' as 'driver' },
-        { name: 'System', value: analytics.cancellationsBySystem, color: '#8b5cf6', source: 'system' as 'system' },
+        { name: 'Passenger', value: analytics.cancellationsByPassenger, color: '#f59e0b', source: 'passenger' as const },
+        { name: 'Driver', value: analytics.cancellationsByDriver, color: '#3b82f6', source: 'driver' as const },
+        { name: 'System', value: analytics.cancellationsBySystem, color: '#8b5cf6', source: 'system' as const },
     ];
 
     // Filter cancellation reasons based on selected source
