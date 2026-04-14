@@ -301,7 +301,13 @@ function App() {
             </div>
             {(user?.role === 'admin' || hasPermission('DISPATCH_DASHBOARD_VIEW') || hasPermission('view_dashboard')) && (
               <button
-                onClick={() => window.open('http://localhost:3002', '_blank')}
+                onClick={() => {
+                  const url = import.meta.env.VITE_DISPATCH_PANEL_URL || 
+                    (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app') 
+                      ? 'https://dispatch.cabi.africa' 
+                      : 'http://localhost:3002');
+                  window.location.href = url;
+                }}
                 className="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:bg-primary hover:text-black rounded-lg transition-all duration-300 group border border-white/5"
                 title="Launch Dispatch Management Panel"
               >
@@ -312,7 +318,13 @@ function App() {
             )}
             {(user?.role === 'admin' || hasPermission('USER_PORTAL_DASHBOARD_VIEW') || hasPermission('view_dashboard')) && (
               <button
-                onClick={() => window.open('http://localhost:3000', '_blank')}
+                onClick={() => {
+                  const url = import.meta.env.VITE_USER_PORTAL_URL || 
+                    (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app') 
+                      ? 'https://cabi.africa' 
+                      : 'http://localhost:3000');
+                  window.location.href = url;
+                }}
                 className="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:bg-white hover:text-black rounded-lg transition-all duration-300 group border border-white/5"
                 title="View User Portal Dashboard"
               >
