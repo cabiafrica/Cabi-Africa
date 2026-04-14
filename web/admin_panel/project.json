@@ -54,6 +54,12 @@
                     "buildTarget": "admin-panel:build:production"
                 }
             }
+        },
+        "lint": {
+            "executor": "@nx/eslint:lint",
+            "outputs": [
+                "{options.outputFile}"
+            ]
         }
     },
     "tags": []

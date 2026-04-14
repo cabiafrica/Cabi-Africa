@@ -666,13 +666,3 @@ export function JobActivitiesDashboard() {
 function generateMockRides(): Ride[] {
   return [];
 }
-      lng: 36.817223 + (Math.random() - 0.5) * 0.1,
-      address: locations[Math.floor(Math.random() * locations.length)],
-    },
-    fare: Math.random() > 0.3 ? Math.floor(Math.random() * 2000) + 200 : null,
-    distance: Math.random() > 0.3 ? Math.random() * 20 + 2 : null,
-    duration: Math.random() > 0.3 ? Math.floor(Math.random() * 60) + 10 : null,
-    createdAt: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toISOString(),
-  }));
-}

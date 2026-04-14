@@ -88,10 +88,10 @@ export const DashboardAnalytics: React.FC = () => {
                                 </Card>
                                 <Card decoration="top" decorationColor="amber">
                                     <Title>Network Virality Coefficient</Title>
-                                    <Metric className="mt-4">1.4</Metric>
-                                    <Text>Each active user invites ~1.4 new users.</Text>
+                                    <Metric className="mt-4">0.0</Metric>
+                                    <Text>Initial network initialization in progress.</Text>
                                     <div className="mt-4 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                                        <div className="h-full bg-primary w-[70%] shadow-[0_0_10px_rgba(255,215,0,0.5)]"></div>
+                                        <div className="h-full bg-primary w-[0%]"></div>
                                     </div>
                                     <Text className="text-xs text-gray-500 mt-2">Target: 2.0 (Viral Growth)</Text>
                                 </Card>
