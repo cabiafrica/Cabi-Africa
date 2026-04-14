@@ -33,6 +33,8 @@ RUN groupadd --gid 1001 nodejs && useradd --uid 1001 --gid nodejs nestjs
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/scripts/start-service.sh ./start-service.sh
+RUN chmod +x ./start-service.sh
 
 ARG SERVICE_NAME
 ARG IS_BACKEND_SUB_SERVICE=true
@@ -44,4 +46,4 @@ USER nestjs
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then node dist/backend/${SERVICE_NAME}/main.js; else node dist/${SERVICE_NAME}/main.js; fi"]
+CMD ["./start-service.sh"]
