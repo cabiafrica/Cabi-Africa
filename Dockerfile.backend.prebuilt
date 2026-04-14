@@ -44,4 +44,4 @@ USER nestjs
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "echo 'Starting service...'; node dist/backend/${SERVICE_NAME}/main.js 2>&1"]
+CMD ["sh", "-c", "if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then node dist/backend/${SERVICE_NAME}/main.js; else node dist/${SERVICE_NAME}/main.js; fi"]
