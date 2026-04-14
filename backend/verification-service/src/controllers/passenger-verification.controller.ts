@@ -584,8 +584,8 @@ export class PassengerVerificationController {
     @Query('searchTerm') searchTerm?: string,
     @Query('verificationLevel')
     verificationLevel?: 'BASIC' | 'SELFIE' | 'BIOMETRIC',
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 20,
+    @Query('page') page = 1,
+    @Query('limit') limit = 20,
   ): Promise<any> {
     const passengers = Array.from(this.passengerStates.entries())
       .filter(([_, state]) => {

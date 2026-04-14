@@ -477,7 +477,7 @@ export class AiDocumentVerificationService {
     if (certMatch) fields.documentNumber = certMatch[2];
 
     // Reference number
-    const refMatch = text.match(/(?:REF|REFERENCE)[:\s#]+([A-Z0-9\/]+)/i);
+    const refMatch = text.match(/(?:REF|REFERENCE)[:\s#]+([A-Z0-9/]+)/i);
     if (refMatch)
       fields.documentNumber = (fields.documentNumber || '') + ' ' + refMatch[1];
 
@@ -566,7 +566,7 @@ export class AiDocumentVerificationService {
   ): void {
     // Certificate Number
     const certMatch = text.match(
-      /(?:CERTIFICATE NO|CERT NO|REG NO)[:\s#]+([A-Z0-9\/]+)/i,
+      /(?:CERTIFICATE NO|CERT NO|REG NO)[:\s#]+([A-Z0-9/]+)/i,
     );
     if (certMatch) fields.documentNumber = certMatch[1].trim();
 

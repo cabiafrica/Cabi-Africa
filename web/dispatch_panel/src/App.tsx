@@ -45,6 +45,8 @@ const MENU_ITEMS: MenuItem[] = [
     { view: 'passengers', label: 'Passenger Management', icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">{MENU_ICONS.passengers}</svg>, permission: 'PASSENGER_PROFILES_VIEW', group: 'management' },
 ];
 
+import { useAuth } from './AuthContext';
+import LoginPage from './components/LoginPage';
 import apiClient from './lib/apiClient';
 
 function App() {

@@ -189,7 +189,7 @@ export class OcrService {
     }
 
     // Extract blood group
-    const bloodGroupMatch = text.match(/\b([ABO][\+\-])\b/);
+    const bloodGroupMatch = text.match(/\b([ABO][+-])\b/);
     if (bloodGroupMatch) {
       result.bloodGroup = bloodGroupMatch[1];
     }
@@ -282,7 +282,7 @@ export class OcrService {
     const result: any = {};
 
     const policyMatch = text.match(
-      /(?:Policy Number|Policy No)[:\s]+([A-Z0-9\-]+)/i,
+      /(?:Policy Number|Policy No)[:\s]+([A-Z0-9-]+)/i,
     );
     if (policyMatch) {
       result.policyNumber = policyMatch[1].trim();
@@ -351,7 +351,7 @@ export class OcrService {
 
     // Extract Certificate Number (often at the top or labeled "Certificate No.")
     const certMatch = text.match(
-      /(?:Certificate No|Cert No)[:\s]+([A-Z0-9\/]+)/i,
+      /(?:Certificate No|Cert No)[:\s]+([A-Z0-9/]+)/i,
     );
     if (certMatch) {
       result.certificateNumber = certMatch[1].trim();
@@ -373,7 +373,7 @@ export class OcrService {
 
     // Extract Registration Number (Reg No. or CP/...)
     const regMatch = text.match(
-      /(?:Reg No|Registration Number)[:\s]+([A-Z0-9\/]+)/i,
+      /(?:Reg No|Registration Number)[:\s]+([A-Z0-9/]+)/i,
     );
     if (regMatch) {
       result.registrationNumber = regMatch[1].trim();
