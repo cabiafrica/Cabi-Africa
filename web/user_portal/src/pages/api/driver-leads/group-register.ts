@@ -125,7 +125,7 @@ export default async function handler(
         const finalAmount = subtotal - discount;
 
         // Generate payment intent
-        const PAYMENT_SERVICE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api';
+        const PAYMENT_SERVICE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://auth-gateway-746659778850.us-central1.run.app/api';
         const paymentResponse = await fetch(`${PAYMENT_SERVICE_URL}/payments/create-intent`, {
             method: 'POST',
             headers: {

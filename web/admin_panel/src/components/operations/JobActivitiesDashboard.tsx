@@ -664,40 +664,8 @@ export function JobActivitiesDashboard() {
 
 // Mock data generator for development
 function generateMockRides(): Ride[] {
-  const statuses: RideStatus[] = [
-    'REQUESTED',
-    'MATCHING',
-    'DRIVER_ASSIGNED',
-    'DRIVER_ARRIVED',
-    'IN_PROGRESS',
-    'COMPLETED',
-    'CANCELLED',
-  ];
-  const names = ['John Doe', 'Jane Smith', 'Bob Johnson', 'Alice Williams', 'Charlie Brown'];
-  const locations = [
-    'Westlands, Nairobi',
-    'CBD, Nairobi',
-    'Karen, Nairobi',
-    'Kilimani, Nairobi',
-    'Parklands, Nairobi',
-  ];
-
-  return Array.from({ length: 50 }, (_, i) => ({
-    id: `ride-${Math.random().toString(36).substring(2, 15)}`,
-    passengerId: `passenger-${i}`,
-    passengerName: names[Math.floor(Math.random() * names.length)],
-    passengerPhone: `+254${Math.floor(Math.random() * 1000000000)}`,
-    driverId: Math.random() > 0.2 ? `driver-${i}` : null,
-    driverName: Math.random() > 0.2 ? names[Math.floor(Math.random() * names.length)] : null,
-    driverPhone: Math.random() > 0.2 ? `+254${Math.floor(Math.random() * 1000000000)}` : null,
-    status: statuses[Math.floor(Math.random() * statuses.length)],
-    pickupLocation: {
-      lat: -1.286389 + (Math.random() - 0.5) * 0.1,
-      lng: 36.817223 + (Math.random() - 0.5) * 0.1,
-      address: locations[Math.floor(Math.random() * locations.length)],
-    },
-    dropoffLocation: {
-      lat: -1.286389 + (Math.random() - 0.5) * 0.1,
+  return [];
+}
       lng: 36.817223 + (Math.random() - 0.5) * 0.1,
       address: locations[Math.floor(Math.random() * locations.length)],
     },

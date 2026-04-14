@@ -51,7 +51,7 @@ export const SosIncidentDashboard = () => {
 
     // In a real app, the URL would come from an environment config file.
     // The query helps the backend subscribe this client to the correct incident room.
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3333';
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://auth-gateway-746659778850.us-central1.run.app';
     const socket: Socket = io(socketUrl, {
       query: { incidentId },
     });
@@ -125,7 +125,7 @@ export const SosIncidentDashboard = () => {
       try {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
         // In a real app, use wss:// for secure connections
-        const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3333';
+        const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://auth-gateway-746659778850.us-central1.run.app';
         const wsUrl = socketUrl.replace('https://', 'wss://').replace('http://', 'ws://');
         const socket = new WebSocket(`${wsUrl}/audio?incidentId=${incidentId}`);
         socket.binaryType = 'arraybuffer';

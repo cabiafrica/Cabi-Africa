@@ -7,13 +7,7 @@ import { FaBuilding, FaArrowLeft, FaCheck, FaSearch, FaUser, FaGlobe, FaTwitter,
 import VideoEmbed from '../../components/VideoEmbed';
 
 // Mock list of registered drivers for demonstration
-const mockDrivers = [
-    { id: '1', name: 'John Kamau', contact: '0712345678', email: 'john.k@cabi.com', orgId: null, passportUrl: 'https://i.pravatar.cc/150?u=john' },
-    { id: '2', name: 'Sarah Ochieng', contact: '0722334455', email: 'sarah.o@cabi.com', orgId: null, passportUrl: 'https://i.pravatar.cc/150?u=sarah' },
-    { id: '3', name: 'David Mwangi', contact: '0733445566', email: 'david.m@cabi.com', orgId: 'org_123', passportUrl: 'https://i.pravatar.cc/150?u=david' },
-    { id: '4', name: 'Alice Wanjiku', contact: '0744556677', email: 'alice.w@cabi.com', orgId: null, passportUrl: 'https://i.pravatar.cc/150?u=alice' },
-    { id: '5', name: 'Michael Rotich', contact: '0755667788', email: 'michael.r@cabi.com', orgId: null, passportUrl: 'https://i.pravatar.cc/150?u=michael' }
-];
+const mockDrivers: any[] = [];
 
 // Helper Component for Member Row with Search
 const MemberRow = ({ index, register, setValue }: { index: number, register: any, setValue: any }) => {

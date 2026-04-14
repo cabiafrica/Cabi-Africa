@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // FIXED: Changed port from 3000 to 3333 to match auth-gateway
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3333/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://auth-gateway-746659778850.us-central1.run.app/api';
 
 // Create axios instance with authentication interceptor
 const apiClient = axios.create({

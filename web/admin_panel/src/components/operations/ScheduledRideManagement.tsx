@@ -368,20 +368,5 @@ export const ScheduledRideManagement: React.FC = () => {
 
 // Helper to generate mock data if API fails or returns empty in dev
 function generateMockScheduledRides(): ScheduledRide[] {
-    const now = new Date();
-    return Array.from({ length: 8 }).map((_, i) => {
-        const pickup = new Date(now);
-        pickup.setHours(now.getHours() + (i + 1) * 2);
-
-        return {
-            id: `sch-${i}`,
-            pickupTime: pickup.toISOString(),
-            passengerName: ['Alice Njoroge', 'Brian Kiptoo', 'Charity Wambui', 'David Owino'][i % 4],
-            passengerPhone: `+254 7${Math.floor(Math.random() * 90) + 10} ${Math.floor(Math.random() * 900) + 100}`,
-            pickupLocation: ['Westlands, Nairobi', 'JKIA Airport', 'Karen Hub', 'Upper Hill'][i % 4],
-            dropoffLocation: ['CBD, Nairobi', 'Gigiri, UN', 'Lavington Mall', 'Thika Road'][i % 4],
-            estimatedFare: Math.floor(Math.random() * 2000) + 500,
-            status: i === 0 ? 'ASSIGNED' : i === 4 ? 'CANCELLED' : 'PENDING'
-        };
-    });
+    return [];
 }

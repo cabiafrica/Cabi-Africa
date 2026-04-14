@@ -31,14 +31,8 @@ export const TractionLogs: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Mock data fetching
-        const mockLogs: TractionLog[] = [
-            { id: 'TRX-9821', date: new Date().toISOString(), userId: 'USR-001', userName: 'John Doe', type: 'RIDE', amount: 450, status: 'COMPLETED', description: 'Nairobi to Westlands' },
-            { id: 'TRX-9822', date: new Date(Date.now() - 3600000).toISOString(), userId: 'DRV-556', userName: 'Jane Smith', type: 'COMMISSION', amount: -45, status: 'COMPLETED', description: 'Platform fee for TRX-9821' },
-            { id: 'TRX-9823', date: new Date(Date.now() - 7200000).toISOString(), userId: 'DRV-556', userName: 'Jane Smith', type: 'PAYOUT', amount: -1200, status: 'PENDING', description: 'Weekly earnings payout' },
-            { id: 'TRX-9824', date: new Date(Date.now() - 86400000).toISOString(), userId: 'USR-088', userName: 'Bob Wilson', type: 'RIDE', amount: 820, status: 'FAILED', description: 'Airport Transfer' },
-            { id: 'TRX-9825', date: new Date(Date.now() - 90000000).toISOString(), userId: 'USR-102', userName: 'Alice Green', type: 'REFUND', amount: 450, status: 'COMPLETED', description: 'Refund for TRX-9824' },
-        ];
+        // Logs will be fetched from API
+        const mockLogs: TractionLog[] = [];
 
         setTimeout(() => {
             setLogs(mockLogs);

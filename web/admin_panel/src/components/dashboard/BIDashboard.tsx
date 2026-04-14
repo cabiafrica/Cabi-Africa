@@ -36,23 +36,9 @@ export const BIDashboard: React.FC = () => {
         </div>
     );
 
-    // Mock chart data since adminService might not provide it yet
-    const revenueData = [
-        { date: 'Jan', Revenue: 450000, Target: 400000 },
-        { date: 'Feb', Revenue: 520000, Target: 420000 },
-        { date: 'Mar', Revenue: 480000, Target: 440000 },
-        { date: 'Apr', Revenue: 610000, Target: 460000 },
-        { date: 'May', Revenue: 590000, Target: 480000 },
-        { date: 'Jun', Revenue: 720000, Target: 500000 },
-    ];
-
-    const cityVolumeData = [
-        { city: 'Nairobi', Trips: 12450 },
-        { city: 'Mombasa', Trips: 3840 },
-        { city: 'Kisumu', Trips: 2100 },
-        { city: 'Nakuru', Trips: 1560 },
-        { city: 'Eldoret', Trips: 980 },
-    ];
+    // Data will be populated from API
+    const revenueData: any[] = [];
+    const cityVolumeData: any[] = [];
 
     return (
         <div className="space-y-6">
@@ -65,8 +51,8 @@ export const BIDashboard: React.FC = () => {
                     <p className="text-slate-500 dark:text-slate-400 mt-1">Global performance metrics and growth analytics.</p>
                 </div>
                 <div className="flex gap-2">
-                    <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold rounded-full border border-green-200 dark:border-green-800 flex items-center">
-                        Market Health: Strong
+                    <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-bold rounded-full border border-blue-200 dark:border-blue-800 flex items-center">
+                        Market Health: Initializing
                     </span>
                 </div>
             </div>

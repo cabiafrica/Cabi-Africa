@@ -6,11 +6,7 @@ import { NetworkGrowthWidget } from '../widgets/NetworkGrowthWidget';
 import { AcquisitionChannelWidget } from '../widgets/AcquisitionChannelWidget';
 import { kpiData, dailySignups } from '../widgets/data';
 
-const alertData = [
-    { name: 'High Surge in CBD', status: 'critical' },
-    { name: 'Driver Verification Pending (5)', status: 'warning' },
-    { name: 'Payment Gateway Stable', status: 'success' }
-];
+const alertData: any[] = [];
 
 export const DashboardAnalytics: React.FC = () => {
     return (
@@ -61,7 +57,7 @@ export const DashboardAnalytics: React.FC = () => {
                                 </Card>
                                 <Card decoration="left" decorationColor="amber">
                                     <Title>Pending Tasks</Title>
-                                    <Text className="mt-2">You have 5 document verifications and 2 support tickets requiring high priority attention.</Text>
+                                    <Text className="mt-2">Review system status and pending actions here. Currently, there are 0 document verifications and 0 support tickets requiring attention.</Text>
                                     <div className="mt-6">
                                         <button className="bg-primary text-black px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-primary-dark transition-colors">View Tasks</button>
                                     </div>

@@ -281,7 +281,7 @@ export const AuditLogPage = () => {
         });
       }
 
-      const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3333';
+      const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://auth-gateway-746659778850.us-central1.run.app';
       socketRef.current = io(socketUrl, { path: '/audit-stream' });
 
       socketRef.current.on('connect', () => {
