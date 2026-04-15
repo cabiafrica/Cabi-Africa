@@ -114,6 +114,7 @@ export function JobActivitiesDashboard() {
   const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   // Filters
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
@@ -154,10 +155,7 @@ export function JobActivitiesDashboard() {
       calculateStats(mappedRides);
     } catch (error) {
       console.error('Error fetching rides:', error);
-      // Mock data for development
-      const mockRides = generateMockRides();
-      setRides(mockRides);
-      calculateStats(mockRides);
+      setError('Failed to load rides. Please check your connection.');
     } finally {
       setLoading(false);
     }
@@ -662,7 +660,3 @@ export function JobActivitiesDashboard() {
   );
 }
 
-// Mock data generator for development
-function generateMockRides(): Ride[] {
-  return [];
-}

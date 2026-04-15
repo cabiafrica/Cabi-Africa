@@ -14,38 +14,12 @@ interface Driver {
     };
 }
 
-// Mock data - Nairobi locations
-const mockDrivers: Driver[] = [];
-
 export default function LiveMapPage() {
-    const [drivers, setDrivers] = useState<Driver[]>(mockDrivers);
+    const [drivers, setDrivers] = useState<Driver[]>([]);
     const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
     const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
-    // Simulate real-time driver movement
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setDrivers((prevDrivers) =>
-                prevDrivers.map((driver) => {
-                    if (!driver.isOnline) return driver;
-
-                    // Simulate small movement
-                    const latOffset = (Math.random() - 0.5) * 0.002;
-                    const lngOffset = (Math.random() - 0.5) * 0.002;
-
-                    return {
-                        ...driver,
-                        position: [
-                            driver.position[0] + latOffset,
-                            driver.position[1] + lngOffset,
-                        ] as [number, number],
-                    };
-                })
-            );
-        }, 3000); // Update every 3 seconds
-
-        return () => clearInterval(interval);
-    }, []);
+    // TODO: Implement real-time driver data fetching from backend
 
     const filteredDrivers = showOnlineOnly
         ? drivers.filter((d) => d.isOnline)

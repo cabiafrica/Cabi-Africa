@@ -216,19 +216,7 @@ export const AuditLogPage = () => {
     const loadEvents = async () => {
       setLoading(true);
       try {
-        // Mocking the response since the backend isn't implemented
-        const mockData: AuditEvent[] = [
-          {
-            id: 'evt-1', userId: 'admin-user-01', userFullName: 'Admin User', action: 'PASSWORD_CHANGED', timestamp: new Date().toISOString(),
-            details: { sourceIp: '192.168.1.1', userAgent: 'Chrome/125.0.0.0' }
-          },
-          { id: 'evt-2', userId: 'admin-user-01', userFullName: 'Admin User', action: 'DRIVER_APPROVED', timestamp: new Date(Date.now() - (3600000 * 2)).toISOString(), details: { driverId: 'DRV-778', notes: 'All docs verified' } },
-          { id: 'evt-4', userId: 'admin-user-02', userFullName: 'Sarah Connor', action: 'SETTINGS_UPDATED', timestamp: new Date(Date.now() - (3600000 * 5)).toISOString(), details: { component: 'PricingEngine', change: 'Surge multiplier increased' } },
-          { id: 'evt-5', userId: 'admin-user-01', userFullName: 'Admin User', action: 'USER_SUSPENDED', timestamp: new Date(Date.now() - (3600000 * 12)).toISOString(), details: { targetUserId: 'USR-665', reason: 'Fraudulent activity detected' } },
-          { id: 'evt-3', userId: 'driver-007', userFullName: 'James Bond', action: 'ACCOUNT_DELETED', timestamp: new Date(Date.now() - (86400000 * 5)).toISOString() },
-        ];
-        // const data = await fetchAuditEvents();
-        setEvents(mockData);
+        setEvents([]);
       } catch (err) {
         setError('Failed to load audit logs.');
       } finally {
@@ -314,21 +302,7 @@ export const AuditLogPage = () => {
         }, 2500);
       });
 
-      // Mock server pushing events for demonstration
-      const intervalId = setInterval(() => {
-        const mockNewEvent: AuditEvent = {
-          id: `evt-${Date.now()}`,
-          userId: 'live-user-01',
-          userFullName: 'Live User',
-          action: 'PASSWORD_CHANGED',
-          timestamp: new Date().toISOString(),
-          details: { sourceIp: '127.0.0.1', userAgent: 'Live-Update-Client' }
-        };
-        socketRef.current?.emit('newAuditEvent', mockNewEvent); // Simulating server push
-      }, 10000);
-
       return () => {
-        clearInterval(intervalId);
         socketRef.current?.disconnect();
       };
     }

@@ -131,16 +131,7 @@ export const ProfilePage = () => {
     const loadRecentActivity = async () => {
       if (!user) return;
       try {
-        // Mocking response for demonstration
-        const mockData: AuditEvent[] = [
-          {
-            id: 'evt-1', userId: user.id, action: 'PASSWORD_CHANGED', timestamp: new Date(Date.now() - 86400000).toISOString(),
-            details: { sourceIp: '192.168.1.1', userAgent: 'Chrome/125.0.0.0' }
-          },
-          { id: 'evt-2', userId: user.id, action: '2FA_ENABLED', timestamp: new Date(Date.now() - 86400000 * 2).toISOString() },
-        ];
-        // const data = await fetchUserAuditEvents(user.id, 5);
-        setRecentActivity(mockData);
+        setRecentActivity([]);
       } catch (err) {
         console.error('Failed to load recent activity', err);
       }
@@ -254,14 +245,9 @@ export const ProfilePage = () => {
       // Logic to start enabling 2FA
       setLoading(true);
       try {
-        // For a real app, the mock response would be replaced by the API call
-        // const { qrCodeUrl, secret } = await enableTwoFactorAuth(user.id);
-        const mockResponse = {
-          qrCodeUrl: 'https://www.google.com/chart?chs=200x200&cht=qr&chl=otpauth://totp/CabiAdmin:admin@cabi.com%3Fsecret%3DJBSWY3DPEHPK3PXP&issuer=CabiAdmin',
-          secret: 'JBSWY3DPEHPK3PXP'
-        };
-        setTwoFactorQrCode(mockResponse.qrCodeUrl);
-        setTwoFactorSecret(mockResponse.secret);
+        const { qrCodeUrl, secret } = await enableTwoFactorAuth(user.id);
+        setTwoFactorQrCode(qrCodeUrl);
+        setTwoFactorSecret(secret);
         setIsTwoFactorModalOpen(true);
         setTwoFactorStep(1);
       } catch (err) {

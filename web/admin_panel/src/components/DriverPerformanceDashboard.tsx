@@ -12,12 +12,7 @@ interface DriverPerformance {
 type SortKey = keyof DriverPerformance;
 type SortOrder = 'asc' | 'desc';
 
-const mockData: DriverPerformance[] = [
-  { id: 'd1', name: 'John Driver', totalTrips: 150, acceptanceRate: 95, averageRating: 4.9, totalEarnings: 85000 },
-  { id: 'd2', name: 'Jane Smith', totalTrips: 120, acceptanceRate: 98, averageRating: 4.8, totalEarnings: 72000 },
-  { id: 'd3', name: 'Peter Jones', totalTrips: 95, acceptanceRate: 85, averageRating: 4.6, totalEarnings: 55000 },
-  { id: 'd4', name: 'Mary Williams', totalTrips: 180, acceptanceRate: 99, averageRating: 4.95, totalEarnings: 98000 },
-];
+const mockData: DriverPerformance[] = [];
 
 export const DriverPerformanceDashboard: React.FC = () => {
   const [drivers, setDrivers] = useState<DriverPerformance[]>([]);
