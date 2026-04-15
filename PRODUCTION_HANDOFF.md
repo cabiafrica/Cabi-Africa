@@ -55,5 +55,17 @@
 *   **Mobile**: Run `flutter build apk --release` from the corresponding `mobile/` subfolder.
 
 ---
+
+## 🏗️ System Architecture & Data Integrity
+
+### **Zero-State Philosophy**
+*   **Market Ready**: The platform operates under a strict **Zero-State Philosophy**. The system has been purged of mock data generators and will display `0` or empty UI states natively when no data exists. 
+*   **Future Development**: All future front-end iterations and implementations **must** gracefully handle empty API responses without relying on statically injected mock data or fallbacks.
+
+### **CI/CD Pipeline Details**
+*   **Dependency Sync**: The monorepo uses `npm install --legacy-peer-deps` within the GitHub Action to account for package incompatibilities (e.g., specific `esbuild` mismatches) and synchronize `package-lock.json` successfully.
+*   **Quality Checks**: Target linting configurations (`@nx/eslint:lint`) have been attached universally across the web components (`admin-panel`, `dispatch-panel`, `user-portal`) to ensure failing code blocks deployment.
+
+---
 **Status**: 🟢 PRODUCTION-READY
 **Author**: Antigravity AI

@@ -1,32 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
+import axios from 'axios';
 import formidable from 'formidable';
 import fs from 'fs';
-import path from 'path';
-import crypto from 'crypto';
+import FormData from 'form-data';
+
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3335/api';
 
 export const config = {
     api: {
         bodyParser: false,
     },
-};
-
-const saveFile = async (file: formidable.File): Promise<string> => {
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    const ext = path.extname(file.originalFilename || '');
-    const filename = `${Date.now()}_${Math.random().toString(36).substring(7)}${ext}`;
-    const newPath = path.join(uploadDir, filename);
-
-    // Copy file instead of rename to avoid cross-device link errors
-    await fs.promises.copyFile(file.filepath, newPath);
-    await fs.promises.unlink(file.filepath); // Remove temp file
-
-    return `/uploads/${filename}`;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -38,279 +21,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const form = formidable({});
         const [fields, files] = await form.parse(req);
 
-        // Helper to get single value from fields
-        const getValue = (key: string): string => {
-            const val = fields[key];
-            return (Array.isArray(val) ? val[0] : val) as string;
-        };
+        // Prepare FormData for the backend
+        const backendFormData = new FormData();
 
-        const role = getValue('role');
-        const firstName = getValue('firstName');
-        const lastName = getValue('lastName');
-        const middleName = getValue('middleName');
-        const email = getValue('email');
-        const phone = getValue('phone');
-        const idNumber = getValue('idNumber');
-        const password = getValue('password');
-        const referralCode = getValue('referralCode');
-
-        if (!role || !email || !password || !firstName || !lastName || !phone) {
-            return res.status(400).json({ message: 'Missing required fields' });
-        }
-
-        // Check if user exists
-        const existingUser = await prisma.user.findFirst({
-            where: {
-                OR: [
-                    { email },
-                    { phone }
-                ]
-            }
+        // Append all fields
+        Object.entries(fields).forEach(([key, value]) => {
+            const val = Array.isArray(value) ? value[0] : value;
+            if (val !== undefined) backendFormData.append(key, val);
         });
 
-        if (existingUser) {
-            return res.status(400).json({ message: 'User with this email or phone already exists' });
-        }
-
-        // Validate Referral Code
-        let referredById = null;
-        if (referralCode) {
-            const referrer = await prisma.user.findUnique({
-                where: { referralCode }
-            });
-            if (referrer) {
-                referredById = referrer.id;
-            }
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const fullName = `${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`;
-        const username = `${email.split('@')[0]}_${Math.floor(Math.random() * 10000)}`;
-        const myReferralCode = (firstName.substring(0, 3) + Math.random().toString(36).substring(2, 7)).toUpperCase();
-
-        if (role === 'passenger') {
-            let passportPhotoUrl = null;
-            if (files.passengerPhoto) {
-                const photo = Array.isArray(files.passengerPhoto) ? files.passengerPhoto[0] : files.passengerPhoto;
-                passportPhotoUrl = await saveFile(photo);
-            }
-
-            const newUser = await prisma.user.create({
-                data: {
-                    email: email.toLowerCase().trim(),
-                    phone: phone.trim(),
-                    password: hashedPassword,
-                    fullName,
-                    middleName,
-                    idNumber,
-                    username,
-                    role: 'PASSENGER',
-                    referralCode: myReferralCode,
-                    referredById: referredById,
-                    passportPhotoUrl
-                }
-            });
-
-            // Auto-login: generate a token
-            const token = 'mock-jwt-token-' + newUser.id;
-
-            // Mock Send Verification Email
-            console.log(`[Mock Email Service] Sending Welcome/Verification Email to ${email} with subject: "Welcome to Cabi - Please Verify Your Email"`);
-            // In a real implementation: await mailService.sendVerificationEmail(newUser);
-
-            return res.status(201).json({
-                success: true,
-                message: 'Registration successful',
-                token,
-                user: {
-                    id: newUser.id,
-                    email: newUser.email,
-                    role: newUser.role,
-                    firstName: newUser.fullName.split(' ')[0],
-                    lastName: newUser.fullName.split(' ').slice(1).join(' '),
-                    profilePictureUrl: passportPhotoUrl
-                }
-            });
-        }
-        else if (role === 'driver') {
-            const licenseNumber = getValue('licenseNumber');
-            if (!licenseNumber) return res.status(400).json({ message: 'License number required for drivers' });
-
-            const existingLicense = await prisma.driverProfile.findUnique({
-                where: { licenseNumber }
-            });
-            if (existingLicense) {
-                return res.status(400).json({ message: 'License number already registered' });
-            }
-
-            // Create User first
-            const newUser = await prisma.user.create({
-                data: {
-                    email,
-                    phone,
-                    password: hashedPassword,
-                    fullName,
-                    middleName,
-                    idNumber,
-                    username,
-                    role: 'DRIVER',
-                    referralCode: myReferralCode,
-                    referredById: referredById
-                }
-            });
-
-            // Handle Documents
-            const handleDoc = async (fileKey: string, docType: string) => {
-                const file = files[fileKey];
+        // Append all files
+        Object.entries(files).forEach(([key, fileList]) => {
+            const filesArray = Array.isArray(fileList) ? fileList : [fileList];
+            filesArray.forEach((file) => {
                 if (file) {
-                    const f = Array.isArray(file) ? file[0] : file;
-                    const url = await saveFile(f);
-                    return {
-                        type: docType,
-                        url,
-                        status: 'PENDING'
-                    };
-                }
-                return null;
-            };
-
-            const documentsData = [];
-            let profilePhotoUrl = null;
-
-            const dlDoc = await handleDoc('drivingLicence', 'LICENSE_FRONT');
-            if (dlDoc) documentsData.push(dlDoc);
-
-            // Handle PSV Badge (Save as LICENSE_BACK for now if ENUM is restrictive, or check schema later)
-            const psvDoc = await handleDoc('psvBadge', 'LICENSE_BACK');
-            if (psvDoc) documentsData.push(psvDoc);
-
-            const policeDoc = await handleDoc('policeClearance', 'POLICE_CLEARANCE');
-            if (policeDoc) documentsData.push(policeDoc);
-
-            const photoDoc = await handleDoc('driverPhoto', 'PROFILE_PHOTO');
-            if (photoDoc) {
-                documentsData.push(photoDoc);
-                profilePhotoUrl = photoDoc.url;
-            }
-
-            // Create Driver Profile
-            await prisma.driverProfile.create({
-                data: {
-                    userId: newUser.id,
-                    licenseNumber,
-                    isOnline: false,
-                    documents: {
-                        createMany: {
-                            data: documentsData
-                        }
-                    }
+                    backendFormData.append(key, fs.createReadStream(file.filepath), {
+                        filename: file.originalFilename || key,
+                        contentType: file.mimetype || 'application/octet-stream',
+                    });
                 }
             });
+        });
 
-            // Mock Send Verification Email
-            console.log(`[Mock Email Service] Sending Welcome/Verification Email to ${email} with subject: "Welcome to Cabi Driver - Please Verify Your Email"`);
+        const role = Array.isArray(fields.role) ? fields.role[0] : fields.role;
+        let endpoint = '/auth/register'; // Default passenger
 
-            return res.status(201).json({
-                success: true,
-                user: {
-                    id: newUser.id,
-                    email: newUser.email,
-                    role: newUser.role,
-                    firstName: newUser.fullName.split(' ')[0],
-                    lastName: newUser.fullName.split(' ').slice(1).join(' '),
-                    profilePictureUrl: profilePhotoUrl
-                }
-            });
-        }
-        else if (role === 'organization') {
-            const orgName = getValue('orgName');
-            const founderName = getValue('founderName');
-            // Members
-            const member1Name = getValue('member1Name');
-            // ... extract others ...
+        if (role === 'driver') endpoint = '/auth/register-driver';
+        if (role === 'organization') endpoint = '/auth/register-organization';
 
-            // Create User (Founder/Admin)
-            const newUser = await prisma.user.create({
-                data: {
-                    email,
-                    phone,
-                    password: hashedPassword,
-                    fullName,
-                    middleName,
-                    idNumber,
-                    username,
-                    role: 'ADMIN', // Giving ADMIN role for Org Manager
-                    referralCode: myReferralCode
-                }
-            });
+        const response = await axios.post(`${BACKEND_URL}${endpoint}`, backendFormData, {
+            headers: {
+                ...backendFormData.getHeaders(),
+            },
+        });
 
-            // Handle Certificate
-            let certUrl = null;
-            if (files.registrationCertificate) {
-                const f = Array.isArray(files.registrationCertificate) ? files.registrationCertificate[0] : files.registrationCertificate;
-                certUrl = await saveFile(f);
-            }
-
-            // Create Organization
-            const org = await prisma.organizations.create({
-                data: {
-                    id: crypto.randomUUID(),
-                    name: orgName,
-                    founderName,
-                    email: `${orgName.replace(/\s+/g, '').toLowerCase()}@cabi.com`, // Generate placeholder org email
-                    registrationNumber: `ORG-${Date.now()}`, // Generate placeholder
-                    registrationCertificateUrl: certUrl,
-                    status: 'PENDING',
-                    updatedAt: new Date()
-                }
-            });
-
-            // Add User as Organization Member
-            await prisma.organization_members.create({
-                data: {
-                    id: crypto.randomUUID(),
-                    organizationId: org.id,
-                    userId: newUser.id,
-                    name: fullName,
-                    contact: phone,
-                    position: 'Founder',
-                }
-            });
-
-            // Add other members (simplified for now - just as records if needed, or skip)
-            if (member1Name) {
-                await prisma.organization_members.create({
-                    data: {
-                        id: crypto.randomUUID(),
-                        organizationId: org.id,
-                        name: member1Name,
-                        contact: getValue('member1Phone') || '',
-                        position: 'Member'
-                    }
-                });
-            }
-            // Repeat for mem2, mem3...
-
-            // Mock Email
-            console.log(`[Mock Email Service] Sending Organization Welcome Email to ${email}`);
-
-            return res.status(201).json({
-                success: true,
-                user: {
-                    id: newUser.id,
-                    role: newUser.role,
-                    firstName: newUser.fullName.split(' ')[0],
-                    lastName: newUser.fullName.split(' ').slice(1).join(' '),
-                    profilePictureUrl: null
-                },
-                org: { id: org.id }
-            });
-        }
-
-        return res.status(400).json({ message: `Registration for role '${role}' is not supported via this endpoint yet.` });
+        return res.status(200).json(response.data);
 
     } catch (error: any) {
-        console.error('Registration error:', error);
-        return res.status(500).json({ message: 'Internal server error', error: error.message });
+        console.error('Registration Proxy error:', error.response?.data || error.message);
+        const status = error.response?.status || 500;
+        const message = error.response?.data?.message || 'Registration failed';
+        return res.status(status).json({ message });
     }
 }

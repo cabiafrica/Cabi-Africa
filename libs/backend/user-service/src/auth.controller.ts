@@ -1,4 +1,5 @@
-import { Controller, Post, Body, ValidationPipe, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, ValidationPipe, UnauthorizedException, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { FileFieldsInterceptor, FileInterceptor, UploadedFile } from '@nestjs/platform-express';
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { IsNotEmpty, IsString } from 'class-validator';
@@ -30,14 +31,41 @@ export class AuthController {
   async login(@Body(new ValidationPipe()) loginDto: LoginDto) {
     try {
       const user = await this.userService.login(loginDto.email, loginDto.password);
+      const token = await this.userService.generateToken(user);
       return {
         message: 'Login successful.',
-        token: 'mock-jwt-token-' + user.id,
+        token,
         user,
       };
     } catch (error) {
       console.error('Login error:', error?.message || error);
       throw new UnauthorizedException('Invalid email/phone or password.');
     }
+  }
+
+  @Post('register-driver')
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'license_front', maxCount: 1 },
+    { name: 'license_back', maxCount: 1 },
+    { name: 'police_clearance', maxCount: 1 },
+    { name: 'national_id', maxCount: 1 },
+    { name: 'psv_badge', maxCount: 1 },
+  ]))
+  async registerDriver(@Body() body: any, @UploadedFiles() files: any) {
+    const result = await this.userService.registerDriver(body, files);
+    return {
+      message: 'Driver registration received for verification.',
+      ...result,
+    };
+  }
+
+  @Post('register-organization')
+  @UseInterceptors(FileInterceptor('registration_certificate'))
+  async registerOrganization(@Body() body: any, @UploadedFile() file: any) {
+    const result = await this.userService.registerOrganization(body, file);
+    return {
+      message: 'Organization registration received for verification.',
+      ...result,
+    };
   }
 }

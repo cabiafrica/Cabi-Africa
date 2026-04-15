@@ -263,6 +263,49 @@ function App() {
                         </button>
                     ))}
                 </nav>
+                
+                {/* System Access Buttons - Persistent Footer */}
+                {((user?.role as any)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as any)?.toUpperCase() === 'ADMIN' || hasPermission('ADMIN_PANEL_VIEW') || hasPermission('view_dashboard')) && (
+                    <div className="p-4 border-t border-slate-800/50 space-y-2 bg-slate-800/10">
+                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-2 mb-2">
+                            System Access
+                        </div>
+                        {((user?.role as any)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as any)?.toUpperCase() === 'ADMIN' || hasPermission('ADMIN_PANEL_VIEW') || hasPermission('view_dashboard')) && (
+                            <button
+                                onClick={() => {
+                                    const url = import.meta.env.VITE_ADMIN_PANEL_URL || 
+                                        (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app') 
+                                            ? 'https://admin.cabi.africa' 
+                                            : 'http://localhost:3001');
+                                    window.location.href = url;
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:bg-white hover:text-black rounded-lg transition-all duration-300 group border border-white/5"
+                                title="Launch Admin Management Panel"
+                            >
+                                <span className="text-base group-hover:scale-110 transition-transform">🛡️</span>
+                                <span>Admin Panel</span>
+                                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">GO ↗️</span>
+                            </button>
+                        )}
+                        {((user?.role as any)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as any)?.toUpperCase() === 'ADMIN' || hasPermission('view_dashboard')) && (
+                            <button
+                                onClick={() => {
+                                    const url = import.meta.env.VITE_USER_PORTAL_URL || 
+                                        (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app') 
+                                            ? 'https://cabi.africa' 
+                                            : 'http://localhost:3000');
+                                    window.location.href = url;
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:bg-white hover:text-black rounded-lg transition-all duration-300 group border border-white/5"
+                                title="View User Portal"
+                            >
+                                <span className="text-base group-hover:scale-110 transition-transform">👤</span>
+                                <span>User Portal</span>
+                                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">VIEW ↗️</span>
+                            </button>
+                        )}
+                    </div>
+                )}
 
                 {/* Footer */}
                 <div className="p-4 border-t border-slate-800/50">

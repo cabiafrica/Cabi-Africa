@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Put, Body, Param, UseGuards, Req } from '@nestjs/common';
 import { AdminUsersService } from './admin-users.service';
-import { RequirePermissions, PermissionsGuard, MockJwtAuthGuard } from '@cabi/backend/rbac';
+import { RequirePermissions, PermissionsGuard, JwtAuthGuard } from '@cabi/backend/rbac';
 import { Permission } from '@prisma/client';
 
 @Controller('admin/users') // Prefix admin/users
-@UseGuards(MockJwtAuthGuard, PermissionsGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class AdminUsersController {
     constructor(private readonly usersService: AdminUsersService) { }
 

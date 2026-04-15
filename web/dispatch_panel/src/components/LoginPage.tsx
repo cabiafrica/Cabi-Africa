@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../AuthContext';
+import axios from 'axios';
 
 export const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -13,34 +14,31 @@ export const LoginPage = () => {
         setIsLoading(true);
 
         try {
-            // Mock login for Dispatch Panel for now, or connect to real API if available.
-            // Since Dispatch might not have a dedicated public API endpoint ready in this context,
-            // we will simulate a successful login or use the same endpoint as user_portal if applicable.
+            const BACKEND_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:3333/api';
+            
+            const response = await axios.post(`${BACKEND_URL}/auth/login`, {
+                email,
+                password
+            });
 
-            // Simulating API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // In a real scenario: const res = await fetch('/api/auth/login', ...);
-
-            // For now, accept any credentials to allow "preview" but enforce the "Log in" step.
-            if (email && password) {
-                const mockUser = {
-                    id: 'dispatch-admin-01',
-                    email: email,
-                    firstName: 'Dispatch',
-                    lastName: 'Operator',
-                    role: 'dispatcher',
-                    profilePictureUrl: 'https://ui-avatars.com/api/?name=Dispatch+Operator&background=0D8ABC&color=fff',
-                    permissions: ['*']
-                };
-                login('mock-jwt-token-dispatch', mockUser);
+            if (response.data && response.data.token) {
+                const { token, user } = response.data;
+                login(token, {
+                    id: user.id,
+                    email: user.email,
+                    firstName: user.fullName?.split(' ')[0] || 'User',
+                    lastName: user.fullName?.split(' ')[1] || '',
+                    role: user.role,
+                    profilePictureUrl: user.profilePhotoUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.fullName),
+                    permissions: user.permissions || []
+                });
             } else {
-                alert('Please enter email and password');
+                alert('Invalid response from server');
             }
 
-        } catch (error) {
-            console.error(error);
-            alert('Login failed');
+        } catch (error: any) {
+            console.error('Login error:', error.response?.data || error.message);
+            alert(error.response?.data?.message || 'Login failed. Please check your credentials.');
         } finally {
             setIsLoading(false);
         }

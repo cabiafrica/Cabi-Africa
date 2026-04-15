@@ -1,4 +1,6 @@
-import { Injectable, InternalServerErrorException, ConflictException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, ConflictException, Inject } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { SmsProvider, PaymentProvider, StorageProvider } from '@cabi/backend/common';
 import { RegisterUserDto, UserRole } from './dto/register-user.dto';
 import { PrismaService } from '@cabi/backend/database';
 import * as bcrypt from 'bcryptjs';
@@ -6,10 +8,26 @@ import { LegacyRole, UserRole as PrismaUserRole, UserPermission as PrismaUserPer
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+    @Inject('SmsProvider') private readonly smsProvider: SmsProvider,
+    @Inject('PaymentProvider') private readonly paymentProvider: PaymentProvider,
+    @Inject('StorageProvider') private readonly storageProvider: StorageProvider,
+  ) { }
+
+  async generateToken(user: any) {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      permissions: user.permissions || []
+    };
+    return this.jwtService.sign(payload);
+  }
 
   async registerPassenger(registerUserDto: RegisterUserDto) {
-    const { firstName, lastName, email, phone, password, role, referrerId, referralCode, licenseNumber, orgName, orgType, profilePhotoUrl } = registerUserDto;
+    const { firstName, lastName, email, phone, password, referrerId, referralCode, profilePhotoUrl } = registerUserDto;
 
     // Check if user already exists
     const existingUser = await this.prisma.user.findFirst({
@@ -78,6 +96,9 @@ export class UserService {
         return newUser;
       });
 
+      // Send Welcome SMS/OTP hook
+      await this.smsProvider.sendSms(newUser.phone, `Welcome to Cabi Africa, ${newUser.fullName}! Your account has been created.`);
+
       return {
         userId: user.id,
         email: user.email,
@@ -87,6 +108,118 @@ export class UserService {
       console.error('Error during registration:', error);
       throw new InternalServerErrorException('Failed to register user.');
     }
+  }
+
+  async registerDriver(data: any, files?: any) {
+    const { firstName, lastName, middleName, email, phone, idNumber, password, referralCode, licenseNumber } = data;
+
+    // 1. Check if user exists
+    const existingUser = await this.prisma.user.findFirst({
+      where: { OR: [{ email }, { phone }] }
+    });
+    if (existingUser) throw new ConflictException('User already exists');
+
+    // 2. Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const fullName = `${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`;
+
+    // 3. Handle Documents via StorageProvider
+    const documentsData = [];
+    if (files) {
+      for (const [key, file] of Object.entries(files)) {
+        const { url } = await this.storageProvider.uploadFile(file, `drivers/${email}/${key}`);
+        documentsData.push({
+          type: key.toUpperCase(), // e.g., LICENSE_FRONT, POLICE_CLEARANCE
+          url,
+          status: 'PENDING'
+        });
+      }
+    }
+
+    // 4. Create User and Profile in transaction
+    const result = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          email,
+          phone,
+          password: hashedPassword,
+          fullName,
+          role: LegacyRole.DRIVER,
+          status: 'PENDING' as any,
+          referralCode: `CABI-D-${Math.random().toString(36).substring(7).toUpperCase()}`,
+        }
+      });
+
+      await (tx as any).driverProfile.create({
+        data: {
+          userId: user.id,
+          licenseNumber,
+          documents: {
+            createMany: {
+              data: documentsData
+            }
+          }
+        }
+      });
+
+      return user;
+    });
+
+    // Notify driver via SMS
+    await this.smsProvider.sendSms(phone, `Hello ${firstName}, your driver registration documents for Cabi Africa have been received and are now pending verification.`);
+
+    return result;
+  }
+
+  async registerOrganization(data: any, certificateFile?: any) {
+    const { firstName, lastName, email, phone, password, orgName, founderName } = data;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    let certUrl = '';
+    if (certificateFile) {
+      const { url } = await this.storageProvider.uploadFile(certificateFile, `orgs/${email}/cert`);
+      certUrl = url;
+    }
+
+    const result = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          email,
+          phone,
+          password: hashedPassword,
+          fullName: `${firstName} ${lastName}`,
+          role: LegacyRole.ADMIN,
+        }
+      });
+
+      const org = await (tx as any).organizations.create({
+        data: {
+          name: orgName,
+          founderName,
+          email: `${orgName.replace(/\s+/g, '').toLowerCase()}@cabi.com`,
+          registrationNumber: `ORG-${Date.now()}`,
+          registrationCertificateUrl: certUrl,
+          status: 'PENDING',
+        }
+      });
+
+      await (tx as any).organization_members.create({
+        data: {
+          organizationId: org.id,
+          userId: user.id,
+          name: user.fullName,
+          contact: user.phone,
+          position: 'Founder',
+        }
+      });
+
+      return { user, org };
+    });
+
+    // Notify founder via SMS
+    await this.smsProvider.sendSms(phone, `Congratulations! The organization ${orgName} has been registered on Cabi Africa. Our team will review your certificate shortly.`);
+
+    return result;
   }
 
   async login(identifier: string, password: string) {
@@ -261,8 +394,10 @@ export class UserService {
       }
     } catch (error) {
       console.error('Error triggering referral commission:', error);
-      // We don't throw here to avoid failing the promotion if referral service is down
     }
+
+    // Notify driver of activation
+    await this.smsProvider.sendSms(user.phone, `Congratulations ${user.fullName}! Your Cabi Africa driver account has been activated. You can now start receiving rides.`);
 
     return driverProfile;
   }
