@@ -321,7 +321,7 @@ function App() {
                 onClick={() => {
                   const url = import.meta.env.VITE_USER_PORTAL_URL || 
                     (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app') 
-                      ? 'https://cabi.africa' 
+                      ? 'https://app.cabi.africa' 
                       : 'http://localhost:3000');
                   window.location.href = url;
                 }}

@@ -1,67 +1,15 @@
-import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Divider, Box, Typography, Link } from '@mui/material';
-import BlockIcon from '@mui/icons-material/Block';
-import PolicyIcon from '@mui/icons-material/Policy';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { useAuthContext } from '@/AuthContext';
+/**
+ * @deprecated This legacy MUI Sidebar is no longer in use.
+ * The active admin panel sidebar is rendered directly inside App.tsx via the <aside> element.
+ *
+ * This file is retained as a placeholder to prevent import errors from any legacy references.
+ * The production sidebar includes:
+ *   - Full RBAC-filtered navigation groups (SIDEBAR_MENU in App.tsx)
+ *   - Theme toggle & logout controls
+ *   - System Access footer (Dispatch Panel, User Portal) with environment-aware URLs
+ *
+ * To modify the sidebar, edit the <aside> block in src/App.tsx.
+ */
 
-import logo from '@/assets/logo.png';
-
-const drawerWidth = 240;
-
-export const Sidebar = () => {
-  const { isAuthenticated, user, logout } = useAuthContext();
-
-  return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-      }}
-    >
-      <Toolbar sx={{ display: 'flex', justifyContent: 'center', p: 1 }}>
-        <img src={logo} alt="CABI Logo" style={{ height: '40px', width: 'auto' }} />
-      </Toolbar>
-      <Box sx={{ overflow: 'auto' }}>
-        {isAuthenticated && (
-          <>
-            <Box sx={{ p: 2, textAlign: 'center' }}>
-              <Typography variant="h6">{user?.fullName}</Typography>
-              <Link component={RouterLink} to="/profile" sx={{ textDecoration: 'none' }}>
-                <Typography variant="caption" color="primary" sx={{ textTransform: 'capitalize' }}>{user?.role}</Typography>
-              </Link>
-            </Box>
-            <Divider />
-            <List>
-              {/* Main navigation items */}
-              <ListItem key="Suspended Accounts" disablePadding component={RouterLink} to="/accounts/suspended" sx={{ color: 'inherit', textDecoration: 'none' }}>
-                <ListItemButton>
-                  <ListItemIcon><BlockIcon /></ListItemIcon>
-                  <ListItemText primary="Suspended Accounts" />
-                </ListItemButton>
-              </ListItem>
-              <ListItem key="Audit Log" disablePadding component={RouterLink} to="/audit-log" sx={{ color: 'inherit', textDecoration: 'none' }}>
-                <ListItemButton>
-                  <ListItemIcon><PolicyIcon /></ListItemIcon>
-                  <ListItemText primary="Audit Log" />
-                </ListItemButton>
-              </ListItem>
-              {/* Add other authenticated routes here */}
-              <Divider sx={{ my: 1 }} />
-              {/* Action items */}
-              <ListItem key="Logout" disablePadding>
-                <ListItemButton onClick={logout}>
-                  <ListItemIcon><LogoutIcon /></ListItemIcon>
-                  <ListItemText primary="Logout" />
-                </ListItemButton>
-              </ListItem>
-            </List>
-          </>
-        )}
-      </Box>
-    </Drawer>
-  );
-};
+// No-op export to prevent build errors from any residual imports.
+export const Sidebar = () => null;
