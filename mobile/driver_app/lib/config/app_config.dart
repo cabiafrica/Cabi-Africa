@@ -11,11 +11,11 @@ class AppConfig {
   static String get protocol => isProduction ? 'https' : 'http';
 
   static String get driverRegistrationUrl => isProduction
-      ? 'https://user-portal-746659778850.us-central1.run.app/drivers/register'
+      ? 'https://cabi.africa/drivers/register'
       : '$protocol://$host:3000/drivers/register';
 
   static String get userPortalUrl => isProduction
-      ? 'https://user-portal-746659778850.us-central1.run.app'
+      ? 'https://cabi.africa'
       : '$protocol://$host:3000';
   
   static String get dispatchApiUrl => isProduction 

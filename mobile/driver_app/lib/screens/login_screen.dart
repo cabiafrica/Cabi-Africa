@@ -249,8 +249,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: () =>
-                                      setState(() => _isLoginTab = false),
+                                  onTap: () async {
+                                    final Uri url = Uri.parse(
+                                        '${AppConfig.driverRegistrationUrl}?source=driver_app');
+                                    if (await canLaunchUrl(url)) {
+                                      await launchUrl(url, mode: LaunchMode.externalApplication);
+                                    }
+                                  },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 12),
@@ -401,29 +406,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 ],
                               ),
                             ),
-                        ] else ...[
-                          // Sign Up Content (Placeholder or Link)
-                          const SizedBox(height: 40),
-                          const Center(
-                              child: Text("Registration is handled via portal",
-                                  style: TextStyle(color: Colors.white))),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () async {
-                              final Uri url = Uri.parse(
-                                  '${AppConfig.driverRegistrationUrl}?source=driver_app');
-                              launchUrl(url,
-                                  mode: LaunchMode.externalApplication);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFFFD700),
-                              foregroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            child: const Text('Sign Up'),
-                          ),
                         ],
 
                         const SizedBox(height: 32),
