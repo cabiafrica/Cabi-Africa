@@ -265,12 +265,12 @@ function App() {
                 </nav>
                 
                 {/* System Access Buttons - Persistent Footer */}
-                {((user?.role as any)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as any)?.toUpperCase() === 'ADMIN' || hasPermission('ADMIN_PANEL_VIEW') || hasPermission('view_dashboard')) && (
+                {((user?.role as string)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as string)?.toUpperCase() === 'ADMIN' || hasPermission('ADMIN_PANEL_VIEW') || hasPermission('view_dashboard')) && (
                     <div className="p-4 border-t border-slate-800/50 space-y-2 bg-slate-800/10">
                         <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-2 mb-2">
                             System Access
                         </div>
-                        {((user?.role as any)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as any)?.toUpperCase() === 'ADMIN' || hasPermission('ADMIN_PANEL_VIEW') || hasPermission('view_dashboard')) && (
+                        {((user?.role as string)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as string)?.toUpperCase() === 'ADMIN' || hasPermission('ADMIN_PANEL_VIEW')) && (
                             <button
                                 onClick={() => {
                                     const url = import.meta.env.VITE_ADMIN_PANEL_URL || 
@@ -284,10 +284,10 @@ function App() {
                             >
                                 <span className="text-base group-hover:scale-110 transition-transform">🛡️</span>
                                 <span>Admin Panel</span>
-                                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">GO ↗️</span>
+                                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">MANAGE ↗️</span>
                             </button>
                         )}
-                        {((user?.role as any)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as any)?.toUpperCase() === 'ADMIN' || hasPermission('view_dashboard')) && (
+                        {((user?.role as string)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as string)?.toUpperCase() === 'ADMIN' || hasPermission('view_dashboard')) && (
                             <button
                                 onClick={() => {
                                     const url = import.meta.env.VITE_USER_PORTAL_URL || 
