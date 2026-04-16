@@ -33,7 +33,7 @@ jobs:
         run: npx nx affected --target=lint --parallel=3 --base=origin/main
 
       - name: Run tests
-        run: npx nx affected --target=test --parallel=3 --base=origin/main --code-coverage
+        run: npx nx affected --target=test --parallel=3 --base=origin/main --coverage
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3
