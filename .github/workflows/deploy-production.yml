@@ -40,84 +40,10 @@ jobs:
         with:
           files: ./coverage/**/coverage-final.json
 
-  # Build frontend applications
-  build-frontend:
-    name: Build ${{ matrix.app }}
-    needs: quality-check
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - app: admin-panel
-            dir: admin_panel
-          - app: dispatch-panel
-            dir: dispatch_panel
-          - app: user-portal
-            dir: user_portal
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps
-
-      - name: Build ${{ matrix.app }}
-        run: npx nx build ${{ matrix.app }} --configuration=production
-        env:
-          VITE_API_URL: ${{ secrets.PRODUCTION_API_URL }}
-          NEXT_PUBLIC_API_URL: ${{ secrets.PRODUCTION_API_URL }}
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.app }}-build
-          path: |
-            web/${{ matrix.dir }}/dist
-            web/${{ matrix.dir }}/.next
-          retention-days: 7
-
-  # Build backend services
-  build-backend:
-    name: Build Backend Services
-    needs: quality-check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps
-
-      - name: Build backend services
-        run: |
-          npx nx run-many --target=build \
-            --projects=auth-gateway,verification-service,dispatch-service,driver-lead-service,referral-service,sacco-service \
-            --parallel=3 \
-            --configuration=production
-
-      - name: Upload backend artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-services
-          path: dist/
-          retention-days: 7
-
   # Database migrations
   migrate-database:
     name: Run Database Migrations
-    needs: [build-frontend, build-backend]
+    needs: quality-check
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -142,90 +68,9 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
 
-  # Deploy User Portal (Next.js to Vercel)
-  deploy-user-portal:
-    name: Deploy User Portal
-    needs: migrate-database
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: user-portal-build
-          path: web/user_portal
-
-      - name: Install Vercel CLI
-        run: npm install -g vercel
-
-      - name: Deploy to Vercel
-        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
-        working-directory: web/user_portal
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_USER_PORTAL_PROJECT_ID }}
-
-  # Deploy Admin Panel (to Vercel/S3/etc)
-  deploy-admin-panel:
-    name: Deploy Admin Panel
-    needs: migrate-database
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: admin-panel-build
-          path: web/admin_panel
-
-      - name: Install Vercel CLI
-        run: npm install -g vercel
-
-      - name: Deploy to Vercel
-        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
-        working-directory: web/admin_panel
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_ADMIN_PANEL_PROJECT_ID }}
-
-  # Deploy Dispatch Panel
-  deploy-dispatch-panel:
-    name: Deploy Dispatch Panel
-    needs: migrate-database
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dispatch-panel-build
-          path: web/dispatch_panel
-
-      - name: Install Vercel CLI
-        run: npm install -g vercel
-
-      - name: Deploy to Vercel
-        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
-        working-directory: web/dispatch_panel
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DISPATCH_PANEL_PROJECT_ID }}
-
-  # Deploy backends via Cloud Build
-  deploy-backends:
-    name: Deploy Backends via Cloud Build
+  # Deploy ALL services via Cloud Build (backends + frontends)
+  deploy-all-services:
+    name: Deploy via Cloud Build
     needs: migrate-database
     runs-on: ubuntu-latest
     environment: production
@@ -247,7 +92,7 @@ jobs:
   # Health checks
   post-deployment-checks:
     name: Post-Deployment Health Checks
-    needs: [deploy-user-portal, deploy-admin-panel, deploy-dispatch-panel, deploy-backends]
+    needs: deploy-all-services
     runs-on: ubuntu-latest
     steps:
       - name: Wait for deployments to stabilize
@@ -261,12 +106,28 @@ jobs:
       - name: Set up gcloud CLI
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Check Cloud Run backend health
+      - name: Check Cloud Run service health
         run: |
+          # Backend services
           for svc in auth-gateway verification-service referral-service sacco-service dispatch-service driver-lead-service; do
             URL=$(gcloud run services describe $svc --region=us-central1 --format='value(status.url)' 2>/dev/null)
             if [ -n "$URL" ]; then
               curl -sf "$URL/api/health" --max-time 10 && echo "✅ $svc is healthy" || echo "⚠️ $svc health check failed"
+            else
+              echo "⚠️ $svc not found on Cloud Run"
+            fi
+          done
+
+          # Frontend services (check HTTP 200)
+          for svc in admin-panel dispatch-panel user-portal; do
+            URL=$(gcloud run services describe $svc --region=us-central1 --format='value(status.url)' 2>/dev/null)
+            if [ -n "$URL" ]; then
+              STATUS=$(curl -o /dev/null -s -w "%{http_code}" "$URL" --max-time 10)
+              if [ "$STATUS" = "200" ]; then
+                echo "✅ $svc is healthy (HTTP $STATUS)"
+              else
+                echo "⚠️ $svc returned HTTP $STATUS"
+              fi
             else
               echo "⚠️ $svc not found on Cloud Run"
             fi

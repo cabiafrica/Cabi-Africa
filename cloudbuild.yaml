@@ -269,6 +269,163 @@ steps:
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-driver-lead-service']
 
+  # ==========================================================================
+  # FRONTEND SERVICES
+  # ==========================================================================
+
+  # Admin Panel (Vite SPA → Nginx)
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-admin-panel'
+    args:
+      - 'build'
+      - '--no-cache'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/admin-panel:latest'
+      - '-f'
+      - 'web/admin_panel/Dockerfile'
+      - '--build-arg'
+      - 'VITE_API_URL=https://auth-gateway-746659778850.us-central1.run.app/api'
+      - '--build-arg'
+      - 'VITE_SOCKET_URL=https://auth-gateway-746659778850.us-central1.run.app'
+      - '--build-arg'
+      - 'VITE_DRIVER_LEAD_SERVICE_URL=https://driver-lead-service-746659778850.us-central1.run.app'
+      - '--build-arg'
+      - 'VITE_DISPATCH_SERVICE_URL=https://dispatch-service-746659778850.us-central1.run.app'
+      - '.'
+    waitFor: ['-']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-admin-panel'
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/admin-panel:latest',
+      ]
+    waitFor: ['build-admin-panel']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-admin-panel'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'admin-panel'
+      - '--image=us-central1-docker.pkg.dev/cabi-africa/cabi-repo/admin-panel:latest'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--port=8080'
+      - '--memory=512Mi'
+      - '--cpu=1'
+      - '--timeout=300'
+      - '--min-instances=0'
+      - '--max-instances=5'
+      - '--allow-unauthenticated'
+      - '--set-env-vars=NODE_ENV=production'
+    waitFor: ['push-admin-panel']
+
+  # Dispatch Panel (Vite SPA → Nginx + envsubst)
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-dispatch-panel'
+    args:
+      - 'build'
+      - '--no-cache'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/dispatch-panel:latest'
+      - '-f'
+      - 'web/dispatch_panel/Dockerfile'
+      - '--build-arg'
+      - 'VITE_API_URL=https://auth-gateway-746659778850.us-central1.run.app/api'
+      - '--build-arg'
+      - 'VITE_SOCKET_URL=https://auth-gateway-746659778850.us-central1.run.app'
+      - '--build-arg'
+      - 'VITE_TRIP_TRACKING_NAMESPACE=/trip-tracking'
+      - '.'
+    waitFor: ['-']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-dispatch-panel'
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/dispatch-panel:latest',
+      ]
+    waitFor: ['build-dispatch-panel']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-dispatch-panel'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'dispatch-panel'
+      - '--image=us-central1-docker.pkg.dev/cabi-africa/cabi-repo/dispatch-panel:latest'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--port=8080'
+      - '--memory=512Mi'
+      - '--cpu=1'
+      - '--timeout=300'
+      - '--min-instances=0'
+      - '--max-instances=5'
+      - '--allow-unauthenticated'
+      - '--set-env-vars=NODE_ENV=production,BACKEND_URL=https://auth-gateway-746659778850.us-central1.run.app'
+    waitFor: ['push-dispatch-panel']
+
+  # User Portal (Next.js SSR → Standalone Node.js)
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-user-portal'
+    args:
+      - 'build'
+      - '--no-cache'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest'
+      - '-f'
+      - 'web/user_portal/Dockerfile'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_API_URL=https://auth-gateway-746659778850.us-central1.run.app/api'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_DRIVER_LEAD_SERVICE_URL=https://driver-lead-service-746659778850.us-central1.run.app'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_DISPATCH_SERVICE_URL=https://dispatch-service-746659778850.us-central1.run.app'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_SACCO_SERVICE_URL=https://sacco-service-746659778850.us-central1.run.app'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_REFERRAL_SERVICE_URL=https://referral-service-746659778850.us-central1.run.app'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_SOCKET_URL=https://auth-gateway-746659778850.us-central1.run.app'
+      - '.'
+    waitFor: ['-']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-user-portal'
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest',
+      ]
+    waitFor: ['build-user-portal']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-user-portal'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'user-portal'
+      - '--image=us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--port=8080'
+      - '--memory=1Gi'
+      - '--cpu=1'
+      - '--timeout=300'
+      - '--min-instances=0'
+      - '--max-instances=10'
+      - '--allow-unauthenticated'
+      - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest'
+      - '--set-env-vars=NODE_ENV=production'
+    waitFor: ['push-user-portal']
+
 images:
   - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
   - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/verification-service:latest'
@@ -276,6 +433,9 @@ images:
   - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/sacco-service:latest'
   - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/dispatch-service:latest'
   - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/driver-lead-service:latest'
+  - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/admin-panel:latest'
+  - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/dispatch-panel:latest'
+  - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest'
 
 options:
   machineType: 'E2_HIGHCPU_8'

@@ -1,19 +1,34 @@
-# STAGE 1: Install dependencies
+# ==============================================================================
+# CABI AFRICA - USER PORTAL (Next.js SSR → Standalone Node.js)
+# Build context: monorepo root (use -f web/user_portal/Dockerfile .)
+# ==============================================================================
+
+# Stage 1: Install dependencies
 FROM node:20-alpine AS deps
 WORKDIR /app
-COPY . .
+
+COPY package.json package-lock.json ./
+COPY web/user_portal/package.json ./web/user_portal/
+COPY libs/backend/database/prisma/ ./libs/backend/database/prisma/
 RUN npm install --legacy-peer-deps
 
-# STAGE 2: Build the Application
+# Stage 2: Build the application
 FROM node:20-alpine AS builder
 WORKDIR /app
+
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY --from=deps /app/web/user_portal/node_modules ./web/user_portal/node_modules
+
+# Copy source
+COPY package.json ./
+COPY tsconfig.base.json ./
+COPY web/user_portal/ ./web/user_portal/
+COPY libs/ ./libs/
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Build-time environment variables (required for Next.js client-side injection)
+# Build-time env vars (required for Next.js client-side injection)
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_DRIVER_LEAD_SERVICE_URL
 ARG NEXT_PUBLIC_DISPATCH_SERVICE_URL
@@ -31,30 +46,26 @@ ENV NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL}
 # Generate Prisma client
 RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
 
-# Build the Next.js app via Nx
-# Build the Next.js app directly bypassing Nx
-# Build the Next.js app using the hoisted node_modules
+# Build Next.js (uses output: 'standalone' from next.config.js)
 RUN npm run build -w user-portal
 
-# STAGE 3: Lightweight production runner
+# Stage 3: Lightweight production runner
 FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=8080
 ENV HOSTNAME="0.0.0.0"
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-# Next.js standalone build lives in dist/web/user_portal/.next/standalone
-# when using Nx + next output:standalone
-# Next.js standalone build from native location
+# Copy Next.js standalone build output
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/static ./web/user_portal/.next/static
 
 USER nextjs
-EXPOSE 3000
+EXPOSE 8080
 
-CMD ["node", "server.js"]
+CMD ["node", "web/user_portal/server.js"]

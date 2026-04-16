@@ -2,12 +2,12 @@
 
 ## 🌍 Production Environment Overview
 
-### **Frontends (Vercel)**
-| Application | Custom Domain | Vercel Project URL |
+### **Frontends (GCP Cloud Run)**
+| Application | Custom Domain | Cloud Run Service |
 |:---|:---|:---|
-| **User Portal** | [app.cabi.africa](https://app.cabi.africa) | [cabi-user-portal.vercel.app](https://cabi-user-portal.vercel.app) |
-| **Admin Panel** | [admin.cabi.africa](https://admin.cabi.africa) | [cabi-admin-panel.vercel.app](https://cabi-admin-panel.vercel.app) |
-| **Dispatch Panel** | [dispatch.cabi.africa](https://dispatch.cabi.africa) | [cabi-dispatch-panel.vercel.app](https://cabi-dispatch-panel.vercel.app) |
+| **User Portal** | [app.cabi.africa](https://app.cabi.africa) | `user-portal` (us-central1) |
+| **Admin Panel** | [admin.cabi.africa](https://admin.cabi.africa) | `admin-panel` (us-central1) |
+| **Dispatch Panel** | [dispatch.cabi.africa](https://dispatch.cabi.africa) | `dispatch-panel` (us-central1) |
 
 ### **Backends (GCP Cloud Run)**
 | Service | Production API URL |
@@ -24,7 +24,7 @@
 ## 🔒 Security & Connectivity
 
 ### **CORS Policy**
-*   **Allowed Origins**: `*.cabi.africa`, `*.cabi-africa.com`, `*.run.app`, `*.vercel.app`.
+*   **Allowed Origins**: `*.cabi.africa`, `*.cabi-africa.com`, `*.run.app`.
 *   **Security**: WebSocket gateways are locked down to production domains in `NODE_ENV=production`.
 
 ### **Database (Supabase)**
@@ -47,12 +47,21 @@
 ## 🚀 Post-Launch Maintenance
 
 ### **Adding Environment Variables**
-*   **Frontends**: Update in the [Vercel Dashboard](https://vercel.com/ibnkes-projects).
-*   **Backends**: Update using `gcloud secrets` or the GCP Console under "Secret Manager".
+*   **All Services**: Update using `gcloud run services update <service> --set-env-vars=KEY=VALUE --region=us-central1` or the GCP Console.
+*   **Secrets**: Manage via GCP Secret Manager (`gcloud secrets`).
+*   **Frontend Build-time**: For `VITE_*` or `NEXT_PUBLIC_*` variables, update the `--build-arg` values in `cloudbuild.yaml` and redeploy.
 
 ### **Triggering Builds**
-*   **Web**: Push to the `main` branch.
+*   **Web + Backend**: Push to the `main` branch triggers Cloud Build via GitHub Actions.
 *   **Mobile**: Run `flutter build apk --release` from the corresponding `mobile/` subfolder.
+
+### **Custom Domain Mapping** (One-time setup)
+```bash
+# Map custom domains to Cloud Run services
+gcloud run domain-mappings create --service=admin-panel --domain=admin.cabi.africa --region=us-central1
+gcloud run domain-mappings create --service=dispatch-panel --domain=dispatch.cabi.africa --region=us-central1
+gcloud run domain-mappings create --service=user-portal --domain=app.cabi.africa --region=us-central1
+```
 
 ---
 
@@ -63,8 +72,10 @@
 *   **Future Development**: All future front-end iterations and implementations **must** gracefully handle empty API responses without relying on statically injected mock data or fallbacks.
 
 ### **CI/CD Pipeline Details**
-*   **Dependency Sync**: The monorepo uses `npm install --legacy-peer-deps` within the GitHub Action to account for package incompatibilities (e.g., specific `esbuild` mismatches) and synchronize `package-lock.json` successfully.
-*   **Quality Checks**: Target linting configurations (`@nx/eslint:lint`) have been attached universally across the web components (`admin-panel`, `dispatch-panel`, `user-portal`) to ensure failing code blocks deployment.
+*   **Platform**: All services (backends + frontends) deploy to **GCP Cloud Run** via **Cloud Build**, triggered by GitHub Actions on push to `main`.
+*   **Dependency Sync**: The monorepo uses `npm install --legacy-peer-deps` within the GitHub Action to account for package incompatibilities.
+*   **Quality Checks**: Target linting configurations (`@nx/eslint:lint`) are attached across web components (`admin-panel`, `dispatch-panel`, `user-portal`) to block deployments on failing code.
+*   **Frontend Builds**: Admin & Dispatch panels build as Vite SPAs served via Nginx. User Portal builds as a Next.js standalone Node.js server.
 
 ---
 **Status**: 🟢 PRODUCTION-READY

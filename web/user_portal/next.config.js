@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // NOTE: For Docker deployment, add: output: 'standalone'
-  // Vercel manages output mode automatically — do NOT set it here.
+  // Standalone output for Cloud Run Docker deployment
+  output: 'standalone',
 
 
 
