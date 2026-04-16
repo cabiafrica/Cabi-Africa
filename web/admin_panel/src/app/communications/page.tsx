@@ -14,7 +14,23 @@ interface FeaturedContent {
 interface ExperimentVariant extends FeaturedContent {
     id: string;
     name: string;
-    stats?: { impressions: number, clicks: number, ctr: number };
+    stats?: ExperimentVariantStats;
+}
+
+interface ExperimentVariantStats {
+    impressions: number;
+    clicks: number;
+    ctr: number;
+}
+
+interface ExperimentResults {
+    status: string;
+    winner: string | null;
+    variants: {
+        id: string;
+        name: string;
+        stats: ExperimentVariantStats;
+    }[];
 }
 
 export default function CommunicationsPage() {
@@ -37,7 +53,7 @@ export default function CommunicationsPage() {
         { ...initialContent, id: 'B', name: 'Variant B' }
     ]);
     const [activeVariantIndex, setActiveVariantIndex] = useState(0);
-    const [experimentResults, setExperimentResults] = useState<any>(null); // Mock results
+    const [experimentResults, setExperimentResults] = useState<ExperimentResults | null>(null); // Mock results
 
 
 
@@ -59,15 +75,18 @@ export default function CommunicationsPage() {
 
             // Simulate data coming in after 2 seconds
             setTimeout(() => {
-                setExperimentResults((prev: any) => ({
-                    ...prev,
-                    status: 'Winner Found',
-                    winner: 'Variant B',
-                    variants: [
-                        { id: 'A', name: 'Variant A', stats: { impressions: 1000, clicks: 50, ctr: 0.05 } },
-                        { id: 'B', name: 'Variant B', stats: { impressions: 1050, clicks: 120, ctr: 0.114 } }
-                    ]
-                }));
+                setExperimentResults((prev: ExperimentResults | null) => {
+                    if (!prev) return null;
+                    return {
+                        ...prev,
+                        status: 'Winner Found',
+                        winner: 'Variant B',
+                        variants: [
+                            { id: 'A', name: 'Variant A', stats: { impressions: 1000, clicks: 50, ctr: 0.05 } },
+                            { id: 'B', name: 'Variant B', stats: { impressions: 1050, clicks: 120, ctr: 0.114 } }
+                        ]
+                    };
+                });
             }, 2000);
 
             alert('A/B Test Started! Collecting data...');
@@ -242,7 +261,7 @@ export default function CommunicationsPage() {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                        {experimentResults.variants.map((v: any) => (
+                                        {experimentResults.variants.map((v) => (
                                             <tr key={v.id}>
                                                 <td className="px-4 py-2">{v.name}</td>
                                                 <td className="px-4 py-2">{v.stats.impressions}</td>

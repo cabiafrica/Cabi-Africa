@@ -1,8 +1,19 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 
+interface Perk {
+    id: string;
+    partner: string;
+    title: string;
+    description: string;
+    type: 'CODE' | 'LINK';
+    isActive: boolean;
+    code?: string;
+    link?: string;
+}
+
 // Mock Data
-const MOCK_PERKS = [
+const MOCK_PERKS: Perk[] = [
     {
         id: '1',
         partner: 'Shell Refuel',
@@ -42,7 +53,7 @@ const MOCK_PERKS = [
 ];
 
 export default function DriverPerksPage() {
-    const [perks, setPerks] = useState<any[]>([]);
+    const [perks, setPerks] = useState<Perk[]>([]);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [formData, setFormData] = useState({
         partner: '',
@@ -59,8 +70,9 @@ export default function DriverPerksPage() {
     }, []);
 
     const handleCreate = () => {
-        const newPerk = {
+        const newPerk: Perk = {
             ...formData,
+            type: formData.type as 'CODE' | 'LINK',
             id: Date.now().toString(),
             isActive: true
         };

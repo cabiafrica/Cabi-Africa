@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from 'react';
 
+type DiscountType = 'PERCENTAGE' | 'FIXED';
+
+interface PromoCode {
+    id: string;
+    code: string;
+    discountType: DiscountType;
+    value: number;
+    expiresAt: string;
+    maxUses: number;
+    currentUses: number;
+    isActive: boolean;
+}
+
 // Mock fetch
-const fetchPromoCodes = async () => {
+const fetchPromoCodes = async (): Promise<PromoCode[]> => {
     return [
         { id: '1', code: 'SAVE10', discountType: 'PERCENTAGE', value: 10, expiresAt: '2025-12-31', maxUses: 1000, currentUses: 45, isActive: true },
         { id: '2', code: 'FIRSTRIDE', discountType: 'FIXED', value: 5.00, expiresAt: '2025-12-31', maxUses: -1, currentUses: 234, isActive: true },
@@ -9,7 +22,7 @@ const fetchPromoCodes = async () => {
 };
 
 export default function PromotionsPage() {
-    const [promoCodes, setPromoCodes] = useState<any[]>([]);
+    const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [formData, setFormData] = useState({
         code: '',
@@ -26,7 +39,13 @@ export default function PromotionsPage() {
 
     const handleCreate = () => {
         // API call
-        const newPromo = { ...formData, id: Date.now().toString(), currentUses: 0, isActive: true };
+        const newPromo: PromoCode = { 
+            ...formData, 
+            discountType: formData.discountType as DiscountType,
+            id: Date.now().toString(), 
+            currentUses: 0, 
+            isActive: true 
+        };
         setPromoCodes([newPromo, ...promoCodes]);
         setShowCreateForm(false);
         setFormData({ code: '', discountType: 'PERCENTAGE', value: 10, expiresAt: '', maxUses: 1000, usesPerUser: 1 });
@@ -66,7 +85,7 @@ export default function PromotionsPage() {
                             <label className="block text-sm font-medium mb-1">Discount Type</label>
                             <select
                                 value={formData.discountType}
-                                onChange={(e) => setFormData({ ...formData, discountType: e.target.value as any })}
+                                onChange={(e) => setFormData({ ...formData, discountType: e.target.value as DiscountType })}
                                 className="w-full border rounded px-3 py-2"
                             >
                                 <option value="PERCENTAGE">Percentage</option>

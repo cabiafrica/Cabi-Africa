@@ -21,8 +21,8 @@ export class PayoutController {
     @Query('search') search?: string,
     @Query('sortBy') sortBy?: 'driverName' | 'amount' | 'requestedAt',
     @Query('sortOrder') sortOrder?: 'asc' | 'desc',
-    @Query('page') page: string = '1',
-    @Query('limit') limit: string = '10',
+    @Query('page') page = '1',
+    @Query('limit') limit = '10',
   ) {
     return this.payoutService.findAll(status, search, sortBy, sortOrder, parseInt(page, 10), parseInt(limit, 10));
   }

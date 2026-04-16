@@ -22,8 +22,8 @@ export class PayoutService {
     search?: string,
     sortBy: 'driverName' | 'amount' | 'requestedAt' = 'requestedAt',
     sortOrder: 'asc' | 'desc' = 'desc',
-    page: number = 1,
-    limit: number = 10,
+    page = 1,
+    limit = 10,
   ): Promise<{ data: PayoutDto[]; total: number }> {
     let results = [...mockPayouts]; // Create a copy to avoid mutation
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 // Using ContentService structure from Story 102.x
 export default function HelpContentManager() {
-    const [faqs, setFaqs] = useState([
+    const [faqs] = useState([
         { id: '1', q: 'How to rest password?', a: 'Go to settings...', category: 'Account' }
     ]);
 

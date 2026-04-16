@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 // Mock map component
-const SurgeZoneMap = ({ zones, onZoneCreate, onZoneUpdate, onZoneDelete }: any) => {
+const SurgeZoneMap = ({ zones, _onZoneCreate, _onZoneUpdate, _onZoneDelete }: any) => {
     return (
         <div className="relative bg-gray-200 rounded-lg" style={{ height: '500px' }}>
             <div className="absolute inset-0 flex items-center justify-center text-gray-500">
@@ -123,9 +123,9 @@ export default function SurgePricingPage() {
                         <h3 className="font-bold mb-4">Zone Map</h3>
                         <SurgeZoneMap
                             zones={zones}
-                            onZoneCreate={() => { }}
-                            onZoneUpdate={() => { }}
-                            onZoneDelete={() => { }}
+                            onZoneCreate={() => { /* No-op */ }}
+                            onZoneUpdate={() => { /* No-op */ }}
+                            onZoneDelete={() => { /* No-op */ }}
                         />
                     </div>
                 </div>

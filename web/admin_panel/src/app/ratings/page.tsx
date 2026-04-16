@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
+interface Rating {
+    id: string;
+    rater: string;
+    ratee: string;
+    stars: number;
+    comment: string;
+    type: 'PASSENGER_TO_DRIVER' | 'DRIVER_TO_PASSENGER';
+    status: 'VISIBLE' | 'HIDDEN';
+}
+
 // Mock Fetch
-const fetchRatings = async () => {
+const fetchRatings = async (): Promise<Rating[]> => {
     return [
         { id: '1', rater: 'Tom', ratee: 'Driver Dave', stars: 5, comment: 'Great!', type: 'PASSENGER_TO_DRIVER', status: 'VISIBLE' },
         { id: '2', rater: 'Driver Dave', ratee: 'Tom', stars: 1, comment: 'Rude.', type: 'DRIVER_TO_PASSENGER', status: 'VISIBLE' },
@@ -9,7 +19,7 @@ const fetchRatings = async () => {
 };
 
 export default function RatingsModeration() {
-    const [ratings, setRatings] = useState<any[]>([]);
+    const [ratings, setRatings] = useState<Rating[]>([]);
 
     useEffect(() => {
         fetchRatings().then(setRatings);

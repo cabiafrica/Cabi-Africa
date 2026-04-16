@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from 'react';
 
+type IncentiveType = 'CONSECUTIVE_TRIPS' | 'REFERRAL' | 'PEAK_HOURS';
+
+interface IncentiveRule {
+    id: string;
+    type: IncentiveType;
+    name: string;
+    description: string;
+    threshold: number;
+    bonusAmount: number;
+    isActive: boolean;
+}
+
 // Mock fetch
-const fetchIncentiveRules = async () => {
+const fetchIncentiveRules = async (): Promise<IncentiveRule[]> => {
     return [
-        { id: '1', type: 'CONSECUTIVE_TRIPS', name: '3 Trips Streak Bonus', threshold: 3, bonusAmount: 10.00, isActive: true },
-        { id: '2', type: 'REFERRAL', name: 'Passenger Referral Bonus', threshold: 1, bonusAmount: 5.00, isActive: true },
-        { id: '3', type: 'PEAK_HOURS', name: 'Peak Hours Bonus', threshold: 5, bonusAmount: 15.00, isActive: false },
+        { id: '1', type: 'CONSECUTIVE_TRIPS', name: '3 Trips Streak Bonus', description: 'Complete 3 trips in a row', threshold: 3, bonusAmount: 10.00, isActive: true },
+        { id: '2', type: 'REFERRAL', name: 'Passenger Referral Bonus', description: 'Refer a new passenger', threshold: 1, bonusAmount: 5.00, isActive: true },
+        { id: '3', type: 'PEAK_HOURS', name: 'Peak Hours Bonus', description: 'Complete trips during peak hours', threshold: 5, bonusAmount: 15.00, isActive: false },
     ];
 };
 
 export default function IncentivesPage() {
-    const [rules, setRules] = useState<any[]>([]);
+    const [rules, setRules] = useState<IncentiveRule[]>([]);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [formData, setFormData] = useState({
         type: 'CONSECUTIVE_TRIPS',
@@ -25,7 +37,12 @@ export default function IncentivesPage() {
     }, []);
 
     const handleCreate = () => {
-        const newRule = { ...formData, id: Date.now().toString(), isActive: true };
+        const newRule: IncentiveRule = { 
+            ...formData, 
+            type: formData.type as IncentiveType,
+            id: Date.now().toString(), 
+            isActive: true 
+        };
         setRules([newRule, ...rules]);
         setShowCreateForm(false);
         setFormData({ type: 'CONSECUTIVE_TRIPS', name: '', description: '', threshold: 3, bonusAmount: 10.00 });
@@ -55,7 +72,7 @@ export default function IncentivesPage() {
                             <label className="block text-sm font-medium mb-1">Type</label>
                             <select
                                 value={formData.type}
-                                onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
+                                onChange={(e) => setFormData({ ...formData, type: e.target.value as IncentiveType })}
                                 className="w-full border rounded px-3 py-2"
                             >
                                 <option value="CONSECUTIVE_TRIPS">Consecutive Trips</option>
