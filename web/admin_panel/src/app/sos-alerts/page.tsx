@@ -16,7 +16,7 @@ const mockSocket = {
             }), 5000);
         }
     },
-    off: (event: string) => { }
+    off: (_event: string) => { /* No-op */ }
 };
 
 export default function SOSDashboard() {

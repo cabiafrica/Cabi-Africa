@@ -7,7 +7,7 @@ export class AnalyticsService {
         return res.data;
     }
 
-    async getHeatMapData(type: 'DEMAND' | 'SUPPLY', serviceId: string = 'ALL'): Promise<any[]> {
+    async getHeatMapData(type: 'DEMAND' | 'SUPPLY', serviceId = 'ALL'): Promise<any[]> {
         const res = await apiClient.get('/v1/analytics/heatmap', { 
             params: { type, serviceId } 
         });

@@ -90,7 +90,7 @@ export const OrganizationManagement: React.FC = () => {
                 <div className="animate-in fade-in slide-in-from-bottom-2">
                     {activeTab === 'subgroups' ? (
                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-                            <SubgroupManagement orgId={selectedOrgId} onBack={() => { }} />
+                            <SubgroupManagement orgId={selectedOrgId} onBack={() => { /* No-op */ }} />
                         </div>
                     ) : (
                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">

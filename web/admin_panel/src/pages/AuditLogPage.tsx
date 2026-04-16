@@ -336,7 +336,7 @@ export const AuditLogPage = () => {
   }, [actionTypes]);
 
   const filteredEvents = useMemo(() => {
-    let sortableEvents = [...events];
+    const sortableEvents = [...events];
     sortableEvents.sort((a, b) => {
       const aValue = a[orderBy] || '';
       const bValue = b[orderBy] || '';

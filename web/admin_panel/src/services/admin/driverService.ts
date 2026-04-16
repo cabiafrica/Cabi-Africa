@@ -66,7 +66,7 @@ export class DriverService {
         await apiClient.post('/v1/driver-leads/bulk-reject', { driverIds, reason });
     }
 
-    async getDriverApplicationsPaginated(page: number = 1, limit: number = 10): Promise<{ data: any[], total: number }> {
+    async getDriverApplicationsPaginated(page = 1, limit = 10): Promise<{ data: any[], total: number }> {
         const res = await apiClient.get(`/v1/driver-leads/pending`, { params: { page, limit } });
         return res.data;
     }
