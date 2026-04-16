@@ -34,7 +34,7 @@ export class DocumentService {
    * Mocks fetching documents that are expiring soon.
    * @param days The number of days to look ahead for expiry.
    */
-  async getExpiringDocuments(days: number): Promise<any[]> {
+  async getExpiringDocuments(days: number): Promise<Record<string, unknown>[]> {
     // Mock data with expiry dates
     const mockDocuments: UploadedDocument[] = [
         { id: 'doc-1', driverId: 'driver-123', documentType: 'Driver\'s License', status: 'Approved', expiryDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(), fileName: 'dl.jpg', mimeType: 'image/jpeg', size: 123, uploadedAt: '' },

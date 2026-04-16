@@ -5,9 +5,6 @@ import {
   UseInterceptors,
   UseGuards,
   Param,
-  ParseFilePipe,
-  MaxFileSizeValidator,
-  FileTypeValidator,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DocumentService } from './document.service';

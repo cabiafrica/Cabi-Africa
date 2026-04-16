@@ -1,10 +1,6 @@
 import { Controller, Post, Body, Delete, Param, Put, Req, HttpCode } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 
-class CreateChargeDto {
-  amount: number;
-  userId: string;
-}
 
 class AddTipDto {
   rideId: string;
