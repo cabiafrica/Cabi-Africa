@@ -1,13 +1,37 @@
+# Dependencies (uncomment if using selective COPY in Dockerfiles)
 # **/node_modules
+
+# Build tools & IDE
 **/.nx
 **/.git
 **/.vscode
+**/.vercel
+**/.next
+
+# Environment files (secrets injected via Cloud Build args / GCP Secret Manager)
 **/.env
+**/.env.local
+**/.env.production.local
+
+# Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.sh
-.ps1
+
+# Scripts & misc
+*.sh
+*.ps1
 *.apk
+
+# Excluded directories
 mobile/
+_archive/
+_docs_archive/
+stories/
+scratch/
+tmp_vercel/
+uploads/
+docs/
+.agent/
+Africa/
