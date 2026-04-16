@@ -9,7 +9,6 @@ import { PromotionalConfig as PromoConfig } from './components/PromotionalConfig
 import { BadgeManagement } from './components/management/BadgeManagement';
 import { BlogManagement } from './components/management/BlogManagement';
 import { PermissionManagement } from './components/management/PermissionManagement';
-import { RoleManagement } from './components/management/RoleManagement';
 import { UserManagement } from './components/management/UserManagement';
 import { UserManagementDashboard as PlatformUsers } from './components/management/PlatformUsers';
 import { OrganizationManagement } from './components/management/OrganizationManagement';
@@ -203,7 +202,7 @@ function App() {
   const hasPermission = (p: string) => {
     if (!user) return false;
     // Super admins/Admins should have access to everything for now or via granular roles
-    const role = (user.role as any)?.toUpperCase();
+    const role = (user.role as string)?.toUpperCase();
     if (role === 'SUPER_ADMIN' || role === 'ADMIN') return true;
 
     if (!user.permissions) return false;

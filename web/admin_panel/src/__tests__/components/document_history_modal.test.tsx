@@ -44,7 +44,9 @@ describe('DocumentHistoryModal', () => {
 
   test('renders and shows loading state when isOpen is true', () => {
     // Arrange: Mock fetch to return a pending promise to keep it in loading state
-    (fetch as jest.Mock).mockImplementationOnce(() => new Promise(() => {}));
+    (fetch as jest.Mock).mockImplementationOnce(() => new Promise(() => {
+      // Intentional empty promise to simulate loading state
+    }));
 
     render(
       <DocumentHistoryModal

@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Param, UseGuards, Req, Query, Post, Body, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Patch, Param, UseGuards, Query, Post, Body, ValidationPipe } from '@nestjs/common';
 import { PayoutService } from './payout.service';
 import { PayoutStatus, RequestPayoutDto } from '@cabi/shared/interfaces';
 

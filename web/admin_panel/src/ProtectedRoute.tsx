@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
-import { Alert, Box, Typography } from '@mui/material';
+import { Alert } from '@mui/material';
 
 interface ProtectedRouteProps {
   requiredRole?: string;
