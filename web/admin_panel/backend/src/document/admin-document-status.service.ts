@@ -4,10 +4,10 @@ class UserService {
   async activateDriver(driverId: string) { console.log(`UserService: Activating driver ${driverId}`); }
 }
 class NotificationService {
-  sendNotification(payload: any) { console.log('NotificationService: Sending notification:', payload); }
+  sendNotification(payload: Record<string, unknown>) { console.log('NotificationService: Sending notification:', payload); }
 }
 class EventEmitter {
-  publish(event: string, payload: any) { console.log(`EventBus: Publishing event '${event}' with payload:`, payload); }
+  publish(event: string, payload: unknown) { console.log(`EventBus: Publishing event '${event}' with payload:`, payload); }
 }
 
 @Injectable()

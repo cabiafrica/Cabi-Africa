@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Put, Body, Param, Query } from '@nestjs/common';
 import { AdminVerificationService } from './admin-verification.service';
 
 @Controller('admin/verification')

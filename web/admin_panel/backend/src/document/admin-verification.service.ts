@@ -49,8 +49,6 @@ export class AdminVerificationService {
     const { status, search, page, limit } = filters;
     const skip = (page - 1) * limit;
 
-    // Build where clause
-    const where: any = {};
 
     // For now, use mock data since we store in memory
     // In production, query from database
@@ -84,9 +82,9 @@ export class AdminVerificationService {
     return mockRequests.find(r => r.id === id) || null;
   }
 
-  async approveVerification(id: string, adminId: string, notes?: string): Promise<any> {
+  async approveVerification(id: string, adminId: string, notes?: string): Promise<Record<string, unknown>> {
     this.logger.log(`Approving verification ${id} by admin ${adminId}`);
-
+    
     // In production, update database
     return {
       success: true,
@@ -94,12 +92,13 @@ export class AdminVerificationService {
       status: 'VERIFIED',
       reviewedBy: adminId,
       reviewedAt: new Date(),
+      adminNotes: notes || '',
     };
   }
-
-  async rejectVerification(id: string, adminId: string, reason: string): Promise<any> {
+  
+  async rejectVerification(id: string, adminId: string, reason: string): Promise<Record<string, unknown>> {
     this.logger.log(`Rejecting verification ${id} by admin ${adminId}. Reason: ${reason}`);
-
+    
     // In production, update database
     return {
       success: true,
@@ -110,10 +109,10 @@ export class AdminVerificationService {
       rejectionReason: reason,
     };
   }
-
-  async requestAdditionalInfo(id: string, adminId: string, requiredInfo: string[]): Promise<any> {
+  
+  async requestAdditionalInfo(id: string, adminId: string, requiredInfo: string[]): Promise<Record<string, unknown>> {
     this.logger.log(`Requesting additional info for verification ${id}`);
-
+    
     return {
       success: true,
       message: 'Request sent to passenger',
@@ -121,10 +120,10 @@ export class AdminVerificationService {
       requiredInfo,
     };
   }
-
-  async getVerificationStats(): Promise<any> {
+  
+  async getVerificationStats(): Promise<Record<string, unknown>> {
     const mockRequests = this.getMockVerificationRequests();
-
+    
     return {
       total: mockRequests.length,
       pending: mockRequests.filter(r => r.status === 'PENDING').length,
