@@ -530,5 +530,4 @@ describe('UserManagementService', () => {
       );
     });
   });
-  });
 });
