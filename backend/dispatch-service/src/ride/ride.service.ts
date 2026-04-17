@@ -12,7 +12,7 @@ import { CommissionService } from '../commission/commission.service';
 class PaymentService { async createCharge(uid: string, amount: number) { return { success: true, message: 'Mock charge' }; } }
 class VehicleService { getActiveVehicleForDriver(id: string): any { return { id: 'v1', model: 'Corolla' }; } }
 class UserService { }
-class NotificationService { sendNotification(payload: any) { } }
+class NotificationService { sendNotification(payload: any) { return; } }
 
 interface PaginationParams {
   page: number;
@@ -339,7 +339,7 @@ export class RideService {
 
     const chargeResult = await this.paymentService.createCharge(ride.passengerId, finalFare);
 
-    let status: 'COMPLETED' | 'CANCELLED' = 'COMPLETED'; // using Enum strings from schema but simplistic
+    const status: 'COMPLETED' | 'CANCELLED' = 'COMPLETED'; // using Enum strings from schema but simplistic
     // Schema Enum: REQUESTED, MATCHING, DRIVER_ASSIGNED, DRIVER_ARRIVED, IN_PROGRESS, COMPLETED, CANCELLED
 
     if (chargeResult.success) {

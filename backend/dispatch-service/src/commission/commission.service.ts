@@ -303,8 +303,8 @@ export class CommissionService {
 
     async getTransactionHistory(
         driverProfileId: string,
-        limit: number = 50,
-        offset: number = 0
+        limit = 50,
+        offset = 0
     ) {
         return this.prisma.transactionLedger.findMany({
             where: { driverProfileId },
