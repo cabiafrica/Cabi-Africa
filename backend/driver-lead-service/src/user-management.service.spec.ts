@@ -44,7 +44,7 @@ const mockNotificationService = {
 
 mockPrismaService['$transaction'] = jest.fn().mockImplementation(async (args) => {
   return Promise.all(args);
-};
+});
 
 const mockAuthTokenService = {
   generateAccessToken: jest.fn().mockImplementation((user) => Promise.resolve(`mock-jwt-for-${user.id}`)),
