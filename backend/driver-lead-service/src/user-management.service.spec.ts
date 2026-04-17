@@ -201,7 +201,7 @@ describe('UserManagementService', () => {
         secret: mockUserWith2fa.twoFactorSecret,
         encoding: 'base32',
         token: '123456',
-      });
+      }));
       expect(result).toEqual({ accessToken: `mock-jwt-for-${mockUserWith2fa.id}` });
       expect(prisma.user.update).toHaveBeenCalledWith({
         where: { id: mockUserWith2fa.id },
@@ -370,6 +370,7 @@ describe('UserManagementService', () => {
         );
       });
     });
+  });
 
   describe('reportSuspiciousLogin', () => {
     it('should mark an entry as reported and send a notification', async () => {

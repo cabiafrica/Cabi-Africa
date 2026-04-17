@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { PrismaService } from '@cabi/backend/database';
 import { 
   CreateDriverGroupDto, 
@@ -139,7 +140,7 @@ export class DriverGroupsService {
 
     return this.prisma.driver_groups.create({
       data: {
-        id: require('crypto').randomUUID(),
+        id: randomUUID(),
         updatedAt: new Date(),
         name,
         description,

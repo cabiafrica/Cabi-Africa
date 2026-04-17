@@ -51,6 +51,7 @@ export class AuthController {
     { name: 'national_id', maxCount: 1 },
     { name: 'psv_badge', maxCount: 1 },
   ]))
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async registerDriver(@Body() body: any, @UploadedFiles() files: any) {
     const result = await this.userService.registerDriver(body, files);
     return {
@@ -61,6 +62,7 @@ export class AuthController {
 
   @Post('register-organization')
   @UseInterceptors(FileInterceptor('registration_certificate'))
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async registerOrganization(@Body() body: any, @UploadedFile() file: any) {
     const result = await this.userService.registerOrganization(body, file);
     return {
