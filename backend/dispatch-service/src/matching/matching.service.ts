@@ -143,6 +143,7 @@ export class MatchingService {
         for (const driver of onlineDrivers) {
             if (!driver.currentLocation) continue;
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const location = driver.currentLocation as any;
             if (!location.lat || !location.lng) continue;
 
@@ -159,6 +160,7 @@ export class MatchingService {
                 // Get badge priority if enabled
                 let badgePriority = 0;
                 let badgeTier: BadgeTier | null = null;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const badgeStatus = (driver as any).badgeStatus as any[];
                 if (useBadgePriority && badgeStatus && badgeStatus.length > 0) {
                     const activeBadge = badgeStatus[0];
@@ -252,6 +254,7 @@ export class MatchingService {
             return null;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const pickup = ride.pickupLocation as any;
         if (!pickup.lat || !pickup.lng) {
             this.logger.error(`Invalid pickup location for ride ${rideId}`);

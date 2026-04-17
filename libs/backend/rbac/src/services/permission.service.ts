@@ -1,7 +1,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
-import { Permission, UserRole } from '@prisma/client';
+import { Permission } from '@prisma/client';
 
 @Injectable()
 export class PermissionService {

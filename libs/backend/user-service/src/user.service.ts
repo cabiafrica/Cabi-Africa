@@ -27,7 +27,7 @@ export class UserService {
   }
 
   async registerPassenger(registerUserDto: RegisterUserDto) {
-    const { firstName, lastName, email, phone, password, referrerId, referralCode, profilePhotoUrl } = registerUserDto;
+    const { firstName, lastName, email, phone, password, referrerId, referralCode, profilePhotoUrl, role } = registerUserDto;
 
     // Check if user already exists
     const existingUser = await this.prisma.user.findFirst({
@@ -145,11 +145,13 @@ export class UserService {
           password: hashedPassword,
           fullName,
           role: LegacyRole.DRIVER,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           status: 'PENDING' as any,
           referralCode: `CABI-D-${Math.random().toString(36).substring(7).toUpperCase()}`,
         }
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (tx as any).driverProfile.create({
         data: {
           userId: user.id,
@@ -192,6 +194,7 @@ export class UserService {
         }
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const org = await (tx as any).organizations.create({
         data: {
           name: orgName,
@@ -203,6 +206,7 @@ export class UserService {
         }
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (tx as any).organization_members.create({
         data: {
           organizationId: org.id,

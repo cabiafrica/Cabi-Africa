@@ -90,7 +90,9 @@ export class ReferralService {
   async updateConfig(config: ReferralConfig): Promise<void> {
     await this.prisma.setting.upsert({
       where: { key: REFERRAL_CONFIG_KEY },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       update: { value: config as any },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       create: { key: REFERRAL_CONFIG_KEY, value: config as any },
     });
   }
@@ -116,7 +118,9 @@ export class ReferralService {
   async updatePromoConfig(config: PromoConfig): Promise<void> {
     await this.prisma.setting.upsert({
       where: { key: PROMO_CONFIG_KEY },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       update: { value: config as any },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       create: { key: PROMO_CONFIG_KEY, value: config as any },
     });
   }
@@ -389,6 +393,7 @@ export class ReferralService {
       return {
         id: user.id,
         name: user.fullName,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         status: (user as any).status || 'ACTIVE',
         level: currentLevel,
         joinedAt: user.createdAt,

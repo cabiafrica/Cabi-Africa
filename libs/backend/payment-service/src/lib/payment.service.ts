@@ -138,7 +138,7 @@ export class PaymentService {
 
         if (callbackData.Body?.stkCallback) {
             const stkCallback = callbackData.Body.stkCallback;
-            const checkoutRequestId = stkCallback.CheckoutRequestID;
+            // const checkoutRequestId = stkCallback.CheckoutRequestID;
             const resultCode = stkCallback.ResultCode;
 
             if (resultCode === 0) {
