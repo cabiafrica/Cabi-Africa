@@ -15,8 +15,8 @@ jest.mock('speakeasy');
 jest.mock('geoip-lite');
 
 // Suppress console logs from the service during tests
-jest.spyOn(Logger.prototype, 'log').mockImplementation(() => {});
-jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => {});
+jest.spyOn(Logger.prototype, 'log').mockImplementation(() => { /* no-op */ });
+jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => { /* no-op */ });
 
 const mockPrismaService = {
   user: {

@@ -12,7 +12,7 @@ const mockPrismaService = {
 };
 
 // Suppress logs
-jest.spyOn(Logger.prototype, 'log').mockImplementation(() => {});
+jest.spyOn(Logger.prototype, 'log').mockImplementation(() => { /* no-op */ });
 
 describe('TokenCleanupJob', () => {
   let job: TokenCleanupJob;

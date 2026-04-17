@@ -11,8 +11,8 @@ jest.mock('fs/promises');
 jest.mock('handlebars');
 
 // Suppress console logs from the service during tests
-jest.spyOn(Logger.prototype, 'log').mockImplementation(() => {});
-jest.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
+jest.spyOn(Logger.prototype, 'log').mockImplementation(() => { /* no-op */ });
+jest.spyOn(Logger.prototype, 'error').mockImplementation(() => { /* no-op */ });
 
 describe('NotificationService', () => {
   let service: NotificationService;
