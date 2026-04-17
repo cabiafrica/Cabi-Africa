@@ -279,7 +279,7 @@ export class MatchingService {
         });
 
         // Filter out blocked drivers
-        let validDrivers = nearbyDrivers.filter(d => !blockedDrivers.includes(d.driverId));
+        const validDrivers = nearbyDrivers.filter(d => !blockedDrivers.includes(d.driverId));
 
         if (validDrivers.length === 0) {
             this.logger.warn(`No valid drivers found for ride ${rideId} (after filtering blocked)`);

@@ -32,7 +32,7 @@ export const logAuditEvent = async (payload: AuditEventPayload): Promise<{ succe
 
 export const fetchUserAuditEvents = async (
   userId: string,
-  limit: number = 5
+  limit = 5
 ): Promise<AuditEvent[]> => {
   console.log(`[Audit Service Mock] Fetching events for user ${userId}`);
   return [];

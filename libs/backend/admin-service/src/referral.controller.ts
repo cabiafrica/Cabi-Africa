@@ -24,8 +24,8 @@ export class ReferralController {
   @Get('ledger')
   @Permissions('COMMISSION_LEDGER_VIEW')
   async getLedger(
-    @Query('page') page: string = '1',
-    @Query('limit') limit: string = '20',
+    @Query('page') page = '1',
+    @Query('limit') limit = '20',
     @Query('driverId') driverId?: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string

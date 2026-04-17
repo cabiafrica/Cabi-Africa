@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
+import * as bcrypt from 'bcryptjs';
 import { AdminUser, Permission } from './admin.types'; // We'll define these types
 import { Permission as PrismaPermission } from '@prisma/client';
 
@@ -65,8 +66,6 @@ export class AdminUsersService {
         // Check if user exists by email
         let user = await this.prisma.user.findUnique({ where: { email } });
         if (!user) {
-            // Import bcrypt for password hashing
-            const bcrypt = require('bcryptjs');
             const tempPassword = `Temp${Math.random().toString(36).substring(2, 10)}!`;
             const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
