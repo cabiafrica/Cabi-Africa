@@ -125,12 +125,12 @@ jobs:
             "auth-gateway"
             "verification-service"
             "dispatch-service"
-            "trip-service"
-            "payment-service"
-            "user-service"
+            "referral-service"
+            "sacco-service"
             "driver-lead-service"
-            "payout-service"
             "admin-panel"
+            "dispatch-panel"
+            "user-portal"
           )
           
           for service in "${services[@]}"; do
