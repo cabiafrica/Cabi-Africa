@@ -444,7 +444,7 @@ images:
   - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/user-portal:latest'
 
 options:
-  machineType: 'E2_HIGHMEM_32'
+  machineType: 'E2_HIGHCPU_32'
   logging: CLOUD_LOGGING_ONLY
 
 timeout: '3600s'
