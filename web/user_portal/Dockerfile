@@ -61,14 +61,13 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-# Copy standalone output (this includes node_modules and the web/user_portal/server.js)
+# In monorepos, standalone output is at the project root
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/static ./web/user_portal/.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./web/user_portal/public
 
 USER nextjs
 EXPOSE 8080
 
-
-# Discovery-based CMD to handle variable standalone pathing in monorepos
-CMD ["sh", "-c", "SERVER=$(find . -name 'server.js' | head -n 1); if [ -n \"$SERVER\" ]; then echo \"Starting Next.js standalone at $SERVER\"; node \"$SERVER\"; else echo \"Error: server.js not found\"; exit 1; fi"]
+# The actual server script in an Nx/Standard monorepo is nested
+CMD ["node", "web/user_portal/server.js"]

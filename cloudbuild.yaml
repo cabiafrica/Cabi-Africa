@@ -319,6 +319,7 @@ steps:
       - '--timeout=300'
       - '--min-instances=0'
       - '--max-instances=5'
+      - '--allow-unauthenticated'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['push-admin-panel']
 
@@ -366,6 +367,7 @@ steps:
       - '--timeout=300'
       - '--min-instances=0'
       - '--max-instances=5'
+      - '--allow-unauthenticated'
       - '--set-env-vars=NODE_ENV=production,BACKEND_URL=https://auth-gateway-746659778850.us-central1.run.app'
     waitFor: ['push-dispatch-panel']
 
@@ -425,6 +427,7 @@ steps:
       - '--timeout=600'
       - '--min-instances=0'
       - '--max-instances=10'
+      - '--allow-unauthenticated'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
     waitFor: ['wait-for-lock-clearance']
