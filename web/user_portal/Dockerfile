@@ -43,7 +43,6 @@ ENV NEXT_PUBLIC_DISPATCH_SERVICE_URL=${NEXT_PUBLIC_DISPATCH_SERVICE_URL}
 ENV NEXT_PUBLIC_SACCO_SERVICE_URL=${NEXT_PUBLIC_SACCO_SERVICE_URL}
 ENV NEXT_PUBLIC_REFERRAL_SERVICE_URL=${NEXT_PUBLIC_REFERRAL_SERVICE_URL}
 ENV NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL}
-ENV PRISMA_CLI_BINARY_TARGETS="native,linux-musl-openssl-3.0.x"
 
 # Generate Prisma
 RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
@@ -70,10 +69,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./public
 USER nextjs
 EXPOSE 8080
 
-# Ensure Prisma binaries are built for Alpine
-ENV PRISMA_CLI_BINARY_TARGETS="native,linux-musl-openssl-3.0.x"
-
-# ... (other env vars) ...
 
 # Discovery-based CMD to handle variable standalone pathing in monorepos
 CMD ["sh", "-c", "SERVER=$(find . -name 'server.js' | head -n 1); if [ -n \"$SERVER\" ]; then echo \"Starting Next.js standalone at $SERVER\"; node \"$SERVER\"; else echo \"Error: server.js not found\"; exit 1; fi"]
