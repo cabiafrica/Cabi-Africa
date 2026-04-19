@@ -68,4 +68,5 @@ COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/static ./we
 USER nextjs
 EXPOSE 8080
 
-CMD ["node", "web/user_portal/server.js"]
+# Start the server with path-detection safety
+CMD ["sh", "-c", "if [ -f web/user_portal/server.js ]; then node web/user_portal/server.js; elif [ -f server.js ]; then node server.js; else echo 'Error: server.js not found'; exit 1; fi"]
