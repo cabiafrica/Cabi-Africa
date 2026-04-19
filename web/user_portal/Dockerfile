@@ -11,7 +11,7 @@ COPY package.json package-lock.json ./
 COPY web/user_portal/package.json ./web/user_portal/
 COPY libs/backend/database/prisma/ ./libs/backend/database/prisma/
 
-RUN npm install --legacy-peer-deps --ignore-scripts
+RUN npm install --legacy-peer-deps
 
 # Stage 2: Build the application
 FROM node:20-alpine AS builder
@@ -61,13 +61,14 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-# In monorepos, standalone output is at the project root
+# Copy the entire standalone output
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/standalone ./
+# Standard Next.js standalone expects static and public in their original sub-paths
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/static ./web/user_portal/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./web/user_portal/public
 
 USER nextjs
 EXPOSE 8080
 
-# The actual server script in an Nx/Standard monorepo is nested
+# In monorepos, the entry point is at the app's nested path within standalone
 CMD ["node", "web/user_portal/server.js"]
