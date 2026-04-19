@@ -11,7 +11,7 @@ COPY package.json package-lock.json ./
 COPY web/user_portal/package.json ./web/user_portal/
 COPY libs/backend/database/prisma/ ./libs/backend/database/prisma/
 
-RUN npm install --legacy-peer-deps
+RUN npm install --legacy-peer-deps --ignore-scripts
 
 # Stage 2: Build the application
 FROM node:20-alpine AS builder
@@ -44,7 +44,7 @@ ENV NEXT_PUBLIC_SACCO_SERVICE_URL=${NEXT_PUBLIC_SACCO_SERVICE_URL}
 ENV NEXT_PUBLIC_REFERRAL_SERVICE_URL=${NEXT_PUBLIC_REFERRAL_SERVICE_URL}
 ENV NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL}
 
-# Generate Prisma
+# Generate Prisma explicitly in the builder stage where all libs are present
 RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
 
 # Build FROM THE ROOT to preserve monorepo paths in standalone
