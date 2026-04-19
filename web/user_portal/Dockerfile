@@ -5,15 +5,12 @@
 # Stage 1: Install dependencies
 FROM node:20-alpine AS deps
 WORKDIR /app
-
-# Check: Does Alpine have what we need?
 RUN apk add --no-cache libc6-compat
 
 COPY package.json package-lock.json ./
 COPY web/user_portal/package.json ./web/user_portal/
 COPY libs/backend/database/prisma/ ./libs/backend/database/prisma/
 
-# Install dependencies (ignoring scripts to prevent prisma generate failure)
 RUN npm install --legacy-peer-deps --ignore-scripts
 
 # Stage 2: Build the application
@@ -32,7 +29,7 @@ COPY libs/ ./libs/
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Build-time env vars
+# Build-time env signature
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_DRIVER_LEAD_SERVICE_URL
 ARG NEXT_PUBLIC_DISPATCH_SERVICE_URL
@@ -47,12 +44,11 @@ ENV NEXT_PUBLIC_SACCO_SERVICE_URL=${NEXT_PUBLIC_SACCO_SERVICE_URL}
 ENV NEXT_PUBLIC_REFERRAL_SERVICE_URL=${NEXT_PUBLIC_REFERRAL_SERVICE_URL}
 ENV NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL}
 
-# Generate Prisma client
+# Generate Prisma
 RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
 
-# Build from app directory to ensure standalone root is correctly detected
-WORKDIR /app/web/user_portal
-RUN npm run build
+# Build FROM THE ROOT to preserve monorepo paths in standalone
+RUN npm run build -w user-portal
 
 # Stage 3: Lightweight production runner
 FROM node:20-alpine AS runner
@@ -61,11 +57,11 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=8080
 ENV HOSTNAME="0.0.0.0"
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-# Copy Next.js standalone build output
-# Note: Since we built from /app/web/user_portal, the standalone folder is at .next/standalone
+# Copy standalone output (this includes node_modules and the web/user_portal/server.js)
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/static ./web/user_portal/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./public
@@ -73,5 +69,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./public
 USER nextjs
 EXPOSE 8080
 
-# The build from subfolder usually flattens the root server.js to /app/server.js
-CMD ["node", "server.js"]
+# In a monorepo standalone build from root, the entrypoint should be the app-specific server.js
+# This ensures it finds the node_modules relative to the monorepo root (which is where we are)
+CMD ["node", "web/user_portal/server.js"]
