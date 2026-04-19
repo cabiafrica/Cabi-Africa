@@ -97,7 +97,7 @@ export class UserService {
       });
 
       // Send Welcome SMS/OTP hook
-      await this.smsProvider.sendSms(newUser.phone, `Welcome to Cabi Africa, ${newUser.fullName}! Your account has been created.`);
+      await this.smsProvider.sendSms(user.phone, `Welcome to Cabi Africa, ${user.fullName}! Your account has been created.`);
 
       return {
         userId: user.id,
