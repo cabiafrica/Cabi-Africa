@@ -10,7 +10,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY web/user_portal/package.json ./web/user_portal/
 COPY libs/backend/database/prisma/ ./libs/backend/database/prisma/
-RUN npm install --legacy-peer-deps
+RUN npm install --legacy-peer-deps --ignore-scripts
 
 # Stage 2: Build the application
 FROM node:20-alpine AS builder
