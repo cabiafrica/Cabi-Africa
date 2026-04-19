@@ -1,5 +1,5 @@
-import { Controller, Post, Body, ValidationPipe, UnauthorizedException, UseInterceptors, UploadedFiles } from '@nestjs/common';
-import { FileFieldsInterceptor, FileInterceptor, UploadedFile } from '@nestjs/platform-express';
+import { Controller, Post, Body, ValidationPipe, UnauthorizedException, UseInterceptors, UploadedFiles, UploadedFile } from '@nestjs/common';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { IsNotEmpty, IsString } from 'class-validator';

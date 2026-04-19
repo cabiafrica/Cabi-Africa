@@ -27,7 +27,7 @@ export class UserService {
   }
 
   async registerPassenger(registerUserDto: RegisterUserDto) {
-    const { firstName, lastName, email, phone, password, referrerId, referralCode, profilePhotoUrl, role } = registerUserDto;
+    const { firstName, lastName, email, phone, password, referrerId, referralCode, profilePhotoUrl, role, licenseNumber, orgName } = registerUserDto;
 
     // Check if user already exists
     const existingUser = await this.prisma.user.findFirst({
