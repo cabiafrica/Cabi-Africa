@@ -404,6 +404,12 @@ steps:
     waitFor: ['build-user-portal']
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'wait-for-lock-clearance'
+    entrypoint: 'bash'
+    args: ['-c', 'echo "Waiting for GCP service locks to clear..."; sleep 60']
+    waitFor: ['push-user-portal']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy-user-portal'
     entrypoint: gcloud
     args:
@@ -416,12 +422,12 @@ steps:
       - '--port=8080'
       - '--memory=1Gi'
       - '--cpu=1'
-      - '--timeout=300'
+      - '--timeout=600'
       - '--min-instances=0'
       - '--max-instances=10'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest'
       - '--set-env-vars=NODE_ENV=production'
-    waitFor: ['push-user-portal']
+    waitFor: ['wait-for-lock-clearance']
 
 images:
   - 'us-central1-docker.pkg.dev/cabi-africa/cabi-repo/auth-gateway:latest'
