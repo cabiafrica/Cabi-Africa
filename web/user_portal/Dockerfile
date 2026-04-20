@@ -72,12 +72,12 @@ COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/standalone 
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/static ./web/user_portal/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./web/user_portal/public
 
-# Explicitly ensure Prisma engines are reachable if they were missed by the tracer
+# Explicitly ensure Prisma engines are reachable
+# STANDALONE often misses the engine binaries in the trace
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
 
 USER nextjs
 EXPOSE 8080
 
-# Next.js standalone creates a server.js in the standalone directory.
-# In a monorepo, it's designed to be run from the root of that standalone dir.
 CMD ["node", "server.js"]
