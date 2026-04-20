@@ -69,9 +69,11 @@ RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/standalone ./
 
 # Standard Next.js standalone expects static and public in their original sub-paths
-# These must match the outputPath in next.config.js or the project's monorepo structure
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/static ./web/user_portal/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./web/user_portal/public
+
+# Explicitly ensure Prisma engines are reachable if they were missed by the tracer
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 
 USER nextjs
 EXPOSE 8080
