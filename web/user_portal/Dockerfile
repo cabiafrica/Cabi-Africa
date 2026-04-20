@@ -70,5 +70,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./web/user
 USER nextjs
 EXPOSE 8080
 
-# In monorepos, the entry point is at the app's nested path within standalone
-CMD ["node", "web/user_portal/server.js"]
+# In Next.js monorepos, the standalone entry point (server.js) location can vary.
+# This script finds the server.js file, moves to its directory (important for relative paths), and starts it.
+CMD ["sh", "-c", "SERVER_PATH=$(find . -name server.js | head -n 1); if [ -z \"$SERVER_PATH\" ]; then echo 'FATAL: server.js not found in /app'; ls -R /app; exit 1; fi; SERVER_DIR=$(dirname \"$SERVER_PATH\"); cd \"$SERVER_DIR\"; echo \"Auto-detected server.js at: $SERVER_PATH. Starting from $SERVER_DIR...\"; node server.js"]
