@@ -60,23 +60,16 @@ ENV NODE_ENV=production
 ENV PORT=8080
 ENV HOSTNAME="0.0.0.0"
 ENV NEXT_TELEMETRY_DISABLED=1
-# Force Prisma to find the query engine in the standalone node_modules
-ENV PRISMA_QUERY_ENGINE_LIBRARY=/app/node_modules/.prisma/client/libquery_engine-linux-musl-openssl-3.0.x.so.node
 
 RUN apk add --no-cache libc6-compat
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-# Copy the entire standalone output
-# Next.js standalone mode in a monorepo puts server.js at the root of standalone
+# In monorepos, standalone tracing often misses hoisted dependencies (like 'next' itself).
+# We copy the root node_modules to guarantee all shared deps are present.
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/standalone ./
-
-# Standard Next.js standalone expects static and public in their original sub-paths
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/static ./web/user_portal/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./web/user_portal/public
-
-# Explicitly ensure Prisma engines are reachable
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 
 USER nextjs
 EXPOSE 8080
