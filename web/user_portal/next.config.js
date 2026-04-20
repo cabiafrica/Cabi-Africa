@@ -37,6 +37,7 @@ const nextConfig = {
 
   // Experimental features for better performance
   experimental: {
+    outputFileTracingRoot: require('path').join(__dirname, '../../'),
     optimizeCss: false,
     optimizePackageImports: ['@heroicons/react'],
   },

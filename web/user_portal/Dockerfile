@@ -61,17 +61,21 @@ ENV PORT=8080
 ENV HOSTNAME="0.0.0.0"
 ENV NEXT_TELEMETRY_DISABLED=1
 
+RUN apk add --no-cache libc6-compat
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
 # Copy the entire standalone output
+# Next.js standalone mode in a monorepo puts server.js at the root of standalone
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/standalone ./
+
 # Standard Next.js standalone expects static and public in their original sub-paths
+# These must match the outputPath in next.config.js or the project's monorepo structure
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/static ./web/user_portal/.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./web/user_portal/public
 
 USER nextjs
 EXPOSE 8080
 
-# In Next.js monorepos, the standalone entry point (server.js) location can vary.
-# This script finds the server.js file, moves to its directory (important for relative paths), and starts it.
-CMD ["sh", "-c", "SERVER_PATH=$(find . -name server.js | head -n 1); if [ -z \"$SERVER_PATH\" ]; then echo 'FATAL: server.js not found in /app'; ls -R /app; exit 1; fi; SERVER_DIR=$(dirname \"$SERVER_PATH\"); cd \"$SERVER_DIR\"; echo \"Auto-detected server.js at: $SERVER_PATH. Starting from $SERVER_DIR...\"; node server.js"]
+# Next.js standalone creates a server.js in the standalone directory.
+# In a monorepo, it's designed to be run from the root of that standalone dir.
+CMD ["node", "server.js"]
