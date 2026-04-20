@@ -74,4 +74,4 @@ COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./web/user
 USER nextjs
 EXPOSE 8080
 
-CMD ["node", "server.js"]
+CMD ["node", "web/user_portal/server.js"]
