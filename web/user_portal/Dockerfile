@@ -60,6 +60,8 @@ ENV NODE_ENV=production
 ENV PORT=8080
 ENV HOSTNAME="0.0.0.0"
 ENV NEXT_TELEMETRY_DISABLED=1
+# Force Prisma to find the query engine in the standalone node_modules
+ENV PRISMA_QUERY_ENGINE_LIBRARY=/app/node_modules/.prisma/client/libquery_engine-linux-musl-openssl-3.0.x.so.node
 
 RUN apk add --no-cache libc6-compat
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
@@ -73,9 +75,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/.next/static ./we
 COPY --from=builder --chown=nextjs:nodejs /app/web/user_portal/public ./web/user_portal/public
 
 # Explicitly ensure Prisma engines are reachable
-# STANDALONE often misses the engine binaries in the trace
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 
 USER nextjs
 EXPOSE 8080
