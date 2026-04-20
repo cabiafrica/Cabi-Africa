@@ -33,7 +33,9 @@ export const RideStatusWidget: React.FC = () => {
                         <ListItem key={item.name}>
                             <span>{item.name}</span>
                             <span className="font-medium text-slate-900 dark:text-slate-50">
-                                {item.value} ({Math.round((item.value / rideStatusData.reduce((a, b) => a + b.value, 0)) * 100)}%)
+                                {item.value} ({rideStatusData.reduce((a, b) => a + b.value, 0) > 0 
+                                    ? Math.round((item.value / rideStatusData.reduce((a, b) => a + b.value, 0)) * 100) 
+                                    : 0}%)
                             </span>
                         </ListItem>
                     ))}

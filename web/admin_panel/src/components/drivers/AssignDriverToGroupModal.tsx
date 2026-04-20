@@ -36,12 +36,7 @@ interface AssignDriverToGroupModalProps {
   onSuccess?: () => void;
 }
 
-const MOCK_GROUPS: Group[] = [
-  { id: '1', name: 'Waitingi Drivers', memberCount: 15, type: 'OPERATIONAL' },
-  { id: '2', name: 'Nairobi CBD Sector', memberCount: 42, type: 'GEOGRAPHIC' },
-  { id: '3', name: 'Night Shift Elite', memberCount: 8, type: 'PERFORMANCE' },
-  { id: '4', name: 'New Recruits', memberCount: 120, type: 'ONBOARDING' },
-];
+const MOCK_GROUPS: Group[] = [];
 
 export const AssignDriverToGroupModal = ({
   isOpen,

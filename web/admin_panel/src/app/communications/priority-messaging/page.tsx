@@ -14,18 +14,7 @@ interface Message {
 }
 
 export default function HighPriorityMessagingPage() {
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: '1',
-            title: 'Protest blocking downtown',
-            content: 'Avoid downtown area due to ongoing protest. Use alternative routes.',
-            targetAudience: 'Drivers in Downtown',
-            isPushNotification: true,
-            priority: 'urgent',
-            sentAt: '2024-12-15T20:30:00Z',
-            recipientCount: 145,
-        },
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
 
     const [isComposing, setIsComposing] = useState(false);
     const [newMessage, setNewMessage] = useState({

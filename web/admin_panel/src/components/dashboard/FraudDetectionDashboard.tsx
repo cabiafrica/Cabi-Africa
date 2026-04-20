@@ -84,7 +84,7 @@ export const FraudDetectionDashboard: React.FC = () => {
                 <div className="bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/50 p-6 rounded-xl flex items-center justify-between">
                     <div>
                         <p className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wider">Resolved Today</p>
-                        <p className="text-3xl font-bold text-green-900 dark:text-green-200 mt-2">12</p>
+                        <p className="text-3xl font-bold text-green-900 dark:text-green-200 mt-2">0</p>
                     </div>
                     <div className="p-3 bg-white dark:bg-slate-800 rounded-full shadow-sm text-green-500">
                         <CheckCircle />

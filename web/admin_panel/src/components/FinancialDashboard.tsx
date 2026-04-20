@@ -21,28 +21,17 @@ export const FinancialDashboard: React.FC = () => {
   const [stats, setStats] = useState<FinancialStats | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Mock API call
-    setTimeout(() => {
-      const dailyData = Array.from({ length: 30 }, (_, i) => {
-        const date = new Date();
-        date.setDate(date.getDate() - (29 - i));
-        return {
-          date: date.toISOString().split('T')[0],
-          revenue: Math.floor(Math.random() * (50000 - 20000 + 1)) + 20000,
-        };
-      });
-
-      setStats({
-        totalRevenue: 985400,
-        systemCommission: 197080,
-        driverPayouts: 740550,
-        saccoSavings: 47870,
-        dailyRevenue: dailyData,
-      });
-      setLoading(false);
-    }, 1500);
-  }, []);
+    useEffect(() => {
+        // Fetch real aggregated data here in production
+        setStats({
+            totalRevenue: 0,
+            systemCommission: 0,
+            driverPayouts: 0,
+            saccoSavings: 0,
+            dailyRevenue: [],
+        });
+        setLoading(false);
+    }, []);
 
   if (loading) {
     return <div className="p-6">Loading financial data...</div>;

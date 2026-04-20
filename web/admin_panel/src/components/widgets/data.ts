@@ -23,7 +23,7 @@ export const dailySignups = [];
 export const acquisitionChannel = [];
 
 export const kpiData = [
-    { title: "Today's Revenue", metric: "KES 0", delta: "0%", deltaType: "moderateIncrease" },
-    { title: "Active Drivers", metric: "0", delta: "0%", deltaType: "increase" },
-    { title: "SOS Incidents", metric: "0", delta: "0%", deltaType: "decrease" },
+    { title: "Today's Revenue", metric: "KES 0", delta: "0.0%", deltaType: "unchanged" },
+    { title: "Active Drivers", metric: "0", delta: "0.0%", deltaType: "unchanged" },
+    { title: "SOS Incidents", metric: "0", delta: "0.0%", deltaType: "unchanged" },
 ];

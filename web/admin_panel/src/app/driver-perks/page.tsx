@@ -13,44 +13,7 @@ interface Perk {
 }
 
 // Mock Data
-const MOCK_PERKS: Perk[] = [
-    {
-        id: '1',
-        partner: 'Shell Refuel',
-        title: '5% Off Fuel',
-        description: 'Save on every liter at participating Shell stations.',
-        code: 'DRIVER5',
-        type: 'CODE',
-        isActive: true,
-    },
-    {
-        id: '2',
-        partner: 'AutoFix Garage',
-        title: '15% Off Oil Change',
-        description: 'Keep your engine running smoothly for less.',
-        code: 'FIX15',
-        type: 'CODE',
-        isActive: true,
-    },
-    {
-        id: '3',
-        partner: 'Safaricom Data',
-        title: '2GB Daily Bundle',
-        description: 'Exclusive driver rate: KSh 50/day.',
-        link: 'https://safaricom.com',
-        type: 'LINK',
-        isActive: true,
-    },
-    {
-        id: '4',
-        partner: 'Java House',
-        title: 'Free Coffee',
-        description: 'Get a free coffee with any meal purchase.',
-        code: 'JAVA-FREE',
-        type: 'CODE',
-        isActive: true,
-    },
-];
+const MOCK_PERKS: Perk[] = [];
 
 export default function DriverPerksPage() {
     const [perks, setPerks] = useState<Perk[]>([]);
@@ -261,7 +224,7 @@ export default function DriverPerksPage() {
                 </div>
                 <div className="bg-blue-50 p-6 rounded-lg border border-blue-100">
                     <h3 className="text-sm font-medium text-blue-700 mb-2">Total Redemptions (30d)</h3>
-                    <p className="text-3xl font-bold text-blue-900">1,245</p>
+                    <p className="text-3xl font-bold text-blue-900">0</p>
                 </div>
             </div>
         </div>

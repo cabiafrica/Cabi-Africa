@@ -11,23 +11,18 @@ const StatCard: React.FC<{ title: string; value: string; trend?: string }> = ({ 
 );
 
 export const CorporateDashboard: React.FC = () => {
-  // Mock Data for "Acme Corp"
   const stats = {
-    totalRides: 145,
-    totalSpend: 87500,
-    activeEmployees: 42,
+    totalRides: 0,
+    totalSpend: 0,
+    activeEmployees: 0,
   };
 
-  const recentTrips = [
-    { id: 't1', employee: 'Alice W.', date: '2024-05-28 08:30', from: 'Westlands', to: 'CBD', cost: 450 },
-    { id: 't2', employee: 'Bob M.', date: '2024-05-28 09:15', from: 'Kilimani', to: 'JKIA', cost: 1200 },
-    { id: 't3', employee: 'Charlie D.', date: '2024-05-27 17:45', from: 'Upper Hill', to: 'Karen', cost: 850 },
-  ];
+  const recentTrips: any[] = [];
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Corporate Dashboard: Acme Corp</h1>
+        <h1 className="text-2xl font-bold">Corporate Overview</h1>
         <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">Active Contract</span>
       </div>
 

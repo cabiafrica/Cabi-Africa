@@ -2,32 +2,7 @@
 import React, { useState, useEffect } from 'react';
 
 // Mock Data
-const MOCK_CONTENT = [
-    {
-        id: '1',
-        category: 'Breathing Exercises',
-        title: '4-7-8 Breathing',
-        duration: '3:00',
-        type: 'AUDIO',
-        isActive: true,
-    },
-    {
-        id: '2',
-        category: 'Short Meditations',
-        title: 'Morning Focus',
-        duration: '5:00',
-        type: 'AUDIO',
-        isActive: true,
-    },
-    {
-        id: '3',
-        category: 'Stress Relief',
-        title: 'Calm in Traffic',
-        duration: '4:30',
-        type: 'AUDIO',
-        isActive: true,
-    },
-];
+const MOCK_CONTENT: any[] = [];
 
 export default function WellnessContentPage() {
     const [content, setContent] = useState<any[]>([]);

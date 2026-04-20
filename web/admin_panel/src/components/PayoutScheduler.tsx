@@ -11,12 +11,12 @@ import {
 
 export const PayoutScheduler: React.FC = () => {
   const [config, setConfig] = useState({
-    enabled: true,
+    enabled: false,
     schedule: 'Weekly (Monday 00:00 EAT)',
-    lastRun: '2024-05-27T00:00:00Z',
-    lastRunStatus: 'SUCCESS',
-    nextRun: '2024-06-03T00:00:00Z',
-    totalProcessedLastRun: 450000
+    lastRun: new Date().toISOString(),
+    lastRunStatus: 'IDLE',
+    nextRun: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    totalProcessedLastRun: 0
   });
   const [isRunning, setIsRunning] = useState(false);
 

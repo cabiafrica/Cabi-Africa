@@ -18,21 +18,7 @@ interface BlogPost {
 }
 
 export default function BlogManagementPage() {
-    const [posts, setPosts] = useState<BlogPost[]>([
-        {
-            id: '1',
-            slug: 'welcome-to-cabi-blog',
-            title: 'Welcome to the Cabi Blog',
-            excerpt: 'We\'re excited to launch our official blog...',
-            content: '<p>Full content here...</p>',
-            author: 'Cabi Team',
-            publishedAt: '2024-12-15T10:00:00Z',
-            category: 'Announcements',
-            tags: ['launch', 'news'],
-            status: 'published',
-            promotionStats: { recipients: 1250, opens: 550, clicks: 80, lastPromotedAt: '2024-12-16T09:00:00Z' }
-        },
-    ]);
+    const [posts, setPosts] = useState<BlogPost[]>([]);
 
     const [isEditing, setIsEditing] = useState(false);
     const [currentPost, setCurrentPost] = useState<Partial<BlogPost>>({

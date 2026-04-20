@@ -27,7 +27,12 @@ export const BIDashboard: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        adminService.getBIStats().then(setStats).finally(() => setLoading(false));
+        adminService.getBIStats().then(data => {
+            setStats(data || { grossBookings: 0, trips: 0, newUsers: 0, activeDrivers: 0, avgRating: 0 });
+        }).catch(err => {
+            console.error('Failed to load BI stats', err);
+            setStats({ grossBookings: 0, trips: 0, newUsers: 0, activeDrivers: 0, avgRating: 0 });
+        }).finally(() => setLoading(false));
     }, []);
 
     if (loading) return (
@@ -60,27 +65,27 @@ export const BIDashboard: React.FC = () => {
             <Grid numItems={1} numItemsSm={2} numItemsLg={5} className="gap-4">
                 <Card decoration="top" decorationColor="indigo" className="bg-white dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700">
                     <Text className="dark:text-slate-400">Gross Bookings</Text>
-                    <Metric className="dark:text-white mt-1 text-2xl">{stats.grossBookings.toLocaleString()} KES</Metric>
-                    <BadgeDelta deltaType="moderateIncrease" size="xs" className="mt-2">+12.5%</BadgeDelta>
+                    <Metric className="dark:text-white mt-1 text-2xl">{stats.grossBookings?.toLocaleString() || '0'} KES</Metric>
+                    <BadgeDelta deltaType="unchanged" size="xs" className="mt-2">0.0%</BadgeDelta>
                 </Card>
                 <Card decoration="top" decorationColor="rose" className="bg-white dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700">
                     <Text className="dark:text-slate-400">Total Trips</Text>
-                    <Metric className="dark:text-white mt-1 text-2xl">{stats.trips.toLocaleString()}</Metric>
-                    <BadgeDelta deltaType="increase" size="xs" className="mt-2">+8.2%</BadgeDelta>
+                    <Metric className="dark:text-white mt-1 text-2xl">{stats.trips?.toLocaleString() || '0'}</Metric>
+                    <BadgeDelta deltaType="unchanged" size="xs" className="mt-2">0.0%</BadgeDelta>
                 </Card>
                 <Card decoration="top" decorationColor="cyan" className="bg-white dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700">
                     <Text className="dark:text-slate-400">New Users</Text>
-                    <Metric className="dark:text-white mt-1 text-2xl">{stats.newUsers}</Metric>
-                    <BadgeDelta deltaType="increase" size="xs" className="mt-2">+24%</BadgeDelta>
+                    <Metric className="dark:text-white mt-1 text-2xl">{stats.newUsers || '0'}</Metric>
+                    <BadgeDelta deltaType="unchanged" size="xs" className="mt-2">0.0%</BadgeDelta>
                 </Card>
                 <Card decoration="top" decorationColor="amber" className="bg-white dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700">
                     <Text className="dark:text-slate-400">Active Drivers</Text>
-                    <Metric className="dark:text-white mt-1 text-2xl">{stats.activeDrivers}</Metric>
-                    <BadgeDelta deltaType="moderateDecrease" size="xs" className="mt-2 text-red-500">-1.4%</BadgeDelta>
+                    <Metric className="dark:text-white mt-1 text-2xl">{stats.activeDrivers || '0'}</Metric>
+                    <BadgeDelta deltaType="unchanged" size="xs" className="mt-2">0.0%</BadgeDelta>
                 </Card>
                 <Card decoration="top" decorationColor="emerald" className="bg-white dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700">
                     <Text className="dark:text-slate-400">Avg Rating</Text>
-                    <Metric className="dark:text-white mt-1 text-2xl">{stats.avgRating} ★</Metric>
+                    <Metric className="dark:text-white mt-1 text-2xl">{stats.avgRating || '0'} ★</Metric>
                     <Text className="text-xs text-slate-500 mt-2">Target: 4.8</Text>
                 </Card>
             </Grid>
