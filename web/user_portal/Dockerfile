@@ -49,6 +49,8 @@ RUN npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
 
 # Build FROM THE ROOT to preserve monorepo paths in standalone
 RUN npm run build -w user-portal
+# Diagnostic: List files to find server.js
+RUN ls -R web/user_portal/.next/standalone
 
 # Stage 3: Lightweight production runner
 FROM node:20-alpine AS runner
