@@ -16,32 +16,7 @@ interface LostAndFoundTicket {
 }
 
 export default function LostAndFoundPage() {
-    const [tickets, setTickets] = useState<LostAndFoundTicket[]>([
-        {
-            id: '1',
-            ticketNumber: 'LF-2024-001',
-            passengerName: 'John Doe',
-            driverName: 'Jane Smith',
-            tripId: 'TRIP-12345',
-            itemDescription: 'Black leather wallet',
-            status: 'Contacting Driver',
-            createdAt: '2024-12-15T10:30:00Z',
-            updatedAt: '2024-12-15T11:00:00Z',
-            notes: ['Initial contact made with driver', 'Driver confirmed finding the item'],
-        },
-        {
-            id: '2',
-            ticketNumber: 'LF-2024-002',
-            passengerName: 'Alice Johnson',
-            driverName: 'Bob Wilson',
-            tripId: 'TRIP-12346',
-            itemDescription: 'iPhone 13 Pro',
-            status: 'New',
-            createdAt: '2024-12-15T14:20:00Z',
-            updatedAt: '2024-12-15T14:20:00Z',
-            notes: [],
-        },
-    ]);
+    const [tickets, setTickets] = useState<LostAndFoundTicket[]>([]);
 
     const [selectedTicket, setSelectedTicket] = useState<LostAndFoundTicket | null>(null);
     const [newNote, setNewNote] = useState('');

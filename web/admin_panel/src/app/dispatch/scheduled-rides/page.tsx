@@ -1,10 +1,7 @@
 import React from 'react';
 
 // Mock Data
-const scheduledRides = [
-    { id: '1', passenger: 'John Doe', pickup: '123 Main St', dropoff: 'JFK Airport', time: '2025-12-15 08:00 AM', status: 'SCHEDULED', assignedDriver: null },
-    { id: '2', passenger: 'Jane Smith', pickup: '456 Park Ave', dropoff: 'LaGuardia', time: '2025-12-15 09:30 AM', status: 'ASSIGNED', assignedDriver: 'Driver Bob' },
-];
+const scheduledRides: any[] = [];
 
 export default function ScheduledRidesPage() {
     return (

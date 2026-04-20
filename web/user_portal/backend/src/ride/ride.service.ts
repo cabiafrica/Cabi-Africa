@@ -24,59 +24,7 @@ export class RideService {
   private readonly notificationService = new NotificationService();
 
   // Mock data store
-  private rides = [
-    {
-      id: 'ride-in-progress-1',
-      status: 'in_progress',
-      driverId: 'driver-abc',
-      passengerId: 'user-abc',
-      vehicleId: 'v1',
-      destination: { address: 'Westside Mall, Nairobi', lat: -1.258, lon: 36.802 },
-      baseFare: 15.75,
-      totalWaitTimeFee: 0,
-      userId: 'user-abc',
-      shareToken: null,
-      shareTokenExpiry: null,
-      pendingChange: null,
-      stops: [
-        { address: 'Stop 1', status: 'pending', arrivalTime: null },
-      ],
-    },
-    {
-      id: 'ride-request-1',
-      status: 'pending_request',
-      driverId: null,
-      passengerId: 'user-xyz',
-      vehicleId: null,
-      pickupLocation: { address: 'Sarit Centre, Nairobi', lat: -1.255, lon: 36.804 },
-      destination: { address: 'Yaya Centre, Nairobi', lat: -1.295, lon: 36.786 },
-      baseFare: 12.00,
-      estimatedDuration: 25, // A regular trip
-      totalWaitTimeFee: 0,
-      userId: 'user-xyz',
-      shareToken: null,
-      shareTokenExpiry: null,
-      pendingChange: null,
-      stops: [],
-    },
-    {
-      id: 'ride-request-long-1',
-      status: 'pending_request',
-      driverId: null,
-      passengerId: 'user-lmn',
-      vehicleId: null,
-      pickupLocation: { address: 'JKIA Airport, Nairobi', lat: -1.319, lon: 36.927 },
-      destination: { address: 'Gigiri, Nairobi', lat: -1.234, lon: 36.806 },
-      baseFare: 48.00,
-      estimatedDuration: 60, // A long trip
-      totalWaitTimeFee: 0,
-      userId: 'user-lmn',
-      shareToken: null,
-      shareTokenExpiry: null,
-      pendingChange: null,
-      stops: [],
-    },
-  ];
+  private rides: any[] = [];
 
   // --- NEW LOGIC FOR STORY-39.2 ---
 
@@ -275,23 +223,7 @@ export class NotificationService {
 
 @Injectable()
 export class UserService {
-  private drivers = [
-    {
-      id: 'driver-1',
-      name: 'Driver One',
-      preferences: { prefersLongTrips: true },
-    },
-    {
-      id: 'driver-2',
-      name: 'Driver Two',
-      preferences: { prefersLongTrips: false },
-    },
-    {
-      id: 'driver-3',
-      name: 'Driver Three',
-      preferences: { prefersLongTrips: true },
-    },
-  ];
+  private drivers: any[] = [];
 
   async getAvailableDrivers() {
     // In a real app, this would query for drivers with 'available' status

@@ -26,12 +26,7 @@ export const PayoutProcessing: React.FC = () => {
   useEffect(() => {
     // Mock API fetch
     setTimeout(() => {
-      setPendingPayouts([
-        { driverId: 'd1', driverName: 'John Doe', pendingBalance: 4500, payoutMethod: 'M-Pesa: +254712...' },
-        { driverId: 'd2', driverName: 'Jane Smith', pendingBalance: 12000, payoutMethod: 'Bank: Equity...' },
-        { driverId: 'd3', driverName: 'Peter Jones', pendingBalance: 850, payoutMethod: 'M-Pesa: +254789...' },
-        { driverId: 'd4', driverName: 'Sarah Connor', pendingBalance: 3200, payoutMethod: 'M-Pesa: +254700...' },
-      ]);
+      setPendingPayouts([]);
       setLoading(false);
     }, 800);
   }, []);

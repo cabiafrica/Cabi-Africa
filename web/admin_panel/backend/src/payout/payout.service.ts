@@ -2,18 +2,10 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { PayoutDto, PayoutStatus } from '@cabi/shared/interfaces';
 
 // Mock in-memory database for payouts
-export const mockPayouts: PayoutDto[] = [
-  { id: 'payout-1', driverId: 'driver-123', driverName: 'John Doe', amount: 150.75, currency: 'KES', status: 'Pending', requestedAt: '2024-08-20T10:00:00Z', paymentMethod: 'M-Pesa' },
-  { id: 'payout-2', driverId: 'driver-456', driverName: 'Jane Smith', amount: 230.00, currency: 'KES', status: 'Pending', requestedAt: '2024-08-20T11:30:00Z', paymentMethod: 'Bank Transfer' },
-  { id: 'payout-3', driverId: 'driver-123', driverName: 'John Doe', amount: 100.00, currency: 'KES', status: 'Paid', requestedAt: '2024-08-15T09:00:00Z', processedAt: '2024-08-15T10:00:00Z', paymentMethod: 'M-Pesa' },
-  { id: 'payout-4', driverId: 'driver-789', driverName: 'Peter Jones', amount: 50.20, currency: 'KES', status: 'Pending', requestedAt: '2024-08-21T08:00:00Z', paymentMethod: 'M-Pesa' },
-];
+export const mockPayouts: PayoutDto[] = [];
 
 // Mock available balance. In a real app, this would come from an EarningsService.
-export const mockAvailableBalances = {
-  'driver-123': 250.0,
-  'driver-456': 50.0,
-};
+export const mockAvailableBalances: Record<string, number> = {};
 
 @Injectable()
 export class PayoutService {

@@ -16,12 +16,7 @@ export const PayoutProcessingDashboard: React.FC = () => {
 
   useEffect(() => {
     // Mock Data Fetching
-    setPayouts([
-      { driverId: 'd1', driverName: 'John Doe', phoneNumber: '+254711223344', amount: 4500, method: 'MPESA', status: 'PENDING' },
-      { driverId: 'd2', driverName: 'Jane Smith', phoneNumber: '+254722334455', amount: 12000, method: 'BANK', status: 'PENDING' },
-      { driverId: 'd3', driverName: 'Peter Kamau', phoneNumber: '+254733445566', amount: 850, method: 'MPESA', status: 'PENDING' },
-      { driverId: 'd4', driverName: 'Alice Wambui', phoneNumber: '+254744556677', amount: 3200, method: 'MPESA', status: 'PAID' },
-    ]);
+    setPayouts([]);
   }, []);
 
   const toggleSelection = (id: string) => {

@@ -14,44 +14,7 @@ interface Feedback {
     submittedDate: string;
 }
 
-const MOCK_FEEDBACK: Feedback[] = [
-    {
-        id: '1',
-        userId: 'user123',
-        userName: 'John Doe',
-        topic: 'Feature Request',
-        title: 'Add dark mode to passenger app',
-        description: 'Would love to have a dark mode option for night rides',
-        status: 'PLANNED',
-        requestCount: 47,
-        tags: ['ui-ux', 'accessibility'],
-        submittedDate: '2024-12-10T10:30:00Z',
-    },
-    {
-        id: '2',
-        userId: 'user456',
-        userName: 'Jane Smith',
-        topic: 'Safety',
-        title: 'Emergency contact quick dial',
-        description: 'Add a quick dial button for emergency contacts during rides',
-        status: 'UNDER_REVIEW',
-        requestCount: 23,
-        tags: ['safety', 'high-priority'],
-        submittedDate: '2024-12-12T14:20:00Z',
-    },
-    {
-        id: '3',
-        userId: 'user789',
-        userName: 'Bob Johnson',
-        topic: 'Payment',
-        title: 'Support for Apple Pay',
-        description: 'Please add Apple Pay as a payment option',
-        status: 'NEW',
-        requestCount: 15,
-        tags: ['payments'],
-        submittedDate: '2024-12-14T09:15:00Z',
-    },
-];
+const MOCK_FEEDBACK: Feedback[] = [];
 
 export default function FeedbackManagementPage() {
     const [feedback, setFeedback] = useState<Feedback[]>([]);

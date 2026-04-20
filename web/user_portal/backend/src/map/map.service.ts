@@ -18,12 +18,7 @@ export class MapService {
   private readonly logger = new Logger(MapService.name);
 
   // Mock data simulating a response from a partner's API
-  private mockVehicles: MicromobilityVehicle[] = [
-    { id: 'bike-001', type: VehicleType.EBIKE, lat: -1.284, lon: 36.822, batteryLevel: 85 },
-    { id: 'scooter-001', type: VehicleType.SCOOTER, lat: -1.283, lon: 36.818, batteryLevel: 62 },
-    { id: 'bike-002', type: VehicleType.EBIKE, lat: -1.286, lon: 36.825, batteryLevel: 91 },
-    { id: 'scooter-002', type: VehicleType.SCOOTER, lat: -1.285, lon: 36.823, batteryLevel: 45 },
-  ];
+  private mockVehicles: MicromobilityVehicle[] = [];
 
   /**
    * Fetches available micromobility vehicles within a given map area.

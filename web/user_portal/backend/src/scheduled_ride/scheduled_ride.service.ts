@@ -26,12 +26,7 @@ export class ScheduledRideService {
   private readonly REMINDER_WINDOW_MINUTES = 60;
 
   // Mock database
-  private scheduledRides: ScheduledRide[] = [
-    { id: 'ride-1', passengerId: 'passenger-1', pickupTime: new Date('2024-09-01T10:00:00Z'), destination: 'Airport', status: 'pending', dispatchAttempts: 0, reminderSent: false },
-    { id: 'ride-2', passengerId: 'passenger-1', pickupTime: new Date('2024-09-05T18:30:00Z'), destination: 'Downtown Hotel', status: 'pending', dispatchAttempts: 0, reminderSent: false },
-    // Add a ride that is due for dispatch for testing purposes
-    { id: 'ride-due', passengerId: 'passenger-due', pickupTime: new Date(Date.now() + 15 * 60 * 1000), destination: 'Test Destination', status: 'pending', dispatchAttempts: 0, reminderSent: false },
-  ];
+  private scheduledRides: ScheduledRide[] = [];
 
   // In a real app, these would be injected via NestJS DI
   constructor(

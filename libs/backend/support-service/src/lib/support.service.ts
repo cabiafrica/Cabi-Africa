@@ -31,9 +31,6 @@ export class SupportService {
     private cannedResponses = new Map<string, string>();
 
     constructor() {
-        // Seed dummy data
-        this.createTicket('user_1', 'PASSENGER', 'Charged twice', 'Payment Issue', 'I see two charges for my last ride.');
-
         // Story 62.8: Canned Responses
         this.cannedResponses.set('greeting', 'Hi there! Thanks for reaching out to Cabi Support.');
         this.cannedResponses.set('closing', 'Let us know if you need anything else. Safe rides!');
@@ -184,11 +181,8 @@ export class SupportService {
     private chatRooms = new Map<string, any[]>(); // roomId -> messages
 
     async getChatRooms(location: string) {
-        // Return nearby rooms mock
-        return [
-            { id: 'room_airport_jfk', name: 'JFK Queue Chat', users: 12 },
-            { id: 'room_downtown', name: 'Downtown Traffic', users: 5 }
-        ];
+        // Real implementation would return nearby rooms based on location
+        return [];
     }
 
     async sendChatMessage(roomId: string, senderId: string, text: string, type: 'TEXT' | 'HELP_REQUEST' = 'TEXT') {
@@ -223,23 +217,10 @@ export class SupportService {
 
     // Story 24.4: Contextual Info
     async getContextualInfo(userId: string, tripId?: string) {
-        // Mock aggregation from UserService and RideService
+        // Full implementation will fetch aggregation from UserService and RideService
         return {
-            user: {
-                id: userId,
-                name: 'John Doe',
-                email: 'john@example.com',
-                memberSince: 'Jan 2024',
-                totalTrips: 45,
-                rating: 4.8
-            },
-            trip: tripId ? {
-                id: tripId,
-                date: '2025-10-10',
-                route: 'JFK -> Downtown',
-                fare: 55.00,
-                driver: 'Driver Bob'
-            } : null
+            user: null,
+            trip: null
         };
     }
 }

@@ -1,54 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 
-// Mock data - in a real implementation, this would come from a database
-const mockTickets = [
-  {
-    id: 'TKT-001',
-    subject: 'Lost Item Report',
-    user: { id: 'user-456', name: 'Alice Johnson', email: 'alice@example.com' },
-    status: 'New',
-    category: 'Lost Item',
-    createdAt: '2024-08-11T14:05:00Z',
-    history: [
-      { sender: 'Alice Johnson', message: 'I left my phone in the car.', timestamp: '2024-08-11T14:05:00Z' },
-    ],
-  },
-  {
-    id: 'TKT-002',
-    subject: 'My ride fare was incorrect',
-    user: { id: 'user-123', name: 'John Doe', email: 'john.doe@example.com' },
-    status: 'Open',
-    category: 'Payment Dispute',
-    createdAt: '2024-08-11T10:00:00Z',
-    history: [
-      { sender: 'John Doe', message: 'Hi, I think my last ride was overcharged. Can you please look into it?', timestamp: '2024-08-11T10:00:00Z' },
-      { sender: 'Support Agent', message: 'Hello John, I am looking into your request now.', isInternalNote: true, timestamp: '2024-08-11T10:05:00Z' },
-    ],
-  },
-  {
-    id: 'TKT-003',
-    subject: 'Feature Suggestion: Dark Mode',
-    user: { id: 'user-789', name: 'Charlie Brown', email: 'charlie@example.com' },
-    status: 'Closed',
-    category: 'Suggestion',
-    createdAt: '2024-08-10T18:30:00Z',
-    history: [
-      { sender: 'Charlie Brown', message: 'The app needs a dark mode!', timestamp: '2024-08-10T18:30:00Z' },
-      { sender: 'Support Agent', message: 'Thanks for the suggestion! We have added it to our product backlog.', timestamp: '2024-08-10T18:35:00Z' },
-    ],
-  },
-  {
-    id: 'TKT-004',
-    subject: 'Driver was unprofessional',
-    user: { id: 'user-101', name: 'Diana Prince', email: 'diana@example.com' },
-    status: 'Open',
-    category: 'Driver Feedback',
-    createdAt: '2024-08-11T13:00:00Z',
-    history: [
-      { sender: 'Diana Prince', message: 'The driver was rude and took a longer route.', timestamp: '2024-08-11T13:00:00Z' },
-    ],
-  },
-];
+
 
 interface FindAllParams {
   page: number;
@@ -59,7 +11,7 @@ interface FindAllParams {
 
 @Injectable()
 export class SupportService {
-  private tickets = [...mockTickets];
+  private tickets: any[] = [];
 
   findAll(params: FindAllParams) {
     let filteredTickets = this.tickets;
