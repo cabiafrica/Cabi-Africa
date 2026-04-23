@@ -26,20 +26,13 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: 🐦 Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: 'latest'
-          channel: 'stable'
-          cache: true
-
       - name: 🐦 Setup Shorebird
         uses: shorebirdtech/setup-shorebird@v1
         with:
           cache: true
 
       - name: 📦 Get Packages
-        run: flutter pub get
+        run: shorebird flutter pub get
 
       - name: 🚀 Publish Shorebird Patch
         run: shorebird patch android --force
