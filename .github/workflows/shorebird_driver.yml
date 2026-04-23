@@ -6,6 +6,7 @@ on:
       - main # Restore to trigger on main branch
     paths:
       - 'mobile/driver_app/**' # Only run when code in driver_app changes
+  workflow_dispatch:
 
 jobs:
   shorebird-patch:

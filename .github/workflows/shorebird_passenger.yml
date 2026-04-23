@@ -6,6 +6,7 @@ on:
       - main # Change this if your main branch has a different name
     paths:
       - 'mobile/passenger_app/**' # Only run when code in passenger_app changes
+  workflow_dispatch:
 
 jobs:
   shorebird-patch:
