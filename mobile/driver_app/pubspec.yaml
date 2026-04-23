@@ -1,7 +1,7 @@
 name: driver_app
 description: CABI Drive - The professional driver app by CABI Africa.
 publish_to: 'none'
-version: 1.0.0+2
+version: 1.1.0+3
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
