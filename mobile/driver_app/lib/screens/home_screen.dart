@@ -266,6 +266,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: 20),
 
+                  // OTA Test Label
+                  const Center(
+                    child: Text(
+                      "OTA TEST v1.1.0+3 - Active",
+                      style: TextStyle(
+                        color: Color(0xFFFFD700),
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
                   // Status headline
                   Text(
                     _isOnline ? 'You are online' : 'Ready to drive?',
