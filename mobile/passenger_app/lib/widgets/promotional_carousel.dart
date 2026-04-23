@@ -20,22 +20,22 @@ class PromotionalCarousel extends StatelessWidget {
         ),
         items: [
           _buildBannerItem(
-            'Explore the City\nTop 10 Hidden Gems',
-            'assets/images/hidden_gems_bg.png',
+            'Safe Night Rides\nWith Cabi Security',
+            'assets/images/blog_1.png',
             Colors.black,
           ),
           _buildBannerItem(
-            'Food Delivered Fast\nTry Cabi Eats Today',
-            'assets/images/food_bg.png',
+            'Corporate Travel\nEfficiency & Luxury',
+            'assets/images/blog_2.png',
             Colors.black,
           ),
           _buildBannerItem(
-            'Send Packages\nSecure & Reliable',
-            'assets/images/package_bg.png',
+            'Weekend Getaways\nExplore Top Destinations',
+            'assets/images/blog_3.png',
             Colors.black,
           ),
           _buildBannerItem(
-            'Ride in Style\nGet 20% off Premium',
+            'Tours & Travel\nBook Safaris Today',
             'assets/images/tours_bg.png',
             Colors.black,
           ),
@@ -50,6 +50,14 @@ class PromotionalCarousel extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A), // Dark fallback color
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 15,
+            spreadRadius: 2,
+            offset: const Offset(0, 8),
+          )
+        ],
       ),
       child: Stack(
         children: [

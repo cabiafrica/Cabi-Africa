@@ -11,7 +11,7 @@ import { AdminRolesController } from './admin-roles.controller';
 import { AdminRolesService } from './admin-roles.service';
 import { Admin2FAService } from './admin-2fa.service';
 import { AdminGeofenceInterceptor } from './admin-geofence.interceptor';
-import { RbacModule } from '@cabi/backend/rbac';
+import { RbacModule, JwtAuthGuard } from '@cabi/backend/rbac';
 
 import { AdminUsersController } from './admin-users.controller';
 import { AdminUsersService } from './admin-users.service';
@@ -23,12 +23,23 @@ import { ReferralController } from './referral.controller';
 import { ReferralService } from './referral.service';
 import { DriverApprovalController } from './driver-approval.controller';
 import { DriverApprovalService } from './driver-approval.service';
+import { BlogController } from './blog.controller';
+import { BlogService } from './blog.service';
 
 @Module({
   imports: [
     RbacModule,
   ],
-  controllers: [AdminController, AdminRolesController, AdminUsersController, SOSController, DriverGroupController, ReferralController, DriverApprovalController],
+  controllers: [
+    AdminController, 
+    AdminRolesController, 
+    AdminUsersController, 
+    SOSController, 
+    DriverGroupController, 
+    ReferralController, 
+    DriverApprovalController,
+    BlogController
+  ],
   providers: [
     AdminService,
     AdminRolesService,
@@ -38,6 +49,7 @@ import { DriverApprovalService } from './driver-approval.service';
     DriverGroupService,
     ReferralService,
     DriverApprovalService,
+    BlogService,
     AdminReadOnlyGuard,
     AdminPermissionGuard,
     {
@@ -51,6 +63,10 @@ import { DriverApprovalService } from './driver-approval.service';
     {
       provide: APP_GUARD,
       useClass: AdminReadOnlyGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
     },
     // We can keep AdminPermissionGuard if it's used elsewhere, otherwise we might remove it
     {

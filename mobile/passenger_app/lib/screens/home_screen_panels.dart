@@ -13,7 +13,7 @@ extension _HomeScreenPanels on _HomeScreenState {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: Colors.black.withOpacity(0.1),
                 blurRadius: 20,
                 spreadRadius: 5),
           ],
@@ -144,7 +144,7 @@ extension _HomeScreenPanels on _HomeScreenState {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
+              color: Colors.black.withOpacity(0.3),
               blurRadius: 20,
               offset: const Offset(0, 10),
             )
@@ -272,13 +272,13 @@ extension _HomeScreenPanels on _HomeScreenState {
 
   Widget _buildBookingSheet(Color primaryColor) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.4,
+      initialChildSize: 0.95,
       minChildSize: 0.25,
       maxChildSize: 0.95,
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.98),
+            color: Colors.white.withOpacity(0.98),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: SingleChildScrollView(
@@ -361,18 +361,29 @@ extension _HomeScreenPanels on _HomeScreenState {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 18),
                           decoration: BoxDecoration(
-                            image: const DecorationImage(
-                              image: AssetImage('assets/images/tours_bg.png'),
+                            image: DecorationImage(
+                              image: const AssetImage('assets/images/tours_bg.png'),
                               fit: BoxFit.cover,
+                              colorFilter: ColorFilter.mode(
+                                  Colors.black.withOpacity(0.5),
+                                  BlendMode.darken),
+                              opacity: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.15),
+                                blurRadius: 12,
+                                offset: const Offset(0, 6),
+                              )
+                            ],
                           ),
                           child: Row(
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.2),
+                                  color: Colors.white.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const Icon(
@@ -400,7 +411,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       'Book trips, safaris & adventures',
                                       style: TextStyle(
                                         color: Colors.white
-                                            .withValues(alpha: 0.85),
+                                            .withOpacity(0.85),
                                         fontSize: 13,
                                       ),
                                     ),
@@ -410,7 +421,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.25),
+                                  color: Colors.white.withOpacity(0.25),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -443,12 +454,22 @@ extension _HomeScreenPanels on _HomeScreenState {
                               child: Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  image: const DecorationImage(
-                                    image:
-                                        AssetImage('assets/images/food_bg.png'),
+                                  image: DecorationImage(
+                                    image: AssetImage('assets/images/food_bg.png'),
                                     fit: BoxFit.cover,
+                                    colorFilter: ColorFilter.mode(
+                                        Colors.black.withOpacity(0.5),
+                                        BlendMode.darken),
+                                    opacity: 1.0,
                                   ),
                                   borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.15),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 6),
+                                    )
+                                  ],
                                 ),
                                 child: Column(
                                   children: [
@@ -456,7 +477,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
                                         color:
-                                            Colors.white.withValues(alpha: 0.2),
+                                            Colors.white.withOpacity(0.2),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: const Icon(
@@ -479,7 +500,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       'Order meals',
                                       style: TextStyle(
                                         color: Colors.white
-                                            .withValues(alpha: 0.85),
+                                            .withOpacity(0.85),
                                         fontSize: 11,
                                       ),
                                     ),
@@ -503,12 +524,22 @@ extension _HomeScreenPanels on _HomeScreenState {
                               child: Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  image: const DecorationImage(
-                                    image: AssetImage(
-                                        'assets/images/package_bg.png'),
+                                  image: DecorationImage(
+                                    image: AssetImage('assets/images/package_bg.png'),
                                     fit: BoxFit.cover,
+                                    colorFilter: ColorFilter.mode(
+                                        Colors.black.withOpacity(0.5),
+                                        BlendMode.darken),
+                                    opacity: 1.0,
                                   ),
                                   borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.15),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 6),
+                                    )
+                                  ],
                                 ),
                                 child: Column(
                                   children: [
@@ -516,7 +547,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
                                         color:
-                                            Colors.white.withValues(alpha: 0.2),
+                                            Colors.white.withOpacity(0.2),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: const Icon(
@@ -539,7 +570,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       'Send parcels',
                                       style: TextStyle(
                                         color: Colors.white
-                                            .withValues(alpha: 0.85),
+                                            .withOpacity(0.85),
                                         fontSize: 11,
                                       ),
                                     ),
@@ -550,6 +581,93 @@ extension _HomeScreenPanels on _HomeScreenState {
                           ),
                         ],
                       ),
+
+                      const SizedBox(height: 12),
+                      
+                      // Favourite Places Section
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Favourites",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text("See all",
+                                style: TextStyle(color: AppTheme.primaryColor)),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 100,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _favouriteDestinations.length,
+                          itemBuilder: (context, index) {
+                            final item = _favouriteDestinations[index];
+                            return Container(
+                              width: 140,
+                              margin: const EdgeInsets.only(right: 12),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  )
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(item['icon'], color: Colors.black54),
+                                  const Spacer(),
+                                  Text(item['name'],
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14)),
+                                  Text(item['address'],
+                                      style: const TextStyle(
+                                          color: Colors.grey, fontSize: 11),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      // Recent Places
+                      const SizedBox(height: 24),
+                      const Text("Recent Places",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
+                      const SizedBox(height: 12),
+                      ..._recentPlaces.map((place) => ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(place['icon'], color: Colors.grey),
+                            ),
+                            title: Text(place['name'],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600)),
+                            subtitle: Text(place['address']),
+                            onTap: () {
+                              _updateState(() {
+                                _destination = place['name'];
+                              });
+                            },
+                          )),
 
                       const SizedBox(height: 30),
 
@@ -586,7 +704,7 @@ extension _HomeScreenPanels on _HomeScreenState {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 20,
               spreadRadius: 5,
             ),
@@ -836,7 +954,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                           horizontal: 16, vertical: 14),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? categoryColor.withValues(alpha: 0.1)
+                            ? categoryColor.withOpacity(0.1)
                             : const Color(0xFF161616),
                         border: Border.all(
                           color: isSelected ? categoryColor : Colors.white12,
@@ -853,7 +971,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? categoryColor.withValues(alpha: 0.15)
+                                  ? categoryColor.withOpacity(0.15)
                                   : Colors.white10,
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -929,7 +1047,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       horizontal: 8, vertical: 2),
                                   decoration: BoxDecoration(
                                     color:
-                                        categoryColor.withValues(alpha: 0.18),
+                                        categoryColor.withOpacity(0.18),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(

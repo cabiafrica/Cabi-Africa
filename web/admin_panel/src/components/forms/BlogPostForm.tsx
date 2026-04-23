@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import styles
 import { adminService, BlogPost } from '../../services/adminService';
+import { useAuth } from '../../hooks/useAuth';
 
 interface Props {
   post?: BlogPost;
@@ -13,8 +14,13 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
   const [title, setTitle] = useState(post?.title || '');
   const [content, setContent] = useState(post?.content || '');
   const [authorName, setAuthorName] = useState(post?.authorName || '');
-  const [status, setStatus] = useState<'DRAFT' | 'PUBLISHED'>(post?.status || 'DRAFT');
+  const [imageUrl, setImageUrl] = useState(post?.imageUrl || '');
+  const [status, setStatus] = useState<'DRAFT' | 'PENDING_APPROVAL' | 'PUBLISHED'>(post?.status || 'DRAFT');
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+
+  // Check if current user is a senior manager or admin
+  const canPublish = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.permissions?.includes('BLOG_POSTS_PUBLISH' as any);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,8 +30,8 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
       content,
       authorName,
       status,
-      summary: content.substring(0, 100).replace(/<[^>]+>/g, ''), // Simple summary generation
-      imageUrl: '', // Placeholder for now
+      summary: content.substring(0, 160).replace(/<[^>]+>/g, '') + '...', // Enhanced summary
+      imageUrl,
     };
 
     try {
@@ -49,27 +55,62 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Title</label>
-            <input
-              type="text"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              required
-              className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border text-gray-900"
-              placeholder="Post Title"
-            />
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Title</label>
+              <input
+                type="text"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+                required
+                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border text-gray-900"
+                placeholder="Enter a catchy title..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Author Name</label>
+              <input
+                type="text"
+                value={authorName}
+                onChange={e => setAuthorName(e.target.value)}
+                required
+                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border text-gray-900"
+                placeholder="Author"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Featured Image URL</label>
+              <input
+                type="url"
+                value={imageUrl}
+                onChange={e => setImageUrl(e.target.value)}
+                required
+                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border text-gray-900"
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
           </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Author Name</label>
-            <input
-              type="text"
-              value={authorName}
-              onChange={e => setAuthorName(e.target.value)}
-              required
-              className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border text-gray-900"
-              placeholder="Author"
-            />
+
+          <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 p-4">
+            <div className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Featured Image Preview</div>
+            {imageUrl ? (
+              <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-md">
+                <img 
+                  src={imageUrl} 
+                  alt="Featured Preview" 
+                  className="w-full h-full object-cover"
+                  onError={(e) => (e.currentTarget.src = 'https://placehold.co/600x400?text=Invalid+Image+URL')}
+                />
+              </div>
+            ) : (
+              <div className="flex flex-col items-center text-gray-400">
+                <span className="text-4xl mb-2">🖼️</span>
+                <span className="text-xs">Image will be cropped to 16:9</span>
+              </div>
+            )}
+            <p className="mt-3 text-[10px] text-gray-500 text-center">
+              All blog images maintain a standard 16:9 aspect ratio for consistency across the platform.
+            </p>
           </div>
         </div>
 
@@ -95,15 +136,21 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
         </div>
 
         <div className="pt-8">
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Status</label>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Workflow Status</label>
           <select
             value={status}
-            onChange={e => setStatus(e.target.value as 'DRAFT' | 'PUBLISHED')}
-            className="w-48 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border text-gray-900"
+            onChange={e => setStatus(e.target.value as any)}
+            className="w-full md:w-64 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border text-gray-900 font-medium"
           >
-            <option value="DRAFT">Draft</option>
-            <option value="PUBLISHED">Published</option>
+            <option value="DRAFT">📝 Draft (Internal Only)</option>
+            <option value="PENDING_APPROVAL">⏳ Ready for Approval (Notify Manager)</option>
+            {canPublish && <option value="PUBLISHED">🚀 Published (Live on Site)</option>}
           </select>
+          {!canPublish && status === 'PUBLISHED' && (
+            <p className="mt-2 text-xs text-amber-600 font-medium italic">
+              * Only Senior Managers can publish to the live site.
+            </p>
+          )}
         </div>
 
         <div className="flex justify-end gap-3 pt-6 border-t border-gray-100">

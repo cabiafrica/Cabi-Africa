@@ -1,16 +1,34 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '@cabi/backend/database';
+import { PermissionService } from '../services/permission.service';
+import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
     constructor(
         private readonly jwtService: JwtService,
-        private readonly prisma: PrismaService
+        private readonly prisma: PrismaService,
+        private readonly permissionService: PermissionService,
+        private readonly reflector: Reflector,
     ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
+        // 1. Check if route is public using standard reflector lookup
+        const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+            context.getHandler(),
+            context.getClass(),
+        ]) || this.reflector.get<boolean>(IS_PUBLIC_KEY, context.getHandler());
+        
+        if (isPublic) {
+            return true;
+        }
+
         const request = context.switchToHttp().getRequest();
+        
+        // Handle cases where the request is from a known safe internal service
+        // or has already been authenticated by a gateway
         const authHeader = request.headers.authorization;
 
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -38,8 +56,14 @@ export class JwtAuthGuard implements CanActivate {
                 throw new UnauthorizedException('User not found');
             }
 
-            // Attach user to request
-            request.user = user;
+            // Flatten permissions
+            const permissionsSet = await this.permissionService.getUserPermissions(user.id);
+            
+            // Attach user to request with flat permissions array
+            request.user = {
+                ...user,
+                permissions: Array.from(permissionsSet)
+            };
 
             return true;
         } catch (error) {
@@ -48,3 +72,4 @@ export class JwtAuthGuard implements CanActivate {
         }
     }
 }
+

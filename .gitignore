@@ -205,10 +205,18 @@ storybook-static/
 .storybook-out/
 
 # ===================================
+# Screenshots & Artifacts
+# ===================================
+*.png
+!mobile/passenger_app/assets/**/*.png
+!web/**/*.png
+
+# ===================================
 # Misc
 # ===================================
 *.tgz
 .npmrc
 .yarnrc
+*.xml
 
 nul

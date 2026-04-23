@@ -136,6 +136,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
       { icon: '🏷️', label: 'Promo Codes', view: '/promo-codes', permission: 'MARKETING_CONTENT_EDIT' },
       { icon: '📢', label: 'Bulk Msg', view: '/bulk-messaging', permission: 'NOTIFICATIONS_MANAGE' },
       { icon: '📝', label: 'CMS', view: '/cms', permission: 'BLOG_POSTS_EDIT' },
+      { icon: '📰', label: 'Blog Management', view: '/blog-management', permission: 'BLOG_POSTS_EDIT' },
     ]
   },
   {

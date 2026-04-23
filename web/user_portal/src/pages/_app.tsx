@@ -7,6 +7,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 import { ThemeProvider } from '../context/ThemeContext';
 import { AuthProvider } from '../context/AuthContext';
+import FloatingTripWidget from '../components/ui/FloatingTripWidget';
 
 function App({ Component, pageProps }: AppProps) {
   return (
@@ -14,6 +15,7 @@ function App({ Component, pageProps }: AppProps) {
       <AuthProvider>
         <main className={inter.className}>
           <Component {...pageProps} />
+          <FloatingTripWidget />
         </main>
       </AuthProvider>
     </ThemeProvider>

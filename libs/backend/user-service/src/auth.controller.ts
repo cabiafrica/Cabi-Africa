@@ -1,5 +1,6 @@
 import { Controller, Post, Body, ValidationPipe, UnauthorizedException, UseInterceptors, UploadedFiles, UploadedFile } from '@nestjs/common';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import { Public } from '@cabi/backend/rbac';
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { IsNotEmpty, IsString } from 'class-validator';
@@ -19,6 +20,7 @@ export class AuthController {
   constructor(private readonly userService: UserService) { }
 
   @Post('register')
+  @Public()
   async register(@Body(new ValidationPipe()) registerUserDto: RegisterUserDto) {
     const result = await this.userService.registerPassenger(registerUserDto);
     return {
@@ -28,6 +30,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @Public()
   async login(@Body(new ValidationPipe()) loginDto: LoginDto) {
     try {
       const user = await this.userService.login(loginDto.email, loginDto.password);
@@ -44,6 +47,7 @@ export class AuthController {
   }
 
   @Post('register-driver')
+  @Public()
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'license_front', maxCount: 1 },
     { name: 'license_back', maxCount: 1 },
@@ -61,6 +65,7 @@ export class AuthController {
   }
 
   @Post('register-organization')
+  @Public()
   @UseInterceptors(FileInterceptor('registration_certificate'))
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async registerOrganization(@Body() body: any, @UploadedFile() file: any) {

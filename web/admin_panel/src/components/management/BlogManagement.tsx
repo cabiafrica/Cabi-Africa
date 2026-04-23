@@ -45,35 +45,70 @@ export const BlogManagement: React.FC = () => {
 
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-50 text-slate-500 uppercase text-[10px] tracking-widest font-bold">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-4 text-left">Post</th>
+              <th className="px-6 py-4 text-left">Author</th>
+              <th className="px-6 py-4 text-left">Workflow Status</th>
+              <th className="px-6 py-4 text-left">Date</th>
+              <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-gray-100">
             {posts.map(post => (
-              <tr key={post.id} className="hover:bg-indigo-50 transition-colors">
+              <tr key={post.id} className="hover:bg-slate-50/50 transition-all group">
                 <td className="px-6 py-4">
-                  <div className="text-sm font-medium text-gray-900">{post.title}</div>
-                  <div className="text-xs text-gray-500 truncate max-w-xs">{post.summary}</div>
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 border border-slate-200">
+                      <img 
+                        src={post.imageUrl || 'https://placehold.co/160x100?text=No+Image'} 
+                        alt="" 
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-sm font-bold text-slate-800 truncate">{post.title}</div>
+                      <div className="text-[11px] text-slate-400 truncate max-w-xs">{post.summary}</div>
+                    </div>
+                  </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.authorName}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${post.status === 'PUBLISHED' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                    {post.status}
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-500">
+                      {post.authorName?.charAt(0) || 'A'}
+                    </div>
+                    <span className="text-sm text-slate-600 font-medium">{post.authorName}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`px-2.5 py-1 inline-flex text-[10px] leading-4 font-bold uppercase tracking-wider rounded-full ${
+                    post.status === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-700' : 
+                    post.status === 'PENDING_APPROVAL' ? 'bg-amber-100 text-amber-700 animate-pulse' : 
+                    'bg-slate-100 text-slate-600'
+                  }`}>
+                    {post.status?.replace('_', ' ') || 'DRAFT'}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 font-medium">
                   {post.publishedDate ? new Date(post.publishedDate).toLocaleDateString() : 'N/A'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button onClick={() => setEditingPost(post)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
-                  <button onClick={() => handleDelete(post.id)} className="text-red-600 hover:text-red-900">Delete</button>
+                  <div className="flex justify-end gap-2">
+                    <button 
+                      onClick={() => setEditingPost(post)} 
+                      className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                      title="Edit Post"
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(post.id)} 
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Delete Post"
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

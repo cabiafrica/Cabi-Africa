@@ -120,6 +120,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     },
   ];
 
+  final List<Map<String, dynamic>> _favouriteDestinations = [
+    {'name': 'Home', 'address': 'Valley Arcade, Nairobi', 'icon': Icons.home},
+    {'name': 'Work', 'address': 'CBD, Nairobi', 'icon': Icons.work},
+  ];
+
+  final List<Map<String, dynamic>> _recentPlaces = [
+    {'name': 'Jomo Kenyatta Airport', 'address': 'Airport North Rd, Nairobi', 'icon': Icons.history},
+    {'name': 'Westgate Mall', 'address': 'Mwanzi Rd, Nairobi', 'icon': Icons.history},
+  ];
+
   @override
   void initState() {
     super.initState();

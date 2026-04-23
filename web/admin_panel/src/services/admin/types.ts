@@ -85,7 +85,7 @@ export interface BlogPost {
     summary: string;
     imageUrl: string;
     authorName: string;
-    status: 'DRAFT' | 'PUBLISHED';
+    status: 'DRAFT' | 'PENDING_APPROVAL' | 'PUBLISHED';
     publishedDate?: string;
 }
 

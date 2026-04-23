@@ -833,6 +833,7 @@ enum Permission {
   MARKETING_ANALYTICS_VIEW
   BLOG_POSTS_VIEW
   BLOG_POSTS_EDIT
+  BLOG_POSTS_PUBLISH
   SYSTEM_SETTINGS_VIEW
   SYSTEM_SETTINGS_EDIT
   USER_ROLES_ASSIGN
@@ -1010,4 +1011,27 @@ enum OrganizationStatus {
   UNVERIFIED
   PENDING
   VERIFIED
+}
+
+model BlogPost {
+  id            String     @id @default(uuid())
+  title         String
+  slug          String     @unique
+  summary       String
+  content       String
+  imageUrl      String?
+  status        PostStatus @default(DRAFT)
+  authorName    String
+  publishedDate DateTime?
+  category      String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@map("blog_posts")
+}
+
+enum PostStatus {
+  DRAFT
+  PENDING_APPROVAL
+  PUBLISHED
 }
