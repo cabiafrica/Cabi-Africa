@@ -3,9 +3,9 @@ name: Shorebird Driver App OTA Updates
 on:
   push:
     branches:
-      - main # Restore to trigger on main branch
+      - main
     paths:
-      - 'mobile/driver_app/**' # Only run when code in driver_app changes
+      - 'mobile/driver_app/**'
   workflow_dispatch:
 
 jobs:
@@ -26,13 +26,19 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
       - name: 🐦 Setup Shorebird
         uses: shorebirdtech/setup-shorebird@v1
         with:
           cache: true
 
       - name: 📦 Get Packages
-        run: shorebird flutter pub get
+        run: flutter pub get
 
       - name: 🚀 Publish Shorebird Patch
         run: shorebird patch android --force
