@@ -305,6 +305,18 @@ extension _HomeScreenPanels on _HomeScreenState {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // OTA Test Label
+                      const Center(
+                        child: Text(
+                          "OTA TEST v1.1.0+3 - Active",
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       // 1. Destination Picker
                       const Text("Where to?",
                           style: TextStyle(
