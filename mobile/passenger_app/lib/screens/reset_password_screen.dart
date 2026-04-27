@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -19,19 +20,32 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     }
     setState(() => _isLoading = true);
 
-    // Mock API call
-    await Future.delayed(const Duration(seconds: 2));
-    debugPrint('Password reset for token: ${_tokenController.text}');
-
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password has been reset successfully.')),
+    try {
+      final authService = AuthService();
+      final result = await authService.resetPassword(
+        _tokenController.text,
+        _passwordController.text,
       );
-      // In a real app, navigate to the login screen
-      Navigator.of(context).pop();
+
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+
+      if (result.error == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Password has been reset successfully.')),
+        );
+        Navigator.of(context).pop();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.error!)),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 

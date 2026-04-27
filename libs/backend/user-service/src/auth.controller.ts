@@ -4,6 +4,8 @@ import { Public } from '@cabi/backend/rbac';
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 class LoginDto {
   @IsNotEmpty({ message: 'Email or phone is required' })
@@ -46,6 +48,18 @@ export class AuthController {
     }
   }
 
+  @Post('forgot-password')
+  @Public()
+  async forgotPassword(@Body(new ValidationPipe()) forgotPasswordDto: ForgotPasswordDto) {
+    return this.userService.forgotPassword(forgotPasswordDto);
+  }
+
+  @Post('reset-password')
+  @Public()
+  async resetPassword(@Body(new ValidationPipe()) resetPasswordDto: ResetPasswordDto) {
+    return this.userService.resetPassword(resetPasswordDto);
+  }
+
   @Post('register-driver')
   @Public()
   @UseInterceptors(FileFieldsInterceptor([
@@ -75,4 +89,4 @@ export class AuthController {
       ...result,
     };
   }
-}
+}

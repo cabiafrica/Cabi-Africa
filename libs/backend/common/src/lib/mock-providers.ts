@@ -1,4 +1,4 @@
-import { SmsProvider, PaymentProvider, StorageProvider } from './interfaces';
+import { SmsProvider, PaymentProvider, StorageProvider, EmailProvider } from './interfaces';
 
 export class MockSmsProvider implements SmsProvider {
   async sendSms(to: string, message: string) {
@@ -31,5 +31,12 @@ export class MockStorageProvider implements StorageProvider {
 
   async deleteFile(url: string) {
     console.log(`[Mock Storage] Deleted file at ${url}`);
+  }
+}
+
+export class MockEmailProvider implements EmailProvider {
+  async sendEmail(to: string, subject: string, body: string) {
+    console.log(`[Mock Email] Sending to ${to}: [${subject}] ${body}`);
+    return { success: true, messageId: `email_${Date.now()}` };
   }
 }

@@ -188,4 +188,57 @@ class AuthService {
   Future<void> updateProfile({required String name, String? imagePath}) async {
     await Future.delayed(const Duration(seconds: 1));
   }
+
+  Future<AuthResult> forgotPassword(String email) async {
+    try {
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/auth/forgot-password'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'email': email}),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return AuthResult(isSignedIn: false, user: data);
+      } else {
+        return AuthResult(
+          isSignedIn: false,
+          error: data['message']?.toString() ?? 'Failed to request reset',
+        );
+      }
+    } catch (e) {
+      return AuthResult(isSignedIn: false, error: 'Connection error: $e');
+    }
+  }
+
+  Future<AuthResult> resetPassword(String token, String newPassword) async {
+    try {
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/auth/reset-password'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'token': token,
+              'newPassword': newPassword,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return AuthResult(isSignedIn: false, user: data);
+      } else {
+        return AuthResult(
+          isSignedIn: false,
+          error: data['message']?.toString() ?? 'Failed to reset password',
+        );
+      }
+    } catch (e) {
+      return AuthResult(isSignedIn: false, error: 'Connection error: $e');
+    }
+  }
 }

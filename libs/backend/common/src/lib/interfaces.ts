@@ -12,3 +12,7 @@ export interface StorageProvider {
   uploadFile(file: any, path: string): Promise<{ url: string }>;
   deleteFile(url: string): Promise<void>;
 }
+
+export interface EmailProvider {
+  sendEmail(to: string, subject: string, body: string): Promise<{ success: boolean; messageId?: string; error?: string }>;
+}

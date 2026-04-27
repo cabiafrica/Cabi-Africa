@@ -33,6 +33,8 @@ model User {
   status                 UserStatus                 @default(PROSPECT)
   forgotEmailOtp         String?
   forgotEmailOtpExpires  DateTime?
+  resetPasswordToken     String?
+  resetPasswordExpires   DateTime?
   isTwoFactorEnabled     Boolean                    @default(false)
   lastActiveAt           DateTime?
   recoveryCodes          String[]

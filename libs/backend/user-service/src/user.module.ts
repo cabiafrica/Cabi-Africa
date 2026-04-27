@@ -4,7 +4,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { 
   MockSmsProvider, 
   MockPaymentProvider, 
-  MockStorageProvider 
+  MockStorageProvider,
+  MockEmailProvider
 } from '@cabi/backend/common';
 import { AuthController } from './auth.controller';
 import { UserController } from './user.controller';
@@ -24,6 +25,7 @@ import { UserService } from './user.service';
     { provide: 'SmsProvider', useClass: MockSmsProvider },
     { provide: 'PaymentProvider', useClass: MockPaymentProvider },
     { provide: 'StorageProvider', useClass: MockStorageProvider },
+    { provide: 'EmailProvider', useClass: MockEmailProvider },
   ],
   exports: [UserService],
 })

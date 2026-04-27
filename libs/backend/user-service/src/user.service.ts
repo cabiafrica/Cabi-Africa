@@ -1,10 +1,14 @@
 import { Injectable, InternalServerErrorException, ConflictException, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SmsProvider, PaymentProvider, StorageProvider } from '@cabi/backend/common';
+import { SmsProvider, PaymentProvider, StorageProvider, EmailProvider } from '@cabi/backend/common';
 import { RegisterUserDto, UserRole } from './dto/register-user.dto';
 import { PrismaService } from '@cabi/backend/database';
 import * as bcrypt from 'bcryptjs';
 import { LegacyRole, UserRole as PrismaUserRole, UserPermission as PrismaUserPermission, Role as PrismaRole, Prisma } from '@prisma/client';
+import { NotFoundException } from '@nestjs/common';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UserService {
@@ -14,6 +18,7 @@ export class UserService {
     @Inject('SmsProvider') private readonly smsProvider: SmsProvider,
     @Inject('PaymentProvider') private readonly paymentProvider: PaymentProvider,
     @Inject('StorageProvider') private readonly storageProvider: StorageProvider,
+    @Inject('EmailProvider') private readonly emailProvider: EmailProvider,
   ) { }
 
   async generateToken(user: any) {
@@ -404,5 +409,62 @@ export class UserService {
     await this.smsProvider.sendSms(user.phone, `Congratulations ${user.fullName}! Your Cabi Africa driver account has been activated. You can now start receiving rides.`);
 
     return driverProfile;
+  }
+
+  async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
+    const { email } = forgotPasswordDto;
+    const user = await this.prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      throw new NotFoundException('If an account with that email exists, a reset link has been sent.');
+    }
+
+    const token = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = new Date(Date.now() + 3600000);
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetPasswordToken: token,
+        resetPasswordExpires: expires,
+      },
+    });
+
+    const subject = 'Cabi Africa - Password Reset';
+    const body = `Your password reset token is: ${token}. This token expires in 1 hour.`;
+
+    await this.emailProvider.sendEmail(email, subject, body);
+
+    return { message: 'Reset token sent to email.' };
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    const { token, newPassword } = resetPasswordDto;
+
+    const user = await this.prisma.user.findFirst({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpires: {
+          gt: new Date(),
+        },
+      },
+    });
+
+    if (!user) {
+      throw new ConflictException('Invalid or expired reset token.');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetPasswordToken: null,
+        resetPasswordExpires: null,
+      },
+    });
+
+    return { message: 'Password reset successful.' };
   }
 }
