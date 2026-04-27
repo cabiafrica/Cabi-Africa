@@ -13,7 +13,7 @@ extension _HomeScreenPanels on _HomeScreenState {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 20,
                 spreadRadius: 5),
           ],
@@ -144,7 +144,7 @@ extension _HomeScreenPanels on _HomeScreenState {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 10),
             )
@@ -278,7 +278,7 @@ extension _HomeScreenPanels on _HomeScreenState {
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.98),
+            color: Colors.white.withValues(alpha: 0.98),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: SingleChildScrollView(
@@ -377,14 +377,14 @@ extension _HomeScreenPanels on _HomeScreenState {
                               image: const AssetImage('assets/images/tours_bg.png'),
                               fit: BoxFit.cover,
                               colorFilter: ColorFilter.mode(
-                                  Colors.black.withOpacity(0.5),
+                                  Colors.black.withValues(alpha: 0.5),
                                   BlendMode.darken),
                               opacity: 1.0,
                             ),
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.15),
+                                color: Colors.black.withValues(alpha: 0.15),
                                 blurRadius: 12,
                                 offset: const Offset(0, 6),
                               )
@@ -395,7 +395,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: Colors.white.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const Icon(
@@ -423,7 +423,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       'Book trips, safaris & adventures',
                                       style: TextStyle(
                                         color: Colors.white
-                                            .withOpacity(0.85),
+                                            .withValues(alpha: 0.85),
                                         fontSize: 13,
                                       ),
                                     ),
@@ -433,7 +433,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.25),
+                                  color: Colors.white.withValues(alpha: 0.25),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -470,14 +470,14 @@ extension _HomeScreenPanels on _HomeScreenState {
                                     image: AssetImage('assets/images/food_bg.png'),
                                     fit: BoxFit.cover,
                                     colorFilter: ColorFilter.mode(
-                                        Colors.black.withOpacity(0.5),
+                                        Colors.black.withValues(alpha: 0.5),
                                         BlendMode.darken),
                                     opacity: 1.0,
                                   ),
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.15),
+                                      color: Colors.black.withValues(alpha: 0.15),
                                       blurRadius: 12,
                                       offset: const Offset(0, 6),
                                     )
@@ -489,7 +489,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
                                         color:
-                                            Colors.white.withOpacity(0.2),
+                                            Colors.white.withValues(alpha: 0.2),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: const Icon(
@@ -512,7 +512,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       'Order meals',
                                       style: TextStyle(
                                         color: Colors.white
-                                            .withOpacity(0.85),
+                                            .withValues(alpha: 0.85),
                                         fontSize: 11,
                                       ),
                                     ),
@@ -540,14 +540,14 @@ extension _HomeScreenPanels on _HomeScreenState {
                                     image: AssetImage('assets/images/package_bg.png'),
                                     fit: BoxFit.cover,
                                     colorFilter: ColorFilter.mode(
-                                        Colors.black.withOpacity(0.5),
+                                        Colors.black.withValues(alpha: 0.5),
                                         BlendMode.darken),
                                     opacity: 1.0,
                                   ),
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.15),
+                                      color: Colors.black.withValues(alpha: 0.15),
                                       blurRadius: 12,
                                       offset: const Offset(0, 6),
                                     )
@@ -559,7 +559,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
                                         color:
-                                            Colors.white.withOpacity(0.2),
+                                            Colors.white.withValues(alpha: 0.2),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: const Icon(
@@ -582,7 +582,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       'Send parcels',
                                       style: TextStyle(
                                         color: Colors.white
-                                            .withOpacity(0.85),
+                                            .withValues(alpha: 0.85),
                                         fontSize: 11,
                                       ),
                                     ),
@@ -627,7 +627,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
+                                    color: Colors.black.withValues(alpha: 0.05),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   )
@@ -716,7 +716,7 @@ extension _HomeScreenPanels on _HomeScreenState {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 20,
               spreadRadius: 5,
             ),
@@ -979,7 +979,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                           horizontal: 16, vertical: 14),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? categoryColor.withOpacity(0.1)
+                            ? categoryColor.withValues(alpha: 0.1)
                             : const Color(0xFF161616),
                         border: Border.all(
                           color: isSelected ? categoryColor : Colors.white12,
@@ -996,7 +996,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? categoryColor.withOpacity(0.15)
+                                  ? categoryColor.withValues(alpha: 0.15)
                                   : Colors.white10,
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -1072,7 +1072,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       horizontal: 8, vertical: 2),
                                   decoration: BoxDecoration(
                                     color:
-                                        categoryColor.withOpacity(0.18),
+                                        categoryColor.withValues(alpha: 0.18),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
