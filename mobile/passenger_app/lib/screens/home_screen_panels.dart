@@ -779,6 +779,19 @@ extension _HomeScreenPanels on _HomeScreenState {
   }
 
   Widget _buildDrawer() {
+    final authState = ref.watch(passengerAuthProvider);
+    String userName = "Guest";
+    String userEmail = "";
+    String initials = "G";
+
+    if (authState is Authenticated) {
+      userName = authState.user?['firstName'] != null
+          ? "${authState.user!['firstName']} ${authState.user!['lastName'] ?? ''}"
+          : authState.user?['name'] ?? 'User';
+      userEmail = authState.user?['email'] ?? "";
+      initials = userName.isNotEmpty ? userName[0].toUpperCase() : "U";
+    }
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -788,17 +801,17 @@ extension _HomeScreenPanels on _HomeScreenState {
               gradient: LinearGradient(
                   colors: [AppTheme.primaryColor, AppTheme.secondaryAmber]),
             ),
-            accountName: const Text("John Doe",
-                style: TextStyle(
+            accountName: Text(userName,
+                style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                     color: Colors.black)),
-            accountEmail: const Text("john.doe@example.com",
-                style: TextStyle(color: Colors.black87)),
+            accountEmail: Text(userEmail,
+                style: const TextStyle(color: Colors.black87)),
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.black,
-              child: Text("JD",
-                  style: TextStyle(fontSize: 24, color: AppTheme.primaryColor)),
+              child: Text(initials,
+                  style: const TextStyle(fontSize: 24, color: AppTheme.primaryColor)),
             ),
           ),
           ListTile(

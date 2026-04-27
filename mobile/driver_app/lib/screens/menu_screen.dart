@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:driver_app/screens/login_screen.dart';
 import 'package:driver_app/widgets/promotional_carousel.dart';
+import '../providers/auth_provider.dart';
 import 'support_screen.dart';
 import 'my_organization_screen.dart';
 import 'sacco_screen.dart';
 
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends ConsumerWidget {
   const MenuScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+    String userName = 'User';
+    String? userEmail;
+
+    if (authState is Authenticated) {
+      userName = authState.user?['firstName'] != null
+          ? "${authState.user!['firstName']} ${authState.user!['lastName'] ?? ''}"
+          : authState.user?['name'] ?? 'User';
+      userEmail = authState.user?['email'];
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       // AppBar removed for custom header design
@@ -47,9 +59,9 @@ class MenuScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'John Doe',
-                          style: TextStyle(
+                        Text(
+                          userName,
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
                             color: Colors.white,
@@ -59,7 +71,7 @@ class MenuScreen extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              'U2973',
+                              userEmail ?? 'U2973',
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.9),
                                 fontSize: 14,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:driver_app/theme/app_theme.dart';
+import '../providers/auth_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'positive_feedback_screen.dart';
 import '../services/badge_service.dart' as badge_service;
@@ -127,17 +129,17 @@ class ProfileService {
 
 // --- WIDGET IMPLEMENTATION ---
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   final ProfileService profileService;
 
   const ProfileScreen(
       {super.key, this.profileService = const ProfileService()});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   late Future<DriverProfile> _profileFuture;
 
   @override
@@ -235,13 +237,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return const Center(child: Text('Could not load profile.'));
           }
 
+          final authState = ref.watch(authProvider);
+          String? realName;
+          String? realEmail;
+
+          if (authState is Authenticated) {
+            realName = authState.user?['firstName'] != null
+                ? "${authState.user!['firstName']} ${authState.user!['lastName'] ?? ''}"
+                : authState.user?['name'];
+            realEmail = authState.user?['email'];
+          }
+
           final profile = snapshot.data!;
+
+          // Override mock data with real auth data if available
+          final displayProfile = DriverProfile(
+            id: profile.id,
+            name: realName ?? profile.name,
+            email: realEmail ?? profile.email,
+            phone: profile.phone,
+            userType: profile.userType,
+            registrationDate: profile.registrationDate,
+            accountStatus: profile.accountStatus,
+            averageRating: profile.averageRating,
+            badges: profile.badges,
+            tier: profile.tier,
+            coverImageUrl: profile.coverImageUrl,
+            compliments: profile.compliments,
+          );
 
           return SingleChildScrollView(
             padding: EdgeInsets.zero,
             child: Column(
               children: [
-                _buildModernHeader(context, profile),
+                _buildModernHeader(context, displayProfile),
                 Transform.translate(
                   offset: const Offset(0, -40),
                   child: Padding(
@@ -249,10 +278,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildStatsRow(profile),
+                        _buildStatsRow(displayProfile),
                         const SizedBox(height: 16),
                         _buildSectionTitle("Account Info"),
-                        _buildProfileDetailsCard(profile),
+                        _buildProfileDetailsCard(displayProfile),
                         const SizedBox(height: 24),
                         _buildSectionTitle("My Career"),
                         _buildOrganizationCard(context),
