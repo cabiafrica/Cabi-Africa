@@ -271,6 +271,11 @@ extension _HomeScreenPanels on _HomeScreenState {
   }
 
   Widget _buildBookingSheet(Color primaryColor) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+    final onSurfaceColor = Theme.of(context).colorScheme.onSurface;
+    final dividerColor = Theme.of(context).dividerColor;
+
     return DraggableScrollableSheet(
       initialChildSize: 0.95,
       minChildSize: 0.25,
@@ -278,8 +283,15 @@ extension _HomeScreenPanels on _HomeScreenState {
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.98),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            color: surfaceColor.withValues(alpha: 0.98),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.1),
+                blurRadius: 24,
+                offset: const Offset(0, -4),
+              )
+            ],
           ),
           child: SingleChildScrollView(
             controller: scrollController,
@@ -290,74 +302,90 @@ extension _HomeScreenPanels on _HomeScreenState {
                 // Handle
                 Center(
                   child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 12),
-                    width: 40,
-                    height: 5,
+                    margin: const EdgeInsets.symmetric(vertical: 16),
+                    width: 48,
+                    height: 6,
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                      color: isDark ? Colors.grey[700] : Colors.grey[300],
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // OTA Test Label
-                      const Center(
-                        child: Text(
-                          "OTA TEST v1.1.0+3 - Active",
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Text(
+                            "OTA TEST v1.1.0+3 - Active",
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
                       // 1. Destination Picker
-                      const Text("Where to?",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18)),
-                      const SizedBox(height: 10),
+                      Text("Where to?",
+                          style: AppTheme.outfit(
+                              fontWeight: FontWeight.bold, fontSize: 24, color: onSurfaceColor)),
+                      const SizedBox(height: 16),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
+                            horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
+                          color: isDark ? const Color(0xFF1F1F1F) : Colors.white,
+                          borderRadius: BorderRadius.circular(16),
                           border:
-                              Border.all(color: Colors.grey.shade300, width: 1),
-                        ),
-                        child: Column(
-                          children: [
-                            // To Where
-                            InkWell(
-                              onTap: () => _navigateToSearch(),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.search,
-                                      color: Colors.black, size: 24),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      _destination,
-                                      style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              Border.all(color: dividerColor, width: 1),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             )
-                          ],
+                          ]
+                        ),
+                        child: InkWell(
+                          onTap: () => _navigateToSearch(),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: primaryColor.withValues(alpha: 0.15),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(Icons.search,
+                                    color: primaryColor, size: 24),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Text(
+                                  _destination,
+                                  style: AppTheme.outfit(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: onSurfaceColor),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
 
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 32),
 
                       // ── Tours & Travel CTA Button ──
                       GestureDetector(
@@ -370,84 +398,100 @@ extension _HomeScreenPanels on _HomeScreenState {
                         },
                         child: Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 18),
                           decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: const AssetImage('assets/images/tours_bg.png'),
+                            image: const DecorationImage(
+                              image: AssetImage('assets/images/tours_bg.png'),
                               fit: BoxFit.cover,
-                              colorFilter: ColorFilter.mode(
-                                  Colors.black.withValues(alpha: 0.5),
-                                  BlendMode.darken),
-                              opacity: 1.0,
                             ),
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(24),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.15),
-                                blurRadius: 12,
-                                offset: const Offset(0, 6),
+                                color: Colors.black.withValues(alpha: 0.2),
+                                blurRadius: 15,
+                                offset: const Offset(0, 8),
                               )
                             ],
                           ),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Icon(
-                                  Icons.explore_rounded,
-                                  color: Colors.white,
-                                  size: 28,
-                                ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 24),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(24),
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [
+                                  Colors.black.withValues(alpha: 0.8),
+                                  Colors.transparent,
+                                ],
                               ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Tours & Travel',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 0.5,
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor,
+                                    borderRadius: BorderRadius.circular(14),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: primaryColor.withValues(alpha: 0.4),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      )
+                                    ]
+                                  ),
+                                  child: const Icon(
+                                    Icons.explore_rounded,
+                                    color: Colors.black,
+                                    size: 28,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Tours & Travel',
+                                        style: AppTheme.outfit(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 0.5,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 3),
-                                    Text(
-                                      'Book trips, safaris & adventures',
-                                      style: TextStyle(
-                                        color: Colors.white
-                                            .withValues(alpha: 0.85),
-                                        fontSize: 13,
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Book trips, safaris & adventures',
+                                        style: AppTheme.outfit(
+                                          color: Colors.white
+                                              .withValues(alpha: 0.9),
+                                          fontSize: 14,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.25),
-                                  shape: BoxShape.circle,
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.25),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.arrow_forward_rounded,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
                                 ),
-                                child: const Icon(
-                                  Icons.arrow_forward_rounded,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
 
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 16),
 
                       // ── Food & Package Delivery Row ──
                       Row(
@@ -464,17 +508,12 @@ extension _HomeScreenPanels on _HomeScreenState {
                                 );
                               },
                               child: Container(
-                                padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  image: DecorationImage(
+                                  image: const DecorationImage(
                                     image: AssetImage('assets/images/food_bg.png'),
                                     fit: BoxFit.cover,
-                                    colorFilter: ColorFilter.mode(
-                                        Colors.black.withValues(alpha: 0.5),
-                                        BlendMode.darken),
-                                    opacity: 1.0,
                                   ),
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withValues(alpha: 0.15),
@@ -483,45 +522,59 @@ extension _HomeScreenPanels on _HomeScreenState {
                                     )
                                   ],
                                 ),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color:
-                                            Colors.white.withValues(alpha: 0.2),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: const Icon(
-                                        Icons.fastfood_rounded,
-                                        color: Colors.white,
-                                        size: 28,
-                                      ),
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                      colors: [
+                                        Colors.black.withValues(alpha: 0.7),
+                                        Colors.transparent,
+                                      ],
                                     ),
-                                    const SizedBox(height: 10),
-                                    const Text(
-                                      'Food Delivery',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: primaryColor,
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: const Icon(
+                                          Icons.fastfood_rounded,
+                                          color: Colors.black,
+                                          size: 24,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 3),
-                                    Text(
-                                      'Order meals',
-                                      style: TextStyle(
-                                        color: Colors.white
-                                            .withValues(alpha: 0.85),
-                                        fontSize: 11,
+                                      const SizedBox(height: 32),
+                                      Text(
+                                        'Food Delivery',
+                                        style: AppTheme.outfit(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Order meals',
+                                        style: AppTheme.outfit(
+                                          color: Colors.white
+                                              .withValues(alpha: 0.85),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 16),
                           // Package Delivery
                           Expanded(
                             child: GestureDetector(
@@ -534,17 +587,12 @@ extension _HomeScreenPanels on _HomeScreenState {
                                 );
                               },
                               child: Container(
-                                padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  image: DecorationImage(
+                                  image: const DecorationImage(
                                     image: AssetImage('assets/images/package_bg.png'),
                                     fit: BoxFit.cover,
-                                    colorFilter: ColorFilter.mode(
-                                        Colors.black.withValues(alpha: 0.5),
-                                        BlendMode.darken),
-                                    opacity: 1.0,
                                   ),
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withValues(alpha: 0.15),
@@ -553,40 +601,54 @@ extension _HomeScreenPanels on _HomeScreenState {
                                     )
                                   ],
                                 ),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color:
-                                            Colors.white.withValues(alpha: 0.2),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: const Icon(
-                                        Icons.inventory_2_rounded,
-                                        color: Colors.white,
-                                        size: 28,
-                                      ),
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                      colors: [
+                                        Colors.black.withValues(alpha: 0.7),
+                                        Colors.transparent,
+                                      ],
                                     ),
-                                    const SizedBox(height: 10),
-                                    const Text(
-                                      'Package Delivery',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: primaryColor,
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: const Icon(
+                                          Icons.inventory_2_rounded,
+                                          color: Colors.black,
+                                          size: 24,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 3),
-                                    Text(
-                                      'Send parcels',
-                                      style: TextStyle(
-                                        color: Colors.white
-                                            .withValues(alpha: 0.85),
-                                        fontSize: 11,
+                                      const SizedBox(height: 32),
+                                      Text(
+                                        'Packages',
+                                        style: AppTheme.outfit(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Send parcels',
+                                        style: AppTheme.outfit(
+                                          color: Colors.white
+                                              .withValues(alpha: 0.85),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -594,37 +656,38 @@ extension _HomeScreenPanels on _HomeScreenState {
                         ],
                       ),
 
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 32),
                       
                       // Favourite Places Section
-                      const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Favourites",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text("Favourites",
+                              style: AppTheme.outfit(
+                                  fontWeight: FontWeight.bold, fontSize: 20, color: onSurfaceColor)),
                           TextButton(
                             onPressed: () {},
-                            child: const Text("See all",
-                                style: TextStyle(color: AppTheme.primaryColor)),
+                            child: Text("See all",
+                                style: AppTheme.outfit(color: primaryColor, fontWeight: FontWeight.w600)),
                           ),
                         ],
                       ),
+                      const SizedBox(height: 8),
                       SizedBox(
-                        height: 100,
+                        height: 110,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: _favouriteDestinations.length,
                           itemBuilder: (context, index) {
                             final item = _favouriteDestinations[index];
                             return Container(
-                              width: 140,
-                              margin: const EdgeInsets.only(right: 12),
-                              padding: const EdgeInsets.all(12),
+                              width: 150,
+                              margin: const EdgeInsets.only(right: 16, bottom: 8, top: 4),
+                              padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.grey[100],
-                                borderRadius: BorderRadius.circular(16),
+                                color: isDark ? const Color(0xFF1F1F1F) : Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: dividerColor),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withValues(alpha: 0.05),
@@ -636,15 +699,16 @@ extension _HomeScreenPanels on _HomeScreenState {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(item['icon'], color: Colors.black54),
+                                  Icon(item['icon'], color: primaryColor, size: 24),
                                   const Spacer(),
                                   Text(item['name'],
-                                      style: const TextStyle(
+                                      style: AppTheme.outfit(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 14)),
+                                          fontSize: 16,
+                                          color: onSurfaceColor)),
                                   Text(item['address'],
-                                      style: const TextStyle(
-                                          color: Colors.grey, fontSize: 11),
+                                      style: AppTheme.outfit(
+                                          color: isDark ? Colors.grey[400] : Colors.grey[600], fontSize: 12),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis),
                                 ],
@@ -655,47 +719,53 @@ extension _HomeScreenPanels on _HomeScreenState {
                       ),
 
                       // Recent Places
-                      const SizedBox(height: 24),
-                      const Text("Recent Places",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16)),
-                      const SizedBox(height: 12),
-                      ..._recentPlaces.map((place) => ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[100],
-                                shape: BoxShape.circle,
+                      const SizedBox(height: 32),
+                      Text("Recent Places",
+                          style: AppTheme.outfit(
+                              fontWeight: FontWeight.bold, fontSize: 20, color: onSurfaceColor)),
+                      const SizedBox(height: 16),
+                      ..._recentPlaces.map((place) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                side: BorderSide(color: dividerColor)
                               ),
-                              child: Icon(place['icon'], color: Colors.grey),
+                              tileColor: isDark ? const Color(0xFF1F1F1F) : Colors.white,
+                              leading: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: primaryColor.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(place['icon'], color: primaryColor),
+                              ),
+                              title: Text(place['name'],
+                                  style: AppTheme.outfit(
+                                      fontWeight: FontWeight.w600, color: onSurfaceColor, fontSize: 16)),
+                              subtitle: Text(place['address'], style: AppTheme.outfit(color: isDark ? Colors.grey[400] : Colors.grey[600])),
+                              onTap: () {
+                                _updateState(() {
+                                  _destination = place['name'];
+                                });
+                              },
                             ),
-                            title: Text(place['name'],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600)),
-                            subtitle: Text(place['address']),
-                            onTap: () {
-                              _updateState(() {
-                                _destination = place['name'];
-                              });
-                            },
-                          )),
+                      )),
 
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 32),
 
                       // 3. Discover More
-                      const Text("Discover More",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18)),
+                      Text("Discover More",
+                          style: AppTheme.outfit(
+                              fontWeight: FontWeight.bold, fontSize: 20, color: onSurfaceColor)),
                     ],
                   ),
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
                 const PromotionalCarousel(),
-                const SizedBox(height: 20),
-
-                const SizedBox(height: 30),
+                const SizedBox(height: 32),
               ],
             ),
           ),
