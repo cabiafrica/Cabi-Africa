@@ -144,7 +144,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   labelText: 'Email or Phone Number',
                   hintText: 'Enter your registered email or phone',
                   prefixIcon: const Icon(
-                    Icons.contact_mail_outlined,
+                    Icons.email_outlined,
                     color: Color(0xFFF59E0B),
                   ),
                   border: OutlineInputBorder(
