@@ -66,6 +66,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   double _distanceKm = 0.0;
   int _tripDurationSeconds = 0;
   String? _currentRideId;
+  Map<String, dynamic>? _currentRideData;
   Timer? _rideUpdateTimer;
 
   LatLng _passengerLocation =
@@ -109,16 +110,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     },
   ];
 
-  List<Map<String, dynamic>> _nearbyDrivers = [
-    {
-      'id': 'drv-001',
-      'location': const LatLng(-1.288000, 36.815000),
-    },
-    {
-      'id': 'drv-002',
-      'location': const LatLng(-1.284000, 36.820000),
-    },
-  ];
+  List<Map<String, dynamic>> _nearbyDrivers = [];
 
   final List<Map<String, dynamic>> _favouriteDestinations = [
     {'name': 'Home', 'address': 'Valley Arcade, Nairobi', 'icon': Icons.home},

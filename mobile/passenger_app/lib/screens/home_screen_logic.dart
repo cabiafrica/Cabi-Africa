@@ -99,6 +99,7 @@ extension _HomeScreenLogic on _HomeScreenState {
   }
 
   void _updateTripStatusFromBackend(Map<String, dynamic> ride) {
+    _currentRideData = ride;
     final status = ride['status']?.toString().toUpperCase();
     if (status == 'REQUESTED') {
       _tripStatus = TripStatus.searching;
@@ -244,88 +245,21 @@ extension _HomeScreenLogic on _HomeScreenState {
         });
       }
     } catch (e) {
-      // Create realistic mocked driver locations around the passenger's current position so the map populates
-      debugPrint('Error fetching nearby drivers, mocking them instead: $e');
+      debugPrint('Error fetching nearby drivers: $e');
       if (mounted) {
         _updateState(() {
-          int numberOfCars = 0;
-          switch (_selectedVehicleType) {
-            case 'BODA':
-              numberOfCars = 8;
-              break;
-            case 'LITE':
-              numberOfCars = 5;
-              break;
-            case 'STANDARD':
-              numberOfCars = 4;
-              break;
-            case 'XL':
-              numberOfCars = 2;
-              break;
-            default:
-              numberOfCars = 3;
-          }
-
-          _nearbyDrivers = List.generate(numberOfCars, (index) {
-            // slightly offset from current passengerLocation
-            double latOffset =
-                (index.isEven ? 0.001 : -0.001) * (index % 3 + 1);
-            double lngOffset =
-                (index % 3 == 0 ? 0.0015 : -0.0015) * (index % 2 + 1);
-
-            return {
-              'id': 'mock_driver_$index',
-              'location': LatLng(
-                _passengerLocation.latitude + latOffset,
-                _passengerLocation.longitude + lngOffset,
-              ),
-              'vehicleType': _selectedVehicleType,
-            };
-          });
+          _nearbyDrivers = [];
         });
       }
     }
   }
 
   void _startArrivalTimer() {
-    _arrivalTimer?.cancel();
-    _arrivalTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
-      if (_arrivalDurationMinutes > 1) {
-        _updateState(() {
-          _arrivalDurationMinutes--;
-        });
-      } else {
-        timer.cancel();
-        if (mounted) {
-          _updateState(() {
-            _tripStatus = TripStatus.onTrip;
-            _startTripSimulation();
-          });
-        }
-      }
-    });
+    // Wait for real driver status updates from backend instead of timer simulation
   }
 
   void _startTripSimulation() {
-    _tripTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!mounted) return;
-      _updateState(() {
-        _tripDurationSeconds++;
-        // Increase distance and fare every second for a more dynamic simulation
-        _distanceKm += 0.02; // Smoothly increase distance
-        // Dynamic fare: Base + (Dist * Rate) + (Time * Rate)
-        // Let's use Cabi Standard rates as prototype: 150 Base + 45/km + 5/min
-        _currentFare =
-            150.0 + (_distanceKm * 45.0) + ((_tripDurationSeconds / 60) * 5.0);
-
-        // Simulation end condition: after 30 seconds to allow observing the increase
-        if (_tripDurationSeconds >= 30) {
-          timer.cancel();
-          _tripStatus = TripStatus.arrived;
-          _showRatingDialog();
-        }
-      });
-    });
+    // Real trip simulation is handled by backend status updates
   }
 
   Future<void> _startSearchSimulation() async {
@@ -388,110 +322,20 @@ extension _HomeScreenLogic on _HomeScreenState {
           });
           _startRideUpdatePolling();
         }
-      } else {
-        // Fallback to simulation if backend returns mock-ride-id (default fallback in service)
-        _runSimulationFallback();
       }
     } catch (e) {
       debugPrint("Error requesting real ride: $e");
-      _runSimulationFallback();
+      if (mounted) {
+        _updateState(() {
+          _tripStatus = TripStatus.idle;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error requesting ride: $e')),
+        );
+      }
     }
   }
 
-  void _runSimulationFallback() {
-    if (!mounted) return;
-    // Simulate finding a driver after 4 seconds
-    Timer(const Duration(seconds: 4), () {
-      if (!mounted) return;
-      _updateState(() {
-        _tripStatus = TripStatus.driverFound;
-        _arrivalDurationMinutes = 2; // Arriving in 2 mins
-      });
-      _startArrivalTimer();
-    });
-  }
-
-  void _showRatingDialog() {
-    double rating = 3.0;
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Column(
-            children: [
-              Icon(Icons.check_circle, color: Colors.green, size: 60),
-              SizedBox(height: 10),
-              Text("Arrived at Destination", textAlign: TextAlign.center),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("How was your ride with Michael K.?",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey.shade600)),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(5, (index) {
-                  return IconButton(
-                    icon: Icon(
-                      index < rating ? Icons.star : Icons.star_border,
-                      color: Colors.amber,
-                      size: 40,
-                    ),
-                    onPressed: () {
-                      setDialogState(() => rating = index + 1.0);
-                    },
-                  );
-                }),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: "Extra feedback (optional)",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-                maxLines: 2,
-              ),
-            ],
-          ),
-          actions: [
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _updateState(() {
-                    _tripStatus = TripStatus.idle;
-                    _pickupLocation = null;
-                    _dropoffLocation = null;
-                    _roadRoute = null;
-                    _tripDurationSeconds = 0;
-                    _distanceKm = 0.0;
-                    _currentFare = 350.0;
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-                child: const Text("Submit Rating",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Future<void> _navigateToSearch() async {
     final result = await Navigator.of(context).push(

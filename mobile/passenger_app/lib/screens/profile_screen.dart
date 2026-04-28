@@ -21,14 +21,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   File? _imageFile;
   bool _isLoading = false;
 
-  // Mock user data - in a real app, this would come from the AuthProvider or a user service
-  final String _phoneNumber = "0712 345 678";
-  final String _currentImageUrl = "https://i.pravatar.cc/150?img=12";
-
   @override
   void initState() {
     super.initState();
-    _nameController.text = "Jane Doe"; // Mock initial name
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final auth = legacy_provider.Provider.of<AuthProvider>(context, listen: false);
+      if (auth.user != null) {
+        setState(() {
+          final user = auth.user!;
+          _nameController.text = "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim();
+        });
+      }
+    });
   }
 
   Future<void> _pickImage() async {
@@ -149,12 +153,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ],
                     ),
-                    child: CircleAvatar(
-                      radius: 65,
-                      backgroundImage: _imageFile != null
-                          ? FileImage(_imageFile!)
-                          : NetworkImage(_currentImageUrl) as ImageProvider,
-                      backgroundColor: surfaceColor,
+                    child: legacy_provider.Consumer<AuthProvider>(
+                      builder: (context, auth, child) {
+                        final profilePic = auth.user?['profilePicture'] ?? "https://i.pravatar.cc/150?img=12";
+                        return CircleAvatar(
+                          radius: 65,
+                          backgroundImage: _imageFile != null
+                              ? FileImage(_imageFile!)
+                              : NetworkImage(profilePic) as ImageProvider,
+                          backgroundColor: surfaceColor,
+                        );
+                      },
                     ),
                   ),
                   Positioned(
@@ -193,17 +202,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 48),
             _buildSectionLabel('PERSONAL INFORMATION'),
             const SizedBox(height: 16),
-            _buildProfileField(
-              controller: _nameController,
-              label: 'Full Name',
-              icon: Icons.person_outline_rounded,
-            ),
-            const SizedBox(height: 20),
-            _buildProfileField(
-              initialValue: _phoneNumber,
-              label: 'Identity Verified Phone',
-              icon: Icons.verified_user_outlined,
-              readOnly: true,
+            legacy_provider.Consumer<AuthProvider>(
+              builder: (context, auth, child) {
+                final user = auth.user;
+                return Column(
+                  children: [
+                    _buildProfileField(
+                      controller: _nameController,
+                      label: 'Full Name',
+                      icon: Icons.person_outline_rounded,
+                    ),
+                    const SizedBox(height: 20),
+                    _buildProfileField(
+                      initialValue: user?['phone'] ?? "No Phone Linked",
+                      label: 'Identity Verified Phone',
+                      icon: Icons.verified_user_outlined,
+                      readOnly: true,
+                    ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 32),
             _buildSectionLabel('EXCLUSIVES'),

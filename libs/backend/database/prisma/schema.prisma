@@ -35,6 +35,8 @@ model User {
   forgotEmailOtpExpires  DateTime?
   resetPasswordToken     String?
   resetPasswordExpires   DateTime?
+  phoneOtpCode           String?
+  phoneOtpExpires        DateTime?
   isTwoFactorEnabled     Boolean                    @default(false)
   lastActiveAt           DateTime?
   recoveryCodes          String[]

@@ -12,7 +12,7 @@ class WaitingForPassengerPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final passengerName = rideDetails['passengerName'] ?? 'Jane Doe';
+    final passengerName = rideDetails['passengerName'] ?? 'Passenger';
 
     return Positioned(
       bottom: 0,

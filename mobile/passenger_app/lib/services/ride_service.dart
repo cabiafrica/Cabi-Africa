@@ -54,15 +54,7 @@ class PayoutTransaction {
 class InsufficientFundsException implements Exception {}
 
 class RideService {
-  final List<PayoutMethod> _payoutMethods = [
-    PayoutMethod(
-      id: '1',
-      type: 'mpesa',
-      display: 'M-Pesa: ***678',
-      isDefault: true,
-    ),
-    PayoutMethod(id: '2', type: 'bank', display: 'KCB Bank: ***1234'),
-  ];
+  final List<PayoutMethod> _payoutMethods = [];
 
   String get _dispatchBaseUrl => AppConfig.dispatchApiUrl;
 
@@ -126,8 +118,7 @@ class RideService {
     } catch (e) {
       debugPrint('Error creating ride: $e');
     }
-    // Fallback for demo
-    return {'id': 'mock-ride-id', 'status': 'REQUESTED'};
+    return {'id': null, 'status': 'ERROR'};
   }
 
   Future<Map<String, dynamic>?> getCurrentRide(
@@ -235,46 +226,15 @@ class RideService {
     }
 
     // Fallback if backend fails or empty to preserve UI demo
-    return [
-      RideHistoryItem(
-        id: 'ride-1',
-        date: DateTime.now().subtract(const Duration(days: 1)),
-        destination: 'Westgate Mall',
-        price: 450.0,
-        status: 'Completed',
-        driverName: 'John Doe',
-      ),
-      RideHistoryItem(
-        id: 'ride-2',
-        date: DateTime.now().subtract(const Duration(days: 3)),
-        destination: 'JKIA Airport',
-        price: 1200.0,
-        status: 'Completed',
-        driverName: 'Jane Smith',
-      ),
-      RideHistoryItem(
-        id: 'ride-3',
-        date: DateTime.now().subtract(const Duration(days: 5)),
-        destination: 'CBD',
-        price: 0.0,
-        status: 'Cancelled',
-        driverName: 'N/A',
-      ),
-    ];
+    return [];
   }
 
   Future<Map<String, dynamic>> getWalletDetails() async {
     await Future.delayed(const Duration(milliseconds: 300));
     return {
-      'balance': 1500.0,
-      'transactions': [
-        {'type': 'Ride Payment', 'amount': 450.0, 'date': '2023-10-01'},
-        {'type': 'Top-up', 'amount': 1000.0, 'date': '2023-09-28'},
-      ],
-      'payoutMethod': {
-        'bankName': 'KCB',
-        'accountNumber': '***1234',
-      },
+      'balance': 0.0,
+      'transactions': [],
+      'payoutMethod': null,
     };
   }
 
@@ -311,7 +271,7 @@ class RideService {
 
   Future<Map<String, dynamic>> getPassengerRating() async {
     await Future.delayed(const Duration(milliseconds: 300));
-    return {'rating': 4.8, 'totalRides': 25};
+    return {'rating': 5.0, 'totalRides': 0};
   }
 
   Future<Map<String, dynamic>> getDriverPerformance() async {
@@ -330,22 +290,7 @@ class RideService {
 
   Future<List<PayoutTransaction>> getPayoutHistory() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    return [
-      PayoutTransaction(
-        id: 'tx-1',
-        amount: 2500.0,
-        destination: 'M-Pesa: ***678',
-        date: '2023-10-15',
-        status: 'Completed',
-      ),
-      PayoutTransaction(
-        id: 'tx-2',
-        amount: 1500.0,
-        destination: 'Bank: ***1234',
-        date: '2023-10-10',
-        status: 'Completed',
-      ),
-    ];
+    return [];
   }
 
   Future<void> confirmCashPayment(String rideId) async {

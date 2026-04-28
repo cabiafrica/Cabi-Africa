@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../services/auth_service.dart';
+import 'otp_verification_screen.dart';
 
 class RegistrationScreen extends ConsumerStatefulWidget {
   final AuthService? authService;
@@ -200,22 +201,29 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
           referralCode: _referralController.text,
         );
 
-        if (result.isSignedIn && mounted) {
-          // On success, show message and navigate to Login
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text(
-                    'Registration successful! Please sign in to continue.')),
-          );
-          // Small delay to let user see the message
-          await Future.delayed(const Duration(seconds: 1));
-          if (mounted) {
-            Navigator.of(context).pop(); // Go back to Login Screen
+        if (mounted) {
+          if (result.needsVerification) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Registration successful! Please verify your phone number.')),
+            );
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => OtpVerificationScreen(
+                  phone: _phoneController.text,
+                  authService: _authService,
+                ),
+              ),
+            );
+          } else if (result.isSignedIn) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Registration successful!')),
+            );
+            Navigator.of(context).pop();
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Registration Failed: ${result.error}')),
+            );
           }
-        } else if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Registration Failed: ${result.error}')),
-          );
         }
       } catch (e) {
         if (mounted) {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:passenger_app/theme/app_theme.dart';
+import 'package:provider/provider.dart' as legacy_provider;
+import 'package:passenger_app/providers/auth_provider.dart';
 import 'package:passenger_app/widgets/profile_avatar_with_qr.dart';
 import 'package:passenger_app/widgets/menu_grid_item.dart';
 import 'package:passenger_app/screens/login_screen.dart';
@@ -109,43 +111,52 @@ class _MenuScreenState extends State<MenuScreen> {
                     bottomRight: Radius.circular(30),
                   ),
                 ),
-                child: Row(
-                  children: [
-                    const ProfileAvatarWithQr(
-                      imageUrl: 'https://i.pravatar.cc/150?u=passenger',
-                      isNetworkImage: true,
-                      radius: 30,
-                      qrData: 'passenger:jane_doe_u1234',
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Jane Doe',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.black,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
+                child: legacy_provider.Consumer<AuthProvider>(
+                  builder: (context, auth, child) {
+                    final user = auth.user;
+                    final fullName = user != null ? "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim() : 'Jane Doe';
+                    final email = user?['email'] ?? 'jane.doe@example.com';
+                    final profilePic = user?['profilePicture'] ?? 'https://i.pravatar.cc/150?u=passenger';
+
+                    return Row(
+                      children: [
+                        ProfileAvatarWithQr(
+                          imageUrl: profilePic,
+                          isNetworkImage: true,
+                          radius: 30,
+                          qrData: 'passenger:${user?['id'] ?? 'unknown'}',
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Gold Member',
-                                style: TextStyle(
-                                  color: Colors.black.withValues(alpha: 0.7),
-                                  fontSize: 14,
+                                fullName.isNotEmpty ? fullName : 'Cabi User',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black,
                                 ),
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Text(
+                                    email,
+                                    style: TextStyle(
+                                      color: Colors.black.withValues(alpha: 0.7),
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),

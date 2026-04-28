@@ -59,24 +59,25 @@ extension _HomeScreenPanels on _HomeScreenState {
             // Driver Info
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 25,
-                  backgroundImage:
-                      NetworkImage('https://i.pravatar.cc/150?u=driver_mike'),
+                  backgroundImage: _currentRideData?['driver']?['profilePicture'] != null
+                      ? NetworkImage(_currentRideData!['driver']['profilePicture'])
+                      : const NetworkImage('https://i.pravatar.cc/150?u=driver_default'),
                 ),
                 const SizedBox(width: 15),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Michael K.",
-                        style: TextStyle(
+                    Text(_currentRideData?['driver']?['fullName'] ?? "Michael K.",
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16)),
                     Row(
                       children: [
                         const Icon(Icons.star, color: Colors.amber, size: 16),
-                        const Text(" 4.9 ",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text("• KCZ 123A • Toyota Axio",
+                        Text(" ${_currentRideData?['driver']?['rating'] ?? '4.9'} ",
+                            style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text("• ${_currentRideData?['driver']?['vehicle']?['licensePlate'] ?? 'KCZ 123A'} • ${_currentRideData?['driver']?['vehicle']?['model'] ?? 'Toyota Axio'}",
                             style: TextStyle(
                                 color: Colors.grey[600], fontSize: 13)),
                       ],
@@ -156,10 +157,11 @@ extension _HomeScreenPanels on _HomeScreenState {
             // Driver/Trip Header
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 20,
-                  backgroundImage:
-                      NetworkImage('https://i.pravatar.cc/150?u=driver_mike'),
+                  backgroundImage: _currentRideData?['driver']?['profilePicture'] != null
+                      ? NetworkImage(_currentRideData!['driver']['profilePicture'])
+                      : const NetworkImage('https://i.pravatar.cc/150?u=driver_default'),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -169,7 +171,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                       Text(
                         _tripStatus == TripStatus.arrived
                             ? 'Arrived at Destination'
-                            : 'On Trip with Michael K.',
+                            : 'On Trip with ${_currentRideData?['driver']?['fullName'] ?? 'Michael K.'}',
                         style: TextStyle(
                             color: _tripStatus == TripStatus.arrived
                                 ? Colors.greenAccent

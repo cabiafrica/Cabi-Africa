@@ -24,55 +24,66 @@ class UserDashboardScreen extends StatelessWidget {
         child: Column(
           children: [
             // Profile Header
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 30,
-                    backgroundImage:
-                        NetworkImage('https://i.pravatar.cc/150?u=passenger'),
-                  ),
-                  const SizedBox(width: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'John Doe',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'Gold Member',
-                        style: TextStyle(
-                            color: AppTheme.primaryColor,
-                            fontWeight: FontWeight.w600),
+            Consumer<AuthProvider>(
+              builder: (context, auth, _) {
+                final user = auth.user;
+                final fullName = user != null ? "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim() : 'Jane Doe';
+                final profilePic = user?['profilePicture'] ?? 'https://i.pravatar.cc/150?u=passenger';
+                
+                return Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
                       ),
                     ],
                   ),
-                ],
-              ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: NetworkImage(profilePic),
+                      ),
+                      const SizedBox(width: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            fullName.isNotEmpty ? fullName : 'Cabi User',
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            user?['membershipTier'] ?? 'Standard Member',
+                            style: const TextStyle(
+                                color: AppTheme.primaryColor,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 20),
 
             // Stats Grid
-            Row(
-              children: [
-                _buildStatCard('Rides', '124'),
-                const SizedBox(width: 15),
-                _buildStatCard('Spent', 'KES 450'),
-                _buildStatCard('Spent', 'KES 450'),
-              ],
+            Consumer<AuthProvider>(
+              builder: (context, auth, _) {
+                final user = auth.user;
+                return Row(
+                  children: [
+                    _buildStatCard('Rides', user?['totalRides']?.toString() ?? '0'),
+                    const SizedBox(width: 15),
+                    _buildStatCard('Spent', 'KES ${user?['totalSpent']?.toString() ?? '0'}'),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 20),
 

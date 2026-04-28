@@ -54,6 +54,11 @@ export class UserService {
     // Map frontend roles to Prisma roles
     const prismaRole = role.toUpperCase() as LegacyRole;
 
+    // Generate OTP
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date();
+    otpExpires.setMinutes(otpExpires.getMinutes() + 10); // 10 minutes expiry
+
     try {
       const user = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         // Create the base user
@@ -67,6 +72,8 @@ export class UserService {
             passportPhotoUrl: profilePhotoUrl,
             referralCode: referralCode || `CABI-${Math.random().toString(36).substring(7).toUpperCase()}`,
             referredById: referrerId,
+            phoneOtpCode: otpCode,
+            phoneOtpExpires: otpExpires,
           }
         });
 
@@ -102,17 +109,63 @@ export class UserService {
       });
 
       // Send Welcome SMS/OTP hook
-      await this.smsProvider.sendSms(user.phone, `Welcome to Cabi Africa, ${user.fullName}! Your account has been created.`);
+      await this.smsProvider.sendSms(user.phone, `Welcome to Cabi Africa! Your verification code is: ${otpCode}. It expires in 10 minutes.`);
 
       return {
         userId: user.id,
         email: user.email,
         fullName: user.fullName,
+        message: 'OTP sent to your phone number.',
       };
     } catch (error) {
       console.error('Error during registration:', error);
       throw new InternalServerErrorException('Failed to register user.');
     }
+  }
+
+  async verifyOtp(phone: string, otpCode: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { phone },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found.');
+    }
+
+    if (user.phoneOtpCode !== otpCode) {
+      throw new UnauthorizedException('Invalid OTP code.');
+    }
+
+    if (new Date() > user.phoneOtpExpires) {
+      throw new UnauthorizedException('OTP has expired.');
+    }
+
+    // Clear OTP and mark phone as verified
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        phoneOtpCode: null,
+        phoneOtpExpires: null,
+        isPhoneVerified: true,
+        status: 'ACTIVE',
+      },
+    });
+
+    // Generate JWT token
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const token = await this.jwtService.signAsync(payload);
+
+    return {
+      isSignedIn: true,
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        phone: user.phone,
+        role: user.role,
+      },
+    };
   }
 
   async registerDriver(data: any, files?: any) {

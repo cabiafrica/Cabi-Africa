@@ -25,7 +25,7 @@ class DriverEnRoutePanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Dummy data for passenger name and ETA
-    final passengerName = rideDetails['passengerName'] ?? 'Jane Doe';
+    final passengerName = rideDetails['passengerName'] ?? 'Passenger';
     final eta = rideDetails['eta'] ?? 5;
 
     return Positioned(
@@ -58,12 +58,18 @@ class DriverEnRoutePanel extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.call),
-                    onPressed: () => _launchUrl('tel:+1234567890'),
+                    onPressed: () {
+                      final phone = rideDetails['passengerPhone'] ?? '';
+                      if (phone.isNotEmpty) _launchUrl('tel:$phone');
+                    },
                     tooltip: 'Call Passenger',
                   ),
                   IconButton(
                     icon: const Icon(Icons.message),
-                    onPressed: () => _launchUrl('sms:+1234567890'),
+                    onPressed: () {
+                      final phone = rideDetails['passengerPhone'] ?? '';
+                      if (phone.isNotEmpty) _launchUrl('sms:$phone');
+                    },
                     tooltip: 'Chat with Passenger',
                   ),
                   IconButton(

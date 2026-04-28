@@ -7,11 +7,18 @@ import '../config/app_config.dart';
 
 class AuthResult {
   final bool isSignedIn;
+  final bool needsVerification;
   final String? error;
   final Map<String, dynamic>? user;
   final String? token;
 
-  AuthResult({required this.isSignedIn, this.error, this.user, this.token});
+  AuthResult({
+    required this.isSignedIn,
+    this.needsVerification = false,
+    this.error,
+    this.user,
+    this.token,
+  });
 }
 
 class AuthService {
@@ -121,7 +128,8 @@ class AuthService {
           await _storage.write(key: 'jwt_token', value: token);
         }
         return AuthResult(
-          isSignedIn: true,
+          isSignedIn: token != null,
+          needsVerification: token == null,
           user: data,
           token: token,
         );
@@ -167,21 +175,32 @@ class AuthService {
 
   Future<AuthResult> verifyOtp(
       {required String phone, required String otp}) async {
-    if (!await _isSecureEnvironment()) {
-      return AuthResult(isSignedIn: false, error: 'App cannot run on a compromised device.');
-    }
-    await Future.delayed(const Duration(seconds: 1));
-    if (otp == '123456') {
-      final mockToken = 'mock_token';
-      await _storage.write(key: 'jwt_token', value: mockToken);
-      
-      return AuthResult(
-        isSignedIn: true,
-        token: mockToken,
-        user: {'id': 'mock-user-id', 'phone': phone},
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/verify-otp'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'phone': phone, 'otpCode': otp}),
       );
-    } else {
-      return AuthResult(isSignedIn: false, error: 'Invalid OTP');
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final token = data['token'];
+        await _storage.write(key: 'jwt_token', value: token);
+        
+        return AuthResult(
+          isSignedIn: true,
+          token: token,
+          user: data['user'],
+        );
+      } else {
+        final errorData = json.decode(response.body);
+        return AuthResult(
+          isSignedIn: false,
+          error: errorData['message'] ?? 'Invalid OTP',
+        );
+      }
+    } catch (e) {
+      return AuthResult(isSignedIn: false, error: 'Connection failed: $e');
     }
   }
 

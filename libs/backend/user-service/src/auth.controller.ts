@@ -31,6 +31,12 @@ export class AuthController {
     };
   }
 
+  @Post('verify-otp')
+  @Public()
+  async verifyOtp(@Body(new ValidationPipe()) verifyOtpDto: any) {
+    return this.userService.verifyOtp(verifyOtpDto.phone, verifyOtpDto.otpCode);
+  }
+
   @Post('login')
   @Public()
   async login(@Body(new ValidationPipe()) loginDto: LoginDto) {
