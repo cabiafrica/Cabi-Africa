@@ -5,7 +5,7 @@ import { RegisterUserDto, UserRole } from './dto/register-user.dto';
 import { PrismaService } from '@cabi/backend/database';
 import * as bcrypt from 'bcryptjs';
 import { LegacyRole, UserRole as PrismaUserRole, UserPermission as PrismaUserPermission, Role as PrismaRole, Prisma } from '@prisma/client';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import * as crypto from 'crypto';
@@ -412,11 +412,21 @@ export class UserService {
   }
 
   async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
-    const { email } = forgotPasswordDto;
-    const user = await this.prisma.user.findUnique({ where: { email } });
+    const { email, phone } = forgotPasswordDto;
+    
+    if (!email && !phone) {
+      throw new BadRequestException('Please provide either an email or a phone number');
+    }
+
+    let user;
+    if (email) {
+      user = await this.prisma.user.findUnique({ where: { email } });
+    } else if (phone) {
+      user = await this.prisma.user.findUnique({ where: { phone } });
+    }
 
     if (!user) {
-      throw new NotFoundException('If an account with that email exists, a reset link has been sent.');
+      throw new NotFoundException('If an account with those details exists, a reset link has been sent.');
     }
 
     const token = Math.floor(100000 + Math.random() * 900000).toString();
@@ -430,12 +440,16 @@ export class UserService {
       },
     });
 
-    const subject = 'Cabi Africa - Password Reset';
-    const body = `Your password reset token is: ${token}. This token expires in 1 hour.`;
+    const body = `Your Cabi Africa password reset token is: ${token}. This token expires in 1 hour.`;
 
-    await this.emailProvider.sendEmail(email, subject, body);
+    if (email) {
+      const subject = 'Cabi Africa - Password Reset';
+      await this.emailProvider.sendEmail(email, subject, body);
+    } else if (phone) {
+      await this.smsProvider.sendSms(user.phone, body);
+    }
 
-    return { message: 'Reset token sent to email.' };
+    return { message: 'Reset token sent successfully.' };
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto) {

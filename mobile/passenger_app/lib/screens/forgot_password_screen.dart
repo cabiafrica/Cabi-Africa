@@ -10,14 +10,14 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _identifierController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool _emailSent = false;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _identifierController.dispose();
     super.dispose();
   }
 
@@ -32,7 +32,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     try {
       final authService = AuthService();
-      final result = await authService.forgotPassword(_emailController.text);
+      final result = await authService.forgotPassword(_identifierController.text);
 
       if (result.error == null) {
         setState(() {
@@ -115,7 +115,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'No worries! Enter your email address and we\'ll send you a link to reset your password.',
+              'No worries! Enter your email address or phone number and we\'ll send you a link to reset your password.',
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.grey[600],
@@ -137,13 +137,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ],
               ),
               child: TextFormField(
-                controller: _emailController,
+                controller: _identifierController,
                 keyboardType: TextInputType.emailAddress,
+                style: const TextStyle(color: Colors.black),
                 decoration: InputDecoration(
-                  labelText: 'Email Address',
-                  hintText: 'Enter your registered email',
+                  labelText: 'Email or Phone Number',
+                  hintText: 'Enter your registered email or phone',
                   prefixIcon: const Icon(
-                    Icons.email_outlined,
+                    Icons.contact_mail_outlined,
                     color: Color(0xFFF59E0B),
                   ),
                   border: OutlineInputBorder(
@@ -159,11 +160,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
+                    return 'Please enter your email or phone number';
                   }
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                      .hasMatch(value)) {
-                    return 'Please enter a valid email';
+                  
+                  final isEmail = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value);
+                  final isPhone = RegExp(r'^\+?[0-9]{10,15}$').hasMatch(value.replaceAll(RegExp(r'\s+'), ''));
+                  
+                  if (!isEmail && !isPhone) {
+                    return 'Please enter a valid email or phone number';
                   }
                   return null;
                 },
@@ -273,7 +277,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              _emailController.text,
+              _identifierController.text,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,

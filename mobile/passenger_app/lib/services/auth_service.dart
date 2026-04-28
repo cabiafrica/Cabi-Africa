@@ -189,13 +189,22 @@ class AuthService {
     await Future.delayed(const Duration(seconds: 1));
   }
 
-  Future<AuthResult> forgotPassword(String email) async {
+  Future<AuthResult> forgotPassword(String identifier) async {
     try {
+      final isEmail = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(identifier);
+      
+      final Map<String, dynamic> body = {};
+      if (isEmail) {
+        body['email'] = identifier;
+      } else {
+        body['phone'] = identifier.replaceAll(RegExp(r'\s+'), '');
+      }
+
       final response = await http
           .post(
             Uri.parse('$baseUrl/auth/forgot-password'),
             headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({'email': email}),
+            body: jsonEncode(body),
           )
           .timeout(const Duration(seconds: 10));
 

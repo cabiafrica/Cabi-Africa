@@ -61,6 +61,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             children: [
               TextFormField(
                 controller: _tokenController,
+                style: const TextStyle(color: Colors.black),
                 decoration: const InputDecoration(labelText: 'Reset Token'),
                 validator: (value) => (value == null || value.isEmpty)
                     ? 'Enter the token from your email'
@@ -69,6 +70,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _passwordController,
+                style: const TextStyle(color: Colors.black),
                 decoration: const InputDecoration(labelText: 'New Password'),
                 obscureText: true,
                 validator: (value) => (value == null || value.length < 6)
