@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../utils/map_styles.dart';
 
 // Mock DTOs - In a real app, these would be generated.
 class RouteDetailsDto {
@@ -102,6 +103,12 @@ class _InAppNavigationScreenState extends State<InAppNavigationScreen> {
         polylines: _polylines,
         myLocationEnabled: true,
         myLocationButtonEnabled: true,
+        style: Theme.of(context).brightness == Brightness.dark
+            ? MapStyles.darkMapStyle
+            : null,
+        onMapCreated: (GoogleMapController controller) {
+          // Controller initialization if needed
+        },
       ),
     );
   }

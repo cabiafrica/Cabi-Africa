@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import '../utils/map_styles.dart';
 
 class MapPickerScreen extends StatefulWidget {
   const MapPickerScreen({super.key});
@@ -84,8 +85,12 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
               target: _currentCenter,
               zoom: 15,
             ),
+            style: Theme.of(context).brightness == Brightness.dark
+                ? MapStyles.darkMapStyle
+                : null,
             onMapCreated: (controller) {
               _mapController = controller;
+
               if (!_isLoading) {
                 controller
                     .animateCamera(CameraUpdate.newLatLng(_currentCenter));
