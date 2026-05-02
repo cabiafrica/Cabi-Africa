@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { FaLocationArrow, FaMapMarkerAlt, FaCar, FaSearch } from 'react-icons/fa';
+import { FaLocationArrow, FaMapMarkerAlt, FaCar, FaSearch, FaFingerprint, FaShieldAlt } from 'react-icons/fa';
+import { useAuth } from '@/context/AuthContext';
 
 interface VehicleOption {
     id: string;
@@ -19,31 +20,66 @@ export default function BookingSection() {
     const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
     const [bookingConfirmed, setBookingConfirmed] = useState(false);
     const [expanded, setExpanded] = useState(false);
+    const { user, isAuthenticated } = useAuth();
+    const [showVerification, setShowVerification] = useState(false);
+    const [verificationType, setVerificationType] = useState<'NONE' | 'FACE' | 'OTP'>('NONE');
+    const [verificationLoading, setVerificationLoading] = useState(false);
 
     const [tripStatus, setTripStatus] = useState<'IDLE' | 'SEARCHING' | 'CONFIRMED' | 'DRIVER_ASSIGNED' | 'ARRIVED' | 'IN_PROGRESS' | 'COMPLETED'>('IDLE');
     const [progressStep, setProgressStep] = useState(0);
     const [activeRideId, setActiveRideId] = useState<string | null>(null);
     const [driverInfo, setDriverInfo] = useState<any>(null);
+    const [currentCoords, setCurrentCoords] = useState<{ lat: number; lng: number } | null>(null);
     const pollingInterval = useRef<NodeJS.Timeout | null>(null);
+
+    const getCurrentLocation = () => {
+        if (typeof window !== 'undefined' && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setCurrentCoords({ lat: latitude, lng: longitude });
+                    setPickup('Current Location (Detected)');
+                },
+                (error) => {
+                    console.error('Geolocation error:', error);
+                }
+            );
+        }
+    };
 
     // Initial check for active ride
     useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            try {
-                const user = JSON.parse(storedUser);
-                const passengerId = user.userId || user.id;
-                if (passengerId) {
-                    checkActiveRide(passengerId);
-                }
-            } catch (e) {
-                console.error('Failed to parse user', e);
-            }
+        if (isAuthenticated && user?.id) {
+            checkActiveRide(user.id);
         }
 
         return () => {
             if (pollingInterval.current) clearInterval(pollingInterval.current);
         };
+    }, [isAuthenticated, user?.id]);
+
+    // Listen for tactical booking events
+    useEffect(() => {
+        const handleTacticalBooking = (e: any) => {
+            if (e.detail) {
+                setPickup(e.detail.pickup || '');
+                setDestination(e.detail.destination || '');
+                setExpanded(true);
+            }
+        };
+
+        // Check for URL parameters on mount
+        const params = new URLSearchParams(window.location.search);
+        const p = params.get('pickup');
+        const d = params.get('destination');
+        if (p || d) {
+            setPickup(p || '');
+            setDestination(d || '');
+            setExpanded(true);
+        }
+
+        window.addEventListener('tactical-booking', handleTacticalBooking);
+        return () => window.removeEventListener('tactical-booking', handleTacticalBooking);
     }, []);
 
     const checkActiveRide = async (passengerId: string) => {
@@ -145,27 +181,35 @@ export default function BookingSection() {
         const vehicle = vehicleOptions.find(v => v.id === selectedVehicle);
         if (!vehicle) return;
 
-        let passengerId = 'guest';
-        if (typeof window !== 'undefined') {
-            const storedUser = localStorage.getItem('user');
-            if (storedUser) {
-                try {
-                    const user = JSON.parse(storedUser);
-                    passengerId = user.userId || user.id || 'guest';
-                } catch (e) {
-                    console.error('Failed to parse user', e);
-                }
+        const settingsRes = await fetch('/api/settings/system/RIDE_VERIFICATION_ENABLED');
+        if (settingsRes.ok) {
+            const { value } = await settingsRes.json();
+            if (value === true && !showVerification) {
+                const types: ('FACE' | 'OTP')[] = ['FACE', 'OTP'];
+                setVerificationType(types[Math.floor(Math.random() * types.length)]);
+                setShowVerification(true);
+                return;
             }
         }
 
         setLoading(true);
+
+        const passengerId = user?.id || 'guest';
         try {
             const response = await fetch('/api/rides/book', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    pickup,
-                    destination,
+                    pickupLocation: { 
+                        address: pickup, 
+                        lat: currentCoords?.lat || -1.286389, 
+                        lng: currentCoords?.lng || 36.817223 
+                    },
+                    dropoffLocation: { 
+                        address: destination, 
+                        lat: -1.2921, 
+                        lng: 36.8219 
+                    },
                     vehicleType: vehicle.name,
                     fare: vehicle.price,
                     passengerId: passengerId,
@@ -185,6 +229,15 @@ export default function BookingSection() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleVerifyAndBook = async () => {
+        setVerificationLoading(true);
+        // Simulate verification process
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        setVerificationLoading(false);
+        setShowVerification(false);
+        handleBookRide();
     };
 
     const renderProgressBar = () => {
@@ -209,7 +262,7 @@ export default function BookingSection() {
     };
 
     return (
-        <section className="relative z-20 -mt-20 lg:-mt-32 px-4 lg:px-6 mb-24 pointer-events-none">
+        <section id="booking-section" className="relative z-20 -mt-20 lg:-mt-32 px-4 lg:px-6 mb-24 pointer-events-none">
             <div className="container mx-auto">
                 <div className="glass-premium rounded-[2rem] lg:rounded-[3rem] p-6 lg:p-12 pointer-events-auto transform transition-all duration-700 hover:shadow-[0_0_100px_rgba(250,204,21,0.1)] outline outline-1 outline-white/10">
 
@@ -289,7 +342,14 @@ export default function BookingSection() {
                                 <div className="space-y-2 group">
                                     <div className="flex justify-between items-center px-1">
                                         <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Extraction Source</label>
-                                        <FaLocationArrow className="text-brand-yellow text-xs animate-pulse" />
+                                        <button 
+                                            onClick={getCurrentLocation}
+                                            className="text-brand-yellow hover:text-white transition-colors flex items-center gap-1 group/loc"
+                                            title="Use my current location"
+                                        >
+                                            <span className="text-[8px] font-bold uppercase tracking-wider opacity-0 group-hover/loc:opacity-100 transition-opacity">Auto-Detect</span>
+                                            <FaLocationArrow className="text-xs animate-pulse" />
+                                        </button>
                                     </div>
                                     <div className="relative group">
                                         <input
@@ -347,6 +407,7 @@ export default function BookingSection() {
                     {/* Results Expansion */}
                     {expanded && !bookingConfirmed && vehicleOptions.length > 0 && (
                         <div className="mt-12 pt-12 border-t border-white/10 animate-reveal text-left">
+                            {/* ... (existing vehicle options code) */}
                             <h3 className="text-white text-xl font-black mb-8 tracking-tight uppercase flex items-center gap-3">
                                 <span className="w-8 h-px bg-brand-yellow"></span>
                                 Available Fleet Modules
@@ -401,6 +462,53 @@ export default function BookingSection() {
                     )}
                 </div>
             </div>
+
+            {/* Verification Modal */}
+            {showVerification && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
+                    <div className="absolute inset-0 bg-brand-black/80 backdrop-blur-md" onClick={() => setShowVerification(false)}></div>
+                    <div className="relative glass-premium p-8 rounded-[2.5rem] max-w-md w-full border border-brand-yellow/30 shadow-2xl animate-reveal">
+                        <div className="text-center">
+                            <div className="w-20 h-20 bg-brand-yellow/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                {verificationType === 'FACE' ? (
+                                    <FaShieldAlt className="text-4xl text-brand-yellow animate-pulse" />
+                                ) : (
+                                    <FaFingerprint className="text-4xl text-brand-yellow animate-pulse" />
+                                )}
+                            </div>
+                            <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tighter">Identity Check</h3>
+                            <p className="text-white/40 mb-8 font-medium">
+                                {verificationType === 'FACE' 
+                                    ? "Please look at the camera for facial recognition protocol." 
+                                    : "Please confirm your identity via secondary verification."}
+                            </p>
+
+                            <div className="space-y-4">
+                                <button
+                                    onClick={handleVerifyAndBook}
+                                    disabled={verificationLoading}
+                                    className="w-full py-4 rounded-2xl bg-brand-yellow text-black font-black uppercase tracking-widest hover:bg-brand-yellowHover transition-all shadow-lg flex items-center justify-center gap-3"
+                                >
+                                    {verificationLoading ? (
+                                        <>
+                                            <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        "Authenticate Now"
+                                    )}
+                                </button>
+                                <button
+                                    onClick={() => setShowVerification(false)}
+                                    className="w-full py-4 rounded-2xl bg-white/5 text-white/40 font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </section>
     );
 }

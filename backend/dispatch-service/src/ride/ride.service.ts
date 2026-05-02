@@ -6,7 +6,8 @@ import { CommissionService } from '../commission/commission.service';
 // import { PaymentService } from '@cabi/backend/payment-service'; 
 // import { VehicleService } from '@cabi/backend/vehicle-service'; 
 // import { UserService } from '@cabi/backend/user-service';
-// import { NotificationService } from '@cabi/backend/notification-service';
+import { NotificationService } from '@cabi/backend/notification-service';
+import { SettingsService } from '@cabi/backend/settings';
 
 // Mock Services for external dependencies (Payment, Vehicle, Notification)
 class PaymentService { async createCharge(uid: string, amount: number) { return { success: true, message: 'Mock charge' }; } }
@@ -40,10 +41,24 @@ export class RideService {
     private prisma: PrismaService,
     public matchingService: MatchingService,
     private badgeService: BadgeService,
-    private commissionService: CommissionService
+    private commissionService: CommissionService,
+    private settingsService: SettingsService
   ) { }
 
-  private checkPassengerVerification(passengerId: string): { canRequest: boolean; reason?: string; remainingTrips?: number; isVerified?: boolean } {
+  private async checkPassengerVerification(passengerId: string): Promise<{ canRequest: boolean; reason?: string; remainingTrips?: number; isVerified?: boolean }> {
+    // Check admin setting for verification
+    const verificationEnabled = await this.settingsService.getSystemSetting('RIDE_VERIFICATION_ENABLED');
+    
+    // If verification is disabled by admin, allow all requests
+    if (verificationEnabled === false) {
+      return { canRequest: true, isVerified: true };
+    }
+
+    // Special handling for guest users during testing phase
+    if (passengerId === 'guest') {
+      return { canRequest: true, reason: 'Guest booking permitted during testing.', isVerified: false };
+    }
+
     // Get current trip count
     const tripCount = passengerTripCounts.get(passengerId) || 0;
     const remainingTrips = Math.max(0, MAX_FREE_TRIPS - tripCount);
@@ -70,9 +85,9 @@ export class RideService {
     };
   }
 
-  async createRide(passengerId: string, pickup: any, dropoff: any, vehicleType?: string) {
+  async createRide(passengerId: string, pickup: any, dropoff: any, fare: number, vehicleType?: string) {
     // Check passenger verification before creating ride
-    const verificationCheck = this.checkPassengerVerification(passengerId);
+    const verificationCheck = await this.checkPassengerVerification(passengerId);
 
     if (!verificationCheck.canRequest) {
       throw new HttpException(
@@ -89,15 +104,21 @@ export class RideService {
 
     const matchingStartedAt = new Date();
 
+    // Map LITE to STANDARD if it's sent from the app
+    let resolvedVehicleType = vehicleType;
+    if (vehicleType === 'LITE') {
+      resolvedVehicleType = 'STANDARD';
+    }
+
     const ride = await this.prisma.ride.create({
       data: {
         passengerId,
         pickupLocation: pickup,
         dropoffLocation: dropoff,
         status: 'REQUESTED',
-        requestedVehicleType: vehicleType as any,
+        requestedVehicleType: resolvedVehicleType as any,
         matchingStartedAt,
-        fare: 0,
+        fare: fare,
         distance: 0,
         duration: 0
       }

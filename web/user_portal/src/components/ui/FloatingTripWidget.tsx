@@ -23,7 +23,22 @@ export default function FloatingTripWidget() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!pickup || !destination) return;
-        window.location.href = `/book?pickup=${encodeURIComponent(pickup)}&destination=${encodeURIComponent(destination)}`;
+        
+        // Dispatch custom event to update BookingSection
+        const event = new CustomEvent('tactical-booking', {
+            detail: { pickup, destination }
+        });
+        window.dispatchEvent(event);
+
+        // Scroll to the booking section
+        const bookingSection = document.getElementById('booking-section');
+        if (bookingSection) {
+            bookingSection.scrollIntoView({ behavior: 'smooth' });
+            setIsOpen(false);
+        } else {
+            // Fallback if not on home page
+            window.location.href = `/?pickup=${encodeURIComponent(pickup)}&destination=${encodeURIComponent(destination)}`;
+        }
     };
 
     return (
