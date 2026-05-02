@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
 class ReferralTreeGraph extends StatelessWidget {
   final int level1Count;
@@ -29,7 +30,7 @@ class ReferralTreeGraph extends StatelessWidget {
             height: 80,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFFFFD700), // Center color
+              color: AppTheme.primaryColor, // Center color
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.2),
@@ -78,12 +79,12 @@ class _ReferralTreePainter extends CustomPainter {
 
     // Draw Ring 2 (Outer)
     paint.color =
-        const Color(0xFFFFF59D).withValues(alpha: 0.5); // Very light yellow
+        const Color(0x80FFF59D); // Very light yellow
     canvas.drawCircle(center, ring2Radius, paint);
 
     // Draw Ring 1 (Inner)
     paint.color =
-        const Color(0xFFFFEE58).withValues(alpha: 0.7); // Light yellow
+        const Color(0xB3FFEE58); // Light yellow
     canvas.drawCircle(center, ring1Radius, paint);
 
     // Draw Nodes for Level 2
@@ -104,7 +105,7 @@ class _ReferralTreePainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.1)
+      ..color = const Color(0x1A000000)
       ..style = PaintingStyle.fill
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
 
@@ -126,3 +127,5 @@ class _ReferralTreePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
+
+

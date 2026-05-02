@@ -88,7 +88,7 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: const Text('About App'),
-            subtitle: const Text('Version 1.0.0'),
+            subtitle: const Text('Version 1.1.0+6'),
             onTap: () {},
           ),
         ],
@@ -106,7 +106,7 @@ class SettingsScreen extends ConsumerWidget {
         title.toUpperCase(),
         style: TextStyle(
           color: isDark
-              ? const Color(0xFFFFD700)
+              ? AppTheme.primaryColor
               : Colors.black87, // Gold on Black, Black on White
           fontWeight: FontWeight.bold,
           fontSize: 12,

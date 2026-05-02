@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../services/auth_service.dart';
 import 'otp_verification_screen.dart';
+import 'package:passenger_app/theme/app_theme.dart';
 
 class RegistrationScreen extends ConsumerStatefulWidget {
   final AuthService? authService;
@@ -83,7 +84,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                   child: Text(
                     'Upload Professional Photo',
                     style: TextStyle(
-                      color: Color(0xFFFFD700),
+                      color: AppTheme.primaryColor,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
@@ -239,17 +240,17 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xFFFFD700); // Prestige Gold
-    const backgroundColor = Color(0xFF0A0A0A); // Deep Black
-    const surfaceColor = Color(0xFF141414); // Elevated Black
+    final primaryColor = AppTheme.primaryColor; // Prestige Gold
+    final backgroundColor = AppTheme.darkBackground; // Deep Black
+    final surfaceColor = AppTheme.darkSurface; // Elevated Black
 
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'CREATE ACCOUNT',
           style: TextStyle(
-            color: primaryColor,
+            color: AppTheme.primaryColor,
             fontWeight: FontWeight.bold,
             letterSpacing: 2,
             fontSize: 16,
@@ -257,7 +258,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: primaryColor),
+        iconTheme: IconThemeData(color: AppTheme.primaryColor),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
@@ -291,17 +292,17 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                           ? FileImage(_profileImage!)
                           : null,
                       child: _profileImage == null
-                          ? const Column(
+                          ? Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(Icons.camera_enhance_outlined,
-                                    size: 32, color: primaryColor),
+                                    size: 32, color: AppTheme.primaryColor),
                                 SizedBox(height: 4),
                                 Text(
                                   'PHOTO',
                                   style: TextStyle(
                                     fontSize: 10,
-                                    color: primaryColor,
+                                    color: AppTheme.primaryColor,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1,
                                   ),
@@ -331,7 +332,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                     child: _buildTextField(
                       controller: _firstNameController,
                       label: 'First Name',
-                      hint: 'John',
+                      hint: 'Legal Name',
                       validator: (value) =>
                           (value == null || value.isEmpty) ? 'Required' : null,
                     ),
@@ -341,7 +342,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                     child: _buildTextField(
                       controller: _lastNameController,
                       label: 'Last Name',
-                      hint: 'Doe',
+                      hint: 'Surname',
                       validator: (value) =>
                           (value == null || value.isEmpty) ? 'Required' : null,
                     ),
@@ -352,7 +353,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               _buildTextField(
                 controller: _emailController,
                 label: 'Email Address (Optional)',
-                hint: 'john.doe@prestige.com',
+                hint: 'your.email@prestige.com',
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) return null;
@@ -406,8 +407,8 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               ),
               const SizedBox(height: 40),
               _isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(color: primaryColor))
+                  ? Center(
+                      child: CircularProgressIndicator(color: AppTheme.primaryColor))
                   : ElevatedButton(
                       onPressed: _submitRegistration,
                       style: ElevatedButton.styleFrom(
@@ -446,8 +447,8 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
     VoidCallback? onToggleVisibility,
     String? Function(String?)? validator,
   }) {
-    const primaryColor = Color(0xFFFFD700);
-    const surfaceColor = Color(0xFF141414);
+    final primaryColor = AppTheme.primaryColor;
+    final surfaceColor = AppTheme.darkSurface;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -500,7 +501,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: primaryColor, width: 1),
+              borderSide: BorderSide(color: AppTheme.primaryColor, width: 1),
             ),
             errorStyle: const TextStyle(color: Colors.redAccent, fontSize: 11),
           ),
@@ -509,3 +510,4 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
     );
   }
 }
+

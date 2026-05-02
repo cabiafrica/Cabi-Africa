@@ -3,6 +3,9 @@ import 'home_screen.dart';
 import 'dashboard_screen.dart';
 import 'earnings_screen.dart';
 import 'menu_screen.dart';
+import 'package:driver_app/theme/app_theme.dart';
+
+import 'sos_alert_screen.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -23,14 +26,25 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
-    const primaryGold = Color(0xFFFFD700);
-    const prestigeBlack = Color(0xFF0A0A0A);
+    const primaryGold = AppTheme.primaryColor;
+    const prestigeBlack = AppTheme.darkBackground;
 
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
         children: _screens,
       ),
+      floatingActionButton: _currentIndex != 3 ? FloatingActionButton(
+        heroTag: 'global_sos_btn',
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SosAlertScreen()),
+          );
+        },
+        backgroundColor: Colors.redAccent,
+        child: const Text('SOS', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+      ) : null,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: prestigeBlack,
@@ -144,3 +158,4 @@ class _NavItem extends StatelessWidget {
     );
   }
 }
+

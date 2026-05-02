@@ -10,15 +10,19 @@ class CreateRideDto {
 
   @IsNotEmpty()
   @IsObject()
-  pickup: any;
+  pickupLocation: any;
 
   @IsNotEmpty()
   @IsObject()
-  dropoff: any;
+  dropoffLocation: any;
 
   @IsString()
   @IsOptional()
   vehicleType?: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  fare: number;
 }
 
 class AcceptRideDto {
@@ -72,8 +76,9 @@ export class RideController {
   createRide(@Body() body: CreateRideDto) {
     return this.rideService.createRide(
       body.passengerId,
-      body.pickup,
-      body.dropoff,
+      body.pickupLocation,
+      body.dropoffLocation,
+      body.fare,
       body.vehicleType
     );
   }

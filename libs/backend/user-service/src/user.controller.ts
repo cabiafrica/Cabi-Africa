@@ -23,4 +23,9 @@ export class UserController {
     async updateUserStatus(@Param('id') id: string, @Body('status') status: string) {
         return this.userService.updateUserStatus(id, status);
     }
+
+    @Post(':id/verify-biometric')
+    async verifyBiometric(@Param('id') id: string) {
+        return this.userService.verifyBiometric(id);
+    }
 }

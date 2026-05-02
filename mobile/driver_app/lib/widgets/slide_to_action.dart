@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
 class SlideToAction extends StatefulWidget {
   final String label;
@@ -12,7 +13,7 @@ class SlideToAction extends StatefulWidget {
     super.key,
     required this.label,
     required this.onAction,
-    this.color = const Color(0xFFFFD700),
+    this.color = AppTheme.primaryColor,
     this.textColor = Colors.black,
     this.slideLeft = false,
   });
@@ -98,3 +99,4 @@ class _SlideToActionState extends State<SlideToAction> {
     );
   }
 }
+

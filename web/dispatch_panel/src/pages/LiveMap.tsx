@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { io, Socket } from 'socket.io-client';
+import apiClient from '../lib/apiClient';
 import { CabiMap, MapMarker } from '../components/CabiMap';
 
 interface Driver {
@@ -18,8 +20,88 @@ export default function LiveMapPage() {
     const [drivers, setDrivers] = useState<Driver[]>([]);
     const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
     const [showOnlineOnly, setShowOnlineOnly] = useState(false);
+    const socketRef = useRef<Socket | null>(null);
 
-    // TODO: Implement real-time driver data fetching from backend
+    // 1. Initial Data Fetch
+    useEffect(() => {
+        const fetchDrivers = async () => {
+            try {
+                const response = await apiClient.get('/dispatch/drivers');
+                const mappedDrivers = response.data.map((d: any) => ({
+                    id: d.id,
+                    name: d.user?.fullName || 'Unknown Driver',
+                    position: d.currentLocation 
+                        ? [d.currentLocation.lat, d.currentLocation.lng] 
+                        : [-1.286389, 36.817223],
+                    isOnline: d.isOnline,
+                }));
+                setDrivers(mappedDrivers);
+            } catch (error) {
+                console.error('Failed to fetch drivers:', error);
+            }
+        };
+
+        fetchDrivers();
+    }, []);
+
+    // 2. Real-time WebSocket Connection
+    useEffect(() => {
+        const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const socket = io(`${socketUrl}/trip-tracking`, {
+            transports: ['websocket'],
+        });
+
+        socketRef.current = socket;
+
+        socket.on('connect', () => {
+            console.log('Connected to Dispatch WebSocket');
+        });
+
+        socket.on('globalDriverUpdate', (data: { driverId: string; lat: number; lng: number }) => {
+            setDrivers((prev) =>
+                prev.map((d) =>
+                    d.id === data.driverId
+                        ? { ...d, position: [data.lat, data.lng] as [number, number], isOnline: true }
+                        : d
+                )
+            );
+        });
+
+        socket.on('driverStatusUpdate', (data: { driverId: string; isOnline: boolean }) => {
+            setDrivers((prev) =>
+                prev.map((d) =>
+                    d.id === data.driverId ? { ...d, isOnline: data.isOnline } : d
+                )
+            );
+        });
+
+        socket.on('tripUpdate', (ride: any) => {
+            setDrivers((prev) =>
+                prev.map((d) =>
+                    d.id === ride.driverId
+                        ? {
+                            ...d,
+                            currentTrip: {
+                                passengerId: ride.passengerId,
+                                passengerName: ride.passenger?.fullName || 'Passenger',
+                                pickup: [ride.pickupLocation.lat, ride.pickupLocation.lng],
+                                dropoff: [ride.dropoffLocation.lat, ride.dropoffLocation.lng],
+                            },
+                        }
+                        : d
+                )
+            );
+        });
+
+        socket.on('newTripRequest', (ride: any) => {
+            // New trip requested, maybe show a notification or update stats
+            console.log('New trip request received:', ride);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
 
     const filteredDrivers = showOnlineOnly
         ? drivers.filter((d) => d.isOnline)

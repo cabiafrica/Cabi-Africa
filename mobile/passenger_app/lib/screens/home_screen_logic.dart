@@ -273,16 +273,19 @@ extension _HomeScreenLogic on _HomeScreenState {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please sign in to Request a Ride')),
       );
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
       return;
     }
 
-    // 1. Face Identity Gate (MANDATORY BEFORE EVERY TRIP REQUEST)
+    // 1. Identity Gate (MANDATORY BEFORE EVERY TRIP REQUEST)
     bool verified = false;
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => FaceVerificationModal(
+      builder: (context) => SecurityVerificationModal(
         onVerified: () => verified = true,
       ),
     );

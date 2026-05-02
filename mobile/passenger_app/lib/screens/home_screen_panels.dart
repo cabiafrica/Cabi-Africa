@@ -9,11 +9,12 @@ extension _HomeScreenPanels on _HomeScreenState {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.darkSurface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.1), width: 1),
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: Colors.black.withValues(alpha: 0.3),
                 blurRadius: 20,
                 spreadRadius: 5),
           ],
@@ -33,11 +34,11 @@ extension _HomeScreenPanels on _HomeScreenState {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
-                            color: Colors.green)),
+                            color: Colors.greenAccent)),
                     const SizedBox(height: 4),
                     Text("Arriving in $_arrivalDurationMinutes mins",
                         style: const TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 14)),
+                            fontWeight: FontWeight.w600, fontSize: 14, color: Colors.white)),
                   ],
                 ),
                 Container(
@@ -69,9 +70,9 @@ extension _HomeScreenPanels on _HomeScreenState {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(_currentRideData?['driver']?['fullName'] ?? "Michael K.",
+                    Text(_currentRideData?['driver']?['fullName'] ?? "Driver Found",
                         style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
+                            fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
                     Row(
                       children: [
                         const Icon(Icons.star, color: Colors.amber, size: 16),
@@ -79,7 +80,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                             style: const TextStyle(fontWeight: FontWeight.bold)),
                         Text("• ${_currentRideData?['driver']?['vehicle']?['licensePlate'] ?? 'KCZ 123A'} • ${_currentRideData?['driver']?['vehicle']?['model'] ?? 'Toyota Axio'}",
                             style: TextStyle(
-                                color: Colors.grey[600], fontSize: 13)),
+                                color: Colors.white70, fontSize: 13)),
                       ],
                     )
                   ],
@@ -171,7 +172,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                       Text(
                         _tripStatus == TripStatus.arrived
                             ? 'Arrived at Destination'
-                            : 'On Trip with ${_currentRideData?['driver']?['fullName'] ?? 'Michael K.'}',
+                            : 'On Trip with ${_currentRideData?['driver']?['fullName'] ?? 'Driver'}',
                         style: TextStyle(
                             color: _tripStatus == TripStatus.arrived
                                 ? Colors.greenAccent
@@ -197,7 +198,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                   child: Text(
                     formattedTime,
                     style: const TextStyle(
-                        color: Color(0xFFFFD700), fontWeight: FontWeight.bold),
+                        color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -217,7 +218,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                 Text(
                   'KES ${_currentFare.toStringAsFixed(2)}',
                   style: const TextStyle(
-                    color: Color(0xFFFFD700), // Taxi Gold
+                    color: AppTheme.primaryColor, // Taxi Gold
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                   ),
@@ -328,11 +329,12 @@ extension _HomeScreenPanels on _HomeScreenState {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Text(
-                            "OTA TEST v1.1.0+3 - Active",
+                            "CABI PASSENGER v1.1.0+6 - Active",
                             style: TextStyle(
                               color: Colors.green,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
                             ),
                           ),
                         ),
@@ -784,11 +786,12 @@ extension _HomeScreenPanels on _HomeScreenState {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.darkSurface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.1), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 20,
               spreadRadius: 5,
             ),
@@ -1196,3 +1199,4 @@ extension _HomeScreenPanels on _HomeScreenState {
     );
   }
 }
+

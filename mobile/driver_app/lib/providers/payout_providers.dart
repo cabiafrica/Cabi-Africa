@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:driver_app/providers/auth_provider.dart';
 import 'package:driver_app/models/payout_dto.dart';
 import '../services/payout_api_service.dart';
 
 /// Provider to fetch the driver's available earnings.
 final availableEarningsProvider = FutureProvider.autoDispose<double>((ref) {
   final payoutApiService = ref.watch(payoutApiServiceProvider);
-  // Mocking driverId, in a real app this would come from the auth state.
-  const mockDriverId = 'driver-123';
-  return payoutApiService.getAvailableEarnings(mockDriverId);
+  final auth = ref.watch(authProvider);
+  final driverId = auth.userId ?? 'driver-default';
+  return payoutApiService.getAvailableEarnings(driverId);
 });
 
 /// Controller for handling the payout request logic.

@@ -304,3 +304,4 @@ class _SupportChatScreenState extends State<SupportChatScreen> {
     super.dispose();
   }
 }
+

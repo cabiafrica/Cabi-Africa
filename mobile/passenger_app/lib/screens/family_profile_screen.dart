@@ -32,7 +32,7 @@ class _FamilyProfileScreenState extends State<FamilyProfileScreen> {
   List<FamilyMember> familyMembers = [
     FamilyMember(
       id: '1',
-      name: 'John Smith',
+      name: "Elite Member",
       email: 'john@example.com',
       role: 'organizer',
       status: 'active',
@@ -552,3 +552,4 @@ class _FamilyProfileScreenState extends State<FamilyProfileScreen> {
     );
   }
 }
+

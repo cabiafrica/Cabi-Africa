@@ -99,3 +99,4 @@ class _BiometricCheckWrapperState extends State<BiometricCheckWrapper> {
     );
   }
 }
+

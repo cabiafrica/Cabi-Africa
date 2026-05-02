@@ -358,3 +358,4 @@ class _OrganizationBrowserScreenState extends State<OrganizationBrowserScreen> {
     );
   }
 }
+

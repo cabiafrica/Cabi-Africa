@@ -2,15 +2,15 @@ import 'package:flutter/foundation.dart';
 
 class AppConfig {
   // Auto-detect production environment based on build mode
-  static const bool isProduction = kReleaseMode;
+  static const bool isProduction = false; // Forced false for local integration verification
 
   static String get host {
     if (isProduction) return 'auth-gateway-746659778850.us-central1.run.app';
-    if (kIsWeb) return 'localhost';
+    if (kIsWeb) return '127.0.0.1';
     if (defaultTargetPlatform == TargetPlatform.android) {
       return '10.0.2.2'; // Android Emulator
     }
-    return 'localhost';
+    return '127.0.0.1';
   }
 
   static String get protocol => isProduction ? 'https' : 'http';

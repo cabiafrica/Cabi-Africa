@@ -92,9 +92,11 @@ class _ReferralProgramScreenState extends ConsumerState<ReferralProgramScreen> {
   }
 
   void _shareCode(String code) {
-    Clipboard.setData(ClipboardData(text: code));
+    final message =
+        'Join Cabi Africa as a driver and earn more! Use my referral code: $code\nSign up here: https://cabi.africa/d';
+    Clipboard.setData(ClipboardData(text: message));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Referral code copied to clipboard!')),
+      const SnackBar(content: Text('Driver invite message copied to clipboard!')),
     );
   }
 

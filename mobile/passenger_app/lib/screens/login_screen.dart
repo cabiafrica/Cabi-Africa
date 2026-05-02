@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
+import '../theme/app_theme.dart';
 import 'home_screen.dart';
 import 'registration_screen.dart';
 import 'forgot_password_screen.dart';
@@ -102,8 +103,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     // Cabi Global Colors (New Dawn)
-    const primaryColor = Color(0xFFFFD700); // Prestige Gold
-    const backgroundColor = Color(0xFF0A0A0A); // Deep Black
+    final primaryColor = AppTheme.primaryColor;
+    final backgroundColor = AppTheme.darkBackground;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -149,7 +150,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   'assets/images/cabi_logo.png',
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.taxi_alert_outlined,
+                                      Icon(Icons.taxi_alert_outlined,
                                           color: primaryColor, size: 30),
                                 ),
                               ),
@@ -270,7 +271,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     ),
                                   );
                                 },
-                                child: const Text("Forgot Password?",
+                                child: Text("Forgot Password?",
                                     style: TextStyle(
                                         color: primaryColor, fontSize: 14)),
                               ),
@@ -327,7 +328,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                           builder: (_) =>
                                               const RegistrationScreen()));
                                 },
-                                child: const Text("Sign Up",
+                                child: Text("Sign Up",
                                     style: TextStyle(
                                         color: primaryColor,
                                         fontWeight: FontWeight.bold)),
@@ -379,3 +380,4 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 }
+

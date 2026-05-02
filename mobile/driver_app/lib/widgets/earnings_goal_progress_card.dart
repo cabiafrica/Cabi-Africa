@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
 class EarningsGoalProgressCard extends StatefulWidget {
   final double currentEarnings;
@@ -123,7 +124,7 @@ class _EarningsGoalProgressCardState extends State<EarningsGoalProgressCard>
                   children: [
                     Icon(
                       isGoalMet ? Icons.emoji_events : Icons.flag,
-                      color: isGoalMet ? Colors.green : const Color(0xFFFFD700),
+                      color: isGoalMet ? Colors.green : AppTheme.primaryColor,
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -165,7 +166,7 @@ class _EarningsGoalProgressCardState extends State<EarningsGoalProgressCard>
                     minHeight: 12,
                     backgroundColor: Colors.grey[200],
                     valueColor: AlwaysStoppedAnimation<Color>(
-                        isGoalMet ? Colors.green : const Color(0xFFFFD700)),
+                        isGoalMet ? Colors.green : AppTheme.primaryColor),
                   ),
                 ),
               ],
@@ -239,3 +240,4 @@ class _EarningsGoalProgressCardState extends State<EarningsGoalProgressCard>
     );
   }
 }
+

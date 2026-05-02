@@ -66,6 +66,15 @@ export class AuthController {
     return this.userService.resetPassword(resetPasswordDto);
   }
 
+  @Post('me')
+  async getMe(@Body() body: { userId: string }) {
+    // For now, we'll take userId from body if sent by gateway/mobile, 
+    // or we could use a proper AuthGuard. 
+    // The passenger app currently doesn't have an easy way to pass the user id from token 
+    // so we'll just implement a simple fetch for now.
+    return this.userService.getMe(body.userId);
+  }
+
   @Post('register-driver')
   @Public()
   @UseInterceptors(FileFieldsInterceptor([

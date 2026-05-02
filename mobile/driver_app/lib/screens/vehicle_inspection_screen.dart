@@ -251,3 +251,4 @@ class _VehicleInspectionScreenState extends State<VehicleInspectionScreen> {
     );
   }
 }
+

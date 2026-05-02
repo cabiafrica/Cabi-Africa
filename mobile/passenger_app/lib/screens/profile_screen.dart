@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart' as legacy_provider;
 import '../services/auth_service.dart';
 import '../providers/auth_provider.dart';
+import '../theme/app_theme.dart';
 import 'login_screen.dart';
 import 'loyalty_dashboard_screen.dart';
 
@@ -87,25 +88,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xFFFFD700); // Prestige Gold
-    const backgroundColor = Color(0xFF0A0A0A); // Deep Black
-    const surfaceColor = Color(0xFF141414); // Elevated Black
+    final primaryColor = AppTheme.primaryColor;
+    final backgroundColor = AppTheme.darkBackground;
+    final surfaceColor = AppTheme.darkSurface;
 
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'PRESTIGE PROFILE',
           style: TextStyle(
-            color: primaryColor,
+            color: AppTheme.primaryColor,
             fontWeight: FontWeight.bold,
             letterSpacing: 2,
             fontSize: 14,
           ),
         ),
-        iconTheme: const IconThemeData(color: primaryColor),
+        iconTheme: IconThemeData(color: AppTheme.primaryColor),
         actions: [
           if (_isLoading)
             const Padding(
@@ -115,16 +116,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: primaryColor),
+                      strokeWidth: 2, color: AppTheme.primaryColor),
                 ),
               ),
             )
           else
             TextButton(
               onPressed: _saveProfile,
-              child: const Text('SAVE',
+              child: Text('SAVE',
                   style: TextStyle(
-                      color: primaryColor,
+                      color: AppTheme.primaryColor,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1)),
             ),
@@ -173,8 +174,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: _pickImage,
                       child: Container(
                         padding: const EdgeInsets.all(10),
-                        decoration: const BoxDecoration(
-                          color: primaryColor,
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryColor,
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -247,7 +248,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: TextStyle(
                       letterSpacing: 2,
                       fontWeight: FontWeight.bold,
-                      fontSize: 12)),
+                      fontSize: 12,
+                      color: AppTheme.errorRed)),
             ),
             const SizedBox(height: 40),
           ],
@@ -260,7 +262,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Text(
       label,
       style: const TextStyle(
-        color: Color(0xFFFFD700),
+        color: AppTheme.primaryColor,
         fontSize: 10,
         fontWeight: FontWeight.bold,
         letterSpacing: 1.5,
@@ -275,8 +277,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required IconData icon,
     bool readOnly = false,
   }) {
-    const primaryColor = Color(0xFFFFD700);
-    const surfaceColor = Color(0xFF141414);
+    final primaryColor = AppTheme.primaryColor;
+    final surfaceColor = AppTheme.darkSurface;
+
 
     return TextFormField(
       controller: controller,
@@ -301,7 +304,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: primaryColor, width: 0.5),
+          borderSide: BorderSide(color: AppTheme.primaryColor, width: 0.5),
         ),
       ),
     );
@@ -313,8 +316,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String subtitle,
     required VoidCallback onTap,
   }) {
-    const primaryColor = Color(0xFFFFD700);
-    const surfaceColor = Color(0xFF141414);
+    final primaryColor = AppTheme.primaryColor;
+    final surfaceColor = AppTheme.darkSurface;
+
 
     return Container(
       decoration: BoxDecoration(
@@ -338,3 +342,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+

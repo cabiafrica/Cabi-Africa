@@ -285,3 +285,4 @@ class _SurgeNotificationExampleState extends State<SurgeNotificationExample> {
     );
   }
 }
+

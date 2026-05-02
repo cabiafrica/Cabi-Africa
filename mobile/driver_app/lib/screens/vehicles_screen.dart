@@ -392,3 +392,4 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     super.dispose();
   }
 }
+

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
 /// A saved location entry.
 class SavedPlace {
@@ -180,7 +181,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFD700),
+                    backgroundColor: AppTheme.primaryColor,
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
@@ -239,7 +240,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _addPlace,
-        backgroundColor: const Color(0xFFFFD700),
+        backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.black,
         icon: const Icon(Icons.add),
         label: const Text('Add Place'),
@@ -340,7 +341,7 @@ class _EmptyState extends StatelessWidget {
             icon: const Icon(Icons.add),
             label: const Text('Add a Place'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFD700),
+              backgroundColor: AppTheme.primaryColor,
               foregroundColor: Colors.black,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
@@ -351,3 +352,4 @@ class _EmptyState extends StatelessWidget {
     );
   }
 }
+

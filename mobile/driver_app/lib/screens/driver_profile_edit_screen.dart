@@ -219,11 +219,11 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: Color(0x0D000000),
                       blurRadius: 8,
-                      offset: const Offset(0, 2),
+                      offset: Offset(0, 2),
                     ),
                   ],
                 ),
@@ -234,10 +234,9 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
                       children: [
                         Container(
                           padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color:
-                                const Color(0xFFFBBF24).withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(8),
+                          decoration: const BoxDecoration(
+                            color: Color(0x33FBBF24),
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
                           ),
                           child: const Icon(
                             Icons.person_outline,
@@ -293,12 +292,12 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
               // Info Card
               Container(
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFBBF24).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xFFFBBF24).withValues(alpha: 0.3),
-                  ),
+                decoration: const BoxDecoration(
+                  color: Color(0x1AFBBF24),
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  border: Border.fromBorderSide(BorderSide(
+                    color: Color(0x4DFBBF24),
+                  )),
                 ),
                 child: Row(
                   children: [
@@ -326,7 +325,7 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
           // Loading Overlay
           if (_isLoading)
             Container(
-              color: Colors.black.withValues(alpha: 0.5),
+              color: const Color(0x80000000),
               child: const Center(
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFBBF24)),
@@ -337,13 +336,13 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Color(0x1A000000),
               blurRadius: 10,
-              offset: const Offset(0, -2),
+              offset: Offset(0, -2),
             ),
           ],
         ),
@@ -369,8 +368,9 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
                   Text(
                     _isLoading ? 'Saving...' : 'Save Changes',
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5,
                     ),
                   ),
                 ],
@@ -382,3 +382,5 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
     );
   }
 }
+
+

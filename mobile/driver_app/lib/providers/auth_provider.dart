@@ -5,6 +5,8 @@ import '../services/auth_service.dart';
 // -- States --
 abstract class AuthState {
   const AuthState();
+  Map<String, dynamic>? get user => null;
+  String? get userId => null;
 }
 
 class AuthInitial extends AuthState {
@@ -21,9 +23,11 @@ class Unauthenticated extends AuthState {
 
 class Authenticated extends AuthState {
   final String token;
+  @override
   final Map<String, dynamic>? user;
   const Authenticated(this.token, [this.user]);
 
+  @override
   String? get userId => user?['id']?.toString() ?? user?['userId']?.toString();
 }
 
@@ -38,7 +42,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   AuthNotifier(this._authService, this._storage) : super(const AuthInitial());
 
   Future<void> tryAutoLogin() async {
-    final token = await _storage.read(key: 'authToken');
+    final token = await _storage.read(key: 'jwt_token');
     if (token != null) {
       // In a real app, we'd fetch the user profile from the token here
       state = Authenticated(token);
@@ -55,10 +59,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       if (result.isSignedIn && result.token != null) {
         if (rememberMe) {
-          await _storage.write(key: 'authToken', value: result.token);
+          await _storage.write(key: 'jwt_token', value: result.token);
         } else {
           await _storage.delete(
-              key: 'authToken'); // Ensure old sessions are wiped
+              key: 'jwt_token'); // Ensure old sessions are wiped
         }
         state = Authenticated(result.token!, result.user);
       } else {
@@ -72,7 +76,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> logout() async {
-    await _storage.delete(key: 'authToken');
+    await _storage.delete(key: 'jwt_token');
     state = const Unauthenticated();
   }
 }

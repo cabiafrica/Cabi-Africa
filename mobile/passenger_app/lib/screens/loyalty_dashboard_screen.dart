@@ -1,34 +1,54 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 import '../screens/redeem_points_screen.dart';
 
-class LoyaltyDashboardScreen extends StatelessWidget {
+class LoyaltyDashboardScreen extends StatefulWidget {
   const LoyaltyDashboardScreen({super.key});
 
-  // Mock data for the MVP
-  final int cabiPoints = 1250;
-  final String currentTier = "Silver";
-  final int pointsToNextTier = 2500;
-  final List<Map<String, String>> recentActivity = const [
-    {'description': 'Trip to Westgate Mall', 'points': '+50'},
-    {'description': 'Trip to JKIA', 'points': '+120'},
-    {'description': 'Trip to The Alchemist Bar', 'points': '+35'},
-  ];
+  @override
+  State<LoyaltyDashboardScreen> createState() => _LoyaltyDashboardScreenState();
+}
+
+class _LoyaltyDashboardScreenState extends State<LoyaltyDashboardScreen> {
+  // These will be fetched from a service in the next iteration
+  final int cabiPoints = 0;
+  final String currentTier = "ELITE";
+  final int pointsToNextTier = 5000;
+  final List<Map<String, String>> recentActivity = [];
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = AppTheme.primaryColor;
+    final backgroundColor = AppTheme.darkBackground;
+    final surfaceColor = AppTheme.darkSurface;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Loyalty Rewards')),
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          'LOYALTY REWARDS',
+          style: TextStyle(
+            color: primaryColor,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+            fontSize: 14,
+          ),
+        ),
+        iconTheme: IconThemeData(color: primaryColor),
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildPointsCard(context),
-            const SizedBox(height: 24),
-            _buildTierProgressCard(context),
-            const SizedBox(height: 24),
-            _buildRecentActivity(context),
-            const SizedBox(height: 24),
+            _buildPointsCard(context, primaryColor, surfaceColor),
+            const SizedBox(height: 32),
+            _buildTierProgressCard(context, primaryColor, surfaceColor),
+            const SizedBox(height: 32),
+            _buildRecentActivity(context, primaryColor, surfaceColor),
+            const SizedBox(height: 48),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -38,100 +58,201 @@ class LoyaltyDashboardScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: const Text('Redeem Points'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: const Text(
+                'REDEEM PRESTIGE POINTS',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                ),
+              ),
             ),
+            const SizedBox(height: 40),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPointsCard(BuildContext context) {
-    return Card(
-      color: Colors.blue.shade700,
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            const Text(
-              'Cabi Points Balance',
-              style: TextStyle(color: Colors.white70, fontSize: 16),
+  Widget _buildPointsCard(BuildContext context, Color primary, Color surface) {
+    return Container(
+      padding: const EdgeInsets.all(32.0),
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: primary.withValues(alpha: 0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: primary.withValues(alpha: 0.05),
+            blurRadius: 40,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(
+            'CABI POINTS BALANCE',
+            style: TextStyle(
+              color: primary.withValues(alpha: 0.6),
+              fontSize: 10,
+              letterSpacing: 2,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 8),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            cabiPoints.toString(),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 56,
+              fontWeight: FontWeight.bold,
+              letterSpacing: -1,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'AVAILABLE FOR REDEMPTION',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.2),
+              fontSize: 9,
+              letterSpacing: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTierProgressCard(
+      BuildContext context, Color primary, Color surface) {
+    final progress = pointsToNextTier == 0 ? 0.0 : cabiPoints / pointsToNextTier;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
             Text(
-              cabiPoints.toString(),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 48,
+              'TIER STATUS: $currentTier',
+              style: TextStyle(
+                color: primary,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+              ),
+            ),
+            Text(
+              'NEXT: PLATINUM',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.3),
+                fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildTierProgressCard(BuildContext context) {
-    final progress = cabiPoints / pointsToNextTier;
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Current Tier: $currentTier',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const Text('Next: Gold', style: TextStyle(color: Colors.grey)),
-              ],
-            ),
-            const SizedBox(height: 16),
-            LinearProgressIndicator(
-              value: progress,
-              minHeight: 10,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${pointsToNextTier - cabiPoints} points to reach Gold Tier',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
+        const SizedBox(height: 16),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: LinearProgressIndicator(
+            value: progress,
+            minHeight: 8,
+            backgroundColor: Colors.white.withValues(alpha: 0.05),
+            valueColor: AlwaysStoppedAnimation<Color>(primary),
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildRecentActivity(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Recent Activity', style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 8),
-        Card(
-          child: Column(
-            children: recentActivity.map((activity) {
-              return ListTile(
-                leading: const Icon(Icons.star, color: Colors.amber),
-                title: Text(activity['description']!),
-                trailing: Text(
-                  activity['points']!,
-                  style: const TextStyle(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              );
-            }).toList(),
+        const SizedBox(height: 12),
+        Text(
+          '${pointsToNextTier - cabiPoints} points until your next status upgrade',
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.4),
+            fontSize: 11,
           ),
         ),
       ],
     );
   }
+
+  Widget _buildRecentActivity(
+      BuildContext context, Color primary, Color surface) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'RECENT ACTIVITY',
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.6),
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.5,
+          ),
+        ),
+        const SizedBox(height: 16),
+        if (recentActivity.isEmpty)
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 40),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.03)),
+            ),
+            child: Column(
+              children: [
+                Icon(Icons.history_rounded,
+                    color: Colors.white.withValues(alpha: 0.1), size: 32),
+                const SizedBox(height: 12),
+                Text(
+                  'No recent points activity',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          ...recentActivity.map((activity) {
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: surface,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.03)),
+              ),
+              child: ListTile(
+                leading: Icon(Icons.stars_rounded, color: primary, size: 22),
+                title: Text(
+                  activity['description']!,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500),
+                ),
+                trailing: Text(
+                  activity['points']!,
+                  style: TextStyle(
+                    color: primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            );
+          }),
+      ],
+    );
+  }
 }
+

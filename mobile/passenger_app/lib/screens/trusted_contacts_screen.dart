@@ -15,7 +15,7 @@ class TrustedContactsService {
     await Future.delayed(const Duration(milliseconds: 500));
     return [
       TrustedContact(id: 'c1', name: 'Mom', phone: '555-0101'),
-      TrustedContact(id: 'c2', name: 'John Doe', phone: '555-0102'),
+      TrustedContact(id: 'c2', name: "Elite Member", phone: '555-0102'),
     ];
   }
 

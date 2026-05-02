@@ -206,3 +206,4 @@ class TemperaturePreferenceDisplay extends StatelessWidget {
     }
   }
 }
+

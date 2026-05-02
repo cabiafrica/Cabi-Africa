@@ -116,3 +116,4 @@ class WavRideOptionWidget extends StatelessWidget {
     );
   }
 }
+

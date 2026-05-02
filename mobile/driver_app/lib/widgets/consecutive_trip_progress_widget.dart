@@ -116,3 +116,4 @@ class ConsecutiveTripProgressWidget extends StatelessWidget {
     );
   }
 }
+

@@ -1,31 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/ratings_service.dart';
+import '../providers/auth_provider.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
-class RatingsScreen extends StatefulWidget {
+class RatingsScreen extends ConsumerStatefulWidget {
   final RatingsService? ratingsService;
 
   const RatingsScreen({super.key, this.ratingsService});
 
   @override
-  State<RatingsScreen> createState() => _RatingsScreenState();
+  ConsumerState<RatingsScreen> createState() => _RatingsScreenState();
 }
 
-class _RatingsScreenState extends State<RatingsScreen> {
+class _RatingsScreenState extends ConsumerState<RatingsScreen> {
   late final RatingsService _ratingsService;
-  late Future<RatingsData> _ratingsFuture;
-
-  // Mock driver ID — replace with auth provider value in production
-  static const _mockDriverId = 'driver-001';
+  Future<RatingsData>? _ratingsFuture;
+  String? _lastDriverId;
 
   @override
   void initState() {
     super.initState();
     _ratingsService = widget.ratingsService ?? RatingsService();
-    _ratingsFuture = _ratingsService.fetchRatings(_mockDriverId);
+    
+    // Defer the initial load to after the first frame to safely use ref
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final authState = ref.read(authProvider);
+        if (authState is Authenticated) {
+          _loadRatings(authState.userId ?? 'driver-test-id');
+        } else {
+          _loadRatings('driver-test-id');
+        }
+      }
+    });
+  }
+
+  void _loadRatings(String driverId) {
+    setState(() {
+      _lastDriverId = driverId;
+      _ratingsFuture = _ratingsService.fetchRatings(driverId);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+    
+    // Update if driverId changes (e.g. logout/login without screen dispose)
+    if (authState is Authenticated && authState.userId != _lastDriverId) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _loadRatings(authState.userId!);
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Ratings'),
@@ -50,7 +78,7 @@ class _RatingsScreenState extends State<RatingsScreen> {
                   ElevatedButton(
                     onPressed: () => setState(() {
                       _ratingsFuture =
-                          _ratingsService.fetchRatings(_mockDriverId);
+                          _ratingsService.fetchRatings(_lastDriverId!);
                     }),
                     child: const Text('Retry'),
                   ),
@@ -58,15 +86,28 @@ class _RatingsScreenState extends State<RatingsScreen> {
               ),
             );
           }
-          if (!snapshot.hasData) {
-            return const Center(child: Text('No ratings data available.'));
+          if (!snapshot.hasData || snapshot.data!.totalRatings == 0) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                setState(() {
+                  _ratingsFuture = _ratingsService.fetchRatings(_lastDriverId!);
+                });
+                await _ratingsFuture;
+              },
+              child: Stack(
+                children: [
+                  ListView(),
+                  const Center(child: Text('No ratings data available yet.')),
+                ],
+              ),
+            );
           }
 
           final data = snapshot.data!;
           return RefreshIndicator(
             onRefresh: () async {
               setState(() {
-                _ratingsFuture = _ratingsService.fetchRatings(_mockDriverId);
+                _ratingsFuture = _ratingsService.fetchRatings(_lastDriverId!);
               });
               await _ratingsFuture;
             },
@@ -125,7 +166,7 @@ class _OverallRatingCard extends StatelessWidget {
           Text(
             data.overallRating.toStringAsFixed(1),
             style: const TextStyle(
-              color: Color(0xFFFFD700),
+              color: AppTheme.primaryColor,
               fontSize: 52,
               fontWeight: FontWeight.bold,
             ),
@@ -139,7 +180,7 @@ class _OverallRatingCard extends StatelessWidget {
               return Icon(
                 partial ? Icons.star_half : Icons.star,
                 color: filled || partial
-                    ? const Color(0xFFFFD700)
+                    ? AppTheme.primaryColor
                     : Colors.white24,
                 size: 22,
               );
@@ -200,7 +241,7 @@ class _CategoryRow extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: category.score / 5.0,
                 backgroundColor: Colors.grey.shade200,
-                color: const Color(0xFFFFD700),
+                color: AppTheme.primaryColor,
                 minHeight: 8,
               ),
             ),
@@ -247,7 +288,7 @@ class _ReviewCard extends StatelessWidget {
                       Icons.star,
                       size: 14,
                       color: i < review.rating
-                          ? const Color(0xFFFFD700)
+                          ? AppTheme.primaryColor
                           : Colors.grey.shade300,
                     ),
                   ),

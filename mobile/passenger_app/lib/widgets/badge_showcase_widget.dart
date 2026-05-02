@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/badge_service.dart' as badge_service;
+import 'package:passenger_app/theme/app_theme.dart';
 
 class BadgeShowcaseWidget extends StatelessWidget {
   final List<badge_service.Badge> badges;
@@ -18,7 +19,7 @@ class BadgeShowcaseWidget extends StatelessWidget {
       case 'PLATINUM':
         return const Color(0xFFE5E4E2);
       case 'GOLD':
-        return const Color(0xFFFFD700);
+        return AppTheme.primaryColor;
       case 'SILVER':
         return const Color(0xFFC0C0C0);
       case 'BRONZE':
@@ -251,3 +252,4 @@ class BadgeShowcaseWidget extends StatelessWidget {
     );
   }
 }
+

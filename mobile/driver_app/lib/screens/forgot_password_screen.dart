@@ -65,8 +65,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             Container(
               width: 100,
               height: 100,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
                   colors: [Color(0xFFFBBF24), Color(0xFFF59E0B)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -74,9 +74,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFFBBF24).withValues(alpha: 0.3),
+                    color: Color(0x4DFBBF24),
                     blurRadius: 12,
-                    offset: const Offset(0, 4),
+                    offset: Offset(0, 4),
                   ),
                 ],
               ),
@@ -292,3 +292,5 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 }
+
+

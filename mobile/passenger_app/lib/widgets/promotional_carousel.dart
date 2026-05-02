@@ -112,3 +112,4 @@ class PromotionalCarousel extends StatelessWidget {
     );
   }
 }
+

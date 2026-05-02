@@ -64,34 +64,73 @@ async function main() {
     if (role.name === 'Super Admin') {
       // Create a global dummy organization if needed, or null
       // In the schema, organizationId is optional but part of unique constraint
-      await prisma.userRole.upsert({
-        where: {
-          userId_roleId_organizationId: {
+      const existingUserRole = await prisma.userRole.findFirst({
+        where: { userId: superAdmin.id, roleId: role.id }
+      });
+      if (!existingUserRole) {
+        await prisma.userRole.create({
+          data: {
             userId: superAdmin.id,
             roleId: role.id,
-            organizationId: null as any, 
+            isActive: true,
           }
-        },
-        update: {},
-        create: {
-          userId: superAdmin.id,
-          roleId: role.id,
-          isActive: true,
-        }
-      });
+        });
+      }
     }
   }
   console.log('✅ Created System Roles and assigned Super Admin.');
 
-  // 3. Create Settings
-  await prisma.setting.upsert({
-    where: { key: 'PLATFORM_NAME' },
-    update: {},
+  // 4. Create Test Passenger
+  const passengerPassword = await bcrypt.hash('Password123!', 10);
+  const testPassenger = await prisma.user.upsert({
+    where: { email: 'passenger@test.com' },
+    update: {
+      password: passengerPassword,
+      phone: '+254711111111',
+      role: LegacyRole.PASSENGER,
+    },
     create: {
-      key: 'PLATFORM_NAME',
-      value: { name: 'Cabi Africa' }
-    }
+      email: 'passenger@test.com',
+      phone: '+254711111111',
+      password: passengerPassword,
+      fullName: 'Test Passenger',
+      role: LegacyRole.PASSENGER,
+      status: 'ACTIVE',
+      isEmailVerified: true,
+      isPhoneVerified: true,
+      isIdentityVerified: true,
+    },
   });
+  console.log('✅ Created Test Passenger:', testPassenger.email);
+
+  // 5. Create Test Driver
+  const driverPassword = await bcrypt.hash('Password123!', 10);
+  const testDriver = await prisma.user.upsert({
+    where: { email: 'driver@test.com' },
+    update: {
+      password: driverPassword,
+      phone: '+254722222222',
+      role: LegacyRole.DRIVER,
+    },
+    create: {
+      email: 'driver@test.com',
+      phone: '+254722222222',
+      password: driverPassword,
+      fullName: 'Test Driver',
+      role: LegacyRole.DRIVER,
+      status: 'ACTIVE',
+      isEmailVerified: true,
+      isPhoneVerified: true,
+      isIdentityVerified: true,
+      driverProfile: {
+        create: {
+          licenseNumber: 'DL-TEST-12345',
+          isOnline: false,
+        },
+      },
+    },
+  });
+  console.log('✅ Created Test Driver:', testDriver.email);
 
   console.log('✨ Seeding completed successfully!');
 }

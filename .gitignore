@@ -155,6 +155,8 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 pnpm-debug.log*
+*.txt
+*.log
 
 # ===================================
 # Testing & Coverage
@@ -186,6 +188,9 @@ _archive/
 .gemini/
 .bmad-core/
 docs/
+scratch/
+!scripts/e2e_unified_test.js
+scripts/
 
 # ===================================
 # Database & Secrets

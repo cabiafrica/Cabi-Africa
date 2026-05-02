@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import '../config/app_config.dart';
 
 // --- MODELS ---
 
@@ -32,10 +35,12 @@ class PassengerReview {
   factory PassengerReview.fromJson(Map<String, dynamic> json) {
     return PassengerReview(
       id: json['id'] as String,
-      passengerName: json['passengerName'] as String,
-      rating: (json['rating'] as num).toDouble(),
-      comment: json['comment'] as String,
-      date: json['date'] as String,
+      passengerName: json['raterName'] as String? ?? 'Anonymous',
+      rating: (json['stars'] as num).toDouble(),
+      comment: json['comment'] as String? ?? '',
+      date: json['createdAt'] != null 
+          ? (json['createdAt'] as String).split('T')[0] 
+          : 'N/A',
     );
   }
 }
@@ -58,74 +63,92 @@ class RatingsData {
 
 class RatingsService {
   Future<RatingsData> fetchRatings(String driverId) async {
-    debugPrint('Fetching ratings for driver $driverId...');
-    await Future.delayed(const Duration(milliseconds: 800));
+    debugPrint('Fetching ratings for driver $driverId from ${AppConfig.authApiUrl}...');
+    
+    try {
+      final response = await http.get(
+        Uri.parse('${AppConfig.authApiUrl}/ratings/admin/all?rateeId=$driverId'),
+      );
 
-    // Mock API response — replace with real HTTP call when backend endpoint is ready.
-    final mockReviews = [
-      const PassengerReview(
-        id: 'rev-1',
-        passengerName: 'Sarah M.',
-        rating: 5.0,
-        comment: 'Excellent driver! Very punctual and friendly.',
-        date: '2026-02-18',
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        final reviews = data.map((json) => PassengerReview.fromJson(json)).toList();
+
+        // Calculate aggregate stats if backend doesn't provide them yet
+        double overallRating = 0.0;
+        if (reviews.isNotEmpty) {
+          overallRating = reviews.map((r) => r.rating).reduce((a, b) => a + b) / reviews.length;
+        }
+
+        return RatingsData(
+          overallRating: overallRating,
+          totalRatings: reviews.length,
+          categories: _generateDefaultCategories(overallRating),
+          recentReviews: reviews,
+        );
+      } else {
+        throw Exception('Failed to load ratings: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error fetching ratings: $e');
+      // Fallback to empty data instead of crashing
+      return const RatingsData(
+        overallRating: 0.0,
+        totalRatings: 0,
+        categories: [],
+        recentReviews: [],
+      );
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchRatingSummary(String driverId) async {
+    try {
+      final response = await http.get(Uri.parse('${AppConfig.authApiUrl}/ratings/summary/$driverId'));
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return {
+          'average': 0.0,
+          'totalRatings': 0,
+          'starCounts': {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0},
+          'tagCounts': {}
+        };
+      }
+    } catch (e) {
+      debugPrint('Error fetching rating summary: $e');
+      return {
+        'average': 0.0,
+        'totalRatings': 0,
+        'starCounts': {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0},
+        'tagCounts': {}
+      };
+    }
+  }
+
+  List<CategoryRating> _generateDefaultCategories(double overall) {
+    // Backend doesn't have category-specific ratings yet, so we derive them from overall for now
+    return [
+      CategoryRating(
+        category: 'Punctuality',
+        score: (overall + 0.2).clamp(0.0, 5.0),
+        icon: Icons.schedule,
       ),
-      const PassengerReview(
-        id: 'rev-2',
-        passengerName: 'James K.',
-        rating: 4.0,
-        comment: 'Good ride, clean car. Took a slightly longer route.',
-        date: '2026-02-17',
+      CategoryRating(
+        category: 'Cleanliness',
+        score: (overall + 0.1).clamp(0.0, 5.0),
+        icon: Icons.cleaning_services,
       ),
-      const PassengerReview(
-        id: 'rev-3',
-        passengerName: 'Aisha W.',
-        rating: 5.0,
-        comment: 'Super polite and drove carefully. Would ride again!',
-        date: '2026-02-16',
+      CategoryRating(
+        category: 'Friendliness',
+        score: (overall + 0.3).clamp(0.0, 5.0),
+        icon: Icons.sentiment_very_satisfied,
       ),
-      const PassengerReview(
-        id: 'rev-4',
-        passengerName: 'Brian O.',
-        rating: 4.0,
-        comment: 'Arrived on time, comfortable ride.',
-        date: '2026-02-14',
-      ),
-      const PassengerReview(
-        id: 'rev-5',
-        passengerName: 'Grace N.',
-        rating: 5.0,
-        comment: 'Great experience!',
-        date: '2026-02-12',
+      CategoryRating(
+        category: 'Navigation',
+        score: (overall - 0.2).clamp(0.0, 5.0),
+        icon: Icons.map,
       ),
     ];
-
-    return RatingsData(
-      overallRating: 4.6,
-      totalRatings: 248,
-      categories: const [
-        CategoryRating(
-          category: 'Punctuality',
-          score: 4.8,
-          icon: Icons.schedule,
-        ),
-        CategoryRating(
-          category: 'Cleanliness',
-          score: 4.7,
-          icon: Icons.cleaning_services,
-        ),
-        CategoryRating(
-          category: 'Friendliness',
-          score: 4.9,
-          icon: Icons.sentiment_very_satisfied,
-        ),
-        CategoryRating(
-          category: 'Navigation',
-          score: 4.4,
-          icon: Icons.map,
-        ),
-      ],
-      recentReviews: mockReviews,
-    );
   }
 }

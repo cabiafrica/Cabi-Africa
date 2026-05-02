@@ -376,3 +376,4 @@ class _SharedRideExampleState extends State<SharedRideExample> {
     );
   }
 }
+

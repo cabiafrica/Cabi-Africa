@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
 class SecureWebView extends StatefulWidget {
   final String url;
@@ -34,7 +35,7 @@ class _SecureWebViewState extends State<SecureWebView> {
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0xFF0A0A0A))
+      ..setBackgroundColor(AppTheme.darkBackground)
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) {
@@ -58,7 +59,7 @@ class _SecureWebViewState extends State<SecureWebView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0A),
+      backgroundColor: AppTheme.darkBackground,
       appBar: AppBar(
         title: Text(
           widget.title,
@@ -73,7 +74,7 @@ class _SecureWebViewState extends State<SecureWebView> {
           WebViewWidget(controller: _controller),
           if (_isLoading)
             const Center(
-              child: CircularProgressIndicator(color: Color(0xFFFFD700)),
+              child: CircularProgressIndicator(color: AppTheme.primaryColor),
             ),
         ],
       ),

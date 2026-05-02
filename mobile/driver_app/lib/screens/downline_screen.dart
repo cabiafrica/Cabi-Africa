@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:driver_app/widgets/referral_tree_graph.dart';
 import 'package:driver_app/services/referral_service.dart';
 import 'package:driver_app/providers/auth_provider.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
 class DownlineScreen extends ConsumerStatefulWidget {
   const DownlineScreen({super.key});
@@ -76,7 +77,7 @@ class _DownlineScreenState extends ConsumerState<DownlineScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildLegendItem("You", const Color(0xFFFFD700)),
+                      _buildLegendItem("You", AppTheme.primaryColor),
                       const SizedBox(width: 15),
                       _buildLegendItem("Level 1", Colors.orange.shade700),
                       const SizedBox(width: 15),

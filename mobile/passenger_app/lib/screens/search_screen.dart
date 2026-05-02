@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:passenger_app/theme/app_theme.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -39,7 +40,6 @@ class _SearchScreenState extends State<SearchScreen> {
   static const _bgColor = Color(0xFF0D0D0D);
   static const _cardColor = Color(0xFF181818);
   static const _dividerColor = Color(0xFF2A2A2A);
-  static const _goldColor = Color(0xFFFFD700);
 
   @override
   void dispose() {
@@ -227,7 +227,7 @@ class _SearchScreenState extends State<SearchScreen> {
           if (_isLoading)
             const LinearProgressIndicator(
               backgroundColor: Colors.transparent,
-              valueColor: AlwaysStoppedAnimation<Color>(_goldColor),
+              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
               minHeight: 2,
             ),
 
@@ -259,7 +259,7 @@ class _SearchScreenState extends State<SearchScreen> {
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => _searchLocation(_searchController.text.trim()),
-                child: const Text('Retry', style: TextStyle(color: _goldColor)),
+                child: const Text('Retry', style: TextStyle(color: AppTheme.primaryColor)),
               ),
             ],
           ),
@@ -294,15 +294,15 @@ class _SearchScreenState extends State<SearchScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 12),
                       decoration: BoxDecoration(
-                        color: _goldColor.withValues(alpha: 0.08),
+                        color: AppTheme.primaryColor.withValues(alpha: 0.08),
                         border: Border.all(
-                            color: _goldColor.withValues(alpha: 0.5)),
+                            color: AppTheme.primaryColor.withValues(alpha: 0.5)),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         children: [
                           const Icon(Icons.flash_on_rounded,
-                              color: _goldColor, size: 18),
+                              color: AppTheme.primaryColor, size: 18),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Column(
@@ -310,7 +310,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               children: [
                                 const Text('Quick Pick',
                                     style: TextStyle(
-                                        color: _goldColor,
+                                        color: AppTheme.primaryColor,
                                         fontSize: 11,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.8)),
@@ -326,7 +326,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             ),
                           ),
                           const Icon(Icons.arrow_forward_ios_rounded,
-                              color: _goldColor, size: 14),
+                              color: AppTheme.primaryColor, size: 14),
                         ],
                       ),
                     ),
@@ -412,7 +412,7 @@ class _SearchScreenState extends State<SearchScreen> {
           const Divider(indent: 16, endIndent: 16, color: _dividerColor),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
+            child: const Text(
               'SAVED PLACES',
               style: TextStyle(
                 fontSize: 11,
@@ -427,11 +427,11 @@ class _SearchScreenState extends State<SearchScreen> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: _goldColor.withValues(alpha: 0.1),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(place['icon'] as IconData,
-                      color: _goldColor, size: 20),
+                      color: AppTheme.primaryColor, size: 20),
                 ),
                 title: Text(
                   place['name'] as String,
@@ -525,3 +525,4 @@ class _SearchScreenState extends State<SearchScreen> {
     return const SizedBox.shrink();
   }
 }
+

@@ -125,3 +125,4 @@ class _SosButtonState extends State<SosButton> {
     );
   }
 }
+

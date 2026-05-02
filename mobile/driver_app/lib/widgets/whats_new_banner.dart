@@ -82,11 +82,11 @@ class _WhatsNewBannerState extends State<WhatsNewBanner>
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(16),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
-                color: const Color(0xFFFBBF24).withValues(alpha: 0.3),
+                color: Color(0x4DFBBF24),
                 blurRadius: 12,
-                offset: const Offset(0, 4),
+                offset: Offset(0, 4),
               ),
             ],
           ),
@@ -218,3 +218,5 @@ class _WhatsNewBannerState extends State<WhatsNewBanner>
     );
   }
 }
+
+

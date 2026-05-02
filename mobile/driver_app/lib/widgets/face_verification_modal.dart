@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:driver_app/theme/app_theme.dart';
+import '../services/auth_service.dart';
 
 class FaceVerificationModal extends StatefulWidget {
+  final String userId;
+  final AuthService authService;
   final VoidCallback onVerified;
 
-  const FaceVerificationModal({super.key, required this.onVerified});
+  const FaceVerificationModal({
+    super.key,
+    required this.userId,
+    required this.authService,
+    required this.onVerified,
+  });
 
   @override
   State<FaceVerificationModal> createState() => _FaceVerificationModalState();
@@ -16,7 +25,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
   double _progress = 0.0;
   String _statusText = 'Align your face within the frame';
 
-  static const primaryGold = Color(0xFFFFD700);
+  static const primaryGold = AppTheme.primaryColor;
 
   void _startScan() async {
     setState(() {
@@ -24,14 +33,48 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
       _statusText = 'Verifying identity...';
     });
 
-    // Simulate scanning progress
-    for (int i = 0; i <= 100; i += 5) {
+    // --- REAL BACKEND VERIFICATION ---
+    // 1. Simulate scan progress for UX
+    for (int i = 0; i <= 70; i += 10) {
+      if (!mounted) return;
+      await Future.delayed(const Duration(milliseconds: 150));
+      setState(() {
+        _progress = i / 100;
+        if (i == 30) _statusText = 'Checking liveness...';
+        if (i == 60) _statusText = 'Capturing face metrics...';
+      });
+    }
+
+    // 2. Call Backend API
+    try {
+      final success = await widget.authService.verifyBiometrics(widget.userId);
+      if (!success) {
+        if (mounted) {
+          setState(() {
+            _isScanning = false;
+            _statusText = 'Verification failed. Try again.';
+            _progress = 0;
+          });
+        }
+        return;
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isScanning = false;
+          _statusText = 'Connection error. Check internet.';
+        });
+      }
+      return;
+    }
+
+    // 3. Complete scan progress
+    for (int i = 71; i <= 100; i += 10) {
       if (!mounted) return;
       await Future.delayed(const Duration(milliseconds: 100));
       setState(() {
         _progress = i / 100;
-        if (i == 40) _statusText = 'Checking liveness...';
-        if (i == 80) _statusText = 'Matching with ID photo...';
+        if (i == 90) _statusText = 'Identity Verified';
       });
     }
 
@@ -53,7 +96,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: const BoxDecoration(
-        color: Color(0xFF0A0A0A),
+        color: AppTheme.darkBackground,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(

@@ -139,3 +139,4 @@ class _SwipeableActionButtonState extends State<SwipeableActionButton>
     );
   }
 }
+

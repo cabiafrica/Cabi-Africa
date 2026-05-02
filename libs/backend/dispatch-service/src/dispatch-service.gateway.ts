@@ -71,6 +71,7 @@ export class DispatchGateway
             where: { id: driverId },
             data: { isOnline: true },
         });
+        this.server.emit('driverStatusUpdate', { driverId, isOnline: true });
         this.logger.log(`Driver ${driverId} is now ONLINE`);
     }
 
@@ -80,6 +81,7 @@ export class DispatchGateway
             where: { id: driverId },
             data: { isOnline: false },
         });
+        this.server.emit('driverStatusUpdate', { driverId, isOnline: false });
         this.logger.log(`Driver ${driverId} is now OFFLINE`);
     }
 

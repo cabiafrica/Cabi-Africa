@@ -296,3 +296,4 @@ class _FoodCheckoutScreenState extends State<FoodCheckoutScreen> {
     );
   }
 }
+

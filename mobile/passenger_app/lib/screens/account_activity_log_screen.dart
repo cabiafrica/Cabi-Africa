@@ -289,3 +289,4 @@ class AccountActivityLogScreen extends StatelessWidget {
     }
   }
 }
+

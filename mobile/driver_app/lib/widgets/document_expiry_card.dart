@@ -166,8 +166,7 @@ class DocumentExpiryCard extends StatelessWidget {
                           : 'Update now to avoid service interruption.',
                       style: TextStyle(
                         fontSize: 12,
-                        color: statusColor.withValues(
-                            alpha: 1.0), // Fully opaque text
+                        color: statusColor.withValues(alpha: 1.0), // Fully opaque text
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -180,3 +179,4 @@ class DocumentExpiryCard extends StatelessWidget {
     );
   }
 }
+

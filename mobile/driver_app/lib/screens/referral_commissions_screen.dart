@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'downline_screen.dart';
 import '../services/referral_service.dart';
 import '../providers/auth_provider.dart';
-// import '../theme/app_theme.dart'; // Removed unused import
+import '../theme/app_theme.dart';
 
 class ReferralCommissionsScreen extends ConsumerStatefulWidget {
   const ReferralCommissionsScreen({super.key});
@@ -126,7 +126,7 @@ class _ReferralCommissionsScreenState
                           Text(
                             'KES ${_totalEarned.toStringAsFixed(2)}',
                             style: const TextStyle(
-                              color: Color(0xFFFFD700),
+                              color: AppTheme.primaryColor,
                               fontSize: 40,
                               fontWeight: FontWeight.w900,
                             ),
@@ -183,7 +183,7 @@ class _ReferralCommissionsScreenState
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFFD700)
+                                  color: AppTheme.primaryColor
                                       .withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
@@ -337,3 +337,4 @@ class _ReferralCommissionsScreenState
     );
   }
 }
+

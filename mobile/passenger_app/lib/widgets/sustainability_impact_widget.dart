@@ -378,3 +378,4 @@ class SustainabilityImpactWidget extends StatelessWidget {
     );
   }
 }
+

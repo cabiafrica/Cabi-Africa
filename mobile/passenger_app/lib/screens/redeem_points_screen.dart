@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class RedeemPointsScreen extends StatefulWidget {
   const RedeemPointsScreen({super.key});
@@ -8,8 +9,8 @@ class RedeemPointsScreen extends StatefulWidget {
 }
 
 class _RedeemPointsScreenState extends State<RedeemPointsScreen> {
-  // Mock data - in a real app, this would come from a service/provider
-  int _currentPoints = 1250;
+  // Syncing with backend in future iterations
+  int _currentPoints = 0;
 
   final List<Map<String, dynamic>> _rewards = [
     {'id': '1', 'title': '100 KES Off Next Ride', 'cost': 500},
@@ -28,15 +29,16 @@ class _RedeemPointsScreenState extends State<RedeemPointsScreen> {
         SnackBar(
           content: Text(
             'Redeemed "${reward['title']}"! Coupon added to wallet.',
+            style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: AppTheme.primaryColor,
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Insufficient points to redeem this reward.'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppTheme.errorRed,
         ),
       );
     }
@@ -44,19 +46,37 @@ class _RedeemPointsScreenState extends State<RedeemPointsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = AppTheme.primaryColor;
+    final backgroundColor = AppTheme.darkBackground;
+    final surfaceColor = AppTheme.darkSurface;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Redeem Points')),
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          'REDEEM POINTS',
+          style: TextStyle(
+            color: primaryColor,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+            fontSize: 14,
+          ),
+        ),
+        iconTheme: IconThemeData(color: primaryColor),
+      ),
       body: Column(
         children: [
-          _buildBalanceHeader(context),
+          _buildBalanceHeader(context, primaryColor, surfaceColor),
           Expanded(
             child: ListView.separated(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(24.0),
               itemCount: _rewards.length,
               separatorBuilder: (context, index) => const SizedBox(height: 16),
               itemBuilder: (context, index) {
                 final reward = _rewards[index];
-                return _buildRewardCard(context, reward);
+                return _buildRewardCard(context, reward, primaryColor, surfaceColor);
               },
             ),
           ),
@@ -65,24 +85,35 @@ class _RedeemPointsScreenState extends State<RedeemPointsScreen> {
     );
   }
 
-  Widget _buildBalanceHeader(BuildContext context) {
+  Widget _buildBalanceHeader(BuildContext context, Color primary, Color surface) {
     return Container(
-      padding: const EdgeInsets.all(24.0),
-      color: Colors.blue.shade50,
+      padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 24),
+      decoration: BoxDecoration(
+        color: surface,
+        border: Border(
+          bottom: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+        ),
+      ),
       width: double.infinity,
       child: Column(
         children: [
-          const Text(
-            'Available Balance',
-            style: TextStyle(fontSize: 16, color: Colors.grey),
-          ),
-          const SizedBox(height: 8),
           Text(
-            '$_currentPoints Points',
+            'AVAILABLE BALANCE',
             style: TextStyle(
+              fontSize: 10,
+              color: primary.withValues(alpha: 0.6),
+              letterSpacing: 2,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '$_currentPoints POINTS',
+            style: const TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).primaryColor,
+              color: Colors.white,
+              letterSpacing: 1,
             ),
           ),
         ],
@@ -90,26 +121,61 @@ class _RedeemPointsScreenState extends State<RedeemPointsScreen> {
     );
   }
 
-  Widget _buildRewardCard(BuildContext context, Map<String, dynamic> reward) {
+  Widget _buildRewardCard(
+      BuildContext context, Map<String, dynamic> reward, Color primary, Color surface) {
     final bool canAfford = _currentPoints >= reward['cost'];
 
-    return Card(
-      elevation: 2,
+    return Container(
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.03)),
+      ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16.0),
         title: Text(
           reward['title'],
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
         ),
-        subtitle: Text(
-          '${reward['cost']} Points',
-          style: const TextStyle(color: Colors.grey),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Text(
+            '${reward['cost']} POINTS',
+            style: TextStyle(
+              color: primary.withValues(alpha: 0.8),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
         trailing: ElevatedButton(
           onPressed: canAfford ? () => _redeemReward(reward) : null,
-          child: const Text('Redeem'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: primary,
+            foregroundColor: Colors.black,
+            disabledBackgroundColor: Colors.white10,
+            disabledForegroundColor: Colors.white24,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            elevation: 0,
+          ),
+          child: const Text(
+            'REDEEM',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
+          ),
         ),
       ),
     );
   }
 }
+

@@ -265,3 +265,4 @@ class TelematicsDashboard extends StatelessWidget {
     );
   }
 }
+

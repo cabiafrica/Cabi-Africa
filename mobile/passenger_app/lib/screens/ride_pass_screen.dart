@@ -432,3 +432,4 @@ class _RidePassScreenState extends State<RidePassScreen> {
     );
   }
 }
+

@@ -43,11 +43,7 @@ class AuthService {
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Backend returns { twoFactorRequired, accessToken }
         final token = data['accessToken'] ?? data['token'];
-        if (token != null) {
-          await _storage.write(key: 'jwt_token', value: token);
-        }
         return AuthResult(
           isSignedIn: token != null,
           user: data['user'],
@@ -102,9 +98,6 @@ class AuthService {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final token = data['accessToken'] ?? data['token'];
-        if (token != null) {
-          await _storage.write(key: 'jwt_token', value: token);
-        }
         return AuthResult(
           isSignedIn: true,
           user: data,
@@ -143,5 +136,21 @@ class AuthService {
   
   Future<String?> getToken() async {
     return await _storage.read(key: 'jwt_token');
+  }
+
+  Future<bool> verifyBiometrics(String userId) async {
+    try {
+      final token = await getToken();
+      final response = await http.post(
+        Uri.parse('$baseUrl/users/$userId/verify-biometric'),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+      );
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      return false;
+    }
   }
 }

@@ -5,7 +5,7 @@ import { RegisterUserDto, UserRole } from './dto/register-user.dto';
 import { PrismaService } from '@cabi/backend/database';
 import * as bcrypt from 'bcryptjs';
 import { LegacyRole, UserRole as PrismaUserRole, UserPermission as PrismaUserPermission, Role as PrismaRole, Prisma } from '@prisma/client';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import * as crypto from 'crypto';
@@ -285,9 +285,6 @@ export class UserService {
   }
 
   async login(identifier: string, password: string) {
-    // Backdoor removed for production/DB auth
-    // if (identifier === 'admin@cabi.com' && password === 'password123') { ... }
-
     const user = await this.prisma.user.findFirst({
       where: {
         OR: [
@@ -302,7 +299,11 @@ export class UserService {
           }
         },
         userPermissions: true,
-        driverProfile: true
+        driverProfile: {
+          include: {
+            vehicles: true
+          }
+        }
       }
     });
 
@@ -349,7 +350,7 @@ export class UserService {
       fullName: user.fullName,
       role: user.role,
       permissions: Array.from(permissions),
-      driverProfileId: user.driverProfile?.id,
+      driverProfile: user.driverProfile,
       isEmailVerified: user.isEmailVerified,
       isPhoneVerified: user.isPhoneVerified,
       isIdentityVerified: user.isIdentityVerified,
@@ -533,5 +534,51 @@ export class UserService {
     });
 
     return { message: 'Password reset successful.' };
+  }
+
+  async getMe(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        driverProfile: {
+          include: {
+            vehicles: true
+          }
+        },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      phone: user.phone,
+      role: user.role,
+      status: (user as any).status,
+      isEmailVerified: user.isEmailVerified,
+      isPhoneVerified: user.isPhoneVerified,
+      isIdentityVerified: user.isIdentityVerified,
+      passportPhotoUrl: user.passportPhotoUrl,
+      driverProfile: user.driverProfile,
+    };
+  }
+
+  async verifyBiometric(userId: string) {
+    const driverProfile = await this.prisma.driverProfile.findUnique({
+      where: { userId }
+    });
+
+    if (!driverProfile) {
+      throw new NotFoundException('Driver profile not found');
+    }
+
+    return this.prisma.driverProfile.update({
+      where: { id: driverProfile.id },
+      data: { isBiometricVerified: true }
+    });
   }
 }

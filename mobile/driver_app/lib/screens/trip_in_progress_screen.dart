@@ -10,7 +10,7 @@ import 'package:driver_app/services/ride_service.dart';
 class TripInProgressScreen extends StatefulWidget {
   final String? rideId;
   final String? driverId;
-  final RideService? rideService; // optional for testing
+  final RideService? rideService; 
   const TripInProgressScreen({super.key, this.rideId, this.driverId, this.rideService});
 
   @override
@@ -20,15 +20,14 @@ class TripInProgressScreen extends StatefulWidget {
 class _TripInProgressScreenState extends State<TripInProgressScreen> {
   bool _showOffer = false;
   Timer? _tripTimer;
-  double _currentFare = 150.0; // Base fare start
+  double _currentFare = 150.0; 
   double _distanceKm = 0.0;
   int _durationSeconds = 0;
   bool _isTripEnded = false;
   late final RideService _rideService;
 
-  // Mock Locations
-  LatLng _driverLocation = const LatLng(-1.286389, 36.817223); // CBD
-  final LatLng _passengerLocation = const LatLng(-1.2921, 36.8219); // Near CBD
+  LatLng _driverLocation = const LatLng(-1.286389, 36.817223); 
+  final LatLng _passengerLocation = const LatLng(-1.2921, 36.8219); 
 
   @override
   void initState() {
@@ -49,37 +48,36 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
     _tripTimer?.cancel();
     super.dispose();
   }
+  
   void _startTripSimulation() {
     _tripTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_isTripEnded) {
         timer.cancel();
         return;
       }
-      setState(() {
-        _durationSeconds++;
-        // Simulate movement: every 5 seconds, add 0.1km
-        if (_durationSeconds % 5 == 0) {
-          _distanceKm += 0.1;
-          // Simulate fare calculation: KES 30/km + KES 5/min
-          _currentFare += (0.1 * 30) + (5 / 60 * 5);
-        }
-
-        // Move 2% closer to destination every second
-        final double latDiff =
-            _passengerLocation.latitude - _driverLocation.latitude;
-        final double lngDiff =
-            _passengerLocation.longitude - _driverLocation.longitude;
-        if (latDiff.abs() > 0.0001 || lngDiff.abs() > 0.0001) {
-          _driverLocation = LatLng(_driverLocation.latitude + (latDiff * 0.02),
-              _driverLocation.longitude + (lngDiff * 0.02));
-
-          // Send update to backend
-          if (widget.driverId != null) {
-            _rideService.updateDriverLocation(widget.driverId!,
-                _driverLocation.latitude, _driverLocation.longitude);
+      if (mounted) {
+        setState(() {
+          _durationSeconds++;
+          if (_durationSeconds % 5 == 0) {
+            _distanceKm += 0.1;
+            _currentFare += (0.1 * 30) + (5 / 60 * 5);
           }
-        }
-      });
+
+          final double latDiff =
+              _passengerLocation.latitude - _driverLocation.latitude;
+          final double lngDiff =
+              _passengerLocation.longitude - _driverLocation.longitude;
+          if (latDiff.abs() > 0.0001 || lngDiff.abs() > 0.0001) {
+            _driverLocation = LatLng(_driverLocation.latitude + (latDiff * 0.02),
+                _driverLocation.longitude + (lngDiff * 0.02));
+
+            if (widget.driverId != null) {
+              _rideService.updateDriverLocation(widget.driverId!,
+                  _driverLocation.latitude, _driverLocation.longitude);
+            }
+          }
+        });
+      }
     });
   }
 
@@ -109,48 +107,62 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setStateBottom) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        return Container(
+          decoration: const BoxDecoration(
+            color: AppTheme.darkSurface,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('TRIP SUMMARY', style: TextStyle(color: AppTheme.primaryColor, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+              const SizedBox(height: 24),
+              _buildBillRow('Base Fare', 'KES 150.00'),
+              _buildBillRow('Distance (${_distanceKm.toStringAsFixed(2)} km)', 'KES ${(_distanceKm * 30).toStringAsFixed(2)}'),
+              _buildBillRow('Duration (${_formatDuration(_durationSeconds)})', 'KES ${(_durationSeconds / 60 * 5).toStringAsFixed(2)}'),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Divider(color: Colors.white10),
               ),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Waybill Breakdown', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Text('Base Fare: KES ${_currentFare.toStringAsFixed(2)}'),
-                  Text('Distance: ${_distanceKm.toStringAsFixed(2)} km'),
-                  Text('Duration: ${_formatDuration(_durationSeconds)}'),
-                  const Divider(),
-                  Text('Total Fare: KES ${_currentFare.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        if (_isTripEnded) {
-                          Navigator.of(context).pushReplacementNamed('/home');
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _isTripEnded ? Colors.green : null,
-                        foregroundColor: _isTripEnded ? Colors.white : null,
-                      ),
-                      child: Text(_isTripEnded ? 'Confirm Payment Received' : 'Close'),
-                    ),
+              _buildBillRow('Total Fare', 'KES ${_currentFare.toStringAsFixed(2)}', isTotal: true),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    if (_isTripEnded) {
+                      Navigator.of(context).pushReplacementNamed('/home');
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                ],
+                  child: Text(_isTripEnded ? 'CONFIRM PAYMENT' : 'CLOSE', style: const TextStyle(fontWeight: FontWeight.bold)),
+                ),
               ),
-            );
-          },
+            ],
+          ),
         );
       },
+    );
+  }
+
+  Widget _buildBillRow(String label, String value, {bool isTotal = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(color: isTotal ? Colors.white : AppTheme.darkTextSecondary, fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)),
+          Text(value, style: TextStyle(color: isTotal ? AppTheme.primaryColor : Colors.white, fontWeight: FontWeight.bold, fontSize: isTotal ? 18 : 14)),
+        ],
+      ),
     );
   }
 
@@ -158,28 +170,28 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.darkBackground,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('On Trip', style: TextStyle(color: Colors.black)),
+        title: const Text('ON TRIP', style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold, letterSpacing: 1.5, fontSize: 14)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: Container(
           margin: const EdgeInsets.all(8),
-          decoration:
-              const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+          decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.5), shape: BoxShape.circle),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
             onPressed: () => Navigator.pop(context),
           ),
         ),
       ),
       body: Stack(
         children: [
-          // 1. Full Screen Map
           CabiMap(
             initialCenter: _driverLocation,
             initialZoom: 15.0,
+            theme: CabiMapTheme.dark,
             markers: [
               CabiMapMarker.driver(
                   position: _driverLocation, driverId: 'me', isOnline: true),
@@ -189,31 +201,17 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
             showUserLocation: true,
           ),
 
-          // Debug/Simulation Controls
-          Positioned(
-            top: 100,
-            right: 20,
-            child: FloatingActionButton.small(
-              heroTag: 'sim_offer',
-              onPressed: () => setState(() => _showOffer = true),
-              backgroundColor: Colors.white,
-              child:
-                  const Icon(Icons.notifications_active, color: Colors.orange),
-            ),
-          ),
-
-          // Bottom Trip Card
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
               margin: const EdgeInsets.all(16),
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFF212121), // Dark Premium Background
+                color: AppTheme.darkSurface, 
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: Colors.black.withValues(alpha: 0.4),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   )
@@ -222,13 +220,16 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Passenger Info Header
                   Row(
                     children: [
-                      const CircleAvatar(
-                        radius: 20,
-                        backgroundImage: NetworkImage(
-                            'https://i.pravatar.cc/150?u=passenger_sarah'),
+                      Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: const BoxDecoration(color: AppTheme.primaryColor, shape: BoxShape.circle),
+                        child: const CircleAvatar(
+                          radius: 18,
+                          backgroundColor: AppTheme.darkBackground,
+                          child: Icon(Icons.person, color: AppTheme.primaryColor, size: 18),
+                        ),
                       ),
                       const SizedBox(width: 12),
                       const Expanded(
@@ -236,62 +237,62 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Sarah M.',
+                              'PASSENGER',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16),
+                                  fontSize: 14,
+                                  letterSpacing: 1),
                             ),
                             Text(
-                              'Dropoff: Westlands',
+                              'DESTINATION: WESTLANDS',
                               style: TextStyle(
-                                  color: Colors.white70, fontSize: 12),
+                                  color: AppTheme.darkTextSecondary, fontSize: 10),
                             ),
                           ],
                         ),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
+                            horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 66, 66, 66),
-                          borderRadius: BorderRadius.circular(12),
+                          color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           _formatDuration(_durationSeconds),
                           style: const TextStyle(
-                              color: Color(0xFFFFD700),
-                              fontWeight: FontWeight.bold),
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12),
                         ),
                       ),
                     ],
                   ),
-                  const Divider(color: Colors.white24, height: 24),
+                  const Divider(color: Colors.white10, height: 32),
 
-                  // Main Fare Display
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.baseline,
                     textBaseline: TextBaseline.alphabetic,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'Current Fare',
-                        style: TextStyle(color: Colors.white54, fontSize: 14),
+                        'CURRENT FARE',
+                        style: TextStyle(color: AppTheme.darkTextSecondary, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1),
                       ),
                       Text(
                         'KES ${_currentFare.toStringAsFixed(2)}',
                         style: const TextStyle(
-                          color: Color(0xFFFFD700), // Taxi Gold
-                          fontSize: 32,
+                          color: AppTheme.primaryColor,
+                          fontSize: 28,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
 
-                  // Actions
                   Row(
                     children: [
                       Expanded(
@@ -299,19 +300,19 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                           onPressed: _showWaybill,
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.white,
-                            side: const BorderSide(color: Colors.white30),
+                            side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: const Text('Waybill'),
+                          child: const Text('WAYBILL', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1, fontSize: 12)),
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         flex: 2,
                         child: SwipeableActionButton(
-                            label: 'Slide to End Trip',
+                            label: 'END TRIP',
                             color: AppTheme.errorRed,
                             icon: Icons.flag,
                             onAction: () async {
@@ -324,7 +325,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                 }
                               }
                               setState(() => _isTripEnded = true);
-                              _showWaybill(); // Show final bill
+                              _showWaybill(); 
                             }),
                       ),
                     ],
@@ -344,3 +345,4 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
     );
   }
 }
+

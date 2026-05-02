@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../theme/app_theme.dart';
 
 class FaceVerificationModal extends StatefulWidget {
   final VoidCallback onVerified;
@@ -16,7 +17,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
   double _progress = 0.0;
   String _statusText = 'Align your face within the frame';
 
-  static const primaryColor = Color(0xFFFDCB02); // Cabi Yellow
+  // No longer hardcoded - using AppTheme
 
   void _startScan() async {
     setState(() {
@@ -52,9 +53,10 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      decoration: BoxDecoration(
+        color: AppTheme.darkSurface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.1), width: 1),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -63,7 +65,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: AppTheme.primaryColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -71,7 +73,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
           Text(
             'Identity Verification',
             style: GoogleFonts.outfit(
-              color: Colors.black,
+              color: AppTheme.primaryColor,
               fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
@@ -80,7 +82,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
           const Text(
             'To prevent fraudulent bookings, please complete a quick face scan before requesting your trip.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.black54, fontSize: 13),
+            style: TextStyle(color: Colors.white70, fontSize: 13),
           ),
           const SizedBox(height: 40),
           
@@ -97,7 +99,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
                   border: Border.all(
                     color: _isSuccess 
                         ? Colors.green 
-                        : (_isScanning ? primaryColor : Colors.grey.shade200),
+                        : (_isScanning ? AppTheme.primaryColor : Colors.white10),
                     width: 4,
                   ),
                 ),
@@ -107,15 +109,15 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
                       : (_isScanning 
                           ? Stack(
                               children: [
-                                const Center(child: Icon(Icons.face, size: 90, color: Colors.black12)),
+                                const Center(child: Icon(Icons.face, size: 90, color: Colors.white24)),
                                 CircularProgressIndicator(
                                   value: _progress,
                                   strokeWidth: 4,
-                                  color: primaryColor,
+                                  color: AppTheme.primaryColor,
                                 ),
                               ],
                             )
-                          : const Icon(Icons.face, size: 90, color: Colors.black12)
+                          : const Icon(Icons.face, size: 90, color: Colors.white24)
                       ),
                 ),
               ),
@@ -131,7 +133,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: primaryColor.withValues(alpha: 1.0 - value),
+                          color: AppTheme.primaryColor.withValues(alpha: 1.0 - value),
                           width: 2,
                         ),
                       ),
@@ -145,7 +147,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
           Text(
             _statusText,
             style: GoogleFonts.outfit(
-              color: _isSuccess ? Colors.green : Colors.black,
+              color: _isSuccess ? Colors.green : Colors.white,
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -159,8 +161,8 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
               child: ElevatedButton(
                 onPressed: _startScan,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   elevation: 0,
                 ),
@@ -179,3 +181,4 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
     );
   }
 }
+

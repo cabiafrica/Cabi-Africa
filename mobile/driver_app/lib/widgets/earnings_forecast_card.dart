@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
 class EarningsForecastCard extends StatelessWidget {
   final double currentWeekEarnings;
@@ -85,7 +86,7 @@ class EarningsForecastCard extends StatelessWidget {
                   Text(
                     'KES ${forecast['projected']!.toStringAsFixed(0)}',
                     style: const TextStyle(
-                      color: Color(0xFFFFD700),
+                      color: AppTheme.primaryColor,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
@@ -141,3 +142,4 @@ class EarningsForecastCard extends StatelessWidget {
     );
   }
 }
+

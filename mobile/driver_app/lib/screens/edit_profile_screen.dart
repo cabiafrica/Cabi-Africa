@@ -5,9 +5,9 @@ class UserService {
   Future<Map<String, String>> getUserProfile() async {
     await Future.delayed(const Duration(milliseconds: 500));
     return {
-      'fullName': 'Jane Driver',
-      'phone': '+1 (555) 987-6543',
-      'email': 'jane.driver@example.com',
+      'fullName': 'Cabi Driver',
+      'phone': '+254 700 000 000',
+      'email': 'driver@prestige.cabi',
       'profilePictureUrl': 'https://via.placeholder.com/150',
     };
   }

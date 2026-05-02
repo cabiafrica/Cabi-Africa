@@ -221,3 +221,4 @@ class RideRequestModal extends StatelessWidget {
     );
   }
 }
+

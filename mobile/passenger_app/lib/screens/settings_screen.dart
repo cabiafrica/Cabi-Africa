@@ -3,14 +3,16 @@ import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import 'privacy_settings_screen.dart';
 import 'trusted_contacts_screen.dart';
+import 'qr_test_screen.dart';
+import 'package:passenger_app/theme/app_theme.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xFFFFD700); // Prestige Gold
-    const backgroundColor = Color(0xFF0A0A0A); // Deep Black
+    final primaryColor = AppTheme.primaryColor; // Prestige Gold
+    final backgroundColor = AppTheme.darkBackground; // Deep Black
 
     final themeProvider = Provider.of<ThemeProvider>(context);
 
@@ -19,7 +21,7 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'SETTINGS',
           style: TextStyle(
             color: primaryColor,
@@ -28,7 +30,7 @@ class SettingsScreen extends StatelessWidget {
             fontSize: 14,
           ),
         ),
-        iconTheme: const IconThemeData(color: primaryColor),
+        iconTheme: IconThemeData(color: primaryColor),
       ),
       body: ListView(
         padding: const EdgeInsets.all(24),
@@ -68,10 +70,23 @@ class SettingsScreen extends StatelessWidget {
                   builder: (context) => const TrustedContactsScreen()),
             ),
           ),
+          const SizedBox(height: 32),
+          _buildSettingsSection('DIAGNOSTICS'),
+          const SizedBox(height: 12),
+          _buildNavigationTile(
+            title: 'QR Integration Test',
+            subtitle: 'Verify identity & referral QR systems',
+            icon: Icons.qr_code_2_rounded,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const QrTestScreen()),
+            ),
+          ),
           const SizedBox(height: 40),
           const Center(
             child: Text(
-              'CABI AFRICA v1.0.4\nPRESTIGE EDITION',
+              'CABI AFRICA v1.1.0+6\nPRESTIGE EDITION',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white12,
@@ -91,8 +106,8 @@ class SettingsScreen extends StatelessWidget {
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         label,
-        style: const TextStyle(
-          color: Color(0xFFFFD700),
+        style: TextStyle(
+          color: AppTheme.primaryColor,
           fontSize: 10,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.5,
@@ -108,8 +123,8 @@ class SettingsScreen extends StatelessWidget {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    const primaryColor = Color(0xFFFFD700);
-    const surfaceColor = Color(0xFF141414);
+    final primaryColor = AppTheme.primaryColor;
+    final surfaceColor = AppTheme.darkSurface;
 
     return Container(
       decoration: BoxDecoration(
@@ -141,8 +156,8 @@ class SettingsScreen extends StatelessWidget {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    const primaryColor = Color(0xFFFFD700);
-    const surfaceColor = Color(0xFF141414);
+    final primaryColor = AppTheme.primaryColor;
+    final surfaceColor = AppTheme.darkSurface;
 
     return Container(
       decoration: BoxDecoration(
@@ -166,3 +181,4 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
+

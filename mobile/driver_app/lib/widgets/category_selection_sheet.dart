@@ -101,7 +101,7 @@ class _CategorySelectionSheetState extends State<CategorySelectionSheet> {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: category.isSelected
-                        ? const Color(0xFFFBBF24).withValues(alpha: 0.1)
+                        ? const Color(0x1AFBBF24)
                         : Colors.grey.shade50,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
@@ -188,3 +188,5 @@ class _CategorySelectionSheetState extends State<CategorySelectionSheet> {
     );
   }
 }
+
+

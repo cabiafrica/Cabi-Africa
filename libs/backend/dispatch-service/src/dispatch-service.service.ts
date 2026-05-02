@@ -1,10 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
 import { RideStatus, VehicleType } from '@prisma/client';
+import { DispatchGateway } from './dispatch-service.gateway';
 
 @Injectable()
 export class DispatchService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly gateway: DispatchGateway
+    ) { }
 
     async getDashboardMetrics() {
         const [activeRides, pendingRequests, onlineDrivers, completedToday] = await Promise.all([
@@ -64,7 +68,7 @@ export class DispatchService {
             throw new Error('Invalid ride request: Missing pickup, dropoff, or passengerId');
         }
 
-        return await this.prisma.ride.create({
+        const ride = await this.prisma.ride.create({
             data: {
                 passengerId: rideRequest.passengerId,
                 pickupLocation: rideRequest.pickup,
@@ -74,25 +78,38 @@ export class DispatchService {
                 distance: rideRequest.distance || 0,
             },
         });
+
+        this.gateway.server.emit('newTripRequest', ride);
+        return ride;
     }
 
     async acceptRide(rideId: string, driverId: string) {
-        return await this.prisma.ride.update({
+        const ride = await this.prisma.ride.update({
             where: { id: rideId },
             data: {
                 driverId: driverId,
                 status: RideStatus.DRIVER_ASSIGNED,
             },
+            include: { passenger: true, driver: { include: { user: true } } }
         });
+
+        this.gateway.server.to(rideId).emit('statusUpdate', { status: RideStatus.DRIVER_ASSIGNED, ride });
+        this.gateway.server.emit('tripUpdate', ride);
+        return ride;
     }
 
     async updateRideStatus(rideId: string, status: string) {
-        return await this.prisma.ride.update({
+        const ride = await this.prisma.ride.update({
             where: { id: rideId },
             data: {
                 status: status as RideStatus,
             },
+            include: { passenger: true, driver: { include: { user: true } } }
         });
+
+        this.gateway.server.to(rideId).emit('statusUpdate', { status, ride });
+        this.gateway.server.emit('tripUpdate', ride);
+        return ride;
     }
 
     async completeRide(rideId: string) {
@@ -149,6 +166,15 @@ export class DispatchService {
     }
 
     async updateDriverStatus(driverId: string, isOnline: boolean) {
+        if (isOnline) {
+            const driver = await this.prisma.driverProfile.findUnique({
+                where: { id: driverId },
+                select: { isBiometricVerified: true }
+            });
+            if (!driver?.isBiometricVerified) {
+                throw new HttpException('Biometric verification required to go online. Please verify your identity in the app.', HttpStatus.FORBIDDEN);
+            }
+        }
         return this.prisma.driverProfile.update({
             where: { id: driverId },
             data: { isOnline }

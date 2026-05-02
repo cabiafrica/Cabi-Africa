@@ -218,3 +218,4 @@ class _WhatsNewBannerState extends State<WhatsNewBanner>
     );
   }
 }
+

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'document_submission_screen.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
 class PendingApprovalScreen extends StatelessWidget {
   const PendingApprovalScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xFFFFD700); // Prestige Gold
-    const backgroundColor = Color(0xFF0A0A0A); // Deep Black
+    const primaryColor = AppTheme.primaryColor; // Prestige Gold
+    const backgroundColor = AppTheme.darkBackground; // Deep Black
 
     return Scaffold(
       backgroundColor: backgroundColor,

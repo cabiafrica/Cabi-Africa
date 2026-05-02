@@ -57,39 +57,36 @@ class RideService {
   // Complete a trip
   Future<double> completeTrip(String tripId) async {
     try {
-      final response = await _client.post(
-        Uri.parse('$_dispatchBaseUrl/rides/$tripId/complete'),
+      final response = await _client.patch(
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$tripId/complete'),
       );
 
       if (response.statusCode == 200) {
-        // final data = jsonDecode(response.body); // Unused
+        final data = jsonDecode(response.body);
         debugPrint('Trip $tripId completed via backend.');
-        // Expecting 'fare' in the response body from Backend
-        // Backend returns: { rideId: ..., status: ..., message: ... }
-        // Wait, backend logic I wrote earlier returns status and message.
-        // It DOES NOT return the full ride object with fare in the response DTO I wrote in 'completeRide'.
-        // I should verify backend logic.
-        // My backend code: return { rideId: ride.id, status: ride.status, message: ... }
-        // It does NOT return fare inside that object.
-        // I should update backend to return fare, or fetch it.
-        // For now, I'll default to mock if missing, but try to parse.
-
-        // Actually, let's fix backend to return the full ride or at least fare.
-        // But assuming I can't go back easily, I'll use a mock fallback here for safety.
-        return 450.0;
+        
+        // Try to get actual fare from backend response
+        if (data['fare'] != null) {
+          return (data['fare'] as num).toDouble();
+        }
+        if (data['ride'] != null && data['ride']['fare'] != null) {
+          return (data['ride']['fare'] as num).toDouble();
+        }
+        
+        return 0.0; // Return 0 if no fare data found, UI should handle this
       } else {
-        debugPrint('Backend completeTrip failed: ${response.statusCode}');
+        debugPrint('Backend completeTrip failed: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
       debugPrint('Error completing trip: $e');
     }
-    return 450.0; // Mock fare amount fallback
+    return 0.0;
   }
 
   Future<void> acceptRide(String rideId, String driverId) async {
     try {
       final response = await _client.post(
-        Uri.parse('$_dispatchBaseUrl/rides/$rideId/accept'),
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/accept'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'driverId': driverId}),
       );
@@ -107,9 +104,10 @@ class RideService {
 
   Future<void> startTrip(String rideId) async {
     try {
-      final response = await _client.post(
-        Uri.parse('$_dispatchBaseUrl/rides/$rideId/start'),
+      final response = await _client.patch(
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/status'),
         headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'status': 'IN_PROGRESS'}),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -126,11 +124,9 @@ class RideService {
   Future<void> rejectRide(String rideId, String driverId,
       [String? reason]) async {
     try {
-      final body = reason != null
-          ? jsonEncode({'driverId': driverId, 'reason': reason})
-          : jsonEncode({'driverId': driverId});
-      await _client.post(
-        Uri.parse('$_dispatchBaseUrl/rides/$rideId/reject'),
+      final body = jsonEncode({'status': 'CANCELLED'});
+      await _client.patch(
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/status'),
         headers: {'Content-Type': 'application/json'},
         body: body,
       );
@@ -150,7 +146,7 @@ class RideService {
       {required String tripId, required double rating, String? comment}) async {
     try {
       await _client.post(
-        Uri.parse('$_dispatchBaseUrl/rides/$tripId/rate'),
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$tripId/rate'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'rating': rating, 'comment': comment}),
       );
@@ -163,7 +159,7 @@ class RideService {
   Future<void> confirmCashPayment(String tripId, double amount) async {
     try {
       await _client.post(
-        Uri.parse('$_dispatchBaseUrl/rides/$tripId/confirm-cash'),
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$tripId/confirm-cash'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'amount': amount}),
       );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
 class ProfileAvatarWithQr extends StatelessWidget {
   final String imageUrl;
@@ -21,25 +22,45 @@ class ProfileAvatarWithQr extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: AppTheme.darkSurface,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: BorderSide(color: AppTheme.primaryColor.withValues(alpha: 0.1))),
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(32.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'My QR Code',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                'DRIVER IDENTITY',
+                style: AppTheme.outfit(
+                  color: AppTheme.primaryColor,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 2,
+                  fontSize: 16,
+                ),
               ),
-              const SizedBox(height: 24),
-              SizedBox(
-                height: 250,
-                width: 250,
+              const SizedBox(height: 8),
+              Text(
+                'MY QR CODE',
+                style: AppTheme.inter(
+                  color: Colors.white38,
+                  fontSize: 10,
+                  letterSpacing: 1.5,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 32),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: QrImageView(
                   data: qrData,
                   version: QrVersions.auto,
+                  size: 200,
                   eyeStyle: const QrEyeStyle(
                     eyeShape: QrEyeShape.square,
                     color: Colors.black,
@@ -50,18 +71,40 @@ class ProfileAvatarWithQr extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               Text(
                 qrData,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey,
-                    ),
+                style: AppTheme.inter(
+                  color: Colors.white24,
+                  fontSize: 11,
+                  letterSpacing: 1,
+                ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
-              const Text(
-                'Scan to verify identity',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.verified_user,
+                        color: AppTheme.primaryColor, size: 14),
+                    const SizedBox(width: 8),
+                    Text(
+                      'SECURE DRIVER ID',
+                      style: AppTheme.inter(
+                        color: AppTheme.primaryColor,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -74,36 +117,45 @@ class ProfileAvatarWithQr extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        CircleAvatar(
-          radius: radius,
-          backgroundColor: Colors.grey[200],
-          backgroundImage: isNetworkImage
-              ? NetworkImage(imageUrl)
-              : AssetImage(imageUrl) as ImageProvider,
-          child: (imageUrl.isEmpty)
-              ? Icon(Icons.person, size: radius, color: Colors.grey)
-              : null,
+        Container(
+          padding: const EdgeInsets.all(2),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.2), width: 1),
+          ),
+          child: CircleAvatar(
+            radius: radius,
+            backgroundColor: AppTheme.darkSurface,
+            backgroundImage: isNetworkImage
+                ? NetworkImage(imageUrl)
+                : AssetImage(imageUrl) as ImageProvider,
+            child: (imageUrl.isEmpty)
+                ? Icon(Icons.person, size: radius, color: Colors.white24)
+                : null,
+          ),
         ),
         if (showQrIcon)
           Positioned(
             bottom: 0,
-            left: 0,
+            right: 0,
             child: GestureDetector(
               onTap: () => _showQrDialog(context),
               child: Container(
-                padding: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppTheme.primaryColor,
                   shape: BoxShape.circle,
+                  border: Border.all(color: Colors.black, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 4,
+                      color: Colors.black.withValues(alpha: 0.4),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     )
                   ],
                 ),
                 child: const Icon(
-                  Icons.qr_code,
+                  Icons.qr_code_rounded,
                   size: 14,
                   color: Colors.black,
                 ),
@@ -114,3 +166,4 @@ class ProfileAvatarWithQr extends StatelessWidget {
     );
   }
 }
+

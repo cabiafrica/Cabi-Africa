@@ -5,6 +5,7 @@ import 'payout_setup_screen.dart';
 import 'referral_screen.dart';
 import '../services/referral_service.dart';
 import '../providers/auth_provider.dart';
+import 'package:passenger_app/theme/app_theme.dart';
 
 class WalletScreen extends ConsumerStatefulWidget {
   const WalletScreen({super.key});
@@ -169,7 +170,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                       Text(
                         'KES ${balance.toStringAsFixed(2)}',
                         style: const TextStyle(
-                          color: Color(0xFFFFD700),
+                          color: AppTheme.primaryColor,
                           fontSize: 40,
                           fontWeight: FontWeight.w900,
                         ),
@@ -181,7 +182,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                             child: ElevatedButton(
                               onPressed: _showTopUpDialog,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFFFD700),
+                                backgroundColor: AppTheme.primaryColor,
                                 foregroundColor: Colors.black,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12)),
@@ -365,3 +366,4 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     );
   }
 }
+

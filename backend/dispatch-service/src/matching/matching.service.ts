@@ -98,14 +98,20 @@ export class MatchingService {
             `Finding drivers near (${pickupLat}, ${pickupLng}) within ${maxDistanceKm}km (badgePriority: ${useBadgePriority})`
         );
 
+        // Map LITE to STANDARD if it's sent from the app
+        let resolvedVehicleType = vehicleType;
+        if ((vehicleType as string) === 'LITE') {
+            resolvedVehicleType = VehicleType.STANDARD;
+        }
+
         // Fetch all online drivers with badge status if needed
         const onlineDrivers = await this.prisma.driverProfile.findMany({
             where: {
                 isOnline: true,
                 currentLocation: { not: null },
-                ...(vehicleType && {
+                ...(resolvedVehicleType && {
                     vehicles: {
-                        type: vehicleType,
+                        type: resolvedVehicleType,
                     },
                 }),
                 ridesAsDriver: {

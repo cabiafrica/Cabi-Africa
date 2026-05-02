@@ -12,13 +12,13 @@ async function listUsers() {
                 userRoles: {
                     include: {
                         role: true,
-                        organization: true
+                        organizations: true
                     }
                 },
                 driverProfile: {
                     include: {
-                        vehicle: true,
-                        organization: true
+                        vehicles: true,
+                        organizations: true
                     }
                 }
             },
@@ -51,7 +51,7 @@ async function listUsers() {
             if (user.userRoles && user.userRoles.length > 0) {
                 console.log(`\nRBAC Roles (${user.userRoles.length}):`);
                 user.userRoles.forEach(ur => {
-                    const orgInfo = ur.organization ? ` [Org: ${ur.organization.name}]` : '';
+                    const orgInfo = ur.organizations ? ` [Org: ${ur.organizations.name}]` : '';
                     const status = ur.isActive ? '✓ Active' : '✗ Inactive';
                     console.log(`  - ${ur.role.displayName} (${ur.role.type})${orgInfo} - ${status}`);
                 });
@@ -66,12 +66,12 @@ async function listUsers() {
                 console.log(`  Online:     ${user.driverProfile.isOnline ? 'Yes' : 'No'}`);
                 console.log(`  Biometric:  ${user.driverProfile.isBiometricVerified ? '✓ Verified' : '✗ Not Verified'}`);
 
-                if (user.driverProfile.vehicle) {
-                    console.log(`  Vehicle:    ${user.driverProfile.vehicle.make} ${user.driverProfile.vehicle.model} (${user.driverProfile.vehicle.plateNumber})`);
+                if (user.driverProfile.vehicles) {
+                    console.log(`  Vehicle:    ${user.driverProfile.vehicles.make} ${user.driverProfile.vehicles.model} (${user.driverProfile.vehicles.plateNumber})`);
                 }
 
-                if (user.driverProfile.organization) {
-                    console.log(`  Organization: ${user.driverProfile.organization.name}`);
+                if (user.driverProfile.organizations) {
+                    console.log(`  Organization: ${user.driverProfile.organizations.name}`);
                 }
             }
 

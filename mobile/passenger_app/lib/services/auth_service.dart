@@ -57,9 +57,6 @@ class AuthService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final token = data['accessToken'] ?? data['token'];
-        if (token != null) {
-          await _storage.write(key: 'jwt_token', value: token);
-        }
         return AuthResult(
           isSignedIn: token != null,
           user: data['user'],
@@ -124,9 +121,6 @@ class AuthService {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final token = data['accessToken'] ?? data['token'];
-        if (token != null) {
-          await _storage.write(key: 'jwt_token', value: token);
-        }
         return AuthResult(
           isSignedIn: token != null,
           needsVerification: token == null,
@@ -173,6 +167,50 @@ class AuthService {
     return await _storage.read(key: 'jwt_token');
   }
 
+  Map<String, dynamic>? _decodeJwt(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) return null;
+      final payload = parts[1];
+      final String normalized = base64Url.normalize(payload);
+      final String resp = utf8.decode(base64Url.decode(normalized));
+      return json.decode(resp);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<AuthResult> getMe(String token) async {
+    try {
+      final payload = _decodeJwt(token);
+      final userId = payload?['sub'] ?? payload?['userId'];
+      
+      if (userId == null) return AuthResult(isSignedIn: false, error: 'Invalid token');
+
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/me'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'userId': userId}),
+      ).timeout(const Duration(seconds: 8));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        return AuthResult(
+          isSignedIn: true,
+          user: data,
+          token: token,
+        );
+      } else {
+        return AuthResult(isSignedIn: false, error: 'Failed to fetch profile');
+      }
+    } catch (e) {
+      return AuthResult(isSignedIn: false, error: e.toString());
+    }
+  }
+
   Future<AuthResult> verifyOtp(
       {required String phone, required String otp}) async {
     try {
@@ -185,8 +223,6 @@ class AuthService {
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = json.decode(response.body);
         final token = data['token'];
-        await _storage.write(key: 'jwt_token', value: token);
-        
         return AuthResult(
           isSignedIn: true,
           token: token,

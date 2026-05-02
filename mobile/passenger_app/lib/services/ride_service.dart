@@ -75,13 +75,13 @@ class RideService {
         queryParams['vehicleType'] = vehicleType;
       }
 
-      final uri = Uri.parse('$_dispatchBaseUrl/rides/nearby-drivers')
+      final uri = Uri.parse('$_dispatchBaseUrl/dispatch/rides/nearby-drivers')
           .replace(queryParameters: queryParams);
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return List<Map<String, dynamic>>.from(data['data'] ?? []);
+        return List<Map<String, dynamic>>.from(data['data'] ?? data ?? []);
       }
     } catch (e) {
       debugPrint('Error fetching nearby drivers: $e');
@@ -98,19 +98,17 @@ class RideService {
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('$_dispatchBaseUrl/rides'),
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'passengerId': passengerId,
-          'pickupLocation': pickup,
-          'dropoffLocation': dropoff,
+          'pickup': pickup,
+          'dropoff': dropoff,
           'vehicleType': vehicleType,
-          'fare': 350.0,
-          'distance': 5.0,
           'status': 'REQUESTED'
         }),
       );
-      if (response.statusCode == 201) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
         return jsonDecode(response.body);
       }
       debugPrint(
@@ -125,7 +123,7 @@ class RideService {
       String userId, String role) async {
     try {
       final response = await http.get(
-        Uri.parse('$_dispatchBaseUrl/rides/current?userId=$userId&role=$role'),
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/current?userId=$userId&role=$role'),
       );
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -244,7 +242,7 @@ class RideService {
     required String packageSize,
   }) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    return {'fare': 350.0};
+    return {'fare': 0.0};
   }
 
   Future<void> createPackageDelivery({

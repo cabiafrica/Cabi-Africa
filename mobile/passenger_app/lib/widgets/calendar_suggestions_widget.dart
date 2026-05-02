@@ -317,3 +317,4 @@ class _EventCard extends StatelessWidget {
     return months[month - 1];
   }
 }
+

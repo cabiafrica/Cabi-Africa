@@ -114,8 +114,8 @@ class _MenuScreenState extends State<MenuScreen> {
                 child: legacy_provider.Consumer<AuthProvider>(
                   builder: (context, auth, child) {
                     final user = auth.user;
-                    final fullName = user != null ? "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim() : 'Jane Doe';
-                    final email = user?['email'] ?? 'jane.doe@example.com';
+                    final fullName = user != null ? "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim() : 'Elite Member';
+                    final email = user?['email'] ?? 'Welcome to Cabi';
                     final profilePic = user?['profilePicture'] ?? 'https://i.pravatar.cc/150?u=passenger';
 
                     return Row(
@@ -236,8 +236,8 @@ class _MenuScreenState extends State<MenuScreen> {
                         showAboutDialog(
                           context: context,
                           applicationName: 'Cabi Go',
-                          applicationVersion: 'v1.0.0',
-                          applicationLegalese: '© 2025 Cabi Africa',
+                          applicationVersion: 'v1.1.0+6',
+                          applicationLegalese: '© 2026 Cabi Africa',
                           children: [
                             const SizedBox(height: 16),
                             const Text(
@@ -276,8 +276,8 @@ class _MenuScreenState extends State<MenuScreen> {
               color: Theme.of(context).scaffoldBackgroundColor,
               child: const Center(
                 child: Text(
-                  'Cabi Go • v1.0.0 (5)',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                  'CABI GO PRODUCTION • v1.1.0+6',
+                  style: TextStyle(color: Colors.grey, fontSize: 10, letterSpacing: 1, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -305,7 +305,7 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   Widget _buildGridSection(BuildContext context, List<Widget> items,
-      {Color backgroundColor = Colors.white}) {
+      {Color backgroundColor = Colors.transparent}) {
     return LayoutBuilder(
       builder: (context, constraints) {
         // Calculate crossAxisCount based on screen width
@@ -341,3 +341,4 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 }
+

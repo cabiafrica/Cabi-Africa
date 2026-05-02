@@ -145,3 +145,4 @@ class _TripSummaryPanelState extends State<TripSummaryPanel> {
     );
   }
 }
+

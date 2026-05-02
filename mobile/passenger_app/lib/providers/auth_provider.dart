@@ -54,10 +54,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       // Persistent Storage: Only store if 'Remember Me' is checked
       if (rememberMe) {
-        await _storage.write(key: 'authToken', value: token);
+        await _storage.write(key: 'jwt_token', value: token);
       } else {
         await _storage.delete(
-            key: 'authToken'); // Ensure any previous session is cleared
+            key: 'jwt_token'); // Ensure any previous session is cleared
       }
 
       // --- Analytics Tracking ---
@@ -74,7 +74,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> logout() async {
-    await _storage.delete(key: 'authToken');
+    await _storage.delete(key: 'jwt_token');
     await _analyticsService.setUserId(null); // Clear user ID on logout
     state = const Unauthenticated();
   }
@@ -82,13 +82,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> tryAutoLogin() async {
     try {
       final storedToken = await _storage
-          .read(key: 'authToken')
+          .read(key: 'jwt_token')
           .timeout(const Duration(seconds: 4));
       if (storedToken != null) {
-        // In a real app, you might want to validate the token with the backend here.
-        // For now, we'll assume it's valid if present, but we won't have the user object
-        // unless we fetch it.
-        state = Authenticated(storedToken);
+        // Fetch full profile to populate user object and userId
+        final result = await _authService.getMe(storedToken);
+        if (result.isSignedIn) {
+          state = Authenticated(storedToken, result.user);
+          await _analyticsService.setUserId(result.user?['email'] ?? 'auto_logged_in');
+        } else {
+          // If profile fetch fails (e.g. token expired), clear and set unauthenticated
+          await _storage.delete(key: 'jwt_token');
+          state = const Unauthenticated();
+        }
       } else {
         state = const Unauthenticated();
       }

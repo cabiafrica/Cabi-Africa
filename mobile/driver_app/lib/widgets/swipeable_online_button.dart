@@ -174,3 +174,4 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
     );
   }
 }
+

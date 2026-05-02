@@ -24,8 +24,8 @@ class UserService {
     await Future.delayed(const Duration(seconds: 1));
     return {
       'requiresBiometricCheck': false,
-      'name': 'John Doe',
-      'email': 'john@example.com'
+      'name': 'Elite Member',
+      'email': 'member@prestige.cabi'
     };
   }
 

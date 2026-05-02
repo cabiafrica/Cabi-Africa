@@ -1,45 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:passenger_app/widgets/referral_tree_graph.dart';
 import 'package:passenger_app/theme/app_theme.dart';
+import '../services/referral_service.dart';
+import '../providers/auth_provider.dart';
 
-class ReferralStatusScreen extends StatefulWidget {
+class ReferralStatusScreen extends ConsumerStatefulWidget {
   const ReferralStatusScreen({super.key});
 
   @override
-  State<ReferralStatusScreen> createState() => _ReferralStatusScreenState();
+  ConsumerState<ReferralStatusScreen> createState() => _ReferralStatusScreenState();
 }
 
-class _ReferralStatusScreenState extends State<ReferralStatusScreen> {
-  final List<Map<String, dynamic>> _referrals = [
-    {
-      'id': '1',
-      'name': 'John D.',
-      'status': 'BONUS_PAID',
-      'date': DateTime.now().subtract(const Duration(days: 15)),
-      'bonus': 500.0,
-    },
-    {
-      'id': '2',
-      'name': 'Sarah M.',
-      'status': 'FIRST_RIDE_COMPLETED',
-      'date': DateTime.now().subtract(const Duration(days: 5)),
-      'bonus': 0.0,
-    },
-    {
-      'id': '3',
-      'name': 'Mike K.',
-      'status': 'SIGNED_UP',
-      'date': DateTime.now().subtract(const Duration(days: 2)),
-      'bonus': 0.0,
-    },
-  ];
+class _ReferralStatusScreenState extends ConsumerState<ReferralStatusScreen> {
+  final PassengerReferralService _referralService = PassengerReferralService();
+  Future<Map<String, dynamic>>? _historyFuture;
+  String? _lastUserId;
 
-  double get _totalEarned => _referrals
-      .where((r) => r['status'] == 'BONUS_PAID')
-      .fold(0.0, (sum, r) => sum + (r['bonus'] as double));
+  void _loadHistory(String userId) {
+    if (_lastUserId != userId) {
+      setState(() {
+        _lastUserId = userId;
+        _historyFuture = _referralService.getReferralHistory(userId);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(passengerAuthProvider);
+    String? userId;
+
+    if (authState is Authenticated) {
+      userId = authState.userId;
+    }
+
+    // Fallback for development
+    userId ??= 'passenger-test-id';
+
+    _loadHistory(userId);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Referrals'),
@@ -47,172 +47,206 @@ class _ReferralStatusScreenState extends State<ReferralStatusScreen> {
         foregroundColor: Colors.black,
         elevation: 0,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Referral Visualization
-          Center(
-            child: SizedBox(
-              height: 300,
-              width: 300,
-              child: ReferralTreeGraph(
-                level1Count: 5, // Mock data
-                level2Count: 12, // Mock data
-                userImageUrl: 'https://i.pravatar.cc/150?u=passenger',
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: _historyFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-          // Legend
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildLegendItem("You", const Color(0xFFFFD700)),
-              const SizedBox(width: 15),
-              _buildLegendItem("Level 1", Colors.orange.shade700),
-              const SizedBox(width: 15),
-              _buildLegendItem("Level 2", Colors.orange.shade300),
-            ],
-          ),
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
 
-          const SizedBox(height: 30),
+          final data = snapshot.data ?? {'totalEarned': 0, 'history': [], 'level1Count': 0, 'level2Count': 0};
+          final referrals = (data['history'] as List? ?? []).map((r) => {
+            'id': r['id']?.toString() ?? '',
+            'name': r['name'] ?? 'Anonymous',
+            'status': r['status'] ?? 'SIGNED_UP',
+            'date': r['createdAt'] != null ? DateTime.parse(r['createdAt']) : DateTime.now(),
+            'bonus': (r['bonus'] as num?)?.toDouble() ?? 0.0,
+          }).toList();
 
-          // Stats Card
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Colors.black87, Colors.black],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4))
-                ]),
-            child: Column(
+          final totalEarned = (data['totalEarned'] as num?)?.toDouble() ?? 0.0;
+          final level1Count = data['level1Count'] ?? referrals.length;
+          final level2Count = data['level2Count'] ?? 0;
+
+          return RefreshIndicator(
+            onRefresh: () async {
+              setState(() {
+                _historyFuture = _referralService.getReferralHistory(userId!);
+              });
+              await _historyFuture;
+            },
+            child: ListView(
+              padding: const EdgeInsets.all(16),
               children: [
+                // Referral Visualization
+                Center(
+                  child: SizedBox(
+                    height: 300,
+                    width: 300,
+                    child: ReferralTreeGraph(
+                      level1Count: level1Count,
+                      level2Count: level2Count,
+                      userImageUrl: 'https://i.pravatar.cc/150?u=$userId',
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Legend
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildStatItem('Total Referrals', '${_referrals.length}',
-                        Icons.people),
-                    Container(width: 1, height: 40, color: Colors.white30),
-                    _buildStatItem(
-                        'Total Earned',
-                        'KES ${_totalEarned.toStringAsFixed(0)}',
-                        Icons.account_balance_wallet),
+                    _buildLegendItem("You", AppTheme.primaryColor),
+                    const SizedBox(width: 15),
+                    _buildLegendItem("Level 1", Colors.orange.shade700),
+                    const SizedBox(width: 15),
+                    _buildLegendItem("Level 2", Colors.orange.shade300),
                   ],
                 ),
-                const SizedBox(height: 16),
+
+                const SizedBox(height: 30),
+
+                // Stats Card
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.white24)),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Icon(Icons.info_outline,
-                            color: AppTheme.primaryColor, size: 20),
+                      gradient: const LinearGradient(
+                        colors: [Colors.black87, Colors.black],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      Expanded(
-                        child: Text(
-                          'Earn KES 500 for each friend who completes their first ride',
-                          style: TextStyle(
-                              color: Colors.grey.shade300, fontSize: 12),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4))
+                      ]),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildStatItem('Total Referrals', '${referrals.length}',
+                              Icons.people),
+                          Container(width: 1, height: 40, color: Colors.white30),
+                          _buildStatItem(
+                              'Total Earned',
+                              'KES ${totalEarned.toStringAsFixed(0)}',
+                              Icons.account_balance_wallet),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.white24)),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Icon(Icons.info_outline,
+                                  color: AppTheme.primaryColor, size: 20),
+                            ),
+                            Expanded(
+                              child: Text(
+                                'Earn KES 500 for each friend who completes their first ride',
+                                style: TextStyle(
+                                    color: Colors.grey.shade300, fontSize: 12),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
 
-          const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Level 1 Referrals',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              TextButton.icon(
-                onPressed: () {
-                  // Share referral code
-                },
-                icon: const Icon(Icons.share, size: 18),
-                label: const Text('Invite More'),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 12),
-
-          // Referral List
-          if (_referrals.isEmpty)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(Icons.people_outline,
-                        size: 80, color: Colors.grey.shade400),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No referrals yet',
-                      style:
-                          TextStyle(fontSize: 16, color: Colors.grey.shade600),
-                    ),
-                    const SizedBox(height: 8),
                     const Text(
-                      'Start inviting friends to earn bonuses!',
-                      style: TextStyle(color: Colors.grey),
+                      'Level 1 Referrals',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    TextButton.icon(
+                      onPressed: () {
+                        // Share referral code
+                      },
+                      icon: const Icon(Icons.share, size: 18),
+                      label: const Text('Invite More'),
                     ),
                   ],
                 ),
-              ),
-            )
-          else
-            ..._referrals.map((referral) => _buildReferralCard(referral)),
 
-          const SizedBox(height: 24),
+                const SizedBox(height: 12),
 
-          // Portal Link Button
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                // In real app, launchUrl to portal
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Redirecting to User Portal...')),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: const Color(0xFFFFBE0B), // Cabi Yellow
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                // Referral List
+                if (referrals.isEmpty)
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        children: [
+                          Icon(Icons.people_outline,
+                              size: 80, color: Colors.grey.shade400),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No referrals yet',
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.grey.shade600),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Start inviting friends to earn bonuses!',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                else
+                  ...referrals.map((referral) => _buildReferralCard(referral)),
+
+                const SizedBox(height: 24),
+
+                // Portal Link Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // In real app, launchUrl to portal
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Redirecting to User Portal...')),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: const Color(0xFFFFBE0B), // Cabi Yellow
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'View All Network & Details in User Portal',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ),
-              ),
-              child: const Text(
-                'View All Network & Details in User Portal',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+                const SizedBox(height: 20),
+              ],
             ),
-          ),
-          const SizedBox(height: 20),
-        ],
+          );
+        },
       ),
     );
   }
@@ -388,3 +422,4 @@ class _ReferralStatusScreenState extends State<ReferralStatusScreen> {
     return '${date.day}/${date.month}/${date.year}';
   }
 }
+

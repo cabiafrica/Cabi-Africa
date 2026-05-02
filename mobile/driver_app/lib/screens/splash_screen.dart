@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:driver_app/providers/auth_provider.dart';
 import 'package:driver_app/screens/main_shell.dart';
 import 'package:driver_app/screens/login_screen.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -90,8 +91,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    const primaryGold = Color(0xFFFFD700);
-    const prestigeBlack = Color(0xFF0A0A0A);
+    const primaryGold = AppTheme.primaryColor;
+    const prestigeBlack = AppTheme.darkBackground;
 
     return Scaffold(
       backgroundColor: prestigeBlack,
@@ -174,3 +175,4 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     );
   }
 }
+

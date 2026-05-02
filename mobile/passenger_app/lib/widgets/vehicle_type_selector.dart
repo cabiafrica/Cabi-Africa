@@ -167,3 +167,4 @@ class VehicleTypeSelector extends StatelessWidget {
     );
   }
 }
+

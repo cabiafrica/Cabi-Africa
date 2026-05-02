@@ -29,7 +29,8 @@ async function main() {
             passengerId: userId,
             pickup: { lat: -1.2921, lng: 36.8219, address: "Nairobi West" },
             dropoff: { lat: -1.2864, lng: 36.8172, address: "City Hall" },
-            vehicleType: "STANDARD"
+            vehicleType: "STANDARD",
+            fare: 450.0
         };
 
         const rideResponse = await axios.post('http://localhost:3334/api/rides', rideData);

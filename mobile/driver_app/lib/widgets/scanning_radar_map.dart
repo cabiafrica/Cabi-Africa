@@ -118,3 +118,4 @@ class RadarPainter extends CustomPainter {
     return true;
   }
 }
+

@@ -14,6 +14,7 @@ class UserDashboardScreen extends StatelessWidget {
     final badgeServiceInstance = badge_service.BadgeService();
 
     return Scaffold(
+      backgroundColor: AppTheme.darkBackground,
       appBar: AppBar(
         title: const Text('Dashboard'),
         backgroundColor: AppTheme.primaryColor,
@@ -27,17 +28,18 @@ class UserDashboardScreen extends StatelessWidget {
             Consumer<AuthProvider>(
               builder: (context, auth, _) {
                 final user = auth.user;
-                final fullName = user != null ? "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim() : 'Jane Doe';
+                final fullName = user != null ? "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim() : 'Elite Member';
                 final profilePic = user?['profilePicture'] ?? 'https://i.pravatar.cc/150?u=passenger';
                 
                 return Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppTheme.darkSurface,
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.1), width: 1),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
+                        color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 10,
                       ),
                     ],
@@ -53,9 +55,9 @@ class UserDashboardScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            fullName.isNotEmpty ? fullName : 'Cabi User',
+                            fullName.isNotEmpty ? fullName : 'Elite Member',
                             style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
                           ),
                           Text(
                             user?['membershipTier'] ?? 'Standard Member',
@@ -112,12 +114,12 @@ class UserDashboardScreen extends StatelessWidget {
                           children: [
                             const Text('Achievements',
                                 style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold)),
+                                    fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
                             TextButton(
                               onPressed: () {
                                 // Navigate to full badge screen if implemented
                               },
-                              child: const Text('View All'),
+                              child: const Text('View All', style: TextStyle(color: AppTheme.primaryColor)),
                             ),
                           ],
                         ),
@@ -135,11 +137,12 @@ class UserDashboardScreen extends StatelessWidget {
             // Quick Actions
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.darkSurface,
                 borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.1), width: 1),
                 boxShadow: [
                   BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: Colors.black.withValues(alpha: 0.2),
                       blurRadius: 10)
                 ],
               ),
@@ -156,7 +159,7 @@ class UserDashboardScreen extends StatelessWidget {
                               builder: (_) => const ReferralStatusScreen()));
                     },
                   ),
-                  const Divider(height: 1),
+                  const Divider(height: 1, color: Colors.white10),
                   _buildMenuOption(
                     context,
                     icon: Icons.star_outline,
@@ -171,12 +174,15 @@ class UserDashboardScreen extends StatelessWidget {
 
             // Recent Activity Placeholder
             const Text('Recent Activity',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
             const SizedBox(height: 10),
             Container(
               height: 200,
-              color: Colors.grey[100],
-              child: const Center(child: Text('No recent activity')),
+              decoration: BoxDecoration(
+                color: AppTheme.darkSurface,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Center(child: Text('No recent activity', style: TextStyle(color: Colors.white38))),
             )
           ],
         ),
@@ -189,11 +195,12 @@ class UserDashboardScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.darkSurface,
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.1), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 10,
             ),
           ],
@@ -202,8 +209,8 @@ class UserDashboardScreen extends StatelessWidget {
           children: [
             Text(value,
                 style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            Text(label, style: const TextStyle(color: Colors.grey)),
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+            Text(label, style: const TextStyle(color: Colors.white54)),
           ],
         ),
       ),
@@ -223,10 +230,11 @@ class UserDashboardScreen extends StatelessWidget {
         ),
         child: Icon(icon, color: AppTheme.primaryColor),
       ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
       trailing:
           const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
       onTap: onTap,
     );
   }
 }
+

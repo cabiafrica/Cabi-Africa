@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../services/document_api_service.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
 // Mock data model for a document. In a real app, this would be a DTO.
 class OnboardingDocument {
@@ -76,8 +77,8 @@ class DocumentSubmissionScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const primaryColor = Color(0xFFFFD700); // Prestige Gold
-    const backgroundColor = Color(0xFF0A0A0A); // Deep Black
+    const primaryColor = AppTheme.primaryColor; // Prestige Gold
+    const backgroundColor = AppTheme.darkBackground; // Deep Black
     final documents = ref.watch(documentsProvider);
 
     return Scaffold(
@@ -181,8 +182,8 @@ class DocumentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xFFFFD700);
-    const surfaceColor = Color(0xFF141414);
+    const primaryColor = AppTheme.primaryColor;
+    const surfaceColor = AppTheme.darkSurface;
 
     IconData icon;
     Color color;

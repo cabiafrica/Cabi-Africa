@@ -19,11 +19,12 @@ import 'delivery_screen.dart';
 import 'user_dashboard_screen.dart';
 import 'package:passenger_app/screens/menu_screen.dart';
 import 'package:passenger_app/widgets/promotional_carousel.dart';
+import 'login_screen.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../providers/providers.dart';
-import '../widgets/face_verification_modal.dart';
+import '../widgets/security_verification_modal.dart';
 part 'home_screen_panels.dart';
 part 'home_screen_logic.dart';
 
@@ -62,9 +63,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Timer? _arrivalTimer;
   Timer? _tripTimer;
-  double _currentFare = 350.0;
-  double _distanceKm = 0.0;
-  int _tripDurationSeconds = 0;
+  final double _currentFare = 0.0;
+  final double _distanceKm = 0.0;
+  final int _tripDurationSeconds = 0;
   String? _currentRideId;
   Map<String, dynamic>? _currentRideData;
   Timer? _rideUpdateTimer;
@@ -112,15 +113,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   List<Map<String, dynamic>> _nearbyDrivers = [];
 
-  final List<Map<String, dynamic>> _favouriteDestinations = [
-    {'name': 'Home', 'address': 'Valley Arcade, Nairobi', 'icon': Icons.home},
-    {'name': 'Work', 'address': 'CBD, Nairobi', 'icon': Icons.work},
-  ];
+  final List<Map<String, dynamic>> _favouriteDestinations = [];
 
-  final List<Map<String, dynamic>> _recentPlaces = [
-    {'name': 'Jomo Kenyatta Airport', 'address': 'Airport North Rd, Nairobi', 'icon': Icons.history},
-    {'name': 'Westgate Mall', 'address': 'Mwanzi Rd, Nairobi', 'icon': Icons.history},
-  ];
+  final List<Map<String, dynamic>> _recentPlaces = [];
 
   @override
   void initState() {
@@ -329,7 +324,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   FloatingActionButton.small(
                     heroTag: 'sos_btn_passenger',
                     onPressed: () {/* SOS Logic */},
-                    backgroundColor: const Color(0xFFD32F2F),
+                    backgroundColor: AppTheme.errorRed,
                     foregroundColor: Colors.white,
                     elevation: 4,
                     child: const Text("SOS",
