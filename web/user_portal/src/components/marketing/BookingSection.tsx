@@ -31,6 +31,11 @@ export default function BookingSection() {
     const [driverInfo, setDriverInfo] = useState<any>(null);
     const [currentCoords, setCurrentCoords] = useState<{ lat: number; lng: number } | null>(null);
     const pollingInterval = useRef<NodeJS.Timeout | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const getCurrentLocation = () => {
         if (typeof window !== 'undefined' && navigator.geolocation) {
@@ -265,6 +270,8 @@ export default function BookingSection() {
             </div>
         );
     };
+
+    if (!mounted) return null;
 
     return (
         <section id="booking-section" className="relative z-20 -mt-20 lg:-mt-32 px-4 lg:px-6 mb-24 pointer-events-none">

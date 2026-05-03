@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaArrowRight } from 'react-icons/fa';
@@ -8,6 +9,10 @@ interface FeatureSplitProps {
 
 export default function FeatureSplit({ type }: FeatureSplitProps) {
     const isDriver = type === 'driver';
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const content = isDriver ? {
         title: "Drive & Earn on Your Terms",
@@ -85,7 +90,7 @@ export default function FeatureSplit({ type }: FeatureSplitProps) {
                             }`}
                         >
                             {content.buttonText} 
-                            <FaArrowRight className="transition-transform duration-500 group-hover:translate-x-2" />
+                            {mounted && <FaArrowRight className="transition-transform duration-500 group-hover:translate-x-2" />}
                         </Link>
                     </div>
 

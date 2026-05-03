@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -16,6 +17,13 @@ export default function HeroSlider() {
         fade: true,
         arrows: false,
     };
+
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) return <div className="relative min-h-[750px] lg:h-screen bg-brand-black" />;
 
     const slides = [
         {

@@ -90,7 +90,7 @@ export default function Header() {
                                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                                     >
                                         <span className="max-w-[80px] truncate">Hi {user?.firstName}</span>
-                                        <ChevronDown className={`h-4 w-4 text-brand-yellow/70 transition-transform duration-500 ${isMenuOpen ? 'rotate-180' : ''}`} />
+                                        {mounted && <ChevronDown className={`h-4 w-4 text-brand-yellow/70 transition-transform duration-500 ${isMenuOpen ? 'rotate-180' : ''}`} />}
                                     </button>
                                 </div>
                             ) : (
@@ -115,11 +115,11 @@ export default function Header() {
                                 aria-expanded={isMenuOpen}
                             >
                                 <span className="sr-only">Open main menu</span>
-                                {isMenuOpen ? (
+                                {mounted && (isMenuOpen ? (
                                     <X className="block h-6 w-6" />
                                 ) : (
                                     <Menu className="block h-6 w-6" />
-                                )}
+                                ))}
                             </button>
                         </div>
                     </div>
@@ -145,7 +145,7 @@ export default function Header() {
                                 onClick={() => setIsMenuOpen(false)}
                             >
                                 <span>{link.name}</span>
-                                <ChevronDown className="h-5 w-5 -rotate-90 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-[-10px] group-hover:translate-x-0" />
+                                {mounted && <ChevronDown className="h-5 w-5 -rotate-90 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-[-10px] group-hover:translate-x-0" />}
                             </Link>
                         ))}
                     </div>
@@ -174,7 +174,7 @@ export default function Header() {
                                         className="flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-white/10 text-white font-black text-sm uppercase tracking-widest hover:bg-white/20 transition-all border border-white/5"
                                         onClick={() => setIsMenuOpen(false)}
                                     >
-                                        <Layers className="h-4 w-4" />
+                                        {mounted && <Layers className="h-4 w-4" />}
                                         Control Center
                                     </Link>
                                     <button
@@ -184,7 +184,7 @@ export default function Header() {
                                             logout();
                                         }}
                                     >
-                                        <LogOut className="h-4 w-4" />
+                                        {mounted && <LogOut className="h-4 w-4" />}
                                         Terminate Session
                                     </button>
                                 </div>
@@ -199,7 +199,7 @@ export default function Header() {
                                     <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                     <span className="relative z-10 flex items-center gap-2">
                                         Login to Network
-                                        <Rocket className="h-4 w-4" />
+                                        {mounted && <Rocket className="h-4 w-4" />}
                                     </span>
                                 </Link>
                                 <p className="text-center text-[10px] font-bold text-white/30 uppercase tracking-[0.3em] mt-6">Secure Access Required</p>

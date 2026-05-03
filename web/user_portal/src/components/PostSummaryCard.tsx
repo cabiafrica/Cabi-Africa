@@ -1,4 +1,5 @@
 // apps/user-portal/src/components/PostSummaryCard.tsx
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { BlogPostSummary } from '@/backend/services/cms';
@@ -8,6 +9,10 @@ export default function PostSummaryCard({
 }: {
     post: BlogPostSummary;
 }) {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
     return (
         <Link href={`/blog/${post.id}`} className="group relative flex flex-col glass rounded-2xl overflow-hidden shadow-sm hover:shadow-brand-accent/20 transition-all duration-300 transform hover:-translate-y-1 border border-white/5">
             <div className="relative aspect-video w-full overflow-hidden bg-brand-dark">
@@ -25,7 +30,7 @@ export default function PostSummaryCard({
                         Article
                     </span>
                     <span className="text-xs text-gray-400">
-                        {new Date(post.publishedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                        {mounted && new Date(post.publishedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                     </span>
                 </div>
 
