@@ -24,7 +24,6 @@ export const HeatMapAnalytics: React.FC = () => {
 
     useEffect(() => {
         setLoading(true);
-        // @ts-expect-error - Ignoring potential signature mismatch until adminService is updated
         adminService.getHeatMapData(type, serviceId).then(setPoints).finally(() => setLoading(false));
     }, [type, serviceId]);
 

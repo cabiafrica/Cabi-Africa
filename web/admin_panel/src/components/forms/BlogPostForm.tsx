@@ -20,7 +20,8 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Check if current user is a senior manager or admin
-  const canPublish = user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' || user?.permissions?.includes('BLOG_POSTS_PUBLISH' as any);
+  const role = (user?.role as string)?.toUpperCase();
+  const canPublish = role === 'ADMIN' || role === 'SUPER_ADMIN' || user?.permissions?.includes('BLOG_POSTS_PUBLISH' as any);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
