@@ -17,8 +17,6 @@ export default function Header() {
         setIsMenuOpen(!isMenuOpen);
     };
 
-    if (!mounted) return null;
-
     const baseNavLinks = [
         { name: 'Home', href: '/' },
         { name: 'Services', href: '/services' },
@@ -29,11 +27,11 @@ export default function Header() {
         { name: 'Contact Us', href: '/contact' },
     ];
 
-    const navLinks = [
+    const navLinks = mounted ? [
         ...baseNavLinks,
         ...(hasPermission('DRIVER_PROFILE_EDIT') ? [{ name: 'For Drivers', href: '/drivers/dashboard' }] : []),
         ...(hasPermission('ORGANIZATION_VIEW') ? [{ name: 'Organization', href: '/organizations/dashboard' }] : []),
-    ];
+    ] : baseNavLinks;
 
     const registrationLinks = [
         { name: 'Individual Registration', href: '/drivers/register', icon: 'user' },
@@ -69,9 +67,9 @@ export default function Header() {
 
                     <div className="flex items-center gap-2 md:gap-6">
                         <div className="hidden md:flex items-center space-x-6">
-                            <ThemeToggle />
+                            {mounted ? <ThemeToggle /> : <div className="w-9 h-9" />}
                             
-                            {isAuthenticated ? (
+                            {mounted ? (isAuthenticated ? (
                                 <div className="relative flex items-center gap-4">
                                     <Link
                                         href="/dashboard"
@@ -104,11 +102,11 @@ export default function Header() {
                                     <span className="absolute inset-0 bg-gradient-to-tr from-brand-yellow to-brand-accent mix-blend-overlay" />
                                     <span className="relative text-black z-10">Login</span>
                                 </Link>
-                            )}
+                            )) : <div className="w-[105px] h-[44px]"></div>}
                         </div>
 
                         <div className="flex lg:hidden items-center gap-2">
-                            <ThemeToggle />
+                            {mounted ? <ThemeToggle /> : <div className="w-9 h-9" />}
                             <button
                                 onClick={toggleMenu}
                                 type="button"
