@@ -14,6 +14,7 @@ import 'package:driver_app/providers/map_provider.dart' as provider;
 import 'package:provider/provider.dart' as legacy_provider;
 import 'package:driver_app/services/ride_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:driver_app/providers/providers.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:geolocator_platform_interface/geolocator_platform_interface.dart';

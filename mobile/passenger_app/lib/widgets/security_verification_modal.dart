@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
-import '../providers/auth_provider.dart';
 
 enum VerificationMethod { face, fingerprint, otp }
 
@@ -49,7 +48,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
       final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
 
       if (canAuthenticate) {
-        final List<BiometricType> availableBiometrics = await auth.getAvailableBiometrics();
+        await auth.getAvailableBiometrics();
         
         // Simulation for UI "Wow" effect
         _timer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
@@ -151,7 +150,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -169,7 +168,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
             'Secure your ride with a quick check',
             style: GoogleFonts.outfit(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 32),
@@ -240,16 +239,16 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(0.1),
+                color: AppTheme.primaryColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: AppTheme.primaryColor, size: 28),
@@ -271,13 +270,13 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                     subtitle,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: Colors.white.withOpacity(0.3)),
+            Icon(Icons.chevron_right, color: Colors.white.withValues(alpha: 0.3)),
           ],
         ),
       ),
@@ -298,7 +297,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               child: CircularProgressIndicator(
                 value: _scanningProgress,
                 strokeWidth: 4,
-                backgroundColor: Colors.white.withOpacity(0.05),
+                backgroundColor: Colors.white.withValues(alpha: 0.05),
                 color: AppTheme.primaryColor,
               ),
             ),
@@ -306,7 +305,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               width: 100,
               height: 100,
               decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(0.1),
+                color: AppTheme.primaryColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -350,10 +349,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           ),
           decoration: InputDecoration(
             hintText: '0000',
-            hintStyle: TextStyle(color: Colors.white.withOpacity(0.1)),
+            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.1)),
             counterText: '',
             enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
             ),
             focusedBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: AppTheme.primaryColor),

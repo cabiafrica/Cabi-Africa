@@ -39,7 +39,7 @@ class _MainShellState extends State<MainShell> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const SosAlertScreen()),
+            MaterialPageRoute(builder: (context) => const SosAlertScreen(alertData: {})),
           );
         },
         backgroundColor: Colors.redAccent,

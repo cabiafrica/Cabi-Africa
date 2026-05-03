@@ -12,6 +12,7 @@ import '../widgets/ride_request_modal.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/face_verification_modal.dart';
 import '../widgets/radar_animation.dart';
+import '../providers/providers.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -286,7 +287,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Consumer(
                     builder: (context, ref, child) {
                       final authState = ref.watch(authProvider);
-                      final driverProfile = (authState is Authenticated) ? authState.user?['driverProfile'] : null;
+                      final driverProfile = authState.user?['driverProfile'];
                       final vehicle = driverProfile?['vehicles'];
                       
                       if (vehicle == null) return const SizedBox.shrink();
@@ -302,7 +303,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.directions_car, color: AppTheme.primaryColor, size: 16),
+                            const Icon(Icons.directions_car, color: AppTheme.primaryColor, size: 16),
                             const SizedBox(width: 8),
                             Text(
                               "${vehicle['make']} ${vehicle['model']} • ${vehicle['plateNumber']}",

@@ -2,7 +2,6 @@ import '../config/app_config.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 class RideService {
@@ -183,4 +182,3 @@ class RideService {
   }
 }
 
-final rideServiceProvider = Provider((ref) => RideService());

@@ -5,6 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:driver_app/screens/home_screen.dart';
 import 'package:driver_app/services/ride_service.dart';
 import 'package:driver_app/services/location_service.dart';
+import 'package:driver_app/providers/providers.dart';
 import 'package:geolocator/geolocator.dart';
 
 class MockRideService extends Mock implements RideService {}

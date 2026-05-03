@@ -73,7 +73,7 @@ class RadarPainter extends CustomPainter {
     final radius = size.width / 2;
 
     final paint = Paint()
-      ..color = color.withOpacity(0.1)
+      ..color = color.withValues(alpha: 0.1)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
@@ -84,32 +84,26 @@ class RadarPainter extends CustomPainter {
 
     // Draw moving ring
     final movingPaint = Paint()
-      ..color = color.withOpacity(1.0 - progress)
+      ..color = color.withValues(alpha: 1.0 - progress)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
     canvas.drawCircle(center, radius * progress, movingPaint);
 
     // Draw sweep
-    final sweepPaint = Paint()
-      ..shader = SweepGradient(
+    final sweepShader = SweepGradient(
         center: Alignment.center,
         startAngle: 0.0,
         endAngle: math.pi * 2,
         colors: [
-          color.withOpacity(0.0),
-          color.withOpacity(0.5),
-          color.withOpacity(0.0),
+          color.withValues(alpha: 0.0),
+          color.withValues(alpha: 0.5),
+          color.withValues(alpha: 0.0),
         ],
         stops: const [0.0, 0.5, 1.0],
         transform: GradientRotation(progress * math.pi * 2),
       ).createShader(Rect.fromCircle(center: center, radius: radius));
 
-    final sweepPath = Path()
-      ..moveTo(center.dx, center.dy)
-      ..arcTo(Rect.fromCircle(center: center, radius: radius), progress * math.pi * 2, math.pi / 4, false)
-      ..close();
-    
-    canvas.drawCircle(center, radius, Paint()..shader = sweepPaint..style = PaintingStyle.fill);
+    canvas.drawCircle(center, radius, Paint()..shader = sweepShader..style = PaintingStyle.fill);
 
     // Draw random "pings" (mock passengers)
     final pingPaint = Paint()
@@ -132,7 +126,7 @@ class RadarPainter extends CustomPainter {
       if (diff > math.pi) diff = (2 * math.pi - diff).abs();
       
       if (diff < 0.5) {
-        canvas.drawCircle(point, 4 * (1.0 - diff / 0.5), pingPaint..color = color.withOpacity(1.0 - diff / 0.5));
+        canvas.drawCircle(point, 4 * (1.0 - diff / 0.5), pingPaint..color = color.withValues(alpha: 1.0 - diff / 0.5));
       }
     }
   }

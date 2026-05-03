@@ -12,6 +12,7 @@ import 'package:driver_app/screens/home_screen.dart';
 import 'package:driver_app/services/ride_service.dart';
 import 'package:driver_app/services/auth_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:driver_app/providers/providers.dart';
 import '../mocks/image_mocks.dart';
 
 // Mock for GeolocatorPlatform

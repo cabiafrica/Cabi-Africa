@@ -18,6 +18,7 @@ import 'package:driver_app/providers/map_provider.dart' as map_prov;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:driver_app/providers/providers.dart';
 
 // --- Mocks ---
 class MockAuthService extends Mock implements AuthService {}

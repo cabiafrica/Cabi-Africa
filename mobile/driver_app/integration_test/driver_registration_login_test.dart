@@ -13,6 +13,7 @@ import 'package:driver_app/services/ride_service.dart';
 import 'package:driver_app/screens/login_screen.dart';
 import 'package:driver_app/screens/home_screen.dart';
 import 'package:driver_app/providers/map_provider.dart' as map_prov;
+import 'package:driver_app/providers/providers.dart';
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 class MockAuthService extends Mock implements AuthService {}
@@ -235,7 +236,7 @@ void main() {
       expect(find.byType(HomeScreen), findsOneWidget);
 
       // Token was persisted (rememberMe = true by default)
-      verify(() => mockStorage.write(key: 'authToken', value: 'mock-jwt-token'))
+      verify(() => mockStorage.write(key: 'jwt_token', value: 'mock-jwt-token'))
           .called(1);
 
       debugPrint('[TEST 5] ✅ Successful login → HomeScreen. Token persisted.');
@@ -307,8 +308,8 @@ void main() {
       expect(find.byType(HomeScreen), findsOneWidget);
 
       // Token should NOT be written; instead deleted (session-only)
-      verifyNever(() => mockStorage.write(key: 'authToken', value: any(named: 'value')));
-      verify(() => mockStorage.delete(key: 'authToken')).called(1);
+      verifyNever(() => mockStorage.write(key: 'jwt_token', value: any(named: 'value')));
+      verify(() => mockStorage.delete(key: 'jwt_token')).called(1);
 
       debugPrint('[TEST 7] ✅ Remember Me unchecked: token deleted (session-only login).');
     });
@@ -316,7 +317,7 @@ void main() {
     // ── 8. Auto-login from stored token ──────────────────────────────────────
     testWidgets('8. Valid stored token auto-logs in, skips LoginScreen', (tester) async {
       // Simulate a token already stored from a previous session
-      when(() => mockStorage.read(key: 'authToken'))
+      when(() => mockStorage.read(key: 'jwt_token'))
           .thenAnswer((_) async => 'stored-valid-token');
 
       await tester.pumpWidget(_buildApp(
