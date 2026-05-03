@@ -340,19 +340,13 @@ extension _HomeScreenPanels on _HomeScreenState {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      // 1. Destination Picker
-                      Text("Where to?",
-                          style: AppTheme.outfit(
-                              fontWeight: FontWeight.bold, fontSize: 24, color: onSurfaceColor)),
-                      const SizedBox(height: 16),
+                      // 1. Location Pickers (Pickup & Destination)
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: isDark ? const Color(0xFF1F1F1F) : Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border:
-                              Border.all(color: dividerColor, width: 1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: dividerColor, width: 1),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.05),
@@ -361,31 +355,75 @@ extension _HomeScreenPanels on _HomeScreenState {
                             )
                           ]
                         ),
-                        child: InkWell(
-                          onTap: () => _navigateToSearch(),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: primaryColor.withValues(alpha: 0.15),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(Icons.search,
-                                    color: primaryColor, size: 24),
+                        child: Column(
+                          children: [
+                            // Pickup
+                            InkWell(
+                              onTap: () => _navigateToSearch(isPickup: true),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 12,
+                                    height: 12,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: Colors.blue, width: 2.5),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Text(
+                                      _pickupAddress,
+                                      style: AppTheme.outfit(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: isDark ? Colors.white70 : Colors.black87),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Text(
-                                  _destination,
-                                  style: AppTheme.outfit(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      color: onSurfaceColor),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5, top: 4, bottom: 4),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Container(
+                                  width: 2,
+                                  height: 20,
+                                  color: dividerColor,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                            // Destination
+                            InkWell(
+                              onTap: () => _navigateToSearch(isPickup: false),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 12,
+                                    height: 12,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Text(
+                                      _destination,
+                                      style: AppTheme.outfit(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: isDark ? Colors.white : Colors.black),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
 

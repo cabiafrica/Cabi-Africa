@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { pickupLocation, dropoffLocation, vehicleType, fare, passengerId } = req.body;
 
-    if (!pickupLocation || !dropoffLocation || !vehicleType || !fare || !passengerId) {
+    if (!pickupLocation || !dropoffLocation || !vehicleType || !passengerId) {
         return res.status(400).json({ message: 'Missing required fields' });
     }
 
@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 pickupLocation,
                 dropoffLocation,
                 vehicleType,
-                fare
+                fare: fare ?? 0,
             }),
         });
 

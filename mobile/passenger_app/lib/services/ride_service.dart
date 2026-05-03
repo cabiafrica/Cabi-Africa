@@ -102,10 +102,10 @@ class RideService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'passengerId': passengerId,
-          'pickup': pickup,
-          'dropoff': dropoff,
+          'pickupLocation': pickup,
+          'dropoffLocation': dropoff,
           'vehicleType': vehicleType,
-          'status': 'REQUESTED'
+          'fare': 0,
         }),
       );
       if (response.statusCode == 201 || response.statusCode == 200) {

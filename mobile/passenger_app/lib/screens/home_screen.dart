@@ -51,6 +51,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String? _selectedVehicleType; // STANDARD, PREMIUM, XL, BODA
 
   String _destination = "Where to?"; // Destination state
+  String _pickupAddress = "Current Location"; // Pickup address state
   List<LatLng>? _roadRoute; // Dynamically fetched road trace
 
   TripStatus _tripStatus = TripStatus.idle;

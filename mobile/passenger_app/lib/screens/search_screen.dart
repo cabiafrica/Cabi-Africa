@@ -183,21 +183,23 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isPickup = ModalRoute.of(context)?.settings.arguments as bool? ?? false;
+    
     return Scaffold(
       backgroundColor: _bgColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: _bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         title: TextField(
           controller: _searchController,
           decoration: InputDecoration(
-            hintText: 'Search for a destination...',
+            hintText: isPickup ? 'Search for a pickup location...' : 'Search for a destination...',
             hintStyle: const TextStyle(
-              color: Colors.black38,
+              color: Colors.white38,
               fontSize: 16,
               fontWeight: FontWeight.w400,
             ),
@@ -205,7 +207,7 @@ class _SearchScreenState extends State<SearchScreen> {
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
                     icon: const Icon(Icons.clear_rounded,
-                        color: Colors.black38, size: 20),
+                        color: Colors.white38, size: 20),
                     onPressed: () {
                       _searchController.clear();
                       _onSearchChanged('');
@@ -214,11 +216,11 @@ class _SearchScreenState extends State<SearchScreen> {
                 : null,
           ),
           style: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
           autofocus: true,
           onChanged: _onSearchChanged,
           textInputAction: TextInputAction.search,
-          cursorColor: Colors.black,
+          cursorColor: AppTheme.primaryColor,
         ),
       ),
       body: Column(

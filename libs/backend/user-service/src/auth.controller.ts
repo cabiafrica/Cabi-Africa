@@ -1,4 +1,4 @@
-import { Controller, Post, Body, ValidationPipe, UnauthorizedException, UseInterceptors, UploadedFiles, UploadedFile } from '@nestjs/common';
+import { Controller, Post, Get, Body, ValidationPipe, UnauthorizedException, UseInterceptors, UploadedFiles, UploadedFile, Req } from '@nestjs/common';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { Public } from '@cabi/backend/rbac';
 import { UserService } from './user.service';
@@ -45,6 +45,7 @@ export class AuthController {
       const token = await this.userService.generateToken(user);
       return {
         message: 'Login successful.',
+        accessToken: token,  // mobile apps expect accessToken
         token,
         user,
       };
@@ -68,11 +69,17 @@ export class AuthController {
 
   @Post('me')
   async getMe(@Body() body: { userId: string }) {
-    // For now, we'll take userId from body if sent by gateway/mobile, 
-    // or we could use a proper AuthGuard. 
-    // The passenger app currently doesn't have an easy way to pass the user id from token 
-    // so we'll just implement a simple fetch for now.
     return this.userService.getMe(body.userId);
+  }
+
+  @Get('me')
+  async getMeFromToken(@Req() req: any) {
+    // Extract userId from the JWT payload (set by JwtAuthGuard)
+    const userId = req.user?.sub || req.user?.id || req.user?.userId;
+    if (!userId) {
+      throw new UnauthorizedException('Could not extract user identity from token.');
+    }
+    return this.userService.getMe(userId);
   }
 
   @Post('register-driver')

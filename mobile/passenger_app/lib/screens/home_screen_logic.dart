@@ -270,25 +270,22 @@ extension _HomeScreenLogic on _HomeScreenState {
     }
 
     if (userId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please sign in to Request a Ride')),
-      );
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-      );
-      return;
+      // Use persistent guest ID for unauthenticated requests
+      userId = '00000000-0000-0000-0000-000000000000';
     }
 
-    // 1. Identity Gate (MANDATORY BEFORE EVERY TRIP REQUEST)
-    bool verified = false;
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => SecurityVerificationModal(
-        onVerified: () => verified = true,
-      ),
-    );
+    // 1. Identity Gate (MANDATORY FOR REGISTERED USERS, SKIPPED FOR GUESTS)
+    bool verified = userId == '00000000-0000-0000-0000-000000000000';
+    if (!verified) {
+      await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => SecurityVerificationModal(
+          onVerified: () => verified = true,
+        ),
+      );
+    }
 
     if (!verified) {
       _updateState(() {
@@ -308,7 +305,7 @@ extension _HomeScreenLogic on _HomeScreenState {
         {
           'lat': _pickupLocation?.latitude ?? _passengerLocation.latitude,
           'lng': _pickupLocation?.longitude ?? _passengerLocation.longitude,
-          'address': "Current Location"
+          'address': _pickupAddress
         },
         {
           'lat': _dropoffLocation!.latitude,
@@ -340,9 +337,12 @@ extension _HomeScreenLogic on _HomeScreenState {
   }
 
 
-  Future<void> _navigateToSearch() async {
+  Future<void> _navigateToSearch({bool isPickup = false}) async {
     final result = await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const SearchScreen()),
+      MaterialPageRoute(
+        builder: (context) => const SearchScreen(),
+        settings: RouteSettings(arguments: isPickup),
+      ),
     );
 
     if (!mounted) return;
@@ -360,15 +360,24 @@ extension _HomeScreenLogic on _HomeScreenState {
       final double lat = result['latitude'];
       final double lng = result['longitude'];
       _updateState(() {
-        _destination = locationName;
-        _dropoffLocation = LatLng(lat, lng);
+        if (isPickup) {
+          _pickupAddress = locationName;
+          _pickupLocation = LatLng(lat, lng);
+        } else {
+          _destination = locationName;
+          _dropoffLocation = LatLng(lat, lng);
+        }
+        
         _pickupLocation ??= _passengerLocation;
+        
         // Show service selection panel right after destination is set
-        _tripStatus = TripStatus.selectingService;
+        if (_dropoffLocation != null) {
+          _tripStatus = TripStatus.selectingService;
+        }
       });
       _fetchRoadRoute();
 
-      // Center the map to show the dropoff location
+      // Center the map to show the selected location
       _mapController?.moveCamera(LatLng(lat, lng));
     }
   }

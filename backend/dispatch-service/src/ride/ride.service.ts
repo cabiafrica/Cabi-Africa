@@ -6,7 +6,6 @@ import { CommissionService } from '../commission/commission.service';
 // import { PaymentService } from '@cabi/backend/payment-service'; 
 // import { VehicleService } from '@cabi/backend/vehicle-service'; 
 // import { UserService } from '@cabi/backend/user-service';
-import { NotificationService } from '@cabi/backend/notification-service';
 import { SettingsService } from '@cabi/backend/settings';
 
 // Mock Services for external dependencies (Payment, Vehicle, Notification)
@@ -55,7 +54,8 @@ export class RideService {
     }
 
     // Special handling for guest users during testing phase
-    if (passengerId === 'guest') {
+    const GUEST_ID = '00000000-0000-0000-0000-000000000000';
+    if (passengerId === 'guest' || passengerId === GUEST_ID) {
       return { canRequest: true, reason: 'Guest booking permitted during testing.', isVerified: false };
     }
 

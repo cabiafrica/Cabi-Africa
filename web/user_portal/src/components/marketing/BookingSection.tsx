@@ -181,20 +181,25 @@ export default function BookingSection() {
         const vehicle = vehicleOptions.find(v => v.id === selectedVehicle);
         if (!vehicle) return;
 
-        const settingsRes = await fetch('/api/settings/system/RIDE_VERIFICATION_ENABLED');
-        if (settingsRes.ok) {
-            const { value } = await settingsRes.json();
-            if (value === true && !showVerification) {
-                const types: ('FACE' | 'OTP')[] = ['FACE', 'OTP'];
-                setVerificationType(types[Math.floor(Math.random() * types.length)]);
-                setShowVerification(true);
-                return;
+        const GUEST_ID = '00000000-0000-0000-0000-000000000000';
+        const passengerId = user?.id || GUEST_ID;
+
+        // Skip verification for guests
+        if (passengerId !== GUEST_ID) {
+            const settingsRes = await fetch('/api/settings/system/RIDE_VERIFICATION_ENABLED');
+            if (settingsRes.ok) {
+                const { value } = await settingsRes.json();
+                if (value === true && !showVerification) {
+                    const types: ('FACE' | 'OTP')[] = ['FACE', 'OTP'];
+                    setVerificationType(types[Math.floor(Math.random() * types.length)]);
+                    setShowVerification(true);
+                    return;
+                }
             }
         }
 
         setLoading(true);
 
-        const passengerId = user?.id || 'guest';
         try {
             const response = await fetch('/api/rides/book', {
                 method: 'POST',

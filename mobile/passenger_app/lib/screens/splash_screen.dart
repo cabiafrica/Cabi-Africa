@@ -54,9 +54,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       if (!mounted) return;
       final authState = ref.read(passengerAuthProvider);
 
-      Widget nextScreen = const LoginScreen();
+      Widget nextScreen = const HomeScreen();
       if (authState is Authenticated) {
-        nextScreen = const HomeScreen();
+        // Already authenticated, user data is populated
       }
 
       Navigator.pushReplacement(

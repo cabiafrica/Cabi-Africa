@@ -25,6 +25,25 @@ async function main() {
   });
   console.log('✅ Created Super Admin:', superAdmin.email);
 
+  // 1b. Create Guest User for unauthenticated bookings
+  const guestUser = await prisma.user.upsert({
+    where: { email: 'guest@cabi.africa' },
+    update: {},
+    create: {
+      id: '00000000-0000-0000-0000-000000000000',
+      email: 'guest@cabi.africa',
+      phone: '+0000000000',
+      password: hashedPassword, // Not intended for login
+      fullName: 'Guest User',
+      role: LegacyRole.PASSENGER,
+      status: 'ACTIVE',
+      isEmailVerified: true,
+      isPhoneVerified: true,
+      isIdentityVerified: true,
+    },
+  });
+  console.log('✅ Created Guest User:', guestUser.email);
+
   // 2. Create Core System Roles
   const roles = [
     {
