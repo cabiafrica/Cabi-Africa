@@ -14,7 +14,7 @@ export default function PostSummaryCard({
         setMounted(true);
     }, []);
     return (
-        <Link href={`/blog/${post.id}`} className="group relative flex flex-col glass rounded-2xl overflow-hidden shadow-sm hover:shadow-brand-accent/20 transition-all duration-300 transform hover:-translate-y-1 border border-white/5">
+        <Link href={`/blog/${post.id}`} className="group relative flex flex-col glass rounded-2xl overflow-hidden shadow-sm hover:shadow-brand-accent/20 transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 dark:border-white/5 bg-white/80 dark:bg-white/5 backdrop-blur-xl">
             <div className="relative aspect-video w-full overflow-hidden bg-brand-dark">
                 <Image
                     src={post.imageUrl || `https://source.unsplash.com/random/800x600/?${post.category?.toLowerCase() || 'transport'}`}
@@ -34,11 +34,11 @@ export default function PostSummaryCard({
                     </span>
                 </div>
 
-                <h3 className="text-xl font-bold text-white mb-3 line-clamp-2 group-hover:text-brand-yellow transition-colors">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-brand-yellow dark:group-hover:text-brand-yellow transition-colors">
                     {post.title}
                 </h3>
 
-                <p className="text-base text-gray-400 line-clamp-3 mb-4 flex-1">
+                <p className="text-base text-gray-600 dark:text-gray-400 line-clamp-3 mb-4 flex-1">
                     {post.summary}
                 </p>
 

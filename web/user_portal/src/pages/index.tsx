@@ -49,8 +49,8 @@ export default function HomePage({ posts }: HomePageProps) {
         <FeatureSplit type="passenger" />
 
         {/* Blog Teaser (System Intel) */}
-        <section className="py-32 bg-brand-black relative">
-          <div className="absolute inset-0 grid-futurist opacity-10" />
+        <section className="py-32 bg-slate-50 dark:bg-brand-black transition-colors duration-500 relative">
+          <div className="absolute inset-0 grid-futurist opacity-10 dark:opacity-20" />
           <div className="container mx-auto px-6 relative z-10">
             <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8 animate-reveal">
               <div>
@@ -58,10 +58,10 @@ export default function HomePage({ posts }: HomePageProps) {
                     <span className="h-px w-8 bg-brand-yellow opacity-40" />
                     <span className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-yellow">Data Feed</span>
                 </div>
-                <h2 className="text-4xl lg:text-6xl font-black text-white tracking-tighter">System <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-brand-accent">Intel.</span></h2>
-                <p className="text-white/40 mt-4 font-medium">Real-time protocols and tactical updates from the CABI network.</p>
+                <h2 className="text-4xl lg:text-6xl font-black text-gray-900 dark:text-white tracking-tighter">System <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-brand-accent">Intel.</span></h2>
+                <p className="text-gray-600 dark:text-white/40 mt-4 font-medium">Real-time protocols and tactical updates from the CABI network.</p>
               </div>
-              <Link href="/blog" className="px-8 py-3 rounded-xl border border-white/10 text-white/60 text-xs font-black uppercase tracking-widest hover:border-brand-yellow hover:text-brand-yellow transition-all">
+              <Link href="/blog" className="px-8 py-3 rounded-xl border border-gray-300 dark:border-white/10 text-gray-700 dark:text-white/60 text-xs font-black uppercase tracking-widest hover:border-brand-yellow dark:hover:border-brand-yellow hover:text-brand-yellow dark:hover:text-brand-yellow transition-all">
                 Access Archives &rarr;
               </Link>
             </div>
