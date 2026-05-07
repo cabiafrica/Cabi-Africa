@@ -454,7 +454,7 @@ export default function Register() {
                                 )}
 
                                 <p className="text-center text-xs text-gray-500 mt-4 leading-relaxed">
-                                    By joining, you agree to our <Link href="/terms" className="underline hover:text-white">Terms of Service</Link> and <Link href="/privacy" className="underline hover:text-white">Privacy Policy</Link>.
+                                    By joining, you agree to our <Link href="/terms-of-service" className="underline hover:text-white">Terms of Service</Link> and <Link href="/privacy-policy" className="underline hover:text-white">Privacy Policy</Link>.
                                 </p>
                             </form>
                         </div>

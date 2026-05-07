@@ -38,7 +38,7 @@ export default function ForPassengersPage(
             <h1 className="text-5xl font-bold mb-4">{t('passengers_hero_title')}</h1>
             <p className="text-xl mb-8">{t('passengers_hero_subtitle')}</p>
             <Link
-              href="/download/passenger"
+              href="/download"
               className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg"
             >
               {t('passengers_hero_cta')}

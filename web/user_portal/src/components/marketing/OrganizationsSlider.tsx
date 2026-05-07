@@ -1,4 +1,4 @@
-import Link from 'next/link';
+// removed next/link
 
 const organizations = [
     { name: 'KCB Bank', logo: 'https://via.placeholder.com/150x50?text=KCB+Bank' },
@@ -22,13 +22,12 @@ export default function OrganizationsSlider() {
                 <div className="flex w-max animate-scroll gap-16">
                     {/* Triple the items to ensure smooth scrolling on wide screens */}
                     {[...organizations, ...organizations, ...organizations].map((org, index) => (
-                        <Link
+                        <div
                             key={`org-${index}`}
-                            href={`/organizations/${org.name.toLowerCase()}`}
-                            className="flex items-center justify-center grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 min-w-[120px]"
+                            className="flex items-center justify-center grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 min-w-[120px] cursor-default"
                         >
                             <span className="text-xl font-serif font-bold text-gray-800 dark:text-gray-200">{org.name}</span>
-                        </Link>
+                        </div>
                     ))}
                 </div>
             </div>

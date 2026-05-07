@@ -72,7 +72,7 @@ export default function ReferralDetailsPage() {
                                 Join the community of drivers who are earning more with CABI.
                             </p>
                             <Link
-                                href="/download/driver"
+                                href="/download"
                                 className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg"
                             >
                                 Sign Up to Drive

@@ -11,8 +11,8 @@ const DriverLayout: React.FC<DriverLayoutProps> = ({ children }) => {
         <nav className="container mx-auto flex justify-between items-center">
           <a href="/drivers" className="text-xl font-bold">Cabi Drivers</a>
           <div>
-            <a href="/drivers/how-it-works" className="ml-4 hover:underline">How it Works</a>
-            <a href="/drivers/faq" className="ml-4 hover:underline">FAQ</a>
+            <a href="/why-drive" className="ml-4 hover:underline">How it Works</a>
+            <a href="/faq" className="ml-4 hover:underline">FAQ</a>
             <a href="/drivers/register" className="ml-4 px-4 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-100">Register</a>
           </div>
         </nav>

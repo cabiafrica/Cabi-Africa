@@ -38,7 +38,7 @@ export default function ServicesPage() {
                                 <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600 dark:text-gray-300">
                                     <p className="flex-auto">Manage your organization's transportation with our powerful dashboard.</p>
                                     <p className="mt-6">
-                                        <Link href="/organizations" className="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Learn more <span aria-hidden="true">→</span></Link>
+                                        <Link href="/organizations/register" className="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Learn more <span aria-hidden="true">→</span></Link>
                                     </p>
                                 </dd>
                             </div>

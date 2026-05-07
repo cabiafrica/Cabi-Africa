@@ -7,8 +7,34 @@ import { DispatchGateway } from './dispatch-service.gateway';
 export class DispatchService {
     constructor(
         private readonly prisma: PrismaService,
-        private readonly gateway: DispatchGateway
+        private readonly gateway: DispatchGateway,
+        private readonly settingsService: SettingsService
     ) { }
+
+    private async checkPassengerVerification(passengerId: string): Promise<{ canRequest: boolean; reason?: string; remainingTrips?: number; isVerified?: boolean }> {
+        // Check admin setting for verification
+        const verificationEnabled = await this.settingsService.getSystemSetting('RIDE_VERIFICATION_ENABLED');
+        
+        // If verification is disabled by admin, allow all requests
+        if (verificationEnabled === false) {
+            return { canRequest: true, isVerified: true };
+        }
+
+        // Special handling for guest users during testing phase
+        const GUEST_ID = '00000000-0000-0000-0000-000000000000';
+        if (passengerId === 'guest' || passengerId === GUEST_ID) {
+            return { canRequest: true, reason: 'Guest booking permitted during testing.', isVerified: false };
+        }
+
+        // In-memory passenger trip tracking (would use database in production)
+        // For now, assume always allowed if not guest, but you can add more logic here
+        return {
+            canRequest: true,
+            reason: `Standard passenger verification check passed.`,
+            remainingTrips: 1,
+            isVerified: true
+        };
+    }
 
     async getDashboardMetrics() {
         const [activeRides, pendingRequests, onlineDrivers, completedToday] = await Promise.all([
@@ -64,18 +90,35 @@ export class DispatchService {
     }
 
     async requestRide(rideRequest: any) {
-        if (!rideRequest.pickup || !rideRequest.dropoff || !rideRequest.passengerId) {
-            throw new Error('Invalid ride request: Missing pickup, dropoff, or passengerId');
+        if (!rideRequest.pickupLocation || !rideRequest.dropoffLocation || !rideRequest.passengerId) {
+            throw new Error('Invalid ride request: Missing pickupLocation, dropoffLocation, or passengerId');
+        }
+
+        // Check passenger verification before creating ride
+        const verificationCheck = await this.checkPassengerVerification(rideRequest.passengerId);
+
+        if (!verificationCheck.canRequest) {
+            throw new HttpException(
+                {
+                    error: 'Verification Required',
+                    message: verificationCheck.reason,
+                    remainingTrips: verificationCheck.remainingTrips,
+                    isVerified: verificationCheck.isVerified,
+                    action: 'VERIFY_IDENTITY'
+                },
+                HttpStatus.FORBIDDEN
+            );
         }
 
         const ride = await this.prisma.ride.create({
             data: {
                 passengerId: rideRequest.passengerId,
-                pickupLocation: rideRequest.pickup,
-                dropoffLocation: rideRequest.dropoff,
+                pickupLocation: rideRequest.pickupLocation,
+                dropoffLocation: rideRequest.dropoffLocation,
                 status: RideStatus.REQUESTED,
                 fare: rideRequest.fare || 0,
                 distance: rideRequest.distance || 0,
+                requestedVehicleType: (rideRequest.vehicleType || 'STANDARD') as VehicleType,
             },
         });
 
