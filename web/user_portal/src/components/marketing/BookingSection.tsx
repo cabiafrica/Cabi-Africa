@@ -276,17 +276,19 @@ export default function BookingSection() {
     return (
         <section id="booking-section" className="relative z-20 -mt-20 lg:-mt-32 px-4 lg:px-6 mb-24 pointer-events-none">
             <div className="container mx-auto">
-                <div className="glass-premium rounded-[2rem] lg:rounded-[3rem] p-6 lg:p-12 pointer-events-auto transform transition-all duration-700 hover:shadow-[0_0_100px_rgba(250,204,21,0.1)] outline outline-1 outline-white/10">
+                <div className="glass-premium rounded-[1rem] lg:rounded-[1.5rem] p-6 lg:p-12 pointer-events-auto transform transition-all duration-700 hover:shadow-[0_0_100px_rgba(250,204,21,0.1)] outline outline-1 outline-black/5 dark:outline-white/10">
 
                     {/* Header */}
                     {!expanded && !bookingConfirmed && (
-                        <div className="flex items-center gap-4 mb-10 animate-reveal">
-                            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-brand-yellow/10 flex items-center justify-center border border-brand-yellow/20">
-                                <FaSearch className="text-brand-yellow lg:text-xl" />
-                            </div>
-                            <div>
-                                <h2 className="text-2xl lg:text-3xl font-black text-white tracking-tighter">Instant Logistics.</h2>
-                                <p className="text-white/40 text-[10px] lg:text-sm font-bold uppercase tracking-[0.2em]">Neural Deployment Unit</p>
+                        <div className="animate-float">
+                            <div className="flex items-center gap-4 mb-10 animate-reveal">
+                                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-brand-yellow/10 flex items-center justify-center border border-brand-yellow/20">
+                                    <FaSearch className="text-brand-yellow lg:text-xl" />
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl lg:text-3xl font-black text-gray-900 dark:text-white tracking-tighter">Instant Logistics.</h2>
+                                    <p className="text-gray-500 dark:text-white/40 text-[10px] lg:text-sm font-bold uppercase tracking-[0.2em]">Neural Deployment Unit</p>
+                                </div>
                             </div>
                         </div>
                     )}
@@ -353,10 +355,10 @@ export default function BookingSection() {
                             <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2 group">
                                     <div className="flex justify-between items-center px-1">
-                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Extraction Source</label>
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 dark:text-white/40">Extraction Source</label>
                                         <button 
                                             onClick={getCurrentLocation}
-                                            className="text-brand-yellow hover:text-white transition-colors flex items-center gap-1 group/loc"
+                                            className="text-brand-yellow hover:text-brand-dark dark:hover:text-white transition-colors flex items-center gap-1 group/loc"
                                             title="Use my current location"
                                         >
                                             <span className="text-[8px] font-bold uppercase tracking-wider opacity-0 group-hover/loc:opacity-100 transition-opacity">Auto-Detect</span>
@@ -367,7 +369,7 @@ export default function BookingSection() {
                                         <input
                                             type="text"
                                             placeholder="Enter pickup point"
-                                            className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-2xl focus:border-brand-yellow focus:bg-white/[0.08] focus:ring-4 focus:ring-brand-yellow/10 outline-none text-white font-bold placeholder-white/20 transition-all duration-500"
+                                            className="w-full px-6 py-5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl focus:border-brand-yellow focus:bg-black/10 dark:focus:bg-white/[0.08] focus:ring-4 focus:ring-brand-yellow/10 outline-none text-gray-900 dark:text-white font-bold placeholder-gray-400 dark:placeholder-white/20 transition-all duration-500"
                                             value={pickup}
                                             onChange={(e) => setPickup(e.target.value)}
                                         />
@@ -375,14 +377,14 @@ export default function BookingSection() {
                                 </div>
                                 <div className="space-y-2 group">
                                     <div className="flex justify-between items-center px-1">
-                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Target Coordinates</label>
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 dark:text-white/40">Target Coordinates</label>
                                         <FaMapMarkerAlt className="text-brand-accent text-xs animate-pulse" />
                                     </div>
                                     <div className="relative group">
                                         <input
                                             type="text"
                                             placeholder="Enter destination"
-                                            className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-2xl focus:border-brand-accent focus:bg-white/[0.08] focus:ring-4 focus:ring-brand-accent/10 outline-none text-white font-bold placeholder-white/20 transition-all duration-500"
+                                            className="w-full px-6 py-5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl focus:border-brand-accent focus:bg-black/10 dark:focus:bg-white/[0.08] focus:ring-4 focus:ring-brand-accent/10 outline-none text-gray-900 dark:text-white font-bold placeholder-gray-400 dark:placeholder-white/20 transition-all duration-500"
                                             value={destination}
                                             onChange={(e) => setDestination(e.target.value)}
                                         />
@@ -395,16 +397,16 @@ export default function BookingSection() {
                                 <button
                                     onClick={handleGetEstimates}
                                     disabled={loading || !pickup || !destination}
-                                    className={`relative w-full lg:w-64 py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-500 overflow-hidden group active:scale-95 ${loading || !pickup || !destination
-                                        ? 'bg-white/5 text-white/20 cursor-not-allowed border border-white/5'
+                                    className={`relative w-full lg:w-64 py-5 rounded-xl font-black text-sm uppercase tracking-widest transition-all duration-500 overflow-hidden group active:scale-95 ${loading || !pickup || !destination
+                                        ? 'bg-gray-100 text-gray-400 border border-gray-200 dark:bg-white/5 dark:text-white/20 dark:border-white/5 cursor-not-allowed'
                                         : 'text-black shadow-[0_20px_40px_-15px_rgba(250,204,21,0.3)] hover:shadow-[0_25px_50px_-12px_rgba(250,204,21,0.5)]'
                                         }`}
                                 >
-                                    <span className="absolute inset-0 bg-brand-yellow group-hover:bg-amber-400 transition-colors duration-500" />
+                                    <span className={`absolute inset-0 transition-colors duration-500 ${loading || !pickup || !destination ? 'hidden' : 'bg-brand-yellow group-hover:bg-amber-400'}`} />
                                     <span className="relative z-10 flex items-center justify-center gap-3">
                                         {loading ? (
                                             <>
-                                                <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                                <div className={`w-4 h-4 border-2 border-t-transparent rounded-full animate-spin ${loading || !pickup || !destination ? 'border-gray-400 dark:border-white/20' : 'border-black/20 border-t-black'}`} />
                                                 Processing
                                             </>
                                         ) : (
@@ -420,7 +422,7 @@ export default function BookingSection() {
                     {expanded && !bookingConfirmed && vehicleOptions.length > 0 && (
                         <div className="mt-12 pt-12 border-t border-white/10 animate-reveal text-left">
                             {/* ... (existing vehicle options code) */}
-                            <h3 className="text-white text-xl font-black mb-8 tracking-tight uppercase flex items-center gap-3">
+                            <h3 className="text-gray-900 dark:text-white text-xl font-black mb-8 tracking-tight uppercase flex items-center gap-3">
                                 <span className="w-8 h-px bg-brand-yellow"></span>
                                 Available Fleet Modules
                             </h3>
@@ -429,9 +431,9 @@ export default function BookingSection() {
                                     <div
                                         key={v.id}
                                         onClick={() => setSelectedVehicle(v.id)}
-                                        className={`p-6 rounded-[2rem] border-2 cursor-pointer transition-all duration-500 group relative overflow-hidden ${selectedVehicle === v.id
+                                        className={`p-6 rounded-[1rem] border-2 cursor-pointer transition-all duration-500 group relative overflow-hidden ${selectedVehicle === v.id
                                             ? 'bg-brand-yellow text-black border-brand-yellow shadow-[0_0_40px_rgba(250,204,21,0.3)]'
-                                            : 'bg-white/5 border-white/5 text-white/60 hover:bg-white/10 hover:border-white/20'
+                                            : 'bg-black/5 dark:bg-white/5 border-black/5 dark:border-white/5 text-gray-600 dark:text-white/60 hover:bg-black/10 dark:hover:bg-white/10 hover:border-black/20 dark:hover:border-white/20'
                                             }`}
                                     >
                                         <div className="relative z-10">
@@ -450,20 +452,20 @@ export default function BookingSection() {
                                 ))}
                             </div>
                             <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-                                <p className="text-white/40 text-[10px] lg:text-xs font-medium max-w-sm text-center lg:text-left">Prices are inclusive of neural network surge fees and system processing mandates.</p>
+                                <p className="text-gray-500 dark:text-white/40 text-[10px] lg:text-xs font-medium max-w-sm text-center lg:text-left">Prices are inclusive of neural network surge fees and system processing mandates.</p>
                                 <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 w-full lg:w-auto">
                                     <button
                                         onClick={() => setExpanded(false)}
-                                        className="px-8 py-4 text-white/40 hover:text-white uppercase font-black tracking-widest text-xs transition-colors"
+                                        className="px-8 py-4 text-gray-500 dark:text-white/40 hover:text-gray-900 dark:hover:text-white uppercase font-black tracking-widest text-xs transition-colors"
                                     >
                                         Abort
                                     </button>
                                     <button
                                         onClick={handleBookRide}
                                         disabled={!selectedVehicle}
-                                        className={`px-12 py-5 lg:py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all duration-500 active:scale-95 ${selectedVehicle 
+                                        className={`px-12 py-5 lg:py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all duration-500 active:scale-95 ${selectedVehicle 
                                             ? 'bg-brand-accent text-black shadow-[0_15px_30px_-10px_rgba(34,211,238,0.5)] hover:bg-cyan-300' 
-                                            : 'bg-white/5 text-white/20 border border-white/5'
+                                            : 'bg-gray-100 text-gray-400 border border-gray-200 dark:bg-white/5 dark:text-white/20 dark:border-white/5'
                                             }`}
                                     >
                                         Confirm Protocol
@@ -479,7 +481,7 @@ export default function BookingSection() {
             {showVerification && (
                 <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
                     <div className="absolute inset-0 bg-brand-black/80 backdrop-blur-md" onClick={() => setShowVerification(false)}></div>
-                    <div className="relative glass-premium p-8 rounded-[2.5rem] max-w-md w-full border border-brand-yellow/30 shadow-2xl animate-reveal">
+                    <div className="relative glass-premium p-8 rounded-[1.25rem] max-w-md w-full border border-brand-yellow/30 shadow-2xl animate-reveal">
                         <div className="text-center">
                             <div className="w-20 h-20 bg-brand-yellow/10 rounded-full flex items-center justify-center mx-auto mb-6">
                                 {verificationType === 'FACE' ? (
@@ -499,7 +501,7 @@ export default function BookingSection() {
                                 <button
                                     onClick={handleVerifyAndBook}
                                     disabled={verificationLoading}
-                                    className="w-full py-4 rounded-2xl bg-brand-yellow text-black font-black uppercase tracking-widest hover:bg-brand-yellowHover transition-all shadow-lg flex items-center justify-center gap-3"
+                                    className="w-full py-4 rounded-xl bg-brand-yellow text-black font-black uppercase tracking-widest hover:bg-brand-yellowHover transition-all shadow-lg flex items-center justify-center gap-3"
                                 >
                                     {verificationLoading ? (
                                         <>
@@ -512,7 +514,7 @@ export default function BookingSection() {
                                 </button>
                                 <button
                                     onClick={() => setShowVerification(false)}
-                                    className="w-full py-4 rounded-2xl bg-white/5 text-white/40 font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+                                    className="w-full py-4 rounded-xl bg-white/5 text-white/40 font-black uppercase tracking-widest hover:bg-white/10 transition-all"
                                 >
                                     Cancel
                                 </button>

@@ -39,30 +39,31 @@ export default function Header() {
     ];
 
     return (
-        <header className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl glass-premium z-[100] transition-all duration-700 animate-reveal ${isMenuOpen ? 'rounded-[2rem]' : 'rounded-full'}`}>
-            <nav className="mx-auto px-6 sm:px-8">
-                <div className="flex justify-between h-16 md:h-20 items-center gap-2">
-                    <div className="flex items-center gap-2 md:gap-8">
-                        <div className="flex-shrink-0 flex items-center group">
-                            <Link href="/" className="flex items-center gap-2">
-                                <div className="p-1.5 bg-brand-yellow rounded-xl group-hover:rotate-12 transition-transform duration-500">
-                                    <img src="/logo.png" alt="CABI Logo" className="h-5 md:h-7 w-auto brightness-0" />
-                                </div>
-                                <span className="text-lg md:text-2xl font-black tracking-tighter text-white group-hover:text-brand-yellow transition-colors duration-500">CABI</span>
+        <header className="fixed top-0 left-0 w-full bg-brand-black/20 backdrop-blur-md border-b border-white/10 z-[100] transition-all duration-700">
+            <nav className="mx-auto px-6 sm:px-8 max-w-7xl">
+                <div className="flex justify-between h-16 md:h-20 items-center gap-4">
+                    {/* Left: Logo */}
+                    <div className="flex-shrink-0 flex items-center group">
+                        <Link href="/" className="flex items-center gap-2">
+                            <div className="p-1.5 bg-brand-yellow rounded-xl group-hover:rotate-12 transition-transform duration-500">
+                                <img src="/logo.png" alt="CABI Logo" className="h-5 md:h-7 w-auto brightness-0" />
+                            </div>
+                            <span className="text-lg md:text-2xl font-black tracking-tighter text-white group-hover:text-brand-yellow transition-colors duration-500">CABI</span>
+                        </Link>
+                    </div>
+
+                    {/* Center: Nav links */}
+                    <div className="hidden lg:flex flex-1 justify-center items-center gap-8">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.name}
+                                href={link.href}
+                                className="text-xs font-bold text-white/80 hover:text-white transition-colors duration-300 relative group uppercase tracking-wider"
+                            >
+                                {link.name}
+                                <span className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-brand-yellow scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
                             </Link>
-                        </div>
-                        <div className="hidden lg:flex items-center gap-1 bg-white/5 p-1 rounded-full border border-white/5">
-                            {navLinks.map((link) => (
-                                <Link
-                                    key={link.name}
-                                    href={link.href}
-                                    className="px-4 py-2 text-xs font-bold text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 relative group"
-                                >
-                                    {link.name}
-                                    <span className="absolute bottom-1 left-4 right-4 h-0.5 bg-brand-yellow scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
-                                </Link>
-                            ))}
-                        </div>
+                        ))}
                     </div>
 
                     <div className="flex items-center gap-2 md:gap-6">
@@ -96,11 +97,9 @@ export default function Header() {
                             ) : (
                                 <Link
                                     href="/login"
-                                    className="relative py-2.5 px-8 rounded-full font-black text-sm uppercase tracking-wider text-white overflow-hidden group transition-all duration-500 active:scale-95"
+                                    className="py-2 px-6 border border-white/50 hover:border-white hover:bg-white/10 rounded font-bold text-xs uppercase tracking-wider text-white transition-all duration-300"
                                 >
-                                    <span className="absolute inset-0 bg-brand-yellow transition-transform duration-500 group-hover:scale-110" />
-                                    <span className="absolute inset-0 bg-gradient-to-tr from-brand-yellow to-brand-accent mix-blend-overlay" />
-                                    <span className="relative text-black z-10">Login</span>
+                                    Login
                                 </Link>
                             )) : <div className="w-[105px] h-[44px]"></div>}
                         </div>
@@ -128,7 +127,7 @@ export default function Header() {
 
             {/* Mobile menu */}
             {isMenuOpen && (
-                <div className="lg:hidden animate-reveal p-6 space-y-8 bg-brand-black/98 backdrop-blur-3xl rounded-[2.5rem] mt-4 border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden relative z-[101]" id="mobile-menu">
+                <div className="lg:hidden animate-reveal p-6 space-y-8 bg-brand-black/95 backdrop-blur-3xl rounded-[2.5rem] mt-4 border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden relative z-[101]" id="mobile-menu">
                     {/* Background Detail */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-brand-yellow/10 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
                     
