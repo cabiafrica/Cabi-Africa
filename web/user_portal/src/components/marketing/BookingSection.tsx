@@ -355,7 +355,7 @@ export default function BookingSection() {
                             <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2 group">
                                     <div className="flex justify-between items-center px-1">
-                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 dark:text-white/40">Extraction Source</label>
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-700 dark:text-white/80">Extraction Source</label>
                                         <button 
                                             onClick={getCurrentLocation}
                                             className="text-brand-yellow hover:text-brand-dark dark:hover:text-white transition-colors flex items-center gap-1 group/loc"
@@ -377,7 +377,7 @@ export default function BookingSection() {
                                 </div>
                                 <div className="space-y-2 group">
                                     <div className="flex justify-between items-center px-1">
-                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 dark:text-white/40">Target Coordinates</label>
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-700 dark:text-white/80">Target Coordinates</label>
                                         <FaMapMarkerAlt className="text-brand-accent text-xs animate-pulse" />
                                     </div>
                                     <div className="relative group">

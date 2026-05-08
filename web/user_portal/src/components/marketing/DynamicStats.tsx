@@ -63,7 +63,7 @@ export default function DynamicStats() {
                                 key={idx} 
                                 className="flex flex-col items-center justify-center glass-premium p-10 rounded-[2.5rem] border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all duration-700 group hover:-translate-y-2"
                             >
-                                <dt className="text-[10px] font-black leading-6 text-gray-500 dark:text-white/40 uppercase tracking-[0.4em] mb-4">
+                                <dt className="text-[10px] font-black leading-6 text-gray-700 dark:text-white/40 uppercase tracking-[0.4em] mb-4">
                                     {item.label}
                                 </dt>
                                 <dd className="order-first text-5xl md:text-6xl font-black tracking-tighter text-gray-900 dark:text-white mb-2 flex items-baseline gap-1 group-hover:scale-110 transition-transform duration-700">

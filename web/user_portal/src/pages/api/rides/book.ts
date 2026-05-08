@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        const DISPATCH_SERVICE_URL = process.env.DISPATCH_SERVICE_URL || 'http://localhost:3334/api';
+        const DISPATCH_SERVICE_URL = process.env.NEXT_PUBLIC_DISPATCH_SERVICE_URL || process.env.DISPATCH_SERVICE_URL || 'http://localhost:3334/api';
         
         const response = await fetch(`${DISPATCH_SERVICE_URL}/rides`, {
             method: 'POST',
