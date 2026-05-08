@@ -113,6 +113,12 @@ class MenuScreen extends ConsumerWidget {
                     iconColor: Colors.blueGrey,
                     route: '/vehicles'),
                 _MenuGridItem(
+                    icon: Icons.shield_outlined,
+                    label: 'WELFARE',
+                    color: Colors.cyan.withValues(alpha: 0.1),
+                    iconColor: Colors.cyan,
+                    route: '/welfare_schemes'),
+                _MenuGridItem(
                     icon: Icons.account_balance_rounded,
                     label: 'MY SACCO',
                     color: Colors.orange.withValues(alpha: 0.1),

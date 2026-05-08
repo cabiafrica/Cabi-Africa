@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
 import { BadgeTier } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
+import { WelfareService, WelfareDeductionResult } from '../welfare/welfare.service';
 
 export class TripPayoutInput {
     baseFare: number;
@@ -17,6 +18,9 @@ export interface TripPayoutResult {
     badgeBonusActive: boolean;
     badgeBonusAmount: number;
     personalSavingsAmount: number;
+    pensionDeduction: number;
+    housingDeduction: number;
+    totalWelfareDeductions: number;
     driverShare: number;
     driverNetTakeHome: number;
     totalSaccoDeposit: number;
@@ -65,7 +69,10 @@ const GRACE_PERIOD_TRIPS = 50;
 export class CommissionService {
     private readonly logger = new Logger(CommissionService.name);
 
-    constructor(private prisma: PrismaService) { }
+    constructor(
+        private prisma: PrismaService,
+        private welfareService: WelfareService,
+    ) { }
 
     async calculateTripPayout(input: TripPayoutInput): Promise<TripPayoutResult> {
         const { baseFare, driverProfileId, tripId } = input;
@@ -110,9 +117,59 @@ export class CommissionService {
         const personalSavingsAmount = driverShare.times(Math.min(personalSavingRate / 100, personalSavingCap));
 
         const totalSaccoDeposit = saccoAdminFee.plus(badgeBonusAmount).plus(personalSavingsAmount);
-        const driverNetTakeHome = driverShare.minus(personalSavingsAmount);
+        let driverNetTakeHome = driverShare.minus(personalSavingsAmount);
 
-        const totalDeductionRate = platformCommissionRate + (personalSavingRate / 100);
+        // ─── Welfare Deductions (Pension & Housing) ────────────────
+        let pensionDeduction = new Decimal(0);
+        let housingDeduction = new Decimal(0);
+
+        try {
+            const welfareDeductions = await this.welfareService.calculateWelfareDeductions(
+                driverProfileId,
+                tripId,
+            );
+
+            for (const wd of welfareDeductions) {
+                if (wd.schemeType === 'PENSION') {
+                    pensionDeduction = pensionDeduction.plus(wd.amount);
+                } else if (wd.schemeType === 'HOUSING') {
+                    housingDeduction = housingDeduction.plus(wd.amount);
+                }
+            }
+
+            const totalWelfare = pensionDeduction.plus(housingDeduction);
+
+            // Enforce 50% cap: total deductions (platform + savings + welfare) must not exceed 50%
+            const totalDeductionRate = platformCommissionRate
+                + (personalSavingRate / 100)
+                + totalWelfare.dividedBy(fare).toNumber();
+
+            if (totalDeductionRate > 0.50) {
+                // Skip welfare deductions if they breach the cap
+                this.logger.warn(
+                    `Welfare deductions skipped for driver ${driverProfileId}: total deductions would be ${(totalDeductionRate * 100).toFixed(1)}%`,
+                );
+                pensionDeduction = new Decimal(0);
+                housingDeduction = new Decimal(0);
+            } else {
+                driverNetTakeHome = driverNetTakeHome.minus(totalWelfare);
+
+                // Record the welfare deductions in the welfare ledger
+                await this.welfareService.recordDeductions(
+                    driverProfileId,
+                    tripId,
+                    welfareDeductions,
+                );
+            }
+        } catch (error) {
+            this.logger.error(`Failed to calculate welfare deductions: ${error}`);
+        }
+
+        const totalWelfareDeductions = pensionDeduction.plus(housingDeduction);
+
+        const totalDeductionRate = platformCommissionRate
+            + (personalSavingRate / 100)
+            + totalWelfareDeductions.dividedBy(fare).toNumber();
         let isFlagged = false;
         let flagReason: string | undefined;
 
@@ -129,6 +186,9 @@ export class CommissionService {
             badgeBonusActive,
             badgeBonusAmount: badgeBonusAmount.toNumber(),
             personalSavingsAmount: personalSavingsAmount.toNumber(),
+            pensionDeduction: pensionDeduction.toNumber(),
+            housingDeduction: housingDeduction.toNumber(),
+            totalWelfareDeductions: totalWelfareDeductions.toNumber(),
             driverShare: driverShare.toNumber(),
             driverNetTakeHome: driverNetTakeHome.toNumber(),
             totalSaccoDeposit: totalSaccoDeposit.toNumber(),
@@ -269,6 +329,8 @@ export class CommissionService {
         badgeBonusActive: boolean;
         badgeBonusAmount: number;
         personalSavingsAmount: number;
+        pensionDeduction: number;
+        housingDeduction: number;
         driverShare: number;
         driverNetTakeHome: number;
         totalSaccoDeposit: number;
@@ -288,6 +350,8 @@ export class CommissionService {
                     badgeBonusActive: data.badgeBonusActive,
                     badgeBonusAmount: data.badgeBonusAmount,
                     personalSavingsAmount: data.personalSavingsAmount,
+                    pensionDeduction: data.pensionDeduction,
+                    housingDeduction: data.housingDeduction,
                     driverShare: data.driverShare,
                     driverNetTakeHome: data.driverNetTakeHome,
                     totalSaccoDeposit: data.totalSaccoDeposit,

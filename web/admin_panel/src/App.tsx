@@ -39,6 +39,7 @@ import { DashboardAnalytics } from './components/dashboard/DashboardAnalytics';
 import { GamificationManagement } from './components/settings/GamificationManagement';
 import { AppSettingsManagement } from './components/settings/AppSettingsManagement';
 import { JobActivitiesDashboard } from './components/operations/JobActivitiesDashboard';
+import { WelfareSchemeManagement } from './components/settings/WelfareSchemeManagement';
 
 // New Role Pages
 import RolesList from './pages/Roles/RolesList';
@@ -145,6 +146,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
       { icon: '💹', label: 'Commissions', view: '/commission-ledger', permission: 'COMMISSION_VIEW' },
       { icon: '💸', label: 'Payout Processing', view: '/payouts', permission: 'PAYMENTS_PROCESS' },
       { icon: '⏱️', label: 'Payout Scheduler', view: '/payout-scheduler', permission: 'PAYMENTS_PROCESS' },
+      { icon: '🏦', label: 'Welfare Schemes', view: '/welfare-schemes', permission: 'COMMISSION_EDIT' },
       { icon: '💰', label: 'Traction Logs', view: '/traction-logs', permission: 'AUDIT_LOGS_VIEW' },
     ]
   }
@@ -405,6 +407,7 @@ function App() {
               <Route path="/fraud-alerts" element={<FraudDetectionDashboard />} />
               <Route path="/gamification" element={<GamificationManagement />} />
               <Route path="/app-settings" element={<AppSettingsManagement />} />
+              <Route path="/welfare-schemes" element={<WelfareSchemeManagement />} />
             </Routes>
           </div>
         </div>

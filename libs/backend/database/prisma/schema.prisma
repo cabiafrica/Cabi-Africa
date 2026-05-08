@@ -124,6 +124,8 @@ model DriverProfile {
   transactionLedger   TransactionLedger[]
   badges              UserBadge[]
   vehicles            Vehicle?
+  welfareEnrollments  WelfareEnrollment[]
+  welfareDeductions   WelfareDeduction[]
 
   @@index([isOnline])
   @@index([referrerId])
@@ -530,6 +532,8 @@ model TransactionLedger {
   driverNetTakeHome     Decimal       @db.Decimal(10, 2)
   totalSaccoDeposit     Decimal       @db.Decimal(10, 2)
   commissionRebate      Decimal       @db.Decimal(10, 2)
+  pensionDeduction      Decimal       @default(0) @db.Decimal(10, 2)
+  housingDeduction      Decimal       @default(0) @db.Decimal(10, 2)
   isFlagged             Boolean       @default(false)
   flagReason            String?
   createdAt             DateTime      @default(now())
@@ -1038,4 +1042,66 @@ enum PostStatus {
   DRAFT
   PENDING_APPROVAL
   PUBLISHED
+}
+
+enum WelfareSchemeType {
+  PENSION
+  HOUSING
+}
+
+enum WelfareDeductionMode {
+  PER_TRIP
+  PER_DAY
+}
+
+model WelfareScheme {
+  id              String              @id @default(uuid())
+  name            String
+  type            WelfareSchemeType
+  deductionMode   WelfareDeductionMode
+  amount          Decimal             @db.Decimal(10, 2)
+  minAmount       Decimal?            @db.Decimal(10, 2)
+  maxAmount       Decimal?            @db.Decimal(10, 2)
+  description     String?
+  providerName    String?
+  providerAccount String?
+  isActive        Boolean             @default(true)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  enrollments     WelfareEnrollment[]
+  deductions      WelfareDeduction[]
+
+  @@map("welfare_schemes")
+}
+
+model WelfareEnrollment {
+  id              String        @id @default(uuid())
+  driverProfileId String
+  schemeId        String
+  customAmount    Decimal?      @db.Decimal(10, 2)
+  isActive        Boolean       @default(true)
+  enrolledAt      DateTime      @default(now())
+  unenrolledAt    DateTime?
+  driverProfile   DriverProfile @relation(fields: [driverProfileId], references: [id])
+  scheme          WelfareScheme @relation(fields: [schemeId], references: [id])
+
+  @@unique([driverProfileId, schemeId])
+  @@index([driverProfileId])
+  @@map("welfare_enrollments")
+}
+
+model WelfareDeduction {
+  id              String        @id @default(uuid())
+  driverProfileId String
+  schemeId        String
+  tripId          String?
+  amount          Decimal       @db.Decimal(10, 2)
+  createdAt       DateTime      @default(now())
+  driverProfile   DriverProfile @relation(fields: [driverProfileId], references: [id])
+  scheme          WelfareScheme @relation(fields: [schemeId], references: [id])
+
+  @@index([driverProfileId])
+  @@index([schemeId])
+  @@index([createdAt])
+  @@map("welfare_deductions")
 }

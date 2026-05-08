@@ -12,9 +12,9 @@ import 'package:driver_app/screens/my_organization_screen.dart';
 import 'package:driver_app/screens/referral_program_screen.dart';
 import 'package:driver_app/screens/splash_screen.dart';
 import 'package:driver_app/screens/trip_in_progress_screen.dart';
-import 'package:driver_app/screens/earnings_screen.dart';
 import 'package:driver_app/screens/ratings_screen.dart';
 import 'package:driver_app/screens/saved_places_screen.dart';
+import 'package:driver_app/screens/welfare_schemes_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart' as legacy_provider;
 
@@ -64,6 +64,7 @@ class CabiDriverApp extends ConsumerWidget {
           '/earnings': (context) => const EarningsScreen(),
           '/ratings': (context) => const RatingsScreen(),
           '/saved_places': (context) => const SavedPlacesScreen(),
+          '/welfare_schemes': (context) => const WelfareSchemeScreen(),
         },
       ),
     );

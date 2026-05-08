@@ -12,6 +12,7 @@ import { AdminBadgeController } from './badge/admin-badge.controller';
 import { CommissionModule } from './commission/commission.module';
 import { CommissionController } from './commission/commission.controller';
 import { SafetyModule } from './safety/safety.module';
+import { WelfareModule } from './welfare/welfare.module';
 import { HealthController } from './health/health.controller';
 import { MockTripService } from './mock-trip.service';
 
@@ -26,6 +27,7 @@ import { MockTripService } from './mock-trip.service';
         UserModule,
         SafetyModule,
         SettingsModule,
+        WelfareModule,
         DispatchModule
     ],
     controllers: [BadgeController, AdminBadgeController, CommissionController, HealthController],
