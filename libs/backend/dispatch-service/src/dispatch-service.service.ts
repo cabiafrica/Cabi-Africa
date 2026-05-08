@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, HttpException, HttpStatus } from '@nestj
 import { PrismaService } from '@cabi/backend/database';
 import { RideStatus, VehicleType } from '@prisma/client';
 import { DispatchGateway } from './dispatch-service.gateway';
+import { SettingsService } from '@cabi/backend/settings';
 
 @Injectable()
 export class DispatchService {
