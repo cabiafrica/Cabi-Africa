@@ -105,6 +105,20 @@ export const SubgroupManagement: React.FC<Props> = ({ orgId, onBack }) => {
         }
     };
 
+    const handleToggleResponder = async (userId: string, currentStatus: boolean) => {
+        if (selectedForMembers) {
+            try {
+                // We assume there's a new API method for this
+                await adminService.updateDistressResponder(selectedForMembers.orgId, userId, !currentStatus);
+                // Refresh members locally or fetch
+                setMembers(prev => prev.map(m => m.id === userId ? { ...m, isDistressResponder: !currentStatus } : m));
+            } catch (err) {
+                console.error("Failed to update responder status", err);
+                alert("Failed to update distress responder status.");
+            }
+        }
+    };
+
     const renderTree = (nodes: TreeNode[]) => {
         return (
             <ul className="pl-4 border-l border-gray-200">
@@ -192,14 +206,26 @@ export const SubgroupManagement: React.FC<Props> = ({ orgId, onBack }) => {
                                     <tr>
                                         <th className="text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                                         <th className="text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                        <th className="text-center text-xs font-medium text-gray-500 uppercase">Distress Responder</th>
                                         <th className="text-right text-xs font-medium text-gray-500 uppercase">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
-                                    {members.length === 0 ? <tr><td colSpan={3} className="py-4 text-center text-gray-500">No members found.</td></tr> : members.map(m => (
+                                    {members.length === 0 ? <tr><td colSpan={4} className="py-4 text-center text-gray-500">No members found.</td></tr> : members.map(m => (
                                         <tr key={m.id}>
                                             <td className="py-2 text-sm">{m.name}</td>
                                             <td className="py-2 text-sm text-gray-500">{m.email}</td>
+                                            <td className="py-2 text-center">
+                                                <label className="relative inline-flex items-center cursor-pointer">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        className="sr-only peer"
+                                                        checked={!!m.isDistressResponder}
+                                                        onChange={() => handleToggleResponder(m.id, !!m.isDistressResponder)}
+                                                    />
+                                                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-red-600"></div>
+                                                </label>
+                                            </td>
                                             <td className="py-2 text-right">
                                                 <button onClick={() => handleRemoveMember(m.id)} className="text-red-600 hover:text-red-800 text-sm">Remove</button>
                                             </td>

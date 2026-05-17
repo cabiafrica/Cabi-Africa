@@ -6,6 +6,12 @@ interface OrgMember {
     name: string;
     contact: string;
     position: string;
+    isDistressResponder?: boolean;
+}
+
+interface SubgroupConfig {
+    name: string;
+    features: string[];
 }
 
 interface OrgRegistrationRequest {
@@ -20,6 +26,7 @@ interface OrgRegistrationRequest {
     linkedin?: string;
     primaryColor?: string;
     members: OrgMember[];
+    subgroups?: SubgroupConfig[];
 }
 
 export default async function handler(
@@ -94,7 +101,19 @@ export default async function handler(
                         id: crypto.randomUUID(),
                         name: m.name,
                         contact: m.contact,
-                        position: m.position
+                        position: m.position,
+                        isDistressResponder: m.isDistressResponder || false
+                    }))
+                },
+                other_organizations: {
+                    create: (data.subgroups || []).map(sg => ({
+                        id: crypto.randomUUID(),
+                        name: sg.name,
+                        email: `${crypto.randomUUID()}@subgroup.cabi.local`,
+                        registrationNumber: `SUB-${crypto.randomUUID().substring(0, 8).toUpperCase()}`,
+                        features: sg.features || [],
+                        status: 'VERIFIED',
+                        updatedAt: new Date()
                     }))
                 }
             }

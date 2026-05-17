@@ -31,8 +31,8 @@ export class OrgService {
         return res.data;
     }
 
-    async createSubgroup(orgId: string, name: string, parentId?: string): Promise<void> {
-        await apiClient.post(`/v1/organizations/${orgId}/subgroups`, { name, parentId });
+    async createSubgroup(orgId: string, name: string, features?: string[]): Promise<void> {
+        await apiClient.post(`/v1/organizations/${orgId}/subgroups`, { name, features });
     }
 
     async updateSubgroup(subgroupId: string, updates: Partial<Subgroup>): Promise<void> {
@@ -59,6 +59,10 @@ export class OrgService {
     async getOrganizationAuditLog(orgId: string): Promise<OrganizationLogEntry[]> {
         const res = await apiClient.get(`/v1/organizations/${orgId}/audit-log`);
         return res.data;
+    }
+
+    async updateDistressResponder(orgId: string, userId: string, isResponder: boolean): Promise<void> {
+        await apiClient.patch(`/v1/organizations/${orgId}/members/${userId}/distress-responder`, { isDistressResponder: isResponder });
     }
 }
 

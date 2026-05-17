@@ -659,6 +659,7 @@ model organization_members {
   duties              String?
   isBiometricVerified Boolean       @default(false)
   canHunt             Boolean       @default(false)
+  isDistressResponder Boolean       @default(false)
   userId              String?       @unique
   invitations         Invitation[]
   organizations       organizations @relation(fields: [organizationId], references: [id])
@@ -684,6 +685,7 @@ model organizations {
   registrationCertificateUrl String?
   status                     OrganizationStatus     @default(UNVERIFIED)
   parentId                   String?
+  features                   String[]               @default([])
   createdAt                  DateTime               @default(now())
   updatedAt                  DateTime
   founderName                String?

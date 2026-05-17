@@ -31,6 +31,9 @@ import {
   ButtonBase,
   FormControlLabel,
   Switch,
+  Fade,
+  Stack,
+  Tooltip as MuiTooltip,
 } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -47,12 +50,23 @@ import {
 } from 'recharts';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, solarizedlight, atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import VolumeOffIcon from '@mui/icons-material/VolumeOff';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import SettingsIcon from '@mui/icons-material/Settings';
-import DownloadIcon from '@mui/icons-material/Download';
+import {
+  ContentCopy as ContentCopyIcon,
+  VolumeOff as VolumeOffIcon,
+  VolumeUp as VolumeUpIcon,
+  Settings as SettingsIcon,
+  FileDownload as DownloadIcon,
+  Security as SecurityIcon,
+  History as HistoryIcon,
+  FilterList as FilterIcon,
+  Refresh as RefreshIcon,
+  LiveTv as LiveIcon,
+} from '@mui/icons-material';
 import { fetchAuditEvents, AuditEvent } from './api/auditService';
+
+const GOLD_GRADIENT = 'linear-gradient(135deg, #FFD700 0%, #B8860B 100%)';
+const GLASS_BG = 'rgba(15, 23, 42, 0.7)';
+const CARD_BORDER = 'rgba(255, 215, 0, 0.1)';
 
 const getActionChipColor = (action: string) => {
   switch (action) {
@@ -123,19 +137,35 @@ function Row(props: {
 
   return (
     <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' }, bgcolor: event.isNew ? 'action.hover' : 'transparent', transition: 'background-color 1s ease-out' }}>
+      <TableRow sx={{ 
+        '& > *': { borderBottom: 'unset !important' }, 
+        bgcolor: event.isNew ? 'rgba(255,215,0,0.1)' : 'transparent', 
+        transition: 'background-color 1s ease-out',
+        '&:hover': { bgcolor: 'rgba(255,255,255,0.03)' }
+      }}>
         <TableCell>
-          <IconButton aria-label="expand row" size="small" onClick={() => { setOpen(!open); if (open) { setShowRawJson(false); setDetailsSearch(''); } }}>
+          <IconButton aria-label="expand row" size="small" onClick={() => { setOpen(!open); if (open) { setShowRawJson(false); setDetailsSearch(''); } }} sx={{ color: '#FFD700' }}>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell>{new Date(event.timestamp).toLocaleString()}</TableCell>
-        <TableCell>{event.userFullName || event.userId}</TableCell>
+        <TableCell sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem' }}>{new Date(event.timestamp).toLocaleString()}</TableCell>
+        <TableCell sx={{ color: 'white', fontWeight: 600 }}>{event.userFullName || event.userId}</TableCell>
         <TableCell>
-          <Chip label={event.action.replace(/_/g, ' ')} color={getActionChipColor(event.action)} size="small" />
+          <Chip 
+            label={event.action.replace(/_/g, ' ')} 
+            sx={{ 
+              bgcolor: 'rgba(255,215,0,0.1)', 
+              color: '#FFD700', 
+              fontWeight: 800, 
+              fontSize: '0.7rem',
+              border: '1px solid rgba(255,215,0,0.2)',
+              borderRadius: '6px'
+            }} 
+            size="small" 
+          />
         </TableCell>
         <TableCell>
-          <Typography variant="body2" sx={{ fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 250 }}>
+          <Typography variant="body2" sx={{ fontFamily: 'monospace', color: 'text.secondary', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 250 }}>
             {event.details ? JSON.stringify(event.details) : '—'}
           </Typography>
         </TableCell>
@@ -143,39 +173,53 @@ function Row(props: {
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1, p: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                <Typography variant="h6" component="div">
-                  {showRawJson ? 'Raw Event JSON' : 'Full Details'}
+            <Box sx={{ margin: 2, p: 3, background: 'rgba(0,0,0,0.2)', borderRadius: 3, border: '1px solid rgba(255,255,255,0.05)' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#FFD700' }}>
+                  {showRawJson ? 'Forensic JSON Trace' : 'Extended Event Payload'}
                 </Typography>
                 <Box>
-                  {showRawJson && <Button size="small" startIcon={<ContentCopyIcon />} onClick={handleCopyRawJson}>Copy</Button>}
-                  <Button size="small" onClick={() => { setShowRawJson(!showRawJson); setDetailsSearch(''); }}>{showRawJson ? 'View Formatted' : 'View Raw JSON'}</Button>
+                  {showRawJson && <Button size="small" startIcon={<ContentCopyIcon />} onClick={handleCopyRawJson} sx={{ color: '#FFD700' }}>Copy</Button>}
+                  <Button size="small" onClick={() => { setShowRawJson(!showRawJson); setDetailsSearch(''); }} sx={{ color: 'text.secondary' }}>
+                    {showRawJson ? 'View Formatted' : 'Inspect Raw JSON'}
+                  </Button>
                 </Box>
               </Box>
               {showRawJson ? (
-                <SyntaxHighlighter language="json" style={theme} customStyle={{ borderRadius: '4px', margin: 0 }}>
-                  {JSON.stringify(event, null, 2)}
-                </SyntaxHighlighter>
+                <Box sx={{ borderRadius: 2, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <SyntaxHighlighter language="json" style={theme} customStyle={{ borderRadius: '8px', margin: 0, padding: '20px', fontSize: '0.85rem' }}>
+                    {JSON.stringify(event, null, 2)}
+                  </SyntaxHighlighter>
+                </Box>
               ) : (
                 <>
-                  <TextField
-                    size="small" variant="outlined" placeholder="Search details..."
-                    value={detailsSearch} onChange={(e) => setDetailsSearch(e.target.value)}
-                    sx={{ mb: 1, width: '100%', bgcolor: 'white' }}
-                  />
-                  {event.details ? (
-                    Object.entries(event.details)
-                      .filter(([key, value]) =>
-                        key.toLowerCase().includes(detailsSearch.toLowerCase()) ||
-                        String(value).toLowerCase().includes(detailsSearch.toLowerCase())
-                      )
-                      .map(([key, value]) => (
-                        <DetailItem key={key} label={key} value={String(value)} onNotify={onNotify} />
-                      ))
-                  ) : (
-                    <Typography variant="body2" color="text.secondary">No details available.</Typography>
-                  )}
+                  <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: 'rgba(255,255,255,0.03)', px: 2, borderRadius: 2, border: '1px solid rgba(255,255,255,0.05)', mb: 2 }}>
+                    <TextField
+                      size="small" variant="standard" placeholder="Search parameters..."
+                      value={detailsSearch} onChange={(e) => setDetailsSearch(e.target.value)}
+                      sx={{ width: '100%', py: 1 }}
+                      InputProps={{ disableUnderline: true, sx: { color: 'white', fontSize: '0.85rem' } }}
+                    />
+                  </Box>
+                  <Grid container spacing={1}>
+                    {event.details ? (
+                      Object.entries(event.details)
+                        .filter(([key, value]) =>
+                          key.toLowerCase().includes(detailsSearch.toLowerCase()) ||
+                          String(value).toLowerCase().includes(detailsSearch.toLowerCase())
+                        )
+                        .map(([key, value]) => (
+                          <Grid item xs={12} key={key}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 1.5, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid rgba(255,255,255,0.03)' }}>
+                              <Typography sx={{ color: '#FFD700', fontWeight: 700, fontSize: '0.85rem' }}>{key}</Typography>
+                              <Typography sx={{ color: 'white', fontSize: '0.85rem', wordBreak: 'break-all', textAlign: 'right', pl: 2 }}>{String(value)}</Typography>
+                            </Box>
+                          </Grid>
+                        ))
+                    ) : (
+                      <Typography variant="body2" sx={{ color: 'text.secondary', p: 2 }}>No payload data available.</Typography>
+                    )}
+                  </Grid>
                 </>
               )}
             </Box>
@@ -571,185 +615,283 @@ export const AuditLogPage = () => {
   };
 
   return (
-    <Box p={3}>
-      <Typography variant="h4" gutterBottom>Audit Log</Typography>
+    <Fade in={true} timeout={800}>
+      <Box p={4} sx={{ background: 'transparent', minHeight: '100vh' }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+          <Box>
+            <Typography variant="h3" sx={{ fontWeight: 900, background: GOLD_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
+              Audit Console
+            </Typography>
+            <Typography variant="body1" sx={{ color: 'text.secondary', display: 'flex', alignItems: 'center', gap: 1 }}>
+              <SecurityIcon sx={{ fontSize: 18, color: '#FFD700' }} />
+              High-integrity forensic trace monitoring
+            </Typography>
+          </Box>
+          <Stack direction="row" spacing={2}>
+            <Button 
+              variant="outlined" 
+              startIcon={<DownloadIcon />} 
+              onClick={handleExportCsv} 
+              disabled={filteredEvents.length === 0}
+              sx={{ borderColor: 'rgba(255,255,255,0.1)', color: 'white', '&:hover': { borderColor: '#FFD700', background: 'rgba(255,215,0,0.05)' } }}
+            >
+              Export Forensics
+            </Button>
+            <Button 
+              variant="contained" 
+              startIcon={<RefreshIcon />} 
+              onClick={handleClearAllFilters}
+              sx={{ bgcolor: '#FFD700', color: 'black', fontWeight: 800, '&:hover': { bgcolor: '#E6C200' } }}
+            >
+              Reset View
+            </Button>
+          </Stack>
+        </Box>
 
-      <Grid container spacing={3} mb={2}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper
-            component={ButtonBase}
-            onClick={handleClearAllFilters}
-            sx={{ p: 2, textAlign: 'center', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
-          >
-            <Typography variant="h5">{summaryStats.total}</Typography>
-            <Typography color="text.secondary">Total Events Displayed</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper
-            component={ButtonBase}
-            onClick={() => {
+        {/* Stats Grid */}
+        <Grid container spacing={3} mb={4}>
+          {[
+            { label: 'Total Events', value: summaryStats.total, icon: <HistoryIcon />, onClick: handleClearAllFilters },
+            { label: 'Today\'s Audit', value: summaryStats.today, icon: <SecurityIcon />, onClick: () => {
               const today = new Date().toISOString().split('T')[0];
               setStartDate(today);
               setEndDate(today);
-            }}
-            sx={{ p: 2, textAlign: 'center', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
-          >
-            <Typography variant="h5">{summaryStats.today}</Typography>
-            <Typography color="text.secondary">Events Today</Typography>
-          </Paper>
+            }},
+            { label: 'Key Activity', value: summaryStats.mostFrequent.replace(/_/g, ' ').toLowerCase(), icon: <RefreshIcon />, onClick: () => summaryStats.mostFrequent !== 'N/A' && setFilterText(summaryStats.mostFrequent) },
+            { label: 'Primary Actor', value: summaryStats.mostActiveUser, icon: <LiveIcon />, onClick: () => summaryStats.mostActiveUser !== 'N/A' && setFilterText(summaryStats.mostActiveUser) },
+          ].map((stat, i) => (
+            <Grid item xs={12} sm={6} md={3} key={i}>
+              <Paper
+                component={ButtonBase}
+                onClick={stat.onClick}
+                sx={{ 
+                  p: 3, 
+                  width: '100%', 
+                  textAlign: 'left',
+                  background: GLASS_BG,
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: 4,
+                  border: `1px solid ${CARD_BORDER}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                  transition: 'transform 0.2s',
+                  '&:hover': { transform: 'translateY(-4px)', borderColor: '#FFD700' }
+                }}
+              >
+                <Box sx={{ p: 1.5, borderRadius: 2, background: 'rgba(255,215,0,0.1)', color: '#FFD700' }}>
+                  {stat.icon}
+                </Box>
+                <Box>
+                  <Typography variant="h4" sx={{ fontWeight: 800, color: 'white', textTransform: i === 2 ? 'capitalize' : 'none' }}>{stat.value}</Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{stat.label}</Typography>
+                </Box>
+              </Paper>
+            </Grid>
+          ))}
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper
-            component={ButtonBase}
-            onClick={() => summaryStats.mostFrequent !== 'N/A' && setFilterText(summaryStats.mostFrequent)}
-            disabled={summaryStats.mostFrequent === 'N/A'}
-            sx={{ p: 2, textAlign: 'center', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
-          >
-            <Typography variant="h5" sx={{ textTransform: 'capitalize' }}>{summaryStats.mostFrequent.replace(/_/g, ' ').toLowerCase()}</Typography>
-            <Typography color="text.secondary">Most Frequent Event</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Paper
-            component={ButtonBase}
-            onClick={() => summaryStats.mostActiveUser !== 'N/A' && setFilterText(summaryStats.mostActiveUser)}
-            disabled={summaryStats.mostActiveUser === 'N/A'}
-            sx={{ p: 2, textAlign: 'center', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
-          >
-            <Typography variant="h5">{summaryStats.mostActiveUser}</Typography>
-            <Typography color="text.secondary">Most Active User</Typography>
-          </Paper>
-        </Grid>
-      </Grid>
 
-      <Paper sx={{ p: 2, mb: 2, height: 300 }}>
-        <Typography variant="h6" gutterBottom>Event Trends</Typography>
-        <ResponsiveContainer width="100%" height="90%">
-          <LineChart data={chartData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }} onClick={handleChartClick}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis allowDecimals={false} />
-            <Tooltip />
-            <Legend onClick={handleLegendClick} />
-            {actionTypes.map(action =>
-              lineVisibility[action] ? (
-                <Line key={action} type="monotone" dataKey={action} stroke={lineColors[action] || '#000000'} name={action.replace(/_/g, ' ')} />
-              ) : null
-            )}
-          </LineChart>
-        </ResponsiveContainer>
-      </Paper>
-      <Paper sx={{ p: 2, mb: 2 }}>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Filter by User ID, Name, or Action"
-              variant="outlined"
-              size="small"
-              fullWidth
-              value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
+        {/* Chart Section */}
+        <Paper sx={{ 
+          p: 4, 
+          mb: 4, 
+          height: 400, 
+          background: GLASS_BG, 
+          backdropFilter: 'blur(20px)',
+          borderRadius: 4,
+          border: `1px solid ${CARD_BORDER}`
+        }}>
+          <Typography variant="h6" sx={{ color: 'white', fontWeight: 800, mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ width: 4, height: 16, bgcolor: '#FFD700', borderRadius: 1 }} />
+            Temporal Activity Trace
+          </Typography>
+          <ResponsiveContainer width="100%" height="85%">
+            <LineChart data={chartData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }} onClick={handleChartClick}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+              <XAxis 
+                dataKey="date" 
+                stroke="rgba(255,255,255,0.3)" 
+                fontSize={12}
+                tickFormatter={(val) => new Date(val).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+              />
+              <YAxis 
+                allowDecimals={false} 
+                stroke="rgba(255,255,255,0.3)" 
+                fontSize={12}
+              />
+              <Tooltip 
+                contentStyle={{ background: '#0F172A', border: '1px solid rgba(255,215,0,0.2)', borderRadius: '12px' }}
+                itemStyle={{ color: '#FFD700' }}
+              />
+              <Legend 
+                onClick={handleLegendClick} 
+                wrapperStyle={{ paddingTop: '20px' }}
+              />
+              {actionTypes.map(action =>
+                lineVisibility[action] ? (
+                  <Line 
+                    key={action} 
+                    type="monotone" 
+                    dataKey={action} 
+                    stroke={lineColors[action] || '#FFD700'} 
+                    strokeWidth={3}
+                    dot={{ fill: lineColors[action] || '#FFD700', r: 4 }}
+                    activeDot={{ r: 6, stroke: 'white', strokeWidth: 2 }}
+                    name={action.replace(/_/g, ' ')} 
+                  />
+                ) : null
+              )}
+            </LineChart>
+          </ResponsiveContainer>
+        </Paper>
+
+        {/* Filter Controls */}
+        <Paper sx={{ 
+          p: 3, 
+          mb: 4, 
+          background: GLASS_BG, 
+          backdropFilter: 'blur(20px)',
+          borderRadius: 4,
+          border: `1px solid ${CARD_BORDER}`
+        }}>
+          <Grid container spacing={3} alignItems="center">
+            <Grid item xs={12} md={4}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, bgcolor: 'rgba(0,0,0,0.2)', p: 1, borderRadius: 2, border: '1px solid rgba(255,255,255,0.1)' }}>
+                <FilterIcon sx={{ color: 'text.secondary', ml: 1 }} />
+                <TextField
+                  placeholder="Identity or Action filter..."
+                  variant="standard"
+                  fullWidth
+                  value={filterText}
+                  onChange={(e) => setFilterText(e.target.value)}
+                  InputProps={{ disableUnderline: true, sx: { color: 'white', fontSize: '0.9rem' } }}
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={4} md={2}>
+              <FormControl size="small" fullWidth>
+                <InputLabel sx={{ color: 'text.secondary' }}>Timeline</InputLabel>
+                <Select 
+                  value={quickFilter} 
+                  label="Timeline" 
+                  onChange={handleQuickFilterChange as any}
+                  sx={{ color: 'white', '.MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' } }}
+                >
+                  <MenuItem value="all">Infinity Scope</MenuItem>
+                  <MenuItem value="24h">T-24 Hours</MenuItem>
+                  <MenuItem value="7d">T-7 Days</MenuItem>
+                  <MenuItem value="30d">T-30 Days</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={4} md={2}>
+              <TextField
+                label="Start"
+                type="date"
+                size="small"
+                fullWidth
+                value={startDate || ''}
+                onChange={(e) => { setStartDate(e.target.value); handleManualDateChange(); }}
+                InputLabelProps={{ shrink: true, sx: { color: 'text.secondary' } }}
+                sx={{ input: { color: 'white' }, '.MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' } }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4} md={2}>
+              <TextField
+                label="End"
+                type="date"
+                size="small"
+                fullWidth
+                value={endDate || ''}
+                onChange={(e) => { setEndDate(e.target.value); handleManualDateChange(); }}
+                InputLabelProps={{ shrink: true, sx: { color: 'text.secondary' } }}
+                sx={{ input: { color: 'white' }, '.MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.1)' } }}
+              />
+            </Grid>
+            <Grid item xs={12} md={2} display="flex" justifyContent="flex-end">
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography variant="caption" sx={{ color: isLive ? '#FFD700' : 'text.secondary', fontWeight: 800 }}>LIVE</Typography>
+                <Switch 
+                  checked={isLive} 
+                  onChange={(e) => setIsLive(e.target.checked)} 
+                  sx={{ 
+                    '& .MuiSwitch-switchBase.Mui-checked': { color: '#FFD700' },
+                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#FFD700' }
+                  }}
+                />
+                <IconButton onClick={() => setIsSettingsModalOpen(true)} sx={{ color: 'text.secondary' }}>
+                  <SettingsIcon fontSize="small" />
+                </IconButton>
+              </Stack>
+            </Grid>
+          </Grid>
+        </Paper>
+
+        {loading ? (
+          <Box display="flex" justifyContent="center" p={10}><CircularProgress sx={{ color: '#FFD700' }} /></Box>
+        ) : error ? (
+          <Paper sx={{ p: 4, textAlign: 'center', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: 4 }}>
+            <Typography color="error" sx={{ fontWeight: 700 }}>{error}</Typography>
+          </Paper>
+        ) : (
+          <Paper sx={{ 
+            background: GLASS_BG, 
+            backdropFilter: 'blur(20px)',
+            borderRadius: 4,
+            border: `1px solid ${CARD_BORDER}`,
+            overflow: 'hidden'
+          }}>
+            <TableContainer>
+              <Table>
+                <TableHead sx={{ bgcolor: 'rgba(255,255,255,0.02)' }}>
+                  <TableRow>
+                    <TableCell width={60} />
+                    <TableCell sortDirection={orderBy === 'timestamp' ? order : false}>
+                      <TableSortLabel 
+                        active={orderBy === 'timestamp'} 
+                        direction={orderBy === 'timestamp' ? order : 'asc'} 
+                        onClick={() => handleSortRequest('timestamp')}
+                        sx={{ color: 'white !important', '.MuiTableSortLabel-icon': { color: '#FFD700 !important' } }}
+                      >
+                        Temporal Index
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell sortDirection={orderBy === 'userFullName' ? order : false}>
+                      <TableSortLabel 
+                        active={orderBy === 'userFullName'} 
+                        direction={orderBy === 'userFullName' ? order : 'asc'} 
+                        onClick={() => handleSortRequest('userFullName')}
+                        sx={{ color: 'white !important', '.MuiTableSortLabel-icon': { color: '#FFD700 !important' } }}
+                      >
+                        Actor
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 800 }}>Protocol Action</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 800 }}>Payload Trace</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredEvents
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((event) => (
+                      <Row key={event.id} event={event} onNotify={handleNotify} theme={themeMap[syntaxTheme]} />
+                    ))
+                  }
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[10, 25, 50]}
+              component="div"
+              count={filteredEvents.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              sx={{ color: 'text.secondary', borderTop: '1px solid rgba(255,255,255,0.05)' }}
             />
-          </Grid>
-          <Grid item xs={12} sm={4} md={2}>
-            <FormControl size="small" fullWidth>
-              <InputLabel>Time Range</InputLabel>
-              <Select value={quickFilter} label="Time Range" onChange={handleQuickFilterChange as any}>
-                <MenuItem value="all">All Time</MenuItem>
-                <MenuItem value="24h">Last 24 hours</MenuItem>
-                <MenuItem value="7d">Last 7 days</MenuItem>
-                <MenuItem value="30d">Last 30 days</MenuItem>
-                <MenuItem value="custom" disabled>Custom</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <TextField
-              label="Start Date"
-              type="date"
-              size="small"
-              fullWidth
-              value={startDate || ''}
-              onChange={(e) => { setStartDate(e.target.value); handleManualDateChange(); }}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={6} sm={4} md={2}>
-            <TextField
-              label="End Date"
-              type="date"
-              size="small"
-              fullWidth
-              value={endDate || ''}
-              onChange={(e) => { setEndDate(e.target.value); handleManualDateChange(); }}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4} md={1} textAlign="center">
-            <Button onClick={handleClearAllFilters} variant="text">Clear All Filters</Button>
-          </Grid>
-          <Grid item xs={12} sm={4} md={2} textAlign="center">
-            <Button onClick={() => setIsResetConfirmOpen(true)} variant="text" color="secondary">Reset Preferences</Button>
-          </Grid>
-          <Grid item xs={12} sm={6} md={2} textAlign={{ xs: 'left', md: 'right' }} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
-            <FormControlLabel
-              control={<Switch checked={isLive} onChange={(e) => setIsLive(e.target.checked)} />}
-              label="Live Update"
-            />
-            {isLive && (
-              <IconButton onClick={() => setIsSettingsModalOpen(true)} size="small">
-                <SettingsIcon />
-              </IconButton>
-            )}
-          </Grid>
-          <Grid item xs={12} md={2} textAlign="right">
-            <Button variant="outlined" startIcon={<DownloadIcon />} onClick={handleExportCsv} disabled={filteredEvents.length === 0}>
-              Export as CSV
-            </Button>
-          </Grid>
-        </Grid>
-      </Paper>
-      {loading ? <CircularProgress /> : error ? <Typography color="error">{error}</Typography> : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell />
-                <TableCell sortDirection={orderBy === 'timestamp' ? order : false}>
-                  <TableSortLabel active={orderBy === 'timestamp'} direction={orderBy === 'timestamp' ? order : 'asc'} onClick={() => handleSortRequest('timestamp')}>
-                    Timestamp
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell sortDirection={orderBy === 'userFullName' ? order : false}>
-                  <TableSortLabel active={orderBy === 'userFullName'} direction={orderBy === 'userFullName' ? order : 'asc'} onClick={() => handleSortRequest('userFullName')}>
-                    User
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell>Action</TableCell>
-                <TableCell>Details</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredEvents
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((event) => (
-                  <Row key={event.id} event={event} onNotify={handleNotify} theme={themeMap[syntaxTheme]} />
-                ))
-              }
-            </TableBody>
-          </Table>
-          <TablePagination
-            rowsPerPageOptions={[10, 25, 50]}
-            component="div"
-            count={filteredEvents.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </TableContainer>
-      )}
+          </Paper>
+        )}
 
       <Dialog open={isSettingsModalOpen} onClose={() => setIsSettingsModalOpen(false)}>
         <DialogTitle>Notification Settings</DialogTitle>

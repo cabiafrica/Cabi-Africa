@@ -269,10 +269,8 @@ extension _HomeScreenLogic on _HomeScreenState {
       userId = authState.userId;
     }
 
-    if (userId == null) {
-      // Use persistent guest ID for unauthenticated requests
-      userId = '00000000-0000-0000-0000-000000000000';
-    }
+    // Use persistent guest ID for unauthenticated requests
+    userId ??= '00000000-0000-0000-0000-000000000000';
 
     // 1. Identity Gate (MANDATORY FOR REGISTERED USERS, SKIPPED FOR GUESTS)
     bool verified = userId == '00000000-0000-0000-0000-000000000000';

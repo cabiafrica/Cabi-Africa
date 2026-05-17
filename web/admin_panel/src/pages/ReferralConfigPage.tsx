@@ -1,5 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, CircularProgress, Grid, Paper, TextField, Typography } from '@mui/material';
+import { 
+  Box, 
+  Button, 
+  CircularProgress, 
+  Grid, 
+  Paper, 
+  TextField, 
+  Typography,
+  Fade,
+  Divider,
+  Stack,
+  InputAdornment
+} from '@mui/material';
+import {
+  Settings as SettingsIcon,
+  AccountBalance as SaccoIcon,
+  EmojiEvents as BadgeIcon,
+  Savings as SavingsIcon,
+  AccountBalanceWallet as WalletIcon,
+  Percent as PercentIcon,
+  Save as SaveIcon
+} from '@mui/icons-material';
 
 // Mock API functions
 const fetchReferralConfig = async () => {
@@ -30,6 +51,53 @@ const initialConfigState = {
   saccoSavingsRate: 0,
   earningBadgeIds: [],
 };
+
+const GOLD_GRADIENT = 'linear-gradient(135deg, #FFD700 0%, #B8860B 100%)';
+const GLASS_BG = 'rgba(15, 23, 42, 0.7)';
+const CARD_BORDER = 'rgba(255, 215, 0, 0.1)';
+
+const ConfigCard = ({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) => (
+  <Paper sx={{ 
+    p: 3, 
+    background: GLASS_BG, 
+    backdropFilter: 'blur(20px)',
+    borderRadius: 4,
+    border: `1px solid ${CARD_BORDER}`,
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 3
+  }}>
+    <Box display="flex" alignItems="center" gap={1.5}>
+      <Box sx={{ p: 1, borderRadius: 2, background: 'rgba(255,215,0,0.1)', color: '#FFD700' }}>
+        {icon}
+      </Box>
+      <Typography variant="h6" sx={{ color: 'white', fontWeight: 800 }}>{title}</Typography>
+    </Box>
+    <Divider sx={{ borderColor: 'rgba(255,255,255,0.05)' }} />
+    {children}
+  </Paper>
+);
+
+const PremiumInput = (props: any) => (
+  <TextField
+    {...props}
+    fullWidth
+    variant="outlined"
+    sx={{ 
+      '& .MuiOutlinedInput-root': {
+        color: 'white',
+        bgcolor: 'rgba(0,0,0,0.2)',
+        borderRadius: 2,
+        '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
+        '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
+        '&.Mui-focused fieldset': { borderColor: '#FFD700' },
+      },
+      '& .MuiInputLabel-root': { color: 'text.secondary' },
+      '& .MuiInputLabel-root.Mui-focused': { color: '#FFD700' }
+    }}
+  />
+);
 
 export const ReferralConfigPage = () => {
   const [config, setConfig] = useState(initialConfigState);
@@ -77,68 +145,157 @@ export const ReferralConfigPage = () => {
     }
   };
 
-  if (loading) return <CircularProgress />;
-
-  return (
-    <Box p={3}>
-      <Typography variant="h4" gutterBottom>Referral Configuration</Typography>
-      {error && <Typography color="error">{error}</Typography>}
-      <Paper sx={{ p: 3, mt: 2 }}>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Typography variant="h6">Registration Fee</Typography>
-            <TextField
-              label="Total Fee (KES)"
-              type="number"
-              value={config.registrationFee}
-              onChange={(e) => handleChange('registrationFee', e.target.value)}
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={4}><TextField label="System Split (%)" type="number" value={config.registrationFeeSplit.system} onChange={(e) => handleChange('registrationFeeSplit.system', e.target.value)} /></Grid>
-          <Grid item xs={4}><TextField label="Upline 1 Split (%)" type="number" value={config.registrationFeeSplit.upline1} onChange={(e) => handleChange('registrationFeeSplit.upline1', e.target.value)} /></Grid>
-          <Grid item xs={4}><TextField label="Upline 2 Split (%)" type="number" value={config.registrationFeeSplit.upline2} onChange={(e) => handleChange('registrationFeeSplit.upline2', e.target.value)} /></Grid>
-
-          <Grid item xs={12}>
-            <Typography variant="h6" sx={{ mt: 3 }}>Fare Commission</Typography>
-          </Grid>
-          <Grid item xs={4}><TextField label="System Split (%)" type="number" value={config.fareCommissionSplit.system} onChange={(e) => handleChange('fareCommissionSplit.system', e.target.value)} /></Grid>
-          <Grid item xs={4}><TextField label="Upline 1 Split (%)" type="number" value={config.fareCommissionSplit.upline1} onChange={(e) => handleChange('fareCommissionSplit.upline1', e.target.value)} /></Grid>
-          <Grid item xs={4}><TextField label="Upline 2 Split (%)" type="number" value={config.fareCommissionSplit.upline2} onChange={(e) => handleChange('fareCommissionSplit.upline2', e.target.value)} /></Grid>
-
-          <Grid item xs={12}>
-            <Typography variant="h6" sx={{ mt: 3 }}>Other Settings</Typography>
-            <TextField
-              label="SACCO Savings Rate (%)"
-              type="number"
-              value={config.saccoSavingsRate}
-              onChange={(e) => handleChange('saccoSavingsRate', e.target.value)}
-              fullWidth
-            />
-          </Grid>
-
-          {/* TODO: Replace with a multi-select dropdown populated from a badge API */}
-          <Grid item xs={12}>
-            <TextField
-              label="Earning Badge IDs (comma-separated)"
-              value={config.earningBadgeIds.join(',')}
-              onChange={(e) => setConfig(prev => ({ ...prev, earningBadgeIds: e.target.value.split(',').map(s => s.trim()) }))}
-              fullWidth
-            />
-          </Grid>
-
-          <Grid item xs={12} sx={{ mt: 3, textAlign: 'right' }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving ? <CircularProgress size={24} /> : 'Save Configuration'}
-            </Button>
-          </Grid>
-        </Grid>
-      </Paper>
+  if (loading) return (
+    <Box display="flex" justifyContent="center" alignItems="center" height="80vh">
+      <CircularProgress sx={{ color: '#FFD700' }} />
     </Box>
   );
-};
+
+  return (
+    <Fade in={true} timeout={800}>
+      <Box p={4}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+          <Box>
+            <Typography variant="h3" sx={{ fontWeight: 900, background: GOLD_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
+              Referral Protocol
+            </Typography>
+            <Typography variant="body1" sx={{ color: 'text.secondary', display: 'flex', alignItems: 'center', gap: 1 }}>
+              <SettingsIcon sx={{ fontSize: 18, color: '#FFD700' }} />
+              Economic yield & commission configuration
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            startIcon={saving ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
+            onClick={handleSave}
+            disabled={saving}
+            sx={{ 
+              bgcolor: '#FFD700', 
+              color: 'black', 
+              fontWeight: 800, 
+              px: 4,
+              py: 1.5,
+              borderRadius: 3,
+              boxShadow: '0 10px 20px rgba(255,215,0,0.2)',
+              '&:hover': { bgcolor: '#E6C200' } 
+            }}
+          >
+            Commit Changes
+          </Button>
+        </Box>
+
+        {error && (
+          <Paper sx={{ p: 2, mb: 4, background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: 2 }}>
+            <Typography color="error" variant="body2">{error}</Typography>
+          </Paper>
+        )}
+
+        <Grid container spacing={4}>
+          {/* Registration Section */}
+          <Grid item xs={12} md={6}>
+            <ConfigCard title="Onboarding Economics" icon={<WalletIcon />}>
+              <PremiumInput
+                label="Total Registration Fee"
+                type="number"
+                value={config.registrationFee}
+                onChange={(e: any) => handleChange('registrationFee', e.target.value)}
+                InputProps={{ startAdornment: <InputAdornment position="start"><Typography sx={{ color: '#FFD700', fontWeight: 800 }}>KES</Typography></InputAdornment> }}
+              />
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, textTransform: 'uppercase' }}>Fee Distribution Split</Typography>
+              <Stack direction="row" spacing={2}>
+                <PremiumInput 
+                  label="System" 
+                  type="number" 
+                  value={config.registrationFeeSplit.system} 
+                  onChange={(e: any) => handleChange('registrationFeeSplit.system', e.target.value)}
+                  InputProps={{ endAdornment: <InputAdornment position="end"><PercentIcon sx={{ fontSize: 16, color: 'text.secondary' }} /></InputAdornment> }}
+                />
+                <PremiumInput 
+                  label="Upline 1" 
+                  type="number" 
+                  value={config.registrationFeeSplit.upline1} 
+                  onChange={(e: any) => handleChange('registrationFeeSplit.upline1', e.target.value)}
+                  InputProps={{ endAdornment: <InputAdornment position="end"><PercentIcon sx={{ fontSize: 16, color: 'text.secondary' }} /></InputAdornment> }}
+                />
+                <PremiumInput 
+                  label="Upline 2" 
+                  type="number" 
+                  value={config.registrationFeeSplit.upline2} 
+                  onChange={(e: any) => handleChange('registrationFeeSplit.upline2', e.target.value)}
+                  InputProps={{ endAdornment: <InputAdornment position="end"><PercentIcon sx={{ fontSize: 16, color: 'text.secondary' }} /></InputAdornment> }}
+                />
+              </Stack>
+            </ConfigCard>
+          </Grid>
+
+          {/* Fare Commission Section */}
+          <Grid item xs={12} md={6}>
+            <ConfigCard title="Yield Distribution" icon={<PercentIcon />}>
+              <Typography variant="body2" sx={{ color: 'text.secondary', mb: -1 }}>Fare commission split across nodes</Typography>
+              <Stack spacing={3}>
+                <PremiumInput 
+                  label="System Network Commission" 
+                  type="number" 
+                  value={config.fareCommissionSplit.system} 
+                  onChange={(e: any) => handleChange('fareCommissionSplit.system', e.target.value)}
+                  InputProps={{ endAdornment: <InputAdornment position="end"><PercentIcon sx={{ fontSize: 16, color: 'text.secondary' }} /></InputAdornment> }}
+                />
+                <PremiumInput 
+                  label="Upline Tier 1 Yield" 
+                  type="number" 
+                  value={config.fareCommissionSplit.upline1} 
+                  onChange={(e: any) => handleChange('fareCommissionSplit.upline1', e.target.value)}
+                  InputProps={{ endAdornment: <InputAdornment position="end"><PercentIcon sx={{ fontSize: 16, color: 'text.secondary' }} /></InputAdornment> }}
+                />
+                <PremiumInput 
+                  label="Upline Tier 2 Yield" 
+                  type="number" 
+                  value={config.fareCommissionSplit.upline2} 
+                  onChange={(e: any) => handleChange('fareCommissionSplit.upline2', e.target.value)}
+                  InputProps={{ endAdornment: <InputAdornment position="end"><PercentIcon sx={{ fontSize: 16, color: 'text.secondary' }} /></InputAdornment> }}
+                />
+              </Stack>
+            </ConfigCard>
+          </Grid>
+
+          {/* SACCO & Badges Section */}
+          <Grid item xs={12}>
+            <ConfigCard title="Operational Overlays" icon={<SaccoIcon />}>
+              <Grid container spacing={4}>
+                <Grid item xs={12} md={6}>
+                  <PremiumInput
+                    label="SACCO Automatic Savings Rate"
+                    type="number"
+                    value={config.saccoSavingsRate}
+                    onChange={(e: any) => handleChange('saccoSavingsRate', e.target.value)}
+                    InputProps={{ 
+                      startAdornment: <InputAdornment position="start"><SavingsIcon sx={{ color: '#FFD700' }} /></InputAdornment>,
+                      endAdornment: <InputAdornment position="end"><PercentIcon sx={{ fontSize: 16, color: 'text.secondary' }} /></InputAdornment> 
+                    }}
+                  />
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mt: 1, display: 'block' }}>
+                    Mandatory deduction for collective savings pool
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <PremiumInput
+                    label="Entitlement Badge IDs"
+                    placeholder="e.g. BDG-01, BDG-05"
+                    value={config.earningBadgeIds.join(',')}
+                    onChange={(e: any) => setConfig(prev => ({ ...prev, earningBadgeIds: e.target.value.split(',').map((s: string) => s.trim()) }))}
+                    InputProps={{ 
+                      startAdornment: <InputAdornment position="start"><BadgeIcon sx={{ color: '#FFD700' }} /></InputAdornment> 
+                    }}
+                  />
+                  <Typography variant="caption" sx={{ color: 'text.secondary', mt: 1, display: 'block' }}>
+                    Badge IDs required for referral yield eligibility
+                  </Typography>
+                </Grid>
+              </Grid>
+            </ConfigCard>
+          </Grid>
+        </Grid>
+      </Box>
+    </Fade>
+  );
+};

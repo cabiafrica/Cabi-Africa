@@ -25,6 +25,8 @@ import { DriverApprovalController } from './driver-approval.controller';
 import { DriverApprovalService } from './driver-approval.service';
 import { BlogController } from './blog.controller';
 import { BlogService } from './blog.service';
+import { OrganizationController } from './organization.controller';
+import { OrganizationService } from './organization.service';
 
 @Module({
   imports: [
@@ -38,7 +40,8 @@ import { BlogService } from './blog.service';
     DriverGroupController, 
     ReferralController, 
     DriverApprovalController,
-    BlogController
+    BlogController,
+    OrganizationController
   ],
   providers: [
     AdminService,
@@ -50,6 +53,7 @@ import { BlogService } from './blog.service';
     ReferralService,
     DriverApprovalService,
     BlogService,
+    OrganizationService,
     AdminReadOnlyGuard,
     AdminPermissionGuard,
     {

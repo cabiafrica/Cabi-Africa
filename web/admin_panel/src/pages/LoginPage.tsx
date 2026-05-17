@@ -5,24 +5,77 @@ import {
   Button,
   TextField,
   Typography,
-  Paper,
   CircularProgress,
   Alert,
   Link,
   InputAdornment,
   IconButton,
   Container,
+  Paper,
+  Fade,
+  Stack,
+  alpha,
+  Grid
 } from '@mui/material';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import {
+  Visibility,
+  VisibilityOff,
+  PersonOutline as PersonIcon,
+  LockOutlined as LockIcon,
+  ArrowForward as ArrowIcon,
+  Shield as ShieldIcon,
+  Radar as RadarIcon,
+  Security as SecurityIcon
+} from '@mui/icons-material';
 import { useAuthContext } from '../AuthContext';
 import { loginUser } from './api/authService';
-import loginBg from '../assets/login_bg_red.png';
 import logo from '../assets/cabi_logo_white.png';
+
+/* ─── Modern Aesthetics ────────────────────────────────────────────── */
+const GOLD_GRADIENT = 'linear-gradient(135deg, #FFD700 0%, #B8860B 100%)';
+const DEEP_NAVY = '#0F172A';
+const GLASS_BG = 'rgba(15, 23, 42, 0.7)';
+const BORDER_COLOR = 'rgba(255, 215, 0, 0.15)';
+
+/* ─── Background Elements ───────────────────────────────────────────── */
+const AnimatedOrb = ({ size, top, left, color, duration = 15, delay = 0 }: any) => (
+  <Box
+    sx={{
+      position: 'absolute',
+      width: size,
+      height: size,
+      borderRadius: '50%',
+      top,
+      left,
+      background: color,
+      filter: `blur(${size / 2}px)`,
+      opacity: 0.4,
+      zIndex: 0,
+      animation: `float ${duration}s ease-in-out ${delay}s infinite alternate`,
+      '@keyframes float': {
+        '0%': { transform: 'translate(0, 0) scale(1)' },
+        '100%': { transform: 'translate(50px, 50px) scale(1.1)' },
+      },
+      pointerEvents: 'none',
+    }}
+  />
+);
+
+const FeatureItem = ({ icon, text }: { icon: any, text: string }) => (
+  <Stack direction="row" spacing={2} alignItems="center">
+    <Box sx={{ 
+      p: 1, borderRadius: 1.5, 
+      background: 'rgba(255, 215, 0, 0.1)', 
+      color: '#FFD700',
+      display: 'flex', alignItems: 'center'
+    }}>
+      {icon}
+    </Box>
+    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
+      {text}
+    </Typography>
+  </Stack>
+);
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -34,16 +87,13 @@ export const LoginPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/', { replace: true });
-    }
+    if (isAuthenticated) navigate('/', { replace: true });
   }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
-
     try {
       const response = await loginUser({ email, password });
       login(response.token, {
@@ -56,322 +106,235 @@ export const LoginPage = () => {
       });
       navigate('/');
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Invalid email or password.';
-      setError(errorMessage);
+      setError(err.response?.data?.message || 'Invalid operational credentials.');
     } finally {
       setLoading(false);
     }
   };
 
-  if (isAuthenticated) {
-    return null;
-  }
+  if (isAuthenticated) return null;
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        width: '100vw',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundImage: 'linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.95))', // Clean luxury dark base
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        position: 'relative',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.4)',
-          backdropFilter: 'blur(2px)',
-          zIndex: 0,
-        }
-      }}
-    >
-      <Container component="main" maxWidth="xs" sx={{ position: 'relative', zIndex: 1 }}>
-        <Paper
-          elevation={24}
-          sx={{
-            p: 5,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            background: 'rgba(20, 20, 20, 0.6)', // Deep dark transparent background
-            backdropFilter: 'blur(20px)',
-            borderRadius: '24px', // More rounded to match reference style
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            // The "lights" effect - glowing border and shadow
-            boxShadow: `
-              0 0 0 1px rgba(255, 255, 255, 0.05),
-              0 10px 40px -10px rgba(0, 0, 0, 0.8),
-              0 0 30px rgba(255, 215, 0, 0.05), 
-              inset 0 0 20px rgba(255, 255, 255, 0.02)
-            `,
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          {/* Top highlight "light" effect */}
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '1px',
-              background: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%)',
-            }}
-          />
+    <Box sx={{
+      minHeight: '100vh',
+      display: 'flex',
+      bgcolor: DEEP_NAVY,
+      overflow: 'hidden',
+      position: 'relative',
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        inset: 0,
+        backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,215,0,0.05) 1px, transparent 0)`,
+        backgroundSize: '40px 40px',
+        zIndex: 1,
+      }
+    }}>
+      {/* Background Ambience */}
+      <AnimatedOrb size={600} top="-200px" left="-100px" color="radial-gradient(circle, #B8860B 0%, transparent 70%)" />
+      <AnimatedOrb size={400} top="60%" left="70%" color="radial-gradient(circle, #0F172A 0%, transparent 70%)" duration={20} />
+      <AnimatedOrb size={300} top="20%" left="80%" color="radial-gradient(circle, #FFD700 0%, transparent 70%)" delay={2} />
 
-          {/* Left edge highlight effect */}
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '20%',
-              left: 0,
-              bottom: '20%',
-              width: '1px',
-              background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255, 215, 0, 0.2) 50%, rgba(255,255,255,0) 100%)',
-            }}
-          />
-
-          <Box sx={{ mb: 5, textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            {/* Logo container with circle effect */}
-            <Box
-              sx={{
-                width: 90,
-                height: 90,
-                borderRadius: '50%',
-                border: '1px solid rgba(255, 215, 0, 0.3)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mb: 3,
-                boxShadow: '0 0 30px rgba(255, 215, 0, 0.1)',
-              }}
-            >
-              <Box
-                component="img"
-                src={logo}
-                alt="CABI Logo"
-                sx={{
-                  maxWidth: '65%',
-                  maxHeight: '65%',
-                  objectFit: 'contain',
-                }}
-              />
-            </Box>
-
-            <Typography component="h1" variant="h5" sx={{
-              fontWeight: 700,
-              color: '#FFD700',
-              letterSpacing: '0.3em',
-              textTransform: 'uppercase',
-              mb: 1,
-              textShadow: '0 0 30px rgba(255, 215, 0, 0.2)'
-            }}>
-              CABI Africa
-            </Typography>
-            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', letterSpacing: '0.1em' }}>
-              ADMIN PANEL
-            </Typography>
-          </Box>
-
-          <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
-            {error && (
-              <Alert
-                severity="error"
-                sx={{
-                  mb: 3,
-                  borderRadius: 2,
-                  backgroundColor: 'rgba(255, 215, 0, 0.05)',
-                  color: '#FFD700',
-                  border: '1px solid rgba(255, 215, 0, 0.1)'
-                }}
-              >
-                {error}
-              </Alert>
-            )}
-
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              placeholder="Username"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <PersonOutlineIcon sx={{ color: 'rgba(255,255,255,0.7)' }} />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                mb: 2,
-                '& .MuiOutlinedInput-root': {
-                  color: 'white',
-                  borderRadius: 1, // Standard slightly rounded corners
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.1)',
-                    borderWidth: '1px',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#FFD700',
-                    boxShadow: '0 0 8px rgba(255, 215, 0, 0.2)',
-                  },
-                },
-                '& .MuiInputBase-input::placeholder': {
-                  color: 'rgba(255,255,255,0.5)',
-                  opacity: 1,
-                }
-              }}
-            />
-
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              placeholder="Password"
-              type={showPassword ? 'text' : 'password'}
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockOutlinedIcon sx={{ color: 'rgba(255,255,255,0.7)' }} />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => setShowPassword(!showPassword)}
-                      onMouseDown={(e) => e.preventDefault()}
-                      edge="end"
-                      sx={{ color: 'rgba(255,255,255,0.5)' }}
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                mb: 1,
-                '& .MuiOutlinedInput-root': {
-                  color: 'white',
-                  borderRadius: 1,
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.1)',
-                    borderWidth: '1px',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#FFD700',
-                    boxShadow: '0 0 8px rgba(255, 215, 0, 0.2)',
-                  },
-                },
-                '& .MuiInputBase-input::placeholder': {
-                  color: 'rgba(255,255,255,0.5)',
-                  opacity: 1,
-                }
-              }}
-            />
-
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, mt: 1 }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    value="remember"
-                    sx={{
-                      color: 'rgba(255,255,255,0.5)',
-                      '&.Mui-checked': {
-                        color: '#FFD700',
-                      },
-                    }}
+      <Container maxWidth="lg" sx={{ display: 'flex', position: 'relative', zIndex: 2, alignItems: 'center' }}>
+        <Grid container spacing={8} alignItems="center">
+          
+          {/* Brand & Context Section */}
+          <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Fade in timeout={1000}>
+              <Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 6 }}>
+                  <Box 
+                    component="img" 
+                    src={logo} 
+                    alt="Cabi Africa" 
+                    sx={{ width: 60, filter: 'drop-shadow(0 0 10px rgba(255,215,0,0.3))' }} 
                   />
-                }
-                label={<Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>Remember me</Typography>}
-              />
-              <Link
-                component={RouterLink}
-                to="/forgot-password"
-                variant="body2"
-                sx={{
-                  color: 'rgba(255,255,255,0.7)',
-                  textDecoration: 'none',
-                  fontStyle: 'italic',
-                  '&:hover': {
-                    color: '#fff',
-                    textDecoration: 'underline',
-                  }
-                }}
-              >
-                Forgot Password?
-              </Link>
-            </Box>
+                  <Box>
+                    <Typography variant="h4" sx={{ fontWeight: 900, color: 'white', letterSpacing: -1 }}>
+                      CABI <Box component="span" sx={{ color: '#FFD700' }}>AFRICA</Box>
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', letterSpacing: 3, fontWeight: 700 }}>
+                      SECURITY & OPS COMMAND
+                    </Typography>
+                  </Box>
+                </Box>
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              disabled={loading}
-              sx={{
-                py: 1.5,
-                borderRadius: 1,
-                textTransform: 'uppercase',
-                fontSize: '0.9rem',
-                fontWeight: 600,
-                letterSpacing: '1px',
-                background: 'linear-gradient(to right, #0f172a, #1e293b)', // Dark gradient base
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                color: 'white',
-                position: 'relative',
-                overflow: 'hidden',
-                '&::before': {
-                  content: '""',
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
+                <Typography variant="h2" sx={{ fontWeight: 900, color: 'white', mb: 3, lineHeight: 1.1 }}>
+                  The Pulse of <br />
+                  <Box component="span" sx={{ background: GOLD_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    African Mobility.
+                  </Box>
+                </Typography>
+
+                <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.5)', mb: 6, fontWeight: 400, maxWidth: 450 }}>
+                  Enter the command center to monitor live operations, resolve incidents, and manage the future of transportation.
+                </Typography>
+
+                <Stack spacing={3}>
+                  <FeatureItem icon={<RadarIcon />} text="Real-time Fleet Intelligence" />
+                  <FeatureItem icon={<SecurityIcon />} text="Crisis Response Protocol" />
+                  <FeatureItem icon={<ShieldIcon />} text="Fraud Detection Sentinel" />
+                </Stack>
+              </Box>
+            </Fade>
+          </Grid>
+
+          {/* Login Interface Section */}
+          <Grid item xs={12} md={6}>
+            <Fade in timeout={1200}>
+              <Box sx={{ display: 'flex', justifyContent: { xs: 'center', md: 'flex-end' } }}>
+                <Paper sx={{
+                  p: 5,
                   width: '100%',
-                  height: '100%',
-                  background: 'linear-gradient(45deg, transparent 0%, rgba(239, 68, 68, 0.1) 50%, transparent 100%)',
-                  transition: 'transform 0.5s',
-                  transform: 'translateX(-100%)',
-                },
-                '&:hover': {
-                  background: 'rgba(255, 215, 0, 0.9)',
-                  boxShadow: '0 0 25px rgba(15, 23, 42, 0.8)',
-                  borderColor: '#FFD700',
-                  color: '#000',
-                  '&::before': {
-                    transform: 'translateX(100%)'
-                  }
-                }
-              }}
-            >
-              {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
-            </Button>
-          </Box>
-        </Paper>
+                  maxWidth: 440,
+                  background: GLASS_BG,
+                  backdropFilter: 'blur(40px)',
+                  borderRadius: 6,
+                  border: `1px solid ${BORDER_COLOR}`,
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  {/* Subtle Top Glow */}
+                  <Box sx={{
+                    position: 'absolute', top: 0, left: 0, right: 0, height: 2,
+                    background: GOLD_GRADIENT, opacity: 0.5
+                  }} />
+
+                  <Box sx={{ mb: 5, textAlign: 'center' }}>
+                    <Typography variant="h4" sx={{ fontWeight: 900, color: 'white', mb: 1 }}>
+                      Welcome Back
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>
+                      Authenticate to access system controls
+                    </Typography>
+                  </Box>
+
+                  {error && (
+                    <Alert severity="error" sx={{ 
+                      mb: 4, borderRadius: 2, bgcolor: 'rgba(239, 68, 68, 0.1)', 
+                      color: '#fca5a5', border: '1px solid rgba(239, 68, 68, 0.2)' 
+                    }}>
+                      {error}
+                    </Alert>
+                  )}
+
+                  <Box component="form" onSubmit={handleSubmit}>
+                    <Stack spacing={3}>
+                      <Box>
+                        <Typography variant="caption" sx={{ color: '#FFD700', fontWeight: 800, mb: 1, display: 'block', letterSpacing: 1 }}>
+                          IDENTIFICATION
+                        </Typography>
+                        <TextField
+                          fullWidth required
+                          placeholder="admin@cabi.africa"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <PersonIcon sx={{ color: 'rgba(255,255,255,0.3)' }} />
+                              </InputAdornment>
+                            ),
+                          }}
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              color: 'white',
+                              bgcolor: 'rgba(0,0,0,0.2)',
+                              borderRadius: 2,
+                              '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
+                              '&:hover fieldset': { borderColor: 'rgba(255,215,0,0.3)' },
+                              '&.Mui-focused fieldset': { borderColor: '#FFD700' },
+                            }
+                          }}
+                        />
+                      </Box>
+
+                      <Box>
+                        <Typography variant="caption" sx={{ color: '#FFD700', fontWeight: 800, mb: 1, display: 'block', letterSpacing: 1 }}>
+                          ACCESS KEY
+                        </Typography>
+                        <TextField
+                          fullWidth required
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="••••••••"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <LockIcon sx={{ color: 'rgba(255,255,255,0.3)' }} />
+                              </InputAdornment>
+                            ),
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" sx={{ color: 'rgba(255,255,255,0.3)' }}>
+                                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              color: 'white',
+                              bgcolor: 'rgba(0,0,0,0.2)',
+                              borderRadius: 2,
+                              '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
+                              '&:hover fieldset': { borderColor: 'rgba(255,215,0,0.3)' },
+                              '&.Mui-focused fieldset': { borderColor: '#FFD700' },
+                            }
+                          }}
+                        />
+                      </Box>
+
+                      <Box display="flex" justifyContent="flex-end">
+                        <Link 
+                          component={RouterLink} to="/forgot-password" 
+                          sx={{ color: 'rgba(255,215,0,0.6)', textDecoration: 'none', fontSize: '0.85rem', '&:hover': { color: '#FFD700' } }}
+                        >
+                          Credential Recovery?
+                        </Link>
+                      </Box>
+
+                      <Button
+                        type="submit"
+                        fullWidth
+                        disabled={loading}
+                        variant="contained"
+                        sx={{
+                          py: 2,
+                          borderRadius: 2,
+                          background: GOLD_GRADIENT,
+                          color: 'black',
+                          fontWeight: 900,
+                          fontSize: '1rem',
+                          boxShadow: '0 8px 32px rgba(255,215,0,0.2)',
+                          '&:hover': {
+                            background: 'linear-gradient(135deg, #FFE033 0%, #FFB300 100%)',
+                            boxShadow: '0 12px 40px rgba(255,215,0,0.3)',
+                            transform: 'translateY(-2px)'
+                          },
+                          transition: 'all 0.3s'
+                        }}
+                      >
+                        {loading ? <CircularProgress size={24} sx={{ color: 'black' }} /> : (
+                          <Stack direction="row" spacing={1} alignItems="center">
+                            <span>INITIALIZE ACCESS</span>
+                            <ArrowIcon />
+                          </Stack>
+                        )}
+                      </Button>
+                    </Stack>
+
+                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.2)', mt: 6, display: 'block', textAlign: 'center' }}>
+                      CABI AFRICA OPS · SECURE NODE {new Date().getFullYear()}
+                    </Typography>
+                  </Box>
+                </Paper>
+              </Box>
+            </Fade>
+          </Grid>
+        </Grid>
       </Container>
     </Box>
   );

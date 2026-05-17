@@ -118,6 +118,17 @@ const MemberRow = ({ index, register, setValue }: { index: number, register: any
                         placeholder="e.g. Chairman, Secretary"
                     />
                 </div>
+                <div className="space-y-2 md:col-span-2 flex items-center gap-3 mt-2">
+                    <input
+                        type="checkbox"
+                        {...register(`members.${index}.isDistressResponder` as const)}
+                        className="w-4 h-4 rounded border-white/10 bg-brand-black/50 text-brand-purple focus:ring-brand-purple"
+                        id={`distress-${index}`}
+                    />
+                    <label htmlFor={`distress-${index}`} className="text-sm text-gray-300">
+                        Designate as Distress Responder (SOS Alert Contact)
+                    </label>
+                </div>
             </div>
 
 
@@ -144,16 +155,22 @@ export default function RegisterOrganization() {
             // Tax PIN removed
 
             members: [
-                { name: '', contact: '', position: 'Chairman' },
-                { name: '', contact: '', position: 'Secretary' },
-                { name: '', contact: '', position: 'Treasurer' }
-            ]
+                { name: '', contact: '', position: 'Chairman', isDistressResponder: false },
+                { name: '', contact: '', position: 'Secretary', isDistressResponder: false },
+                { name: '', contact: '', position: 'Treasurer', isDistressResponder: false }
+            ],
+            subgroups: [] as { name: string; features: string[] }[]
         }
     });
 
     const { fields } = useFieldArray({
         control,
         name: "members"
+    });
+
+    const { fields: subgroupFields, append: appendSubgroup, remove: removeSubgroup } = useFieldArray({
+        control,
+        name: "subgroups"
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -198,7 +215,8 @@ export default function RegisterOrganization() {
                 instagram: data.instagram,
                 linkedin: data.linkedin,
                 primaryColor: brandColor,
-                members: data.members
+                members: data.members,
+                subgroups: data.subgroups
             };
 
             const response = await fetch('/api/organizations/register', {
@@ -430,6 +448,59 @@ export default function RegisterOrganization() {
                                     {fields.map((field, index) => (
                                         <MemberRow key={field.id} index={index} register={register} setValue={setValue} />
                                     ))}
+                                </div>
+                            </div>
+
+                            {/* Subgroups Configuration */}
+                            <div className="space-y-6">
+                                <div className="flex justify-between items-center border-b border-white/10 pb-2">
+                                    <h3 className="text-xl font-bold">Subgroups Configuration</h3>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => appendSubgroup({ name: '', features: [] })}
+                                        className="text-sm bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors"
+                                    >
+                                        + Add Subgroup
+                                    </button>
+                                </div>
+                                <div className="grid gap-4">
+                                    {subgroupFields.length === 0 ? (
+                                        <p className="text-sm text-gray-500 italic">No subgroups configured. You can add them later.</p>
+                                    ) : (
+                                        subgroupFields.map((field, index) => (
+                                            <div key={field.id} className="p-4 bg-white/5 rounded-xl border border-white/5 relative">
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => removeSubgroup(index)}
+                                                    className="absolute top-4 right-4 text-xs text-red-400 hover:text-red-300"
+                                                >
+                                                    Remove
+                                                </button>
+                                                <div className="space-y-4 pr-16">
+                                                    <div className="space-y-2">
+                                                        <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Subgroup Name</label>
+                                                        <input
+                                                            {...register(`subgroups.${index}.name` as const, { required: true })}
+                                                            className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-sm"
+                                                            placeholder="e.g. Welfare Fund, Emergency Response"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Features (Comma-separated)</label>
+                                                        <input
+                                                            {...register(`subgroups.${index}.features` as const)}
+                                                            onChange={(e) => {
+                                                                const vals = e.target.value.split(',').map(v => v.trim()).filter(Boolean);
+                                                                setValue(`subgroups.${index}.features`, vals);
+                                                            }}
+                                                            className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-sm"
+                                                            placeholder="WELFARE, INVESTMENT, ALERTS"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
                             </div>
 

@@ -8,6 +8,7 @@ import 'package:driver_app/screens/wallet_screen.dart';
 import 'package:driver_app/screens/vehicle_list_screen.dart';
 import 'package:driver_app/screens/document_history_screen.dart';
 import 'package:driver_app/screens/earnings_goal_screen.dart';
+import 'package:driver_app/screens/earnings_dashboard_screen.dart';
 import 'package:driver_app/screens/my_organization_screen.dart';
 import 'package:driver_app/screens/referral_program_screen.dart';
 import 'package:driver_app/screens/splash_screen.dart';
@@ -61,7 +62,7 @@ class CabiDriverApp extends ConsumerWidget {
           '/my_organization': (context) => const MyOrganizationScreen(),
           '/referral_program': (context) => const ReferralProgramScreen(),
           '/trip_in_progress': (context) => const TripInProgressScreen(),
-          '/earnings': (context) => const EarningsScreen(),
+          '/earnings': (context) => const EarningsDashboardScreen(),
           '/ratings': (context) => const RatingsScreen(),
           '/saved_places': (context) => const SavedPlacesScreen(),
           '/welfare_schemes': (context) => const WelfareSchemeScreen(),

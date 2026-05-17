@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
+import { PrismaService } from '@cabi/backend/database';
 
 export interface SOSAlert {
     id: string;
@@ -35,6 +36,12 @@ export class SOSGateway {
     sendAlert(alert: SOSAlert) {
         this.server.emit('sos_alert', alert);
     }
+    
+    sendOrgDistressAlert(userIds: string[], alert: any) {
+        // In a real app, this would emit to specific user rooms. 
+        // For now, emit a broadcast with intended recipients.
+        this.server.emit('org_distress_alert', { userIds, alert });
+    }
 }
 
 @Injectable()
@@ -42,7 +49,10 @@ export class SOSService {
     private alerts: SOSAlert[] = [];
     private penaltyConfig: SosPenaltyConfig = { type: 'FEE', feeAmount: 500 };
 
-    constructor(private readonly sosGateway: SOSGateway) {
+    constructor(
+        private readonly sosGateway: SOSGateway,
+        private readonly prisma?: PrismaService
+    ) {
         // Seed data
         this.alerts.push({
             id: 'alert_1',
@@ -68,6 +78,74 @@ export class SOSService {
         this.alerts.push(alert);
         this.sosGateway.sendAlert(alert);
         console.log(`[SOSService] New Alert Created: ${alert.id} from ${userType} ${userId}`);
+
+        if (this.prisma && userType === 'DRIVER') {
+            try {
+                // Find driver's organization
+                const driver = await this.prisma.driverProfile.findFirst({
+                    where: { userId },
+                    include: {
+                        organizations: {
+                            include: {
+                                organization_members: true
+                            }
+                        }
+                    }
+                });
+
+                if (driver?.organizations) {
+                    const org = driver.organizations;
+                    const responders = org.organization_members.filter(m => m.isDistressResponder && m.userId);
+                    const allMembers = org.organization_members.filter(m => m.userId);
+
+                    if (responders.length > 0) {
+                        const responderIds = responders.map(r => r.userId!);
+                        console.log(`[SOSService] Notifying Distress Responders for Org ${org.name}:`, responderIds);
+                        this.sosGateway.sendOrgDistressAlert(responderIds, { ...alert, priority: 'HIGH', message: 'SOS Triggered by a member of your organization!' });
+                    }
+
+                    // Notify others
+                    const otherMembers = allMembers.filter(m => !m.isDistressResponder && m.userId !== userId).map(m => m.userId!);
+                    if (otherMembers.length > 0) {
+                        console.log(`[SOSService] Notifying General Members for Org ${org.name}:`, otherMembers);
+                        this.sosGateway.sendOrgDistressAlert(otherMembers, { ...alert, priority: 'LOW', message: 'A distress signal was triggered in your organization.' });
+                    }
+                }
+            } catch (err) {
+                console.error('[SOSService] Error processing organization distress routing:', err);
+            }
+
+            try {
+                const driver = await this.prisma.driverProfile.findFirst({
+                    where: { userId }
+                });
+
+                await this.prisma.occurrence.create({
+                    data: {
+                        obNumber: `OB-SOS-${Date.now()}`,
+                        category: 'SAFETY_VIOLATION',
+                        severity: 'CRITICAL',
+                        title: `SOS Alert - ${userType} ${userId}`,
+                        description: `Distress signal received from ${userType} at location: ${location.lat}, ${location.lng} for trip ${tripId}`,
+                        driverId: userType === 'DRIVER' ? driver?.id : null,
+                        passengerId: userType === 'PASSENGER' ? userId : null,
+                        rideId: tripId,
+                        occurrenceDate: new Date(),
+                        occurrenceTime: new Date(),
+                        occurredAt: new Date(),
+                        locationLat: location.lat,
+                        locationLng: location.lng,
+                        source: 'SOS_SYSTEM',
+                        registeredById: userId, 
+                        status: 'OPEN'
+                    }
+                });
+                console.log(`[SOSService] Formal entry in Occurrence Book created for alert ${alert.id}`);
+            } catch (err) {
+                console.error('[SOSService] Error creating Occurrence entry:', err);
+            }
+        }
+
         return alert;
     }
 

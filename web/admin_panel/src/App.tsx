@@ -46,6 +46,9 @@ import RolesList from './pages/Roles/RolesList';
 import RoleEditor from './pages/Roles/RoleEditor';
 import { DriverGroupsPage } from './pages/DriverGroupsPage';
 import { SosIncidentDashboard } from './pages/SosIncidentDashboard';
+import { OccurrenceList } from './pages/OccurrenceList';
+import OrganizationsList from './pages/organizations/OrganizationsList';
+import OrganizationDetails from './pages/organizations/OrganizationDetails';
 
 // Widgets
 import { RevenueWidget } from './components/widgets/RevenueWidget';
@@ -58,10 +61,13 @@ import { PayoutProcessing } from './components/PayoutProcessing';
 import { PayoutScheduler } from './components/PayoutScheduler';
 import { ExportableReports } from './components/ExportableReports';
 
+// Guards
+import { ProtectedRoute } from './components/common/ProtectedRoute';
+
 // Icons
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
-type View = 'dashboard' | 'applications' | 'job-activities' | 'referral-dashboard' | 'referral-config' | 'promo-config' | 'badge-management' | 'blog-management' | 'permissions' | 'roles' | 'users' | 'platform-users' | 'commission-ledger' | 'audit-log' | 'sos-config' | 'suspended-accounts' | 'organization-management' | 'simulation-dashboard' | 'support-tickets' | 'surge-zones' | 'airport-zones' | 'vehicle-categories' | 'promo-codes' | 'scheduled-rides' | 'cms' | 'bulk-messaging' | 'driver-performance' | 'city-management' | 'heat-maps' | 'driver-unions' | 'live-map' | 'bi-dashboard' | 'fraud-alerts' | 'gamification' | 'traction-logs';
+type View = 'dashboard' | 'applications' | 'job-activities' | 'referral-dashboard' | 'referral-config' | 'promo-config' | 'badge-management' | 'blog-management' | 'permissions' | 'roles' | 'users' | 'platform-users' | 'commission-ledger' | 'audit-log' | 'sos-config' | 'suspended-accounts' | 'organization-management' | 'simulation-dashboard' | 'support-tickets' | 'surge-zones' | 'airport-zones' | 'vehicle-categories' | 'promo-codes' | 'scheduled-rides' | 'cms' | 'bulk-messaging' | 'driver-performance' | 'city-management' | 'heat-maps' | 'driver-unions' | 'live-map' | 'bi-dashboard' | 'fraud-alerts' | 'gamification' | 'traction-logs' | 'occurrences';
 
 interface MenuItem {
   icon: string;
@@ -83,7 +89,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
       { icon: '🏠', label: 'Dashboard', view: '/dashboard', permission: 'DISPATCH_DASHBOARD_VIEW' },
       { icon: '🚗', label: 'Job Activities', view: '/job-activities', permission: 'DISPATCH_DASHBOARD_VIEW' },
       { icon: '📄', label: 'Driver Applications', view: '/applications', permission: 'DRIVER_APPLICATIONS_VIEW' },
-      { icon: '🏢', label: 'Organization', view: '/organization-management', permission: 'ORGANIZATION_VIEW' },
+      { icon: '🏢', label: 'Organizations', view: '/organizations', permission: 'ORGANIZATION_VIEW' },
       { icon: '📁', label: 'Driver Groups', view: '/driver-groups', permission: 'ORGANIZATION_VIEW' },
       { icon: '📅', label: 'Scheduled Rides', view: '/scheduled-rides', permission: 'DISPATCH_RIDE_MONITOR' },
       { icon: '🎫', label: 'Support Tickets', view: '/support-tickets', permission: 'OCCURRENCE_VIEW' },
@@ -104,6 +110,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
     label: 'Security',
     items: [
       { icon: '🚨', label: 'Fraud Alerts', view: '/fraud-alerts', permission: 'AUDIT_LOGS_VIEW' },
+      { icon: '📋', label: 'Occurrences', view: '/occurrences', permission: 'OCCURRENCE_VIEW' },
       { icon: '⚖️', label: 'Resolution Dash', view: '/resolution-dashboard', permission: 'OCCURRENCE_RESOLVE' },
       { icon: '🚫', label: 'Suspended Accounts', view: '/suspended-accounts', permission: 'DRIVER_SUSPEND' },
       { icon: '📜', label: 'Audit Log', view: '/audit-log', permission: 'AUDIT_LOGS_VIEW' },
@@ -361,15 +368,17 @@ function App() {
                 </div>
               } />
 
-              <Route path="/applications" element={<DriverApprovalDashboard />} />
-              <Route path="/job-activities" element={<JobActivitiesDashboard />} />
+              <Route path="/applications" element={<ProtectedRoute permission="DRIVER_APPLICATIONS_VIEW"><DriverApprovalDashboard /></ProtectedRoute>} />
+              <Route path="/job-activities" element={<ProtectedRoute permission="DISPATCH_DASHBOARD_VIEW"><JobActivitiesDashboard /></ProtectedRoute>} />
 
-              <Route path="/resolution-dashboard" element={<SosIncidentDashboard />} />
-              <Route path="/resolution-dashboard/:incidentId" element={<SosIncidentDashboard />} />
-              <Route path="/organization-management" element={<OrganizationManagement />} />
-              <Route path="/driver-groups" element={<DriverGroupsPage />} />
-              <Route path="/referral-config" element={<ReferralConfig />} />
-              <Route path="/referral-dashboard" element={<ReferralDashboard />} />
+              <Route path="/occurrences" element={<ProtectedRoute permission="OCCURRENCE_VIEW"><OccurrenceList /></ProtectedRoute>} />
+              <Route path="/resolution-dashboard" element={<ProtectedRoute permission="OCCURRENCE_RESOLVE"><SosIncidentDashboard /></ProtectedRoute>} />
+              <Route path="/resolution-dashboard/:incidentId" element={<ProtectedRoute permission="OCCURRENCE_RESOLVE"><SosIncidentDashboard /></ProtectedRoute>} />
+              <Route path="/organizations" element={<ProtectedRoute permission="ORGANIZATION_VIEW"><OrganizationsList /></ProtectedRoute>} />
+              <Route path="/organizations/:id" element={<ProtectedRoute permission="ORGANIZATION_VIEW"><OrganizationDetails /></ProtectedRoute>} />
+              <Route path="/driver-groups" element={<ProtectedRoute permission="ORGANIZATION_VIEW"><DriverGroupsPage /></ProtectedRoute>} />
+              <Route path="/referral-config" element={<ProtectedRoute permission="REFERRAL_FORMULA_VIEW"><ReferralConfig /></ProtectedRoute>} />
+              <Route path="/referral-dashboard" element={<ProtectedRoute permission="REFERRAL_FORMULA_VIEW"><ReferralDashboard /></ProtectedRoute>} />
               <Route path="/simulation-dashboard" element={<SimulationDashboard />} />
               <Route path="/promo-config" element={<PromoConfig />} />
               <Route path="/platform-users" element={<PlatformUsers />} />
@@ -378,9 +387,9 @@ function App() {
               <Route path="/blog-management" element={<BlogManagement />} />
 
               {/* Updated Permission/Role Routes */}
-              <Route path="/roles" element={<RolesList />} />
-              <Route path="/roles/:id" element={<RoleEditor />} />
-              <Route path="/permissions" element={<PermissionManagement />} /> {/* Legacy or update this later */}
+              <Route path="/roles" element={<ProtectedRoute permission="USER_ROLES_ASSIGN"><RolesList /></ProtectedRoute>} />
+              <Route path="/roles/:id" element={<ProtectedRoute permission="USER_ROLES_ASSIGN"><RoleEditor /></ProtectedRoute>} />
+              <Route path="/permissions" element={<ProtectedRoute permission="USER_ROLES_ASSIGN"><PermissionManagement /></ProtectedRoute>} /> {/* Legacy or update this later */}
 
               <Route path="/users" element={<UserManagement />} />
               <Route path="/audit-log" element={<AuditLogViewer />} />

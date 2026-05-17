@@ -1,11 +1,38 @@
 export interface Organization {
     id: string;
     name: string;
-    ownerId: string;
+    email: string;
+    registrationNumber: string;
+    ownerId?: string;
     memberCount: number;
-    status?: 'ACTIVE' | 'HOLD' | 'TEMP_HOLD' | 'PENDING';
-    type?: 'UNION' | 'ASSOCIATION' | 'GROUP';
-    founder?: string;
+    status: 'VERIFIED' | 'UNVERIFIED' | 'HOLD' | 'TEMP_HOLD' | 'PENDING';
+    type?: 'UNION' | 'ASSOCIATION' | 'GROUP' | 'FLEET';
+    founderName?: string;
+    createdAt?: string;
+    features?: string[];
+    subgroups?: Subgroup[];
+    distressResponders?: OrgMember[];
+}
+
+export interface Subgroup {
+    id: string;
+    name: string;
+    email: string;
+    registrationNumber: string;
+    parentId: string;
+    features: string[];
+    status: string;
+    memberCount?: number;
+    createdAt?: string;
+}
+
+export interface OrgMember {
+    id: string;
+    name: string;
+    contact: string;
+    position: string;
+    isDistressResponder: boolean;
+    userId?: string;
 }
 
 export interface DriverApplication {
@@ -129,18 +156,86 @@ export interface AuditLogFilters {
 
 export interface SOSIncidentDetails {
     id: string;
-    driver: { id: string; name: string; phone: string; };
-    passenger: { id: string; name: string; phone: string; };
-    upline1: { id: string; name: string; phone: string; };
-    upline2: { id: string; name: string; phone: string; };
-    liveLocation: { lat: number; lng: number; };
-    status: 'ACTIVE' | 'RESOLVED' | 'PENDING';
+    obNumber?: string;
+    title?: string;
+    description?: string;
+    category: string;
+    severity: string;
+    driver: { 
+        id: string; 
+        name: string; 
+        phone?: string; 
+        photoUrl?: string;
+        rating?: number;
+        badges?: { name: string; icon?: string; tier: string; }[];
+        organization?: {
+            id: string;
+            name: string;
+            leader?: { name: string; phone: string; position: string; };
+        };
+    };
+    passenger: { 
+        id: string; 
+        name: string; 
+        phone?: string; 
+        photoUrl?: string;
+        rating?: number;
+        badges?: { name: string; icon?: string; tier: string; }[];
+    };
+    upline1?: { id: string; name: string; phone?: string; };
+    upline2?: { id: string; name: string; phone?: string; };
+    liveLocation?: { lat: number; lng: number; };
+    status: 'OPEN' | 'UNDER_INVESTIGATION' | 'RESOLVED' | 'DISPUTED' | string;
+    responsibleParty?: string;
     logs: SOSIncidentLogEntry[];
+    /** Enriched audit log with actor identity */
+    annotatedLogs?: AnnotatedLogEntry[];
+    /** Party statements (from OccurrenceObjection) */
+    statements?: IncidentStatement[];
 }
 
 export interface SOSIncidentLogEntry {
     timestamp: string;
     notes: string;
+}
+
+export interface AnnotatedLogEntry {
+    id: string;
+    timestamp: string;
+    action: string;
+    notes: string;
+    actorId: string | null;
+    actorName: string;
+    actorPhoto: string | null;
+    actorRole: 'Driver' | 'Passenger' | 'Admin' | 'Unknown';
+}
+
+export interface IncidentStatement {
+    id: string;
+    role: 'Driver' | 'Passenger' | 'Admin' | 'Unknown';
+    objectorId: string;
+    objectorName: string;
+    objectorPhoto: string | null;
+    objectorRating: number | null;
+    text: string;
+    supportingEvidence: any | null;
+    status: 'PENDING' | 'UNDER_REVIEW' | 'ACCEPTED' | 'REJECTED';
+    reviewedAt: string | null;
+    reviewedBy: { id: string; name: string } | null;
+    reviewNotes: string | null;
+    submittedAt: string;
+}
+
+export interface OccurrenceSummary {
+    id: string;
+    obNumber: string | null;
+    category: string;
+    severity: string;
+    title: string | null;
+    status: string;
+    createdAt: string;
+    driverName?: string;
+    passengerName?: string;
 }
 
 export interface SosPenaltyConfig {
@@ -180,6 +275,7 @@ export interface PlatformUser {
     name: string;
     email: string;
     type: 'DRIVER' | 'PASSENGER';
+    isDistressResponder?: boolean;
     registrationDate: string;
     status: 'ACTIVE' | 'SUSPENDED';
 }

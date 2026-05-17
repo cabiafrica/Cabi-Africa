@@ -83,9 +83,11 @@ class _WelfareSchemeScreenState extends ConsumerState<WelfareSchemeScreen> {
       }
       _fetchData();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Operation failed: $e'), backgroundColor: Colors.red),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Operation failed: $e'), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 
@@ -95,12 +97,12 @@ class _WelfareSchemeScreenState extends ConsumerState<WelfareSchemeScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppTheme.darkBackground,
-        title: Text('Housing Contribution', style: TextStyle(color: Colors.white)),
+        title: const Text('Housing Contribution', style: TextStyle(color: Colors.white)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Set your daily contribution target (KSH):',
               style: TextStyle(color: Colors.white70, fontSize: 14),
             ),
@@ -108,14 +110,14 @@ class _WelfareSchemeScreenState extends ConsumerState<WelfareSchemeScreen> {
             TextField(
               controller: controller,
               keyboardType: TextInputType.number,
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white.withValues(alpha: 0.05),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 hintText: 'e.g. 300',
                 prefixText: 'KSH ',
-                prefixStyle: TextStyle(color: AppTheme.primaryColor),
+                prefixStyle: const TextStyle(color: AppTheme.primaryColor),
               ),
             ),
             if (scheme['minAmount'] != null)
@@ -123,7 +125,7 @@ class _WelfareSchemeScreenState extends ConsumerState<WelfareSchemeScreen> {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   'Min: KSH ${scheme['minAmount']} • Max: KSH ${scheme['maxAmount']}',
-                  style: TextStyle(color: Colors.white54, fontSize: 12),
+                  style: const TextStyle(color: Colors.white54, fontSize: 12),
                 ),
               ),
           ],
@@ -131,7 +133,7 @@ class _WelfareSchemeScreenState extends ConsumerState<WelfareSchemeScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('CANCEL'),
+            child: const Text('CANCEL'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -141,7 +143,7 @@ class _WelfareSchemeScreenState extends ConsumerState<WelfareSchemeScreen> {
                 _toggleEnrollment(scheme, true, amount: amount);
               }
             },
-            child: Text('ENROLL'),
+            child: const Text('ENROLL'),
           ),
         ],
       ),
@@ -208,15 +210,15 @@ class _WelfareSchemeScreenState extends ConsumerState<WelfareSchemeScreen> {
               const Text('KSH', style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(width: 8),
               Text(
-                _summaries.fold(0.0, (sum, item) => sum + item['totalContributed']).toStringAsFixed(2),
-                style: const TextStyle(color: Colors.black, fontSize: 36, fontWeight: FontWeight.black),
+                _summaries.fold(0.0, (sum, item) => sum + (item['totalContributed'] as num)).toStringAsFixed(2),
+                style: const TextStyle(color: Colors.black, fontSize: 36, fontWeight: FontWeight.w900),
               ),
             ],
           ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: _summaries.map((s) => _buildSmallStat(s['schemeType'], s['totalContributed'])).toList(),
+            children: _summaries.map((s) => _buildSmallStat(s['schemeType'], (s['totalContributed'] as num).toDouble())).toList(),
           ),
         ],
       ),
@@ -253,12 +255,12 @@ class _WelfareSchemeScreenState extends ConsumerState<WelfareSchemeScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: (scheme['type'] == 'PENSION' ? Colors.emerald : Colors.blue).withValues(alpha: 0.1),
+                    color: (scheme['type'] == 'PENSION' ? Colors.teal : Colors.blue).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     scheme['type'] == 'PENSION' ? Icons.account_balance : Icons.home_work,
-                    color: scheme['type'] == 'PENSION' ? Colors.emerald : Colors.blue,
+                    color: scheme['type'] == 'PENSION' ? Colors.teal : Colors.blue,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -276,7 +278,7 @@ class _WelfareSchemeScreenState extends ConsumerState<WelfareSchemeScreen> {
                 ),
                 Switch(
                   value: isEnrolled,
-                  activeColor: AppTheme.primaryColor,
+                  activeThumbColor: AppTheme.primaryColor,
                   onChanged: (val) {
                     if (val) {
                       if (scheme['type'] == 'HOUSING') {
@@ -316,7 +318,7 @@ class _WelfareSchemeScreenState extends ConsumerState<WelfareSchemeScreen> {
                       const Text('SAVED SO FAR', style: TextStyle(color: Colors.white38, fontSize: 10)),
                       Text(
                         'KSH ${summary['totalContributed'].toStringAsFixed(0)}',
-                        style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
+                        style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),

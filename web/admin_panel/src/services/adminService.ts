@@ -50,12 +50,15 @@ class AdminService {
   updateReferralRules = this.referralService.updateReferralRules.bind(this.referralService);
 
   // --- Safety Service Delegation ---
+  getIncidents = this.safetyService.getIncidents.bind(this.safetyService);
   getSosIncidentDetails = this.safetyService.getSosIncidentDetails.bind(this.safetyService);
   logSosIncidentAction = this.safetyService.logSosIncidentAction.bind(this.safetyService);
   resolveSosIncident = this.safetyService.resolveSosIncident.bind(this.safetyService);
   resolveSos = this.safetyService.resolveSos.bind(this.safetyService);
   getSosPenaltyConfig = this.safetyService.getSosPenaltyConfig.bind(this.safetyService);
   updateSosPenaltyConfig = this.safetyService.updateSosPenaltyConfig.bind(this.safetyService);
+  reviewStatement = this.safetyService.reviewStatement.bind(this.safetyService);
+  adjudicateStatement = this.safetyService.adjudicateStatement.bind(this.safetyService);
 
   // --- User Service Delegation ---
   getAdminUsers = this.userService.getAdminUsers.bind(this.userService);
@@ -91,6 +94,7 @@ class AdminService {
   removeMemberFromSubgroup = this.orgService.removeMemberFromSubgroup.bind(this.orgService);
   getOrganizationAuditLog = this.orgService.getOrganizationAuditLog.bind(this.orgService);
   getDriverUnions = this.orgService.getDriverUnions.bind(this.orgService);
+  updateDistressResponder = this.orgService.updateDistressResponder.bind(this.orgService);
 
   // --- Analytics Service Delegation ---
   getBIStats = this.analyticsService.getBIStats.bind(this.analyticsService);

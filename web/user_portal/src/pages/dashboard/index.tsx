@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
+import SafetyTab from '@/components/dashboard/SafetyTab';
 
 import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
 import ReferralNetworkVisualizer from '@/components/dashboard/ReferralNetworkVisualizer';
@@ -31,6 +32,7 @@ import {
     Plus,
     Gift,
     ShieldCheck,
+    Shield,
     CreditCard,
     Zap
 } from 'lucide-react';
@@ -39,7 +41,7 @@ export default function Dashboard() {
     const router = useRouter();
     const [userRole, setUserRole] = React.useState<'passenger' | 'driver'>('driver');
     const [hasOrganization, setHasOrganization] = React.useState(true); // Default to true for detail view
-    const [activeTab, setActiveTab] = React.useState<'overview' | 'analytics' | 'network' | 'wallet' | 'vehicles'>('overview');
+    const [activeTab, setActiveTab] = React.useState<'overview' | 'analytics' | 'network' | 'wallet' | 'vehicles' | 'safety'>('overview');
     const [referralCode, setReferralCode] = React.useState('REF-INVITE');
     const [isConnectingSacco, setIsConnectingSacco] = React.useState(false);
     const [showProfileMenu, setShowProfileMenu] = React.useState(false);
@@ -57,7 +59,7 @@ export default function Dashboard() {
     React.useEffect(() => {
         if (router.isReady && router.query.tab) {
             const tab = router.query.tab as string;
-            if (['overview', 'analytics', 'network', 'wallet', 'vehicles'].includes(tab)) {
+            if (['overview', 'analytics', 'network', 'wallet', 'vehicles', 'safety'].includes(tab)) {
                 setActiveTab(tab as any);
             }
         }
@@ -120,6 +122,12 @@ export default function Dashboard() {
                                 className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'wallet' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
                             >
                                 <Wallet className="w-4 h-4" /> Wallet
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('safety')}
+                                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'safety' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
+                            >
+                                <Shield className="w-4 h-4" /> Safety &amp; Incidents
                             </button>
                         </div>
 
@@ -683,6 +691,10 @@ export default function Dashboard() {
                             </div>
                         </div>
                     </div>
+                )}
+
+                {activeTab === 'safety' && user && (
+                    <SafetyTab userId={user.id} />
                 )}
             </main>
         </div>
