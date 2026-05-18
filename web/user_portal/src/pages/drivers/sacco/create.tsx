@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import MainLayout from '@/components/layout/MainLayout';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 export default function CreateSaccoPage() {
     const router = useRouter();
+    const { user, refreshProfile } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
         registrationNumber: '',
@@ -12,6 +14,8 @@ export default function CreateSaccoPage() {
         founderName: '',
         certificateUrl: '',
     });
+    const [category, setCategory] = useState<'organization' | 'sacco'>('organization');
+    const [selectedServices, setSelectedServices] = useState<string[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [uploading, setUploading] = useState(false);
 
@@ -35,17 +39,31 @@ export default function CreateSaccoPage() {
         e.preventDefault();
         setIsSubmitting(true);
 
+        const features = [
+            `category:${category}`,
+            ...selectedServices.map(s => `service:${s}`)
+        ];
+
         try {
             const response = await fetch('/api/sacco/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    ...formData,
+                    features,
+                    driverId: user?.id || '',
+                }),
             });
 
             if (!response.ok) throw new Error('Registration failed');
 
+            // Refresh user profile so that organizationId is updated
+            if (refreshProfile) {
+                await refreshProfile();
+            }
+
             alert('Organization registered successfully! Status: PENDING VERIFICATION');
-            router.push('/drivers/dashboard');
+            router.push('/drivers/sacco/manage');
         } catch (error) {
             console.error(error);
             alert('Failed to register organization');
@@ -73,6 +91,89 @@ export default function CreateSaccoPage() {
 
                     <div className="bg-[#121212] border border-white/10 rounded-2xl p-8 backdrop-blur-xl shadow-2xl">
                         <form onSubmit={handleSubmit} className="space-y-8">
+                            {/* Category Selection */}
+                            <div className="space-y-4">
+                                <label className="block text-sm font-medium text-gray-400">Choose Group Category</label>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div 
+                                        onClick={() => {
+                                            setCategory('organization');
+                                            setSelectedServices([]);
+                                        }}
+                                        className={`cursor-pointer p-6 rounded-2xl border transition-all ${category === 'organization' ? 'border-yellow-500 bg-yellow-500/5 shadow-[0_0_15px_rgba(234,179,8,0.1)]' : 'border-white/10 hover:border-white/20 bg-white/5'}`}
+                                    >
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h3 className="font-bold text-lg text-white">Driver Organisation</h3>
+                                            <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${category === 'organization' ? 'border-yellow-500 bg-yellow-500' : 'border-white/30'}`}>
+                                                {category === 'organization' && <span className="w-2.5 h-2.5 bg-black rounded-full" />}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm text-gray-400">Mainly for uniting drivers, support networks, social groups, and driver directories. No financial overhead.</p>
+                                    </div>
+
+                                    <div 
+                                        onClick={() => setCategory('sacco')}
+                                        className={`cursor-pointer p-6 rounded-2xl border transition-all ${category === 'sacco' ? 'border-yellow-500 bg-yellow-500/5 shadow-[0_0_15px_rgba(234,179,8,0.1)]' : 'border-white/10 hover:border-white/20 bg-white/5'}`}
+                                    >
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h3 className="font-bold text-lg text-white">SACCO</h3>
+                                            <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${category === 'sacco' ? 'border-yellow-500 bg-yellow-500' : 'border-white/30'}`}>
+                                                {category === 'sacco' && <span className="w-2.5 h-2.5 bg-black rounded-full" />}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm text-gray-400">Cooperative organization focusing on financial pools, pension schemes, savings, custom insurance, and housing investments.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* SACCO Financial Services multi-select checklist */}
+                            {category === 'sacco' && (
+                                <div className="space-y-4 border border-white/10 bg-white/5 rounded-2xl p-6 transition-all duration-300 animate-fadeIn">
+                                    <div>
+                                        <h3 className="text-yellow-500 font-bold text-lg">Financial Services Selection</h3>
+                                        <p className="text-sm text-gray-400 mt-1">Select the custom services your SACCO offers. You can select multiple simultaneously.</p>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                                        {[
+                                            { id: 'pension', name: 'Pension & Retirement Fund', desc: 'Secure retirement assets and payouts' },
+                                            { id: 'insurance', name: 'Personal Insurance', desc: 'Cooperative health, collision & life packages' },
+                                            { id: 'housing', name: 'Housing & Land Investment Pools', desc: 'Acquire real estate and properties collectively' },
+                                            { id: 'savings', name: 'Savings & High-Yield Dividends', desc: 'Regular pooling with periodic dividend cycles' },
+                                            { id: 'loans', name: 'Emergency Credit & Micro-loans', desc: 'Fast approval credit for vehicles/emergencies' }
+                                        ].map(svc => {
+                                            const isChecked = selectedServices.includes(svc.id);
+                                            return (
+                                                <div 
+                                                    key={svc.id}
+                                                    onClick={() => {
+                                                        setSelectedServices(prev => 
+                                                            prev.includes(svc.id) 
+                                                                ? prev.filter(x => x !== svc.id) 
+                                                                : [...prev, svc.id]
+                                                        );
+                                                    }}
+                                                    className={`cursor-pointer flex items-start gap-4 p-4 rounded-xl border transition-all ${isChecked ? 'border-yellow-500/50 bg-yellow-500/5' : 'border-white/5 hover:border-white/10 bg-black/20'}`}
+                                                >
+                                                    <div className="pt-0.5">
+                                                        <div className={`w-5 h-5 rounded flex items-center justify-center border ${isChecked ? 'border-yellow-500 bg-yellow-500 text-black' : 'border-white/30'}`}>
+                                                            {isChecked && (
+                                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-semibold text-white text-sm">{svc.name}</h4>
+                                                        <p className="text-xs text-gray-400 mt-0.5">{svc.desc}</p>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-gray-400">Organization Name (Official)</label>

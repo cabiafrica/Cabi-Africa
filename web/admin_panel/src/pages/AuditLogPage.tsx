@@ -950,6 +950,7 @@ export const AuditLogPage = () => {
           <Alert onClose={() => setNotification(null)} severity={notification.severity} sx={{ width: '100%' }}>{notification.message}</Alert>
         </Snackbar>
       )} */}
-    </Box>
+      </Box>
+    </Fade>
   );
 };

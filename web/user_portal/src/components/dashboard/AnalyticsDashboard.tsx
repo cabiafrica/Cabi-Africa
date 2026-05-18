@@ -43,7 +43,7 @@ export default function AnalyticsDashboard({ role = 'driver' }: AnalyticsProps) 
         { hour: '12:00', value: 45 }, { hour: '16:00', value: 95 }, { hour: '20:00', value: 30 },
     ];
 
-    const data = role === 'driver' ? driverData : passengerData;
+    const data: any[] = role === 'driver' ? driverData : passengerData;
 
     return (
         <div className="space-y-6 animate-fade-in">

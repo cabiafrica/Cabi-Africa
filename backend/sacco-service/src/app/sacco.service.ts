@@ -21,6 +21,28 @@ export class CreateSaccoDto {
     isExternal?: boolean;
     apiBaseUrl?: string;
     webhookUrl?: string;
+    driverId?: string;
+    features?: string[];
+}
+
+export class UpdateSaccoDto {
+    name?: string;
+    email?: string;
+    bio?: string;
+    logoUrl?: string;
+    bannerUrl?: string;
+    primaryColor?: string;
+    secondaryColor?: string;
+    website?: string;
+    twitter?: string;
+    facebook?: string;
+    instagram?: string;
+    linkedin?: string;
+    registrationNumber?: string;
+    certificateUrl?: string;
+    founderName?: string;
+    driverId?: string;
+    features?: string[];
 }
 
 @Injectable()
@@ -138,7 +160,7 @@ export class SaccoService {
         // If no certificate provided, status is UNVERIFIED (invalid)
         const status = dto.certificateUrl ? OrganizationStatus.PENDING : OrganizationStatus.UNVERIFIED;
 
-        return this.prisma.organizations.create({
+        const newOrg = await this.prisma.organizations.create({
             data: {
                 id: randomUUID(),
                 name: dto.name,
@@ -147,9 +169,65 @@ export class SaccoService {
                 founderName: dto.founderName,
                 registrationCertificateUrl: dto.certificateUrl,
                 status: status,
+                features: dto.features || [],
                 updatedAt: new Date(),
             }
         });
+
+        // Automatically associate the creating driver with the new SACCO
+        if (dto.driverId) {
+            const profile = await this.prisma.driverProfile.findUnique({
+                where: { userId: dto.driverId }
+            });
+            if (profile) {
+                await this.prisma.driverProfile.update({
+                    where: { userId: dto.driverId },
+                    data: { organizationId: newOrg.id }
+                });
+            }
+        }
+
+        return newOrg;
+    }
+
+    async updateSacco(id: string, dto: UpdateSaccoDto): Promise<any> {
+        this.logger.log(`Updating SACCO: ${id}`);
+
+        const org = await this.prisma.organizations.findUnique({
+            where: { id }
+        });
+
+        if (!org) {
+            throw new Error('SACCO not found');
+        }
+
+        const updateData: any = {
+            ...dto,
+            updatedAt: new Date(),
+        };
+
+        // If the update payload includes driverId, omit it from prisma update
+        delete updateData.driverId;
+
+        // If a critical legal field (registration number or certificate) is modified,
+        // revert the verification status back to PENDING.
+        let statusChanged = false;
+        if (dto.registrationNumber && dto.registrationNumber !== org.registrationNumber) {
+            updateData.status = OrganizationStatus.PENDING;
+            statusChanged = true;
+        }
+        if (dto.certificateUrl && dto.certificateUrl !== org.registrationCertificateUrl) {
+            updateData.status = OrganizationStatus.PENDING;
+            statusChanged = true;
+        }
+
+        const updatedOrg = await this.prisma.organizations.update({
+            where: { id },
+            data: updateData
+        });
+
+        this.logger.log(`SACCO ${id} updated successfully. Status reset to PENDING: ${statusChanged}`);
+        return updatedOrg;
     }
 
     async joinSacco(driverId: string, saccoId: string): Promise<any> {

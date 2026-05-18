@@ -17,7 +17,6 @@ import {
   Avatar,
   Stack,
   InputBase,
-  Alpha,
   useTheme,
   Fade,
   Skeleton

@@ -5,7 +5,7 @@ export interface Organization {
     registrationNumber: string;
     ownerId?: string;
     memberCount: number;
-    status: 'VERIFIED' | 'UNVERIFIED' | 'HOLD' | 'TEMP_HOLD' | 'PENDING';
+    status: 'ACTIVE' | 'VERIFIED' | 'UNVERIFIED' | 'HOLD' | 'TEMP_HOLD' | 'PENDING';
     type?: 'UNION' | 'ASSOCIATION' | 'GROUP' | 'FLEET';
     founderName?: string;
     createdAt?: string;
@@ -19,7 +19,8 @@ export interface Subgroup {
     name: string;
     email: string;
     registrationNumber: string;
-    parentId: string;
+    parentId: string | null;
+    orgId?: string;
     features: string[];
     status: string;
     memberCount?: number;
@@ -242,14 +243,6 @@ export interface SosPenaltyConfig {
     type: 'FEE' | 'REVOKE_BADGE';
     feeAmount?: number;
     badgeId?: string;
-}
-
-export interface Subgroup {
-    id: string;
-    orgId: string;
-    name: string;
-    parentId: string | null;
-    memberCount: number;
 }
 
 export interface DriverGroup {

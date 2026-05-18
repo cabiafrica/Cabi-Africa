@@ -29,8 +29,12 @@ export default function Header() {
 
     const navLinks = mounted ? [
         ...baseNavLinks,
-        ...(hasPermission('DRIVER_PROFILE_EDIT') ? [{ name: 'For Drivers', href: '/drivers/dashboard' }] : []),
+        ...(hasPermission('DRIVER_PROFILE_EDIT') || user?.role === 'driver' ? [
+            { name: 'Driver Dashboard', href: '/drivers/dashboard' },
+            { name: 'My Vehicles', href: '/drivers/vehicles' }
+        ] : []),
         ...(hasPermission('ORGANIZATION_VIEW') ? [{ name: 'Organization', href: '/organizations/dashboard' }] : []),
+        { name: 'Fleet Portal', href: '/fleet/dashboard' },
     ] : baseNavLinks;
 
     const registrationLinks = [
@@ -39,7 +43,7 @@ export default function Header() {
     ];
 
     return (
-        <header className="fixed top-0 left-0 w-full bg-brand-black/20 backdrop-blur-md border-b border-white/10 z-[100] transition-all duration-700">
+        <header className="fixed top-0 left-0 w-full bg-white/80 dark:bg-brand-black/20 backdrop-blur-md border-b border-slate-200 dark:border-white/10 z-[100] transition-all duration-700">
             <nav className="mx-auto px-6 sm:px-8 max-w-7xl">
                 <div className="flex justify-between h-16 md:h-20 items-center gap-4">
                     {/* Left: Logo */}
@@ -48,7 +52,7 @@ export default function Header() {
                             <div className="p-1.5 bg-brand-yellow rounded-xl group-hover:rotate-12 transition-transform duration-500">
                                 <img src="/logo.png" alt="CABI Logo" className="h-5 md:h-7 w-auto brightness-0" />
                             </div>
-                            <span className="text-lg md:text-2xl font-black tracking-tighter text-white group-hover:text-brand-yellow transition-colors duration-500">CABI</span>
+                            <span className="text-lg md:text-2xl font-black tracking-tighter text-slate-900 dark:text-white group-hover:text-brand-yellow transition-colors duration-500">CABI</span>
                         </Link>
                     </div>
 
@@ -58,7 +62,7 @@ export default function Header() {
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                className="text-xs font-bold text-white/80 hover:text-white transition-colors duration-300 relative group uppercase tracking-wider"
+                                className="text-xs font-bold text-slate-700 hover:text-slate-950 dark:text-white/80 dark:hover:text-white transition-colors duration-300 relative group uppercase tracking-wider"
                             >
                                 {link.name}
                                 <span className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-brand-yellow scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
@@ -79,7 +83,7 @@ export default function Header() {
                                     >
                                         <div className="absolute -inset-1 bg-gradient-to-tr from-brand-yellow to-brand-accent rounded-full opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500" />
                                         <img
-                                            className="relative h-9 w-9 rounded-full object-cover border-2 border-white/20 group-hover:border-brand-yellow cursor-pointer shadow-lg"
+                                            className="relative h-9 w-9 rounded-full object-cover border-2 border-slate-200 dark:border-white/20 group-hover:border-brand-yellow cursor-pointer shadow-lg"
                                             src={user?.profilePictureUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"}
                                             alt="User Avatar"
                                         />
@@ -87,7 +91,7 @@ export default function Header() {
 
                                     <button
                                         type="button"
-                                        className="flex items-center gap-2 text-sm font-bold text-white/80 hover:text-white transition-all duration-500"
+                                        className="flex items-center gap-2 text-sm font-bold text-slate-800 hover:text-slate-950 dark:text-white/80 dark:hover:text-white transition-all duration-500"
                                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                                     >
                                         <span className="max-w-[80px] truncate">Hi {user?.firstName}</span>
@@ -97,7 +101,7 @@ export default function Header() {
                             ) : (
                                 <Link
                                     href="/login"
-                                    className="py-2 px-6 border border-white/50 hover:border-white hover:bg-white/10 rounded font-bold text-xs uppercase tracking-wider text-white transition-all duration-300"
+                                    className="py-2 px-6 border border-slate-300 hover:border-slate-800 hover:bg-slate-100 dark:border-white/50 dark:hover:border-white dark:hover:bg-white/10 rounded font-bold text-xs uppercase tracking-wider text-slate-800 dark:text-white transition-all duration-300"
                                 >
                                     Login
                                 </Link>
@@ -127,7 +131,7 @@ export default function Header() {
 
             {/* Mobile menu */}
             {isMenuOpen && (
-                <div className="lg:hidden animate-reveal p-6 space-y-8 bg-brand-black/95 backdrop-blur-3xl rounded-[2.5rem] mt-4 border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden relative z-[101]" id="mobile-menu">
+                <div className="lg:hidden animate-reveal p-6 space-y-8 bg-slate-950/95 dark:bg-brand-black/95 backdrop-blur-3xl rounded-[2.5rem] mt-4 border border-slate-800 dark:border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden relative z-[101]" id="mobile-menu">
                     {/* Background Detail */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-brand-yellow/10 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
                     

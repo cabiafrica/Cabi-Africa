@@ -8,8 +8,6 @@ CREATE TYPE "WelfareDeductionMode" AS ENUM ('PER_TRIP', 'PER_DAY');
 ALTER TABLE "transaction_ledger" ADD COLUMN     "housingDeduction" DECIMAL(10,2) NOT NULL DEFAULT 0,
 ADD COLUMN     "pensionDeduction" DECIMAL(10,2) NOT NULL DEFAULT 0;
 
--- AlterTable
-ALTER TABLE "users" ALTER COLUMN "phoneOtpExpires" SET DATA TYPE TIMESTAMP(3);
 
 -- CreateTable
 CREATE TABLE "welfare_schemes" (

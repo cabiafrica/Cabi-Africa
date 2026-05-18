@@ -33,6 +33,10 @@ model User {
   status                 UserStatus                 @default(PROSPECT)
   forgotEmailOtp         String?
   forgotEmailOtpExpires  DateTime?
+  resetPasswordToken     String?
+  resetPasswordExpires   DateTime?
+  phoneOtpCode           String?
+  phoneOtpExpires        DateTime?
   isTwoFactorEnabled     Boolean                    @default(false)
   lastActiveAt           DateTime?
   recoveryCodes          String[]
@@ -66,6 +70,7 @@ model User {
   userRoles              UserRole[]
   referredBy             User?                      @relation("UserReferrals", fields: [referredById], references: [id])
   referrals              User[]                     @relation("UserReferrals")
+  fleetManagerProfile    FleetManager?
 
   @@index([role])
   @@index([createdAt])
@@ -119,7 +124,10 @@ model DriverProfile {
   saccoLedger         SaccoLedger[]
   transactionLedger   TransactionLedger[]
   badges              UserBadge[]
-  vehicles            Vehicle?
+  vehicles            Vehicle? // legacy 1-to-1 (kept for backward compat)
+  vehicleDrivers      VehicleDriver[] // assigned vehicles (new multi-car support)
+  vehicleShifts       VehicleShift[] // shift history
+  benefitClaims       VehicleBenefitClaim[] // self-reported maintenance
   welfareEnrollments  WelfareEnrollment[]
   welfareDeductions   WelfareDeduction[]
 
@@ -149,13 +157,14 @@ model Document {
 }
 
 model Vehicle {
-  id                      String         @id @default(uuid())
-  driverProfileId         String         @unique
+  id                      String                @id @default(uuid())
+  driverProfileId         String?               @unique
+  fleetManagerId          String?
   make                    String
   model                   String
   year                    Int
-  plateNumber             String         @unique
-  type                    VehicleType    @default(STANDARD)
+  plateNumber             String                @unique
+  type                    VehicleType           @default(STANDARD)
   backPhotoUrl            String?
   color                   String?
   frontPhotoUrl           String?
@@ -163,19 +172,131 @@ model Vehicle {
   insuranceCertificateUrl String?
   insuranceExpiry         DateTime?
   insurancePolicyNumber   String?
-  logbookNumber           String?        @unique
+  logbookNumber           String?               @unique
   sidePhotoUrl            String?
   insuranceType           InsuranceType?
-  usage                   VehicleUsage   @default(TAXI)
+  usage                   VehicleUsage          @default(TAXI)
   logbookImageUrl         String?
   ownerName               String?
   ownerPhone              String?
   capacity                Float?
   capacityUnit            String?
-  occurrences             Occurrence[]   @relation("VehicleOccurrences")
-  driver_profiles         DriverProfile  @relation(fields: [driverProfileId], references: [id])
+  isShared                Boolean               @default(false)
+  createdAt               DateTime              @default(now())
+  updatedAt               DateTime              @updatedAt
+  occurrences             Occurrence[]          @relation("VehicleOccurrences")
+  driver_profiles         DriverProfile?        @relation(fields: [driverProfileId], references: [id])
+  fleetManager            FleetManager?         @relation(fields: [fleetManagerId], references: [id])
+  vehicleDrivers          VehicleDriver[]
+  vehicleShifts           VehicleShift[]
+  benefitClaims           VehicleBenefitClaim[]
 
   @@map("vehicles")
+}
+
+model FleetManager {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  companyName String?
+  phone       String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id])
+  vehicles    Vehicle[]
+
+  @@map("fleet_managers")
+}
+
+model VehicleDriver {
+  id              String        @id @default(uuid())
+  vehicleId       String
+  driverProfileId String
+  assignedAt      DateTime      @default(now())
+  removedAt       DateTime?
+  isActive        Boolean       @default(true)
+  vehicle         Vehicle       @relation(fields: [vehicleId], references: [id])
+  driver          DriverProfile @relation(fields: [driverProfileId], references: [id])
+
+  @@unique([vehicleId, driverProfileId])
+  @@index([vehicleId, isActive])
+  @@index([driverProfileId, isActive])
+  @@map("vehicle_drivers")
+}
+
+model VehicleShift {
+  id              String        @id @default(uuid())
+  vehicleId       String
+  driverProfileId String
+  startedAt       DateTime      @default(now())
+  endedAt         DateTime?
+  status          ShiftStatus   @default(ACTIVE)
+  vehicle         Vehicle       @relation(fields: [vehicleId], references: [id])
+  driver          DriverProfile @relation(fields: [driverProfileId], references: [id])
+
+  @@index([vehicleId, status])
+  @@index([driverProfileId, status])
+  @@map("vehicle_shifts")
+}
+
+model VehicleBenefit {
+  id           String                     @id @default(uuid())
+  name         String                     @unique
+  description  String?
+  category     String
+  iconEmoji    String?                    @default("🔧")
+  isActive     Boolean                    @default(true)
+  createdAt    DateTime                   @default(now())
+  updatedAt    DateTime                   @updatedAt
+  claims       VehicleBenefitClaim[]
+  requirements QualificationRequirement[]
+
+  @@map("vehicle_benefits")
+}
+
+model VehicleBenefitClaim {
+  id                 String         @id @default(uuid())
+  vehicleId          String
+  benefitId          String
+  reportedByDriverId String
+  reportedAt         DateTime       @default(now())
+  evidenceUrl        String?
+  notes              String?
+  status             ClaimStatus    @default(PENDING)
+  reviewedAt         DateTime?
+  reviewedByAdminId  String?
+  rejectionReason    String?
+  vehicle            Vehicle        @relation(fields: [vehicleId], references: [id])
+  benefit            VehicleBenefit @relation(fields: [benefitId], references: [id])
+  driver             DriverProfile  @relation(fields: [reportedByDriverId], references: [id])
+
+  @@index([vehicleId, status])
+  @@index([status])
+  @@map("vehicle_benefit_claims")
+}
+
+model VehicleQualification {
+  id              String                     @id @default(uuid())
+  name            String                     @unique
+  description     String?
+  rewardLabel     String
+  rewardIconEmoji String?                    @default("🏆")
+  isActive        Boolean                    @default(true)
+  createdAt       DateTime                   @default(now())
+  updatedAt       DateTime                   @updatedAt
+  requirements    QualificationRequirement[]
+
+  @@map("vehicle_qualifications")
+}
+
+model QualificationRequirement {
+  qualificationId String
+  benefitId       String
+  qualification   VehicleQualification @relation(fields: [qualificationId], references: [id], onDelete: Cascade)
+  benefit         VehicleBenefit       @relation(fields: [benefitId], references: [id], onDelete: Cascade)
+
+  @@id([qualificationId, benefitId])
+  @@map("qualification_requirements")
 }
 
 model Ride {
@@ -655,6 +776,7 @@ model organization_members {
   duties              String?
   isBiometricVerified Boolean       @default(false)
   canHunt             Boolean       @default(false)
+  isDistressResponder Boolean       @default(false)
   userId              String?       @unique
   invitations         Invitation[]
   organizations       organizations @relation(fields: [organizationId], references: [id])
@@ -680,6 +802,7 @@ model organizations {
   registrationCertificateUrl String?
   status                     OrganizationStatus     @default(UNVERIFIED)
   parentId                   String?
+  features                   String[]               @default([])
   createdAt                  DateTime               @default(now())
   updatedAt                  DateTime
   founderName                String?
@@ -837,6 +960,7 @@ enum Permission {
   MARKETING_ANALYTICS_VIEW
   BLOG_POSTS_VIEW
   BLOG_POSTS_EDIT
+  BLOG_POSTS_PUBLISH
   SYSTEM_SETTINGS_VIEW
   SYSTEM_SETTINGS_EDIT
   USER_ROLES_ASSIGN
@@ -1016,6 +1140,29 @@ enum OrganizationStatus {
   VERIFIED
 }
 
+model BlogPost {
+  id            String     @id @default(uuid())
+  title         String
+  slug          String     @unique
+  summary       String
+  content       String
+  imageUrl      String?
+  status        PostStatus @default(DRAFT)
+  authorName    String
+  publishedDate DateTime?
+  category      String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@map("blog_posts")
+}
+
+enum PostStatus {
+  DRAFT
+  PENDING_APPROVAL
+  PUBLISHED
+}
+
 enum WelfareSchemeType {
   PENSION
   HOUSING
@@ -1027,19 +1174,19 @@ enum WelfareDeductionMode {
 }
 
 model WelfareScheme {
-  id              String              @id @default(uuid())
+  id              String               @id @default(uuid())
   name            String
   type            WelfareSchemeType
   deductionMode   WelfareDeductionMode
-  amount          Decimal             @db.Decimal(10, 2)
-  minAmount       Decimal?            @db.Decimal(10, 2)
-  maxAmount       Decimal?            @db.Decimal(10, 2)
+  amount          Decimal              @db.Decimal(10, 2)
+  minAmount       Decimal?             @db.Decimal(10, 2)
+  maxAmount       Decimal?             @db.Decimal(10, 2)
   description     String?
   providerName    String?
   providerAccount String?
-  isActive        Boolean             @default(true)
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
+  isActive        Boolean              @default(true)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
   enrollments     WelfareEnrollment[]
   deductions      WelfareDeduction[]
 
@@ -1076,4 +1223,17 @@ model WelfareDeduction {
   @@index([schemeId])
   @@index([createdAt])
   @@map("welfare_deductions")
+}
+
+// --- Enums for Vehicle System ---
+
+enum ShiftStatus {
+  ACTIVE
+  ENDED
+}
+
+enum ClaimStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

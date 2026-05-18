@@ -36,7 +36,8 @@ module.exports = {
                     gray: '#1E1E1E',
                     yellow: '#F59E0B',
                     yellowHover: '#D97706',
-                    accent: '#F59E0B',
+                    accent: '#22D3EE', // Corrected to Cyan per globals.css and previous session audit
+                    indigo: '#6366F1', // Corrected to Indigo per globals.css
                     purple: '#F59E0B',
                 },
             },

@@ -103,7 +103,7 @@ const MOCK_POSTS: BlogPost[] = [
     id: '3',
     title: 'New Safety Features Update',
     summary: 'We have introduced new SOS features and real-time tracking for peace of mind.',
-    imageUrl: 'https://images.unsplash.com/photo-1517154942693-0e311a2f607d?q=80&w=2070',
+    imageUrl: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2074',
     publishedDate: new Date(Date.now() - 172800000).toISOString(),
     authorName: 'Product Team',
     content: '<p>Safety is our top priority...</p>',

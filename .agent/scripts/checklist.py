@@ -134,8 +134,8 @@ def print_summary(results: List[dict]):
     skipped_count = sum(1 for r in results if r.get("skipped"))
     
     print(f"Total Checks: {len(results)}")
-    print(f"{Colors.GREEN}✅ Passed: {passed_count}{Colors.ENDC}")
-    print(f"{Colors.RED}❌ Failed: {failed_count}{Colors.ENDC}")
+    print(f"{Colors.GREEN}[PASS] Passed: {passed_count}{Colors.ENDC}")
+    print(f"{Colors.RED}[FAIL] Failed: {failed_count}{Colors.ENDC}")
     print(f"{Colors.YELLOW}[SKIPPED] Skipped: {skipped_count}{Colors.ENDC}")
     print()
     

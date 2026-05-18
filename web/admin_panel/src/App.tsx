@@ -49,6 +49,10 @@ import { SosIncidentDashboard } from './pages/SosIncidentDashboard';
 import { OccurrenceList } from './pages/OccurrenceList';
 import OrganizationsList from './pages/organizations/OrganizationsList';
 import OrganizationDetails from './pages/organizations/OrganizationDetails';
+import { VehicleBenefitsPage } from './pages/VehicleBenefitsPage';
+import { VehicleQualificationsPage } from './pages/VehicleQualificationsPage';
+import { BenefitClaimsPage } from './pages/BenefitClaimsPage';
+
 
 // Widgets
 import { RevenueWidget } from './components/widgets/RevenueWidget';
@@ -94,6 +98,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
       { icon: '📅', label: 'Scheduled Rides', view: '/scheduled-rides', permission: 'DISPATCH_RIDE_MONITOR' },
       { icon: '🎫', label: 'Support Tickets', view: '/support-tickets', permission: 'OCCURRENCE_VIEW' },
       { icon: '📊', label: 'Driver Performance', view: '/driver-performance', permission: 'DISPATCH_ANALYTICS_VIEW' },
+      { icon: '🛡️', label: 'Benefit Claims', view: '/benefit-claims', permission: 'OCCURRENCE_VIEW' },
     ]
   },
   {
@@ -136,6 +141,8 @@ const SIDEBAR_MENU: MenuGroup[] = [
       { icon: '🏅', label: 'Badges', view: '/badge-management', permission: 'SYSTEM_SETTINGS_EDIT' },
       { icon: '🎮', label: 'Gamification', view: '/gamification', permission: 'SYSTEM_SETTINGS_EDIT' },
       { icon: '⚙️', label: 'App Settings', view: '/app-settings', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: '🎁', label: 'Vehicle Benefits', view: '/vehicle-benefits', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: '🏆', label: 'Qualifications', view: '/vehicle-qualifications', permission: 'SYSTEM_SETTINGS_EDIT' },
     ]
   },
   {
@@ -417,6 +424,9 @@ function App() {
               <Route path="/gamification" element={<GamificationManagement />} />
               <Route path="/app-settings" element={<AppSettingsManagement />} />
               <Route path="/welfare-schemes" element={<WelfareSchemeManagement />} />
+              <Route path="/vehicle-benefits" element={<VehicleBenefitsPage />} />
+              <Route path="/vehicle-qualifications" element={<VehicleQualificationsPage />} />
+              <Route path="/benefit-claims" element={<BenefitClaimsPage />} />
             </Routes>
           </div>
         </div>

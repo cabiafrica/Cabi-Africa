@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Get, Logger, Query, HttpException, Param, Put } from '@nestjs/common';
-import { SaccoService, TripPaidEvent, CreateSaccoDto } from './sacco.service';
+import { SaccoService, TripPaidEvent, CreateSaccoDto, UpdateSaccoDto } from './sacco.service';
 
 @Controller('sacco')
 export class SaccoController {
@@ -38,6 +38,15 @@ export class SaccoController {
     async registerSacco(@Body() dto: CreateSaccoDto) {
         try {
             return await this.saccoService.createSacco(dto);
+        } catch (error) {
+            throw new HttpException(error.message, 400);
+        }
+    }
+
+    @Put('update/:id')
+    async updateSacco(@Param('id') id: string, @Body() dto: UpdateSaccoDto) {
+        try {
+            return await this.saccoService.updateSacco(id, dto);
         } catch (error) {
             throw new HttpException(error.message, 400);
         }

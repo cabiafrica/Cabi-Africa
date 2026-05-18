@@ -27,13 +27,22 @@ def get_project_root():
     return Path(".").resolve()
 
 def is_running(pid):
-    try:
-        os.kill(pid, 0)
-        return True
-    except OSError:
-        return False
+    if sys.platform == 'win32':
+        try:
+            out = subprocess.check_output(f'tasklist /FI "PID eq {pid}"', shell=True).decode(errors='ignore')
+            return str(pid) in out
+        except:
+            return False
+    else:
+        try:
+            os.kill(pid, 0)
+            return True
+        except PermissionError:
+            return True
+        except OSError:
+            return False
 
-def get_start_command(root):
+def get_start_command(root, target="user"):
     pkg_file = root / "package.json"
     if not pkg_file.exists():
         return None
@@ -42,13 +51,19 @@ def get_start_command(root):
         data = json.load(f)
     
     scripts = data.get("scripts", {})
+    
+    # Try dev:target first
+    target_script = f"dev:{target}"
+    if target_script in scripts:
+        return ["npm", "run", target_script]
+    
     if "dev" in scripts:
         return ["npm", "run", "dev"]
     elif "start" in scripts:
         return ["npm", "start"]
     return None
 
-def start_server(port=3000):
+def start_server(target="user", port=3000):
     if PID_FILE.exists():
         try:
             pid = int(PID_FILE.read_text().strip())
@@ -59,17 +74,17 @@ def start_server(port=3000):
             pass # Invalid PID file
 
     root = get_project_root()
-    cmd = get_start_command(root)
+    cmd = get_start_command(root, target)
     
     if not cmd:
-        print("[ERROR] No 'dev' or 'start' script found in package.json")
+        print(f"[ERROR] No script found for target '{target}' in package.json")
         sys.exit(1)
     
-    # Add port env var if needed (simple heuristic)
+    # Add port env var if needed
     env = os.environ.copy()
     env["PORT"] = str(port)
     
-    print(f"[STARTING] Starting preview on port {port}...")
+    print(f"[STARTING] Starting preview for target '{target}' on port {port}...")
     
     with open(LOG_FILE, "w") as log:
         process = subprocess.Popen(
@@ -81,7 +96,9 @@ def start_server(port=3000):
             shell=True # Required for npm on windows often, or consistent path handling
         )
     
-    PID_FILE.write_text(str(process.pid))
+    # Save target info along with PID
+    status_data = {"pid": process.pid, "target": target, "port": port}
+    PID_FILE.write_text(json.dumps(status_data))
     print(f"[OK] Preview started! (PID: {process.pid})")
     print(f"   Logs: {LOG_FILE}")
     print(f"   URL: http://localhost:{port}")
@@ -92,7 +109,13 @@ def stop_server():
         return
 
     try:
-        pid = int(PID_FILE.read_text().strip())
+        content = PID_FILE.read_text().strip()
+        try:
+            status_data = json.loads(content)
+            pid = status_data["pid"]
+        except json.JSONDecodeError:
+            pid = int(content)
+            
         if is_running(pid):
             # Try gentle kill first
             os.kill(pid, signal.SIGTERM) if sys.platform != 'win32' else subprocess.call(['taskkill', '/F', '/T', '/PID', str(pid)])
@@ -108,23 +131,31 @@ def stop_server():
 def status_server():
     running = False
     pid = None
-    url = "Unknown"
+    target = "Unknown"
+    port = 3000
     
     if PID_FILE.exists():
         try:
-            pid = int(PID_FILE.read_text().strip())
+            content = PID_FILE.read_text().strip()
+            try:
+                status_data = json.loads(content)
+                pid = status_data["pid"]
+                target = status_data.get("target", "user")
+                port = status_data.get("port", 3000)
+            except json.JSONDecodeError:
+                pid = int(content)
+                
             if is_running(pid):
                 running = True
-                # Heuristic for URL, strictly we should save it
-                url = "http://localhost:3000" 
         except:
             pass
             
     print("\n=== Preview Status ===")
     if running:
         print(f"[OK] Status: Running")
+        print(f"Target: {target}")
         print(f"PID: {pid}")
-        print(f"URL: {url} (Likely)")
+        print(f"URL: http://localhost:{port}")
         print(f"Logs: {LOG_FILE}")
     else:
         print("[STOPPED] Status: Stopped")
@@ -133,12 +164,25 @@ def status_server():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("action", choices=["start", "stop", "status"])
-    parser.add_argument("port", nargs="?", default="3000")
+    parser.add_argument("arg1", nargs="?", default=None)
+    parser.add_argument("arg2", nargs="?", default=None)
     
     args = parser.parse_args()
     
     if args.action == "start":
-        start_server(int(args.port))
+        # Resolve target and port
+        target = "user"
+        port = 3000
+        
+        if args.arg1:
+            if args.arg1.isdigit():
+                port = int(args.arg1)
+            else:
+                target = args.arg1
+                if args.arg2 and args.arg2.isdigit():
+                    port = int(args.arg2)
+                    
+        start_server(target, port)
     elif args.action == "stop":
         stop_server()
     elif args.action == "status":
