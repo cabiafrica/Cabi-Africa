@@ -99,7 +99,7 @@ export default function AssignDriverPage() {
     if (loading) {
         return (
             <MainLayout title="Loading Available Drivers..." description="Searching operator network.">
-                <div className="min-h-screen bg-slate-900 flex items-center justify-center p-8">
+                <div className="min-h-screen bg-brand-black flex items-center justify-center p-8">
                     <div className="flex flex-col items-center gap-4">
                         <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
                         <span className="text-white font-black text-lg tracking-widest uppercase text-blue-400 animate-pulse">Searching Operator Network...</span>
@@ -112,7 +112,7 @@ export default function AssignDriverPage() {
     if (error && !vehicle) {
         return (
             <MainLayout title="Assignment Error" description="Could not load assignment screen.">
-                <div className="min-h-screen bg-slate-900 py-20 px-4 text-center">
+                <div className="min-h-screen bg-brand-black py-20 px-4 text-center">
                     <div className="max-w-md mx-auto bg-slate-800/40 p-12 rounded-3xl border border-white/5 shadow-2xl">
                         <AlertCircle className="w-20 h-20 text-red-500 mx-auto mb-6 animate-bounce" />
                         <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Assignment Error</h2>
@@ -128,7 +128,7 @@ export default function AssignDriverPage() {
 
     return (
         <MainLayout title={`Assign Driver to ${vehicle?.plateNumber || 'Vehicle'} | Cabi`} description="Search and authorize certified drivers to operate this vehicle.">
-            <div className="min-h-screen bg-slate-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-brand-black text-white py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-4xl mx-auto space-y-8">
                     {/* Back navigation */}
                     <div>

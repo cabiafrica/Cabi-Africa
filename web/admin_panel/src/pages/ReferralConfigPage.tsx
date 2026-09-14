@@ -263,19 +263,27 @@ export const ReferralConfigPage = () => {
             <ConfigCard title="Operational Overlays" icon={<SaccoIcon />}>
               <Grid container spacing={4}>
                 <Grid item xs={12} md={6}>
-                  <PremiumInput
-                    label="SACCO Automatic Savings Rate"
-                    type="number"
-                    value={config.saccoSavingsRate}
-                    onChange={(e: any) => handleChange('saccoSavingsRate', e.target.value)}
-                    InputProps={{ 
-                      startAdornment: <InputAdornment position="start"><SavingsIcon sx={{ color: '#FFD700' }} /></InputAdornment>,
-                      endAdornment: <InputAdornment position="end"><PercentIcon sx={{ fontSize: 16, color: 'text.secondary' }} /></InputAdornment> 
+                  <Box
+                    sx={{
+                      p: 2,
+                      border: '1px solid rgba(255,215,0,0.3)',
+                      borderRadius: 2,
+                      background: 'rgba(255,215,0,0.05)',
                     }}
-                  />
-                  <Typography variant="caption" sx={{ color: 'text.secondary', mt: 1, display: 'block' }}>
-                    Mandatory deduction for collective savings pool
-                  </Typography>
+                  >
+                    <Typography variant="caption" sx={{ color: '#FFD700', fontWeight: 700, display: 'block', mb: 1 }}>
+                      🏛️ Sacco Remittance Rate
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
+                      Sacco remittance rates (mandatory %, joining incentive, duration) are now managed in the{' '}
+                      <a
+                        href="/sacco-integration"
+                        style={{ color: '#FFD700', fontWeight: 700, textDecoration: 'none' }}
+                      >
+                        Sacco Integration Hub →
+                      </a>
+                    </Typography>
+                  </Box>
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <PremiumInput

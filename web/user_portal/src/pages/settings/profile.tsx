@@ -49,7 +49,7 @@ export default function ProfileSettings() {
 
     return (
         <MainLayout title="Profile & Privacy">
-            <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-slate-50 dark:bg-brand-black py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-3xl mx-auto">
                     <div className="text-center mb-10">
                         <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center justify-center gap-3">

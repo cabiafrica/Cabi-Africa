@@ -10,6 +10,7 @@ import 'package:driver_app/theme/app_theme.dart';
 import '../providers/ride_request_provider.dart';
 import '../widgets/ride_request_modal.dart';
 import '../providers/auth_provider.dart';
+import '../providers/map_provider.dart';
 import '../widgets/face_verification_modal.dart';
 import '../widgets/radar_animation.dart';
 import '../providers/providers.dart';
@@ -31,11 +32,77 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       const LatLng(-1.286389, 36.817223); // Nairobi default
   CabiMapController? _mapController;
   StreamSubscription<Position>? _locationSubscription;
+  Timer? _ridePollingTimer;
+
+  void _startRidePolling() {
+    _ridePollingTimer?.cancel();
+    debugPrint('[DRIVER_POLL] Starting ride polling every 3 seconds...');
+    _ridePollingTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
+      if (!_isOnline || !mounted) return;
+      final authState = ref.read(authProvider);
+      if (authState is! Authenticated) return;
+      final driverProfile = authState.user?['driverProfile'];
+      if (driverProfile == null) return;
+      final driverId = driverProfile['id'];
+      
+      final rideReqProvider = legacy_provider.Provider.of<RideRequestProvider>(context, listen: false);
+      if (rideReqProvider.currentRideRequest != null) return;
+
+      final rideService = ref.read(rideServiceProvider);
+      try {
+        final currentRide = await rideService.getCurrentRide(driverId, 'DRIVER');
+        if (currentRide != null && mounted) {
+          final status = currentRide['status'];
+          if (status == 'DRIVER_ASSIGNED' || status == 'REQUESTED') {
+            if (rideReqProvider.currentRideRequest == null) {
+              debugPrint('[DRIVER_POLL] Incoming ride detected: ${currentRide['id']} (status: $status)');
+              final pickup = currentRide['pickupLocation'];
+              final dropoff = currentRide['dropoffLocation'];
+              final passenger = currentRide['passenger'];
+
+              final formattedRequest = {
+                'rideId': currentRide['id'],
+                'pickupAddress': (pickup is Map && pickup['address'] != null)
+                    ? pickup['address']
+                    : (currentRide['pickupAddress'] ?? 'Kenyatta Ave, Nairobi'),
+                'dropoffAddress': (dropoff is Map && dropoff['address'] != null)
+                    ? dropoff['address']
+                    : (currentRide['dropoffAddress'] ?? 'Westlands, Nairobi'),
+                'distanceToPickup': '1.5 km',
+                'fare': currentRide['fare']?.toString() ?? '350',
+                'passengerRating': passenger?['averageRating']?.toString() ?? '5.0',
+                'isVerifiedPassenger': passenger?['isVerifiedPassenger'] ?? true,
+                'passengerName': passenger?['fullName'] ?? 'Guest Passenger',
+              };
+              rideReqProvider.setRideRequest(formattedRequest);
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint('[DRIVER_POLL] Polling error: $e');
+      }
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authState = ref.read(authProvider);
+      if (authState is Authenticated) {
+        final driverProfile = authState.user?['driverProfile'];
+        if (driverProfile != null && mounted) {
+          setState(() {
+            if (driverProfile['isOnline'] == true) {
+              _isOnline = true;
+              _startRidePolling();
+            }
+            if (driverProfile['isBiometricVerified'] == true) {
+              _isFaceVerified = true;
+            }
+          });
+        }
+      }
       _initLocation();
     });
   }
@@ -79,10 +146,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Future<void> _toggleOnline() async {
     final authState = ref.read(authProvider);
-    if (authState is! Authenticated) return;
+    if (authState is! Authenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in first to go online.')),
+      );
+      return;
+    }
     
-    final driverProfile = authState.user?['driverProfile'];
-    if (driverProfile == null) return;
+    var driverProfile = authState.user?['driverProfile'];
+    if (driverProfile == null) {
+      setState(() => _isLoading = true);
+      final authService = ref.read(authServiceProvider);
+      final res = await authService.getMe(authState.token);
+      setState(() => _isLoading = false);
+      if (res.user != null) {
+        ref.read(authProvider.notifier).updateUser(res.user!);
+        driverProfile = res.user!['driverProfile'];
+      }
+    }
+
+    if (driverProfile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No driver profile found for this account.')),
+      );
+      return;
+    }
     final driverId = driverProfile['id'];
     
     final rideService = ref.read(rideServiceProvider);
@@ -110,6 +198,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         });
         if (_isOnline) {
           _mapController?.animateCamera(_driverLocation, zoom: 15.0);
+          _startRidePolling();
+        } else {
+          _ridePollingTimer?.cancel();
         }
       }
     } catch (e) {
@@ -150,20 +241,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void dispose() {
+    _ridePollingTimer?.cancel();
     _locationSubscription?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final mapType = ref.watch(mapProvider);
+
     return Scaffold(
-      backgroundColor: AppTheme.darkBackground,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Stack(
         children: [
           CabiMap(
+            key: ValueKey('cabi_driver_map_${mapType.name}'),
             initialCenter: _driverLocation,
             initialZoom: 14.0,
-            theme: CabiMapTheme.dark,
+            theme: isDark ? CabiMapTheme.dark : CabiMapTheme.light,
+            mapSource: mapType == MapType.google
+                ? CabiMapSource.googleMaps
+                : CabiMapSource.cabiAfrica,
             markers: [
               CabiMapMarker.driver(
                 position: _driverLocation,
@@ -191,12 +291,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
-                    color: _isOnline ? AppTheme.darkSurface : Colors.black.withValues(alpha: 0.8),
+                    color: _isOnline ? (theme.cardTheme.color ?? theme.colorScheme.surface) : Colors.black.withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: _isOnline
                           ? AppTheme.primaryColor.withValues(alpha: 0.6)
-                          : Colors.white.withValues(alpha: 0.1),
+                          : (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1)),
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -231,6 +331,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 const Spacer(),
                 _MapButton(
+                  icon: Icons.layers_outlined,
+                  onTap: () => _showMapSelectionSheet(context, mapType),
+                ),
+                const SizedBox(width: 8),
+                _MapButton(
                   icon: Icons.my_location,
                   onTap: () => _mapController?.animateCamera(_driverLocation,
                       zoom: 15.0),
@@ -247,12 +352,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               padding: EdgeInsets.fromLTRB(
                   24, 24, 24, MediaQuery.of(context).padding.bottom + 24),
               decoration: BoxDecoration(
-                color: AppTheme.darkBackground,
+                color: theme.scaffoldBackgroundColor,
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(28)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.5),
+                    color: isDark ? Colors.black.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.1),
                     blurRadius: 24,
                     offset: const Offset(0, -4),
                   ),
@@ -296,9 +401,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         margin: const EdgeInsets.only(bottom: 16),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
+                          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -308,7 +413,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             Text(
                               "${vehicle['make']} ${vehicle['model']} • ${vehicle['plateNumber']}",
                               style: GoogleFonts.outfit(
-                                color: Colors.white.withValues(alpha: 0.8),
+                                color: theme.textTheme.bodyLarge?.color?.withValues(alpha: 0.8),
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -322,7 +427,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Text(
                     _isOnline ? 'You are online' : 'Ready to drive?',
                     style: GoogleFonts.outfit(
-                      color: Colors.white,
+                      color: theme.textTheme.bodyLarge?.color,
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
                     ),
@@ -333,7 +438,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ? 'Waiting for trip requests nearby...'
                         : 'Go online to start receiving trips.',
                     style: GoogleFonts.outfit(
-                      color: AppTheme.darkTextSecondary,
+                      color: theme.textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary,
                       fontSize: 13,
                     ),
                   ),
@@ -367,7 +472,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           children: [
                             Text(
                               'Trip Radius Filter',
-                              style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14),
+                              style: GoogleFonts.outfit(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w600, fontSize: 14),
                             ),
                             Text(
                               '${_tripRadiusKm.toStringAsFixed(1)} km',
@@ -378,7 +483,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         SliderTheme(
                           data: SliderTheme.of(context).copyWith(
                             activeTrackColor: AppTheme.primaryColor,
-                            inactiveTrackColor: Colors.white.withValues(alpha: 0.1),
+                            inactiveTrackColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
                             thumbColor: AppTheme.primaryColor,
                             overlayColor: AppTheme.primaryColor.withValues(alpha: 0.2),
                             trackHeight: 4.0,
@@ -410,8 +515,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       decoration: BoxDecoration(
                         color:
                             _isOnline 
-                                ? AppTheme.darkSurface 
-                                : (_isVerificationInProgress ? Colors.white10 : AppTheme.primaryColor),
+                                ? (theme.cardTheme.color ?? theme.colorScheme.surface) 
+                                : (_isVerificationInProgress ? (isDark ? Colors.white10 : Colors.black12) : AppTheme.primaryColor),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: _isOnline
@@ -475,6 +580,209 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
+
+  void _showMapSelectionSheet(BuildContext context, MapType currentMapType) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.5),
+                blurRadius: 20,
+                offset: const Offset(0, -4),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    const Icon(Icons.layers_outlined, color: AppTheme.primaryColor, size: 22),
+                    const SizedBox(width: 10),
+                    Text(
+                      'SELECT NAVIGATION MAP',
+                      style: GoogleFonts.outfit(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                        color: theme.textTheme.titleLarge?.color,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Choose your preferred mapping provider for dispatch & live driving',
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    color: isDark ? Colors.white60 : Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _buildMapOption(
+                  context: ctx,
+                  type: MapType.google,
+                  title: 'Google Maps',
+                  subtitle: 'Official Google Maps Platform with high precision satellite & road network',
+                  badgeText: 'GLOBAL MAPS',
+                  icon: Icons.public,
+                  isSelected: currentMapType == MapType.google,
+                  onTap: () {
+                    ref.read(mapProvider.notifier).setMapType(MapType.google);
+                    Navigator.pop(ctx);
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildMapOption(
+                  context: ctx,
+                  type: MapType.cabi,
+                  title: 'Cabi Africa Maps',
+                  subtitle: 'Optimized African local roads, informal routes & low data consumption',
+                  badgeText: 'LOCAL AFRICA',
+                  icon: Icons.explore,
+                  isSelected: currentMapType == MapType.cabi,
+                  onTap: () {
+                    ref.read(mapProvider.notifier).setMapType(MapType.cabi);
+                    Navigator.pop(ctx);
+                  },
+                ),
+                const SizedBox(height: 12),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMapOption({
+    required BuildContext context,
+    required MapType type,
+    required String title,
+    required String subtitle,
+    required String badgeText,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppTheme.primaryColor.withValues(alpha: 0.12)
+              : (isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.03)),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected
+                ? AppTheme.primaryColor
+                : (isDark ? Colors.white12 : Colors.black12),
+            width: isSelected ? 1.5 : 1.0,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected
+                    ? AppTheme.primaryColor.withValues(alpha: 0.2)
+                    : (isDark ? Colors.white10 : Colors.black12),
+              ),
+              child: Icon(
+                icon,
+                color: isSelected ? AppTheme.primaryColor : (isDark ? Colors.white70 : Colors.black54),
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        title,
+                        style: GoogleFonts.outfit(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: isSelected ? AppTheme.primaryColor : null,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppTheme.primaryColor.withValues(alpha: 0.2)
+                              : (isDark ? Colors.white12 : Colors.black12),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          badgeText,
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.8,
+                            color: isSelected ? AppTheme.primaryColor : (isDark ? Colors.white60 : Colors.black54),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark ? Colors.white60 : Colors.black54,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              isSelected ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+              color: isSelected ? AppTheme.primaryColor : (isDark ? Colors.white24 : Colors.black26),
+              size: 22,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _MapButton extends StatelessWidget {
@@ -528,7 +836,7 @@ class _StatCard extends StatelessWidget {
         Text(
           label,
           style: GoogleFonts.outfit(
-            color: AppTheme.darkTextSecondary,
+            color: Theme.of(context).textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary,
             fontSize: 11,
           ),
         ),

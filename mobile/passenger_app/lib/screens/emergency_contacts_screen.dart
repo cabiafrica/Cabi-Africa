@@ -74,7 +74,16 @@ class _EmergencyContactsScreenState
             itemBuilder: (context, index) {
               final contact = contacts[index];
               return ListTile(
-                leading: const CircleAvatar(child: Icon(Icons.person)),
+                leading: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.5), width: 1.5),
+                  ),
+                  child: const CircleAvatar(
+                    backgroundColor: Colors.black,
+                    child: Icon(Icons.person_rounded, color: Color(0xFFF59E0B)),
+                  ),
+                ),
                 title: Text(contact.name),
                 subtitle: Text(contact.phone),
                 trailing: IconButton(

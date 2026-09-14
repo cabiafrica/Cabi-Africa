@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart' as legacy_provider;
@@ -22,15 +23,25 @@ Future<void> main() async {
     GoogleFonts.config.allowRuntimeFetching = true;
     AppTheme.useGoogleFonts = true;
   }
+  final prefs = await SharedPreferences.getInstance();
+  final themeString = prefs.getString('theme_mode');
+  ThemeMode initialThemeMode = ThemeMode.system;
+  if (themeString == 'light') {
+    initialThemeMode = ThemeMode.light;
+  } else if (themeString == 'dark') {
+    initialThemeMode = ThemeMode.dark;
+  }
+
   runApp(
-    const ProviderScope(
-      child: CabiPassengerApp(),
+    ProviderScope(
+      child: CabiPassengerApp(initialThemeMode: initialThemeMode),
     ),
   );
 }
 
 class CabiPassengerApp extends ConsumerWidget {
-  const CabiPassengerApp({super.key});
+  final ThemeMode initialThemeMode;
+  const CabiPassengerApp({super.key, this.initialThemeMode = ThemeMode.system});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,7 +50,7 @@ class CabiPassengerApp extends ConsumerWidget {
     return legacy_provider.MultiProvider(
       providers: [
         legacy_provider.ChangeNotifierProvider(create: (_) => AuthProvider()),
-        legacy_provider.ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        legacy_provider.ChangeNotifierProvider(create: (_) => ThemeProvider(initialMode: initialThemeMode)),
       ],
       child: legacy_provider.Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

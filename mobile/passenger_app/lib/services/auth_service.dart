@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
@@ -240,8 +241,81 @@ class AuthService {
     }
   }
 
-  Future<void> updateProfile({required String name, String? imagePath}) async {
-    await Future.delayed(const Duration(seconds: 1));
+  Future<AuthResult> updateProfile({
+    required String name,
+    String? imagePath,
+    String? imageUrl,
+  }) async {
+    try {
+      final token = await _storage.read(key: 'jwt_token');
+      if (token == null) {
+        return AuthResult(isSignedIn: false, error: 'Not authenticated');
+      }
+
+      final payload = _decodeJwt(token);
+      final userId = payload?['sub'] ?? payload?['userId'];
+
+      String? photoData = imageUrl;
+      if (imagePath != null && photoData == null) {
+        final file = File(imagePath);
+        if (await file.exists()) {
+          final bytes = await file.readAsBytes();
+          final ext = imagePath.split('.').last.toLowerCase();
+          final mime = ext == 'png' ? 'image/png' : 'image/jpeg';
+          photoData = 'data:$mime;base64,${base64Encode(bytes)}';
+        } else if (imagePath.startsWith('http') || imagePath.startsWith('data:')) {
+          photoData = imagePath;
+        }
+      }
+
+      final body = <String, dynamic>{
+        'fullName': name,
+        if (photoData != null) 'passportPhotoUrl': photoData,
+        if (photoData != null) 'profilePicture': photoData,
+      };
+
+      final response = await http.put(
+        Uri.parse('$baseUrl/auth/profile'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(body),
+      ).timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        return AuthResult(
+          isSignedIn: true,
+          user: data,
+          token: token,
+        );
+      } else {
+        if (userId != null) {
+          final fallbackRes = await http.put(
+            Uri.parse('$baseUrl/users/$userId/profile'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode(body),
+          ).timeout(const Duration(seconds: 15));
+
+          if (fallbackRes.statusCode == 200 || fallbackRes.statusCode == 201) {
+            final data = jsonDecode(fallbackRes.body);
+            return AuthResult(
+              isSignedIn: true,
+              user: data,
+              token: token,
+            );
+          }
+        }
+        final err = jsonDecode(response.body);
+        return AuthResult(isSignedIn: false, error: err['message']?.toString() ?? 'Failed to update profile');
+      }
+    } catch (e) {
+      return AuthResult(isSignedIn: false, error: e.toString());
+    }
   }
 
   Future<AuthResult> forgotPassword(String identifier) async {

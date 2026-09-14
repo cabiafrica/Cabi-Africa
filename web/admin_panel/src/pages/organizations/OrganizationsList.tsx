@@ -38,7 +38,7 @@ export default function OrganizationsList() {
         <div>
           <h2 className="text-3xl font-black text-white tracking-tighter flex items-center gap-3">
             <Building className="w-8 h-8 text-brand-yellow" />
-            Organizations & SACCOs
+            Organizations
           </h2>
           <p className="text-gray-400 mt-2 text-sm">
             Manage fleets, driver associations, distress responders, and feature flags.

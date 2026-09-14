@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:driver_app/theme/app_theme.dart';
 import '../providers/auth_provider.dart';
+import '../services/auth_service.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'positive_feedback_screen.dart';
+import 'driver_profile_edit_screen.dart';
 import '../services/badge_service.dart' as badge_service;
 import '../widgets/badge_showcase_widget.dart';
 import '../services/profile_service.dart';
@@ -170,13 +174,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_note, color: AppTheme.primaryColor),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  backgroundColor: AppTheme.darkSurface,
-                  content: Text('Profile editing will be available in the next patch.', style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold)),
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DriverProfileEditScreen(
+                    currentName: name,
+                    currentProfilePictureUrl: profilePic,
+                  ),
                 ),
               );
+              if (result != null && result is Map<String, dynamic>) {
+                ref.read(authProvider.notifier).updateUser(result);
+              }
             },
           ),
         ],
@@ -271,24 +281,51 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 const SizedBox(height: 20),
                 Hero(
                   tag: 'profile_pic',
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border:
-                          Border.all(color: AppTheme.primaryColor, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.primaryColor.withValues(alpha: 0.2),
-                          blurRadius: 20,
-                          spreadRadius: 2,
-                        )
-                      ],
-                    ),
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundColor: AppTheme.darkSurface,
-                      backgroundImage: NetworkImage(profilePic),
-                    ),
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border:
+                              Border.all(color: AppTheme.primaryColor, width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                              blurRadius: 20,
+                              spreadRadius: 2,
+                            )
+                          ],
+                        ),
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundColor: AppTheme.darkSurface,
+                          backgroundImage: _resolveAvatar(profilePic),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: () => _pickAndUploadProfilePic(context, id),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryColor,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppTheme.darkSurface,
+                                width: 2,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt_rounded,
+                              color: Colors.black,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -605,6 +642,130 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+  Future<void> _pickAndUploadProfilePic(BuildContext context, String driverId) async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.darkSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'UPDATE DRIVER PHOTO',
+                style: TextStyle(
+                  color: AppTheme.primaryColor,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.camera_alt_rounded, color: AppTheme.primaryColor),
+                title: const Text('Take Photo', style: TextStyle(color: Colors.white)),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  final picked = await ImagePicker().pickImage(
+                    source: ImageSource.camera,
+                    maxWidth: 1024,
+                    maxHeight: 1024,
+                    imageQuality: 85,
+                  );
+                  if (picked != null && context.mounted) {
+                    await _uploadImageFile(context, driverId, picked.path);
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library_rounded, color: AppTheme.primaryColor),
+                title: const Text('Choose from Gallery', style: TextStyle(color: Colors.white)),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  final picked = await ImagePicker().pickImage(
+                    source: ImageSource.gallery,
+                    maxWidth: 1024,
+                    maxHeight: 1024,
+                    imageQuality: 85,
+                  );
+                  if (picked != null && context.mounted) {
+                    await _uploadImageFile(context, driverId, picked.path);
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _uploadImageFile(BuildContext context, String driverId, String filePath) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        backgroundColor: AppTheme.darkSurface,
+        content: Row(
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.primaryColor),
+            ),
+            SizedBox(width: 12),
+            Text('Updating profile picture...', style: TextStyle(color: Colors.white)),
+          ],
+        ),
+      ),
+    );
+
+    try {
+      final res = await AuthService().updateProfile(
+        userId: driverId,
+        imagePath: filePath,
+      );
+
+      if (res.isSignedIn && res.user != null) {
+        final updated = Map<String, dynamic>.from(res.user!);
+        ref.read(authProvider.notifier).updateUser(updated);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: AppTheme.darkSurface,
+              content: Text('Profile picture updated successfully!', style: TextStyle(color: AppTheme.primaryColor)),
+            ),
+          );
+        }
+      } else if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red.shade900,
+            content: Text(res.error ?? 'Failed to update picture'),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(backgroundColor: Colors.red.shade900, content: Text('Error: $e')),
+        );
+      }
+    }
+  }
+
+  ImageProvider _resolveAvatar(String profilePic) {
+    if (profilePic.startsWith('data:')) {
+      try {
+        return MemoryImage(base64Decode(profilePic.split(',').last));
+      } catch (_) {
+        return const NetworkImage("https://i.pravatar.cc/150");
+      }
+    }
+    return NetworkImage(profilePic);
+  }
 }
 
 

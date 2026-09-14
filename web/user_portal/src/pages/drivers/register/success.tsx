@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import MainLayout from '@/components/layout/MainLayout';
+import { Smartphone, FileText, Clock, Zap, PartyPopper, Gift, Share2, Coins, CheckCircle } from 'lucide-react';
 
 export default function SuccessPage() {
     const router = useRouter();
@@ -49,8 +50,8 @@ export default function SuccessPage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                            🎉 Registration Successful!
+                        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-3">
+                            <PartyPopper className="w-9 h-9 text-brand-yellow" /> Registration Successful!
                         </h1>
                         <p className="text-xl text-gray-600 dark:text-gray-400">
                             Welcome to the CABI driver community!
@@ -95,8 +96,8 @@ export default function SuccessPage() {
                         <div className="space-y-6">
                             {/* Step 1 */}
                             <div className="flex items-start">
-                                <div className="flex-shrink-0 w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
-                                    <span className="text-indigo-600 dark:text-indigo-400 font-bold">1</span>
+                                <div className="flex-shrink-0 w-10 h-10 bg-brand-yellow/10 border border-brand-yellow/30 rounded-full flex items-center justify-center">
+                                    <Smartphone className="w-5 h-5 text-brand-yellow" />
                                 </div>
                                 <div className="ml-4">
                                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
@@ -130,8 +131,8 @@ export default function SuccessPage() {
 
                             {/* Step 2 */}
                             <div className="flex items-start">
-                                <div className="flex-shrink-0 w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
-                                    <span className="text-indigo-600 dark:text-indigo-400 font-bold">2</span>
+                                <div className="flex-shrink-0 w-10 h-10 bg-brand-yellow/10 border border-brand-yellow/30 rounded-full flex items-center justify-center">
+                                    <FileText className="w-5 h-5 text-brand-yellow" />
                                 </div>
                                 <div className="ml-4">
                                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
@@ -145,8 +146,8 @@ export default function SuccessPage() {
 
                             {/* Step 3 */}
                             <div className="flex items-start">
-                                <div className="flex-shrink-0 w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
-                                    <span className="text-indigo-600 dark:text-indigo-400 font-bold">3</span>
+                                <div className="flex-shrink-0 w-10 h-10 bg-brand-yellow/10 border border-brand-yellow/30 rounded-full flex items-center justify-center">
+                                    <Clock className="w-5 h-5 text-brand-yellow" />
                                 </div>
                                 <div className="ml-4">
                                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
@@ -160,8 +161,8 @@ export default function SuccessPage() {
 
                             {/* Step 4 */}
                             <div className="flex items-start">
-                                <div className="flex-shrink-0 w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
-                                    <span className="text-indigo-600 dark:text-indigo-400 font-bold">4</span>
+                                <div className="flex-shrink-0 w-10 h-10 bg-brand-yellow/10 border border-brand-yellow/30 rounded-full flex items-center justify-center">
+                                    <Zap className="w-5 h-5 text-brand-yellow" />
                                 </div>
                                 <div className="ml-4">
                                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
@@ -176,9 +177,9 @@ export default function SuccessPage() {
                     </div>
 
                     {/* Referral Code */}
-                    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-xl p-8 mb-6 text-white">
-                        <h2 className="text-2xl font-bold mb-4">
-                            🎁 Your Referral Code
+                    <div className="bg-gradient-to-r from-black to-neutral-900 rounded-2xl shadow-xl p-8 mb-6 text-white border border-brand-yellow/20">
+                        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                            <Gift className="w-6 h-6 text-brand-yellow" /> Your Referral Code
                         </h2>
                         <p className="mb-4 text-indigo-100">
                             Earn extra income by referring other drivers! Share your unique code and earn commissions when they register.
@@ -198,13 +199,13 @@ export default function SuccessPage() {
 
                         <button
                             onClick={shareReferralLink}
-                            className="w-full px-6 py-3 bg-white text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors font-bold"
+                            className="w-full px-6 py-3 bg-brand-yellow text-black rounded-lg hover:bg-yellow-400 transition-colors font-bold flex items-center justify-center gap-2"
                         >
-                            📤 Share Referral Link
+                            <Share2 className="w-4 h-4" /> Share Referral Link
                         </button>
 
-                        <p className="mt-4 text-sm text-indigo-100">
-                            💰 Earn 30% commission (KES 600) for each driver you refer!
+                        <p className="mt-4 text-sm text-neutral-400 flex items-center gap-1.5">
+                            <Coins className="w-4 h-4 text-brand-yellow" /> Earn 30% commission (KES 600) for each driver you refer!
                         </p>
                     </div>
 

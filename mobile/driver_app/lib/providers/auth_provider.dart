@@ -44,10 +44,23 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> tryAutoLogin() async {
     final token = await _storage.read(key: 'jwt_token');
     if (token != null) {
-      // In a real app, we'd fetch the user profile from the token here
-      state = Authenticated(token);
+      final res = await _authService.getMe(token);
+      if (res.isSignedIn && res.user != null) {
+        state = Authenticated(token, res.user);
+      } else {
+        state = Authenticated(token);
+      }
     } else {
       state = const Unauthenticated();
+    }
+  }
+
+  void updateUser(Map<String, dynamic> updatedFields) {
+    if (state is Authenticated) {
+      final current = state as Authenticated;
+      final updated = Map<String, dynamic>.from(current.user ?? {});
+      updated.addAll(updatedFields);
+      state = Authenticated(current.token, updated);
     }
   }
 

@@ -37,13 +37,33 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
     _authService = widget.authService ?? ref.read(authServiceProvider);
   }
 
+  String? _validateName(String? value, String fieldName) {
+    if (value == null || value.trim().isEmpty) {
+      return '$fieldName is required';
+    }
+    final trimmed = value.trim();
+    if (RegExp(r'^\d+$').hasMatch(trimmed)) {
+      return '$fieldName cannot be a number';
+    }
+    if (RegExp(r'\d').hasMatch(trimmed)) {
+      return '$fieldName cannot contain numbers';
+    }
+    if (!RegExp(r"^[a-zA-Z\s'-]+$").hasMatch(trimmed)) {
+      return '$fieldName can only contain letters';
+    }
+    if (trimmed.length < 2) {
+      return '$fieldName must be at least 2 characters';
+    }
+    return null;
+  }
+
   String? _validatePhone(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter your phone number';
     }
     // Basic Kenyan phone number validation
-    if (!RegExp(r'^(?:\+254|0)?(7|1)\d{8}$').hasMatch(value)) {
-      return 'Enter a valid Kenyan phone number';
+    if (!RegExp(r'^(?:\+254|0)?(7|1)\d{8}$').hasMatch(value.trim())) {
+      return 'Enter a valid Kenyan phone number (e.g. +254 712 345 678)';
     }
     return null;
   }
@@ -128,37 +148,6 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
           preferredCameraDevice: CameraDevice.front,
         );
         if (photo != null) {
-          setState(() => _isLoading = true);
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Verifying passport photo quality...'),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          }
-
-          // Simulated ML verification delay
-          await Future.delayed(const Duration(seconds: 2));
-
-          // Simulate 10% chance of failing the ML quality check
-          bool passesCheck = DateTime.now().millisecond % 10 != 0;
-
-          if (!passesCheck) {
-            setState(() => _isLoading = false);
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                      'The uploaded file does not meet the standard. Please upload a professional passport photo.'),
-                  backgroundColor: Colors.redAccent,
-                  duration: Duration(seconds: 4),
-                ),
-              );
-            }
-            return;
-          }
-
           setState(() {
             _profileImage = File(photo.path);
             _isLoading = false;
@@ -333,8 +322,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                       controller: _firstNameController,
                       label: 'First Name',
                       hint: 'Legal Name',
-                      validator: (value) =>
-                          (value == null || value.isEmpty) ? 'Required' : null,
+                      validator: (value) => _validateName(value, 'First Name'),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -343,8 +331,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                       controller: _lastNameController,
                       label: 'Last Name',
                       hint: 'Surname',
-                      validator: (value) =>
-                          (value == null || value.isEmpty) ? 'Required' : null,
+                      validator: (value) => _validateName(value, 'Last Name'),
                     ),
                   ),
                 ],

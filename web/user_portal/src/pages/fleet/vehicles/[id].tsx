@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import MainLayout from '@/components/layout/MainLayout';
-import { Car, Shield, Users, Clock, AlertCircle, ArrowLeft, Plus, CheckCircle2, Trash2, UserPlus, Activity, FileText, Sparkles } from 'lucide-react';
+import { Car, Shield, Users, Clock, AlertCircle, ArrowLeft, Plus, CheckCircle2, Trash2, UserPlus, Activity, FileText, Sparkles, Phone, Mail, Loader2, Wrench } from 'lucide-react';
 
 export default function FleetVehicleDetailPage() {
     const router = useRouter();
@@ -63,7 +63,7 @@ export default function FleetVehicleDetailPage() {
     if (loading) {
         return (
             <MainLayout title="Loading Vehicle Roster..." description="Fetching vehicle telemetry and authorized operators.">
-                <div className="min-h-screen bg-slate-900 flex items-center justify-center p-8">
+                <div className="min-h-screen bg-brand-black flex items-center justify-center p-8">
                     <div className="flex flex-col items-center gap-4">
                         <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
                         <span className="text-white font-black text-lg tracking-widest uppercase text-blue-400 animate-pulse">Loading Roster & Telemetry...</span>
@@ -76,7 +76,7 @@ export default function FleetVehicleDetailPage() {
     if (error || !vehicle) {
         return (
             <MainLayout title="Vehicle Not Found" description="Could not load vehicle details.">
-                <div className="min-h-screen bg-slate-900 py-20 px-4 text-center">
+                <div className="min-h-screen bg-brand-black py-20 px-4 text-center">
                     <div className="max-w-md mx-auto bg-slate-800/40 p-12 rounded-3xl border border-white/5 shadow-2xl">
                         <AlertCircle className="w-20 h-20 text-red-500 mx-auto mb-6 animate-bounce" />
                         <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Vehicle Not Found</h2>
@@ -94,7 +94,7 @@ export default function FleetVehicleDetailPage() {
 
     return (
         <MainLayout title={`Fleet: ${vehicle.plateNumber} | Cabi`} description="Manage authorized driver roster and telemetry for this vehicle.">
-            <div className="min-h-screen bg-slate-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-brand-black text-white py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto space-y-12">
                     {/* Back navigation */}
                     <div>
@@ -178,9 +178,9 @@ export default function FleetVehicleDetailPage() {
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            <div className="text-xs text-slate-400 font-mono space-x-3">
-                                                                <span>📱 {phone}</span>
-                                                                <span className="hidden md:inline">✉️ {email}</span>
+                                                            <div className="text-xs text-slate-400 font-mono flex items-center gap-3">
+                                                                <span className="flex items-center gap-1"><Phone className="w-3 h-3" /> {phone}</span>
+                                                                <span className="hidden md:flex items-center gap-1"><Mail className="w-3 h-3" /> {email}</span>
                                                             </div>
                                                             <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
                                                                 Assigned: {new Date(vd.assignedAt).toLocaleDateString()}
@@ -195,7 +195,7 @@ export default function FleetVehicleDetailPage() {
                                                         className="self-end sm:self-center flex items-center gap-2 px-4 py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/20 font-black text-xs uppercase tracking-widest transition-all disabled:opacity-40"
                                                     >
                                                         {unassigning === vd.driverProfileId ? (
-                                                            <span className="animate-spin">🔄 Revoking...</span>
+                                                            <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Revoking...</span>
                                                         ) : (
                                                             <>
                                                                 <Trash2 className="w-4 h-4" /> Revoke Access
@@ -274,7 +274,7 @@ export default function FleetVehicleDetailPage() {
                                             <div key={claim.id} className="p-4 bg-black/30 rounded-2xl border border-white/5 space-y-2">
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-2">
-                                                        <span>{claim.benefit?.iconEmoji || '🔧'}</span>
+                                                        <Wrench className="w-4 h-4 text-slate-400" />
                                                         <span className="font-black text-white text-sm">{claim.benefit?.name || 'Maintenance'}</span>
                                                     </div>
                                                     <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${

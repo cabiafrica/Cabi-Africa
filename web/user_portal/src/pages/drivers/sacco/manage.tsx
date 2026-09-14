@@ -1,416 +1,416 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
-import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/router';
+import {
+  Building2,
+  CheckCircle,
+  Clock,
+  TrendingUp,
+  ToggleLeft,
+  ToggleRight,
+  AlertCircle,
+  ChevronRight,
+  Globe,
+  Mail,
+  Loader2,
+} from 'lucide-react';
 
-interface Member {
-    id: string;
-    user: { fullName: string; phone: string };
-    isOnline: boolean;
-    totalRidesCompleted: number;
-    averageRating: number;
+// ─── Types ──────────────────────────────────────────────────────────────────────
+
+interface SaccoPartner {
+  id: string;
+  name: string;
+  description?: string;
+  logoUrl?: string;
+  website?: string;
+  contactEmail: string;
 }
 
-interface OrgDetails {
-    id: string;
-    name: string;
-    registrationNumber: string;
-    status: string;
-    bio?: string;
-    features?: string[];
-    driver_profiles: Member[];
+interface EnrollmentStatus {
+  enrolled: boolean;
+  saccoEnrolledAt?: string;
+  incentiveActive?: boolean;
+  incentiveExpiresAt?: string;
+  totalRemitted?: number;
+  mandatoryPct?: number;
+  cabiPct?: number;
+  partner?: SaccoPartner;
 }
 
-const SERVICE_META: Record<string, { icon: string; label: string; color: string; desc: string; balanceLabel: string }> = {
-    pension:   { icon: '🏦', label: 'Pension & Retirement Fund', color: 'text-blue-400',   desc: 'Pooled retirement savings for members', balanceLabel: 'Pension Balance' },
-    insurance: { icon: '🛡️', label: 'Personal Insurance Pool',  color: 'text-green-400',  desc: 'Cooperative health, life & collision cover', balanceLabel: 'Cover Value' },
-    housing:   { icon: '🏠', label: 'Housing & Land Pools',     color: 'text-orange-400', desc: 'Collective real estate investments', balanceLabel: 'Portfolio Value' },
-    savings:   { icon: '💰', label: 'Savings & Dividends',      color: 'text-yellow-400', desc: 'High-yield group savings cycles', balanceLabel: 'Savings Pool' },
-    loans:     { icon: '⚡', label: 'Emergency Credit',         color: 'text-red-400',    desc: 'Fast micro-loans for vehicles & emergencies', balanceLabel: 'Credit Limit' },
-};
+interface Transaction {
+  id: string;
+  amount: number;
+  tripId: string;
+  createdAt: string;
+}
 
-export default function ManageOrgPage() {
-    const router = useRouter();
-    const { user, loading: authLoading } = useAuth();
-    const [org, setOrg] = useState<OrgDetails | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [memberFilter, setMemberFilter] = useState('');
+// ─── Utility ────────────────────────────────────────────────────────────────────
 
-    const organizationId = user?.driverProfile?.organizationId || user?.organizationId || user?.driver?.organizationId;
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 
-    useEffect(() => {
-        if (authLoading) return;
-        if (!organizationId) { setLoading(false); return; }
-        fetchDetails(organizationId);
-    }, [organizationId, authLoading]);
+async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options?.headers,
+    },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ message: res.statusText }));
+    throw new Error(err.message || 'Request failed');
+  }
+  return res.json() as Promise<T>;
+}
 
-    const fetchDetails = async (id: string) => {
-        setLoading(true);
-        try {
-            const res = await fetch(`/api/sacco/details/${id}`);
-            if (res.ok) setOrg(await res.json());
-            else setOrg(null);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setLoading(false);
-        }
-    };
+function kes(n: number) {
+  return `KES ${n.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
 
-    // ── Derive category & services from features[] ──────────────────────────
-    const features = org?.features || [];
-    const category = features.find(f => f.startsWith('category:'))?.replace('category:', '') ?? 'organization';
-    const services = features.filter(f => f.startsWith('service:')).map(f => f.replace('service:', ''));
-    const isSacco = category === 'sacco';
+function daysRemaining(date: string): number {
+  const diff = new Date(date).getTime() - Date.now();
+  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+}
 
-    // ── Filtered member list ─────────────────────────────────────────────────
-    const members = (org?.driver_profiles ?? []).filter(m =>
-        m.user.fullName.toLowerCase().includes(memberFilter.toLowerCase()) ||
-        m.user.phone.includes(memberFilter)
-    );
-    const onlineCount = members.filter(m => m.isOnline).length;
-    const totalRides  = members.reduce((acc, m) => acc + m.totalRidesCompleted, 0);
+// ─── Main Component ─────────────────────────────────────────────────────────────
 
-    // ── Loading ──────────────────────────────────────────────────────────────
-    if (authLoading || loading) return (
-        <MainLayout title="Manage Organization">
-            <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500" />
-            </div>
-        </MainLayout>
-    );
+export default function DriverSaccoManage() {
+  const { user } = useAuth();
+  const driverId = user?.driverProfile?.id || user?.id;
 
-    // ── No org ───────────────────────────────────────────────────────────────
-    if (!org) return (
-        <MainLayout title="No Organization Found">
-            <div className="min-h-screen bg-[#0A0A0A] flex flex-col items-center justify-center text-white gap-6">
-                <div className="text-6xl">🏢</div>
-                <h1 className="text-2xl font-bold">You don't manage any organization yet.</h1>
-                <p className="text-gray-500 max-w-md text-center">
-                    Register a <strong className="text-yellow-500">Driver Organisation</strong> to unite drivers,
-                    or a <strong className="text-yellow-500">SACCO</strong> to pool financial services like pension,
-                    insurance, and housing investments.
-                </p>
-                <Link
-                    href="/drivers/sacco/create"
-                    className="bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-4 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(234,179,8,0.3)]"
-                >
-                    Register Your Organization
-                </Link>
-            </div>
-        </MainLayout>
-    );
+  const [status, setStatus] = useState<EnrollmentStatus | null>(null);
+  const [partner, setPartner] = useState<SaccoPartner | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [enrolling, setEnrolling] = useState(false);
+  const [confirmUnenroll, setConfirmUnenroll] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  const loadData = useCallback(async () => {
+    if (!driverId) return;
+    setLoading(true);
+    try {
+      const [enrollStatus, activePartner] = await Promise.all([
+        apiFetch<EnrollmentStatus>(`/api/sacco/enrollment-status?driverId=${driverId}`),
+        apiFetch<SaccoPartner | null>('/api/sacco/active-partner').catch(() => null),
+      ]);
+      setStatus(enrollStatus);
+      setPartner(enrollStatus.partner || activePartner);
+
+      if (enrollStatus.enrolled) {
+        const txns = await apiFetch<Transaction[]>(`/api/sacco/transactions?driverId=${driverId}`);
+        setTransactions(txns.slice(0, 10));
+      }
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [driverId]);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  const handleEnroll = async () => {
+    if (!driverId || !partner) return;
+    setEnrolling(true);
+    setError(null);
+    try {
+      await apiFetch('/api/sacco/enroll', {
+        method: 'POST',
+        body: JSON.stringify({ driverId, partnerId: partner.id }),
+      });
+      setSuccessMsg(`You have successfully enrolled in ${partner.name}. Remittances will begin from your next trip.`);
+      await loadData();
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setEnrolling(false);
+    }
+  };
+
+  const handleUnenroll = async () => {
+    if (!driverId) return;
+    setEnrolling(true);
+    setError(null);
+    try {
+      await apiFetch('/api/sacco/unenroll', {
+        method: 'POST',
+        body: JSON.stringify({ driverId }),
+      });
+      setConfirmUnenroll(false);
+      setSuccessMsg('You have unenrolled from the Sacco. No further remittances will be deducted.');
+      await loadData();
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setEnrolling(false);
+    }
+  };
+
+  if (loading) {
     return (
-        <MainLayout title={`Manage ${org.name} | CABI Africa`}>
-            <div className="min-h-screen bg-[#0A0A0A] text-white py-20 px-4">
-                <div className="max-w-7xl mx-auto space-y-10">
-
-                    {/* ── Header ─────────────────────────────────────────────── */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div>
-                            <div className="flex items-center gap-3 mb-2 flex-wrap">
-                                <span className="text-2xl">{isSacco ? '🏦' : '🤝'}</span>
-                                <h1 className="text-4xl font-bold text-white">{org.name}</h1>
-                                {/* Category badge */}
-                                <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                                    isSacco
-                                        ? 'border-blue-500/30 text-blue-400 bg-blue-500/5'
-                                        : 'border-yellow-500/30 text-yellow-400 bg-yellow-500/5'
-                                }`}>
-                                    {isSacco ? 'SACCO' : 'Driver Organisation'}
-                                </span>
-                                {/* Verification status badge */}
-                                <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                                    org.status === 'VERIFIED'   ? 'border-green-500/30 text-green-500 bg-green-500/5' :
-                                    org.status === 'PENDING'    ? 'border-yellow-500/30 text-yellow-500 bg-yellow-500/5' :
-                                                                  'border-red-500/30 text-red-500 bg-red-500/5'
-                                }`}>
-                                    {org.status}
-                                </span>
-                            </div>
-                            <p className="text-gray-500 font-mono text-sm">{org.registrationNumber}</p>
-                            {org.bio && <p className="text-gray-400 text-sm mt-1 max-w-xl">{org.bio}</p>}
-                        </div>
-                        <div className="flex gap-4 shrink-0">
-                            <button
-                                onClick={() => router.push('/drivers/sacco/edit')}
-                                className="bg-white/5 border border-white/10 hover:border-yellow-500/50 text-white px-6 py-3 rounded-xl transition-all font-medium"
-                            >
-                                ⚙️ Settings
-                            </button>
-                            <button className="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-3 rounded-xl transition-all font-bold">
-                                + Invite Driver
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* ── Stats Row ───────────────────────────────────────────── */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        <StatCard label="Total Members"  value={org.driver_profiles.length} color="text-yellow-500" />
-                        <StatCard label="Active Now"     value={onlineCount}  color="text-green-500" />
-                        <StatCard label="Group Rides"    value={totalRides}   color="text-blue-500" />
-                        <StatCard label="Avg. Rating"    value="4.8 ★"        color="text-purple-400" />
-                    </div>
-
-                    {/* ═══════════════════════════════════════════════════════════
-                        BRANCH A: SACCO — Financial Services Suite
-                    ══════════════════════════════════════════════════════════════ */}
-                    {isSacco && (
-                        <section>
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-2xl font-bold text-white">
-                                    💼 Financial Services Suite
-                                </h2>
-                                <span className="text-xs text-gray-500 bg-white/5 border border-white/10 px-3 py-1 rounded-full">
-                                    {services.length} active service{services.length !== 1 ? 's' : ''}
-                                </span>
-                            </div>
-
-                            {services.length === 0 ? (
-                                <div className="bg-[#121212] border border-white/10 rounded-2xl p-10 text-center">
-                                    <p className="text-gray-500">No financial services selected.</p>
-                                    <button
-                                        onClick={() => router.push('/drivers/sacco/edit')}
-                                        className="mt-4 text-yellow-400 hover:text-yellow-300 text-sm font-medium"
-                                    >
-                                        → Configure services in Settings
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                                    {services.map(svcId => {
-                                        const meta = SERVICE_META[svcId];
-                                        if (!meta) return null;
-                                        return (
-                                            <div key={svcId} className="bg-[#121212] border border-white/10 hover:border-white/20 rounded-2xl p-6 transition-all group">
-                                                <div className="flex items-start justify-between mb-4">
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="text-3xl">{meta.icon}</span>
-                                                        <div>
-                                                            <h3 className={`font-bold text-sm ${meta.color}`}>{meta.label}</h3>
-                                                            <p className="text-xs text-gray-500 mt-0.5">{meta.desc}</p>
-                                                        </div>
-                                                    </div>
-                                                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse mt-1.5" />
-                                                </div>
-                                                <div className="border-t border-white/5 pt-4">
-                                                    <p className="text-xs text-gray-500 mb-1">{meta.balanceLabel}</p>
-                                                    <p className={`text-2xl font-bold ${meta.color}`}>
-                                                        KSh 0.00
-                                                    </p>
-                                                    <p className="text-xs text-gray-600 mt-1">Awaiting member contributions</p>
-                                                </div>
-                                                <button className="mt-4 w-full py-2 text-xs font-bold border border-white/10 hover:border-yellow-500/50 rounded-xl text-gray-400 hover:text-white transition-all">
-                                                    View Ledger →
-                                                </button>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            )}
-
-                            {/* SACCO Quick Actions */}
-                            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <QuickActionCard icon="📊" title="Run Deductions" desc="Process monthly savings from member rides" action="Coming Soon" />
-                                <QuickActionCard icon="📄" title="Generate Report" desc="Download monthly SACCO financial statements" action="Coming Soon" />
-                                <QuickActionCard icon="🔔" title="Announce to Members" desc="Send a group notification to all members" action="Coming Soon" />
-                            </div>
-                        </section>
-                    )}
-
-                    {/* ═══════════════════════════════════════════════════════════
-                        BRANCH B: DRIVER ORGANISATION — Unity & General Affairs
-                    ══════════════════════════════════════════════════════════════ */}
-                    {!isSacco && (
-                        <section>
-                            <div className="flex items-center gap-3 mb-6">
-                                <h2 className="text-2xl font-bold text-white">🤝 Driver Unity & General Affairs</h2>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                                {/* Upcoming Meetings */}
-                                <div className="bg-[#121212] border border-white/10 rounded-2xl p-6 md:col-span-2">
-                                    <h3 className="font-bold text-lg mb-4 text-white flex items-center gap-2">
-                                        📅 Upcoming Meetings
-                                    </h3>
-                                    <div className="space-y-3">
-                                        <MeetingRow date="No meetings scheduled" desc="Post a notice to invite members for discussions" placeholder />
-                                    </div>
-                                    <button className="mt-4 w-full py-2.5 text-sm font-bold border border-white/10 hover:border-yellow-500/50 rounded-xl text-gray-400 hover:text-white transition-all">
-                                        + Schedule Meeting
-                                    </button>
-                                </div>
-
-                                {/* Organisation Health */}
-                                <div className="bg-[#121212] border border-white/10 rounded-2xl p-6">
-                                    <h3 className="font-bold text-lg mb-4 text-white">📈 Org Health</h3>
-                                    <div className="space-y-4">
-                                        <HealthRow label="Member Growth" pct={org.driver_profiles.length > 0 ? 60 : 0} />
-                                        <HealthRow label="Activity Rate" pct={org.driver_profiles.length > 0 ? Math.round((onlineCount / org.driver_profiles.length) * 100) : 0} />
-                                        <HealthRow label="Profile Score" pct={org.bio ? 80 : 30} />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Announcements Board */}
-                            <div className="bg-[#121212] border border-white/10 rounded-2xl p-6 mb-8">
-                                <h3 className="font-bold text-lg mb-4 text-white flex items-center gap-2">
-                                    📢 Announcements Board
-                                </h3>
-                                <div className="border border-dashed border-white/10 rounded-xl p-8 text-center text-gray-500">
-                                    <p className="text-4xl mb-2">📋</p>
-                                    <p className="font-medium">No announcements yet</p>
-                                    <p className="text-xs mt-1">Post updates, notices, or policy changes for your driver community.</p>
-                                    <button className="mt-4 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 px-6 py-2 rounded-xl text-sm font-bold transition-all">
-                                        + Post Announcement
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Quick Actions for Org */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <QuickActionCard icon="🗳️" title="Run a Poll" desc="Get your members' opinion on group decisions" action="Coming Soon" />
-                                <QuickActionCard icon="🏅" title="Award Driver" desc="Recognize top-performing members in your org" action="Coming Soon" />
-                                <QuickActionCard icon="📨" title="Group Broadcast" desc="Send a message to all organization members" action="Coming Soon" />
-                            </div>
-                        </section>
-                    )}
-
-                    {/* ── Member Directory (shared by both categories) ─────────── */}
-                    <section>
-                        <div className="bg-[#121212] border border-white/10 rounded-2xl overflow-hidden">
-                            <div className="p-6 border-b border-white/10 flex items-center justify-between gap-4 flex-wrap">
-                                <h3 className="font-bold text-xl">
-                                    {isSacco ? '💼 SACCO Member Directory' : '🤝 Driver Directory'}
-                                </h3>
-                                <input
-                                    type="text"
-                                    value={memberFilter}
-                                    onChange={e => setMemberFilter(e.target.value)}
-                                    placeholder="Filter by name or phone..."
-                                    className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-yellow-500 w-64"
-                                />
-                            </div>
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-left">
-                                    <thead className="bg-white/5 text-gray-400 text-sm uppercase font-medium">
-                                        <tr>
-                                            <th className="px-6 py-4">Driver Name</th>
-                                            <th className="px-6 py-4">Status</th>
-                                            <th className="px-6 py-4">Total Rides</th>
-                                            <th className="px-6 py-4">Rating</th>
-                                            {isSacco && <th className="px-6 py-4">Contributions</th>}
-                                            <th className="px-6 py-4 text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-white/10">
-                                        {members.length === 0 ? (
-                                            <tr>
-                                                <td colSpan={isSacco ? 6 : 5} className="px-6 py-10 text-center text-gray-600">
-                                                    {memberFilter ? 'No members match your filter.' : 'No members yet. Invite drivers to join!'}
-                                                </td>
-                                            </tr>
-                                        ) : members.map(member => (
-                                            <tr key={member.id} className="hover:bg-white/[0.02] transition-all">
-                                                <td className="px-6 py-4">
-                                                    <div className="font-bold text-white">{member.user.fullName}</div>
-                                                    <div className="text-xs text-gray-500">{member.user.phone}</div>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    {member.isOnline ? (
-                                                        <span className="flex items-center gap-2 text-green-500 text-sm">
-                                                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />Online
-                                                        </span>
-                                                    ) : (
-                                                        <span className="flex items-center gap-2 text-gray-500 text-sm">
-                                                            <span className="w-2 h-2 rounded-full bg-gray-600" />Offline
-                                                        </span>
-                                                    )}
-                                                </td>
-                                                <td className="px-6 py-4 text-gray-300 font-mono">{member.totalRidesCompleted}</td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center text-yellow-500">
-                                                        <span className="mr-1">{member.averageRating || '5.0'}</span>
-                                                        <svg className="w-3 h-3 fill-current" viewBox="0 0 20 20">
-                                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                                                        </svg>
-                                                    </div>
-                                                </td>
-                                                {isSacco && (
-                                                    <td className="px-6 py-4 text-gray-500 font-mono text-sm">KSh 0.00</td>
-                                                )}
-                                                <td className="px-6 py-4 text-right">
-                                                    <button className="text-gray-500 hover:text-white transition-all">
-                                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
-                                                        </svg>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </section>
-
-                </div>
-            </div>
-        </MainLayout>
-    );
-}
-
-// ── Sub-components ──────────────────────────────────────────────────────────
-
-function StatCard({ label, value, color }: { label: string; value: number | string; color: string }) {
-    return (
-        <div className="bg-[#121212] border border-white/10 p-6 rounded-2xl">
-            <p className="text-gray-500 text-sm mb-1">{label}</p>
-            <h2 className={`text-3xl font-bold ${color}`}>{value}</h2>
+      <MainLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-yellow-400" />
         </div>
+      </MainLayout>
     );
-}
+  }
 
-function QuickActionCard({ icon, title, desc, action }: { icon: string; title: string; desc: string; action: string }) {
-    return (
-        <div className="bg-[#121212] border border-white/10 hover:border-white/20 rounded-2xl p-5 flex items-start gap-4 transition-all cursor-pointer group">
-            <span className="text-2xl mt-0.5">{icon}</span>
-            <div className="flex-1">
-                <h4 className="font-bold text-white text-sm">{title}</h4>
-                <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
-                <span className="text-xs text-yellow-500/60 group-hover:text-yellow-500 transition-all mt-2 inline-block">{action}</span>
-            </div>
-        </div>
-    );
-}
-
-function MeetingRow({ date, desc, placeholder }: { date: string; desc: string; placeholder?: boolean }) {
-    return (
-        <div className={`flex items-center gap-3 p-3 rounded-xl ${placeholder ? 'border border-dashed border-white/10 text-gray-600' : 'bg-white/5'}`}>
-            <span className="text-lg">📅</span>
-            <div>
-                <p className={`font-medium text-sm ${placeholder ? 'text-gray-600' : 'text-white'}`}>{date}</p>
-                <p className="text-xs text-gray-600">{desc}</p>
-            </div>
-        </div>
-    );
-}
-
-function HealthRow({ label, pct }: { label: string; pct: number }) {
-    return (
+  return (
+    <MainLayout>
+      <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+        {/* Header */}
         <div>
-            <div className="flex justify-between text-xs mb-1">
-                <span className="text-gray-400">{label}</span>
-                <span className="text-white font-mono">{pct}%</span>
-            </div>
-            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                <div
-                    className="h-full bg-yellow-500 rounded-full transition-all duration-700"
-                    style={{ width: `${pct}%` }}
-                />
-            </div>
+          <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
+            <Building2 className="w-7 h-7 text-yellow-400" />
+            Sacco Services
+          </h1>
+          <p className="text-gray-400 text-sm mt-1">
+            Opt into our partner Sacco to grow your financial security — voluntary, transparent, yours.
+          </p>
         </div>
-    );
+
+        {/* Alerts */}
+        {error && (
+          <div className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
+            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <span>{error}</span>
+          </div>
+        )}
+        {successMsg && (
+          <div className="flex items-start gap-3 p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 text-sm">
+            <CheckCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <span>{successMsg}</span>
+          </div>
+        )}
+
+        {/* No active partner */}
+        {!partner && (
+          <div className="p-6 bg-white/5 border border-white/10 rounded-2xl text-center">
+            <Building2 className="w-10 h-10 mx-auto mb-3 text-gray-500 opacity-50" />
+            <p className="text-gray-400 text-sm">
+              No Sacco partner is currently active. Check back soon.
+            </p>
+          </div>
+        )}
+
+        {/* Partner Card */}
+        {partner && (
+          <div className="p-6 bg-white/5 border border-white/10 rounded-2xl space-y-4">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-yellow-400/10 flex items-center justify-center flex-shrink-0">
+                <Building2 className="w-6 h-6 text-yellow-400" />
+              </div>
+              <div className="flex-1">
+                <h2 className="font-bold text-white text-lg">{partner.name}</h2>
+                {partner.description && (
+                  <p className="text-sm text-gray-400 mt-1 leading-relaxed">{partner.description}</p>
+                )}
+                <div className="flex flex-wrap gap-3 mt-3">
+                  {partner.website && (
+                    <a
+                      href={partner.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-yellow-400 transition-colors"
+                    >
+                      <Globe className="w-3.5 h-3.5" />
+                      Website
+                    </a>
+                  )}
+                  {partner.contactEmail && (
+                    <a
+                      href={`mailto:${partner.contactEmail}`}
+                      className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-yellow-400 transition-colors"
+                    >
+                      <Mail className="w-3.5 h-3.5" />
+                      {partner.contactEmail}
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Enrollment split info */}
+            {status && (
+              <div className="p-3 bg-black/20 rounded-xl">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">How your earnings split</p>
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div>
+                    <p className="text-xs text-gray-500">You keep</p>
+                    <p className="font-black text-white text-lg">
+                      {status.enrolled ? `${80}%` : '82%'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">To Sacco</p>
+                    <p className={`font-black text-lg ${status.enrolled ? 'text-yellow-400' : 'text-gray-600'}`}>
+                      {status.enrolled
+                        ? `${status.incentiveActive ? (status.mandatoryPct ?? 2) + 3 : status.mandatoryPct ?? 2}%`
+                        : '0%'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Cabi</p>
+                    <p className="font-black text-white text-lg">
+                      {status.enrolled && status.incentiveActive
+                        ? `${(status.cabiPct ?? 18) - 3}%`
+                        : `${status.cabiPct ?? 18}%`}
+                    </p>
+                  </div>
+                </div>
+                {status.enrolled && status.incentiveActive && (
+                  <p className="text-xs text-green-400 text-center mt-2">
+                    ✨ Joining incentive active — Cabi is contributing an extra 3% to your Sacco
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Enrollment Toggle */}
+        {partner && status && (
+          <div className={`p-5 rounded-2xl border transition-all ${
+            status.enrolled
+              ? 'border-green-500/30 bg-green-500/5'
+              : 'border-white/10 bg-white/5'
+          }`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-bold text-white">
+                  {status.enrolled ? 'Enrolled in Sacco' : 'Not enrolled'}
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {status.enrolled
+                    ? `Joined ${new Date(status.saccoEnrolledAt!).toLocaleDateString('en-KE', { day: '2-digit', month: 'short', year: 'numeric' })}`
+                    : 'Enroll to start building your financial safety net'}
+                </p>
+              </div>
+              {status.enrolled ? (
+                <CheckCircle className="w-8 h-8 text-green-400" />
+              ) : (
+                <button
+                  onClick={handleEnroll}
+                  disabled={enrolling}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-yellow-400 text-black font-bold rounded-xl hover:bg-yellow-300 transition-all disabled:opacity-50 text-sm"
+                >
+                  {enrolling ? <Loader2 className="w-4 h-4 animate-spin" /> : <ToggleRight className="w-4 h-4" />}
+                  Enroll Now
+                </button>
+              )}
+            </div>
+
+            {status.enrolled && (
+              <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+                <p className="text-xs text-gray-500">
+                  You can opt out at any time. Existing remittances remain in the Sacco.
+                </p>
+                <button
+                  onClick={() => setConfirmUnenroll(true)}
+                  className="text-xs text-red-400 hover:text-red-300 transition-colors flex items-center gap-1"
+                >
+                  <ToggleLeft className="w-3.5 h-3.5" />
+                  Opt out
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Incentive Countdown */}
+        {status?.enrolled && status.incentiveActive && status.incentiveExpiresAt && (
+          <div className="p-4 bg-yellow-400/5 border border-yellow-400/20 rounded-2xl flex items-start gap-3">
+            <Clock className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-bold text-yellow-400 text-sm">Joining Incentive Active</p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Cabi is adding an extra 3% to your Sacco for{' '}
+                <span className="text-white font-bold">{daysRemaining(status.incentiveExpiresAt)} more days</span>.
+                Expires{' '}
+                {new Date(status.incentiveExpiresAt).toLocaleDateString('en-KE', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                })}.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Total Remitted */}
+        {status?.enrolled && typeof status.totalRemitted === 'number' && (
+          <div className="p-5 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <TrendingUp className="w-5 h-5 text-yellow-400" />
+              <div>
+                <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Total Remitted to Sacco</p>
+                <p className="text-2xl font-black text-white">{kes(status.totalRemitted)}</p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-500" />
+          </div>
+        )}
+
+        {/* Recent Transactions */}
+        {status?.enrolled && transactions.length > 0 && (
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Recent Remittances</h3>
+            <div className="space-y-2">
+              {transactions.map(tx => (
+                <div
+                  key={tx.id}
+                  className="flex items-center justify-between px-4 py-3 bg-white/5 border border-white/5 rounded-xl"
+                >
+                  <div>
+                    <p className="text-sm text-white font-medium">Trip #{tx.tripId.slice(-6)}</p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(tx.createdAt).toLocaleDateString('en-KE', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                  <p className="font-bold text-yellow-400 text-sm">{kes(tx.amount)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Unenroll Confirm Modal */}
+        {confirmUnenroll && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <div className="bg-[#111] border border-white/10 rounded-2xl w-full max-w-sm p-6 space-y-4">
+              <h3 className="font-bold text-white text-lg">Opt out of Sacco?</h3>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                You will stop making remittances after your next trip. Funds already sent to the Sacco remain in your account with {partner?.name}.
+              </p>
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setConfirmUnenroll(false)}
+                  className="flex-1 px-4 py-2.5 border border-white/10 rounded-xl text-gray-400 hover:text-white font-bold text-sm transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUnenroll}
+                  disabled={enrolling}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all disabled:opacity-50 text-sm"
+                >
+                  {enrolling ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                  Yes, Opt Out
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </MainLayout>
+  );
 }

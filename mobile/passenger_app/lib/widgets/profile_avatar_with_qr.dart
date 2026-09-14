@@ -1,8 +1,42 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:passenger_app/theme/app_theme.dart';
 
+ImageProvider getPassengerAvatarProvider(dynamic userOrUrl) {
+  if (userOrUrl is Map) {
+    final photo = userOrUrl['profilePicture'] ?? userOrUrl['passportPhotoUrl'] ?? userOrUrl['avatar'];
+    if (photo != null && photo.toString().trim().isNotEmpty) {
+      final str = photo.toString().trim();
+      if (str.startsWith('http://') || str.startsWith('https://')) {
+        return NetworkImage(str);
+      } else if (str.startsWith('data:')) {
+        try {
+          return MemoryImage(base64Decode(str.split(',').last));
+        } catch (_) {}
+      } else if (str.startsWith('assets/')) {
+        return AssetImage(str);
+      }
+    }
+  } else if (userOrUrl is String && userOrUrl.trim().isNotEmpty) {
+    final str = userOrUrl.trim();
+    if (str.startsWith('http://') || str.startsWith('https://')) {
+      return NetworkImage(str);
+    } else if (str.startsWith('data:')) {
+      try {
+        return MemoryImage(base64Decode(str.split(',').last));
+      } catch (_) {}
+    } else if (str.startsWith('assets/')) {
+      return AssetImage(str);
+    }
+  }
+  return const NetworkImage(
+    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+  );
+}
+
 class ProfileAvatarWithQr extends StatelessWidget {
+  final dynamic user;
   final String imageUrl;
   final bool isNetworkImage;
   final double radius;
@@ -11,7 +45,8 @@ class ProfileAvatarWithQr extends StatelessWidget {
 
   const ProfileAvatarWithQr({
     super.key,
-    required this.imageUrl,
+    this.user,
+    this.imageUrl = '',
     this.isNetworkImage = false,
     this.radius = 20,
     required this.qrData,
@@ -113,25 +148,40 @@ class ProfileAvatarWithQr extends StatelessWidget {
     );
   }
 
+  ImageProvider _resolveAvatar() {
+    if (user != null) {
+      return getPassengerAvatarProvider(user);
+    }
+    if (imageUrl.isNotEmpty) {
+      if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+        return NetworkImage(imageUrl);
+      }
+      return AssetImage(imageUrl);
+    }
+    return getPassengerAvatarProvider(null);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Container(
-          padding: const EdgeInsets.all(2),
+          padding: const EdgeInsets.all(2.5),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.2), width: 1),
+            border: Border.all(color: AppTheme.primaryColor, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primaryColor.withValues(alpha: 0.35),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: CircleAvatar(
             radius: radius,
-            backgroundColor: AppTheme.darkSurface,
-            backgroundImage: isNetworkImage
-                ? NetworkImage(imageUrl)
-                : AssetImage(imageUrl) as ImageProvider,
-            child: (imageUrl.isEmpty)
-                ? Icon(Icons.person, size: radius, color: Colors.white24)
-                : null,
+            backgroundColor: const Color(0xFF1E1E1E),
+            backgroundImage: _resolveAvatar(),
           ),
         ),
         if (showQrIcon)

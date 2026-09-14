@@ -1,290 +1,346 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
-import { OrganizationStatus } from '@prisma/client';
-import { randomUUID } from 'crypto';
+
+// ─── Trip Split Engine ────────────────────────────────────────────────────────
+
+export interface TripSplitInput {
+    fare: number;
+    driverEnrolled: boolean;
+    incentiveActive: boolean;
+    mandatoryRemittancePct: number;  // e.g. 0.02 (2%)
+    incentivePct: number;             // e.g. 0.03 (3%) — from Cabi's commission
+    cabiCommissionPct: number;        // e.g. 0.18 (18%)
+}
+
+export interface TripSplitResult {
+    driverAmount: number;
+    saccoAmount: number;
+    cabiAmount: number;
+    breakdown: {
+        driverPct: number;
+        saccoPct: number;
+        cabiPct: number;
+        incentiveActive: boolean;
+    };
+}
 
 /**
- * Represents the structure of the TripPaid event.
+ * Pure function — computes how a trip fare is split.
+ *
+ * Business rules:
+ *   Not enrolled:           driver=82%, sacco=0%,  cabi=18%
+ *   Enrolled (no incentive): driver=80%, sacco=2%,  cabi=18%
+ *   Enrolled + incentive:   driver=80%, sacco=5%,  cabi=15%
+ *   (the 3% incentive comes FROM cabi's commission, never extra)
  */
-export class TripPaidEvent {
-    tripId: string;
-    driverId: string;
-    finalFare: number;
+export function computeTripSplit(input: TripSplitInput): TripSplitResult {
+    const { fare, driverEnrolled, incentiveActive, mandatoryRemittancePct, incentivePct, cabiCommissionPct } = input;
+
+    if (!driverEnrolled) {
+        const driverPct = 1 - cabiCommissionPct;
+        return {
+            driverAmount: fare * driverPct,
+            saccoAmount: 0,
+            cabiAmount: fare * cabiCommissionPct,
+            breakdown: { driverPct, saccoPct: 0, cabiPct: cabiCommissionPct, incentiveActive: false }
+        };
+    }
+
+    // Driver always gets (1 - cabiCommissionPct - mandatoryRemittancePct)
+    const driverPct = 1 - cabiCommissionPct - mandatoryRemittancePct;
+
+    if (incentiveActive) {
+        // The extra incentivePct comes out of cabi's share
+        const saccoPct = mandatoryRemittancePct + incentivePct;
+        const cabiPct = cabiCommissionPct - incentivePct;
+        return {
+            driverAmount: fare * driverPct,
+            saccoAmount: fare * saccoPct,
+            cabiAmount: fare * cabiPct,
+            breakdown: { driverPct, saccoPct, cabiPct, incentiveActive: true }
+        };
+    }
+
+    return {
+        driverAmount: fare * driverPct,
+        saccoAmount: fare * mandatoryRemittancePct,
+        cabiAmount: fare * cabiCommissionPct,
+        breakdown: { driverPct, saccoPct: mandatoryRemittancePct, cabiPct: cabiCommissionPct, incentiveActive: false }
+    };
 }
 
-export class CreateSaccoDto {
+// ─── DTOs ─────────────────────────────────────────────────────────────────────
+
+export class CreateSaccoPartnerDto {
     name: string;
-    email: string;
-    registrationNumber: string;
-    founderName: string;
-    certificateUrl?: string;
-    isExternal?: boolean;
+    contactEmail: string;
     apiBaseUrl?: string;
-    webhookUrl?: string;
-    driverId?: string;
-    features?: string[];
+    apiKey?: string;
+    connectorType: 'REST_API' | 'WEBHOOK' | 'LEDGER_EXPORT';
+    testMode?: boolean;
+    logoUrl?: string;
+    description?: string;
+    website?: string;
 }
 
-export class UpdateSaccoDto {
+export class UpdateSaccoPartnerDto {
     name?: string;
-    email?: string;
-    bio?: string;
+    contactEmail?: string;
+    apiBaseUrl?: string;
+    apiKey?: string;
+    connectorType?: 'REST_API' | 'WEBHOOK' | 'LEDGER_EXPORT';
+    testMode?: boolean;
+    isActive?: boolean;
     logoUrl?: string;
-    bannerUrl?: string;
-    primaryColor?: string;
-    secondaryColor?: string;
+    description?: string;
     website?: string;
-    twitter?: string;
-    facebook?: string;
-    instagram?: string;
-    linkedin?: string;
-    registrationNumber?: string;
-    certificateUrl?: string;
-    founderName?: string;
-    driverId?: string;
-    features?: string[];
 }
+
+export class SaccoFinancialConfigDto {
+    mandatoryRemittancePct: number;
+    cabiCommissionPct: number;
+    joiningIncentiveEnabled: boolean;
+    joiningIncentivePct: number;
+    joiningIncentiveDurationDays: number;
+}
+
+// ─── Main Service ─────────────────────────────────────────────────────────────
 
 @Injectable()
 export class SaccoService {
     private readonly logger = new Logger(SaccoService.name);
 
-    constructor(private readonly prisma: PrismaService) { }
-
-    async processDeduction(event: TripPaidEvent): Promise<any> {
-        this.logger.log(`Processing SACCO deduction for trip: ${event.tripId}`);
-
-        try {
-            // 1. Fetch all required configuration (Simulated or from DB settings)
-            // Ideally fetch from Settings table if available, else usage defaults
-            const saccoConfig = { savingsRate: 0.05 }; // 5%
-            const commissionConfig = { totalCommission: 0.2 }; // 20%
-
-            this.logger.log(`Fetched SACCO config: ${JSON.stringify(saccoConfig)}`);
-
-            // 2. Check if savings rate is zero
-            if (saccoConfig.savingsRate <= 0) {
-                this.logger.log('SACCO savings rate is zero. No deduction will be made.');
-                return { status: 'skipped', reason: 'zero_savings_rate' };
-            }
-
-            // 3. Calculate the deduction amount
-            const totalCommission = Number(event.finalFare) * commissionConfig.totalCommission;
-            const savingsAmount = totalCommission * saccoConfig.savingsRate;
-
-            if (savingsAmount <= 0) {
-                this.logger.log('Calculated savings amount is zero. No deduction will be made.');
-                return { status: 'skipped', reason: 'zero_amount' };
-            }
-
-            // 4. Persist the transaction to DB
-            this.logger.log(`Persisting SACCO transaction for driver: ${event.driverId}, amount: ${savingsAmount}`);
-
-            const transaction = await this.prisma.saccoLedger.create({
-                data: {
-                    driverId: event.driverId,
-                    amount: savingsAmount,
-                    type: 'SACCO_SAVING',
-                    relatedTripId: event.tripId,
-                }
-            });
-
-            this.logger.log(`Successfully processed SACCO deduction of ${savingsAmount} for driver: ${event.driverId}. Ledger ID: ${transaction.id}`);
-
-            return {
-                status: 'success',
-                transaction
-            };
-
-        } catch (error) {
-            this.logger.error('Failed to process SACCO deduction', error);
-            // Don't crash the consumer, just log error? depending on requirements.
-            // Throwing allows retry strategies if configured.
-            throw error;
-        }
-    }
+    constructor(private readonly prisma: PrismaService) {}
 
     async getHealth() {
         return { status: 'OK', service: 'sacco-service', timestamp: new Date() };
     }
 
-    async getSavingsBalance(driverId: string) {
-        // Sum up all transactions for the driver
-        // Assuming withdrawals or loans would be negative amounts or handled via type
-        // For simplicity: All 'SACCO_SAVING' are positive. Withdrawals should be subtracted.
-        // We can group by type or just sum amount if we store negatives for withdrawals.
+    // ── Partner Management ────────────────────────────────────────────────────
 
-        // Let's assume for now we just sum everything.
-        // Prisma aggregate
-        const result = await this.prisma.saccoLedger.aggregate({
-            _sum: {
-                amount: true
-            },
-            where: {
-                driverId: driverId
-            }
-        });
-
-        // If no transactions, sum is null
-        const totalSavings = result._sum.amount ? Number(result._sum.amount) : 0;
-
-        // Available might be less if there are loans locked, etc.
-        // For now: available = total
-        return {
-            totalSavings,
-            availableWithdrawal: totalSavings
-        };
-    }
-
-    async getTransactions(driverId: string) {
-        return this.prisma.saccoLedger.findMany({
-            where: { driverId },
-            orderBy: { createdAt: 'desc' },
-            take: 50 // limit to recent 50
-        });
-    }
-
-    async createSacco(dto: CreateSaccoDto): Promise<any> {
-        this.logger.log(`Registering new SACCO: ${dto.name}`);
-        
-        // Check if registration number already exists
-        const existing = await this.prisma.organizations.findFirst({
-            where: { registrationNumber: dto.registrationNumber }
-        });
-
-        if (existing) {
-            throw new Error('SACCO with this registration number already exists');
-        }
-
-        // Create SACCO
-        // If no certificate provided, status is UNVERIFIED (invalid)
-        const status = dto.certificateUrl ? OrganizationStatus.PENDING : OrganizationStatus.UNVERIFIED;
-
-        const newOrg = await this.prisma.organizations.create({
+    async createPartner(dto: CreateSaccoPartnerDto): Promise<any> {
+        this.logger.log(`Creating external Sacco partner: ${dto.name}`);
+        return this.prisma.saccoPartner.create({
             data: {
-                id: randomUUID(),
                 name: dto.name,
-                email: dto.email,
-                registrationNumber: dto.registrationNumber,
-                founderName: dto.founderName,
-                registrationCertificateUrl: dto.certificateUrl,
-                status: status,
-                features: dto.features || [],
+                contactEmail: dto.contactEmail,
+                apiBaseUrl: dto.apiBaseUrl ?? null,
+                apiKey: dto.apiKey ?? null,
+                connectorType: dto.connectorType,
+                testMode: dto.testMode ?? true,
+                isActive: false, // Admin must explicitly activate
+                logoUrl: dto.logoUrl ?? null,
+                description: dto.description ?? null,
+                website: dto.website ?? null,
                 updatedAt: new Date(),
             }
         });
-
-        // Automatically associate the creating driver with the new SACCO
-        if (dto.driverId) {
-            const profile = await this.prisma.driverProfile.findUnique({
-                where: { userId: dto.driverId }
-            });
-            if (profile) {
-                await this.prisma.driverProfile.update({
-                    where: { userId: dto.driverId },
-                    data: { organizationId: newOrg.id }
-                });
-            }
-        }
-
-        return newOrg;
     }
 
-    async updateSacco(id: string, dto: UpdateSaccoDto): Promise<any> {
-        this.logger.log(`Updating SACCO: ${id}`);
-
-        const org = await this.prisma.organizations.findUnique({
-            where: { id }
+    async updatePartner(id: string, dto: UpdateSaccoPartnerDto): Promise<any> {
+        this.logger.log(`Updating Sacco partner: ${id}`);
+        const partner = await this.prisma.saccoPartner.findUnique({ where: { id } });
+        if (!partner) throw new Error('Sacco partner not found');
+        return this.prisma.saccoPartner.update({
+            where: { id },
+            data: { ...dto, updatedAt: new Date() }
         });
+    }
 
-        if (!org) {
-            throw new Error('SACCO not found');
-        }
+    async listPartners(): Promise<any[]> {
+        return this.prisma.saccoPartner.findMany({
+            orderBy: { createdAt: 'desc' },
+            include: { _count: { select: { enrolledDrivers: true } } }
+        });
+    }
 
-        const updateData: any = {
-            ...dto,
-            updatedAt: new Date(),
+    async getPartnerById(id: string): Promise<any> {
+        return this.prisma.saccoPartner.findUnique({
+            where: { id },
+            include: { _count: { select: { enrolledDrivers: true } } }
+        });
+    }
+
+    async getActivePartner(): Promise<any> {
+        return this.prisma.saccoPartner.findFirst({ where: { isActive: true } });
+    }
+
+    // ── Financial Config ──────────────────────────────────────────────────────
+
+    async getFinancialConfig(): Promise<SaccoFinancialConfigDto> {
+        const keys = [
+            'SACCO_MANDATORY_REMITTANCE_PCT',
+            'CABI_COMMISSION_PCT',
+            'SACCO_JOINING_INCENTIVE_ENABLED',
+            'SACCO_JOINING_INCENTIVE_PCT',
+            'SACCO_JOINING_INCENTIVE_DURATION_DAYS',
+        ];
+
+        const settings = await this.prisma.systemSettings.findMany({ where: { key: { in: keys } } });
+        const get = (k: string, def: string) => settings.find(s => s.key === k)?.value ?? def;
+
+        return {
+            mandatoryRemittancePct: parseFloat(get('SACCO_MANDATORY_REMITTANCE_PCT', '0.02')),
+            cabiCommissionPct: parseFloat(get('CABI_COMMISSION_PCT', '0.18')),
+            joiningIncentiveEnabled: get('SACCO_JOINING_INCENTIVE_ENABLED', 'false') === 'true',
+            joiningIncentivePct: parseFloat(get('SACCO_JOINING_INCENTIVE_PCT', '0.03')),
+            joiningIncentiveDurationDays: parseInt(get('SACCO_JOINING_INCENTIVE_DURATION_DAYS', '90')),
+        };
+    }
+
+    async updateFinancialConfig(dto: SaccoFinancialConfigDto): Promise<SaccoFinancialConfigDto> {
+        this.logger.log('Updating Sacco financial config');
+
+        const upsert = async (key: string, value: string) => {
+            await this.prisma.systemSettings.upsert({
+                where: { key },
+                update: { value, updatedAt: new Date() },
+                create: { key, value, description: `Sacco config: ${key}`, updatedAt: new Date() }
+            });
         };
 
-        // If the update payload includes driverId, omit it from prisma update
-        delete updateData.driverId;
+        await Promise.all([
+            upsert('SACCO_MANDATORY_REMITTANCE_PCT', String(dto.mandatoryRemittancePct)),
+            upsert('CABI_COMMISSION_PCT', String(dto.cabiCommissionPct)),
+            upsert('SACCO_JOINING_INCENTIVE_ENABLED', String(dto.joiningIncentiveEnabled)),
+            upsert('SACCO_JOINING_INCENTIVE_PCT', String(dto.joiningIncentivePct)),
+            upsert('SACCO_JOINING_INCENTIVE_DURATION_DAYS', String(dto.joiningIncentiveDurationDays)),
+        ]);
 
-        // If a critical legal field (registration number or certificate) is modified,
-        // revert the verification status back to PENDING.
-        let statusChanged = false;
-        if (dto.registrationNumber && dto.registrationNumber !== org.registrationNumber) {
-            updateData.status = OrganizationStatus.PENDING;
-            statusChanged = true;
-        }
-        if (dto.certificateUrl && dto.certificateUrl !== org.registrationCertificateUrl) {
-            updateData.status = OrganizationStatus.PENDING;
-            statusChanged = true;
-        }
-
-        const updatedOrg = await this.prisma.organizations.update({
-            where: { id },
-            data: updateData
-        });
-
-        this.logger.log(`SACCO ${id} updated successfully. Status reset to PENDING: ${statusChanged}`);
-        return updatedOrg;
+        return this.getFinancialConfig();
     }
 
-    async joinSacco(driverId: string, saccoId: string): Promise<any> {
-        this.logger.log(`Driver ${driverId} joining SACCO ${saccoId}`);
-        
-        const org = await this.prisma.organizations.findUnique({
-            where: { id: saccoId }
-        });
+    // ── Driver Enrollment ─────────────────────────────────────────────────────
 
-        if (!org || org.status !== OrganizationStatus.VERIFIED) {
-            throw new Error('SACCO is not verified or does not exist');
-        }
+    async enrollDriver(driverId: string, partnerId: string): Promise<any> {
+        this.logger.log(`Driver ${driverId} enrolling in Sacco partner ${partnerId}`);
+
+        const partner = await this.prisma.saccoPartner.findUnique({ where: { id: partnerId } });
+        if (!partner || !partner.isActive) throw new Error('Sacco partner is not active or does not exist');
+
+        const profile = await this.prisma.driverProfile.findUnique({ where: { userId: driverId } });
+        if (!profile) throw new Error('Driver profile not found');
 
         return this.prisma.driverProfile.update({
             where: { userId: driverId },
-            data: { organizationId: saccoId }
+            data: {
+                saccoEnrolled: true,
+                saccoPartnerId: partnerId,
+                saccoEnrolledAt: new Date(),
+            }
         });
     }
 
-    async leaveSacco(driverId: string): Promise<any> {
-        this.logger.log(`Driver ${driverId} leaving SACCO`);
-        
+    async unenrollDriver(driverId: string): Promise<any> {
+        this.logger.log(`Driver ${driverId} unenrolling from Sacco`);
         return this.prisma.driverProfile.update({
             where: { userId: driverId },
-            data: { organizationId: null }
+            data: {
+                saccoEnrolled: false,
+                saccoPartnerId: null,
+                saccoEnrolledAt: null,
+            }
         });
     }
 
-    async getSaccos(search?: string): Promise<any[]> {
-        return this.prisma.organizations.findMany({
+    async getEnrolledDrivers(partnerId?: string): Promise<any[]> {
+        return this.prisma.driverProfile.findMany({
             where: {
-                status: OrganizationStatus.VERIFIED,
-                OR: search ? [
-                    { name: { contains: search, mode: 'insensitive' } },
-                    { registrationNumber: { contains: search, mode: 'insensitive' } }
-                ] : undefined
+                saccoEnrolled: true,
+                ...(partnerId ? { saccoPartnerId: partnerId } : {})
             },
             include: {
-              _count: {
-                select: { driver_profiles: true }
-              }
+                user: { select: { fullName: true, phone: true, email: true } }
+            },
+            orderBy: { saccoEnrolledAt: 'desc' }
+        });
+    }
+
+    async getDriverEnrollmentStatus(driverId: string): Promise<any> {
+        const profile = await this.prisma.driverProfile.findUnique({
+            where: { userId: driverId },
+            select: {
+                saccoEnrolled: true,
+                saccoPartnerId: true,
+                saccoEnrolledAt: true,
+            }
+        });
+
+        if (!profile?.saccoEnrolled) {
+            return { enrolled: false, partner: null, enrolledAt: null, incentiveActive: false, incentiveDaysRemaining: 0 };
+        }
+
+        const config = await this.getFinancialConfig();
+        let incentiveActive = false;
+        let incentiveDaysRemaining = 0;
+
+        if (config.joiningIncentiveEnabled && profile.saccoEnrolledAt) {
+            const msSinceEnrollment = Date.now() - profile.saccoEnrolledAt.getTime();
+            const daysSinceEnrollment = msSinceEnrollment / (1000 * 60 * 60 * 24);
+            incentiveDaysRemaining = Math.max(0, config.joiningIncentiveDurationDays - Math.floor(daysSinceEnrollment));
+            incentiveActive = incentiveDaysRemaining > 0;
+        }
+
+        const partner = profile.saccoPartnerId
+            ? await this.prisma.saccoPartner.findUnique({ where: { id: profile.saccoPartnerId } })
+            : null;
+
+        return {
+            enrolled: true,
+            partner: partner ? { id: partner.id, name: partner.name, logoUrl: partner.logoUrl } : null,
+            enrolledAt: profile.saccoEnrolledAt,
+            incentiveActive,
+            incentiveDaysRemaining,
+            config: {
+                mandatoryRemittancePct: config.mandatoryRemittancePct,
+                incentivePct: config.joiningIncentivePct,
+            }
+        };
+    }
+
+    // ── Remittance Ledger (per-trip) ──────────────────────────────────────────
+
+    async recordRemittance(driverId: string, tripId: string, amount: number, partnerId: string): Promise<any> {
+        this.logger.log(`Recording Sacco remittance for driver ${driverId}, trip ${tripId}, amount ${amount}`);
+        return this.prisma.saccoLedger.create({
+            data: {
+                driverId,
+                amount,
+                type: 'SACCO_REMITTANCE',
+                relatedTripId: tripId,
             }
         });
     }
 
-    async getSaccoDetails(id: string): Promise<any> {
-        return this.prisma.organizations.findUnique({
-            where: { id },
-            include: {
-                driver_profiles: {
-                    include: {
-                        user: {
-                            select: { fullName: true, phone: true }
-                        }
-                    }
-                }
-            }
+    async getRemittanceHistory(driverId: string): Promise<any[]> {
+        return this.prisma.saccoLedger.findMany({
+            where: { driverId },
+            orderBy: { createdAt: 'desc' },
+            take: 50,
+        });
+    }
+
+    async getTotalRemitted(driverId: string): Promise<number> {
+        const result = await this.prisma.saccoLedger.aggregate({
+            _sum: { amount: true },
+            where: { driverId }
+        });
+        return result._sum.amount ? Number(result._sum.amount) : 0;
+    }
+
+    // ── Split Preview (for admin calculator) ─────────────────────────────────
+
+    async previewSplit(fare: number, enrolled: boolean, incentiveOverride?: boolean): Promise<TripSplitResult> {
+        const config = await this.getFinancialConfig();
+        const incentiveActive = incentiveOverride ?? config.joiningIncentiveEnabled;
+
+        return computeTripSplit({
+            fare,
+            driverEnrolled: enrolled,
+            incentiveActive,
+            mandatoryRemittancePct: config.mandatoryRemittancePct,
+            incentivePct: config.joiningIncentivePct,
+            cabiCommissionPct: config.cabiCommissionPct,
         });
     }
 }

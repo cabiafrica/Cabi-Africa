@@ -10,34 +10,25 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    // SSR-safe state: initialize with a static value or null, then hydrate in useEffect
+    // Default to 'dark' — matches _document.tsx inline script default
     const [theme, setTheme] = useState<Theme>('dark');
-    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setMounted(true);
+        // Sync React state from localStorage. The _document.tsx inline script
+        // already applied the correct class before paint, so no DOM manipulation needed here.
         const savedTheme = localStorage.getItem('theme') as Theme | null;
         if (savedTheme) {
             setTheme(savedTheme);
-            document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-        } else {
-            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            setTheme(systemTheme);
-            document.documentElement.classList.toggle('dark', systemTheme === 'dark');
         }
     }, []);
 
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';
         setTheme(newTheme);
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('theme', newTheme);
-            document.documentElement.classList.toggle('dark', newTheme === 'dark');
-        }
+        localStorage.setItem('theme', newTheme);
+        document.documentElement.classList.toggle('dark', newTheme === 'dark');
     };
 
-    // Prevent hydration mismatch by only rendering children after mount if needed
-    // But for a provider, we just want it to not crash.
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
             {children}

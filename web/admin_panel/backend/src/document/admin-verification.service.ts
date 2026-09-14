@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, HttpException } from '@nestjs/common';
+import axios, { AxiosInstance } from 'axios';
 
 export interface PassengerVerificationRequest {
   id: string;
@@ -39,6 +40,14 @@ interface DocumentInfo {
 @Injectable()
 export class AdminVerificationService {
   private readonly logger = new Logger(AdminVerificationService.name);
+  private readonly http: AxiosInstance;
+
+  constructor() {
+    const baseURL =
+      process.env.VERIFICATION_SERVICE_URL ??
+      'http://localhost:3003/api/v1/verification';
+    this.http = axios.create({ baseURL, timeout: 10_000 });
+  }
 
   async getVerificationRequests(filters: {
     status?: string;
@@ -47,99 +56,112 @@ export class AdminVerificationService {
     limit: number;
   }): Promise<{ data: PassengerVerificationRequest[]; total: number }> {
     const { status, search, page, limit } = filters;
-    const skip = (page - 1) * limit;
-
-
-    // For now, use mock data since we store in memory
-    // In production, query from database
-    const mockRequests = this.getMockVerificationRequests();
-
-    let filtered = mockRequests;
-
-    // Filter by status
-    if (status && status !== 'ALL') {
-      filtered = filtered.filter(r => r.status === status);
+    try {
+      const res = await this.http.get('/admin/requests', {
+        params: {
+          ...(status && status !== 'ALL' ? { status } : {}),
+          ...(search ? { search } : {}),
+          page,
+          limit,
+        },
+      });
+      return res.data as { data: PassengerVerificationRequest[]; total: number };
+    } catch (err: any) {
+      this.logger.error(`getVerificationRequests failed: ${err?.message}`);
+      return { data: [], total: 0 };
     }
-
-    // Filter by search
-    if (search) {
-      const searchLower = search.toLowerCase();
-      filtered = filtered.filter(r => 
-        r.userName.toLowerCase().includes(searchLower) ||
-        r.userPhone.includes(search) ||
-        r.userEmail.toLowerCase().includes(searchLower)
-      );
-    }
-
-    const total = filtered.length;
-    const data = filtered.slice(skip, skip + limit);
-
-    return { data, total };
   }
 
   async getVerificationRequest(id: string): Promise<PassengerVerificationRequest | null> {
-    const mockRequests = this.getMockVerificationRequests();
-    return mockRequests.find(r => r.id === id) || null;
+    try {
+      const res = await this.http.get(`/admin/requests/${id}`);
+      return res.data as PassengerVerificationRequest;
+    } catch (err: any) {
+      if (err?.response?.status === 404) return null;
+      this.logger.error(`getVerificationRequest(${id}) failed: ${err?.message}`);
+      return null;
+    }
   }
 
-  async approveVerification(id: string, adminId: string, notes?: string): Promise<Record<string, unknown>> {
-    this.logger.log(`Approving verification ${id} by admin ${adminId}`);
-    
-    // In production, update database
-    return {
-      success: true,
-      message: 'Verification approved successfully',
-      status: 'VERIFIED',
-      reviewedBy: adminId,
-      reviewedAt: new Date(),
-      adminNotes: notes || '',
-    };
+  async approveVerification(
+    id: string,
+    adminId: string,
+    notes?: string,
+  ): Promise<Record<string, unknown>> {
+    try {
+      const res = await this.http.post(`/admin/requests/${id}/approve`, {
+        adminId,
+        notes: notes ?? '',
+      });
+      this.logger.log(`Verification ${id} approved by admin ${adminId}`);
+      return res.data as Record<string, unknown>;
+    } catch (err: any) {
+      this.logger.error(`approveVerification(${id}) failed: ${err?.message}`);
+      throw new HttpException(
+        err?.response?.data?.message ?? 'Failed to approve verification',
+        err?.response?.status ?? 500,
+      );
+    }
   }
-  
-  async rejectVerification(id: string, adminId: string, reason: string): Promise<Record<string, unknown>> {
-    this.logger.log(`Rejecting verification ${id} by admin ${adminId}. Reason: ${reason}`);
-    
-    // In production, update database
-    return {
-      success: true,
-      message: 'Verification rejected',
-      status: 'REJECTED',
-      reviewedBy: adminId,
-      reviewedAt: new Date(),
-      rejectionReason: reason,
-    };
+
+  async rejectVerification(
+    id: string,
+    adminId: string,
+    reason: string,
+  ): Promise<Record<string, unknown>> {
+    try {
+      const res = await this.http.post(`/admin/requests/${id}/reject`, {
+        adminId,
+        reason,
+      });
+      this.logger.log(`Verification ${id} rejected by admin ${adminId}. Reason: ${reason}`);
+      return res.data as Record<string, unknown>;
+    } catch (err: any) {
+      this.logger.error(`rejectVerification(${id}) failed: ${err?.message}`);
+      throw new HttpException(
+        err?.response?.data?.message ?? 'Failed to reject verification',
+        err?.response?.status ?? 500,
+      );
+    }
   }
-  
-  async requestAdditionalInfo(id: string, adminId: string, requiredInfo: string[]): Promise<Record<string, unknown>> {
-    this.logger.log(`Requesting additional info for verification ${id}`);
-    
-    return {
-      success: true,
-      message: 'Request sent to passenger',
-      status: 'REVIEW_REQUIRED',
-      requiredInfo,
-    };
+
+  async requestAdditionalInfo(
+    id: string,
+    adminId: string,
+    requiredInfo: string[],
+  ): Promise<Record<string, unknown>> {
+    try {
+      const res = await this.http.post(`/admin/requests/${id}/request-info`, {
+        adminId,
+        requiredInfo,
+      });
+      this.logger.log(`Additional info requested for verification ${id}`);
+      return res.data as Record<string, unknown>;
+    } catch (err: any) {
+      this.logger.error(`requestAdditionalInfo(${id}) failed: ${err?.message}`);
+      throw new HttpException(
+        err?.response?.data?.message ?? 'Failed to request additional info',
+        err?.response?.status ?? 500,
+      );
+    }
   }
-  
+
   async getVerificationStats(): Promise<Record<string, unknown>> {
-    const mockRequests = this.getMockVerificationRequests();
-    
-    return {
-      total: mockRequests.length,
-      pending: mockRequests.filter(r => r.status === 'PENDING').length,
-      verified: mockRequests.filter(r => r.status === 'VERIFIED').length,
-      rejected: mockRequests.filter(r => r.status === 'REJECTED').length,
-      reviewRequired: mockRequests.filter(r => r.status === 'REVIEW_REQUIRED').length,
-      byLevel: {
-        none: mockRequests.filter(r => r.verificationLevel === 'NONE').length,
-        basic: mockRequests.filter(r => r.verificationLevel === 'BASIC').length,
-        selfie: mockRequests.filter(r => r.verificationLevel === 'SELFIE').length,
-        biometric: mockRequests.filter(r => r.verificationLevel === 'BIOMETRIC').length,
-      },
-    };
-  }
-
-  private getMockVerificationRequests(): PassengerVerificationRequest[] {
-    return [];
+    try {
+      const res = await this.http.get('/admin/stats');
+      return res.data as Record<string, unknown>;
+    } catch (err: any) {
+      this.logger.error(`getVerificationStats failed: ${err?.message}`);
+      // Return zeroed structure so UI doesn't crash
+      return {
+        total: 0,
+        pending: 0,
+        verified: 0,
+        rejected: 0,
+        reviewRequired: 0,
+        byLevel: { none: 0, basic: 0, selfie: 0, biometric: 0 },
+      };
+    }
   }
 }
+

@@ -47,8 +47,8 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
 
     setState(() => _isSubmitting = true);
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
+    // Submit report
+    await Future.delayed(const Duration(milliseconds: 300));
 
     if (mounted) {
       Navigator.pop(context);

@@ -15,25 +15,25 @@ export default function FleetDashboardPage() {
     // Default or mock fleet manager ID
     const fleetManagerId = user?.fleetManagerId || 'mock-fleet-manager-1';
 
-    useEffect(() => {
-        const fetchFleetVehicles = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const res = await fetch(`/api/vehicles?fleetManagerId=${fleetManagerId}`);
-                const data = await res.json();
-                if (data.success) {
-                    setVehicles(data.vehicles);
-                } else {
-                    setError(data.message || 'Failed to fetch fleet vehicles');
-                }
-            } catch (err: any) {
-                setError(err.message || 'Network error loading fleet');
-            } finally {
-                setLoading(false);
+    const fetchFleetVehicles = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await fetch(`/api/vehicles?fleetManagerId=${fleetManagerId}`);
+            const data = await res.json();
+            if (data.success) {
+                setVehicles(data.vehicles || []);
+            } else {
+                setError(data.message || 'Failed to fetch fleet vehicles');
             }
-        };
+        } catch (err: any) {
+            setError(err.message || 'Network error loading fleet');
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchFleetVehicles();
     }, [fleetManagerId]);
 
@@ -56,7 +56,7 @@ export default function FleetDashboardPage() {
 
     return (
         <MainLayout title="Fleet Manager Command Center | Cabi" description="Real-time vehicle telemetry, driver roster management, and shift tracking for fleet owners.">
-            <div className="min-h-screen bg-slate-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-brand-black text-white py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto space-y-12">
                     {/* Header Banner */}
                     <div className="relative rounded-3xl overflow-hidden bg-slate-800/60 border border-white/10 p-8 sm:p-12 shadow-2xl backdrop-blur-xl">
@@ -161,10 +161,16 @@ export default function FleetDashboardPage() {
                             <p className="text-slate-400 font-bold uppercase tracking-widest animate-pulse">Loading Fleet Operations Data...</p>
                         </div>
                     ) : error ? (
-                        <div className="p-8 bg-red-500/20 border border-red-500 rounded-3xl text-center">
-                            <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-3" />
+                        <div className="p-8 bg-red-500/10 border border-red-500/30 rounded-3xl text-center max-w-lg mx-auto backdrop-blur-xl">
+                            <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-3" />
                             <h3 className="text-xl font-bold text-white mb-2">Error Loading Fleet</h3>
-                            <p className="text-slate-300">{error}</p>
+                            <p className="text-slate-300 mb-6 text-sm">{error}</p>
+                            <button
+                                onClick={() => fetchFleetVehicles()}
+                                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transition-all"
+                            >
+                                Retry Connection
+                            </button>
                         </div>
                     ) : filteredVehicles.length === 0 ? (
                         <div className="py-20 bg-slate-800/20 border border-white/5 rounded-3xl text-center p-8 backdrop-blur-xl">

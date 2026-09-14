@@ -320,33 +320,16 @@ extension _HomeScreenPanels on _HomeScreenState {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // OTA Test Label
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.green.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Text(
-                            "CABI PASSENGER v1.1.0+6 - Active",
-                            style: TextStyle(
-                              color: Colors.green,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
                       // 1. Location Pickers (Pickup & Destination)
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF1F1F1F) : Colors.white,
+                          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: dividerColor, width: 1),
+                          border: Border.all(
+                            color: isDark ? const Color(0xFF444444) : dividerColor,
+                            width: 1.2,
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.05),
@@ -372,15 +355,42 @@ extension _HomeScreenPanels on _HomeScreenState {
                                   ),
                                   const SizedBox(width: 16),
                                   Expanded(
-                                    child: Text(
-                                      _pickupAddress,
-                                      style: AppTheme.outfit(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                          color: isDark ? Colors.white70 : Colors.black87),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          _pickupAddress,
+                                          style: AppTheme.outfit(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: isDark ? Colors.white70 : Colors.black87),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        if (_isLoadingLocation)
+                                          Text(
+                                            "Detecting location...",
+                                            style: AppTheme.outfit(
+                                              fontSize: 11,
+                                              color: AppTheme.primaryColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                      ],
                                     ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.my_location_rounded,
+                                      size: 18,
+                                      color: _isLoadingLocation
+                                          ? AppTheme.primaryColor
+                                          : (isDark ? Colors.white60 : Colors.black54),
+                                    ),
+                                    tooltip: "Auto-detect location",
+                                    onPressed: () => _initLocationTracking(userInitiated: true),
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                                   ),
                                 ],
                               ),
@@ -399,28 +409,45 @@ extension _HomeScreenPanels on _HomeScreenState {
                             // Destination
                             InkWell(
                               onTap: () => _navigateToSearch(isPickup: false),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 12,
-                                    height: 12,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.black,
-                                    ),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF2F4F7),
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: isDark ? const Color(0xFF555555) : const Color(0xFFD0D5DD),
+                                    width: 1.2,
                                   ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Text(
-                                      _destination,
-                                      style: AppTheme.outfit(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: isDark ? Colors.white : Colors.black),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 12,
+                                      height: 12,
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.primaryColor,
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 14),
+                                    Expanded(
+                                      child: Text(
+                                        _destination,
+                                        style: AppTheme.outfit(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: isDark ? Colors.white : Colors.black87),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.search_rounded,
+                                      size: 20,
+                                      color: isDark ? AppTheme.primaryColor : Colors.black54,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -921,10 +948,25 @@ extension _HomeScreenPanels on _HomeScreenState {
                     color: Colors.black)),
             accountEmail: Text(userEmail,
                 style: const TextStyle(color: Colors.black87)),
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.black,
-              child: Text(initials,
-                  style: const TextStyle(fontSize: 24, color: AppTheme.primaryColor)),
+            currentAccountPicture: Container(
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.black87, width: 2),
+                boxShadow: const [
+                  BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2)),
+                ],
+              ),
+              child: CircleAvatar(
+                backgroundColor: const Color(0xFF1E1E1E),
+                backgroundImage: () {
+                  final authState = ref.watch(passengerAuthProvider);
+                  if (authState is Authenticated) {
+                    return getPassengerAvatarProvider(authState.user);
+                  }
+                  return const AssetImage('assets/images/passenger_avatar.jpg') as ImageProvider;
+                }(),
+              ),
             ),
           ),
           ListTile(
@@ -1078,11 +1120,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                 },
                 child: Builder(
                   builder: (context) {
-                    Color categoryColor = primaryColor;
-                    if (id == 'boda') categoryColor = Colors.green.shade400;
-                    if (id == 'lite') categoryColor = Colors.blue.shade400;
-                    if (id == 'standard') categoryColor = primaryColor;
-                    if (id == 'xl') categoryColor = Colors.purple.shade400;
+                    const goldColor = Color(0xFFFFD700); // Cabi Signature Gold
 
                     return AnimatedContainer(
                       duration: const Duration(milliseconds: 180),
@@ -1092,13 +1130,22 @@ extension _HomeScreenPanels on _HomeScreenState {
                           horizontal: 16, vertical: 14),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? categoryColor.withValues(alpha: 0.1)
+                            ? goldColor.withValues(alpha: 0.12)
                             : const Color(0xFF161616),
                         border: Border.all(
-                          color: isSelected ? categoryColor : Colors.white12,
-                          width: isSelected ? 2 : 1,
+                          color: isSelected ? goldColor : Colors.white12,
+                          width: isSelected ? 2.0 : 1.0,
                         ),
                         borderRadius: BorderRadius.circular(16),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: goldColor.withValues(alpha: 0.25),
+                                  blurRadius: 14,
+                                  spreadRadius: 1,
+                                ),
+                              ]
+                            : null,
                       ),
                       child: Row(
                         children: [
@@ -1109,7 +1156,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? categoryColor.withValues(alpha: 0.15)
+                                  ? goldColor.withValues(alpha: 0.20)
                                   : Colors.white10,
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -1119,7 +1166,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                               errorBuilder: (_, __, ___) => Icon(
                                 v['icon'] as IconData,
                                 color:
-                                    isSelected ? categoryColor : Colors.white54,
+                                    isSelected ? goldColor : Colors.white54,
                                 size: 28,
                               ),
                             ),
@@ -1143,7 +1190,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                 const SizedBox(height: 3),
                                 Row(
                                   children: [
-                                    Icon(Icons.people_outline,
+                                    const Icon(Icons.people_outline,
                                         size: 13, color: Colors.white38),
                                     const SizedBox(width: 4),
                                     Text(v['capacity'] as String,
@@ -1172,28 +1219,28 @@ extension _HomeScreenPanels on _HomeScreenState {
                                 calcPrice(id),
                                 style: TextStyle(
                                   color: isSelected
-                                      ? categoryColor
+                                      ? goldColor
                                       : Colors.white54,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 13,
+                                  fontSize: 14,
                                 ),
                               ),
                               if (isSelected)
                                 Container(
                                   margin: const EdgeInsets.only(top: 4),
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 2),
+                                      horizontal: 8, vertical: 3),
                                   decoration: BoxDecoration(
-                                    color:
-                                        categoryColor.withValues(alpha: 0.18),
-                                    borderRadius: BorderRadius.circular(8),
+                                    color: goldColor,
+                                    borderRadius: BorderRadius.circular(6),
                                   ),
-                                  child: Text(
-                                    'Selected',
+                                  child: const Text(
+                                    'SELECTED',
                                     style: TextStyle(
                                         fontSize: 10,
-                                        color: categoryColor,
-                                        fontWeight: FontWeight.bold),
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 0.5),
                                   ),
                                 ),
                             ],
@@ -1208,16 +1255,26 @@ extension _HomeScreenPanels on _HomeScreenState {
 
             const SizedBox(height: 16),
 
-            // Book Button
+            // Book Button with Golden Look
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
-              child: SizedBox(
+              child: Container(
                 width: double.infinity,
                 height: 56,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFFFD700).withValues(alpha: 0.45),
+                      blurRadius: 18,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
                 child: ElevatedButton(
                   onPressed: _startSearchSimulation,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
+                    backgroundColor: const Color(0xFFFFD700),
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16)),
@@ -1226,7 +1283,10 @@ extension _HomeScreenPanels on _HomeScreenState {
                   child: Text(
                     'Book ${_vehicleTypes.firstWhere((v) => v['id'] == (_selectedVehicleId ?? 'standard'), orElse: () => _vehicleTypes[1])['name']}',
                     style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                        color: Colors.black),
                   ),
                 ),
               ),

@@ -355,6 +355,7 @@ export class UserService {
       isPhoneVerified: user.isPhoneVerified,
       isIdentityVerified: user.isIdentityVerified,
       passportPhotoUrl: user.passportPhotoUrl,
+      profilePicture: user.passportPhotoUrl,
     };
   }
 
@@ -563,8 +564,102 @@ export class UserService {
       isPhoneVerified: user.isPhoneVerified,
       isIdentityVerified: user.isIdentityVerified,
       passportPhotoUrl: user.passportPhotoUrl,
+      profilePicture: user.passportPhotoUrl,
+      city: user.city,
+      nickname: user.nickname,
       driverProfile: user.driverProfile,
     };
+  }
+
+  async updateProfile(userId: string, data: {
+    fullName?: string;
+    firstName?: string;
+    lastName?: string;
+    passportPhotoUrl?: string;
+    profilePicture?: string;
+    photoUrl?: string;
+    city?: string;
+    nickname?: string;
+    phone?: string;
+  }) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        driverProfile: {
+          include: {
+            vehicles: true
+          }
+        }
+      }
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+
+    const updateData: any = {};
+    if (data.fullName) {
+      updateData.fullName = data.fullName.trim();
+    } else if (data.firstName || data.lastName) {
+      const parts = [data.firstName || '', data.lastName || ''].filter(Boolean);
+      if (parts.length > 0) {
+        updateData.fullName = parts.join(' ');
+      }
+    }
+
+    const photo = data.passportPhotoUrl || data.profilePicture || data.photoUrl;
+    if (photo !== undefined) {
+      updateData.passportPhotoUrl = photo;
+    }
+
+    if (data.city !== undefined) updateData.city = data.city;
+    if (data.nickname !== undefined) updateData.nickname = data.nickname;
+    if (data.phone !== undefined) updateData.phone = data.phone;
+
+    const updated = await this.prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+      include: {
+        driverProfile: {
+          include: {
+            vehicles: true
+          }
+        }
+      }
+    });
+
+    return {
+      id: updated.id,
+      email: updated.email,
+      fullName: updated.fullName,
+      phone: updated.phone,
+      role: updated.role,
+      status: (updated as any).status,
+      isEmailVerified: updated.isEmailVerified,
+      isPhoneVerified: updated.isPhoneVerified,
+      isIdentityVerified: updated.isIdentityVerified,
+      passportPhotoUrl: updated.passportPhotoUrl,
+      profilePicture: updated.passportPhotoUrl,
+      city: updated.city,
+      nickname: updated.nickname,
+      driverProfile: updated.driverProfile,
+    };
+  }
+
+  async uploadProfilePicture(userId: string, file?: any, photoUrl?: string) {
+    let finalUrl: string | undefined = photoUrl;
+    if (file && this.storageProvider) {
+      try {
+        const uploadRes: any = await this.storageProvider.uploadFile(file, `profiles/${userId}/avatar`);
+        finalUrl = uploadRes?.url || (typeof uploadRes === 'string' ? uploadRes : undefined);
+      } catch (e) {
+        // If file buffer, create data URI fallback if upload fails
+        if (file.buffer && file.mimetype) {
+          finalUrl = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+        }
+      }
+    }
+    return this.updateProfile(userId, { passportPhotoUrl: finalUrl });
   }
 
   async verifyBiometric(userId: string) {

@@ -123,12 +123,15 @@ export class DriverLeadsService {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
 
+    const photo = data.passportPhotoUrl || data.profilePicture || data.photoUrl;
+
     return this.prisma.user.update({
       where: { id: userId },
       data: {
-        fullName: data.fullName,
-        city: data.city,
-        nickname: data.nickname,
+        ...(data.fullName ? { fullName: data.fullName } : {}),
+        ...(data.city ? { city: data.city } : {}),
+        ...(data.nickname ? { nickname: data.nickname } : {}),
+        ...(photo ? { passportPhotoUrl: photo } : {}),
       },
     });
   }

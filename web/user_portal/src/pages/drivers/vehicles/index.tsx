@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/context/AuthContext';
-import { Car, Shield, Play, Square, AlertCircle, Plus, CheckCircle2, Clock, Sparkles, Award, ArrowRight, Activity } from 'lucide-react';
+import { Car, Shield, Play, Square, AlertCircle, Plus, CheckCircle2, Clock, Sparkles, Award, ArrowRight, Activity, Loader2 } from 'lucide-react';
 
 export default function MyVehiclesPage() {
     const { user, loading: authLoading } = useAuth();
@@ -100,7 +100,7 @@ export default function MyVehiclesPage() {
 
     return (
         <MainLayout title="My Vehicles & Shifts | Cabi Driver Portal" description="Manage your registered vehicles, start shifts, and report benefit claims.">
-            <div className="min-h-screen bg-slate-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-brand-black text-white py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
                     {/* Header Banner */}
                     <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 p-8 sm:p-12 mb-12 shadow-2xl">
@@ -232,7 +232,7 @@ export default function MyVehiclesPage() {
                                                     className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-black text-sm uppercase tracking-widest transition-all shadow-lg shadow-red-600/30"
                                                 >
                                                     {actionLoading === vehicle.id ? (
-                                                        <span className="animate-spin">🔄</span>
+                                                        <Loader2 className="w-5 h-5 animate-spin" />
                                                     ) : (
                                                         <>
                                                             <Square className="w-4 h-4 fill-current" /> End Active Shift
@@ -246,7 +246,7 @@ export default function MyVehiclesPage() {
                                                     className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 disabled:opacity-50 text-black font-black text-sm uppercase tracking-widest transition-all shadow-lg shadow-yellow-500/20"
                                                 >
                                                     {actionLoading === vehicle.id ? (
-                                                        <span className="animate-spin">🔄</span>
+                                                        <Loader2 className="w-5 h-5 animate-spin" />
                                                     ) : (
                                                         <>
                                                             <Play className="w-4 h-4 fill-current" /> Start Shift

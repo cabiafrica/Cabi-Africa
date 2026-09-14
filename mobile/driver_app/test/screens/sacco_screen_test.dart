@@ -5,15 +5,17 @@ import 'package:mocktail/mocktail.dart';
 import 'package:driver_app/screens/sacco_screen.dart';
 import 'package:driver_app/services/sacco_service.dart';
 import 'package:driver_app/providers/auth_provider.dart';
+import 'package:driver_app/services/auth_service.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class MockSaccoService extends Mock implements SaccoService {}
+class MockAuthService extends Mock implements AuthService {}
+class MockSecureStorage extends Mock implements FlutterSecureStorage {}
 
-class FakeAuthNotifier extends StateNotifier<AuthState>
-    implements AuthNotifier {
-  FakeAuthNotifier(super.state);
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+class AuthNotifierMock extends AuthNotifier {
+  AuthNotifierMock(AuthState state) : super(MockAuthService(), MockSecureStorage()) {
+    this.state = state;
+  }
 }
 
 void main() {
@@ -27,7 +29,7 @@ void main() {
     return ProviderScope(
       overrides: [
         saccoServiceProvider.overrideWithValue(mockSaccoService),
-        authProvider.overrideWith((ref) => FakeAuthNotifier(
+        authProvider.overrideWith((ref) => AuthNotifierMock(
               const Authenticated("test-token", {"id": "driver-123"}),
             )),
       ],

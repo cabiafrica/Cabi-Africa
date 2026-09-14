@@ -1,48 +1,292 @@
 part of 'home_screen.dart';
 
 extension _HomeScreenLogic on _HomeScreenState {
-  Future<void> _initLocationTracking() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return;
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return;
+  Future<void> _initLocationTracking({bool userInitiated = false}) async {
+    bool serviceEnabled = false;
+    try {
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    } catch (_) {
+      serviceEnabled = true;
     }
 
-    // Get initial position
-    try {
-      final position = await Geolocator.getCurrentPosition();
+    if (!serviceEnabled) {
       if (mounted) {
+        _showLocationPrompt(isServiceDisabled: true);
+      }
+      return;
+    }
+
+    LocationPermission permission = LocationPermission.denied;
+    try {
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          if (userInitiated && mounted) {
+            _showLocationPrompt(isServiceDisabled: false, isPermissionDeniedForever: false);
+          }
+          return;
+        }
+      }
+    } catch (e) {
+      debugPrint("Error checking location permission: $e");
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      if (mounted) {
+        _showLocationPrompt(isServiceDisabled: false, isPermissionDeniedForever: true);
+      }
+      return;
+    }
+
+    // Both service and permission are ready! Fetch current high-accuracy position
+    try {
+      _updateState(() => _isLoadingLocation = true);
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
+      );
+
+      if (mounted) {
+        final currentCoords = LatLng(position.latitude, position.longitude);
         _updateState(() {
-          _passengerLocation = LatLng(position.latitude, position.longitude);
+          _passengerLocation = currentCoords;
+          _pickupLocation = currentCoords;
+          _isLoadingLocation = false;
         });
         _centerMapOnLocation();
+        _updateNearbyDrivers();
+
+        // Automatically reverse geocode to set pickup address
+        _reverseGeocodePickup(currentCoords);
       }
     } catch (e) {
       debugPrint("Error getting current location: $e");
+      if (mounted) {
+        _updateState(() => _isLoadingLocation = false);
+      }
     }
 
-    // Subscribe to updates
-    _locationSubscription = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 5,
-      ),
-    ).listen((Position position) {
-      if (mounted) {
-        _updateState(() {
-          _passengerLocation = LatLng(position.latitude, position.longitude);
-        });
-        // Update nearby drivers when location changes significantly (already filtered by distanceFilter)
-        _updateNearbyDrivers();
+    // Subscribe to continuous location updates
+    _locationSubscription?.cancel();
+    try {
+      _locationSubscription = Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 10,
+        ),
+      ).listen((Position position) {
+        if (mounted) {
+          final updatedCoords = LatLng(position.latitude, position.longitude);
+          _updateState(() {
+            _passengerLocation = updatedCoords;
+            if (_tripStatus == TripStatus.idle &&
+                (_pickupAddress == 'Current Location' || _pickupAddress == 'Where to?' || _pickupAddress.isEmpty)) {
+              _pickupLocation = updatedCoords;
+            }
+          });
+          _updateNearbyDrivers();
 
-        if (_isFollowingLocation) {
-          _centerMapOnLocation();
+          if (_isFollowingLocation) {
+            _centerMapOnLocation();
+          }
         }
+      });
+    } catch (e) {
+      debugPrint("Location stream error: $e");
+    }
+  }
+
+  Future<void> _reverseGeocodePickup(LatLng coords) async {
+    try {
+      final address = await GooglePlacesService().reverseGeocode(coords);
+      if (address != null && address.isNotEmpty && mounted) {
+        _updateState(() {
+          final parts = address.split(',');
+          if (parts.length > 2) {
+            _pickupAddress = '${parts[0].trim()}, ${parts[1].trim()}';
+          } else {
+            _pickupAddress = address.trim();
+          }
+        });
       }
-    });
+    } catch (e) {
+      debugPrint("Reverse geocoding error: $e");
+    }
+  }
+
+  Future<void> _showLocationPrompt({
+    required bool isServiceDisabled,
+    bool isPermissionDeniedForever = false,
+  }) async {
+    if (_isPromptingLocation || !mounted) return;
+    _isPromptingLocation = true;
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF181818) : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            border: Border.all(
+              color: AppTheme.primaryColor.withValues(alpha: 0.5),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                blurRadius: 28,
+                offset: const Offset(0, -4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Top indicator handle
+              Container(
+                width: 44,
+                height: 5,
+                margin: const EdgeInsets.only(bottom: 24),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.grey[700] : Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+
+              // Golden location icon with radiant glow
+              Container(
+                width: 76,
+                height: 76,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.primaryColor.withValues(alpha: 0.12),
+                  border: Border.all(
+                    color: AppTheme.primaryColor,
+                    width: 2.2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primaryColor.withValues(alpha: 0.35),
+                      blurRadius: 20,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.my_location_rounded,
+                  size: 38,
+                  color: AppTheme.primaryColor,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Header
+              Text(
+                isServiceDisabled
+                    ? "Enable Location Settings"
+                    : (isPermissionDeniedForever
+                        ? "Location Permission Needed"
+                        : "Allow Location Access"),
+                style: AppTheme.outfit(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+
+              // Description
+              Text(
+                isServiceDisabled
+                    ? "Please activate location settings on your device so Cabi Africa can automatically select your current pickup spot and calculate accurate ETAs."
+                    : (isPermissionDeniedForever
+                        ? "Location permission is disabled for Cabi Africa. Enable it in App Settings to allow automatic detection of your current location."
+                        : "Enable location to automatically set your pickup spot and see available rides closest to you in real time."),
+                style: AppTheme.outfit(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  height: 1.45,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 26),
+
+              // Golden Primary Button
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    Navigator.of(ctx).pop();
+                    if (isServiceDisabled) {
+                      await Geolocator.openLocationSettings();
+                    } else if (isPermissionDeniedForever) {
+                      await Geolocator.openAppSettings();
+                    } else {
+                      await Geolocator.requestPermission();
+                    }
+                    if (mounted) {
+                      Future.delayed(const Duration(milliseconds: 600), () {
+                        _initLocationTracking(userInitiated: true);
+                      });
+                    }
+                  },
+                  icon: Icon(
+                    isServiceDisabled ? Icons.location_on_rounded : Icons.settings_rounded,
+                    color: Colors.black,
+                    size: 20,
+                  ),
+                  label: Text(
+                    isServiceDisabled
+                        ? "Open Location Settings"
+                        : (isPermissionDeniedForever ? "Open App Settings" : "Enable Location"),
+                    style: AppTheme.outfit(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 6,
+                    shadowColor: AppTheme.primaryColor.withValues(alpha: 0.5),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Dismiss
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text(
+                  "Enter Location Manually",
+                  style: AppTheme.outfit(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    _isPromptingLocation = false;
   }
 
   void _centerMapOnLocation() {
@@ -58,17 +302,16 @@ extension _HomeScreenLogic on _HomeScreenState {
     if (authState is Authenticated) {
       userId = authState.userId;
     }
+    userId ??= '00000000-0000-0000-0000-000000000000';
 
-    if (userId != null) {
-      final rideService = ref.read(rideServiceProvider);
-      final ride = await rideService.getCurrentRide(userId, 'PASSENGER');
-      if (ride != null && mounted) {
-        _updateState(() {
-          _currentRideId = ride['id'];
-          _updateTripStatusFromBackend(ride);
-          _startRideUpdatePolling();
-        });
-      }
+    final rideService = ref.read(rideServiceProvider);
+    final ride = await rideService.getCurrentRide(userId, 'PASSENGER');
+    if (ride != null && mounted) {
+      _updateState(() {
+        _currentRideId = ride['id'];
+        _updateTripStatusFromBackend(ride);
+        _startRideUpdatePolling();
+      });
     }
   }
 
@@ -86,15 +329,14 @@ extension _HomeScreenLogic on _HomeScreenState {
     if (authState is Authenticated) {
       userId = authState.userId;
     }
+    userId ??= '00000000-0000-0000-0000-000000000000';
 
-    if (userId != null) {
-      final rideService = ref.read(rideServiceProvider);
-      final ride = await rideService.getCurrentRide(userId, 'PASSENGER');
-      if (ride != null && mounted) {
-        _updateState(() {
-          _updateTripStatusFromBackend(ride);
-        });
-      }
+    final rideService = ref.read(rideServiceProvider);
+    final ride = await rideService.getCurrentRide(userId, 'PASSENGER');
+    if (ride != null && mounted) {
+      _updateState(() {
+        _updateTripStatusFromBackend(ride);
+      });
     }
   }
 
@@ -338,8 +580,11 @@ extension _HomeScreenLogic on _HomeScreenState {
   Future<void> _navigateToSearch({bool isPickup = false}) async {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const SearchScreen(),
-        settings: RouteSettings(arguments: isPickup),
+        builder: (context) => SearchScreen(
+          isPickup: isPickup,
+          userLocation: _passengerLocation,
+          currentAddress: isPickup ? _pickupAddress : _destination,
+        ),
       ),
     );
 
@@ -351,6 +596,30 @@ extension _HomeScreenLogic on _HomeScreenState {
           _isPickingFromMap = true;
           _isFollowingLocation = false;
         });
+        return;
+      }
+
+      if (result['type'] == 'route') {
+        final pickup = result['pickup'] as Map<String, dynamic>?;
+        final dropoff = result['dropoff'] as Map<String, dynamic>?;
+
+        _updateState(() {
+          if (pickup != null) {
+            _pickupAddress = pickup['name'] ?? _pickupAddress;
+            _pickupLocation = LatLng(pickup['latitude'], pickup['longitude']);
+          }
+          if (dropoff != null) {
+            _destination = dropoff['name'] ?? _destination;
+            _dropoffLocation = LatLng(dropoff['latitude'], dropoff['longitude']);
+            _tripStatus = TripStatus.selectingService;
+          }
+          _pickupLocation ??= _passengerLocation;
+        });
+
+        _fetchRoadRoute();
+        if (_dropoffLocation != null) {
+          _mapController?.moveCamera(_dropoffLocation!);
+        }
         return;
       }
 

@@ -4,6 +4,7 @@ import 'package:passenger_app/screens/referral_status_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:passenger_app/providers/auth_provider.dart';
 import 'package:passenger_app/widgets/badge_showcase_widget.dart';
+import 'package:passenger_app/widgets/profile_avatar_with_qr.dart';
 import '../services/badge_service.dart' as badge_service;
 
 class UserDashboardScreen extends StatelessWidget {
@@ -46,9 +47,24 @@ class UserDashboardScreen extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundImage: NetworkImage(profilePic),
+                      Container(
+                        padding: const EdgeInsets.all(2.5),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppTheme.primaryColor, width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.primaryColor.withValues(alpha: 0.35),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: CircleAvatar(
+                          radius: 30,
+                          backgroundColor: const Color(0xFF1E1E1E),
+                          backgroundImage: getPassengerAvatarProvider(user),
+                        ),
                       ),
                       const SizedBox(width: 20),
                       Column(

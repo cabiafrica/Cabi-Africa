@@ -27,8 +27,6 @@ class DriverLeadService {
     };
 
     async getProspectStatus(email: string): Promise<ProspectStatus> {
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 800));
         return { ...this.mockProspect, email }; // Echo back email
     }
 }

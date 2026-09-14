@@ -35,18 +35,30 @@ class CabiDriverApp extends StatelessWidget {
         return MaterialApp(
           title: 'Cabi Driver',
           theme: ThemeData(
-            primarySwatch: Colors.deepPurple,
+            primaryColor: const Color(0xFFF59E0B),
+            primarySwatch: Colors.amber,
             visualDensity: VisualDensity.adaptivePlatformDensity,
             brightness: Brightness.light,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFFF59E0B),
+              primary: const Color(0xFFF59E0B),
+              brightness: Brightness.light,
+            ),
           ),
           darkTheme: ThemeData(
-            primarySwatch: Colors.deepPurple,
+            primaryColor: const Color(0xFFF59E0B),
+            primarySwatch: Colors.amber,
             visualDensity: VisualDensity.adaptivePlatformDensity,
             brightness: Brightness.dark,
-            scaffoldBackgroundColor: Colors.grey[900],
-            cardColor: Colors.grey[850],
-            appBarTheme: AppBarTheme(backgroundColor: Colors.grey[900]),
-            drawerTheme: DrawerThemeData(backgroundColor: Colors.grey[900]),
+            scaffoldBackgroundColor: const Color(0xFF121212),
+            cardColor: const Color(0xFF1E1E1E),
+            appBarTheme: const AppBarTheme(backgroundColor: Colors.black, foregroundColor: Colors.white),
+            drawerTheme: const DrawerThemeData(backgroundColor: Color(0xFF181818)),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFFF59E0B),
+              primary: const Color(0xFFF59E0B),
+              brightness: Brightness.dark,
+            ),
           ),
           themeMode: mode,
           home: const DriverMapView(),
@@ -415,14 +427,30 @@ class _DriverMapViewState extends State<DriverMapView> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const UserAccountsDrawerHeader(
-            accountName: Text('John Kamau'),
-            accountEmail: Text('john.kamau@example.com'),
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Icon(Icons.person, size: 40, color: Colors.deepPurple),
+          UserAccountsDrawerHeader(
+            accountName: const Text('John Kamau', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+            accountEmail: const Text('john.kamau@example.com', style: TextStyle(color: Color(0xFFF59E0B))),
+            currentAccountPicture: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFF59E0B), width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFF59E0B).withValues(alpha: 0.25),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: const CircleAvatar(
+                backgroundColor: Colors.black,
+                child: Icon(Icons.person_rounded, size: 42, color: Color(0xFFF59E0B)),
+              ),
             ),
-            decoration: BoxDecoration(color: Colors.deepPurple),
+            decoration: const BoxDecoration(
+              color: Colors.black,
+              border: Border(bottom: BorderSide(color: Color(0xFFF59E0B), width: 2)),
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.person),
@@ -452,7 +480,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.store),
+            leading: const Icon(Icons.storefront_rounded, color: Color(0xFFF59E0B)),
             title: const Text('Driver Store'), // New Feature
             onTap: () {
               Navigator.pop(context);
@@ -461,7 +489,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.school),
+            leading: const Icon(Icons.school_rounded, color: Color(0xFFF59E0B)),
             title: const Text('Learning Center'), // Story 62.3
             onTap: () {
               Navigator.pop(context);
@@ -472,7 +500,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.local_offer, color: Colors.blueAccent),
+            leading: const Icon(Icons.local_offer_rounded, color: Color(0xFFF59E0B)),
             title: const Text('Driver Perks'),
             onTap: () {
               Navigator.pop(context);
@@ -483,7 +511,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.self_improvement, color: Colors.teal),
+            leading: const Icon(Icons.spa_rounded, color: Color(0xFFF59E0B)),
             title: const Text('Wellness & Relax'),
             onTap: () {
               Navigator.pop(context);
@@ -494,7 +522,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.emoji_events),
+            leading: const Icon(Icons.emoji_events_rounded, color: Color(0xFFF59E0B)),
             title: const Text('Weekly Challenges'),
             onTap: () {
               Navigator.pop(context);
@@ -505,7 +533,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.calendar_today, color: Colors.indigo),
+            leading: const Icon(Icons.calendar_month_rounded, color: Color(0xFFF59E0B)),
             title: const Text('Scheduled Rides'),
             onTap: () {
               Navigator.pop(context);
@@ -516,7 +544,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.security),
+            leading: const Icon(Icons.shield_rounded, color: Color(0xFFF59E0B)),
             title: const Text('Trusted Contacts'),
             onTap: () {
               Navigator.pop(context);
@@ -527,7 +555,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.privacy_tip_outlined),
+            leading: const Icon(Icons.security_update_good_rounded, color: Color(0xFFF59E0B)),
             title: const Text('Safety Checkup'), // Story 18.7
             onTap: () {
               Navigator.pop(context);
@@ -538,7 +566,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.leaderboard),
+            leading: const Icon(Icons.leaderboard_rounded, color: Color(0xFFF59E0B)),
             title: const Text('Leaderboard'), // Story 62.7
             onTap: () {
               Navigator.pop(context);
@@ -549,7 +577,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.handshake),
+            leading: const Icon(Icons.handshake_rounded, color: Color(0xFFF59E0B)),
             title: const Text('Mentorship'), // Story 62.6
             onTap: () {
               Navigator.pop(context);
@@ -560,7 +588,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.forum),
+            leading: const Icon(Icons.forum_rounded, color: Color(0xFFF59E0B)),
             title: const Text('Forums'), // Story 62.9
             onTap: () {
               Navigator.pop(context);
@@ -572,7 +600,7 @@ class _DriverMapViewState extends State<DriverMapView> {
           ),
           SwitchListTile(
             title: const Text('Dark Mode'),
-            secondary: const Icon(Icons.dark_mode),
+            secondary: const Icon(Icons.dark_mode_rounded, color: Color(0xFFF59E0B)),
             value: themeNotifier.value == ThemeMode.dark,
             onChanged: (val) {
               themeNotifier.value = val ? ThemeMode.dark : ThemeMode.light;
@@ -581,7 +609,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.settings),
+            leading: const Icon(Icons.settings_suggest_rounded, color: Color(0xFFF59E0B)),
             title: const Text('Settings'),
             onTap: () => Navigator.pop(context),
           ),
@@ -591,7 +619,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             child: Text('Debug', style: TextStyle(color: Colors.grey)),
           ),
           ListTile(
-            leading: const Icon(Icons.timer, color: Colors.blueGrey),
+            leading: const Icon(Icons.timer_rounded, color: Color(0xFFF59E0B)),
             title: const Text('Simulate 2h Driving'),
             onTap: () {
               Navigator.pop(context);
@@ -599,7 +627,7 @@ class _DriverMapViewState extends State<DriverMapView> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.hourglass_empty, color: Colors.orange),
+            leading: const Icon(Icons.hourglass_top_rounded, color: Color(0xFFF59E0B)),
             title: const Text('View Pending Approval'),
             onTap: () {
               Navigator.pop(context);

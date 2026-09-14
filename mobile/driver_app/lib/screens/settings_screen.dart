@@ -51,33 +51,38 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           const Divider(),
-          _buildSectionHeader(context, 'Navigation'),
+          _buildSectionHeader(context, 'Navigation & Maps'),
           ListTile(
-            // Map Provider Selection
-            leading: const Icon(Icons.map),
+            leading: const Icon(Icons.layers_outlined),
             title: const Text('Map Provider'),
-            subtitle: Text(mapType == MapType.cabi
-                ? 'Cabi Maps (OpenStreetMap)'
-                : 'Google Maps'),
-            trailing: Switch(
-              value: mapType == MapType.cabi,
-              onChanged: (bool isCabi) {
-                mapNotifier.setMapType(isCabi ? MapType.cabi : MapType.google);
+            subtitle: Text(mapType.displayName),
+            trailing: DropdownButton<MapType>(
+              value: mapType,
+              underline: const SizedBox(),
+              onChanged: (MapType? newType) {
+                if (newType != null) {
+                  mapNotifier.setMapType(newType);
+                }
               },
-              activeTrackColor: AppTheme.primaryColor,
-              activeThumbColor: AppTheme.primaryColor,
+              items: const [
+                DropdownMenuItem(
+                  value: MapType.google,
+                  child: Text('Google Maps'),
+                ),
+                DropdownMenuItem(
+                  value: MapType.cabi,
+                  child: Text('Cabi Africa Maps'),
+                ),
+              ],
             ),
-            onTap: () {
-              // Toggle
-              mapNotifier.setMapType(
-                  mapType == MapType.cabi ? MapType.google : MapType.cabi);
-            },
           ),
           Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             child: Text(
-              'Cabi Maps uses OpenStreetMap data and is enabled by default for better local coverage.',
+              mapType == MapType.google
+                  ? 'Google Maps Platform: Official global road network, live routing, and satellite view.'
+                  : 'Cabi Africa Maps: High-contrast Africa road network with detailed local landmarks and low data usage.',
               style: Theme.of(context)
                   .textTheme
                   .bodySmall

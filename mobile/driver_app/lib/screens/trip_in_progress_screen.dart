@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cabi_maps/cabi_maps.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:driver_app/providers/map_provider.dart';
 import 'package:driver_app/widgets/back_to_back_offer_widget.dart';
 import 'package:driver_app/widgets/swipeable_action_button.dart';
 import 'package:driver_app/theme/app_theme.dart';
@@ -188,17 +190,26 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
       ),
       body: Stack(
         children: [
-          CabiMap(
-            initialCenter: _driverLocation,
-            initialZoom: 15.0,
-            theme: CabiMapTheme.dark,
-            markers: [
-              CabiMapMarker.driver(
-                  position: _driverLocation, driverId: 'me', isOnline: true),
-              CabiMapMarker.dropoff(position: _passengerLocation),
-            ],
-            routePoints: [_driverLocation, _passengerLocation],
-            showUserLocation: true,
+          Consumer(
+            builder: (context, ref, _) {
+              final mapType = ref.watch(mapProvider);
+              return CabiMap(
+                key: ValueKey('trip_map_${mapType.name}'),
+                initialCenter: _driverLocation,
+                initialZoom: 15.0,
+                theme: CabiMapTheme.dark,
+                mapSource: mapType == MapType.google
+                    ? CabiMapSource.googleMaps
+                    : CabiMapSource.cabiAfrica,
+                markers: [
+                  CabiMapMarker.driver(
+                      position: _driverLocation, driverId: 'me', isOnline: true),
+                  CabiMapMarker.dropoff(position: _passengerLocation),
+                ],
+                routePoints: [_driverLocation, _passengerLocation],
+                showUserLocation: true,
+              );
+            },
           ),
 
           Align(

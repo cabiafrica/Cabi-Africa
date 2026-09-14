@@ -52,7 +52,7 @@ def run_basic_test(url: str, take_screenshot: bool = False) -> dict:
             page = context.new_page()
             
             # Navigate
-            response = page.goto(url, wait_until="networkidle", timeout=30000)
+            response = page.goto(url, wait_until="load", timeout=30000)
             
             # Basic info
             result["page"] = {
@@ -123,7 +123,7 @@ def run_accessibility_check(url: str) -> dict:
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             page = browser.new_page()
-            page.goto(url, wait_until="networkidle", timeout=30000)
+            page.goto(url, wait_until="load", timeout=30000)
             
             # Basic a11y checks
             result["accessibility"] = {

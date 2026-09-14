@@ -15,6 +15,15 @@ class PayoutMethod {
     required this.display,
     this.isDefault = false,
   });
+
+  factory PayoutMethod.fromJson(Map<String, dynamic> json) {
+    return PayoutMethod(
+      id: json['id'] as String,
+      type: json['type'] as String,
+      display: json['display'] ?? json['accountNumber'] ?? '',
+      isDefault: json['isDefault'] as bool? ?? false,
+    );
+  }
 }
 
 class RideHistoryItem {
@@ -49,14 +58,35 @@ class PayoutTransaction {
     required this.date,
     required this.status,
   });
+
+  factory PayoutTransaction.fromJson(Map<String, dynamic> json) {
+    return PayoutTransaction(
+      id: json['id'] as String,
+      amount: (json['amount'] as num).toDouble(),
+      destination: json['destination'] ?? json['accountNumber'] ?? '',
+      date: json['createdAt'] ?? json['date'] ?? '',
+      status: json['status'] as String? ?? 'PENDING',
+    );
+  }
 }
 
 class InsufficientFundsException implements Exception {}
 
 class RideService {
-  final List<PayoutMethod> _payoutMethods = [];
+  final http.Client _client;
+  String? _authToken;
+
+  RideService({http.Client? client}) : _client = client ?? http.Client();
 
   String get _dispatchBaseUrl => AppConfig.dispatchApiUrl;
+  String get _authBaseUrl => AppConfig.authApiUrl;
+
+  Map<String, String> get _headers => {
+        'Content-Type': 'application/json',
+        if (_authToken != null) 'Authorization': 'Bearer $_authToken',
+      };
+
+  void setAuthToken(String token) => _authToken = token;
 
   // Get nearby drivers
   Future<List<Map<String, dynamic>>> getNearbyDrivers({
@@ -77,7 +107,7 @@ class RideService {
 
       final uri = Uri.parse('$_dispatchBaseUrl/dispatch/rides/nearby-drivers')
           .replace(queryParameters: queryParams);
-      final response = await http.get(uri);
+      final response = await _client.get(uri, headers: _headers);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -97,9 +127,9 @@ class RideService {
     String? vehicleType,
   }) async {
     try {
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('$_dispatchBaseUrl/dispatch/rides'),
-        headers: {'Content-Type': 'application/json'},
+        headers: _headers,
         body: jsonEncode({
           'passengerId': passengerId,
           'pickupLocation': pickup,
@@ -122,8 +152,9 @@ class RideService {
   Future<Map<String, dynamic>?> getCurrentRide(
       String userId, String role) async {
     try {
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$_dispatchBaseUrl/dispatch/rides/current?userId=$userId&role=$role'),
+        headers: _headers,
       );
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -134,78 +165,159 @@ class RideService {
     return null;
   }
 
-  // Mock method to notify passenger of arrival
+  // Notify driver has arrived at pickup location
   Future<void> notifyArrival(String rideId) async {
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/arrive-at-stop'),
+        headers: _headers,
+        body: jsonEncode({'stopIndex': 0}),
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        debugPrint('notifyArrival failed: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error notifying arrival: $e');
+    }
   }
 
-  // Mock method to rate a passenger
+  // Rate a passenger after a ride
   Future<void> ratePassenger(String rideId, int rating, String comment) async {
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/rate'),
+        headers: _headers,
+        body: jsonEncode({'rating': rating, 'comment': comment}),
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        debugPrint('ratePassenger failed: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error rating passenger: $e');
+    }
   }
 
-  // Mock method to start the trip
+  // Start the trip (driver begins journey)
   Future<void> startTrip(String rideId) async {
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/start'),
+        headers: _headers,
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        debugPrint('startTrip failed: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error starting trip: $e');
+    }
   }
 
-  // Mock method to complete the trip
+  // Complete the trip
   Future<void> completeTrip(String rideId) async {
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/complete'),
+        headers: _headers,
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        debugPrint('completeTrip failed: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error completing trip: $e');
+    }
   }
 
-  // Mock method to request a payout
+  // Request a payout — delegates to auth-service wallet endpoint
   Future<void> requestPayout(double amount) async {
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await _client.post(
+        Uri.parse('$_authBaseUrl/payouts/request'),
+        headers: _headers,
+        body: jsonEncode({'amount': amount}),
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        final body = jsonDecode(response.body);
+        if (response.statusCode == 400 &&
+            (body['message'] as String?)?.contains('insufficient') == true) {
+          throw InsufficientFundsException();
+        }
+        debugPrint('requestPayout failed: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      if (e is InsufficientFundsException) rethrow;
+      debugPrint('Error requesting payout: $e');
+    }
   }
 
   Future<List<PayoutMethod>> getPayoutMethods() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return _payoutMethods;
+    try {
+      final response = await _client.get(
+        Uri.parse('$_authBaseUrl/payout-methods'),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        final List data = jsonDecode(response.body);
+        return data.map((j) => PayoutMethod.fromJson(j)).toList();
+      }
+    } catch (e) {
+      debugPrint('Error fetching payout methods: $e');
+    }
+    return [];
   }
 
   Future<PayoutMethod?> getDefaultPayoutMethod() async {
-    await Future.delayed(const Duration(milliseconds: 100));
+    final methods = await getPayoutMethods();
     try {
-      return _payoutMethods.firstWhere((m) => m.isDefault);
-    } catch (e) {
-      return _payoutMethods.isNotEmpty ? _payoutMethods.first : null;
+      return methods.firstWhere((m) => m.isDefault);
+    } catch (_) {
+      return methods.isNotEmpty ? methods.first : null;
     }
   }
 
   Future<void> setDefaultPayoutMethod(String id) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    for (var method in _payoutMethods) {
-      method.isDefault = method.id == id;
+    try {
+      await _client.patch(
+        Uri.parse('$_authBaseUrl/payout-methods/$id/default'),
+        headers: _headers,
+      );
+    } catch (e) {
+      debugPrint('Error setting default payout method: $e');
     }
   }
 
   Future<void> deletePayoutMethod(String id) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    _payoutMethods.removeWhere((m) => m.id == id);
+    try {
+      await _client.delete(
+        Uri.parse('$_authBaseUrl/payout-methods/$id'),
+        headers: _headers,
+      );
+    } catch (e) {
+      debugPrint('Error deleting payout method: $e');
+    }
   }
 
   Future<void> addPayoutMethod(String type, String details) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    final newId = (_payoutMethods.length + 1).toString();
-    _payoutMethods.add(PayoutMethod(id: newId, type: type, display: details));
+    try {
+      await _client.post(
+        Uri.parse('$_authBaseUrl/payout-methods'),
+        headers: _headers,
+        body: jsonEncode({'type': type, 'accountNumber': details}),
+      );
+    } catch (e) {
+      debugPrint('Error adding payout method: $e');
+    }
   }
 
   Future<List<RideHistoryItem>> getRideHistory(String userId) async {
     try {
-      // Using admin endpoint as proxy for now
-      final response = await http
-          .get(Uri.parse('$_dispatchBaseUrl/rides/admin/users/$userId/rides'));
+      final response = await _client
+          .get(Uri.parse('$_dispatchBaseUrl/rides/admin/users/$userId/rides'),
+              headers: _headers);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final List rides = data['data'];
         return rides.map<RideHistoryItem>((r) {
-          // Handling potentially missing fields or json structure diffs
           final dest = r['dropoffLocation'] is Map
               ? r['dropoffLocation']['address']
               : 'Unknown';
@@ -215,25 +327,29 @@ class RideService {
             destination: dest ?? 'Unknown',
             price: double.tryParse(r['fare']?.toString() ?? '0') ?? 0.0,
             status: r['status'] ?? 'Completed',
-            driverName: 'Driver', // Needs join
+            driverName: r['driver']?['name'] ?? 'Driver',
           );
         }).toList();
       }
     } catch (e) {
       debugPrint('Error fetching history: $e');
     }
-
-    // Fallback if backend fails or empty to preserve UI demo
     return [];
   }
 
   Future<Map<String, dynamic>> getWalletDetails() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return {
-      'balance': 0.0,
-      'transactions': [],
-      'payoutMethod': null,
-    };
+    try {
+      final response = await _client.get(
+        Uri.parse('$_authBaseUrl/wallet'),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+    } catch (e) {
+      debugPrint('Error fetching wallet details: $e');
+    }
+    return {'balance': 0.0, 'transactions': [], 'payoutMethod': null};
   }
 
   Future<Map<String, dynamic>> getPackageDeliveryFare({
@@ -241,7 +357,22 @@ class RideService {
     required dynamic destination,
     required String packageSize,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    try {
+      final uri = Uri.parse('$_dispatchBaseUrl/dispatch/rides/package-fare')
+          .replace(queryParameters: {
+        'packageSize': packageSize,
+        'pickupLat': pickup['lat']?.toString() ?? '',
+        'pickupLng': pickup['lng']?.toString() ?? '',
+        'destLat': destination['lat']?.toString() ?? '',
+        'destLng': destination['lng']?.toString() ?? '',
+      });
+      final response = await _client.get(uri, headers: _headers);
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+    } catch (e) {
+      debugPrint('Error fetching package delivery fare: $e');
+    }
     return {'fare': 0.0};
   }
 
@@ -254,36 +385,117 @@ class RideService {
     required String dropoffContact,
     required double fare,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/package'),
+        headers: _headers,
+        body: jsonEncode({
+          'pickupLocation': pickup,
+          'dropoffLocation': destination,
+          'packageSize': packageSize,
+          'packageDescription': packageDescription,
+          'pickupContact': pickupContact,
+          'dropoffContact': dropoffContact,
+          'fare': fare,
+          'rideType': 'PACKAGE',
+        }),
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        debugPrint('createPackageDelivery failed: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error creating package delivery: $e');
+    }
   }
 
   Future<List<Map<String, dynamic>>> getScheduledRides() async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    try {
+      final response = await _client.get(
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/scheduled'),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return List<Map<String, dynamic>>.from(data['data'] ?? data ?? []);
+      }
+    } catch (e) {
+      debugPrint('Error fetching scheduled rides: $e');
+    }
     return [];
   }
 
   Future<List<Map<String, dynamic>>> getIncentives() async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    try {
+      final response = await _client.get(
+        Uri.parse('$_authBaseUrl/incentives'),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return List<Map<String, dynamic>>.from(data['data'] ?? data ?? []);
+      }
+    } catch (e) {
+      debugPrint('Error fetching incentives: $e');
+    }
     return [];
   }
 
   Future<Map<String, dynamic>> getPassengerRating() async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    try {
+      final response = await _client.get(
+        Uri.parse('$_authBaseUrl/ratings/passenger-summary'),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+    } catch (e) {
+      debugPrint('Error fetching passenger rating: $e');
+    }
     return {'rating': 5.0, 'totalRides': 0};
   }
 
   Future<Map<String, dynamic>> getDriverPerformance() async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    try {
+      final response = await _client.get(
+        Uri.parse('$_authBaseUrl/ratings/driver-performance'),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+    } catch (e) {
+      debugPrint('Error fetching driver performance: $e');
+    }
     return {'rating': 4.9, 'acceptanceRate': 0.95};
   }
 
   Future<void> acceptRide(String rideId) async {
-    // Passenger accepting back-to-back? Or redundant.
-    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/accept'),
+        headers: _headers,
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        debugPrint('acceptRide failed: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error accepting ride: $e');
+    }
   }
 
   Future<void> rejectRide(String rideId) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/reject'),
+        headers: _headers,
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        debugPrint('rejectRide failed: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error rejecting ride: $e');
+    }
   }
 
   Future<List<PayoutTransaction>> getPayoutHistory() async {

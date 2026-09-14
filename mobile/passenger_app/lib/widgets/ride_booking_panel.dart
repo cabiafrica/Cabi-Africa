@@ -221,25 +221,44 @@ class _RideBookingPanelState extends State<RideBookingPanel> {
             ),
           ),
           const SizedBox(height: 24),
-          // Confirmation Button
-          ElevatedButton(
-            onPressed: _selectedTier == null
-                ? null
-                : () {
-                    HapticFeedback.mediumImpact();
-                    widget.onConfirm(
-                        '${_selectedTier!.name} (${_selectedBookingType.displayName})');
-                  },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              textStyle: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+          // Confirmation Button with Golden Look
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: _selectedTier != null
+                  ? [
+                      BoxShadow(
+                        color: const Color(0xFFFFD700).withValues(alpha: 0.4),
+                        blurRadius: 14,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : null,
             ),
-            child: Text('Confirm ${_selectedTier?.name ?? ''}'),
+            child: ElevatedButton(
+              onPressed: _selectedTier == null
+                  ? null
+                  : () {
+                      HapticFeedback.mediumImpact();
+                      widget.onConfirm(
+                          '${_selectedTier!.name} (${_selectedBookingType.displayName})');
+                    },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFFD700),
+                foregroundColor: Colors.black,
+                disabledBackgroundColor: Colors.grey.shade300,
+                disabledForegroundColor: Colors.grey.shade600,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              child: Text('Confirm ${_selectedTier?.name ?? ''}'),
+            ),
           ),
           const SizedBox(height: 8),
           // Cancel Button
@@ -253,15 +272,28 @@ class _RideBookingPanelState extends State<RideBookingPanel> {
   }
 
   Widget _buildTierCard(RideTier tier, bool isSelected) {
+    const goldColor = Color(0xFFFFD700);
+
     return Container(
       width: 140,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.blue.shade50 : Colors.grey.shade200,
+        color: isSelected
+            ? goldColor.withValues(alpha: 0.12)
+            : Colors.grey.shade100,
         border: Border.all(
-          color: isSelected ? Colors.blue : Colors.grey.shade300,
-          width: 2,
+          color: isSelected ? goldColor : Colors.grey.shade300,
+          width: isSelected ? 2.0 : 1.0,
         ),
+        boxShadow: isSelected
+            ? [
+                BoxShadow(
+                  color: goldColor.withValues(alpha: 0.20),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                ),
+              ]
+            : null,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -270,7 +302,7 @@ class _RideBookingPanelState extends State<RideBookingPanel> {
           Icon(
             tier.icon,
             size: 30,
-            color: isSelected ? Colors.blue : Colors.black87,
+            color: isSelected ? const Color(0xFFB8860B) : Colors.black87,
           ),
           const SizedBox(height: 4),
           Text(tier.name, style: const TextStyle(fontWeight: FontWeight.bold)),

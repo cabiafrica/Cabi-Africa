@@ -102,6 +102,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
       state = const Unauthenticated();
     }
   }
+
+  void updateUser(Map<String, dynamic> updatedFields) {
+    if (state is Authenticated) {
+      final current = state as Authenticated;
+      final updated = Map<String, dynamic>.from(current.user ?? {});
+      updated.addAll(updatedFields);
+      state = Authenticated(current.token, updated);
+    }
+  }
 }
 
 class AuthProvider extends ChangeNotifier {
@@ -117,6 +126,15 @@ class AuthProvider extends ChangeNotifier {
   void login(String token, [Map<String, dynamic>? user]) {
     _token = token;
     _user = user;
+    notifyListeners();
+  }
+
+  void updateUser(Map<String, dynamic> updatedFields) {
+    if (_user != null) {
+      _user = {..._user!, ...updatedFields};
+    } else {
+      _user = Map<String, dynamic>.from(updatedFields);
+    }
     notifyListeners();
   }
 

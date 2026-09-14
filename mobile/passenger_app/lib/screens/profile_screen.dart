@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +7,7 @@ import 'package:provider/provider.dart' as legacy_provider;
 import '../services/auth_service.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
+import '../widgets/profile_avatar_with_qr.dart';
 import 'login_screen.dart';
 import 'loyalty_dashboard_screen.dart';
 
@@ -37,26 +39,90 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.darkSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'UPDATE PROFILE PICTURE',
+                style: TextStyle(
+                  color: AppTheme.primaryColor,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.camera_alt_rounded, color: AppTheme.primaryColor),
+                title: const Text('Take Photo', style: TextStyle(color: Colors.white)),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  final picked = await ImagePicker().pickImage(
+                    source: ImageSource.camera,
+                    maxWidth: 1024,
+                    maxHeight: 1024,
+                    imageQuality: 85,
+                  );
+                  if (picked != null) {
+                    setState(() => _imageFile = File(picked.path));
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library_rounded, color: AppTheme.primaryColor),
+                title: const Text('Choose from Gallery', style: TextStyle(color: Colors.white)),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  final picked = await ImagePicker().pickImage(
+                    source: ImageSource.gallery,
+                    maxWidth: 1024,
+                    maxHeight: 1024,
+                    imageQuality: 85,
+                  );
+                  if (picked != null) {
+                    setState(() => _imageFile = File(picked.path));
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-    }
   }
 
   Future<void> _saveProfile() async {
     setState(() => _isLoading = true);
     try {
-      await _authService.updateProfile(
+      final res = await _authService.updateProfile(
         name: _nameController.text,
         imagePath: _imageFile?.path,
       );
-      if (mounted) {
+      if (res.isSignedIn && res.user != null) {
+        if (mounted) {
+          final userMap = Map<String, dynamic>.from(res.user!);
+          legacy_provider.Provider.of<AuthProvider>(context, listen: false).updateUser(userMap);
+          try {
+            ProviderScope.containerOf(context, listen: false)
+                .read(passengerAuthProvider.notifier)
+                .updateUser(userMap);
+          } catch (_) {}
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Profile updated successfully!')),
+          );
+        }
+      } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully!')),
+          SnackBar(content: Text(res.error ?? 'Failed to update profile')),
         );
       }
     } catch (e) {
@@ -156,12 +222,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     child: legacy_provider.Consumer<AuthProvider>(
                       builder: (context, auth, child) {
-                        final profilePic = auth.user?['profilePicture'] ?? "https://i.pravatar.cc/150?img=12";
+                        ImageProvider avatarProvider;
+                        if (_imageFile != null) {
+                          avatarProvider = FileImage(_imageFile!);
+                        } else {
+                          avatarProvider = getPassengerAvatarProvider(auth.user);
+                        }
+
                         return CircleAvatar(
                           radius: 65,
-                          backgroundImage: _imageFile != null
-                              ? FileImage(_imageFile!)
-                              : NetworkImage(profilePic) as ImageProvider,
+                          backgroundImage: avatarProvider,
                           backgroundColor: surfaceColor,
                         );
                       },

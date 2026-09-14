@@ -131,6 +131,12 @@ model DriverProfile {
   welfareEnrollments  WelfareEnrollment[]
   welfareDeductions   WelfareDeduction[]
 
+  // External Sacco integration
+  saccoEnrolled       Boolean              @default(false)
+  saccoPartnerId      String?
+  saccoEnrolledAt     DateTime?
+  saccoPartner        SaccoPartner?        @relation(fields: [saccoPartnerId], references: [id])
+
   @@index([isOnline])
   @@index([referrerId])
   @@index([driverGroupId])
@@ -330,6 +336,7 @@ model Ride {
   requestedVehicleType VehicleType?
   surgeMultiplier      Float?         @default(1.0)
   occurrences          Occurrence[]   @relation("RideOccurrences")
+  stops                RideStop[]
   driver               DriverProfile? @relation("DriverRides", fields: [driverId], references: [id])
   passenger            User           @relation("PassengerRides", fields: [passengerId], references: [id])
 
@@ -338,6 +345,28 @@ model Ride {
   @@index([status])
   @@index([createdAt])
   @@map("rides")
+}
+
+model RideStop {
+  id        String     @id @default(uuid())
+  rideId    String
+  address   String
+  location  Json
+  stopOrder Int        @default(1)
+  status    StopStatus @default(PENDING)
+  arrivedAt DateTime?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  ride      Ride       @relation(fields: [rideId], references: [id], onDelete: Cascade)
+
+  @@index([rideId])
+  @@map("ride_stops")
+}
+
+enum StopStatus {
+  PENDING
+  ARRIVED
+  COMPLETED
 }
 
 model Role {
@@ -1244,8 +1273,36 @@ enum ShiftStatus {
   ENDED
 }
 
+
 enum ClaimStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+// ─── External Sacco Integration ────────────────────────────────────────────────
+
+model SaccoPartner {
+  id              String          @id @default(uuid())
+  name            String
+  contactEmail    String
+  apiBaseUrl      String?
+  apiKey          String?
+  connectorType   ConnectorType   @default(REST_API)
+  isActive        Boolean         @default(false)
+  testMode        Boolean         @default(true)
+  logoUrl         String?
+  description     String?
+  website         String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  enrolledDrivers DriverProfile[]
+
+  @@map("sacco_partners")
+}
+
+enum ConnectorType {
+  REST_API
+  WEBHOOK
+  LEDGER_EXPORT
 }

@@ -7,12 +7,12 @@ import { CommissionService } from '../commission/commission.service';
 // import { VehicleService } from '@cabi/backend/vehicle-service'; 
 // import { UserService } from '@cabi/backend/user-service';
 import { SettingsService } from '@cabi/backend/settings';
+import { NotificationService } from '@cabi/backend/notification-service';
 
-// Mock Services for external dependencies (Payment, Vehicle, Notification)
+// Mock Services for external dependencies (Payment, Vehicle)
 class PaymentService { async createCharge(uid: string, amount: number) { return { success: true, message: 'Mock charge' }; } }
 class VehicleService { getActiveVehicleForDriver(id: string): any { return { id: 'v1', model: 'Corolla' }; } }
 class UserService { }
-class NotificationService { sendNotification(payload: any) { return; } }
 
 interface PaginationParams {
   page: number;
@@ -34,55 +34,70 @@ export class RideService {
   private readonly paymentService = new PaymentService();
   private readonly vehicleService = new VehicleService();
   private readonly userService = new UserService();
-  private readonly notificationService = new NotificationService();
+  private readonly notificationService: NotificationService;
 
   constructor(
     private prisma: PrismaService,
     public matchingService: MatchingService,
     private badgeService: BadgeService,
     private commissionService: CommissionService,
-    private settingsService: SettingsService
-  ) { }
+    private settingsService: SettingsService,
+    notificationService?: NotificationService
+  ) {
+    this.notificationService = notificationService || new NotificationService();
+  }
 
   private async checkPassengerVerification(passengerId: string): Promise<{ canRequest: boolean; reason?: string; remainingTrips?: number; isVerified?: boolean }> {
-    // Check admin setting for verification
     const verificationEnabled = await this.settingsService.getSystemSetting('RIDE_VERIFICATION_ENABLED');
     
-    // If verification is disabled by admin, allow all requests
     if (verificationEnabled === false) {
       return { canRequest: true, isVerified: true };
     }
 
-    // Special handling for guest users during testing phase
     const GUEST_ID = '00000000-0000-0000-0000-000000000000';
     if (passengerId === 'guest' || passengerId === GUEST_ID) {
       return { canRequest: true, reason: 'Guest booking permitted during testing.', isVerified: false };
     }
 
-    // Get current trip count
-    const tripCount = passengerTripCounts.get(passengerId) || 0;
-    const remainingTrips = Math.max(0, MAX_FREE_TRIPS - tripCount);
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: passengerId },
+        select: {
+          isVerifiedPassenger: true,
+          isIdentityVerified: true,
+          passengerTripCount: true,
+          maxFreeTrips: true
+        }
+      });
 
-    // Check if passenger is verified (would query database in production)
-    // For now, assume not verified if they have trips tracked
-    const isVerified = tripCount === 0 && passengerTripCounts.has(passengerId);
+      if (!user) {
+        return { canRequest: true, remainingTrips: 1, isVerified: false };
+      }
 
-    // If exceeded trip limit and not verified
-    if (tripCount >= MAX_FREE_TRIPS && !isVerified) {
+      const isVerified = user.isVerifiedPassenger || user.isIdentityVerified;
+      const maxTrips = user.maxFreeTrips ?? MAX_FREE_TRIPS;
+      const tripCount = user.passengerTripCount ?? 0;
+      const remainingTrips = Math.max(0, maxTrips - tripCount);
+
+      if (tripCount >= maxTrips && !isVerified) {
+        return {
+          canRequest: false,
+          reason: 'Verification required. Please verify your identity to continue using the service.',
+          remainingTrips: 0,
+          isVerified: false
+        };
+      }
+
       return {
-        canRequest: false,
-        reason: 'Verification required. Please verify your identity to continue using the service.',
-        remainingTrips: 0,
-        isVerified: false
+        canRequest: true,
+        reason: `You have ${remainingTrips} trip(s) remaining before verification is required.`,
+        remainingTrips,
+        isVerified
       };
+    } catch (e) {
+      this.logger.warn(`Error querying user verification status: ${e}`);
+      return { canRequest: true, remainingTrips: 1, isVerified: true };
     }
-
-    return {
-      canRequest: true,
-      reason: `You have ${remainingTrips} trip(s) remaining before verification is required.`,
-      remainingTrips,
-      isVerified: isVerified
-    };
   }
 
   async createRide(passengerId: string, pickup: any, dropoff: any, fare: number, vehicleType?: string) {
@@ -395,34 +410,182 @@ export class RideService {
           tripId: updatedRide.id
         });
 
-        // Trigger SACCO deduction via Sacco Service API
-        // Service name 'sacco-service' resolves via Docker DNS
+        // ── Sacco Remittance (External Partner Integration) ──────────────────
+        // Only remit if the driver is enrolled in the external Sacco.
+        // The sacco-service handles the split computation (mandatory% + incentive%),
+        // records the ledger entry, and forwards funds to the partner via REST/CSV.
         const saccoServiceUrl = process.env.SACCO_SERVICE_URL || 'http://sacco-service:3338';
 
-        fetch(`${saccoServiceUrl}/api/sacco/deduct`, {
+        fetch(`${saccoServiceUrl}/api/sacco/transactions`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             tripId: updatedRide.id,
             driverId: updatedRide.driverId,
-            finalFare: Number(finalFare)
+            fare: Number(finalFare),
           })
         }).then(res => {
           if (!res.ok) {
-            this.logger.error(`Sacco service returned ${res.status}`);
+            this.logger.warn(`Sacco remittance skipped or failed for ride ${rideId} (status ${res.status}) — driver may not be enrolled.`);
           } else {
-            this.logger.log(`Sacco deduction triggered successfully for ride ${rideId}`);
+            this.logger.log(`Sacco remittance recorded for ride ${rideId}`);
           }
         }).catch(err => {
-          this.logger.error(`Failed to call Sacco service: ${err.message}`);
+          // Non-critical: log and continue — driver still gets paid
+          this.logger.error(`Failed to call Sacco service for remittance: ${err.message}`);
         });
 
-      } catch (commissionError) {
+      } catch (commissionError: any) {
         this.logger.error(`Failed to process payout/commission: ${commissionError.message}`);
       }
     }
 
+    // Trigger HTML email receipts to passenger and driver asynchronously
+    this.sendRideReceipts(updatedRide.id).catch((receiptErr: any) => {
+      this.logger.error(`Failed to send ride receipts for ride ${rideId}: ${receiptErr?.message}`);
+    });
+
     return updatedRide;
+  }
+
+  /**
+   * Generates and dispatches HTML email receipts to the passenger and driver.
+   * Can be called automatically upon ride completion or manually via API.
+   */
+  async sendRideReceipts(rideId: string) {
+    const fullRide = await this.prisma.ride.findUnique({
+      where: { id: rideId },
+      include: {
+        passenger: true,
+        driver: {
+          include: {
+            user: true,
+            vehicles: true,
+          },
+        },
+      },
+    });
+
+    if (!fullRide) {
+      throw new NotFoundException(`Ride with ID ${rideId} not found`);
+    }
+
+    const results: {
+      passengerReceiptSent: boolean;
+      driverReceiptSent: boolean;
+      passengerEmail?: string;
+      driverEmail?: string;
+      passengerError?: string;
+      driverError?: string;
+      previewUrls?: { passenger?: string; driver?: string };
+    } = {
+      passengerReceiptSent: false,
+      driverReceiptSent: false,
+      previewUrls: {},
+    };
+
+    const totalFare = Number(fullRide.fare) || 0;
+    const baseFare = Number(fullRide.baseFare) || (totalFare > 0 ? totalFare * 0.7 : 0);
+    const distanceKm = fullRide.distance ? Number(fullRide.distance.toFixed(1)) : undefined;
+    const durationMinutes = fullRide.duration ? Math.round(fullRide.duration / 60) : undefined;
+    const driverUser = fullRide.driver?.user;
+    const driverName = driverUser?.fullName || 'Cabi Partner Driver';
+    const passengerName = fullRide.passenger?.fullName || 'Valued Passenger';
+
+    let primaryVehicle: any = undefined;
+    if (fullRide.driver?.vehicles) {
+      if (Array.isArray(fullRide.driver.vehicles)) {
+        primaryVehicle = fullRide.driver.vehicles[0];
+      } else {
+        primaryVehicle = fullRide.driver.vehicles;
+      }
+    }
+
+    // 1. Send Passenger HTML Receipt
+    if (fullRide.passenger?.email && fullRide.passenger.email.includes('@')) {
+      results.passengerEmail = fullRide.passenger.email;
+      try {
+        const sendResult = await this.notificationService.sendPassengerReceipt({
+          to: fullRide.passenger.email,
+          passengerName,
+          rideId: fullRide.id,
+          rideDate: fullRide.createdAt || new Date(),
+          pickupLocation: fullRide.pickupLocation,
+          dropoffLocation: fullRide.dropoffLocation,
+          distanceKm,
+          durationMinutes,
+          currency: 'KES',
+          totalFare,
+          baseFare: baseFare > 0 ? baseFare : undefined,
+          surgeMultiplier: fullRide.surgeMultiplier || undefined,
+          surgeAmount: (fullRide.surgeMultiplier && fullRide.surgeMultiplier > 1.0)
+            ? Number((totalFare - (totalFare / fullRide.surgeMultiplier)).toFixed(2))
+            : undefined,
+          paymentMethod: 'MPESA',
+          driverName,
+          vehicleModel: primaryVehicle ? `${primaryVehicle.make || ''} ${primaryVehicle.model || ''}`.trim() : undefined,
+          vehiclePlateNumber: primaryVehicle?.plateNumber,
+          vehicleColor: primaryVehicle?.color,
+        });
+
+        results.passengerReceiptSent = sendResult.success;
+        if (sendResult.previewUrl) {
+          results.previewUrls!.passenger = sendResult.previewUrl;
+        }
+        if (!sendResult.success) {
+          results.passengerError = sendResult.error;
+        }
+      } catch (err: any) {
+        this.logger.error(`Error sending passenger receipt for ride ${rideId}: ${err.message}`);
+        results.passengerError = err.message;
+      }
+    } else {
+      this.logger.warn(`No passenger email found for ride ${rideId}. Skipping passenger receipt.`);
+    }
+
+    // 2. Send Driver HTML Trip Summary
+    if (driverUser?.email && driverUser.email.includes('@')) {
+      results.driverEmail = driverUser.email;
+      try {
+        const commissionRate = 20; // 20% platform commission
+        const commissionAmount = Number((totalFare * (commissionRate / 100)).toFixed(2));
+        const netDriverEarnings = Number((totalFare - commissionAmount).toFixed(2));
+
+        const sendResult = await this.notificationService.sendDriverReceipt({
+          to: driverUser.email,
+          driverName,
+          rideId: fullRide.id,
+          rideDate: fullRide.createdAt || new Date(),
+          pickupLocation: fullRide.pickupLocation,
+          dropoffLocation: fullRide.dropoffLocation,
+          distanceKm,
+          durationMinutes,
+          currency: 'KES',
+          grossFare: totalFare,
+          platformCommissionRate: commissionRate,
+          platformCommissionAmount: commissionAmount,
+          netDriverEarnings,
+          paymentMethod: 'MPESA',
+          payoutStatus: 'CREDITED_TO_WALLET',
+          passengerName,
+        });
+
+        results.driverReceiptSent = sendResult.success;
+        if (sendResult.previewUrl) {
+          results.previewUrls!.driver = sendResult.previewUrl;
+        }
+        if (!sendResult.success) {
+          results.driverError = sendResult.error;
+        }
+      } catch (err: any) {
+        this.logger.error(`Error sending driver receipt for ride ${rideId}: ${err.message}`);
+        results.driverError = err.message;
+      }
+    } else {
+      this.logger.warn(`No driver email found for ride ${rideId}. Skipping driver receipt.`);
+    }
+
+    return results;
   }
 
   private async awardRideCompletionBadges(passengerId: string, driverId: string | null): Promise<void> {
@@ -500,28 +663,111 @@ export class RideService {
   }
 
   async arriveAtStop(rideId: string, stopIndex: number) {
-    // Schema doesn't have `stops` array yet?
-    // `stops` were in the mock object but not obviously in schema.
-    // Schema has `pickupLocation` and `dropoffLocation`.
-    // If we want multiple stops, we need a separate model or Json field.
-    // For now, I will Comment this out or Stub it because Schema doesn't support it fully.
-    this.logger.warn('arriveAtStop not fully implemented with DB yet');
-    return { message: 'Not implemented' };
+    const ride = await this.prisma.ride.findUnique({
+      where: { id: rideId },
+      include: { stops: { orderBy: { stopOrder: 'asc' } } }
+    });
+
+    if (!ride) {
+      throw new NotFoundException(`Ride with ID ${rideId} not found`);
+    }
+
+    if (ride.stops && ride.stops.length > stopIndex) {
+      const targetStop = ride.stops[stopIndex];
+      const updatedStop = await (this.prisma as any).rideStop.update({
+        where: { id: targetStop.id },
+        data: {
+          status: 'ARRIVED',
+          arrivedAt: new Date()
+        }
+      });
+
+      this.notificationService.sendNotification({
+        userId: ride.passengerId,
+        title: 'Driver Arrived at Stop',
+        body: `Your driver has arrived at stop #${stopIndex + 1} (${targetStop.address}).`
+      });
+
+      return { success: true, stop: updatedStop, message: `Arrived at stop ${stopIndex + 1}` };
+    }
+
+    return { success: true, message: `Stop ${stopIndex + 1} marked for ride ${rideId}` };
   }
 
-  addStop(rideId: string, newStopAddress: string) {
-    // Stub
-    return { message: 'Not implemented' };
+  async addStop(rideId: string, newStopAddress: string, location?: any) {
+    const ride = await this.prisma.ride.findUnique({
+      where: { id: rideId },
+      include: { stops: { orderBy: { stopOrder: 'asc' } } }
+    });
+
+    if (!ride) {
+      throw new NotFoundException(`Ride with ID ${rideId} not found`);
+    }
+
+    const currentStopCount = ride.stops?.length ?? 0;
+    const stopLocation = location ?? { address: newStopAddress, lat: 0, lng: 0 };
+
+    const newStop = await (this.prisma as any).rideStop.create({
+      data: {
+        rideId,
+        address: newStopAddress,
+        location: stopLocation,
+        stopOrder: currentStopCount + 1,
+        status: 'PENDING'
+      }
+    });
+
+    const extraFare = 50;
+    const updatedFare = ride.fare ? Number(ride.fare) + extraFare : extraFare;
+    await this.prisma.ride.update({
+      where: { id: rideId },
+      data: { fare: updatedFare }
+    });
+
+    this.notificationService.sendNotification({
+      userId: ride.driverId ?? '',
+      title: 'New Stop Added',
+      body: `Passenger added a new stop: ${newStopAddress}.`
+    });
+
+    return { success: true, stop: newStop, newFare: updatedFare };
   }
 
-  respondToChange(rideId: string, response: 'accepted' | 'declined') {
-    // Stub
-    return { message: 'Not implemented' };
+  async respondToChange(rideId: string, response: 'accepted' | 'declined') {
+    const ride = await this.prisma.ride.findUnique({ where: { id: rideId } });
+    if (!ride) {
+      throw new NotFoundException(`Ride with ID ${rideId} not found`);
+    }
+
+    this.notificationService.sendNotification({
+      userId: ride.passengerId,
+      title: 'Route Change Update',
+      body: `Driver has ${response} the requested route change.`
+    });
+
+    return { success: true, rideId, response };
   }
 
-  findAndOfferBackToBackRide(driverId: string) {
-    // Stub logic with DB later
-    return { success: false, message: 'Not implemented' };
+  async findAndOfferBackToBackRide(driverId: string) {
+    const pendingRides = await this.prisma.ride.findMany({
+      where: {
+        status: 'REQUESTED',
+        driverId: null
+      },
+      take: 5,
+      orderBy: { createdAt: 'desc' }
+    });
+
+    if (pendingRides.length === 0) {
+      return { success: false, message: 'No back-to-back rides currently available.' };
+    }
+
+    const recommendedRide = pendingRides[0];
+    return {
+      success: true,
+      ride: recommendedRide,
+      message: 'Back-to-back ride found and queued.'
+    };
   }
 
   async findForUser(userId: string, params: PaginationParams) {

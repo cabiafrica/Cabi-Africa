@@ -40,6 +40,7 @@ import { GamificationManagement } from './components/settings/GamificationManage
 import { AppSettingsManagement } from './components/settings/AppSettingsManagement';
 import { JobActivitiesDashboard } from './components/operations/JobActivitiesDashboard';
 import { WelfareSchemeManagement } from './components/settings/WelfareSchemeManagement';
+import SaccoIntegrationHub from './pages/sacco/SaccoIntegrationHub';
 
 // New Role Pages
 import RolesList from './pages/Roles/RolesList';
@@ -162,6 +163,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
       { icon: '⏱️', label: 'Payout Scheduler', view: '/payout-scheduler', permission: 'PAYMENTS_PROCESS' },
       { icon: '🏦', label: 'Welfare Schemes', view: '/welfare-schemes', permission: 'COMMISSION_EDIT' },
       { icon: '💰', label: 'Traction Logs', view: '/traction-logs', permission: 'AUDIT_LOGS_VIEW' },
+      { icon: '🏛️', label: 'Sacco Integration', view: '/sacco-integration', permission: 'SYSTEM_SETTINGS_EDIT' },
     ]
   }
 ];
@@ -427,6 +429,7 @@ function App() {
               <Route path="/vehicle-benefits" element={<VehicleBenefitsPage />} />
               <Route path="/vehicle-qualifications" element={<VehicleQualificationsPage />} />
               <Route path="/benefit-claims" element={<BenefitClaimsPage />} />
+              <Route path="/sacco-integration" element={<ProtectedRoute permission="SYSTEM_SETTINGS_EDIT"><SaccoIntegrationHub /></ProtectedRoute>} />
             </Routes>
           </div>
         </div>

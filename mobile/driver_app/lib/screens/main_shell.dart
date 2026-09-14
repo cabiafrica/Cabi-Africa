@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'dashboard_screen.dart';
-import 'earnings_screen.dart';
+import 'earnings_dashboard_screen.dart';
 import 'menu_screen.dart';
 import 'package:driver_app/theme/app_theme.dart';
 
@@ -20,7 +20,7 @@ class _MainShellState extends State<MainShell> {
   final List<Widget> _screens = const [
     HomeScreen(),
     DashboardScreen(),
-    EarningsScreen(),
+    EarningsDashboardScreen(),
     MenuScreen(),
   ];
 

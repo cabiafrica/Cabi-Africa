@@ -13,8 +13,17 @@ enum CabiMapTheme {
   light,
 }
 
+/// Map source provider for Cabi platform
+enum CabiMapSource {
+  /// Google Maps Platform road tiles
+  googleMaps,
+
+  /// Cabi Africa Maps (High-definition Africa-optimized OpenStreetMap network)
+  cabiAfrica,
+}
+
 /// Custom map widget for Cabi platform
-/// Uses OpenStreetMap for free, unlimited usage
+/// Supports both Google Maps and Cabi Africa Maps
 class CabiMap extends StatefulWidget {
   final LatLng initialCenter;
   final double initialZoom;
@@ -25,8 +34,10 @@ class CabiMap extends StatefulWidget {
   final bool showUserLocation;
   final bool enableInteraction;
   final CabiMapTheme theme;
-
+  final CabiMapSource mapSource;
+  final Function(LatLng center, bool hasGesture)? onCameraMove;
   final Function(CabiMapController)? onMapCreated;
+  final String? apiKey;
 
   const CabiMap({
     super.key,
@@ -37,9 +48,12 @@ class CabiMap extends StatefulWidget {
     this.onTap,
     this.onLongPress,
     this.onMapCreated,
+    this.onCameraMove,
     this.showUserLocation = true,
     this.enableInteraction = true,
     this.theme = CabiMapTheme.dark,
+    this.mapSource = CabiMapSource.googleMaps,
+    this.apiKey,
   });
 
   @override
@@ -67,6 +81,14 @@ class _CabiMapState extends State<CabiMap> {
       options: MapOptions(
         initialCenter: widget.initialCenter,
         initialZoom: widget.initialZoom,
+        onPositionChanged: (camera, hasGesture) {
+          if (widget.onCameraMove != null) {
+            final center = camera.center;
+            if (center != null) {
+              widget.onCameraMove!(center, hasGesture);
+            }
+          }
+        },
         onTap: widget.onTap != null
             ? (tapPosition, point) => widget.onTap!(point)
             : null,
@@ -80,14 +102,50 @@ class _CabiMapState extends State<CabiMap> {
         ),
       ),
       children: [
-        // Map tile layer (theme-aware)
-        TileLayer(
-          urlTemplate: widget.theme == CabiMapTheme.dark
-              ? 'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
-              : 'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-          userAgentPackageName: 'com.cabi.app',
-          maxZoom: 19,
-        ),
+        // Map tile layer based on selected map source
+        if (widget.mapSource == CabiMapSource.googleMaps)
+          TileLayer(
+            key: const ValueKey('google_maps_layer'),
+            urlTemplate: (widget.apiKey != null && widget.apiKey!.isNotEmpty)
+                ? 'https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&key=${widget.apiKey}'
+                : 'https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&key=AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0',
+            subdomains: const ['0', '1', '2', '3'],
+            userAgentPackageName: 'com.cabi.app',
+            maxZoom: 20,
+            tileBuilder: widget.theme == CabiMapTheme.dark
+                ? (context, tileWidget, tile) {
+                    return ColorFiltered(
+                      colorFilter: const ColorFilter.matrix([
+                        -0.85, 0.0, 0.0, 0.0, 240.0,
+                        0.0, -0.85, 0.0, 0.0, 240.0,
+                        0.0, 0.0, -0.85, 0.0, 240.0,
+                        0.0, 0.0, 0.0, 1.0, 0.0,
+                      ]),
+                      child: tileWidget,
+                    );
+                  }
+                : null,
+          )
+        else
+          TileLayer(
+            key: const ValueKey('cabi_africa_maps_layer'),
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            userAgentPackageName: 'com.cabi.app',
+            maxZoom: 19,
+            tileBuilder: widget.theme == CabiMapTheme.dark
+                ? (context, tileWidget, tile) {
+                    return ColorFiltered(
+                      colorFilter: const ColorFilter.matrix([
+                        -0.85, 0.0, 0.0, 0.0, 240.0,
+                        0.0, -0.85, 0.0, 0.0, 240.0,
+                        0.0, 0.0, -0.85, 0.0, 240.0,
+                        0.0, 0.0, 0.0, 1.0, 0.0,
+                      ]),
+                      child: tileWidget,
+                    );
+                  }
+                : null,
+          ),
 
         // Route polyline if provided
         if (widget.routePoints != null && widget.routePoints!.isNotEmpty)

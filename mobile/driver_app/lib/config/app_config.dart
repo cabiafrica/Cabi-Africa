@@ -1,12 +1,19 @@
 import 'package:flutter/foundation.dart';
 
 class AppConfig {
-  // Auto-detect production environment based on build mode
-  static const bool isProduction = false; // Forced false for local integration verification
+  // Configurable via --dart-define=IS_PRODUCTION=true
+  static const bool isProduction = bool.fromEnvironment('IS_PRODUCTION', defaultValue: false);
+  
+  // Custom API host override via --dart-define=API_HOST=192.168.100.35
+  static const String customHost = String.fromEnvironment('API_HOST', defaultValue: '192.168.100.35');
 
-  static String get host => isProduction 
-      ? 'auth-gateway-746659778850.us-central1.run.app'
-      : (kIsWeb ? '127.0.0.1' : (defaultTargetPlatform == TargetPlatform.android ? '10.0.2.2' : '127.0.0.1'));
+  static String get host {
+    if (isProduction) return 'auth-gateway-746659778850.us-central1.run.app';
+    if (kIsWeb) return 'localhost';
+    if (customHost.isNotEmpty && customHost != '192.168.100.35') return customHost;
+    if (defaultTargetPlatform == TargetPlatform.android) return '192.168.43.75';
+    return '127.0.0.1';
+  }
 
   static String get protocol => isProduction ? 'https' : 'http';
 

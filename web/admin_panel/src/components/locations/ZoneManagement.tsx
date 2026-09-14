@@ -47,7 +47,12 @@ export const ZoneManagement: React.FC<Props> = ({ type }) => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Map Placeholder Panel */}
                 <div className="lg:col-span-2 bg-slate-100 dark:bg-slate-800 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col justify-center items-center h-96 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-[url('https://maps.googleapis.com/maps/api/staticmap?center=-1.2921,36.8219&zoom=13&size=800x600&sensor=false&key=YOUR_API_KEY_HERE')] bg-cover bg-center opacity-30 grayscale group-hover:grayscale-0 transition-all duration-500"></div>
+                    <div 
+                        className="absolute inset-0 bg-cover bg-center opacity-30 grayscale group-hover:grayscale-0 transition-all duration-500"
+                        style={{
+                            backgroundImage: `url('https://maps.googleapis.com/maps/api/staticmap?center=-1.2921,36.8219&zoom=13&size=800x600&sensor=false&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0'}')`
+                        }}
+                    ></div>
                     <div className="z-10 bg-white dark:bg-slate-900 px-6 py-4 rounded-lg shadow-lg text-center">
                         <Map className="text-slate-400 text-4xl mb-2 mx-auto" />
                         <h3 className="text-slate-900 dark:text-white font-semibold">Interactive Map Viewer</h3>

@@ -6,22 +6,24 @@ interface DriverLayoutProps {
 
 const DriverLayout: React.FC<DriverLayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-blue-600 text-white p-4">
+    <div className="min-h-screen bg-neutral-950 text-white flex flex-col">
+      <header className="bg-black border-b border-neutral-800 p-4">
         <nav className="container mx-auto flex justify-between items-center">
-          <a href="/drivers" className="text-xl font-bold">Cabi Drivers</a>
-          <div>
-            <a href="/why-drive" className="ml-4 hover:underline">How it Works</a>
-            <a href="/faq" className="ml-4 hover:underline">FAQ</a>
-            <a href="/drivers/register" className="ml-4 px-4 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-100">Register</a>
+          <a href="/drivers" className="text-xl font-black tracking-tight text-white">
+            CABI <span className="text-amber-500">Drivers</span>
+          </a>
+          <div className="flex items-center gap-4">
+            <a href="/why-drive" className="text-neutral-300 hover:text-amber-400 transition-colors">How it Works</a>
+            <a href="/faq" className="text-neutral-300 hover:text-amber-400 transition-colors">FAQ</a>
+            <a href="/register" className="px-4 py-2 bg-amber-500 text-black font-bold rounded-lg hover:bg-amber-400 transition-colors">Register</a>
           </div>
         </nav>
       </header>
-      <main className="container mx-auto p-4">
+      <main className="container mx-auto p-4 flex-grow">
         {children}
       </main>
-      <footer className="bg-gray-800 text-white p-4 text-center mt-8">
-        <p>&copy; 2025 Cabi. All rights reserved.</p>
+      <footer className="bg-black border-t border-neutral-900 text-neutral-400 p-6 text-center mt-auto">
+        <p>&copy; {new Date().getFullYear()} CABI Africa. All rights reserved.</p>
       </footer>
     </div>
   );

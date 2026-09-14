@@ -154,12 +154,12 @@ export const CabiMap: React.FC<CabiMapProps> = ({
             zoomControl: false // Custom zoom control styling can be added later
         }).setView(center, zoom);
 
-        const tileUrl = isDark
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+        const googleMapsKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0';
+        const tileUrl = `https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&key=${googleMapsKey}`;
 
         tileLayerRef.current = L.tileLayer(tileUrl, {
-            attribution: '&copy; CARTO',
+            subdomains: ['0', '1', '2', '3'],
+            attribution: '&copy; Google Maps',
             maxZoom: 20,
         }).addTo(map);
 
@@ -182,9 +182,8 @@ export const CabiMap: React.FC<CabiMapProps> = ({
 
     useEffect(() => {
         if (!mapRef.current || !tileLayerRef.current) return;
-        const tileUrl = isDark
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+        const googleMapsKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0';
+        const tileUrl = `https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&key=${googleMapsKey}`;
         tileLayerRef.current.setUrl(tileUrl);
     }, [isDark]);
 

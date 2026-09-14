@@ -35,7 +35,24 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            const CircleAvatar(radius: 40, child: Icon(Icons.person, size: 40)),
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFF59E0B), width: 2.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFF59E0B).withValues(alpha: 0.2),
+                    blurRadius: 16,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: const CircleAvatar(
+                radius: 40,
+                backgroundColor: Colors.black,
+                child: Icon(Icons.person_rounded, size: 44, color: Color(0xFFF59E0B)),
+              ),
+            ),
             const SizedBox(height: 16),
             Text('How was your ride with ${widget.driverName}?',
                 style: const TextStyle(fontSize: 18)),

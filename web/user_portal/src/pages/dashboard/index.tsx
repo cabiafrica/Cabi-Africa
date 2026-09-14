@@ -15,6 +15,7 @@ import {
     Car, 
     Wallet, 
     Settings, 
+    Settings2,
     LogOut, 
     User,
     ChevronRight,
@@ -28,6 +29,7 @@ import {
     Briefcase,
     Heart,
     Check,
+    CheckCircle2,
     Building2,
     Plus,
     Gift,
@@ -45,6 +47,11 @@ export default function Dashboard() {
     const [referralCode, setReferralCode] = React.useState('REF-INVITE');
     const [isConnectingSacco, setIsConnectingSacco] = React.useState(false);
     const [showProfileMenu, setShowProfileMenu] = React.useState(false);
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const connectSacco = async () => {
         setIsConnectingSacco(true);
@@ -158,7 +165,7 @@ export default function Dashboard() {
                             <span className="text-xs font-black uppercase tracking-[0.2em] text-brand-yellow">Dashboard</span>
                         </div>
                         <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                            Welcome back, <span className="text-brand-yellow">{user?.firstName || user?.fullName || 'User'}</span>
+                            Welcome back, <span className="text-brand-yellow">{mounted ? (user?.firstName || user?.fullName || 'User') : 'User'}</span>
                         </h1>
                         <p className="text-slate-500 dark:text-gray-400 mt-2 flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
@@ -173,13 +180,13 @@ export default function Dashboard() {
                         >
                             <div className="text-right hidden sm:block">
                                 <div className="text-sm font-black text-slate-900 dark:text-white group-hover:text-brand-yellow transition-colors tracking-tight">
-                                    {user?.fullName || (user?.firstName ? `${user.firstName} ${user.lastName}` : 'Cabi User')}
+                                    {mounted ? (user?.fullName || (user?.firstName ? `${user.firstName} ${user.lastName}` : 'Cabi User')) : 'Cabi User'}
                                 </div>
                                 <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mt-1">Diamond Member</div>
                             </div>
                             <div className={`w-14 h-14 rounded-lg bg-gradient-to-tr from-brand-yellow to-brand-accent p-[2px] shadow-lg shadow-brand-yellow/10 group-hover:scale-105 transition-all ${showProfileMenu ? 'scale-105 rotate-3' : ''}`}>
                                 <div className="w-full h-full rounded-lg bg-white dark:bg-brand-black flex items-center justify-center text-2xl border-2 border-white dark:border-brand-black overflow-hidden relative">
-                                    {user?.profilePictureUrl ? (
+                                    {mounted && user?.profilePictureUrl ? (
                                         <img src={user.profilePictureUrl} alt="Avatar" className="w-full h-full object-cover" />
                                     ) : (
                                         <User className="w-6 h-6 text-slate-400" />
@@ -358,16 +365,15 @@ export default function Dashboard() {
                                     <div className="glass p-8 rounded-xl border border-slate-200 dark:border-white/5">
                                         <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                                             <MapPin className="w-5 h-5 text-brand-accent" /> Frequent Places
-                                        </h2>
-                                        <div className="space-y-4">
-                                            {[
-                                                { icon: '🏠', name: 'Home', addr: 'Westlands, Woodvale Grove' },
-                                                { icon: '💼', name: 'Work', addr: 'Kenyatta Ave, CBD' },
-                                                { icon: '🏋️', name: 'Gym', addr: 'Lavington Mall, 2nd Floor' }
-                                            ].map((place, idx) => (
+                                        </h2>                                        <div className="space-y-4">
+                                            {([
+                                                { Icon: Home, name: 'Home', addr: 'Westlands, Woodvale Grove' },
+                                                { Icon: Briefcase, name: 'Work', addr: 'Kenyatta Ave, CBD' },
+                                                { Icon: Heart, name: 'Gym', addr: 'Lavington Mall, 2nd Floor' }
+                                            ] as { Icon: React.ElementType, name: string, addr: string }[]).map((place, idx) => (
                                                 <div key={idx} className="flex items-center gap-4 p-4 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-all cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-white/10">
-                                                    <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-white/5 flex items-center justify-center text-xl grayscale hover:grayscale-0 transition-all">
-                                                        {place.icon === '🏠' ? <Home className="w-5 h-5" /> : place.icon === '💼' ? <Briefcase className="w-5 h-5" /> : <Heart className="w-5 h-5" /> }
+                                                    <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-white/5 flex items-center justify-center transition-all">
+                                                        <place.Icon className="w-5 h-5" />
                                                     </div>
                                                     <div>
                                                         <div className="font-bold">{place.name}</div>
@@ -407,13 +413,13 @@ export default function Dashboard() {
                                                 <div className="text-slate-500 dark:text-gray-500 text-xs font-bold uppercase mb-2">Travel Policy</div>
                                                 <ul className="space-y-2 text-sm">
                                                     <li className="flex items-center gap-2 text-green-500">
-                                                        <span>✓</span> Business Trips Allowed
+                                                        <CheckCircle2 className="w-4 h-4" /> Business Trips Allowed
                                                     </li>
                                                     <li className="flex items-center gap-2 text-slate-400">
-                                                        <span>✓</span> Premium Class Eligible
+                                                        <CheckCircle2 className="w-4 h-4" /> Premium Class Eligible
                                                     </li>
                                                     <li className="flex items-center gap-2 text-slate-400">
-                                                        <span>✓</span> 24/7 Cabi Support
+                                                        <CheckCircle2 className="w-4 h-4" /> 24/7 Cabi Support
                                                     </li>
                                                 </ul>
                                             </div>
@@ -558,15 +564,15 @@ export default function Dashboard() {
                                             </div>
                                             <div className="flex justify-between text-sm py-2 border-b border-dashed border-slate-200 dark:border-white/5">
                                                 <span className="text-slate-500">Insurance</span>
-                                                <span className="font-bold text-green-500 flex items-center gap-1">✓ Valid</span>
+                                                <span className="font-bold text-green-500 flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Valid</span>
                                             </div>
                                             <div className="flex justify-between text-sm py-2 border-b border-dashed border-slate-200 dark:border-white/5">
                                                 <span className="text-slate-500">Inspection</span>
-                                                <span className="font-bold text-green-500 flex items-center gap-1">✓ Passed</span>
+                                                <span className="font-bold text-green-500 flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Passed</span>
                                             </div>
                                         </div>
                                         <button className="w-full py-3 bg-slate-900 dark:bg-white text-white dark:text-black rounded-xl font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-                                            <span>⚙️</span> Manage Settings
+                                            <Settings2 className="w-4 h-4" /> Manage Settings
                                         </button>
                                     </div>
                                 </>

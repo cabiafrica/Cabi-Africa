@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:driver_app/theme/app_theme.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SecureWebView extends StatefulWidget {
   final String url;
@@ -15,45 +17,60 @@ class SecureWebView extends StatefulWidget {
 }
 
 class _SecureWebViewState extends State<SecureWebView> {
-  late final WebViewController _controller;
+  WebViewController? _controller;
   bool _isLoading = true;
   final _storage = const FlutterSecureStorage();
 
   @override
   void initState() {
     super.initState();
-    _initWebView();
+    if (!kIsWeb) {
+      _initWebView();
+    } else {
+      _isLoading = false;
+    }
   }
 
   Future<void> _initWebView() async {
-    // We add source=driver_app parameter so the web app knows it's embedded
-    final uri = Uri.parse(widget.url);
-    final finalUrl = uri.replace(queryParameters: {
-      ...uri.queryParameters,
-      'source': 'driver_app',
-    }).toString();
+    try {
+      final uri = Uri.parse(widget.url);
+      final finalUrl = uri.replace(queryParameters: {
+        ...uri.queryParameters,
+        'source': 'driver_app',
+      }).toString();
 
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(AppTheme.darkBackground)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageStarted: (String url) {
-            if (mounted) setState(() => _isLoading = true);
-          },
-          onPageFinished: (String url) async {
-            // Inject JWT session into the web app's localStorage
-            final token = await _storage.read(key: 'jwt_token');
-            if (token != null) {
-              await _controller.runJavaScript("localStorage.setItem('token', '$token');");
-            }
-            if (mounted) {
-              setState(() => _isLoading = false);
-            }
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(finalUrl));
+      final controller = WebViewController();
+      controller
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setBackgroundColor(AppTheme.darkBackground)
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onPageStarted: (String url) {
+              if (mounted) setState(() => _isLoading = true);
+            },
+            onPageFinished: (String url) async {
+              final token = await _storage.read(key: 'jwt_token');
+              if (token != null) {
+                await controller.runJavaScript("localStorage.setItem('token', '$token');");
+              }
+              if (mounted) {
+                setState(() => _isLoading = false);
+              }
+            },
+          ),
+        )
+        ..loadRequest(Uri.parse(finalUrl));
+
+      if (mounted) {
+        setState(() {
+          _controller = controller;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
@@ -69,15 +86,50 @@ class _SecureWebViewState extends State<SecureWebView> {
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
       ),
-      body: Stack(
-        children: [
-          WebViewWidget(controller: _controller),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(color: AppTheme.primaryColor),
+      body: kIsWeb
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.open_in_browser_rounded, size: 56, color: AppTheme.primaryColor),
+                    const SizedBox(height: 16),
+                    Text(
+                      widget.title,
+                      style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Web portal view for ${widget.title}',
+                      style: GoogleFonts.outfit(color: Colors.white70, fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryColor,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      icon: const Icon(Icons.launch, size: 18),
+                      label: const Text('Open in New Tab', style: TextStyle(fontWeight: FontWeight.bold)),
+                      onPressed: () => launchUrl(Uri.parse(widget.url), mode: LaunchMode.externalApplication),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : Stack(
+              children: [
+                if (_controller != null) WebViewWidget(controller: _controller!),
+                if (_isLoading)
+                  const Center(
+                    child: CircularProgressIndicator(color: AppTheme.primaryColor),
+                  ),
+              ],
             ),
-        ],
-      ),
     );
   }
 }

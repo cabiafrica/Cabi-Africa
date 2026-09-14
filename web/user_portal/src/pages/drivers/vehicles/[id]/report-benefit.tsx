@@ -82,7 +82,7 @@ export default function ReportBenefitPage() {
 
     return (
         <MainLayout title="Self-Report Benefit Claim | Cabi" description="Report vehicle maintenance, compliance, or service benefits to maintain premium vehicle account standing.">
-            <div className="min-h-screen bg-slate-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-brand-black text-white py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-3xl mx-auto">
                     {/* Back navigation */}
                     <div className="mb-8">

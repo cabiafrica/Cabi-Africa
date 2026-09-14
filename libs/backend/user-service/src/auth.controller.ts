@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, ValidationPipe, UnauthorizedException, UseInterceptors, UploadedFiles, UploadedFile, Req } from '@nestjs/common';
+import { Controller, Post, Get, Put, Patch, Body, ValidationPipe, UnauthorizedException, UseInterceptors, UploadedFiles, UploadedFile, Req } from '@nestjs/common';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { Public } from '@cabi/backend/rbac';
 import { UserService } from './user.service';
@@ -80,6 +80,35 @@ export class AuthController {
       throw new UnauthorizedException('Could not extract user identity from token.');
     }
     return this.userService.getMe(userId);
+  }
+
+  @Put('profile')
+  async updateMyProfile(@Req() req: any, @Body() body: any) {
+    const userId = req.user?.sub || req.user?.id || req.user?.userId || body.userId;
+    if (!userId) {
+      throw new UnauthorizedException('Could not extract user identity.');
+    }
+    return this.userService.updateProfile(userId, body);
+  }
+
+  @Patch('profile')
+  async patchMyProfile(@Req() req: any, @Body() body: any) {
+    const userId = req.user?.sub || req.user?.id || req.user?.userId || body.userId;
+    if (!userId) {
+      throw new UnauthorizedException('Could not extract user identity.');
+    }
+    return this.userService.updateProfile(userId, body);
+  }
+
+  @Post('profile-picture')
+  @UseInterceptors(FileInterceptor('photo'))
+  async uploadMyProfilePicture(@Req() req: any, @UploadedFile() file: any, @Body() body: any) {
+    const userId = req.user?.sub || req.user?.id || req.user?.userId || body.userId;
+    if (!userId) {
+      throw new UnauthorizedException('Could not extract user identity.');
+    }
+    const photoUrl = body?.photoUrl || body?.passportPhotoUrl || body?.profilePicture;
+    return this.userService.uploadProfilePicture(userId, file, photoUrl);
   }
 
   @Post('register-driver')

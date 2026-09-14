@@ -98,6 +98,12 @@ export class RideController {
     return this.rideService.completeRide(id);
   }
 
+  @Post(':id/receipt')
+  sendReceipts(@Param('id') id: string) {
+    return this.rideService.sendRideReceipts(id);
+  }
+
+
   @Post(':id/reject')
   rejectRide(@Param('id') id: string, @Body('driverId') driverId: string) {
     return this.rideService.rejectRide(id, driverId);
@@ -136,6 +142,11 @@ export class RideController {
   @HttpCode(200)
   respondToChange(@Param('id') id: string, @Body() body: RespondToChangeDto) {
     return this.rideService.respondToChange(id, body.response);
+  }
+
+  @Get('back-to-back/:driverId')
+  findBackToBackRide(@Param('driverId') driverId: string) {
+    return this.rideService.findAndOfferBackToBackRide(driverId);
   }
 
   // This would typically be in a separate AdminRideController with an @UseGuards(AdminGuard)

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import DOMPurify from 'isomorphic-dompurify';
 import MainLayout from '../../components/layout/MainLayout';
 import Sidebar from '../../components/blog/sidebar/Sidebar';
 import AppSidebar from '../../components/blog/sidebar/AppSidebar';
@@ -82,7 +83,7 @@ export default function BlogPostPage({ post, recentPosts, categories }: BlogPost
                                     </figure>
                                 )}
 
-                                <div className="prose-headings:text-gray-900 dark:prose-headings:text-white prose-a:text-indigo-600 dark:prose-a:text-indigo-400" dangerouslySetInnerHTML={{ __html: post.content }} />
+                                <div className="prose-headings:text-gray-900 dark:prose-headings:text-white prose-a:text-indigo-600 dark:prose-a:text-indigo-400" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }} />
                             </article>
                         </div>
 

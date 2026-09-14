@@ -18,7 +18,7 @@ class MenuScreen extends ConsumerWidget {
     String? userId;
     String profilePic = 'https://i.pravatar.cc/150?u=driver';
 
-    if (authState is Authenticated) {
+    if (authState is Authenticated && authState.user != null) {
       final user = authState.user!;
       userName = user['firstName'] != null
           ? "${user['firstName']} ${user['lastName'] ?? ''}"
@@ -28,8 +28,10 @@ class MenuScreen extends ConsumerWidget {
       if (user['profilePicture'] != null) profilePic = user['profilePicture'];
     }
 
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppTheme.darkBackground,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -179,16 +181,16 @@ class MenuScreen extends ConsumerWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(40),
-              child: const Column(
+              child: Column(
                 children: [
-                  Text(
+                  const Text(
                     'CABI DRIVE PRODUCTION',
                     style: TextStyle(color: AppTheme.primaryColor, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     'v1.1.0+6 (2026-RELEASE)',
-                    style: TextStyle(color: AppTheme.darkTextSecondary, fontSize: 10, letterSpacing: 1),
+                    style: TextStyle(color: theme.textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary, fontSize: 10, letterSpacing: 1),
                   ),
                 ],
               ),
@@ -200,17 +202,20 @@ class MenuScreen extends ConsumerWidget {
   }
 
   Widget _buildPremiumHeader(BuildContext context, String name, String? email, String? id, String profilePic) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 60, 20, 30),
       decoration: BoxDecoration(
-        color: AppTheme.darkSurface,
+        color: theme.cardTheme.color ?? theme.colorScheme.surface,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(32),
           bottomRight: Radius.circular(32),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
+            color: isDark ? Colors.black.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           )
@@ -226,7 +231,7 @@ class MenuScreen extends ConsumerWidget {
             ),
             child: CircleAvatar(
               radius: 32,
-              backgroundColor: AppTheme.darkBackground,
+              backgroundColor: theme.scaffoldBackgroundColor,
               backgroundImage: NetworkImage(profilePic),
             ),
           ),
@@ -237,18 +242,18 @@ class MenuScreen extends ConsumerWidget {
               children: [
                 Text(
                   name.toUpperCase(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
-                    color: Colors.white,
+                    color: theme.textTheme.bodyLarge?.color ?? Colors.white,
                     letterSpacing: 0.5,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   email ?? 'N/A',
-                  style: const TextStyle(
-                    color: AppTheme.darkTextSecondary,
+                  style: TextStyle(
+                    color: theme.textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary,
                     fontSize: 12,
                   ),
                 ),
@@ -277,10 +282,11 @@ class MenuScreen extends ConsumerWidget {
   }
 
   void _showQrDialog(BuildContext context, String driverId) {
+    final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        backgroundColor: AppTheme.darkSurface,
+        backgroundColor: theme.cardTheme.color ?? theme.colorScheme.surface,
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(24)), side: BorderSide(color: AppTheme.primaryColor, width: 0.5)),
         child: Padding(
           padding: const EdgeInsets.all(32.0),
@@ -308,7 +314,7 @@ class MenuScreen extends ConsumerWidget {
               const SizedBox(height: 24),
               Text(
                 'ID: $driverId',
-                style: const TextStyle(color: AppTheme.darkTextSecondary, fontSize: 12, letterSpacing: 1),
+                style: TextStyle(color: theme.textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary, fontSize: 12, letterSpacing: 1),
               ),
               const SizedBox(height: 32),
               SizedBox(
@@ -380,12 +386,12 @@ class MenuScreen extends ConsumerWidget {
                 },
             child: Container(
               decoration: BoxDecoration(
-                color: AppTheme.darkSurface,
+                color: Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                border: Border.all(color: Theme.of(context).brightness == Brightness.dark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   )
@@ -406,10 +412,10 @@ class MenuScreen extends ConsumerWidget {
                   Text(
                     item.label,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.white,
                       letterSpacing: 0.5,
                     ),
                   ),

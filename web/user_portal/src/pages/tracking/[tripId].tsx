@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { UserCircle2, Phone, MessageCircle, RadioTower, Radio, CheckCircle2 } from 'lucide-react';
 
 import dynamic from 'next/dynamic';
 
@@ -96,8 +97,8 @@ export default function TrackingPage() {
 
                         <div className="p-6">
                             <div className="flex items-center mb-8">
-                                <div className="w-14 h-14 bg-slate-100 dark:bg-white/5 rounded-xl flex items-center justify-center text-2xl border border-slate-200 dark:border-white/10 shadow-inner">
-                                    👤
+                                <div className="w-14 h-14 bg-brand-yellow/10 rounded-xl flex items-center justify-center border border-brand-yellow/20 shadow-inner">
+                                    <UserCircle2 className="w-8 h-8 text-brand-yellow" />
                                 </div>
                                 <div className="ml-4">
                                     <h3 className="font-black text-lg text-slate-900 dark:text-white leading-tight">{trackingData.driver.name}</h3>
@@ -118,7 +119,9 @@ export default function TrackingPage() {
                                     <p className="font-bold text-slate-900 dark:text-white leading-tight">
                                         {trackingData.pickup.address}
                                     </p>
-                                    <span className="text-green-500 text-[10px] font-black uppercase tracking-widest mt-1 block">✓ COMPLETED</span>
+                                    <span className="text-green-500 text-[10px] font-black uppercase tracking-widest mt-1 flex items-center gap-1">
+                                        <CheckCircle2 className="w-3 h-3" /> COMPLETED
+                                    </span>
                                 </div>
                                 <div className="relative pl-10">
                                     <div className="absolute left-2 top-1 w-4 h-4 rounded-full bg-brand-yellow border-4 border-white dark:border-brand-black shadow-lg shadow-brand-yellow/20"></div>
@@ -131,11 +134,11 @@ export default function TrackingPage() {
                         </div>
 
                         <div className="p-4 bg-slate-50 dark:bg-black/20 border-t border-slate-100 dark:border-white/5 flex gap-4">
-                            <button className="flex-1 py-3 bg-slate-900 dark:bg-white text-white dark:text-black font-black rounded-xl text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">
-                                📞 Call Driver
+                            <button className="flex-1 py-3 bg-slate-900 dark:bg-white text-white dark:text-black font-black rounded-xl text-xs hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                <Phone className="w-4 h-4" /> Call Driver
                             </button>
-                            <button className="flex-1 py-3 bg-white dark:bg-brand-black border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-black rounded-xl text-xs hover:bg-slate-50 dark:hover:bg-white/5 transition-all">
-                                💬 Message
+                            <button className="flex-1 py-3 bg-white dark:bg-brand-black border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-black rounded-xl text-xs hover:bg-slate-50 dark:hover:bg-white/5 transition-all flex items-center justify-center gap-2">
+                                <MessageCircle className="w-4 h-4" /> Message
                             </button>
                         </div>
                     </div>
@@ -165,7 +168,10 @@ export default function TrackingPage() {
                             onClick={() => setShowTraffic(!showTraffic)}
                             className={`px-6 py-3 rounded-full font-black text-sm shadow-2xl transition-all flex items-center gap-2 ${showTraffic ? 'bg-brand-yellow text-black' : 'bg-white dark:bg-brand-black text-slate-900 dark:text-white border border-slate-200 dark:border-white/10'}`}
                         >
-                            <span>{showTraffic ? '🟢' : '⚪'}</span>
+                            {showTraffic
+                                ? <RadioTower className="w-4 h-4" />
+                                : <Radio className="w-4 h-4" />
+                            }
                             Traffic updates
                         </button>
                     </div>

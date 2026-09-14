@@ -80,259 +80,490 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: isDark ? const Color(0xFF111111) : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        title: const Text('Menu',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(
+          'Menu',
+          style: AppTheme.outfit(
+            color: isDark ? Colors.white : const Color(0xFF0F172A),
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            letterSpacing: 0.5,
+          ),
+        ),
         centerTitle: true,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: isDark ? const Color(0xFF111111) : const Color(0xFFF8FAFC),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF222222) : Colors.white,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isDark ? const Color(0xFF333333) : const Color(0xFFE2E8F0),
+                width: 1,
+              ),
+            ),
+            child: IconButton(
+              icon: Icon(
+                Icons.close_rounded,
+                color: isDark ? Colors.white : Colors.black87,
+                size: 20,
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
         ),
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Menu Header (Profile)
-            InkWell(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ProfileScreen()),
-              ),
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-                decoration: const BoxDecoration(
-                  color: AppTheme.primaryColor,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30),
-                  ),
-                ),
-                child: legacy_provider.Consumer<AuthProvider>(
-                  builder: (context, auth, child) {
-                    final user = auth.user;
-                    final fullName = user != null ? "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim() : 'Elite Member';
-                    final email = user?['email'] ?? 'Welcome to Cabi';
-                    final profilePic = user?['profilePicture'] ?? 'https://i.pravatar.cc/150?u=passenger';
+            const SizedBox(height: 6),
 
-                    return Row(
-                      children: [
-                        ProfileAvatarWithQr(
-                          imageUrl: profilePic,
-                          isNetworkImage: true,
-                          radius: 30,
-                          qrData: 'passenger:${user?['id'] ?? 'unknown'}',
+            // ── 1. PRESTIGE PROFILE HEADER CARD ──
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: legacy_provider.Consumer<AuthProvider>(
+                builder: (context, auth, child) {
+                  final user = auth.user;
+                  final fullName = user != null
+                      ? "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim()
+                      : 'Elite Member';
+                  final email = user?['email'] ?? 'Welcome to Cabi Africa';
+                  final phone = user?['phone'] ?? '+254 700 000 000';
+
+                  return InkWell(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                    ),
+                    borderRadius: BorderRadius.circular(24),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: isDark
+                              ? [const Color(0xFF231F14), const Color(0xFF161616)]
+                              : [const Color(0xFFFFFBEB), Colors.white],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: AppTheme.primaryColor.withValues(alpha: isDark ? 0.45 : 0.65),
+                          width: 1.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primaryColor.withValues(alpha: 0.12),
+                            blurRadius: 20,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
                             children: [
-                              Text(
-                                fullName.isNotEmpty ? fullName : 'Cabi User',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black,
+                              // User Avatar with Golden Ring & QR trigger
+                              ProfileAvatarWithQr(
+                                user: user,
+                                radius: 32,
+                                qrData: 'passenger:${user?['id'] ?? 'cabi-member'}',
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Elite Gold Badge
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 2.5),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                                        borderRadius: BorderRadius.circular(6),
+                                        border: Border.all(
+                                          color: AppTheme.primaryColor.withValues(alpha: 0.6),
+                                          width: 0.8,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(
+                                            Icons.stars_rounded,
+                                            size: 13,
+                                            color: Color(0xFFD97706),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            'ELITE MEMBER',
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                              color: isDark
+                                                  ? const Color(0xFFFFD700)
+                                                  : const Color(0xFFB45309),
+                                              letterSpacing: 0.8,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      fullName.isNotEmpty ? fullName : 'Cabi Passenger',
+                                      style: AppTheme.outfit(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 19,
+                                        color: isDark ? Colors.white : const Color(0xFF0F172A),
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      email.isNotEmpty ? email : phone,
+                                      style: TextStyle(
+                                        color: isDark ? Colors.white60 : Colors.black54,
+                                        fontSize: 12.5,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Text(
-                                    email,
-                                    style: TextStyle(
-                                      color: Colors.black.withValues(alpha: 0.7),
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
+                              // Arrow Forward Indicator
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  size: 14,
+                                  color: Color(0xFFD97706),
+                                ),
                               ),
                             ],
                           ),
+                          const SizedBox(height: 16),
+                          // Mini stats bar
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.black.withValues(alpha: 0.3)
+                                  : const Color(0xFFF1F5F9),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: isDark ? Colors.white10 : const Color(0xFFE2E8F0),
+                                width: 0.8,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                _buildMiniStat('RATING', '4.9 ★', const Color(0xFFF59E0B)),
+                                Container(
+                                    width: 1,
+                                    height: 20,
+                                    color: isDark ? Colors.white12 : const Color(0xFFCBD5E1)),
+                                _buildMiniStat('STATUS', 'Verified ✓', const Color(0xFF10B981)),
+                                Container(
+                                    width: 1,
+                                    height: 20,
+                                    color: isDark ? Colors.white12 : const Color(0xFFCBD5E1)),
+                                _buildMiniStat('PRESTIGE', 'Gold Tier', AppTheme.primaryColor),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // ── 2. SECTION: JOURNEYS & ACTIVITY ──
+            _buildSectionHeader('Journeys & Destinations'),
+            _buildGridSection(
+              context,
+              [
+                MenuGridItem(
+                  icon: Icons.route_rounded,
+                  title: 'My Trips',
+                  subtitle: 'Past rides & receipts',
+                  badge: 'TRIPS',
+                  baseColor: const Color(0xFFF59E0B), // Amber Gold
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const TripHistoryScreen()),
+                  ),
+                ),
+                MenuGridItem(
+                  icon: Icons.bookmark_rounded,
+                  title: 'Saved Places',
+                  subtitle: 'Home, Work & Favs',
+                  badge: 'QUICK',
+                  baseColor: const Color(0xFFE11D48), // Rose Coral
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SavedPlacesScreen()),
+                  ),
+                ),
+                MenuGridItem(
+                  icon: Icons.explore_rounded,
+                  title: 'Tours & Safari',
+                  subtitle: 'Curated experiences',
+                  badge: 'AFRICA',
+                  baseColor: const Color(0xFFD97706), // Safari Bronze
+                  onTap: _isLoadingToursUrl ? () {} : _launchToursUrl,
+                ),
+                MenuGridItem(
+                  icon: Icons.celebration_rounded,
+                  title: 'Refer & Earn',
+                  subtitle: 'Invite & get KES 500',
+                  badge: 'EARN',
+                  baseColor: const Color(0xFF10B981), // Emerald Green
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ReferralStatusScreen()),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            // ── 3. SECTION: FINANCIALS & SERVICES ──
+            _buildSectionHeader('Financials & Settings'),
+            _buildGridSection(
+              context,
+              [
+                MenuGridItem(
+                  icon: Icons.account_balance_wallet_rounded,
+                  title: 'Cabi Wallet',
+                  subtitle: 'KES 0.00 • Top up',
+                  badge: 'PAY',
+                  baseColor: const Color(0xFF0284C7), // Sapphire Sky
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const WalletScreen()),
+                  ),
+                ),
+                MenuGridItem(
+                  icon: Icons.tune_rounded,
+                  title: 'Preferences',
+                  subtitle: 'App & ride settings',
+                  baseColor: const Color(0xFF64748B), // Slate Silver
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                  ),
+                ),
+                MenuGridItem(
+                  icon: Icons.support_agent_rounded,
+                  title: 'Concierge',
+                  subtitle: 'Help center & chat',
+                  badge: '24/7',
+                  baseColor: const Color(0xFF0D9488), // Teal Green
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const HelpCenterScreen()),
+                  ),
+                ),
+                MenuGridItem(
+                  icon: Icons.auto_awesome_rounded,
+                  title: 'About Cabi',
+                  subtitle: 'v1.1.0+6 • Official',
+                  baseColor: const Color(0xFFCA8A04), // Warm Gold
+                  onTap: () {
+                    showAboutDialog(
+                      context: context,
+                      applicationName: 'Cabi Africa',
+                      applicationVersion: 'v1.1.0+6',
+                      applicationLegalese: '© 2026 Cabi Africa Mobility',
+                      children: [
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Cabi Africa delivers premium, safe, and reliable ride-hailing and concierge mobility across Africa.',
                         ),
                       ],
                     );
                   },
                 ),
-              ),
+              ],
             ),
 
             const SizedBox(height: 20),
 
-            // Section: My Account (Light Red - like Statements in Driver App)
-            _buildSectionHeader('My Account'),
-            _buildGridSection(
-                context,
-                [
-                  MenuGridItem(
-                      icon: Icons.history,
-                      title: 'My Trips',
-                      baseColor: Colors.deepOrange,
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const TripHistoryScreen()))),
-                  MenuGridItem(
-                      icon: Icons.favorite,
-                      title: 'Saved Places',
-                      baseColor: Colors.red,
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const SavedPlacesScreen()))),
-                  MenuGridItem(
-                      icon: Icons.card_giftcard,
-                      title: 'Referrals',
-                      baseColor: Colors.pink,
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const ReferralStatusScreen()))),
-                ],
-                backgroundColor: Theme.of(context)
-                    .colorScheme
-                    .surface), // Dynamic Surface background
-
-            const SizedBox(height: 24),
-
-            // Section: Services & Tools (Light Yellow)
-            _buildSectionHeader('Services & Tools'),
-            _buildGridSection(
-                context,
-                [
-                  MenuGridItem(
-                      icon: Icons.account_balance_wallet,
-                      title: 'Wallet',
-                      baseColor: Colors.indigo,
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const WalletScreen()))),
-                  MenuGridItem(
-                      icon: Icons.settings,
-                      title: 'Settings',
-                      baseColor: Colors.grey.shade700,
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const SettingsScreen()))),
-                  MenuGridItem(
-                      icon: Icons.headset_mic,
-                      title: 'Support',
-                      baseColor: Colors.blue,
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const HelpCenterScreen()))),
-                  MenuGridItem(
-                      icon: Icons.info,
-                      title: 'About',
-                      baseColor: Colors.teal,
-                      onTap: () {
-                        showAboutDialog(
-                          context: context,
-                          applicationName: 'Cabi Go',
-                          applicationVersion: 'v1.1.0+6',
-                          applicationLegalese: '© 2026 Cabi Africa',
-                          children: [
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Cabi Go is your reliable ride-hailing, food delivery, and package delivery app.',
-                            ),
-                          ],
-                        );
-                      }),
-                  // Tours Button — URL configured by admin
-                  MenuGridItem(
-                      icon: Icons.travel_explore,
-                      title: 'Tours',
-                      baseColor: Colors.orange,
-                      onTap: _isLoadingToursUrl ? () {} : _launchToursUrl),
-                  MenuGridItem(
-                      icon: Icons.logout,
-                      title: 'Logout',
-                      baseColor: Colors.red,
-                      onTap: () {
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()),
-                          (Route<dynamic> route) => false,
-                        );
-                      }),
-                ],
-                backgroundColor: Theme.of(context)
-                    .colorScheme
-                    .surface), // Dynamic Surface background
-
-            const SizedBox(height: 40),
-            // Footer Version
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: const Center(
-                child: Text(
-                  'CABI GO PRODUCTION • v1.1.0+6',
-                  style: TextStyle(color: Colors.grey, fontSize: 10, letterSpacing: 1, fontWeight: FontWeight.bold),
-                ),
+            // ── 4. SECTION: ACCOUNT ACTIONS ──
+            _buildSectionHeader('Account Actions'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: MenuGridItem(
+                icon: Icons.power_settings_new_rounded,
+                title: 'Log Out',
+                subtitle: 'Safely sign out of your Cabi session',
+                badge: 'EXIT',
+                baseColor: const Color(0xFFEF4444), // Crimson
+                onTap: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    (Route<dynamic> route) => false,
+                  );
+                },
               ),
             ),
+
+            const SizedBox(height: 36),
+
+            // ── 5. LUXURY FOOTER ──
+            Center(
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: const BoxDecoration(
+                          color: AppTheme.primaryColor,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'CABI AFRICA LUXURY MOBILITY',
+                        style: TextStyle(
+                          color: isDark ? Colors.white38 : Colors.black38,
+                          fontSize: 10,
+                          letterSpacing: 1.5,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: const BoxDecoration(
+                          color: AppTheme.primaryColor,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'PROD BUILD • v1.1.0+6',
+                    style: TextStyle(
+                      color: isDark ? Colors.white24 : Colors.black26,
+                      fontSize: 9.5,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 18,
+  Widget _buildMiniStat(String label, String value, Color valueColor) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 9.5,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onSurface,
+            color: Colors.grey,
+            letterSpacing: 0.6,
           ),
         ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: valueColor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          Container(
+            width: 3.5,
+            height: 15,
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: AppTheme.outfit(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : const Color(0xFF0F172A),
+              letterSpacing: 0.2,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildGridSection(BuildContext context, List<Widget> items,
-      {Color backgroundColor = Colors.transparent}) {
+  Widget _buildGridSection(BuildContext context, List<Widget> items) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Calculate crossAxisCount based on screen width
-        // Mobile: 3 columns, Tablet: 4-6 columns
-        int crossAxisCount = 3;
+        int crossAxisCount = 2;
         if (constraints.maxWidth > 900) {
-          crossAxisCount = 6;
-        } else if (constraints.maxWidth > 600) {
           crossAxisCount = 4;
+        } else if (constraints.maxWidth > 600) {
+          crossAxisCount = 3;
         }
 
-        // Adjust childAspectRatio based on crossAxisCount and width
-        // to maintain a consistent look
-        double childAspectRatio = 0.85;
-        if (crossAxisCount > 3) {
-          childAspectRatio = 1.0; // Squarer items on larger screens
+        double childAspectRatio = 1.35;
+        if (constraints.maxWidth <= 400) {
+          childAspectRatio = 1.25;
         }
 
-        return Container(
-          color: backgroundColor,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             crossAxisCount: crossAxisCount,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
             childAspectRatio: childAspectRatio,
             children: items,
           ),
@@ -341,4 +572,3 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 }
-

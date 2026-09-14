@@ -22,15 +22,36 @@ export const PaymentReceipt: React.FC<PaymentReceiptProps> = ({
     const receiptRef = useRef<HTMLDivElement>(null);
 
     const handlePrint = () => {
-        // Basic print functionality targeting the receipt
         const printContent = receiptRef.current?.innerHTML;
-        const originalContent = document.body.innerHTML;
-
         if (printContent) {
-            document.body.innerHTML = printContent;
-            window.print();
-            document.body.innerHTML = originalContent;
-            window.location.reload(); // Reload to restore state (simple approach) or generic non-destructive way
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.right = '0';
+            iframe.style.bottom = '0';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = '0';
+            document.body.appendChild(iframe);
+            const doc = iframe.contentWindow?.document || iframe.contentDocument;
+            if (doc) {
+                doc.write(`
+                    <html>
+                        <head>
+                            <title>Print Receipt</title>
+                            <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+                        </head>
+                        <body class="bg-white p-8">
+                            ${printContent}
+                        </body>
+                    </html>
+                `);
+                doc.close();
+                setTimeout(() => {
+                    iframe.contentWindow?.focus();
+                    iframe.contentWindow?.print();
+                    document.body.removeChild(iframe);
+                }, 500);
+            }
         }
     };
 

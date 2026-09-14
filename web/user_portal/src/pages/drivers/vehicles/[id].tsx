@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import MainLayout from '@/components/layout/MainLayout';
-import { Car, Shield, CheckCircle2, AlertCircle, Clock, Sparkles, Award, ArrowLeft, Plus, FileText, UserCheck, Calendar } from 'lucide-react';
+import { Car, Shield, CheckCircle2, AlertCircle, Clock, Sparkles, Award, ArrowLeft, Plus, FileText, UserCheck, Calendar, Trophy, Wrench, ExternalLink } from 'lucide-react';
 
 export default function VehicleAccountPage() {
     const router = useRouter();
@@ -40,7 +40,7 @@ export default function VehicleAccountPage() {
     if (loading) {
         return (
             <MainLayout title="Loading Vehicle Account..." description="Fetching vehicle details and qualifications.">
-                <div className="min-h-screen bg-slate-900 flex items-center justify-center p-8">
+                <div className="min-h-screen bg-brand-black flex items-center justify-center p-8">
                     <div className="flex flex-col items-center gap-4">
                         <div className="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin" />
                         <span className="text-white font-black text-lg tracking-widest uppercase text-yellow-500 animate-pulse">Loading Vehicle Account...</span>
@@ -53,7 +53,7 @@ export default function VehicleAccountPage() {
     if (error || !vehicle) {
         return (
             <MainLayout title="Vehicle Not Found" description="Could not load vehicle account details.">
-                <div className="min-h-screen bg-slate-900 py-20 px-4 text-center">
+                <div className="min-h-screen bg-brand-black py-20 px-4 text-center">
                     <div className="max-w-md mx-auto bg-slate-800/40 p-12 rounded-3xl border border-white/5 shadow-2xl">
                         <AlertCircle className="w-20 h-20 text-red-500 mx-auto mb-6 animate-bounce" />
                         <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Account Not Found</h2>
@@ -71,7 +71,7 @@ export default function VehicleAccountPage() {
 
     return (
         <MainLayout title={`${vehicle.plateNumber} Account | Cabi`} description="View vehicle benefits, active shifts, unlocked qualifications, and claim history.">
-            <div className="min-h-screen bg-slate-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-brand-black text-white py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
                     {/* Back navigation */}
                     <div className="mb-8">
@@ -145,7 +145,9 @@ export default function VehicleAccountPage() {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                         {unlockedQualifications.map((qual) => (
                                             <div key={qual.id} className="relative bg-gradient-to-br from-yellow-500/10 to-amber-500/5 rounded-2xl border border-yellow-500/30 p-6 flex items-start gap-4 shadow-xl">
-                                                <div className="text-4xl p-2 bg-black/40 rounded-2xl border border-white/10">{qual.rewardIconEmoji || '🏆'}</div>
+                                                <div className="p-3 bg-black/40 rounded-2xl border border-white/10 flex items-center justify-center">
+                                                    <Trophy className="w-8 h-8 text-yellow-500" />
+                                                </div>
                                                 <div>
                                                     <h4 className="text-xl font-black text-white mb-1 tracking-tight">{qual.name}</h4>
                                                     <p className="text-slate-400 text-xs mb-3">{qual.description}</p>
@@ -221,7 +223,9 @@ export default function VehicleAccountPage() {
                                             <div key={claim.id} className="p-5 bg-black/30 rounded-2xl border border-white/5 space-y-3">
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-2">
-                                                        <span className="text-2xl">{claim.benefit?.iconEmoji || '🔧'}</span>
+                                                        <div className="p-1.5 bg-yellow-500/10 rounded-lg border border-yellow-500/20 text-yellow-500">
+                                                            <Wrench className="w-4 h-4" />
+                                                        </div>
                                                         <span className="font-black text-white">{claim.benefit?.name || 'Benefit Claim'}</span>
                                                     </div>
                                                     <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
@@ -237,8 +241,8 @@ export default function VehicleAccountPage() {
                                                 <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase tracking-widest pt-2 border-t border-white/5">
                                                     <span>{new Date(claim.reportedAt).toLocaleDateString()}</span>
                                                     {claim.evidenceUrl && (
-                                                        <a href={claim.evidenceUrl} target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:underline">
-                                                            View Evidence 🔗
+                                                        <a href={claim.evidenceUrl} target="_blank" rel="noopener noreferrer" className="text-yellow-400 hover:underline flex items-center gap-1">
+                                                            View Evidence <ExternalLink className="w-3 h-3" />
                                                         </a>
                                                     )}
                                                 </div>

@@ -23,6 +23,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
   final LocalAuthentication auth = LocalAuthentication();
   VerificationMethod? _selectedMethod;
   bool _isVerifying = false;
+  bool _isSuccess = false;
   String? _otpCode;
   final TextEditingController _otpController = TextEditingController();
   
@@ -103,36 +104,42 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
     setState(() {
       _isVerifying = true;
     });
-    // Simulate sending OTP
     Future.delayed(const Duration(seconds: 1), () {
       if (mounted) {
         setState(() {
           _isVerifying = false;
-          _otpCode = "1234"; // Mock OTP
+          _otpCode = "123456"; // Mock OTP
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Verification code sent to your phone: 1234')),
+          const SnackBar(content: Text('Verification code sent to your phone: 123456')),
         );
       }
     });
   }
 
   void _verifyOtp() {
-    if (_otpController.text == "1234") {
+    if (_otpController.text == "123456") {
       _success();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid code. Try 1234')),
+        const SnackBar(content: Text('Invalid code. Try 123456')),
       );
     }
   }
 
-  void _success() {
-    Navigator.pop(context);
-    widget.onVerified();
+  void _success() async {
+    setState(() {
+      _isSuccess = true;
+      _isVerifying = false;
+    });
     
-    // Also update the provider state locally if needed
-    // ref.read(passengerAuthProvider.notifier).markVerified();
+    // Wait for the user to see the success checkmark
+    await Future.delayed(const Duration(milliseconds: 1500));
+    
+    if (mounted) {
+      Navigator.pop(context);
+      widget.onVerified();
+    }
   }
 
   @override
@@ -173,7 +180,9 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           ),
           const SizedBox(height: 32),
           
-          if (_selectedMethod == null) 
+          if (_isSuccess)
+            _buildSuccessState()
+          else if (_selectedMethod == null) 
             _buildMethodSelection()
           else if (_selectedMethod == VerificationMethod.otp)
             _buildOtpVerification()
@@ -181,7 +190,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
             _buildBiometricVerification(),
             
           const SizedBox(height: 24),
-          if (_selectedMethod != null && !_isVerifying)
+          if (_selectedMethod != null && !_isVerifying && !_isSuccess)
             TextButton(
               onPressed: () => setState(() => _selectedMethod = null),
               child: Text(
@@ -216,6 +225,35 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           icon: Icons.sms_outlined,
           title: 'OTP Verification',
           subtitle: 'Code sent via SMS',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSuccessState() {
+    return Column(
+      children: [
+        Container(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            color: Colors.green.withValues(alpha: 0.2),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.check_circle,
+            color: Colors.green,
+            size: 64,
+          ),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          'Verification Successful',
+          style: GoogleFonts.outfit(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
       ],
     );
@@ -340,15 +378,15 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           controller: _otpController,
           keyboardType: TextInputType.number,
           textAlign: TextAlign.center,
-          maxLength: 4,
+          maxLength: 6,
           style: GoogleFonts.outfit(
             fontSize: 32,
-            letterSpacing: 20,
+            letterSpacing: 10,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
           decoration: InputDecoration(
-            hintText: '0000',
+            hintText: '000000',
             hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.1)),
             counterText: '',
             enabledBorder: UnderlineInputBorder(

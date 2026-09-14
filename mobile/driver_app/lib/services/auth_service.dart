@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
@@ -136,6 +137,107 @@ class AuthService {
   
   Future<String?> getToken() async {
     return await _storage.read(key: 'jwt_token');
+  }
+
+  Future<AuthResult> getMe(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/auth/me'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 8));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        return AuthResult(
+          isSignedIn: true,
+          user: data,
+          token: token,
+        );
+      } else {
+        return AuthResult(isSignedIn: false, error: 'Failed to fetch driver profile');
+      }
+    } catch (e) {
+      return AuthResult(isSignedIn: false, error: e.toString());
+    }
+  }
+
+  Future<AuthResult> updateProfile({
+    required String userId,
+    String? name,
+    String? imagePath,
+    String? imageUrl,
+  }) async {
+    try {
+      final token = await getToken();
+      if (token == null) {
+        return AuthResult(isSignedIn: false, error: 'Driver is not authenticated');
+      }
+
+      String? photoData = imageUrl;
+      if (imagePath != null && photoData == null) {
+        final file = File(imagePath);
+        if (await file.exists()) {
+          final bytes = await file.readAsBytes();
+          final ext = imagePath.split('.').last.toLowerCase();
+          final mime = ext == 'png' ? 'image/png' : 'image/jpeg';
+          photoData = 'data:$mime;base64,${base64Encode(bytes)}';
+        } else if (imagePath.startsWith('http') || imagePath.startsWith('data:')) {
+          photoData = imagePath;
+        }
+      }
+
+      final body = <String, dynamic>{
+        if (name != null && name.trim().isNotEmpty) 'fullName': name.trim(),
+        if (photoData != null) 'passportPhotoUrl': photoData,
+        if (photoData != null) 'profilePicture': photoData,
+      };
+
+      // Try PUT /auth/profile first
+      final response = await http.put(
+        Uri.parse('$baseUrl/auth/profile'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(body),
+      ).timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        return AuthResult(
+          isSignedIn: true,
+          user: data,
+          token: token,
+        );
+      } else {
+        // Fallback to /users/:id/profile
+        final fallbackRes = await http.put(
+          Uri.parse('$baseUrl/users/$userId/profile'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode(body),
+        ).timeout(const Duration(seconds: 15));
+
+        if (fallbackRes.statusCode == 200 || fallbackRes.statusCode == 201) {
+          final data = jsonDecode(fallbackRes.body);
+          return AuthResult(
+            isSignedIn: true,
+            user: data,
+            token: token,
+          );
+        }
+
+        final err = jsonDecode(response.body);
+        return AuthResult(isSignedIn: false, error: err['message']?.toString() ?? 'Failed to update profile');
+      }
+    } catch (e) {
+      return AuthResult(isSignedIn: false, error: e.toString());
+    }
   }
 
   Future<bool> verifyBiometrics(String userId) async {

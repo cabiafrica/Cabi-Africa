@@ -38,18 +38,18 @@ class AppTheme {
     return fontFunc(fontSize: fontSize, fontWeight: fontWeight, color: color)!;
   }
 
-  static TextStyle outfit({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle}) {
+  static TextStyle outfit({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle, double? height}) {
     if (!useGoogleFonts) {
-      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle);
+      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height);
     }
-    return GoogleFonts.outfit(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle);
+    return GoogleFonts.outfit(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height);
   }
 
-  static TextStyle inter({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle}) {
+  static TextStyle inter({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle, double? height}) {
     if (!useGoogleFonts) {
-      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle);
+      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height);
     }
-    return GoogleFonts.inter(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle);
+    return GoogleFonts.inter(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height);
   }
 
   // Premium Color Palette

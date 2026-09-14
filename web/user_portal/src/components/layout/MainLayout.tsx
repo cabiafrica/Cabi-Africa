@@ -24,7 +24,7 @@ export default function MainLayout({
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className={`min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 ${inter.className}`}>
+            <div className={`min-h-screen flex flex-col bg-[#0a0a0a] text-white ${inter.className}`}>
                 <Header />
                 <main className="flex-grow pt-16">
                     {children}

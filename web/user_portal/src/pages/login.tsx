@@ -1,18 +1,21 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
-import { User, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { User, Lock, Eye, EyeOff, Loader2, Car, UserCircle2 } from 'lucide-react';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [imgFailed, setImgFailed] = useState(false);
     const { login } = useAuth();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
+        setErrorMessage(null);
 
         try {
             const response = await fetch('/api/login', {
@@ -33,7 +36,7 @@ export default function LoginPage() {
             console.log('Login successful:', data);
         } catch (error: any) {
             console.error('Login error:', error);
-            alert(error.message || 'Failed to login. Please try again.');
+            setErrorMessage(error.message || 'Failed to login. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -62,22 +65,29 @@ export default function LoginPage() {
                     <div className="flex flex-col items-center justify-center mb-8">
                         <div className="relative w-28 h-28 rounded-full border border-brand-yellow/30 flex items-center justify-center bg-black/40 shadow-[0_0_25px_rgba(245,158,11,0.2)] mb-4">
                             <div className="w-24 h-24 rounded-full border border-brand-yellow/20 flex items-center justify-center overflow-hidden p-3 bg-black">
-                                <img
-                                    src="/logo.png"
-                                    alt="Cabi Logo"
-                                    className="w-full h-full object-contain"
-                                    onError={(e) => {
-                                        // Fallback if image fails
-                                        const target = e.target as HTMLImageElement;
-                                        target.style.display = 'none';
-                                        target.parentElement!.innerHTML = '<span class="text-3xl font-black text-brand-yellow tracking-tighter">Cabi</span>';
-                                    }}
-                                />
+                                {imgFailed ? (
+                                    <span className="text-3xl font-black text-brand-yellow tracking-tighter">Cabi</span>
+                                ) : (
+                                    <img
+                                        src="/logo.png"
+                                        alt="Cabi Logo"
+                                        className="w-full h-full object-contain"
+                                        onError={() => setImgFailed(true)}
+                                    />
+                                )}
                             </div>
                         </div>
                         <h2 className="text-2xl font-bold text-white tracking-wide">Welcome Back</h2>
                         <p className="text-gray-400 text-xs mt-1 uppercase tracking-widest">Driver & Passenger Portal</p>
                     </div>
+
+                    {/* Visual Error Banner */}
+                    {errorMessage && (
+                        <div className="mb-5 p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold flex items-center gap-2.5 animate-fade-in">
+                            <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0 animate-pulse" />
+                            <span>{errorMessage}</span>
+                        </div>
+                    )}
 
                     <form className="space-y-5" onSubmit={handleLogin}>
                         {/* Username/Email Input */}
@@ -158,6 +168,27 @@ export default function LoginPage() {
                             {isLoading ? 'Authenticating...' : 'Sign In'}
                         </button>
                     </form>
+
+                    {/* Quick Demo Accounts */}
+                    <div className="mt-6 pt-5 border-t border-white/10">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-2.5 text-center">Quick Demo Credentials</p>
+                        <div className="grid grid-cols-2 gap-2">
+                            <button
+                                type="button"
+                                onClick={() => { setEmail('driver@cabi.africa'); setPassword('Cabi2026!'); setErrorMessage(null); }}
+                                className="px-3 py-2.5 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-700/80 hover:border-brand-yellow text-xs text-neutral-200 hover:text-brand-yellow font-bold transition-all text-center flex items-center justify-center gap-2 shadow-sm"
+                            >
+                                <Car className="w-4.5 h-4.5 text-brand-yellow" /> Driver Demo
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => { setEmail('passenger@cabi.africa'); setPassword('Cabi2026!'); setErrorMessage(null); }}
+                                className="px-3 py-2.5 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-700/80 hover:border-brand-yellow text-xs text-neutral-200 hover:text-brand-yellow font-bold transition-all text-center flex items-center justify-center gap-2 shadow-sm"
+                            >
+                                <UserCircle2 className="w-4.5 h-4.5 text-brand-yellow" /> Passenger Demo
+                            </button>
+                        </div>
+                    </div>
 
                     <div className="mt-6 text-center">
                         <p className="text-gray-400 text-sm">

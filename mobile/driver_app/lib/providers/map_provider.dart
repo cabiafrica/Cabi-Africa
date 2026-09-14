@@ -30,3 +30,32 @@ class MapNotifier extends StateNotifier<MapType> {
 final mapProvider = StateNotifierProvider<MapNotifier, MapType>((ref) {
   return MapNotifier();
 });
+
+extension MapTypeX on MapType {
+  String get displayName {
+    switch (this) {
+      case MapType.google:
+        return 'Google Maps';
+      case MapType.cabi:
+        return 'Cabi Africa Maps';
+    }
+  }
+
+  String get shortName {
+    switch (this) {
+      case MapType.google:
+        return 'GOOGLE';
+      case MapType.cabi:
+        return 'CABI AFRICA';
+    }
+  }
+
+  String get description {
+    switch (this) {
+      case MapType.google:
+        return 'Google Maps Platform road network & satellite view';
+      case MapType.cabi:
+        return 'Africa-optimized local roads, landmarks & fast data caching';
+    }
+  }
+}

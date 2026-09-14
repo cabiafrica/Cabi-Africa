@@ -35,6 +35,43 @@ export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    // Validation Helpers
+    const validateName = (val: string, fieldName = 'Name') => {
+        if (!val || !val.trim()) return `${fieldName} is required`;
+        const trimmed = val.trim();
+        if (/^\d+$/.test(trimmed)) return `${fieldName} cannot be a number`;
+        if (/\d/.test(trimmed)) return `${fieldName} cannot contain numbers`;
+        if (!/^[a-zA-Z\s'-]+$/.test(trimmed)) return `${fieldName} can only contain letters, hyphens, and apostrophes`;
+        if (trimmed.length < 2) return `${fieldName} must be at least 2 characters`;
+        return true;
+    };
+
+    const validatePhone = (val: string) => {
+        if (!val || !val.trim()) return "Phone number is required";
+        const cleaned = val.replace(/\s+/g, '');
+        if (!/^(?:\+254|0)?(7|1)\d{8}$/.test(cleaned) && !/^\+[1-9]\d{7,14}$/.test(cleaned)) {
+            return "Enter a valid phone number (e.g. +254 712 345 678)";
+        }
+        return true;
+    };
+
+    const validatePassword = (val: string) => {
+        if (!val) return "Password is required";
+        if (val.length < 8) return "Password must be at least 8 characters long";
+        if (!/[A-Z]/.test(val)) return "Password must contain at least one uppercase letter";
+        if (!/[a-z]/.test(val)) return "Password must contain at least one lowercase letter";
+        if (!/\d/.test(val)) return "Password must contain at least one number";
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(val)) return "Password must contain at least one special character (!@#$%^&*)";
+        return true;
+    };
+
+    const passwordVal = watch('password') || '';
+    const hasMinLength = passwordVal.length >= 8;
+    const hasUppercase = /[A-Z]/.test(passwordVal);
+    const hasLowercase = /[a-z]/.test(passwordVal);
+    const hasNumber = /\d/.test(passwordVal);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(passwordVal);
+
     // File upload state
     const [files, setFiles] = useState<FileUploads>({
         drivingLicence: null,
@@ -216,17 +253,42 @@ export default function Register() {
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">First Name</label>
-                                                <input {...register('firstName', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="John" />
+                                                <input
+                                                    {...register('firstName', {
+                                                        required: 'First name is required',
+                                                        validate: (val) => validateName(val, 'First name')
+                                                    })}
+                                                    className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600"
+                                                    placeholder="John"
+                                                />
+                                                {errors.firstName && <span className="text-red-500 text-xs block">{errors.firstName.message as string}</span>}
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Last Name</label>
-                                                <input {...register('lastName', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="Doe" />
+                                                <input
+                                                    {...register('lastName', {
+                                                        required: 'Last name is required',
+                                                        validate: (val) => validateName(val, 'Last name')
+                                                    })}
+                                                    className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600"
+                                                    placeholder="Doe"
+                                                />
+                                                {errors.lastName && <span className="text-red-500 text-xs block">{errors.lastName.message as string}</span>}
                                             </div>
                                         </div>
 
                                         <div className="space-y-2">
                                             <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Phone Number</label>
-                                            <input type="tel" {...register('phone', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600" placeholder="+254 712 345 678" />
+                                            <input
+                                                type="tel"
+                                                {...register('phone', {
+                                                    required: 'Phone number is required',
+                                                    validate: validatePhone
+                                                })}
+                                                className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600"
+                                                placeholder="+254 712 345 678"
+                                            />
+                                            {errors.phone && <span className="text-red-500 text-xs block">{errors.phone.message as string}</span>}
                                         </div>
 
                                         <div className="space-y-2">
@@ -244,15 +306,38 @@ export default function Register() {
                                         <div className="grid grid-cols-3 gap-4">
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">First Name</label>
-                                                <input {...register('firstName', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600" placeholder="John" />
+                                                <input
+                                                    {...register('firstName', {
+                                                        required: 'First name is required',
+                                                        validate: (val) => validateName(val, 'First name')
+                                                    })}
+                                                    className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600"
+                                                    placeholder="John"
+                                                />
+                                                {errors.firstName && <span className="text-red-500 text-xs block">{errors.firstName.message as string}</span>}
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Middle Name</label>
-                                                <input {...register('middleName')} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600" placeholder="Michael" />
+                                                <input
+                                                    {...register('middleName', {
+                                                        validate: (val) => !val || validateName(val, 'Middle name')
+                                                    })}
+                                                    className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600"
+                                                    placeholder="Michael"
+                                                />
+                                                {errors.middleName && <span className="text-red-500 text-xs block">{errors.middleName.message as string}</span>}
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Last Name</label>
-                                                <input {...register('lastName', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600" placeholder="Doe" />
+                                                <input
+                                                    {...register('lastName', {
+                                                        required: 'Last name is required',
+                                                        validate: (val) => validateName(val, 'Last name')
+                                                    })}
+                                                    className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600"
+                                                    placeholder="Doe"
+                                                />
+                                                {errors.lastName && <span className="text-red-500 text-xs block">{errors.lastName.message as string}</span>}
                                             </div>
                                         </div>
 
@@ -280,7 +365,16 @@ export default function Register() {
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Phone Number</label>
-                                                <input type="tel" {...register('phone', { required: true })} className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600" placeholder="+254 712 345 678" />
+                                                <input
+                                                    type="tel"
+                                                    {...register('phone', {
+                                                        required: 'Phone number is required',
+                                                        validate: validatePhone
+                                                    })}
+                                                    className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all text-white placeholder-gray-600"
+                                                    placeholder="+254 712 345 678"
+                                                />
+                                                {errors.phone && <span className="text-red-500 text-xs block">{errors.phone.message as string}</span>}
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">ID Number</label>
@@ -386,7 +480,10 @@ export default function Register() {
                                             <div className="relative">
                                                 <input
                                                     type={showPassword ? "text" : "password"}
-                                                    {...register('password', { required: true, minLength: 6 })}
+                                                    {...register('password', {
+                                                        required: 'Password is required',
+                                                        validate: validatePassword
+                                                    })}
                                                     className="w-full bg-brand-dark/50 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-white placeholder-gray-600"
                                                     placeholder="••••••••"
                                                 />
@@ -402,7 +499,31 @@ export default function Register() {
                                                     )}
                                                 </button>
                                             </div>
-                                            {errors.password && <span className="text-red-500 text-xs">Password must be at least 6 characters</span>}
+                                            {errors.password && <span className="text-red-500 text-xs block">{errors.password.message as string}</span>}
+
+                                            {/* Real-time Password Security Indicators */}
+                                            <div className="grid grid-cols-2 gap-2 pt-2 text-[11px]">
+                                                <div className={`flex items-center gap-1.5 ${hasMinLength ? 'text-emerald-400' : 'text-gray-500'}`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${hasMinLength ? 'bg-emerald-400' : 'bg-gray-600'}`} />
+                                                    8+ characters
+                                                </div>
+                                                <div className={`flex items-center gap-1.5 ${hasUppercase ? 'text-emerald-400' : 'text-gray-500'}`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${hasUppercase ? 'bg-emerald-400' : 'bg-gray-600'}`} />
+                                                    Uppercase letter
+                                                </div>
+                                                <div className={`flex items-center gap-1.5 ${hasLowercase ? 'text-emerald-400' : 'text-gray-500'}`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${hasLowercase ? 'bg-emerald-400' : 'bg-gray-600'}`} />
+                                                    Lowercase letter
+                                                </div>
+                                                <div className={`flex items-center gap-1.5 ${hasNumber ? 'text-emerald-400' : 'text-gray-500'}`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${hasNumber ? 'bg-emerald-400' : 'bg-gray-600'}`} />
+                                                    Number
+                                                </div>
+                                                <div className={`col-span-2 flex items-center gap-1.5 ${hasSpecial ? 'text-emerald-400' : 'text-gray-500'}`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${hasSpecial ? 'bg-emerald-400' : 'bg-gray-600'}`} />
+                                                    Special character (!@#$%^&*...)
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div className="space-y-2 animate-fade-in relative">

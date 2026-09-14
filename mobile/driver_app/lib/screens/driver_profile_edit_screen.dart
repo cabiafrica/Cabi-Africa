@@ -1,6 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import '../providers/auth_provider.dart';
+import '../services/auth_service.dart';
+import '../theme/app_theme.dart';
 
-class DriverProfileEditScreen extends StatefulWidget {
+class DriverProfileEditScreen extends ConsumerStatefulWidget {
   final String currentName;
   final String? currentProfilePictureUrl;
 
@@ -11,14 +18,16 @@ class DriverProfileEditScreen extends StatefulWidget {
   });
 
   @override
-  State<DriverProfileEditScreen> createState() =>
+  ConsumerState<DriverProfileEditScreen> createState() =>
       _DriverProfileEditScreenState();
 }
 
-class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
+class _DriverProfileEditScreenState
+    extends ConsumerState<DriverProfileEditScreen> {
   late TextEditingController _nameController;
   String? _selectedImagePath;
   bool _isLoading = false;
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
@@ -33,34 +42,109 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
   }
 
   Future<void> _pickImage() async {
-    // Note: Integrate with image_picker package
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Select Profile Picture'),
-        content: const Text(
-            'This will open your device gallery to select a new profile picture.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+      backgroundColor: AppTheme.darkSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'UPDATE PROFILE PICTURE',
+                style: TextStyle(
+                  color: AppTheme.primaryColor,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.camera_alt_rounded, color: AppTheme.primaryColor),
+                title: const Text('Take Photo', style: TextStyle(color: Colors.white)),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  final picked = await ImagePicker().pickImage(
+                    source: ImageSource.camera,
+                    maxWidth: 1024,
+                    maxHeight: 1024,
+                    imageQuality: 85,
+                  );
+                  if (picked != null) {
+                    setState(() {
+                      _selectedImagePath = picked.path;
+                    });
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library_rounded, color: AppTheme.primaryColor),
+                title: const Text('Choose from Gallery', style: TextStyle(color: Colors.white)),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  final picked = await ImagePicker().pickImage(
+                    source: ImageSource.gallery,
+                    maxWidth: 1024,
+                    maxHeight: 1024,
+                    imageQuality: 85,
+                  );
+                  if (picked != null) {
+                    setState(() {
+                      _selectedImagePath = picked.path;
+                    });
+                  }
+                },
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _selectedImagePath = 'mock_image_path.jpg';
-              });
-              Navigator.pop(context);
-            },
-            child: const Text('Select'),
-          ),
-        ],
+        ),
       ),
     );
   }
 
+  Widget _buildAvatarImage() {
+    if (_selectedImagePath != null) {
+      return Image.file(
+        File(_selectedImagePath!),
+        fit: BoxFit.cover,
+      );
+    }
+    final url = widget.currentProfilePictureUrl;
+    if (url != null && url.isNotEmpty) {
+      if (url.startsWith('data:')) {
+        try {
+          return Image.memory(
+            base64Decode(url.split(',').last),
+            fit: BoxFit.cover,
+          );
+        } catch (_) {}
+      } else {
+        return Image.network(
+          url,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => const Icon(
+            Icons.person,
+            size: 60,
+            color: Colors.white,
+          ),
+        );
+      }
+    }
+    return const Icon(
+      Icons.person,
+      size: 60,
+      color: Colors.white,
+    );
+  }
+
   Future<void> _saveChanges() async {
-    if (_nameController.text.trim().isEmpty) {
+    final name = _nameController.text.trim();
+    if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Name cannot be empty'),
@@ -74,44 +158,77 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
       _isLoading = true;
     });
 
-    // Note: Call AuthService.updateProfile()
-    await Future.delayed(const Duration(seconds: 2)); // Mock API call
+    try {
+      final authState = ref.read(authProvider);
+      final userId = authState.userId ?? '';
 
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Profile updated successfully!'),
-          backgroundColor: Colors.green,
-        ),
+      final res = await _authService.updateProfile(
+        userId: userId,
+        name: name,
+        imagePath: _selectedImagePath,
       );
-      Navigator.pop(context, {
-        'name': _nameController.text,
-        'imagePath': _selectedImagePath,
-      });
+
+      if (res.isSignedIn && res.user != null) {
+        final updatedMap = Map<String, dynamic>.from(res.user!);
+        ref.read(authProvider.notifier).updateUser(updatedMap);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profile updated successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context, updatedMap);
+        }
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(res.error ?? 'Failed to update profile'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error updating profile: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppTheme.darkBackground,
       appBar: AppBar(
         title: const Text(
-          'Edit Profile',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          'EDIT DRIVER PROFILE',
+          style: TextStyle(
+            color: AppTheme.primaryColor,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.5,
+            fontSize: 14,
+          ),
         ),
-        backgroundColor: const Color(0xFFFBBF24),
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: AppTheme.primaryColor),
       ),
       body: Stack(
         children: [
           ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             children: [
               // Profile Picture Section
               Center(
@@ -124,55 +241,21 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
                           height: 120,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFFFBBF24), Color(0xFFF59E0B)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
                             border: Border.all(
-                              color: Colors.white,
-                              width: 4,
+                              color: AppTheme.primaryColor,
+                              width: 3,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFBBF24)
-                                    .withValues(alpha: 0.3),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
+                                color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                                blurRadius: 20,
+                                spreadRadius: 2,
                               ),
                             ],
                           ),
-                          child: _selectedImagePath != null
-                              ? ClipOval(
-                                  child: Container(
-                                    color: Colors.grey[300],
-                                    child: const Icon(
-                                      Icons.person,
-                                      size: 60,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                )
-                              : widget.currentProfilePictureUrl != null
-                                  ? ClipOval(
-                                      child: Image.network(
-                                        widget.currentProfilePictureUrl!,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          return const Icon(
-                                            Icons.person,
-                                            size: 60,
-                                            color: Colors.black,
-                                          );
-                                        },
-                                      ),
-                                    )
-                                  : const Icon(
-                                      Icons.person,
-                                      size: 60,
-                                      color: Colors.black,
-                                    ),
+                          child: ClipOval(
+                            child: _buildAvatarImage(),
+                          ),
                         ),
                         Positioned(
                           bottom: 0,
@@ -182,17 +265,17 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
                             child: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.black,
+                                color: AppTheme.primaryColor,
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: Colors.white,
-                                  width: 3,
+                                  color: AppTheme.darkBackground,
+                                  width: 2,
                                 ),
                               ),
                               child: const Icon(
-                                Icons.camera_alt,
-                                color: Color(0xFFFBBF24),
-                                size: 20,
+                                Icons.camera_alt_rounded,
+                                color: Colors.black,
+                                size: 18,
                               ),
                             ),
                           ),
@@ -200,11 +283,11 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    Text(
+                    const Text(
                       'Tap camera icon to change photo',
                       style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[600],
+                        fontSize: 12,
+                        color: AppTheme.darkTextSecondary,
                       ),
                     ),
                   ],
@@ -217,15 +300,12 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppTheme.darkSurface,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x0D000000),
-                      blurRadius: 8,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
+                  border: Border.all(
+                    color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                    width: 1,
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,13 +314,13 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
                       children: [
                         Container(
                           padding: const EdgeInsets.all(8),
-                          decoration: const BoxDecoration(
-                            color: Color(0x33FBBF24),
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                            borderRadius: const BorderRadius.all(Radius.circular(8)),
                           ),
                           child: const Icon(
-                            Icons.person_outline,
-                            color: Color(0xFFF59E0B),
+                            Icons.person_outline_rounded,
+                            color: AppTheme.primaryColor,
                             size: 20,
                           ),
                         ),
@@ -248,9 +328,9 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
                         const Text(
                           'Full Name',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: Colors.white,
                           ),
                         ),
                       ],
@@ -258,10 +338,16 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
                     const SizedBox(height: 16),
                     TextField(
                       controller: _nameController,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Enter your full name',
+                        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
                         filled: true,
-                        fillColor: Colors.grey[50],
+                        fillColor: AppTheme.darkBackground,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
@@ -269,18 +355,14 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
-                            color: Color(0xFFFBBF24),
-                            width: 2,
+                            color: AppTheme.primaryColor,
+                            width: 1.5,
                           ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 16,
                         ),
-                      ),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -292,27 +374,27 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
               // Info Card
               Container(
                 padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  color: Color(0x1AFBBF24),
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                  border: Border.fromBorderSide(BorderSide(
-                    color: Color(0x4DFBBF24),
-                  )),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.05),
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  border: Border.all(
+                    color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                  ),
                 ),
                 child: Row(
                   children: [
                     const Icon(
-                      Icons.info_outline,
-                      color: Color(0xFFF59E0B),
+                      Icons.info_outline_rounded,
+                      color: AppTheme.primaryColor,
                       size: 20,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Your profile information is visible to passengers during trips',
+                        'Your profile photo and verified name are displayed to passengers upon ride assignment.',
                         style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[700],
+                          fontSize: 12,
+                          color: Colors.white.withValues(alpha: 0.7),
                         ),
                       ),
                     ),
@@ -325,10 +407,10 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
           // Loading Overlay
           if (_isLoading)
             Container(
-              color: const Color(0x80000000),
+              color: Colors.black.withValues(alpha: 0.5),
               child: const Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFBBF24)),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
                 ),
               ),
             ),
@@ -336,15 +418,13 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Color(0x1A000000),
-              blurRadius: 10,
-              offset: Offset(0, -2),
+        decoration: BoxDecoration(
+          color: AppTheme.darkSurface,
+          border: Border(
+            top: BorderSide(
+              color: AppTheme.primaryColor.withValues(alpha: 0.1),
             ),
-          ],
+          ),
         ),
         child: SafeArea(
           child: SizedBox(
@@ -352,7 +432,7 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
             child: ElevatedButton(
               onPressed: _isLoading ? null : _saveChanges,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFBBF24),
+                backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.black,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
@@ -363,12 +443,12 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.check_circle_outline),
+                  const Icon(Icons.check_circle_outline_rounded),
                   const SizedBox(width: 8),
                   Text(
-                    _isLoading ? 'Saving...' : 'Save Changes',
+                    _isLoading ? 'SAVING...' : 'SAVE CHANGES',
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.5,
                     ),
@@ -382,5 +462,3 @@ class _DriverProfileEditScreenState extends State<DriverProfileEditScreen> {
     );
   }
 }
-
-

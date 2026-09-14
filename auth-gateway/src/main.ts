@@ -51,6 +51,7 @@ async function bootstrap() {
         /^https?:\/\/([^/]+\.)?cabi-africa\.com$/,
         /^https?:\/\/localhost(:\d+)?$/,
         /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
+        /^https?:\/\/(192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/,
         /^https?:\/\/([^/]+\.)?run\.app$/,
         /^https?:\/\/([^/]+\.)?vercel\.app$/,
       ];

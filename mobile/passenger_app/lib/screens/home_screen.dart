@@ -19,6 +19,7 @@ import 'delivery_screen.dart';
 import 'user_dashboard_screen.dart';
 import 'package:passenger_app/screens/menu_screen.dart';
 import 'package:passenger_app/widgets/promotional_carousel.dart';
+import 'package:passenger_app/widgets/profile_avatar_with_qr.dart';
 // import 'login_screen.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,6 +74,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   LatLng _passengerLocation =
       const LatLng(-1.286389, 36.817223); // Default Westlands
+  bool _isPromptingLocation = false;
+  bool _isLoadingLocation = false;
   final List<Map<String, dynamic>> _vehicleTypes = [
     {
       'id': 'boda',
@@ -203,16 +206,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.black,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16)),
                   elevation: 8,
+                  shadowColor: AppTheme.primaryColor.withValues(alpha: 0.4),
                 ),
                 child: const Text("Confirm Location",
                     style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
               ),
             ),
 
@@ -257,43 +261,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   },
                   child: Stack(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
-                            boxShadow: const [
-                              BoxShadow(color: Colors.black26, blurRadius: 4)
-                            ]),
-                        child: CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.grey[300],
-                          backgroundImage: () {
-                            final authState = ref.watch(passengerAuthProvider);
-                            if (authState is Authenticated) {
-                              final user = authState.user;
-                              if (user?['passportPhotoUrl'] != null) {
-                                return NetworkImage(user!['passportPhotoUrl']);
-                              } else if (user?['isIdentityVerified'] == true) {
-                                return const NetworkImage(
-                                    'https://i.pravatar.cc/150?u=passenger');
-                              }
-                            }
-                            return null;
-                          }(),
-                          child: () {
-                            final authState = ref.watch(passengerAuthProvider);
-                            if (authState is Authenticated) {
-                              final user = authState.user;
-                              if (user?['passportPhotoUrl'] == null &&
-                                  user?['isIdentityVerified'] != true) {
-                                return const Icon(Icons.person,
-                                    color: Colors.grey);
-                              }
-                              return null;
-                            }
-                            return const Icon(Icons.person, color: Colors.grey);
-                          }(),
-                        ),
+                      ProfileAvatarWithQr(
+                        user: () {
+                          final authState = ref.watch(passengerAuthProvider);
+                          return authState is Authenticated ? authState.user : null;
+                        }(),
+                        radius: 20,
+                        showQrIcon: false,
+                        qrData: '',
                       ),
                       if (() {
                         final authState = ref.watch(passengerAuthProvider);
@@ -331,6 +306,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: const Text("SOS",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 10)),
+                  ),
+                if (!_isPickingFromMap) const SizedBox(height: 12),
+                if (!_isPickingFromMap)
+                  FloatingActionButton.small(
+                    heroTag: 'my_location_btn_passenger',
+                    onPressed: () => _initLocationTracking(userInitiated: true),
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF1E1E1E)
+                        : Colors.white,
+                    foregroundColor: AppTheme.primaryColor,
+                    elevation: 4,
+                    tooltip: "My Location",
+                    child: _isLoadingLocation
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+                            ),
+                          )
+                        : const Icon(Icons.my_location_rounded, size: 20, color: AppTheme.primaryColor),
                   ),
               ],
             ),

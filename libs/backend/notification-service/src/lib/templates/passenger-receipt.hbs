@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Cabi Trip Receipt</title>
+  <style>
+    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100% !important;
+      min-width: 100%;
+      background-color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #1e293b;
+    }
+    .wrapper {
+      width: 100%;
+      table-layout: fixed;
+      background-color: #f1f5f9;
+      padding: 30px 0;
+    }
+    .main-table {
+      width: 100%;
+      max-width: 580px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+    .header-banner {
+      background: linear-gradient(135deg, #090d16 0%, #1e293b 100%);
+      padding: 32px 30px;
+      text-align: left;
+    }
+    .brand-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      margin: 0;
+    }
+    .brand-accent {
+      color: #f59e0b;
+    }
+    .receipt-badge {
+      display: inline-block;
+      background-color: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-top: 8px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .hero-amount-section {
+      background-color: #f8fafc;
+      padding: 24px 30px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .hero-total-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+      margin: 0 0 6px 0;
+    }
+    .hero-amount {
+      font-size: 34px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0;
+      line-height: 1.1;
+    }
+    .content-body {
+      padding: 28px 30px;
+    }
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #475569;
+      margin: 0 0 16px 0;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 8px;
+    }
+    .route-table {
+      width: 100%;
+      margin-bottom: 24px;
+    }
+    .route-dot-pickup {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #10b981;
+      display: inline-block;
+    }
+    .route-dot-dropoff {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #f59e0b;
+      display: inline-block;
+    }
+    .route-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin: 0;
+    }
+    .route-address {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 2px 0 12px 0;
+    }
+    .driver-card {
+      background-color: #f8fafc;
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 24px;
+      border: 1px solid #e2e8f0;
+    }
+    .driver-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0;
+    }
+    .vehicle-info {
+      font-size: 13px;
+      color: #64748b;
+      margin: 4px 0 0 0;
+    }
+    .plate-pill {
+      display: inline-block;
+      background-color: #e2e8f0;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+    .breakdown-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+    }
+    .breakdown-table td {
+      padding: 8px 0;
+      font-size: 14px;
+      color: #334155;
+    }
+    .breakdown-table .item-label {
+      text-align: left;
+    }
+    .breakdown-table .item-value {
+      text-align: right;
+      font-weight: 600;
+    }
+    .breakdown-total td {
+      border-top: 2px solid #0f172a;
+      padding-top: 14px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .meta-card {
+      background-color: #f8fafc;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #64748b;
+    }
+    .btn-action {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      background-color: #0f172a;
+      color: #ffffff !important;
+      text-align: center;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      letter-spacing: 0.3px;
+      transition: background-color 0.2s ease;
+    }
+    .footer {
+      background-color: #f8fafc;
+      padding: 24px 30px;
+      text-align: center;
+      font-size: 12px;
+      color: #94a3b8;
+      border-top: 1px solid #e2e8f0;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <table role="presentation" cellpadding="0" cellspacing="0" class="main-table">
+      <!-- HEADER -->
+      <tr>
+        <td class="header-banner">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td>
+                <h1 class="brand-title">Cabi<span class="brand-accent">.</span>Africa</h1>
+                <span class="receipt-badge">Official Trip Receipt</span>
+              </td>
+              <td align="right" style="vertical-align: top;">
+                <p style="margin: 0; font-size: 12px; color: #94a3b8;">Trip ID</p>
+                <p style="margin: 2px 0 0 0; font-size: 12px; font-weight: 700; color: #ffffff; font-family: monospace;">{{rideId}}</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- TOTAL FARE HERO -->
+      <tr>
+        <td class="hero-amount-section">
+          <p class="hero-total-label">Total Amount Paid</p>
+          <p class="hero-amount">{{currency}} {{formatDecimal totalFare 2}}</p>
+          <p style="margin: 6px 0 0 0; font-size: 13px; color: #64748b;">
+            Paid via <strong>{{paymentMethod}}</strong> &bull; {{formatDate rideDate "full"}}
+          </p>
+        </td>
+      </tr>
+
+      <!-- CONTENT BODY -->
+      <tr>
+        <td class="content-body">
+          <p style="font-size: 15px; margin: 0 0 20px 0; color: #334155;">
+            Hi <strong>{{passengerName}}</strong>, thanks for riding with Cabi. Here are the details of your trip.
+          </p>
+
+          <!-- ROUTE -->
+          <div class="section-title">Trip Route</div>
+          <table role="presentation" cellpadding="0" cellspacing="0" class="route-table">
+            <tr>
+              <td style="width: 24px; vertical-align: top; padding-top: 4px;">
+                <span class="route-dot-pickup"></span>
+              </td>
+              <td>
+                <p class="route-label">Pickup Location</p>
+                <p class="route-address">{{pickupAddress}}</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 24px; vertical-align: top; padding-top: 4px;">
+                <span class="route-dot-dropoff"></span>
+              </td>
+              <td>
+                <p class="route-label">Drop-off Destination</p>
+                <p class="route-address">{{dropoffAddress}}</p>
+              </td>
+            </tr>
+          </table>
+
+          {{#if distanceKm}}
+          <div style="margin-bottom: 24px; font-size: 13px; color: #64748b;">
+            <span>Distance: <strong>{{distanceKm}} km</strong></span>
+            {{#if durationMinutes}}
+            <span style="margin-left: 12px;">Duration: <strong>{{durationMinutes}} mins</strong></span>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          <!-- DRIVER & VEHICLE INFO -->
+          <div class="section-title">Driver & Vehicle</div>
+          <div class="driver-card">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td>
+                  <p class="driver-name">{{driverName}}</p>
+                  <p class="vehicle-info">
+                    {{#if vehicleModel}}{{vehicleModel}}{{else}}Cabi Partner Vehicle{{/if}}
+                    {{#if vehicleColor}}&bull; {{vehicleColor}}{{/if}}
+                  </p>
+                </td>
+                {{#if vehiclePlateNumber}}
+                <td align="right">
+                  <span class="plate-pill">{{vehiclePlateNumber}}</span>
+                </td>
+                {{/if}}
+              </tr>
+            </table>
+          </div>
+
+          <!-- FARE BREAKDOWN -->
+          <div class="section-title">Fare Breakdown</div>
+          <table role="presentation" cellpadding="0" cellspacing="0" class="breakdown-table">
+            {{#if baseFare}}
+            <tr>
+              <td class="item-label">Base Fare</td>
+              <td class="item-value">{{currency}} {{formatDecimal baseFare 2}}</td>
+            </tr>
+            {{/if}}
+            {{#if distanceFare}}
+            <tr>
+              <td class="item-label">Distance Fare</td>
+              <td class="item-value">{{currency}} {{formatDecimal distanceFare 2}}</td>
+            </tr>
+            {{/if}}
+            {{#if timeFare}}
+            <tr>
+              <td class="item-label">Time Fare</td>
+              <td class="item-value">{{currency}} {{formatDecimal timeFare 2}}</td>
+            </tr>
+            {{/if}}
+            {{#if waitTimeFee}}
+            <tr>
+              <td class="item-label">Wait Time Fee</td>
+              <td class="item-value">{{currency}} {{formatDecimal waitTimeFee 2}}</td>
+            </tr>
+            {{/if}}
+            {{#if surgeAmount}}
+            <tr>
+              <td class="item-label">Surge / Demand Multiplier ({{surgeMultiplier}}x)</td>
+              <td class="item-value">{{currency}} {{formatDecimal surgeAmount 2}}</td>
+            </tr>
+            {{/if}}
+            {{#if discountAmount}}
+            <tr>
+              <td class="item-label" style="color: #16a34a;">Promotion Discount</td>
+              <td class="item-value" style="color: #16a34a;">- {{currency}} {{formatDecimal discountAmount 2}}</td>
+            </tr>
+            {{/if}}
+            <tr class="breakdown-total">
+              <td class="item-label">Total Fare</td>
+              <td class="item-value">{{currency}} {{formatDecimal totalFare 2}}</td>
+            </tr>
+          </table>
+
+          <!-- PAYMENT REFERENCE -->
+          <div class="meta-card">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td><strong>Payment Method:</strong></td>
+                <td align="right">{{paymentMethod}}</td>
+              </tr>
+              {{#if transactionReference}}
+              <tr>
+                <td><strong>Transaction Ref:</strong></td>
+                <td align="right" style="font-family: monospace; font-weight: 700; color: #0f172a;">{{transactionReference}}</td>
+              </tr>
+              {{/if}}
+            </table>
+          </div>
+
+          <!-- CTA -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top: 10px;">
+            <tr>
+              <td>
+                <a href="{{supportUrl}}" class="btn-action">Need Help With This Trip?</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- FOOTER -->
+      <tr>
+        <td class="footer">
+          <p style="margin: 0 0 6px 0;">This email is an electronic receipt for services rendered by Cabi Africa.</p>
+          <p style="margin: 0 0 10px 0;">Cabi Technologies Ltd &bull; Nairobi, Kenya &bull; support@cabi.africa</p>
+          <p style="margin: 0; font-size: 11px; color: #cbd5e1;">&copy; 2026 Cabi Africa. All rights reserved.</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>

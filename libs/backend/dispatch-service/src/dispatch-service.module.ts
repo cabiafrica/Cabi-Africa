@@ -5,11 +5,13 @@ import { DispatchService } from './dispatch-service.service';
 import { DispatchGateway } from './dispatch-service.gateway';
 import { PrismaModule } from '@cabi/backend/database';
 import { SettingsModule } from '@cabi/backend/settings';
+import { NotificationModule } from '@cabi/backend/notification-service';
 
 @Module({
-  imports: [PrismaModule, SettingsModule],
+  imports: [PrismaModule, SettingsModule, NotificationModule],
   controllers: [DispatchController, RideController],
   providers: [DispatchService, DispatchGateway],
   exports: [DispatchService],
 })
 export class DispatchModule { }
+

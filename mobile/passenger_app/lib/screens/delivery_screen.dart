@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'search_screen.dart';
 
 class DeliveryScreen extends StatefulWidget {
   const DeliveryScreen({super.key});
@@ -13,6 +14,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
   final _recipientPhoneController = TextEditingController();
   final _packageDescController = TextEditingController();
 
+  String _pickupAddress = 'Westlands, Nairobi';
   String? _dropoffAddress;
   String _selectedSize = 'Small';
 
@@ -38,14 +40,40 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
     },
   ];
 
-  void _selectDropoff() {
-    setState(() {
-      _dropoffAddress = 'Industrial Area, Gate 4, Nairobi';
-    });
+  Future<void> _selectLocation(bool isPickup) async {
+    final selected = await Navigator.push<Map<String, dynamic>>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SearchScreen(),
+        settings: RouteSettings(arguments: isPickup),
+      ),
+    );
+
+    if (selected != null && mounted) {
+      setState(() {
+        final name = selected['name'] as String? ?? '';
+
+        if (isPickup) {
+          _pickupAddress = name;
+        } else {
+          _dropoffAddress = name;
+        }
+      });
+    }
   }
 
   void _bookDelivery() {
-    if (_formKey.currentState!.validate() && _dropoffAddress != null) {
+    if (_dropoffAddress == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a drop-off delivery location.'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    if (_formKey.currentState!.validate()) {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -137,26 +165,39 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                 ),
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.circle,
-                            color: Colors.purple, size: 14),
-                        const SizedBox(width: 15),
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Pickup Location',
-                                  style: TextStyle(
-                                      color: Colors.grey, fontSize: 12)),
-                              Text('123 Westlands Ave, Nairobi',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600)),
-                            ],
-                          ),
+                    InkWell(
+                      onTap: () => _selectLocation(true),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.circle,
+                                color: Colors.purple, size: 14),
+                            const SizedBox(width: 15),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Pickup Location',
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 12)),
+                                  Text(
+                                    _pickupAddress,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.edit_location_alt_outlined,
+                                color: Colors.purple, size: 20),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 6.0),
@@ -164,34 +205,40 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                           width: 2, height: 30, color: Colors.purple.shade100),
                     ),
                     InkWell(
-                      onTap: _selectDropoff,
-                      child: Row(
-                        children: [
-                          const Icon(Icons.location_on_rounded,
-                              color: Colors.deepOrange, size: 18),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Drop-off Location',
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 12)),
-                                Text(
-                                    _dropoffAddress ??
-                                        'Where are you sending to?',
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                        color: _dropoffAddress == null
-                                            ? Colors.grey
-                                            : Colors.black)),
-                              ],
+                      onTap: () => _selectLocation(false),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.location_on_rounded,
+                                color: Colors.deepOrange, size: 18),
+                            const SizedBox(width: 15),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Drop-off Location',
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 12)),
+                                  Text(
+                                      _dropoffAddress ??
+                                          'Where are you sending to?',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          color: _dropoffAddress == null
+                                              ? Colors.grey
+                                              : Colors.black)),
+                                ],
+                              ),
                             ),
-                          ),
-                          const Icon(Icons.search_rounded,
-                              color: Colors.purple),
-                        ],
+                            const Icon(Icons.search_rounded,
+                                color: Colors.purple),
+                          ],
+                        ),
                       ),
                     ),
                   ],

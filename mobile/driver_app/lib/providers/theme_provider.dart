@@ -4,33 +4,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // Implementation of Theme Notifier
 class ThemeNotifier extends StateNotifier<ThemeMode> {
-  ThemeNotifier() : super(ThemeMode.system) {
-    _loadTheme();
-  }
+  ThemeNotifier(super.initialMode);
 
-  static const String _themeKey = 'theme_mode';
-
-  Future<void> _loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    final themeString = prefs.getString(_themeKey);
-    if (themeString == 'light') {
-      state = ThemeMode.light;
-    } else if (themeString == 'dark') {
-      state = ThemeMode.dark;
-    } else {
-      state = ThemeMode.system;
-    }
-  }
+  static const String themeKey = 'theme_mode';
 
   Future<void> setTheme(ThemeMode mode) async {
     state = mode;
     final prefs = await SharedPreferences.getInstance();
     if (mode == ThemeMode.light) {
-      await prefs.setString(_themeKey, 'light');
+      await prefs.setString(themeKey, 'light');
     } else if (mode == ThemeMode.dark) {
-      await prefs.setString(_themeKey, 'dark');
+      await prefs.setString(themeKey, 'dark');
     } else {
-      await prefs.remove(_themeKey);
+      await prefs.remove(themeKey);
     }
   }
 
@@ -43,7 +29,9 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
   }
 }
 
-// Global provider
+// Global provider is now created with an override in ProviderScope or initialized later.
+// We will change it to require an override or a default initial value.
 final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
-  return ThemeNotifier();
+  // Fallback if not overridden
+  return ThemeNotifier(ThemeMode.system);
 });

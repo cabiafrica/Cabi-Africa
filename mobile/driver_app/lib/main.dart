@@ -23,10 +23,31 @@ import 'theme/app_theme.dart';
 import 'providers/theme_provider.dart';
 import 'providers/ride_request_provider.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Load theme preference synchronously before running app
+  final prefs = await SharedPreferences.getInstance();
+  final themeString = prefs.getString(ThemeNotifier.themeKey);
+  ThemeMode initialThemeMode = ThemeMode.system;
+  
+  if (themeString == 'light') {
+    initialThemeMode = ThemeMode.light;
+  } else if (themeString == 'dark') {
+    initialThemeMode = ThemeMode.dark;
+  }
+
   // Amplify configuration removed - app uses direct HTTP API calls
-  runApp(const ProviderScope(child: CabiDriverApp()));
+  runApp(
+    ProviderScope(
+      overrides: [
+        themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
+      ],
+      child: const CabiDriverApp(),
+    ),
+  );
 }
 
 class CabiDriverApp extends ConsumerWidget {
