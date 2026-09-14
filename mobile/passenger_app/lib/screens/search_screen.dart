@@ -800,9 +800,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                     horizontal: 12, vertical: 12),
                                 decoration: BoxDecoration(
                                   color: isDark
-                                      ? const Color(0xFF2A2A2A)
+                                      ? const Color(0xFF262626)
                                       : const Color(0xFFE9ECEF),
                                   borderRadius: BorderRadius.circular(10),
+                                  border: _activeField == 0
+                                      ? Border.all(color: borderColor, width: 1.5)
+                                      : null,
                                 ),
                                 child: Row(
                                   children: [
@@ -847,16 +850,15 @@ class _SearchScreenState extends State<SearchScreen> {
                               ),
                             )
                           else
-                            // Active editing state (looks like the empty field below with map icon)
+                            // Active editing state
                             Container(
                               height: 48,
                               decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF181818) : Colors.white,
+                                color: isDark ? const Color(0xFF262626) : const Color(0xFFF8FAFC),
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: borderColor,
-                                  width: 1.5,
-                                ),
+                                border: _activeField == 0
+                                    ? Border.all(color: borderColor, width: 1.5)
+                                    : null,
                               ),
                               child: Row(
                                 children: [
@@ -883,6 +885,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                           fontSize: 15,
                                         ),
                                         border: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        errorBorder: InputBorder.none,
+                                        disabledBorder: InputBorder.none,
+                                        filled: false,
+                                        fillColor: Colors.transparent,
                                         isDense: true,
                                         contentPadding: EdgeInsets.symmetric(vertical: 10),
                                       ),
@@ -902,12 +910,11 @@ class _SearchScreenState extends State<SearchScreen> {
                             Container(
                               height: 48,
                               decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF181818) : Colors.white,
+                                color: isDark ? const Color(0xFF262626) : const Color(0xFFF8FAFC),
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: const Color(0xFFE2E8F0),
-                                  width: 1.2,
-                                ),
+                                border: _activeField == 2 + i
+                                    ? Border.all(color: borderColor, width: 1.5)
+                                    : null,
                               ),
                               child: Row(
                                 children: [
@@ -917,20 +924,20 @@ class _SearchScreenState extends State<SearchScreen> {
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFE2E8F0),
+                                        color: isDark ? const Color(0xFF333333) : const Color(0xFFE2E8F0),
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          const Icon(Icons.drag_indicator_rounded, size: 14, color: Colors.black54),
+                                          Icon(Icons.drag_indicator_rounded, size: 14, color: isDark ? Colors.white70 : Colors.black54),
                                           const SizedBox(width: 2),
                                           Text(
                                             'Stop ${i + 1}',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 10,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
+                                              color: isDark ? Colors.white : Colors.black87,
                                             ),
                                           ),
                                         ],
@@ -954,6 +961,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                           fontSize: 15,
                                         ),
                                         border: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        errorBorder: InputBorder.none,
+                                        disabledBorder: InputBorder.none,
+                                        filled: false,
+                                        fillColor: Colors.transparent,
                                         isDense: true,
                                         contentPadding: EdgeInsets.symmetric(vertical: 10),
                                       ),
@@ -988,16 +1001,15 @@ class _SearchScreenState extends State<SearchScreen> {
 
                           const SizedBox(height: 8),
 
-                          // 2. Dropoff Field (Active green-bordered field with search & map thumbnail)
+                          // 2. Dropoff Field (only bordered if active)
                           Container(
                             height: 48,
                             decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF181818) : Colors.white,
+                              color: isDark ? const Color(0xFF262626) : const Color(0xFFF8FAFC),
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: borderColor,
-                                width: 1.5,
-                              ),
+                              border: _activeField == 1
+                                  ? Border.all(color: borderColor, width: 1.5)
+                                  : null,
                             ),
                             child: Row(
                               children: [
@@ -1024,6 +1036,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                         fontSize: 15,
                                       ),
                                       border: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      filled: false,
+                                      fillColor: Colors.transparent,
                                       isDense: true,
                                       contentPadding: EdgeInsets.symmetric(vertical: 10),
                                     ),
@@ -1141,12 +1159,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFD700).withValues(alpha: isDark ? 0.15 : 0.08),
+                    color: const Color(0xFFFFD700).withValues(alpha: isDark ? 0.12 : 0.08),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color(0xFFFFD700).withValues(alpha: 0.5),
-                      width: 1.2,
-                    ),
                   ),
                   child: Row(
                     children: [
