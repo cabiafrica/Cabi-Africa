@@ -7,6 +7,7 @@ import DriversList from './components/DriversList';
 import LiveMap from './components/LiveMap';
 import SurgeMonitor from './components/SurgeMonitor';
 import TripAnalytics from './components/TripAnalytics';
+import UndockablePanel from './components/common/UndockablePanel';
 import TripHistoryPage from './components/TripHistoryPage';
 import DriverHistoryPage from './components/DriverHistoryPage';
 import PassengerManagementPage from './components/PassengerManagementPage';
@@ -52,6 +53,7 @@ import apiClient from './lib/apiClient';
 function App() {
     const { isAuthenticated, logout, user, hasPermission } = useAuth();
     const [activeView, setActiveView] = useState<'overview' | 'rides' | 'drivers' | 'map' | 'surge' | 'analytics' | 'trips' | 'driver-history' | 'passengers'>('overview');
+    const [isTripAnalyticsUndocked, setIsTripAnalyticsUndocked] = useState<boolean>(false);
     const [rideRequests, setRideRequests] = useState<RideRequest[]>([]);
     const [drivers, setDrivers] = useState<Driver[]>([]);
     const [metrics, setMetrics] = useState<DispatchMetrics>({
@@ -254,7 +256,7 @@ function App() {
                             key={item.view}
                             onClick={() => setActiveView(item.view)}
                             className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === item.view
-                                ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
+                                ? 'bg-gradient-to-r from-blue-600/25 to-cyan-600/15 border-l-4 border-blue-500 text-white'
                                 : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
                                 }`}
                         >
@@ -310,7 +312,7 @@ function App() {
                 {/* Footer */}
                 <div className="p-4 border-t border-slate-800/50">
                     <div className="flex items-center gap-3 px-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white text-sm font-bold">
                             OP
                         </div>
                         <div className="flex-1 min-w-0">
@@ -356,6 +358,16 @@ function App() {
                             </p>
                         </div>
                         <div className="flex items-center gap-4">
+                            {isTripAnalyticsUndocked && (
+                                <button
+                                    onClick={() => setActiveView('analytics')}
+                                    className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400 hover:bg-blue-500/20 text-xs font-semibold transition-all cursor-pointer shadow-sm"
+                                    title="Trip Monitoring is currently undocked on Screen 2. Click to view controls."
+                                >
+                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span>Screen 2: Trip Monitoring Active</span>
+                                </button>
+                            )}
                             <div className="text-right">
                                 <p className="text-xs text-slate-500">Last Updated</p>
                                 <p className="text-sm font-medium text-white">
@@ -390,21 +402,23 @@ function App() {
                                         metrics={metrics}
                                         rideRequests={rideRequests}
                                         drivers={drivers}
+                                        onUndockTripAnalytics={() => {
+                                            setActiveView('analytics');
+                                        }}
+                                        isTripAnalyticsUndocked={isTripAnalyticsUndocked}
                                     />
                                 )}
-                                {activeView === 'analytics' && (
-                                    <TripAnalytics analytics={{
-                                        totalTrips: 0,
-                                        completedTrips: 0,
-                                        cancelledTrips: 0,
-                                        completionRate: 0,
-                                        cancellationsByPassenger: 0,
-                                        cancellationsByDriver: 0,
-                                        cancellationsBySystem: 0,
-                                        cancellationReasons: [],
-                                        recentCancellations: [],
-                                    }} />
-                                )}
+                                <div className={activeView === 'analytics' ? 'block' : 'hidden'}>
+                                    <UndockablePanel
+                                        title="Trip Monitoring & Analytics"
+                                        subtitle="Real-time ratio of complete vs cancelled trips, cancellation root causes, and fleet performance"
+                                        id="trip-analytics"
+                                        badgeText="MULTI-SCREEN DISPATCH"
+                                        onDockChange={(undocked) => setIsTripAnalyticsUndocked(undocked)}
+                                    >
+                                        <TripAnalytics />
+                                    </UndockablePanel>
+                                </div>
                                 {activeView === 'rides' && (
                                     <RideRequestsList
                                         rideRequests={rideRequests}

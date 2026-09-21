@@ -1,17 +1,18 @@
 import 'package:flutter/foundation.dart';
 
 class AppConfig {
-  // Configurable via --dart-define=IS_PRODUCTION=true
-  static const bool isProduction = bool.fromEnvironment('IS_PRODUCTION', defaultValue: false);
+  // Configurable via --dart-define=IS_PRODUCTION=true, automatically true in release mode
+  static const bool isProduction = bool.fromEnvironment('IS_PRODUCTION', defaultValue: kReleaseMode);
   
   // Custom API host override via --dart-define=API_HOST=192.168.100.35
-  static const String customHost = String.fromEnvironment('API_HOST', defaultValue: '192.168.100.35');
+  static const String customHost = String.fromEnvironment('API_HOST', defaultValue: '');
 
   static String get host {
     if (isProduction) return 'auth-gateway-746659778850.us-central1.run.app';
     if (kIsWeb) return 'localhost';
-    if (customHost.isNotEmpty && customHost != '192.168.100.35') return customHost;
-    if (defaultTargetPlatform == TargetPlatform.android) return '192.168.43.75';
+    if (customHost.isNotEmpty) return customHost;
+    // Android emulator uses 10.0.2.2 to reach the host machine's localhost
+    if (defaultTargetPlatform == TargetPlatform.android) return '10.0.2.2';
     return '127.0.0.1';
   }
 

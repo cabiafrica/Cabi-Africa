@@ -2,14 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Premium Color Palette - Updated to match Login "Taxi Gold" Theme
-  static const Color primaryColor = Color(0xFFFFD700); // Taxi Gold
-  static const Color primaryDark = Color(0xFFE6C200);
-  static const Color primaryLight = Color(0xFFFFE57F);
+  // Premium Color Palette - Luxury Metallic Gold
+  static const Color primaryColor = Color(0xFFD4AF37); // Classic Metallic Gold
+  static const Color primaryDark = Color(0xFFB89028);  // Burnished Royal Gold
+  static const Color primaryLight = Color(0xFFF3E5AB); // Champagne Gold
 
-  static const Color secondaryAmber = Color(0xFFFFA000); // Darker Amber
+  static const Color secondaryAmber = Color(0xFFC5A059); // Warm Satin Gold
   static const Color successGreen = Color(0xFF10B981);
   static const Color errorRed = Color(0xFFEF4444);
+
+  // Luxury Gold Gradients
+  static const LinearGradient goldGradient = LinearGradient(
+    colors: [Color(0xFFF0D278), Color(0xFFD4AF37), Color(0xFFB89028)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient darkGoldSurfaceGradient = LinearGradient(
+    colors: [Color(0xFF1F1C14), Color(0xFF141414)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
 
   // Light Mode Colors
   static const Color lightBackground = Color(0xFFF3F4F6);

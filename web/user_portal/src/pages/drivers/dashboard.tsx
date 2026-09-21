@@ -69,11 +69,25 @@ export default function ApplicationDashboard() {
             {/* Header / Navbar */}
             <header className="bg-black border-b border-neutral-900 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                        <span className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-amber-500">
-                            Cabi
-                        </span>
-                        <span className="text-neutral-400 text-sm border-l pl-2 ml-2 border-neutral-800">Driver Portal</span>
+                    <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2">
+                            <span className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-amber-500">
+                                Cabi
+                            </span>
+                            <span className="text-neutral-400 text-sm border-l pl-2 ml-2 border-neutral-800">Driver Portal</span>
+                        </div>
+                        <nav className="hidden md:flex items-center gap-2">
+                            <Link href="/drivers/dashboard" className="px-3 py-1.5 rounded-lg text-xs font-bold text-black bg-yellow-400 shadow-sm shadow-yellow-500/20">
+                                Dashboard
+                            </Link>
+                            <Link href="/drivers/demand-analysis" className="px-3 py-1.5 rounded-lg text-xs font-semibold text-neutral-300 hover:text-white hover:bg-neutral-900 transition-all flex items-center gap-1.5">
+                                <span>Demand Intelligence</span>
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 font-extrabold">HOT</span>
+                            </Link>
+                            <Link href="/drivers/sacco" className="px-3 py-1.5 rounded-lg text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all">
+                                SACCO
+                            </Link>
+                        </nav>
                     </div>
                     <div>
                         <div className="relative">

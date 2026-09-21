@@ -53,6 +53,33 @@ class DriverEnRoutePanel extends StatelessWidget {
                 ),
               ),
               const Divider(height: 24),
+              if (rideDetails['isExtendedPickup'] == true) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.4)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.bolt_rounded, color: Color(0xFFD4AF37), size: 18),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Driver is coming from afar (~$eta mins). Call or message to coordinate pickup spot.',
+                          style: const TextStyle(
+                            color: Color(0xFFD4AF37),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [

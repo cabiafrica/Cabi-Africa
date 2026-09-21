@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:driver_app/widgets/driver_analytics_cards.dart';
+import 'package:driver_app/theme/app_theme.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -7,203 +9,382 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text('Dashboard',
-            style: TextStyle(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.insights_rounded,
+                color: AppTheme.primaryDark,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Performance Overview',
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface)),
+                fontSize: 18,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+          ],
+        ),
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
-        iconTheme:
-            IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 14.0),
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  gradient: AppTheme.goldGradient,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Text(
+                  'PRO',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 11,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Overview Section
-            Text(
-              'Performance Overview',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-            const SizedBox(height: 16),
+            // Score Matrix & Tier Overview
             const DriverAnalyticsCards(),
             const SizedBox(height: 24),
 
-            // Additional Metrics
+            // Additional Metrics Section Header
+            Row(
+              children: [
+                Container(
+                  width: 4,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    gradient: AppTheme.goldGradient,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Operational Metrics',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+
+            // Metrics Grid
             GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1.5,
+              crossAxisSpacing: 14,
+              mainAxisSpacing: 14,
+              childAspectRatio: 1.35,
               children: [
                 _buildMetricCard(
                   context,
                   'Acceptance Rate',
                   '94%',
-                  Colors.green,
-                  Icons.check_circle_outline,
+                  AppTheme.successGreen,
+                  Icons.task_alt_rounded,
+                  'Top Tier Performance',
                 ),
                 _buildMetricCard(
                   context,
                   'Cancellation Rate',
                   '2%',
-                  Colors.orange,
+                  AppTheme.secondaryAmber,
                   Icons.cancel_outlined,
+                  'Well Below 4% Limit',
                 ),
                 _buildMetricCard(
                   context,
                   'Hours Online',
                   '32.5h',
-                  Colors.blue,
-                  Icons.timer_outlined,
+                  AppTheme.primaryColor,
+                  Icons.access_time_filled_rounded,
+                  'This Week Total',
                 ),
                 _buildMetricCard(
                   context,
                   'Total Trips',
                   '1,240',
-                  Colors.purple,
-                  Icons.directions_car_filled,
+                  AppTheme.primaryDark,
+                  Icons.local_taxi_rounded,
+                  'All-Time Completed',
                 ),
               ],
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 28),
 
-            // Referral Section
+            // Luxury Referral & Growth Section
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                    Theme.of(context).colorScheme.surface,
-                  ],
+                  colors: isDark
+                      ? [
+                          const Color(0xFF1E1A12),
+                          const Color(0xFF141414),
+                        ]
+                      : [
+                          const Color(0xFFFFFDF7),
+                          const Color(0xFFF9F6ED),
+                        ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(22),
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.35),
+                  width: 1.2,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primaryColor.withValues(alpha: 0.08),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
-                   Text(
-                    'Refer & Earn',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.card_giftcard_rounded,
+                        color: AppTheme.primaryDark,
+                        size: 22,
+                      ),
+                      const SizedBox(width: 8),
+                      ShaderMask(
+                        shaderCallback: (bounds) =>
+                            AppTheme.goldGradient.createShader(bounds),
+                        child: const Text(
+                          'Refer Partner & Earn Bonus',
+                          style: TextStyle(
+                            fontSize: 19,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Invite other drivers to join CABI and earn commission on their registration fees.',
+                  Text(
+                    'Invite driver colleagues to CABI Africa. Receive guaranteed commission vouchers when they complete 20 rides.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey, fontSize: 13),
+                    style: TextStyle(
+                      color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
+                      fontSize: 12.5,
+                      height: 1.35,
+                    ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
+                  // Styled QR Frame with Gold border
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: AppTheme.primaryColor.withValues(alpha: 0.5),
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                          blurRadius: 14,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: QrImageView(
                       data: 'https://portal.cabiapp.africa/register/driver?ref=DRV-77821',
                       version: QrVersions.auto,
-                      size: 180.0,
+                      size: 160.0,
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                         Text(
-                          'portal.cabiapp.africa/ref/DRV-77821',
-                          style: TextStyle(
-                            fontFamily: 'monospace',
-                            fontSize: 12,
+                  const SizedBox(height: 20),
+                  // Copyable Link Container
+                  InkWell(
+                    onTap: () {
+                      Clipboard.setData(
+                        const ClipboardData(
+                            text: 'https://portal.cabiapp.africa/ref/DRV-77821'),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text(
+                            'Referral link copied to clipboard!',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          backgroundColor: AppTheme.primaryDark,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        SizedBox(width: 8),
-                        Icon(Icons.copy, size: 16, color: Colors.grey),
-                      ],
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(14),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.05)
+                            : Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: AppTheme.primaryColor.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.link_rounded,
+                            size: 18,
+                            color: AppTheme.primaryDark,
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'portal.cabiapp.africa/ref/DRV-77821',
+                            style: TextStyle(
+                              fontFamily: 'monospace',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Icon(
+                            Icons.copy_rounded,
+                            size: 16,
+                            color: AppTheme.primaryDark,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 36),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMetricCard(BuildContext context, String title, String value,
-      Color color, IconData icon) {
+  Widget _buildMetricCard(
+    BuildContext context,
+    String title,
+    String value,
+    Color color,
+    IconData icon,
+    String subtitle,
+  ) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Theme.of(context).dividerColor),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: AppTheme.primaryColor.withValues(alpha: 0.18),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).brightness == Brightness.dark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(icon, color: color, size: 20),
-              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: color, size: 18),
+              ),
               Text(
-                title,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w500,
+                value,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.5,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.85),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: AppTheme.primaryDark.withValues(alpha: 0.8),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 }
-

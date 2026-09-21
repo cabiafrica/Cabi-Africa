@@ -53,7 +53,7 @@
 
 ### **Triggering Builds**
 *   **Web + Backend**: Push to the `main` branch triggers Cloud Build via GitHub Actions.
-*   **Mobile**: Run `flutter build apk --release` from the corresponding `mobile/` subfolder.
+*   **Mobile**: Run `npm run mobile:build:prod` (or `flutter build apk --release --dart-define=IS_PRODUCTION=true` / `flutter build appbundle --release --dart-define=IS_PRODUCTION=true` from the app directory). Outputs are saved to `dist/mobile/`.
 
 ### **Custom Domain Mapping** (One-time setup)
 ```bash

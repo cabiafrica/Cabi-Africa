@@ -423,7 +423,7 @@ steps:
       - '--max-instances=10'
       - '--allow-unauthenticated'
       - '--set-secrets=DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest'
-      - '--set-env-vars=NODE_ENV=production'
+      - '--set-env-vars=NODE_ENV=production,BACKEND_URL=https://auth-gateway-746659778850.us-central1.run.app/api,AUTH_GATEWAY_URL=https://auth-gateway-746659778850.us-central1.run.app,DISPATCH_SERVICE_URL=https://dispatch-service-746659778850.us-central1.run.app/api,SACCO_SERVICE_URL=https://sacco-service-746659778850.us-central1.run.app/api,DRIVER_LEAD_SERVICE_URL=https://driver-lead-service-746659778850.us-central1.run.app/api,REFERRAL_SERVICE_URL=https://referral-service-746659778850.us-central1.run.app/api'
     waitFor: ['push-user-portal']
 
 images:

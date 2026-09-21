@@ -97,4 +97,14 @@ export class FareService {
         const chargeableMinutes = minutes - gracePeriod;
         return chargeableMinutes * 10; // 10 KES per minute
     }
+
+    /**
+     * Extended Pickup Subsidy:
+     * Compensates the driver for traveling extra miles beyond their search radius.
+     * Paid by the system directly into the driver wallet (Zero charge to passenger).
+     */
+    calculateExtendedPickupSubsidy(extraKm: number, ratePerKm = 30): number {
+        if (extraKm <= 0) return 0;
+        return Math.round(extraKm * ratePerKm);
+    }
 }

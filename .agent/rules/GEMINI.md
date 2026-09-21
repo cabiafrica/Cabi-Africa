@@ -143,6 +143,12 @@ When user's prompt is NOT in English:
 2. What PRINCIPLES must I apply?
 3. How does this DIFFER from generic output?
 
+### 📝 Obsidian Vault Synchronization (MANDATORY)
+
+> 🔴 **MANDATORY:** Always keep the Obsidian vault at `D:\IBN\iBN-Cabi Vault` synchronized with project updates.
+- Whenever architectural changes, service refactoring, database model additions (Prisma), SACCO policies, or significant features are implemented, you MUST update the corresponding documentation in `D:\IBN\iBN-Cabi Vault\01-System Architecture & Engineering\`.
+- Maintain `MOC — Engineering & Codebase Hub.md` and related notes so the vault remains the living, accurate source of truth for the project.
+
 ---
 
 ## TIER 1: CODE RULES (When Writing Code)

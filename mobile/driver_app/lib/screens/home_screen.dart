@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -12,7 +13,8 @@ import '../widgets/ride_request_modal.dart';
 import '../providers/auth_provider.dart';
 import '../providers/map_provider.dart';
 import '../widgets/face_verification_modal.dart';
-import '../widgets/radar_animation.dart';
+import '../widgets/swipeable_online_button.dart';
+import '../widgets/sos_button.dart';
 import '../providers/providers.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -27,16 +29,154 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _isLoading = false;
   bool _isFaceVerified = false;
   bool _isVerificationInProgress = false;
-  double _tripRadiusKm = 2.0; 
+  double _tripRadiusKm = 5.0; // Max radius 5.0 km
+  bool _isRadiusSliderOpen = false; // Collapsible radius slider
   LatLng _driverLocation =
       const LatLng(-1.286389, 36.817223); // Nairobi default
   CabiMapController? _mapController;
   StreamSubscription<Position>? _locationSubscription;
   Timer? _ridePollingTimer;
 
+  void _showAutoOfflineNotice() {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1B15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: AppTheme.primaryColor, width: 0.8),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.pause_circle_outline_rounded, color: Colors.orange, size: 28),
+            const SizedBox(width: 10),
+            Text(
+              'Switched Offline',
+              style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: Text(
+          'You were automatically set offline after missing 3 consecutive qualifying trip requests in your pickup zone.\n\nNon-qualifying trips (outside radius or unaligned destinations) did not count against your record.\n\nSwipe online whenever you are ready to receive passenger trips.',
+          style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.4),
+        ),
+        actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryColor,
+              foregroundColor: Colors.black,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text('Understood', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _isFullScreenMap = false;
+  bool _showDemandHotspots = true;
+  List<Map<String, dynamic>> _demandHotspots = [];
+  Timer? _hotspotsRefreshTimer;
+
+  // Driver Route Preferences (Destination Mode & Excluded Zones)
+  String? _preferredDestinationName;
+  LatLng? _preferredDestinationLatLng;
+  bool _isDestinationModeActive = false;
+  final Set<String> _excludedZones = {};
+
+  double _calculateZoomForRadius(double radiusKm) {
+    final clamped = radiusKm.clamp(1.0, 5.0);
+    // Nairobi Web Mercator calculation for ~320px screen diameter:
+    return 14.612 - (math.log(clamped) / math.ln2);
+  }
+
+  void _onRadiusChanged(double val) {
+    setState(() {
+      _tripRadiusKm = val;
+    });
+    _mapController?.animateCamera(
+      _driverLocation,
+      zoom: _calculateZoomForRadius(val),
+    );
+  }
+
+  Future<void> _fetchDemandHotspots() async {
+    try {
+      final rideService = ref.read(rideServiceProvider);
+      final hotspots = await rideService.getDemandHotspots();
+      if (mounted && hotspots.isNotEmpty) {
+        setState(() {
+          _demandHotspots = hotspots;
+        });
+      }
+    } catch (e) {
+      debugPrint('[HOTSPOTS] Error fetching demand hotspots: $e');
+    }
+  }
+
+  Future<void> _saveDriverPreferences() async {
+    final authState = ref.read(authProvider);
+    if (authState is! Authenticated) return;
+    final driverProfile = authState.user?['driverProfile'];
+    final driverId = driverProfile?['id'] ?? authState.userId;
+    if (driverId == null) return;
+
+    final rideService = ref.read(rideServiceProvider);
+    Map<String, dynamic>? prefDest;
+    if (_isDestinationModeActive && _preferredDestinationLatLng != null) {
+      prefDest = {
+        'name': _preferredDestinationName ?? 'Custom Destination',
+        'lat': _preferredDestinationLatLng!.latitude,
+        'lng': _preferredDestinationLatLng!.longitude,
+        'active': true,
+      };
+    } else {
+      prefDest = {'active': false};
+    }
+
+    final zonesList = _excludedZones
+        .map((z) => {
+              'name': z,
+              'active': true,
+            })
+        .toList();
+
+    final success = await rideService.updateDriverPreferences(
+      driverId,
+      preferredDestination: prefDest,
+      excludedZones: zonesList,
+    );
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 2),
+          content: Text(success
+              ? 'Driver route preferences synced with dispatch!'
+              : 'Failed to update preferences on dispatch server.'),
+        ),
+      );
+    }
+  }
+
+  void _updateDriverLocationOnServer(LatLng loc) {
+    if (!_isOnline) return;
+    final authState = ref.read(authProvider);
+    if (authState is! Authenticated) return;
+    final driverProfile = authState.user?['driverProfile'];
+    if (driverProfile == null) return;
+    final driverId = driverProfile['id'];
+    if (driverId == null) return;
+    final rideService = ref.read(rideServiceProvider);
+    rideService.updateDriverLocation(driverId, loc.latitude, loc.longitude);
+  }
+
   void _startRidePolling() {
     _ridePollingTimer?.cancel();
     debugPrint('[DRIVER_POLL] Starting ride polling every 3 seconds...');
+    _updateDriverLocationOnServer(_driverLocation);
     _ridePollingTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
       if (!_isOnline || !mounted) return;
       final authState = ref.read(authProvider);
@@ -45,6 +185,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (driverProfile == null) return;
       final driverId = driverProfile['id'];
       
+      // Keep backend location current so matching engine finds this driver
+      _updateDriverLocationOnServer(_driverLocation);
+
       final rideReqProvider = legacy_provider.Provider.of<RideRequestProvider>(context, listen: false);
       if (rideReqProvider.currentRideRequest != null) return;
 
@@ -74,7 +217,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 'isVerifiedPassenger': passenger?['isVerifiedPassenger'] ?? true,
                 'passengerName': passenger?['fullName'] ?? 'Guest Passenger',
               };
-              rideReqProvider.setRideRequest(formattedRequest);
+              rideReqProvider.setRideRequest(
+                formattedRequest,
+                onTimeout: () {
+                  debugPrint('[DRIVER_POLL] 20 seconds expired without response. Auto-passing ride ${currentRide['id']} to next driver...');
+                  rideService.passRide(currentRide['id'], driverId, 'Timeout - 20s expired');
+                },
+              );
             }
           }
         }
@@ -95,6 +244,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           setState(() {
             if (driverProfile['isOnline'] == true) {
               _isOnline = true;
+              _updateDriverLocationOnServer(_driverLocation);
               _startRidePolling();
             }
             if (driverProfile['isBiometricVerified'] == true) {
@@ -104,6 +254,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         }
       }
       _initLocation();
+      _fetchDemandHotspots();
+      _hotspotsRefreshTimer = Timer.periodic(
+        const Duration(seconds: 30),
+        (_) => _fetchDemandHotspots(),
+      );
     });
   }
 
@@ -123,7 +278,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         setState(() {
           _driverLocation = LatLng(pos.latitude, pos.longitude);
         });
-        _mapController?.animateCamera(_driverLocation, zoom: 15.0);
+        if (_isOnline) {
+          _updateDriverLocationOnServer(_driverLocation);
+        }
+        // Offset slightly so driver vehicle marker sits in upper open area above selection sheet
+        final cameraFocus = LatLng(_driverLocation.latitude - 0.006, _driverLocation.longitude);
+        _mapController?.animateCamera(cameraFocus, zoom: 15.0);
       }
     } catch (_) {}
 
@@ -134,11 +294,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     ).listen((pos) {
       if (mounted) {
+        final newLoc = LatLng(pos.latitude, pos.longitude);
         setState(() {
-          _driverLocation = LatLng(pos.latitude, pos.longitude);
+          _driverLocation = newLoc;
         });
         if (_isOnline) {
-          _mapController?.animateCamera(_driverLocation, zoom: 15.0);
+          _updateDriverLocationOnServer(newLoc);
+          _mapController?.moveCamera(
+            _driverLocation,
+            zoom: _mapController?.zoom ?? _calculateZoomForRadius(_tripRadiusKm),
+          );
         }
       }
     });
@@ -158,6 +323,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       setState(() => _isLoading = true);
       final authService = ref.read(authServiceProvider);
       final res = await authService.getMe(authState.token);
+      if (!mounted) return;
       setState(() => _isLoading = false);
       if (res.user != null) {
         ref.read(authProvider.notifier).updateUser(res.user!);
@@ -166,6 +332,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
 
     if (driverProfile == null) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No driver profile found for this account.')),
       );
@@ -180,8 +347,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         setState(() => _isVerificationInProgress = true);
         await _showFaceVerificationModal();
         if (!_isFaceVerified) {
-           setState(() => _isVerificationInProgress = false);
-           return; 
+          setState(() => _isVerificationInProgress = false);
+          return; 
         }
         setState(() => _isVerificationInProgress = false);
       }
@@ -197,7 +364,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           _isLoading = false;
         });
         if (_isOnline) {
-          _mapController?.animateCamera(_driverLocation, zoom: 15.0);
+          _updateDriverLocationOnServer(_driverLocation);
+          _mapController?.animateCamera(
+            _driverLocation,
+            zoom: _calculateZoomForRadius(_tripRadiusKm),
+          );
           _startRidePolling();
         } else {
           _ridePollingTimer?.cancel();
@@ -239,8 +410,60 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  Map<String, dynamic> _getServiceDetails(String? rawType) {
+    final type = (rawType ?? 'STANDARD').toUpperCase();
+    switch (type) {
+      case 'PREMIUM':
+        return {
+          'badge': 'CABI COMFORT',
+          'name': 'Cabi Comfort',
+          'category': 'Executive Air-Conditioned',
+          'capacity': '4 Passengers',
+          'subtitle': 'Executive Air-Conditioned Rides',
+          'baseFare': 'KES 250',
+          'perKm': 'KES 45/km',
+          'icon': Icons.stars_rounded,
+        };
+      case 'XL':
+        return {
+          'badge': 'CABI XL',
+          'name': 'Cabi XL',
+          'category': '6-Seater Van / High Capacity',
+          'capacity': '6 Passengers',
+          'subtitle': 'Spacious Vans & Extra Luggage',
+          'baseFare': 'KES 350',
+          'perKm': 'KES 60/km',
+          'icon': Icons.airport_shuttle_rounded,
+        };
+      case 'BODA':
+        return {
+          'badge': 'CABI BODA',
+          'name': 'Cabi Boda',
+          'category': 'Motorcycle Ride & Courier',
+          'capacity': '1 Passenger',
+          'subtitle': 'Quick Motorcycle Commutes & Express Delivery',
+          'baseFare': 'KES 80',
+          'perKm': 'KES 25/km',
+          'icon': Icons.two_wheeler_rounded,
+        };
+      case 'STANDARD':
+      default:
+        return {
+          'badge': 'CABI STANDARD',
+          'name': 'Cabi Ride (Standard)',
+          'category': 'Standard Passenger Mobility',
+          'capacity': '4 Passengers',
+          'subtitle': 'Affordable Everyday City Rides',
+          'baseFare': 'KES 180',
+          'perKm': 'KES 35/km',
+          'icon': Icons.directions_car_rounded,
+        };
+    }
+  }
+
   @override
   void dispose() {
+    _hotspotsRefreshTimer?.cancel();
     _ridePollingTimer?.cancel();
     _locationSubscription?.cancel();
     super.dispose();
@@ -259,7 +482,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           CabiMap(
             key: ValueKey('cabi_driver_map_${mapType.name}'),
             initialCenter: _driverLocation,
-            initialZoom: 14.0,
+            initialZoom: _calculateZoomForRadius(_tripRadiusKm),
             theme: isDark ? CabiMapTheme.dark : CabiMapTheme.light,
             mapSource: mapType == MapType.google
                 ? CabiMapSource.googleMaps
@@ -269,82 +492,151 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 position: _driverLocation,
                 driverId: 'me',
                 isOnline: _isOnline,
+                showRadar: _isOnline,
+                radiusKm: _tripRadiusKm,
               ),
+              if (_isDestinationModeActive && _preferredDestinationLatLng != null)
+                CabiMapMarker.dropoff(
+                  position: _preferredDestinationLatLng!,
+                ),
+              if (_showDemandHotspots)
+                ..._demandHotspots.map((h) {
+                  final lat = (h['lat'] as num?)?.toDouble() ?? 0.0;
+                  final lng = (h['lng'] as num?)?.toDouble() ?? 0.0;
+                  return CabiMapMarker.hotspot(
+                    position: LatLng(lat, lng),
+                    name: h['name'] ?? 'Hotspot',
+                    multiplier: (h['baseMultiplier'] as num?)?.toDouble() ?? 1.2,
+                    activeRequests: (h['activeRequests'] as num?)?.toInt() ?? 10,
+                    onTap: () => _showHotspotDetails(context, h),
+                  );
+                }),
             ],
             showUserLocation: true,
             onMapCreated: (c) {
               _mapController = c;
+              _mapController?.moveCamera(
+                _driverLocation,
+                zoom: _calculateZoomForRadius(_tripRadiusKm),
+              );
             },
           ),
 
-          if (_isOnline)
-            Center(
-              child: RadarAnimation(isOnline: _isOnline),
-            ),
-
           Positioned(
             top: MediaQuery.of(context).padding.top + 12,
-            left: 16,
             right: 16,
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: _isOnline ? (theme.cardTheme.color ?? theme.colorScheme.surface) : Colors.black.withValues(alpha: 0.8),
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: _isOnline
-                          ? AppTheme.primaryColor.withValues(alpha: 0.6)
-                          : (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1)),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.4),
-                        blurRadius: 12,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _isOnline ? AppTheme.primaryColor : Colors.white24,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        _isOnline ? 'ONLINE' : 'OFFLINE',
-                        style: GoogleFonts.outfit(
-                          color: _isOnline ? AppTheme.primaryColor : Colors.white24,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Spacer(),
                 _MapButton(
                   icon: Icons.layers_outlined,
+                  tooltip: 'Change Map Provider',
                   onTap: () => _showMapSelectionSheet(context, mapType),
                 ),
                 const SizedBox(width: 8),
                 _MapButton(
+                  icon: Icons.local_fire_department,
+                  iconColor: _showDemandHotspots ? const Color(0xFFFF5722) : Colors.white54,
+                  tooltip: _showDemandHotspots ? 'Demand Hotspots Active' : 'Demand Hotspots Off',
+                  onTap: () {
+                    setState(() {
+                      _showDemandHotspots = !_showDemandHotspots;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        duration: const Duration(seconds: 2),
+                        content: Text(_showDemandHotspots
+                            ? '🔥 High-demand heatmap hotspots enabled'
+                            : 'Demand hotspots hidden'),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(width: 8),
+                _MapButton(
+                  icon: Icons.alt_route_rounded,
+                  iconColor: (_isDestinationModeActive || _excludedZones.isNotEmpty)
+                      ? const Color(0xFFD4AF37)
+                      : Colors.white54,
+                  tooltip: 'Route Preferences (Destination & Avoid Zones)',
+                  onTap: () => _showRoutePreferencesSheet(context),
+                ),
+                const SizedBox(width: 8),
+                _MapButton(
+                  icon: _isFullScreenMap ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
+                  iconColor: _isFullScreenMap ? AppTheme.primaryColor : Colors.white54,
+                  tooltip: _isFullScreenMap ? 'Exit Full Screen' : 'Full Screen Map',
+                  onTap: () {
+                    setState(() {
+                      _isFullScreenMap = !_isFullScreenMap;
+                    });
+                  },
+                ),
+                const SizedBox(width: 8),
+                _MapButton(
                   icon: Icons.my_location,
-                  onTap: () => _mapController?.animateCamera(_driverLocation,
-                      zoom: 15.0),
+                  tooltip: 'Recenter',
+                  onTap: () {
+                    _mapController?.animateCamera(
+                      _driverLocation,
+                      zoom: _calculateZoomForRadius(_tripRadiusKm),
+                    );
+                  },
                 ),
               ],
             ),
           ),
 
+          if (_isDestinationModeActive && _preferredDestinationName != null)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 58,
+              left: 16,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E1B18),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFFD4AF37), width: 1.2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.4),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.navigation_rounded, color: Color(0xFFD4AF37), size: 14),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Heading: $_preferredDestinationName',
+                      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 6),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() => _isDestinationModeActive = false);
+                        _saveDriverPreferences();
+                      },
+                      child: const Icon(Icons.close, color: Colors.white70, size: 14),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+          // Mid-Top Right Corner: Emergency SOS Button
           Positioned(
+            top: MediaQuery.of(context).padding.top + 70,
+            right: 16,
+            child: const SosButton(size: 46),
+          ),
+
+          if (_isFullScreenMap)
+            _buildFullScreenMapOverlay(context, theme, isDark)
+          else
+            Positioned(
             bottom: 0,
             left: 0,
             right: 0,
@@ -374,19 +666,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  const SizedBox(height: 20),
-
-                  const Center(
-                    child: Text(
-                      "PRESTIGE GOLD v1.1.0+6",
-                      style: TextStyle(
-                        color: AppTheme.primaryColor,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 12),
 
                   Consumer(
@@ -396,14 +675,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       final vehicle = driverProfile?['vehicles'];
                       
                       if (vehicle == null) return const SizedBox.shrink();
+
+                      final service = _getServiceDetails(vehicle['type']);
                       
                       return Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        margin: const EdgeInsets.only(bottom: 14),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1)),
+                          color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.04),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.3) : Colors.black12,
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -413,9 +696,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             Text(
                               "${vehicle['make']} ${vehicle['model']} • ${vehicle['plateNumber']}",
                               style: GoogleFonts.outfit(
-                                color: theme.textTheme.bodyLarge?.color?.withValues(alpha: 0.8),
+                                color: theme.textTheme.bodyLarge?.color?.withValues(alpha: 0.9),
                                 fontSize: 13,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryColor.withValues(alpha: 0.18),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.45)),
+                              ),
+                              child: Text(
+                                service['badge'] as String,
+                                style: GoogleFonts.outfit(
+                                  color: AppTheme.primaryColor,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
                             ),
                           ],
@@ -433,14 +733,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    _isOnline
-                        ? 'Waiting for trip requests nearby...'
-                        : 'Go online to start receiving trips.',
-                    style: GoogleFonts.outfit(
-                      color: theme.textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary,
-                      fontSize: 13,
-                    ),
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final authState = ref.watch(authProvider);
+                      final driverProfile = authState.user?['driverProfile'];
+                      final vehicle = driverProfile?['vehicles'];
+                      final service = _getServiceDetails(vehicle?['type']);
+
+                      return Text(
+                        _isOnline
+                            ? 'Looking for passenger trips near you (${service['name']})...'
+                            : 'Go online to start receiving ride requests in your area.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.outfit(
+                          color: theme.textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary,
+                          fontSize: 13,
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 24),
 
@@ -456,106 +766,205 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            const _StatCard(label: 'Today', value: 'KES 0'), // Still needs earnings integration
+                            const _StatCard(label: 'Today', value: 'KES 0'),
                             _StatCard(label: 'Trips', value: trips.toString()),
+                            // Distance number between Trips and Rating, clickable to toggle slider
+                            _StatCard(
+                              label: 'Radius',
+                              value: '${_tripRadiusKm.toStringAsFixed(1)} km',
+                              valueColor: _isRadiusSliderOpen ? AppTheme.primaryLight : AppTheme.primaryColor,
+                              onTap: () {
+                                setState(() {
+                                  _isRadiusSliderOpen = !_isRadiusSliderOpen;
+                                });
+                              },
+                            ),
                             _StatCard(label: 'Rating', value: '${rating.toStringAsFixed(1)} ★'),
                           ],
                         );
                       },
                     ),
-                    const SizedBox(height: 20),
-                  ] else ...[
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                    // Active Pick-up Radius Controller (Only shown when expanded by driver)
+                    if (_isRadiusSliderOpen) ...[
+                      const SizedBox(height: 14),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1A1916) : Colors.black.withValues(alpha: 0.04),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.25) : Colors.black12,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Trip Radius Filter',
-                              style: GoogleFonts.outfit(color: theme.textTheme.bodyLarge?.color, fontWeight: FontWeight.w600, fontSize: 14),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.radar_rounded, color: AppTheme.primaryColor, size: 16),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Active Pick-up Radius',
+                                      style: GoogleFonts.outfit(
+                                        color: theme.textTheme.bodyLarge?.color,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.35)),
+                                      ),
+                                      child: Text(
+                                        '${_tripRadiusKm.toStringAsFixed(1)} km (Max 5 km)',
+                                        style: GoogleFonts.outfit(
+                                          color: AppTheme.primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 11.5,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    // Close button to collapse slider
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          _isRadiusSliderOpen = false;
+                                        });
+                                      },
+                                      borderRadius: BorderRadius.circular(16),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.close_rounded,
+                                          size: 16,
+                                          color: AppTheme.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            Text(
-                              '${_tripRadiusKm.toStringAsFixed(1)} km',
-                              style: GoogleFonts.outfit(color: AppTheme.primaryColor, fontWeight: FontWeight.bold, fontSize: 14),
+                            SliderTheme(
+                              data: SliderTheme.of(context).copyWith(
+                                activeTrackColor: AppTheme.primaryColor,
+                                inactiveTrackColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
+                                thumbColor: AppTheme.primaryColor,
+                                overlayColor: AppTheme.primaryColor.withValues(alpha: 0.2),
+                                trackHeight: 3.5,
+                                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                              ),
+                              child: Slider(
+                                value: _tripRadiusKm,
+                                min: 1.0,
+                                max: 5.0,
+                                divisions: 8,
+                                onChanged: (val) {
+                                  _onRadiusChanged(val);
+                                },
+                              ),
                             ),
                           ],
                         ),
-                        SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            activeTrackColor: AppTheme.primaryColor,
-                            inactiveTrackColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
-                            thumbColor: AppTheme.primaryColor,
-                            overlayColor: AppTheme.primaryColor.withValues(alpha: 0.2),
-                            trackHeight: 4.0,
-                          ),
-                          child: Slider(
-                            value: _tripRadiusKm,
-                            min: 0.5,
-                            max: 5.0, 
-                            divisions: 9, 
-                            onChanged: (val) {
-                              setState(() {
-                                _tripRadiusKm = val;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                  ],
-
-                  GestureDetector(
-                    onTap: (_isLoading || _isVerificationInProgress) ? null : _toggleOnline,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      width: double.infinity,
-                      height: 58,
+                      ),
+                    ],
+                  ] else ...[
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
-                        color:
-                            _isOnline 
-                                ? (theme.cardTheme.color ?? theme.colorScheme.surface) 
-                                : (_isVerificationInProgress ? (isDark ? Colors.white10 : Colors.black12) : AppTheme.primaryColor),
+                        color: isDark ? const Color(0xFF1A1916) : Colors.black.withValues(alpha: 0.04),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: _isOnline
-                              ? Colors.redAccent.withValues(alpha: 0.7)
-                              : Colors.transparent,
+                          color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.2) : Colors.black12,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (_isOnline || _isVerificationInProgress)
-                                ? Colors.transparent
-                                : AppTheme.primaryColor.withValues(alpha: 0.35),
-                            blurRadius: 20,
-                            spreadRadius: 2,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.radar_rounded, color: AppTheme.primaryColor, size: 18),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Trip Radius Filter',
+                                    style: GoogleFonts.outfit(
+                                      color: theme.textTheme.bodyLarge?.color,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.35)),
+                                ),
+                                child: Text(
+                                  '${_tripRadiusKm.toStringAsFixed(1)} km (Max 5 km)',
+                                  style: GoogleFonts.outfit(
+                                    color: AppTheme.primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12.5,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              activeTrackColor: AppTheme.primaryColor,
+                              inactiveTrackColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
+                              thumbColor: AppTheme.primaryColor,
+                              overlayColor: AppTheme.primaryColor.withValues(alpha: 0.2),
+                              trackHeight: 4.0,
+                            ),
+                            child: Slider(
+                              value: _tripRadiusKm,
+                              min: 1.0,
+                              max: 5.0, 
+                              divisions: 8, 
+                              onChanged: _onRadiusChanged,
+                            ),
                           ),
                         ],
                       ),
-                      child: Center(
-                        child: (_isLoading || _isVerificationInProgress)
-                            ? const SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  color: AppTheme.primaryColor,
-                                ),
-                              )
-                            : Text(
-                                _isOnline ? 'Go Offline' : (_isVerificationInProgress ? 'Verifying...' : 'Go Online'),
-                                style: GoogleFonts.outfit(
-                                  color: _isOnline
-                                      ? Colors.redAccent
-                                      : (_isVerificationInProgress ? Colors.white : Colors.black),
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 17,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                      ),
                     ),
+                  ],
+
+                  // Swipeable Luxury Slider Button
+                  SwipeableOnlineButton(
+                    isOnline: _isOnline,
+                    isLoading: _isLoading || _isVerificationInProgress,
+                    onStatusChanged: (newOnlineStatus) {
+                      if (!_isLoading && !_isVerificationInProgress) {
+                        _toggleOnline();
+                      }
+                    },
                   ),
                 ],
               ),
@@ -783,53 +1192,538 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
+
+  Widget _buildFullScreenMapOverlay(BuildContext context, ThemeData theme, bool isDark) {
+    return Positioned(
+      bottom: MediaQuery.of(context).padding.bottom + 16,
+      left: 16,
+      right: 16,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF141311).withValues(alpha: 0.94) : Colors.white.withValues(alpha: 0.96),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: _isOnline ? const Color(0xFF10B981) : Colors.white24,
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.5),
+              blurRadius: 18,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 12,
+              height: 12,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _isOnline ? const Color(0xFF10B981) : Colors.grey,
+                boxShadow: _isOnline
+                    ? [
+                        BoxShadow(
+                          color: const Color(0xFF10B981).withValues(alpha: 0.6),
+                          blurRadius: 8,
+                          spreadRadius: 2,
+                        ),
+                      ]
+                    : null,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _isOnline ? 'Online • Full Screen Map' : 'Offline • Full Screen Map',
+                    style: GoogleFonts.outfit(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: theme.textTheme.bodyLarge?.color,
+                    ),
+                  ),
+                  Text(
+                    _isOnline
+                        ? 'Monitoring trips (${_tripRadiusKm.toStringAsFixed(1)} km radius)'
+                        : 'Explore Nairobi hotspots & traffic flow',
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                setState(() {
+                  _isFullScreenMap = false;
+                });
+              },
+              icon: const Icon(Icons.fullscreen_exit_rounded, size: 16),
+              label: const Text('Exit', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryColor,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showHotspotDetails(BuildContext context, Map<String, dynamic> hotspot) {
+    final name = hotspot['name'] ?? 'Demand Hotspot';
+    final multiplier = (hotspot['baseMultiplier'] as num?)?.toDouble() ?? 1.2;
+    final requests = hotspot['activeRequests'] ?? 10;
+    final peakHours = hotspot['peakHours'] ?? 'Peak Rush Hours';
+    final peakDays = (hotspot['peakDays'] as List?)?.join(', ') ?? 'Thurs - Sat';
+    final category = hotspot['category'] ?? 'Surge Zone';
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.5),
+              blurRadius: 20,
+            ),
+          ],
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.local_fire_department, color: Color(0xFFFF5722), size: 24),
+                      const SizedBox(width: 8),
+                      Text(
+                        name,
+                        style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF5722).withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFFF5722)),
+                    ),
+                    child: Text(
+                      '${multiplier.toStringAsFixed(1)}x Surge',
+                      style: const TextStyle(color: Color(0xFFFF5722), fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'High passenger activity detected ($requests live requests)',
+                style: const TextStyle(color: Colors.grey, fontSize: 13),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Zone Type', style: TextStyle(color: Colors.grey)),
+                        Text(category, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    const Divider(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Peak Hours', style: TextStyle(color: Colors.grey)),
+                        Text(peakHours, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    const Divider(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Peak Days', style: TextStyle(color: Colors.grey)),
+                        Text(peakDays, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    final lat = (hotspot['lat'] as num?)?.toDouble() ?? _driverLocation.latitude;
+                    final lng = (hotspot['lng'] as num?)?.toDouble() ?? _driverLocation.longitude;
+                    _mapController?.animateCamera(LatLng(lat, lng), zoom: 15.0);
+                  },
+                  icon: const Icon(Icons.navigation_rounded),
+                  label: const Text('Focus Map on Zone'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showRoutePreferencesSheet(BuildContext context) {
+    final nairobiAreas = [
+      {'name': 'Nairobi CBD', 'lat': -1.286389, 'lng': 36.817223},
+      {'name': 'Westlands', 'lat': -1.2655, 'lng': 36.8048},
+      {'name': 'Kilimani / Yaya', 'lat': -1.2921, 'lng': 36.7865},
+      {'name': 'Karen / Langata', 'lat': -1.3197, 'lng': 36.7065},
+      {'name': 'Upper Hill', 'lat': -1.2985, 'lng': 36.8142},
+      {'name': 'Gigiri / UN', 'lat': -1.2333, 'lng': 36.8055},
+      {'name': 'JKIA Airport', 'lat': -1.3192, 'lng': 36.9275},
+      {'name': 'Kasarani / Thika Rd', 'lat': -1.2223, 'lng': 36.8967},
+    ];
+
+    final avoidAreas = [
+      'Eastleigh',
+      'Kayole / Komarock',
+      'Industrial Area Heavy Traffic',
+      'Dandora',
+      'CBD Congestion',
+      'Githurai 45',
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final theme = Theme.of(context);
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.75,
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.6),
+                    blurRadius: 24,
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        const Icon(Icons.alt_route_rounded, color: Color(0xFFD4AF37), size: 24),
+                        const SizedBox(width: 10),
+                        Text(
+                          'DRIVER ROUTE PREFERENCES',
+                          style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Prioritize trips heading towards your destination and avoid unwanted zones.',
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                    const SizedBox(height: 16),
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          // Destination Mode Section
+                          Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.04),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: _isDestinationModeActive ? const Color(0xFFD4AF37) : Colors.white12,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Row(
+                                      children: [
+                                        Icon(Icons.home_rounded, color: Color(0xFFD4AF37), size: 18),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Destination Mode ("Heading Home")',
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                    Switch(
+                                      value: _isDestinationModeActive,
+                                      activeThumbColor: const Color(0xFFD4AF37),
+                                      onChanged: (val) {
+                                        setModalState(() {
+                                          _isDestinationModeActive = val;
+                                        });
+                                        setState(() {
+                                          _isDestinationModeActive = val;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                const Text(
+                                  'Only match rides whose drop-off direction aligns with your destination.',
+                                  style: TextStyle(color: Colors.grey, fontSize: 11),
+                                ),
+                                const SizedBox(height: 12),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: nairobiAreas.map((area) {
+                                    final name = area['name'] as String;
+                                    final isSelected = _preferredDestinationName == name;
+                                    return ChoiceChip(
+                                      label: Text(name),
+                                      selected: isSelected,
+                                      selectedColor: const Color(0xFFD4AF37),
+                                      labelStyle: TextStyle(
+                                        color: isSelected ? Colors.black : Colors.white,
+                                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                        fontSize: 12,
+                                      ),
+                                      onSelected: (selected) {
+                                        setModalState(() {
+                                          if (selected) {
+                                            _preferredDestinationName = name;
+                                            _preferredDestinationLatLng = LatLng(
+                                              (area['lat'] as num).toDouble(),
+                                              (area['lng'] as num).toDouble(),
+                                            );
+                                            _isDestinationModeActive = true;
+                                          } else {
+                                            _preferredDestinationName = null;
+                                            _preferredDestinationLatLng = null;
+                                          }
+                                        });
+                                        setState(() {});
+                                      },
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+
+                          // Excluded Zones Section
+                          Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.04),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: _excludedZones.isNotEmpty ? Colors.redAccent.withValues(alpha: 0.5) : Colors.white12,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Row(
+                                  children: [
+                                    Icon(Icons.do_not_disturb_on_rounded, color: Colors.redAccent, size: 18),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Excluded Zones (Areas to Avoid)',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                const Text(
+                                  'Cabi dispatch will skip matching you to trips with drop-offs inside these zones.',
+                                  style: TextStyle(color: Colors.grey, fontSize: 11),
+                                ),
+                                const SizedBox(height: 12),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: avoidAreas.map((zone) {
+                                    final isExcluded = _excludedZones.contains(zone);
+                                    return FilterChip(
+                                      label: Text(zone),
+                                      selected: isExcluded,
+                                      selectedColor: Colors.redAccent.withValues(alpha: 0.8),
+                                      checkmarkColor: Colors.white,
+                                      labelStyle: TextStyle(
+                                        color: isExcluded ? Colors.white : Colors.white70,
+                                        fontWeight: isExcluded ? FontWeight.bold : FontWeight.normal,
+                                        fontSize: 12,
+                                      ),
+                                      onSelected: (selected) {
+                                        setModalState(() {
+                                          if (selected) {
+                                            _excludedZones.add(zone);
+                                          } else {
+                                            _excludedZones.remove(zone);
+                                          }
+                                        });
+                                        setState(() {});
+                                      },
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          _saveDriverPreferences();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.primaryColor,
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                        child: const Text('Save Route Preferences', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }
 
 class _MapButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
+  final Color? iconColor;
+  final String? tooltip;
 
-  const _MapButton({required this.icon, required this.onTap});
+  const _MapButton({
+    required this.icon,
+    required this.onTap,
+    this.iconColor,
+    this.tooltip,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    Widget btn = GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.black.withValues(alpha: 0.8),
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(
+            color: iconColor != null
+                ? iconColor!.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.1),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
+              color: (iconColor ?? Colors.black).withValues(alpha: 0.35),
               blurRadius: 8,
             ),
           ],
         ),
-        child: Icon(icon, color: Colors.white70, size: 20),
+        child: Icon(icon, color: iconColor ?? Colors.white70, size: 20),
       ),
     );
+
+    if (tooltip != null) {
+      return Tooltip(message: tooltip!, child: btn);
+    }
+    return btn;
   }
 }
 
 class _StatCard extends StatelessWidget {
   final String label;
   final String value;
+  final VoidCallback? onTap;
+  final Color? valueColor;
 
-  const _StatCard({required this.label, required this.value});
+  const _StatCard({
+    required this.label,
+    required this.value,
+    this.onTap,
+    this.valueColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    Widget content = Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           value,
           style: GoogleFonts.outfit(
-            color: AppTheme.primaryColor,
+            color: valueColor ?? AppTheme.primaryColor,
             fontWeight: FontWeight.w700,
-            fontSize: 16,
+            fontSize: 15,
           ),
         ),
         const SizedBox(height: 2),
@@ -842,6 +1736,18 @@ class _StatCard extends StatelessWidget {
         ),
       ],
     );
+
+    if (onTap != null) {
+      return InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+          child: content,
+        ),
+      );
+    }
+    return content;
   }
 }
 

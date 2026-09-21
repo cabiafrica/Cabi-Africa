@@ -11,20 +11,26 @@ class RadarPing {
 
   double get opacity {
     final age = DateTime.now().difference(createdAt).inMilliseconds / 1000.0;
-    // Fade out over 2 seconds
     return math.max(0.0, 1.0 - (age / 2.0));
   }
 }
 
 class RadarAnimation extends StatefulWidget {
   final bool isOnline;
-  const RadarAnimation({super.key, required this.isOnline});
+  final double radiusKm;
+
+  const RadarAnimation({
+    super.key,
+    required this.isOnline,
+    this.radiusKm = 5.0,
+  });
 
   @override
   State<RadarAnimation> createState() => _RadarAnimationState();
 }
 
-class _RadarAnimationState extends State<RadarAnimation> with SingleTickerProviderStateMixin {
+class _RadarAnimationState extends State<RadarAnimation>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   final List<RadarPing> _pings = [];
   Timer? _pingTimer;
@@ -58,23 +64,19 @@ class _RadarAnimationState extends State<RadarAnimation> with SingleTickerProvid
   }
 
   void _generateRandomPing() {
-    // Only occasionally generate a ping (40% chance per tick) to make it organic
     if (_random.nextDouble() > 0.4) return;
 
     final angle = _random.nextDouble() * 2 * math.pi;
     final distance = 0.2 + _random.nextDouble() * 0.7; // 20% to 90% from center
-    
-    // We add a ping when the sweep is near that angle
+
     final sweepAngle = (_controller.value * math.pi * 2);
-    
     double diff = (angle - sweepAngle).abs();
     if (diff > math.pi) diff = (2 * math.pi - diff).abs();
 
-    // If sweep is passing over this point, add a ping
     if (diff < 0.6) {
       setState(() {
-        _pings.add(RadarPing(Offset(math.cos(angle) * distance, math.sin(angle) * distance)));
-        // Cleanup old pings
+        _pings.add(RadarPing(
+            Offset(math.cos(angle) * distance, math.sin(angle) * distance)));
         _pings.removeWhere((p) => p.opacity <= 0.0);
       });
     }
@@ -99,19 +101,78 @@ class _RadarAnimationState extends State<RadarAnimation> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        // Also force a rebuild occasionally to fade out pings even when animation sweeps past
-        return CustomPaint(
-          painter: RadarPainter(
-            progress: _controller.value,
-            color: AppTheme.primaryColor,
-            pings: _pings,
-          ),
-          child: const SizedBox(
-            width: 200,
-            height: 200,
+    // Dynamically scale visual diameter (300px - 335px) to maximize screen utilization,
+    // working in tandem with the dynamic map zoom to match the true geographical search radius
+    final clampedKm = widget.radiusKm.clamp(1.0, 5.0);
+    final targetDiameter = 300.0 + ((clampedKm - 1.0) / 4.0) * 35.0;
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: targetDiameter, end: targetDiameter),
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeOutCubic,
+      builder: (context, animatedDiameter, child) {
+        return SizedBox(
+          width: animatedDiameter,
+          height: animatedDiameter,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return CustomPaint(
+                    size: Size(animatedDiameter, animatedDiameter),
+                    painter: RadarPainter(
+                      progress: _controller.value,
+                      color: AppTheme.primaryColor,
+                      pings: _pings,
+                      radiusKm: clampedKm,
+                    ),
+                  );
+                },
+              ),
+              // Radius Indicator Tag floating at top edge of the radar perimeter
+              Positioned(
+                top: -12,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF141414),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: AppTheme.primaryColor.withValues(alpha: 0.6),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.radar_rounded,
+                          size: 11, color: AppTheme.primaryColor),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${clampedKm.toStringAsFixed(1)} KM PICKUP',
+                        style: const TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w900,
+                          color: AppTheme.primaryLight,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -123,61 +184,84 @@ class RadarPainter extends CustomPainter {
   final double progress;
   final Color color;
   final List<RadarPing> pings;
+  final double radiusKm;
 
-  RadarPainter({required this.progress, required this.color, required this.pings});
+  RadarPainter({
+    required this.progress,
+    required this.color,
+    required this.pings,
+    required this.radiusKm,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
 
-    final paint = Paint()
-      ..color = color.withValues(alpha: 0.1)
+    // Outer boundary ring representing the exact driver pick-up perimeter
+    final perimeterPaint = Paint()
+      ..color = color.withValues(alpha: 0.5)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+    canvas.drawCircle(center, radius, perimeterPaint);
+
+    // Subtle golden fill inside pick-up zone
+    final zoneFillPaint = Paint()
+      ..color = color.withValues(alpha: 0.04)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(center, radius, zoneFillPaint);
+
+    // Concentric intermediate range rings (e.g. 1/3, 2/3)
+    final ringPaint = Paint()
+      ..color = color.withValues(alpha: 0.15)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
-
-    // Draw static rings
-    for (int i = 1; i <= 3; i++) {
-      canvas.drawCircle(center, radius * (i / 3), paint);
+    for (int i = 1; i <= 2; i++) {
+      canvas.drawCircle(center, radius * (i / 3), ringPaint);
     }
 
-    // Draw moving ring
+    // Expanding active radar wave
     final movingPaint = Paint()
-      ..color = color.withValues(alpha: 1.0 - progress)
+      ..color = color.withValues(alpha: 0.8 * (1.0 - progress))
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
     canvas.drawCircle(center, radius * progress, movingPaint);
 
-    // Draw sweep
+    // Radar scanning sweep
     final sweepShader = SweepGradient(
-        center: Alignment.center,
-        startAngle: 0.0,
-        endAngle: math.pi * 2,
-        colors: [
-          color.withValues(alpha: 0.0),
-          color.withValues(alpha: 0.5),
-          color.withValues(alpha: 0.0),
-        ],
-        stops: const [0.0, 0.5, 1.0],
-        transform: GradientRotation(progress * math.pi * 2),
-      ).createShader(Rect.fromCircle(center: center, radius: radius));
+      center: Alignment.center,
+      startAngle: 0.0,
+      endAngle: math.pi * 2,
+      colors: [
+        color.withValues(alpha: 0.0),
+        color.withValues(alpha: 0.35),
+        color.withValues(alpha: 0.0),
+      ],
+      stops: const [0.0, 0.5, 1.0],
+      transform: GradientRotation(progress * math.pi * 2),
+    ).createShader(Rect.fromCircle(center: center, radius: radius));
 
-    canvas.drawCircle(center, radius, Paint()..shader = sweepShader..style = PaintingStyle.fill);
+    canvas.drawCircle(
+      center,
+      radius,
+      Paint()
+        ..shader = sweepShader
+        ..style = PaintingStyle.fill,
+    );
 
-    // Draw dynamic pings
-    final pingPaint = Paint()
-      ..style = PaintingStyle.fill;
-    
+    // Radar dynamic pings
+    final pingPaint = Paint()..style = PaintingStyle.fill;
     for (var ping in pings) {
       final op = ping.opacity;
       if (op > 0) {
         final point = Offset(
           center.dx + ping.position.dx * radius,
-          center.dy + ping.position.dy * radius
+          center.dy + ping.position.dy * radius,
         );
-        // Pulse effect
-        canvas.drawCircle(point, 4 * op + 2, pingPaint..color = color.withValues(alpha: op));
-        canvas.drawCircle(point, 2, pingPaint..color = Colors.white.withValues(alpha: op));
+        canvas.drawCircle(
+            point, 4 * op + 2, pingPaint..color = color.withValues(alpha: op));
+        canvas.drawCircle(
+            point, 2, pingPaint..color = Colors.white.withValues(alpha: op));
       }
     }
   }

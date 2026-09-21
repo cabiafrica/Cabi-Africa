@@ -255,4 +255,66 @@ class AuthService {
       return false;
     }
   }
+
+  Future<AuthResult> forgotPassword(String identifier) async {
+    try {
+      final isEmail = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(identifier);
+
+      final Map<String, dynamic> body = {};
+      if (isEmail) {
+        body['email'] = identifier;
+      } else {
+        body['phone'] = identifier.replaceAll(RegExp(r'\s+'), '');
+      }
+
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/auth/forgot-password'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(body),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return AuthResult(isSignedIn: false, user: data);
+      } else {
+        return AuthResult(
+          isSignedIn: false,
+          error: data['message']?.toString() ?? 'Failed to request reset',
+        );
+      }
+    } catch (e) {
+      return AuthResult(isSignedIn: false, error: 'Connection error: $e');
+    }
+  }
+
+  Future<AuthResult> resetPassword(String token, String newPassword) async {
+    try {
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/auth/reset-password'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'token': token,
+              'newPassword': newPassword,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return AuthResult(isSignedIn: false, user: data);
+      } else {
+        return AuthResult(
+          isSignedIn: false,
+          error: data['message']?.toString() ?? 'Failed to reset password',
+        );
+      }
+    } catch (e) {
+      return AuthResult(isSignedIn: false, error: 'Connection error: $e');
+    }
+  }
 }

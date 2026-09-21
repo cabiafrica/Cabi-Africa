@@ -1,7 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxy from 'http-proxy';
 
-const SACCO_SERVICE_URL = process.env.SACCO_SERVICE_URL || 'http://localhost:3338';
+const SACCO_SERVICE_URL =
+    process.env.SACCO_SERVICE_URL?.replace(/\/api\/?$/, '') ||
+    process.env.NEXT_PUBLIC_SACCO_SERVICE_URL?.replace(/\/api\/?$/, '') ||
+    'https://sacco-service-746659778850.us-central1.run.app';
 
 const proxy = httpProxy.createProxyServer({
     target: SACCO_SERVICE_URL,

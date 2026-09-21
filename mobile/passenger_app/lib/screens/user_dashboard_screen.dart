@@ -30,7 +30,6 @@ class UserDashboardScreen extends StatelessWidget {
               builder: (context, auth, _) {
                 final user = auth.user;
                 final fullName = user != null ? "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim() : 'Elite Member';
-                final profilePic = user?['profilePicture'] ?? 'https://i.pravatar.cc/150?u=passenger';
                 
                 return Container(
                   padding: const EdgeInsets.all(20),

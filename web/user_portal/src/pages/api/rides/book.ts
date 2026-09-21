@@ -12,9 +12,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        const DISPATCH_SERVICE_URL = process.env.NEXT_PUBLIC_DISPATCH_SERVICE_URL || process.env.DISPATCH_SERVICE_URL || 'http://localhost:3334/api';
-        
-        const response = await fetch(`${DISPATCH_SERVICE_URL}/rides`, {
+        const rawDispatchUrl =
+            process.env.DISPATCH_SERVICE_URL ||
+            process.env.NEXT_PUBLIC_DISPATCH_SERVICE_URL ||
+            'http://127.0.0.1:3334/api';
+        const cleanBaseUrl = rawDispatchUrl.replace(/\/+$/, '');
+        const targetUrl = cleanBaseUrl.endsWith('/api') ? `${cleanBaseUrl}/rides` : `${cleanBaseUrl}/api/rides`;
+
+        const response = await fetch(targetUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

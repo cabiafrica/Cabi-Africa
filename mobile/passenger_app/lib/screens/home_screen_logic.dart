@@ -370,7 +370,18 @@ extension _HomeScreenLogic on _HomeScreenState {
 
   List<CabiMapMarker> _getMarkers() {
     final markers = <CabiMapMarker>[];
-    markers.add(CabiMapMarker.passenger(position: _passengerLocation));
+    final isSearching = _tripStatus == TripStatus.searching;
+
+    // Show radar on pickup if specified, otherwise on passenger live position
+    final showPassengerRadar = isSearching && _pickupLocation == null;
+    final showPickupRadar = isSearching && _pickupLocation != null;
+
+    markers.add(CabiMapMarker.passenger(
+      position: _passengerLocation,
+      showRadar: showPassengerRadar,
+      radiusKm: 5.0,
+      radarLabel: 'FINDING NEARBY DRIVERS',
+    ));
 
     for (var driver in _nearbyDrivers) {
       markers.add(CabiMapMarker.driver(
@@ -390,7 +401,12 @@ extension _HomeScreenLogic on _HomeScreenState {
     }
 
     if (_pickupLocation != null) {
-      markers.add(CabiMapMarker.pickup(position: _pickupLocation!));
+      markers.add(CabiMapMarker.pickup(
+        position: _pickupLocation!,
+        showRadar: showPickupRadar,
+        radiusKm: 5.0,
+        radarLabel: 'FINDING NEARBY DRIVERS',
+      ));
     }
     if (_dropoffLocation != null) {
       markers.add(CabiMapMarker.dropoff(position: _dropoffLocation!));
@@ -538,6 +554,9 @@ extension _HomeScreenLogic on _HomeScreenState {
       _tripStatus = TripStatus.searching;
     });
 
+    final searchCenter = _pickupLocation ?? _passengerLocation;
+    _mapController?.moveCamera(searchCenter, zoom: 15.0);
+
     try {
       final rideService = ref.read(rideServiceProvider);
       final ride = await rideService.createRide(
@@ -573,6 +592,66 @@ extension _HomeScreenLogic on _HomeScreenState {
           SnackBar(content: Text('Error requesting ride: $e')),
         );
       }
+    }
+  }
+
+  Future<void> _cancelRideSearch() async {
+    if (_isCancelling) return;
+    _isCancelling = true;
+
+    final rideIdToCancel = _currentRideId;
+
+    // Immediately stop polling and active timers
+    _rideUpdateTimer?.cancel();
+    _arrivalTimer?.cancel();
+    _tripTimer?.cancel();
+
+    // Reset local trip state and return cleanly to the home screen
+    _updateState(() {
+      _tripStatus = TripStatus.idle;
+      _roadRoute = null;
+      _pickupLocation = null;
+      _dropoffLocation = null;
+      _destination = "Where to?";
+      _pickupAddress = "Current Location";
+      _currentRideId = null;
+      _currentRideData = null;
+    });
+
+    // Re-center map to passenger's live position
+    _mapController?.moveCamera(_passengerLocation, zoom: 15.0);
+
+    // Cancel on backend if ride was created
+    if (rideIdToCancel != null && rideIdToCancel != 'mock-ride-id') {
+      try {
+        final rideService = ref.read(rideServiceProvider);
+        await rideService.cancelRide(
+          rideIdToCancel,
+          reason: 'Passenger cancelled driver search',
+        );
+      } catch (e) {
+        debugPrint('Error notifying backend of ride cancellation: $e');
+      }
+    }
+
+    _isCancelling = false;
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.check_circle_outline, color: AppTheme.primaryLight, size: 20),
+              SizedBox(width: 8),
+              Text('Driver search cancelled', style: TextStyle(color: Colors.white)),
+            ],
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: const Color(0xFF1E1E1E),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
     }
   }
 

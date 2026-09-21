@@ -5,9 +5,17 @@ interface MetricsOverviewProps {
     metrics: DispatchMetrics;
     rideRequests: RideRequest[];
     drivers: Driver[];
+    onUndockTripAnalytics?: () => void;
+    isTripAnalyticsUndocked?: boolean;
 }
 
-const MetricsOverview = ({ metrics, rideRequests, drivers }: MetricsOverviewProps) => {
+const MetricsOverview = ({
+    metrics,
+    rideRequests,
+    drivers,
+    onUndockTripAnalytics,
+    isTripAnalyticsUndocked,
+}: MetricsOverviewProps) => {
     // Generate data for charts - currently zeroed for clean production start
     const hourlyData = Array.from({ length: 24 }, (_, i) => ({
         hour: `${i}:00`,
@@ -27,6 +35,51 @@ const MetricsOverview = ({ metrics, rideRequests, drivers }: MetricsOverviewProp
 
     return (
         <div className="space-y-6">
+            {/* Multi-Monitor Dispatch Banner */}
+            {onUndockTripAnalytics && (
+                <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-3.5 rounded-2xl bg-gradient-to-r from-blue-900/30 via-slate-900/40 to-slate-900/30 border border-blue-500/20 backdrop-blur-xl shadow-lg">
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm font-semibold text-white">Multi-Screen Command Center</span>
+                                {isTripAnalyticsUndocked ? (
+                                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                        SCREEN 2 CONNECTED
+                                    </span>
+                                ) : (
+                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-800 text-slate-400 border border-slate-700/60">
+                                        READY FOR DUAL SCREEN
+                                    </span>
+                                )}
+                            </div>
+                            <p className="text-xs text-slate-400">
+                                {isTripAnalyticsUndocked
+                                    ? 'Trip Outcome & Cancellation telemetry is actively streaming to your secondary monitor.'
+                                    : 'Undock Trip Outcome telemetry (completed vs cancelled) to a secondary screen or wallboard.'}
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={onUndockTripAnalytics}
+                        className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                            isTripAnalyticsUndocked
+                                ? 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700'
+                                : 'bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/20 border border-blue-400/30'
+                        }`}
+                    >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        <span>{isTripAnalyticsUndocked ? 'Focus External Screen' : 'Undock Trip Monitoring'}</span>
+                    </button>
+                </div>
+            )}
             {/* Key Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Active Rides */}
@@ -84,17 +137,17 @@ const MetricsOverview = ({ metrics, rideRequests, drivers }: MetricsOverviewProp
                 </div>
 
                 {/* Completed Today */}
-                <div className="bg-gradient-to-br from-purple-600/10 to-purple-600/5 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-6 hover:border-purple-500/40 transition-all duration-300">
+                <div className="bg-gradient-to-br from-teal-600/10 to-teal-600/5 backdrop-blur-xl border border-teal-500/20 rounded-2xl p-6 hover:border-teal-500/40 transition-all duration-300">
                     <div className="flex items-start justify-between">
                         <div>
-                            <p className="text-sm font-medium text-purple-400 mb-1">Completed Today</p>
+                            <p className="text-sm font-medium text-teal-400 mb-1">Completed Today</p>
                             <h3 className="text-4xl font-bold text-white mb-2">{metrics.completedToday}</h3>
                             <p className="text-xs text-slate-400">
                                 <span className="text-green-400">↑ 8%</span> vs yesterday
                             </p>
                         </div>
-                        <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-12 h-12 rounded-xl bg-teal-500/20 flex items-center justify-center">
+                            <svg className="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>

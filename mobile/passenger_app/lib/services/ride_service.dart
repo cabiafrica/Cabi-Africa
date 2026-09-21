@@ -105,11 +105,11 @@ class RideService {
         queryParams['vehicleType'] = vehicleType;
       }
 
-      final uri = Uri.parse('$_dispatchBaseUrl/dispatch/rides/nearby-drivers')
+      final uri = Uri.parse('$_dispatchBaseUrl/rides/nearby-drivers')
           .replace(queryParameters: queryParams);
       final response = await _client.get(uri, headers: _headers);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.body.isNotEmpty && response.body.trim() != 'null') {
         final data = jsonDecode(response.body);
         return List<Map<String, dynamic>>.from(data['data'] ?? data ?? []);
       }
@@ -128,7 +128,7 @@ class RideService {
   }) async {
     try {
       final response = await _client.post(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides'),
+        Uri.parse('$_dispatchBaseUrl/rides'),
         headers: _headers,
         body: jsonEncode({
           'passengerId': passengerId,
@@ -139,7 +139,9 @@ class RideService {
         }),
       );
       if (response.statusCode == 201 || response.statusCode == 200) {
-        return jsonDecode(response.body);
+        if (response.body.isNotEmpty && response.body.trim() != 'null') {
+          return jsonDecode(response.body);
+        }
       }
       debugPrint(
           'Failed to create ride: ${response.statusCode} ${response.body}');
@@ -153,11 +155,14 @@ class RideService {
       String userId, String role) async {
     try {
       final response = await _client.get(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides/current?userId=$userId&role=$role'),
+        Uri.parse('$_dispatchBaseUrl/rides/current?userId=$userId&role=$role'),
         headers: _headers,
       );
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+      if (response.statusCode == 200 && response.body.isNotEmpty && response.body.trim() != 'null') {
+        final decoded = jsonDecode(response.body);
+        if (decoded is Map<String, dynamic>) {
+          return decoded;
+        }
       }
     } catch (e) {
       debugPrint('Error fetching current ride: $e');
@@ -165,11 +170,29 @@ class RideService {
     return null;
   }
 
+  // Cancel a ride request
+  Future<bool> cancelRide(String rideId, {String reason = 'Passenger cancelled'}) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/cancel'),
+        headers: _headers,
+        body: jsonEncode({'reason': reason}),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      debugPrint('Failed to cancel ride: ${response.statusCode} ${response.body}');
+    } catch (e) {
+      debugPrint('Error cancelling ride: $e');
+    }
+    return false;
+  }
+
   // Notify driver has arrived at pickup location
   Future<void> notifyArrival(String rideId) async {
     try {
       final response = await _client.post(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/arrive-at-stop'),
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/arrive-at-stop'),
         headers: _headers,
         body: jsonEncode({'stopIndex': 0}),
       );
@@ -185,7 +208,7 @@ class RideService {
   Future<void> ratePassenger(String rideId, int rating, String comment) async {
     try {
       final response = await _client.post(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/rate'),
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/rate'),
         headers: _headers,
         body: jsonEncode({'rating': rating, 'comment': comment}),
       );
@@ -201,7 +224,7 @@ class RideService {
   Future<void> startTrip(String rideId) async {
     try {
       final response = await _client.post(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/start'),
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/start'),
         headers: _headers,
       );
       if (response.statusCode != 200 && response.statusCode != 201) {
@@ -216,7 +239,7 @@ class RideService {
   Future<void> completeTrip(String rideId) async {
     try {
       final response = await _client.post(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/complete'),
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/complete'),
         headers: _headers,
       );
       if (response.statusCode != 200 && response.statusCode != 201) {
@@ -340,16 +363,22 @@ class RideService {
   Future<Map<String, dynamic>> getWalletDetails() async {
     try {
       final response = await _client.get(
-        Uri.parse('$_authBaseUrl/wallet'),
+        Uri.parse('$_authBaseUrl/payment/wallet'),
         headers: _headers,
       );
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
+      } else {
+        debugPrint('Wallet fetch failed: ${response.statusCode} ${response.body}');
       }
     } catch (e) {
       debugPrint('Error fetching wallet details: $e');
     }
-    return {'balance': 0.0, 'transactions': [], 'payoutMethod': null};
+    return {
+      'balance': 0.0,
+      'transactions': [],
+      'payoutMethod': {'bankName': 'Not set', 'accountNumber': '—'},
+    };
   }
 
   Future<Map<String, dynamic>> getPackageDeliveryFare({
@@ -473,7 +502,7 @@ class RideService {
   Future<void> acceptRide(String rideId) async {
     try {
       final response = await _client.post(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/accept'),
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/accept'),
         headers: _headers,
       );
       if (response.statusCode != 200 && response.statusCode != 201) {
@@ -487,7 +516,7 @@ class RideService {
   Future<void> rejectRide(String rideId) async {
     try {
       final response = await _client.post(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/reject'),
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/reject'),
         headers: _headers,
       );
       if (response.statusCode != 200 && response.statusCode != 201) {

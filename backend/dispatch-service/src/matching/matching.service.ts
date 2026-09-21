@@ -12,6 +12,11 @@ export interface DriverMatch {
     location: { lat: number; lng: number };
     badgePriority?: number; // Priority weight for matching
     badgeTier?: BadgeTier | null;
+    isExtendedPickup?: boolean;
+    extraPickupKm?: number;
+    extendedPickupSubsidy?: number;
+    driverPreferredRadiusKm?: number;
+    passengerConsentRequired?: boolean;
 }
 
 export interface FindNearbyDriversParams {
@@ -98,10 +103,19 @@ export class MatchingService {
             `Finding drivers near (${pickupLat}, ${pickupLng}) within ${maxDistanceKm}km (badgePriority: ${useBadgePriority})`
         );
 
-        // Map LITE to STANDARD if it's sent from the app
-        let resolvedVehicleType = vehicleType;
-        if ((vehicleType as string) === 'LITE') {
-            resolvedVehicleType = VehicleType.STANDARD;
+        // Normalize and resolve vehicle type (case-insensitive and map LITE to STANDARD)
+        let resolvedVehicleType: VehicleType | undefined = undefined;
+        if (vehicleType) {
+            const normalized = String(vehicleType).toUpperCase().trim();
+            if (normalized === 'LITE' || normalized === 'STANDARD') {
+                resolvedVehicleType = VehicleType.STANDARD;
+            } else if (normalized === 'PREMIUM') {
+                resolvedVehicleType = VehicleType.PREMIUM;
+            } else if (normalized === 'XL') {
+                resolvedVehicleType = VehicleType.XL;
+            } else if (normalized === 'BODA') {
+                resolvedVehicleType = VehicleType.BODA;
+            }
         }
 
         // Fetch all online drivers with badge status if needed
@@ -110,9 +124,10 @@ export class MatchingService {
                 isOnline: true,
                 currentLocation: { not: null },
                 ...(resolvedVehicleType && {
-                    vehicles: {
-                        type: resolvedVehicleType,
-                    },
+                    OR: [
+                        { vehicles: { type: resolvedVehicleType } },
+                        { vehicleDrivers: { some: { vehicle: { type: resolvedVehicleType } } } },
+                    ],
                 }),
                 ridesAsDriver: {
                     none: {
@@ -124,6 +139,12 @@ export class MatchingService {
             },
             include: {
                 vehicles: true,
+                vehicleDrivers: {
+                    include: {
+                        vehicle: true,
+                    },
+                    take: 1,
+                },
                 user: {
                     select: {
                         id: true,
@@ -178,15 +199,31 @@ export class MatchingService {
                     (distance / this.AVERAGE_SPEED_KMH) * 60
                 );
 
+                // Check if passenger is beyond the driver's preferred search radius (default 5.0 km)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const driverPreferredRadius = (driver as any).preferredRadiusKm || 5.0;
+                const isExtendedPickup = distance > driverPreferredRadius;
+                const extraPickupKm = isExtendedPickup ? Math.round((distance - driverPreferredRadius) * 10) / 10 : 0;
+                const extendedPickupSubsidy = isExtendedPickup ? Math.round(extraPickupKm * 30) : 0;
+                const activeVehicleType =
+                    driver.vehicles?.type ||
+                    driver.vehicleDrivers?.[0]?.vehicle?.type ||
+                    VehicleType.STANDARD;
+
                 driversWithDistance.push({
                     driverId: driver.id,
                     distance,
                     estimatedArrivalMinutes,
                     rating: driver.averageRating,
-                    vehicleType: driver.vehicles?.type || VehicleType.STANDARD,
+                    vehicleType: activeVehicleType,
                     location: { lat: location.lat, lng: location.lng },
                     badgePriority,
                     badgeTier,
+                    isExtendedPickup,
+                    extraPickupKm,
+                    extendedPickupSubsidy,
+                    driverPreferredRadiusKm: driverPreferredRadius,
+                    passengerConsentRequired: isExtendedPickup,
                 });
             }
         }
@@ -282,26 +319,82 @@ export class MatchingService {
             pickupLng: pickup.lng,
             vehicleType: ride.requestedVehicleType || undefined,
             maxDistanceKm: maxDistance,
-            maxDrivers: 10,
+            maxDrivers: 15,
             useBadgePriority,
             maxDistancePenalty,
         });
 
-        // Filter out blocked drivers
-        const validDrivers = nearbyDrivers.filter(d => !blockedDrivers.includes(d.driverId));
+        // Filter out blocked drivers and drivers who already passed on this ride
+        const passedDriverIds: string[] = (ride as any).passedDriverIds || [];
+        let candidateDrivers = nearbyDrivers.filter(
+            d => !blockedDrivers.includes(d.driverId) && !passedDriverIds.includes(d.driverId)
+        );
 
-        if (validDrivers.length === 0) {
-            this.logger.warn(`No valid drivers found for ride ${rideId} (after filtering blocked)`);
+        if (candidateDrivers.length === 0) {
+            this.logger.warn(`No valid candidate drivers found for ride ${rideId} (passed: ${passedDriverIds.length})`);
             return null;
         }
 
-        // Prioritize favorite drivers, then badge priority
-        validDrivers.sort((a, b) => {
+        // Fetch driver profiles for excludedZones and preferredDestination
+        const driverProfiles = await this.prisma.driverProfile.findMany({
+            where: { id: { in: candidateDrivers.map(d => d.driverId) } },
+            select: { id: true, excludedZones: true, preferredDestination: true }
+        });
+        const profileMap = new Map(driverProfiles.map(p => [p.id, p]));
+
+        // Check if dropoff location intersects with any driver's excluded zones
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const dropoff = ride.dropoffLocation as any;
+        if (dropoff && dropoff.lat && dropoff.lng) {
+            candidateDrivers = candidateDrivers.filter(d => {
+                const profile = profileMap.get(d.driverId);
+                if (!profile || !profile.excludedZones) return true;
+                const zones = Array.isArray(profile.excludedZones) ? profile.excludedZones : [];
+                for (const zone of zones as any[]) {
+                    if (zone.lat && zone.lng) {
+                        const radiusKm = zone.radiusKm || 3.0;
+                        const distToZone = this.calculateDistance(dropoff.lat, dropoff.lng, zone.lat, zone.lng);
+                        if (distToZone <= radiusKm) {
+                            this.logger.log(`Skipping driver ${d.driverId} for ride ${rideId}: dropoff in excluded zone "${zone.name || 'custom'}"`);
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            });
+        }
+
+        if (candidateDrivers.length === 0) {
+            this.logger.warn(`No drivers left for ride ${rideId} after excluded zone filtering`);
+            return null;
+        }
+
+        // Prioritize: 1. Favorite, 2. Destination Mode match, 3. Badge priority, 4. Distance
+        candidateDrivers.sort((a, b) => {
             const isAFav = favoriteDrivers.includes(a.driverId);
             const isBFav = favoriteDrivers.includes(b.driverId);
 
             if (isAFav && !isBFav) return -1;
             if (!isAFav && isBFav) return 1;
+
+            // Destination mode prioritization
+            const profA = profileMap.get(a.driverId);
+            const profB = profileMap.get(b.driverId);
+            const destA = profA?.preferredDestination as any;
+            const destB = profB?.preferredDestination as any;
+            const hasDestA = destA?.active && destA?.lat && destA?.lng;
+            const hasDestB = destB?.active && destB?.lat && destB?.lng;
+
+            if (dropoff && dropoff.lat && dropoff.lng) {
+                if (hasDestA && !hasDestB) {
+                    const distToDest = this.calculateDistance(dropoff.lat, dropoff.lng, destA.lat, destA.lng);
+                    if (distToDest <= (destA.radiusKm || 5.0)) return -1;
+                }
+                if (hasDestB && !hasDestA) {
+                    const distToDest = this.calculateDistance(dropoff.lat, dropoff.lng, destB.lat, destB.lng);
+                    if (distToDest <= (destB.radiusKm || 5.0)) return 1;
+                }
+            }
 
             // If badge priority is enabled, sort by badge weight first
             if (useBadgePriority && a.badgePriority && b.badgePriority) {
@@ -314,7 +407,7 @@ export class MatchingService {
         });
 
         // Select best driver
-        const bestDriver = validDrivers[0];
+        const bestDriver = candidateDrivers[0];
 
         this.logger.log(
             `Matched ride ${rideId} to driver ${bestDriver.driverId} (${bestDriver.distance}km away, badge: ${bestDriver.badgeTier || 'none'})`

@@ -1,10 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxy from 'http-proxy';
 
-const AUTH_GATEWAY_URL = process.env.AUTH_GATEWAY_URL || 'http://localhost:3334';
+const DISPATCH_SERVICE_TARGET =
+    process.env.DISPATCH_SERVICE_URL?.replace(/\/api\/?$/, '') ||
+    process.env.NEXT_PUBLIC_DISPATCH_SERVICE_URL?.replace(/\/api\/?$/, '') ||
+    process.env.AUTH_GATEWAY_URL?.replace(/\/api\/?$/, '') ||
+    'https://dispatch-service-746659778850.us-central1.run.app';
 
 const proxy = httpProxy.createProxyServer({
-    target: AUTH_GATEWAY_URL,
+    target: DISPATCH_SERVICE_TARGET,
     changeOrigin: true,
 });
 

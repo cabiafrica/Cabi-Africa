@@ -26,6 +26,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../providers/providers.dart';
 import '../widgets/security_verification_modal.dart';
+import '../widgets/sos_button.dart';
 part 'home_screen_panels.dart';
 part 'home_screen_logic.dart';
 
@@ -71,6 +72,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String? _currentRideId;
   Map<String, dynamic>? _currentRideData;
   Timer? _rideUpdateTimer;
+  bool _isCancelling = false;
+  bool _isFullScreenMap = false;
+
+  void _exitFullScreenMap() {
+    setState(() {
+      _isFullScreenMap = false;
+    });
+  }
 
   LatLng _passengerLocation =
       const LatLng(-1.286389, 36.817223); // Default Westlands
@@ -295,19 +304,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ],
                   ),
                 ),
-                if (!_isPickingFromMap) const SizedBox(height: 12),
+                if (!_isPickingFromMap) const SizedBox(height: 14),
+                if (!_isPickingFromMap)
+                  const SOSButton(size: 46),
+                if (!_isPickingFromMap) const SizedBox(height: 14),
                 if (!_isPickingFromMap)
                   FloatingActionButton.small(
-                    heroTag: 'sos_btn_passenger',
-                    onPressed: () {/* SOS Logic */},
-                    backgroundColor: AppTheme.errorRed,
-                    foregroundColor: Colors.white,
+                    heroTag: 'fullscreen_toggle_passenger',
+                    onPressed: () {
+                      setState(() {
+                        _isFullScreenMap = !_isFullScreenMap;
+                      });
+                    },
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF1E1E1E)
+                        : Colors.white,
+                    foregroundColor: _isFullScreenMap ? AppTheme.primaryColor : Colors.grey,
                     elevation: 4,
-                    child: const Text("SOS",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 10)),
+                    tooltip: _isFullScreenMap ? "Exit Fullscreen" : "Full Screen Map",
+                    child: Icon(
+                      _isFullScreenMap ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
+                      size: 22,
+                      color: _isFullScreenMap ? AppTheme.primaryColor : null,
+                    ),
                   ),
-                if (!_isPickingFromMap) const SizedBox(height: 12),
+                if (!_isPickingFromMap) const SizedBox(height: 14),
                 if (!_isPickingFromMap)
                   FloatingActionButton.small(
                     heroTag: 'my_location_btn_passenger',
@@ -334,9 +355,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
 
-          // 3. Condition UI: Booking Sheet OR Driver Arriving Panel OR On Trip Panel
-          // 3. Condition UI: Booking Sheet OR Driver Arriving Panel OR On Trip Panel
-          if (_tripStatus == TripStatus.idle && !_isPickingFromMap)
+          // 3. Condition UI: Full Screen Mini Bar OR Booking Sheet OR Driver Arriving Panel OR On Trip Panel
+          if (_isFullScreenMap)
+            _buildFullScreenFloatingBar(primaryColor)
+          else if (_tripStatus == TripStatus.idle && !_isPickingFromMap)
             _buildBookingSheet(primaryColor)
           else if (_tripStatus == TripStatus.selectingService)
             _buildServiceSelectionPanel(primaryColor)

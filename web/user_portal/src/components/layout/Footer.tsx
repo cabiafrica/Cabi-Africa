@@ -50,6 +50,11 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/corporate/dashboard" className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-amber-500 dark:hover:text-amber-400 transition-colors">
+                                    Corporate Travel
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/blog" className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-amber-500 dark:hover:text-amber-400 transition-colors">
                                     System Intel
                                 </Link>

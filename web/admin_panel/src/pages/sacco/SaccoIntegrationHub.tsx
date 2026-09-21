@@ -26,6 +26,7 @@ interface SaccoPartner {
   id: string;
   name: string;
   contactEmail: string;
+  serviceCategory?: 'SACCO' | 'INSURANCE_HEALTH' | 'INSURANCE_VEHICLE' | 'INVESTMENT_MMF' | 'PENSION' | string;
   apiBaseUrl?: string;
   apiKey?: string;
   connectorType: 'REST_API' | 'WEBHOOK' | 'LEDGER_EXPORT';
@@ -43,7 +44,10 @@ interface FinancialConfig {
   joiningIncentiveEnabled: boolean;
   joiningIncentivePct: number;
   joiningIncentiveDurationDays: number;
+  maxVoluntaryDeductionPct?: number;
+  minDriverTakeHomePct?: number;
 }
+
 
 interface SplitPreview {
   fare: number;
@@ -336,6 +340,22 @@ function PartnerTab() {
                 />
               </div>
 
+              {/* Service Category */}
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Service Category</label>
+                <select
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-yellow/50"
+                  value={editing.serviceCategory || 'SACCO'}
+                  onChange={e => setEditing(p => ({ ...p, serviceCategory: e.target.value }))}
+                >
+                  <option value="SACCO">SACCO (Savings & Credit Cooperative)</option>
+                  <option value="INSURANCE_HEALTH">Health & Medical Insurance</option>
+                  <option value="INSURANCE_VEHICLE">Vehicle & PSV Insurance</option>
+                  <option value="INVESTMENT_MMF">Investment / Money Market Fund (MMF)</option>
+                  <option value="PENSION">Micro-Pension Scheme</option>
+                </select>
+              </div>
+
               {/* Connector Type */}
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Connection Method</label>
@@ -349,6 +369,28 @@ function PartnerTab() {
                   <option value="LEDGER_EXPORT">Ledger Export (Manual CSV)</option>
                 </select>
               </div>
+
+              {/* Opt-Out Notice Duration */}
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
+                  Earnings Opt-Out Notice Period
+                </label>
+                <select
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-yellow/50"
+                  value={editing.optOutNoticeMonths ?? 1}
+                  onChange={e => setEditing(p => ({ ...p, optOutNoticeMonths: parseInt(e.target.value) }))}
+                >
+                  <option value={1}>1 Month (Next Month Cycle)</option>
+                  <option value={3}>3 Months Notice</option>
+                  <option value={6}>6 Months Notice</option>
+                  <option value={12}>1 Year Notice (12 Months)</option>
+                </select>
+                <p className="text-[11px] text-gray-500 mt-1">
+                  How long driver deductions continue before ceasing after an opt-out request.
+                </p>
+              </div>
+
+
 
               {/* API Base URL */}
               <div>
@@ -656,7 +698,47 @@ function FinancialTab() {
           )}
         </div>
 
+        {/* Opt-Out Notice & Exit Lock-In Rules */}
+        <div className="border-t border-white/10 pt-6">
+          <div className="mb-4">
+            <h4 className="font-bold text-white flex items-center gap-2">
+              <Clock className="w-4 h-4 text-brand-yellow" />
+              Driver Opt-Out Notice Period (Earnings Lock-in Duration)
+            </h4>
+            <p className="text-xs text-gray-400 mt-1 max-w-2xl">
+              Determine how long driver deductions continue before ceasing after an opt-out request is submitted.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-white/5 border border-white/10 rounded-xl">
+            <div>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                Default Opt-Out Duration
+              </label>
+              <select
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-bold focus:outline-none focus:border-brand-yellow/50"
+                value={config.optOutNoticeMonths ?? 1}
+                onChange={e => setConfig(c => c && { ...c, optOutNoticeMonths: parseInt(e.target.value) })}
+              >
+                <option value={1}>1 Month (Next Month Cycle)</option>
+                <option value={3}>3 Months Notice (Quarterly)</option>
+                <option value={6}>6 Months Notice (Half-Year)</option>
+                <option value={12}>1 Year Notice (12 Months / Annual)</option>
+              </select>
+            </div>
+            <div className="flex flex-col justify-center text-xs text-gray-400">
+              <p className="font-semibold text-white mb-1">Impact on Driver Earnings:</p>
+              <p>
+                When set to <span className="text-brand-yellow font-bold">
+                  {config.optOutNoticeMonths === 12 ? '1 Year' : config.optOutNoticeMonths === 6 ? '6 Months' : config.optOutNoticeMonths === 3 ? '3 Months' : '1 Month'}
+                </span>, deductions will continue during this active notice window to satisfy policy/fund commitments and cease on the 1st of the effective month.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Summary Box */}
+
         <div className="p-4 bg-brand-yellow/5 border border-brand-yellow/20 rounded-xl">
           <p className="text-xs font-bold text-brand-yellow uppercase tracking-wider mb-3">Current Split Summary</p>
           <div className="grid grid-cols-3 gap-4 text-center">
@@ -904,13 +986,14 @@ export default function SaccoIntegrationHub() {
       <div className="border-b border-white/10 pb-6">
         <h2 className="text-3xl font-black text-white tracking-tighter flex items-center gap-3">
           <Building2 className="w-8 h-8 text-brand-yellow" />
-          Sacco Integration Hub
+          Financial Services & SACCO Integration Hub
         </h2>
-        <p className="text-gray-400 mt-2 text-sm max-w-2xl">
-          Connect Cabi Africa to an external Sacco partner. Configure remittance rules, manage the joining
-          incentive programme, and monitor driver enrollment — all without a separate Sacco system.
+        <p className="text-gray-400 mt-2 text-sm max-w-3xl">
+          Connect Cabi Africa to independent external SACCOs, Insurance carriers, and Investment funds. 
+          Orchestrate driver consent, stackable incentives, and 15% capped trip earnings remittances with guaranteed minimum 65% driver take-home.
         </p>
       </div>
+
 
       {/* Tabs */}
       <div className="flex gap-1 p-1 bg-white/5 rounded-xl border border-white/10 w-fit">

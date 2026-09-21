@@ -13,7 +13,17 @@ class TripInProgressScreen extends StatefulWidget {
   final String? rideId;
   final String? driverId;
   final RideService? rideService; 
-  const TripInProgressScreen({super.key, this.rideId, this.driverId, this.rideService});
+  final bool isExtendedPickup;
+  final double? subsidyAmount;
+
+  const TripInProgressScreen({
+    super.key,
+    this.rideId,
+    this.driverId,
+    this.rideService,
+    this.isExtendedPickup = false,
+    this.subsidyAmount,
+  });
 
   @override
   State<TripInProgressScreen> createState() => _TripInProgressScreenState();
@@ -231,6 +241,54 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  if (widget.isExtendedPickup) ...[
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 14),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD4AF37).withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.4)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.bolt_rounded, color: Color(0xFFD4AF37), size: 18),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Extended Pickup (+KES ${(widget.subsidyAmount ?? 60.0).toStringAsFixed(0)} System Subsidy) • Contact passenger to coordinate',
+                              style: const TextStyle(
+                                color: Color(0xFFD4AF37),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.phone, color: Color(0xFFD4AF37), size: 16),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Calling passenger...')),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.message, color: Color(0xFFD4AF37), size: 16),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Opening chat with passenger...')),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   Row(
                     children: [
                       Container(

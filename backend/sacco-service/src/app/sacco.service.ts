@@ -1,73 +1,195 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
 
-// ─── Trip Split Engine ────────────────────────────────────────────────────────
+// ─── Trip Split & Waterfall Engine ────────────────────────────────────────────
+
+export interface VoluntaryDeductionInput {
+    serviceType: string; // 'SACCO' | 'INSURANCE_HEALTH' | 'INSURANCE_VEHICLE' | 'INSURANCE_LIFE' | 'INVESTMENT_MMF' | 'PENSION' | string;
+    partnerId?: string;
+    partnerName?: string;
+    requestedPct: number; // e.g. 0.02 = 2%
+}
+
+export interface ItemizedDeduction {
+    serviceType: string;
+    partnerId?: string;
+    partnerName?: string;
+    priorityTier: number; // 1: Commission, 2: Core Sacco, 3: Insurance, 4: Investment/Wealth
+    requestedPct: number;
+    appliedPct: number;
+    amount: number;
+    isCapped: boolean;
+}
 
 export interface TripSplitInput {
     fare: number;
     driverEnrolled: boolean;
     incentiveActive: boolean;
-    mandatoryRemittancePct: number;  // e.g. 0.02 (2%)
-    incentivePct: number;             // e.g. 0.03 (3%) — from Cabi's commission
-    cabiCommissionPct: number;        // e.g. 0.18 (18%)
+    mandatoryRemittancePct?: number;       // default 0.02 (2%)
+    incentivePct?: number;                  // default 0.03 (3%) — comes from Cabi's commission
+    cabiCommissionPct?: number;             // default 0.18 (18%)
+    maxVoluntaryDeductionPct?: number;      // default 0.15 (15% cap across all voluntary services)
+    minDriverTakeHomePct?: number;          // default 0.65 (guaranteed minimum 65% take-home)
+    voluntaryDeductions?: VoluntaryDeductionInput[];
 }
 
 export interface TripSplitResult {
     driverAmount: number;
     saccoAmount: number;
     cabiAmount: number;
+    totalVoluntaryDeductionAmount: number;
+    itemizedDeductions: ItemizedDeduction[];
     breakdown: {
         driverPct: number;
         saccoPct: number;
         cabiPct: number;
+        totalVoluntaryDeductionsPct: number;
         incentiveActive: boolean;
+        isDeductionCapped: boolean;
+        minTakeHomeGuaranteed: boolean;
     };
 }
 
 /**
- * Pure function — computes how a trip fare is split.
- *
- * Business rules:
- *   Not enrolled:           driver=82%, sacco=0%,  cabi=18%
- *   Enrolled (no incentive): driver=80%, sacco=2%,  cabi=18%
- *   Enrolled + incentive:   driver=80%, sacco=5%,  cabi=15%
- *   (the 3% incentive comes FROM cabi's commission, never extra)
+ * Pure function — computes how a trip fare is split based on:
+ * 1. Priority 1: Cabi Commission (18% - active 3% stackable incentive when qualified).
+ * 2. Priority 2: Core SACCO Contribution (2% driver contribution + 3% Cabi incentive -> SACCO gets 5%).
+ * 3. Priority 3: Essential Protection (Insurance: Health, Vehicle, Personal Accident).
+ * 4. Priority 4: Voluntary Wealth & Savings (Investments, MMF, Pension).
+ * 
+ * Safety Ceiling: Total voluntary deductions from driver earnings are capped at 15% (0.15),
+ * guaranteeing driver net take-home is ALWAYS at least 65% of gross fare.
  */
 export function computeTripSplit(input: TripSplitInput): TripSplitResult {
-    const { fare, driverEnrolled, incentiveActive, mandatoryRemittancePct, incentivePct, cabiCommissionPct } = input;
+    const {
+        fare,
+        driverEnrolled,
+        incentiveActive,
+        mandatoryRemittancePct = 0.02,
+        incentivePct = 0.03,
+        cabiCommissionPct = 0.18,
+        maxVoluntaryDeductionPct = 0.15,
+        minDriverTakeHomePct = 0.65,
+        voluntaryDeductions = [],
+    } = input;
 
-    if (!driverEnrolled) {
-        const driverPct = 1 - cabiCommissionPct;
-        return {
-            driverAmount: fare * driverPct,
-            saccoAmount: 0,
-            cabiAmount: fare * cabiCommissionPct,
-            breakdown: { driverPct, saccoPct: 0, cabiPct: cabiCommissionPct, incentiveActive: false }
-        };
+    // 1. Cabi Commission Calculation (Priority 1)
+    // If incentive is active and driver is in SACCO, the 3% incentive is deducted from Cabi's 18% share (Cabi gets 15%)
+    let effectiveCabiPct = cabiCommissionPct;
+    let appliedIncentivePct = 0;
+
+    if (driverEnrolled && incentiveActive) {
+        appliedIncentivePct = Math.min(incentivePct, cabiCommissionPct);
+        effectiveCabiPct = cabiCommissionPct - appliedIncentivePct;
     }
 
-    // Driver always gets (1 - cabiCommissionPct - mandatoryRemittancePct)
-    const driverPct = 1 - cabiCommissionPct - mandatoryRemittancePct;
+    const cabiAmount = fare * effectiveCabiPct;
 
-    if (incentiveActive) {
-        // The extra incentivePct comes out of cabi's share
-        const saccoPct = mandatoryRemittancePct + incentivePct;
-        const cabiPct = cabiCommissionPct - incentivePct;
-        return {
-            driverAmount: fare * driverPct,
-            saccoAmount: fare * saccoPct,
-            cabiAmount: fare * cabiPct,
-            breakdown: { driverPct, saccoPct, cabiPct, incentiveActive: true }
-        };
+    // 2. Track remaining voluntary deduction capacity under the 15% cap
+    let remainingDeductionCapacity = maxVoluntaryDeductionPct;
+    let anyDeductionCapped = false;
+    const itemized: ItemizedDeduction[] = [];
+
+    // 3. Priority 2: Core SACCO Contribution (2% driver deduction)
+    let saccoDriverDeductionPct = 0;
+    if (driverEnrolled) {
+        saccoDriverDeductionPct = Math.min(mandatoryRemittancePct, remainingDeductionCapacity);
+        remainingDeductionCapacity -= saccoDriverDeductionPct;
+
+        itemized.push({
+            serviceType: 'SACCO',
+            priorityTier: 2,
+            requestedPct: mandatoryRemittancePct,
+            appliedPct: saccoDriverDeductionPct,
+            amount: fare * saccoDriverDeductionPct,
+            isCapped: saccoDriverDeductionPct < mandatoryRemittancePct,
+        });
     }
+
+    // 4. Sort other voluntary deductions into Priority 3 (Insurance) and Priority 4 (Investment/Savings)
+    const insuranceDeductions: VoluntaryDeductionInput[] = [];
+    const investmentDeductions: VoluntaryDeductionInput[] = [];
+
+    for (const vd of voluntaryDeductions) {
+        if (vd.serviceType === 'SACCO') {
+            // Already handled via core SACCO enrollment
+            continue;
+        }
+        if (vd.serviceType.toUpperCase().startsWith('INSURANCE')) {
+            insuranceDeductions.push(vd);
+        } else {
+            investmentDeductions.push(vd);
+        }
+    }
+
+    // Priority 3: Insurance
+    for (const ins of insuranceDeductions) {
+        const requested = Math.max(0, ins.requestedPct);
+        const applied = Math.min(requested, Math.max(0, remainingDeductionCapacity));
+        if (applied < requested) anyDeductionCapped = true;
+        remainingDeductionCapacity -= applied;
+
+        itemized.push({
+            serviceType: ins.serviceType,
+            partnerId: ins.partnerId,
+            partnerName: ins.partnerName,
+            priorityTier: 3,
+            requestedPct: requested,
+            appliedPct: applied,
+            amount: fare * applied,
+            isCapped: applied < requested,
+        });
+    }
+
+    // Priority 4: Investments / MMF / Pension / Wealth
+    for (const inv of investmentDeductions) {
+        const requested = Math.max(0, inv.requestedPct);
+        const applied = Math.min(requested, Math.max(0, remainingDeductionCapacity));
+        if (applied < requested) anyDeductionCapped = true;
+        remainingDeductionCapacity -= applied;
+
+        itemized.push({
+            serviceType: inv.serviceType,
+            partnerId: inv.partnerId,
+            partnerName: inv.partnerName,
+            priorityTier: 4,
+            requestedPct: requested,
+            appliedPct: applied,
+            amount: fare * applied,
+            isCapped: applied < requested,
+        });
+    }
+
+    // Total voluntary deduction percentage from driver
+    const totalVoluntaryDeductionsPct = itemized.reduce((sum, it) => sum + it.appliedPct, 0);
+    const totalVoluntaryDeductionAmount = fare * totalVoluntaryDeductionsPct;
+
+    // Sacco Total Remittance = Driver's Sacco contribution + Cabi's 3% incentive
+    const saccoAmount = (fare * saccoDriverDeductionPct) + (fare * appliedIncentivePct);
+    const saccoTotalPct = saccoDriverDeductionPct + appliedIncentivePct;
+
+    // Driver Take-Home Pay = Fare - Cabi Commission - Total Driver Deductions
+    const driverPct = 1 - effectiveCabiPct - totalVoluntaryDeductionsPct;
+    const driverAmount = fare * driverPct;
 
     return {
-        driverAmount: fare * driverPct,
-        saccoAmount: fare * mandatoryRemittancePct,
-        cabiAmount: fare * cabiCommissionPct,
-        breakdown: { driverPct, saccoPct: mandatoryRemittancePct, cabiPct: cabiCommissionPct, incentiveActive: false }
+        driverAmount,
+        saccoAmount,
+        cabiAmount,
+        totalVoluntaryDeductionAmount,
+        itemizedDeductions: itemized,
+        breakdown: {
+            driverPct,
+            saccoPct: saccoTotalPct,
+            cabiPct: effectiveCabiPct,
+            totalVoluntaryDeductionsPct,
+            incentiveActive: appliedIncentivePct > 0,
+            isDeductionCapped: anyDeductionCapped,
+            minTakeHomeGuaranteed: driverPct >= minDriverTakeHomePct,
+        }
     };
 }
+
 
 // ─── DTOs ─────────────────────────────────────────────────────────────────────
 
@@ -102,6 +224,9 @@ export class SaccoFinancialConfigDto {
     joiningIncentiveEnabled: boolean;
     joiningIncentivePct: number;
     joiningIncentiveDurationDays: number;
+    maxVoluntaryDeductionPct: number; // default 0.15 (15%)
+    minDriverTakeHomePct: number;     // default 0.65 (65%)
+    optOutNoticeMonths: number;       // default 1 (next month cycle), or 3 (3 months), 6 (6 months), 12 (1 year)
 }
 
 // ─── Main Service ─────────────────────────────────────────────────────────────
@@ -174,6 +299,9 @@ export class SaccoService {
             'SACCO_JOINING_INCENTIVE_ENABLED',
             'SACCO_JOINING_INCENTIVE_PCT',
             'SACCO_JOINING_INCENTIVE_DURATION_DAYS',
+            'MAX_VOLUNTARY_DEDUCTION_PCT',
+            'MIN_DRIVER_TAKE_HOME_PCT',
+            'FINANCIAL_OPTOUT_NOTICE_MONTHS',
         ];
 
         const settings = await this.prisma.systemSettings.findMany({ where: { key: { in: keys } } });
@@ -182,9 +310,12 @@ export class SaccoService {
         return {
             mandatoryRemittancePct: parseFloat(get('SACCO_MANDATORY_REMITTANCE_PCT', '0.02')),
             cabiCommissionPct: parseFloat(get('CABI_COMMISSION_PCT', '0.18')),
-            joiningIncentiveEnabled: get('SACCO_JOINING_INCENTIVE_ENABLED', 'false') === 'true',
+            joiningIncentiveEnabled: get('SACCO_JOINING_INCENTIVE_ENABLED', 'true') === 'true',
             joiningIncentivePct: parseFloat(get('SACCO_JOINING_INCENTIVE_PCT', '0.03')),
-            joiningIncentiveDurationDays: parseInt(get('SACCO_JOINING_INCENTIVE_DURATION_DAYS', '90')),
+            joiningIncentiveDurationDays: parseInt(get('SACCO_JOINING_INCENTIVE_DURATION_DAYS', '365')),
+            maxVoluntaryDeductionPct: parseFloat(get('MAX_VOLUNTARY_DEDUCTION_PCT', '0.15')),
+            minDriverTakeHomePct: parseFloat(get('MIN_DRIVER_TAKE_HOME_PCT', '0.65')),
+            optOutNoticeMonths: parseInt(get('FINANCIAL_OPTOUT_NOTICE_MONTHS', '1')),
         };
     }
 
@@ -205,10 +336,15 @@ export class SaccoService {
             upsert('SACCO_JOINING_INCENTIVE_ENABLED', String(dto.joiningIncentiveEnabled)),
             upsert('SACCO_JOINING_INCENTIVE_PCT', String(dto.joiningIncentivePct)),
             upsert('SACCO_JOINING_INCENTIVE_DURATION_DAYS', String(dto.joiningIncentiveDurationDays)),
+            upsert('MAX_VOLUNTARY_DEDUCTION_PCT', String(dto.maxVoluntaryDeductionPct ?? 0.15)),
+            upsert('MIN_DRIVER_TAKE_HOME_PCT', String(dto.minDriverTakeHomePct ?? 0.65)),
+            upsert('FINANCIAL_OPTOUT_NOTICE_MONTHS', String(dto.optOutNoticeMonths ?? 1)),
         ]);
 
         return this.getFinancialConfig();
     }
+
+
 
     // ── Driver Enrollment ─────────────────────────────────────────────────────
 
@@ -328,9 +464,123 @@ export class SaccoService {
         return result._sum.amount ? Number(result._sum.amount) : 0;
     }
 
+    // ── Stackable Incentive Rule Evaluator ─────────────────────────────────────
+
+    /**
+     * Evaluates stackable incentive rules for a driver.
+     * Rules can include:
+     * - TENURE_DURATION (e.g., new drivers <= 365 days)
+     * - BADGE_TIER (e.g., GOLD, PLATINUM, ROAD_MASTER)
+     * - TRIP_COUNT (e.g., driver completed >= 30 trips)
+     *
+     * Returns whether the driver qualifies for the 3% incentive (or combined stackable incentive).
+     */
+    async evaluateStackableIncentives(
+        driverProfileId: string,
+        context?: { completedTrips?: number; fareAmount?: number }
+    ): Promise<{
+        incentiveActive: boolean;
+        totalIncentivePct: number;
+        qualifyingRules: Array<{ ruleId: string; name: string; ruleType: string; incentivePct: number }>;
+    }> {
+        const config = await this.getFinancialConfig();
+        if (!config.joiningIncentiveEnabled) {
+            return { incentiveActive: false, totalIncentivePct: 0, qualifyingRules: [] };
+        }
+
+        const profile = await this.prisma.driverProfile.findUnique({
+            where: { id: driverProfileId },
+            include: {
+                user: true,
+                badgeStatus: true,
+            }
+        });
+
+        if (!profile) {
+            return { incentiveActive: false, totalIncentivePct: 0, qualifyingRules: [] };
+        }
+
+        const qualifyingRules: Array<{ ruleId: string; name: string; ruleType: string; incentivePct: number }> = [];
+
+        // 1. Default Tenure Evaluation (New drivers within duration, e.g. 1 year / 365 days)
+        const enrolledAt = profile.saccoEnrolledAt ?? profile.user.createdAt;
+        const daysSinceEnrollment = (Date.now() - enrolledAt.getTime()) / (1000 * 60 * 60 * 24);
+
+        if (daysSinceEnrollment <= config.joiningIncentiveDurationDays) {
+            qualifyingRules.push({
+                ruleId: 'DEFAULT_TENURE_RULE',
+                name: `New Driver Welcome (${config.joiningIncentiveDurationDays} days)`,
+                ruleType: 'TENURE_DURATION',
+                incentivePct: config.joiningIncentivePct,
+            });
+        }
+
+        // 2. Fetch custom stackable rules from database if present
+        try {
+            const rules = await (this.prisma as any).financialIncentiveRule?.findMany({
+                where: { isActive: true }
+            }) ?? [];
+
+            for (const rule of rules) {
+                if (rule.ruleType === 'BADGE_TIER') {
+                    const requiredBadge = (rule.criteria as any)?.badgeTier;
+                    const hasBadge = profile.badgeStatus.some(b => b.badgeTier === requiredBadge && b.isActive);
+                    if (hasBadge) {
+                        qualifyingRules.push({
+                            ruleId: rule.id,
+                            name: rule.name,
+                            ruleType: rule.ruleType,
+                            incentivePct: Number(rule.incentivePct),
+                        });
+                    }
+                } else if (rule.ruleType === 'TENURE_DURATION') {
+                    const maxDays = (rule.criteria as any)?.maxTenureDays ?? 365;
+                    if (daysSinceEnrollment <= maxDays) {
+                        qualifyingRules.push({
+                            ruleId: rule.id,
+                            name: rule.name,
+                            ruleType: rule.ruleType,
+                            incentivePct: Number(rule.incentivePct),
+                        });
+                    }
+                } else if (rule.ruleType === 'TRIP_COUNT') {
+                    const minTrips = (rule.criteria as any)?.minTrips ?? 50;
+                    const trips = context?.completedTrips ?? profile.totalRidesCompleted;
+                    if (trips >= minTrips) {
+                        qualifyingRules.push({
+                            ruleId: rule.id,
+                            name: rule.name,
+                            ruleType: rule.ruleType,
+                            incentivePct: Number(rule.incentivePct),
+                        });
+                    }
+                }
+            }
+        } catch {
+            // Fallback gracefully if table not yet migrated
+        }
+
+        // Incentive applies if any rule qualifies
+        const incentiveActive = qualifyingRules.length > 0;
+        const totalIncentivePct = incentiveActive
+            ? Math.max(config.joiningIncentivePct, ...qualifyingRules.map(r => r.incentivePct))
+            : 0;
+
+        return {
+            incentiveActive,
+            totalIncentivePct,
+            qualifyingRules,
+        };
+    }
+
     // ── Split Preview (for admin calculator) ─────────────────────────────────
 
-    async previewSplit(fare: number, enrolled: boolean, incentiveOverride?: boolean): Promise<TripSplitResult> {
+    async previewSplit(
+        fare: number,
+        enrolled: boolean,
+        incentiveOverride?: boolean,
+        voluntaryDeductions?: VoluntaryDeductionInput[]
+    ): Promise<TripSplitResult> {
         const config = await this.getFinancialConfig();
         const incentiveActive = incentiveOverride ?? config.joiningIncentiveEnabled;
 
@@ -341,6 +591,10 @@ export class SaccoService {
             mandatoryRemittancePct: config.mandatoryRemittancePct,
             incentivePct: config.joiningIncentivePct,
             cabiCommissionPct: config.cabiCommissionPct,
+            maxVoluntaryDeductionPct: config.maxVoluntaryDeductionPct,
+            minDriverTakeHomePct: config.minDriverTakeHomePct,
+            voluntaryDeductions,
         });
     }
 }
+

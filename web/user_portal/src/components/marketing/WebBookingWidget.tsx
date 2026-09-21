@@ -18,56 +18,135 @@ export default function WebBookingWidget() {
     const [loading, setLoading] = useState(false);
     const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
     const [bookingConfirmed, setBookingConfirmed] = useState(false);
+    const [confirmedRideId, setConfirmedRideId] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const [showAuth, setShowAuth] = useState(false);
     const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
 
-    // Mock fare estimation
+    // Fare estimation
     const handleGetEstimates = async () => {
         if (!pickup || !destination) return;
 
         setLoading(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        setErrorMessage(null);
+        try {
+            const res = await fetch('/api/rides/estimate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pickup, destination }),
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setVehicleOptions(data);
+            } else {
+                setVehicleOptions([
+                    { id: 'v1', name: 'Standard', price: 12.50, eta: 4, icon: '🚗' },
+                    { id: 'v2', name: 'Comfort', price: 16.00, eta: 6, icon: '✨' },
+                    { id: 'v3', name: 'XL', price: 22.00, eta: 8, icon: '🚙' },
+                    { id: 'v4', name: 'Green', price: 13.00, eta: 5, icon: '🌱' },
+                ]);
+            }
+        } catch {
+            setVehicleOptions([
+                { id: 'v1', name: 'Standard', price: 12.50, eta: 4, icon: '🚗' },
+                { id: 'v2', name: 'Comfort', price: 16.00, eta: 6, icon: '✨' },
+                { id: 'v3', name: 'XL', price: 22.00, eta: 8, icon: '🚙' },
+                { id: 'v4', name: 'Green', price: 13.00, eta: 5, icon: '🌱' },
+            ]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        setVehicleOptions([
-            { id: 'v1', name: 'Standard', price: 12.50, eta: 4, icon: '🚗' },
-            { id: 'v2', name: 'Comfort', price: 16.00, eta: 6, icon: '✨' },
-            { id: 'v3', name: 'XL', price: 22.00, eta: 8, icon: '🚙' },
-            { id: 'v4', name: 'Green', price: 13.00, eta: 5, icon: '🌱' },
-        ]);
-        setLoading(false);
+    const bookRideAction = async () => {
+        if (!selectedVehicle) return;
+        setLoading(true);
+        setErrorMessage(null);
+
+        try {
+            const selectedOpt = vehicleOptions.find(v => v.id === selectedVehicle);
+            const res = await fetch('/api/rides/book', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    passengerId: '5f0bc7ef-794f-4249-8460-0e9bbfb29763', // Verified passenger
+                    pickupLocation: {
+                        address: pickup || 'Kenyatta Avenue, Nairobi',
+                        lat: -1.286389,
+                        lng: 36.817223,
+                    },
+                    dropoffLocation: {
+                        address: destination || 'Westlands, Nairobi',
+                        lat: -1.2655,
+                        lng: 36.8048,
+                    },
+                    vehicleType: selectedOpt?.name?.toUpperCase() || 'STANDARD',
+                    fare: selectedOpt?.price ? Math.round(selectedOpt.price * 80) : 650,
+                }),
+            });
+
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.message || 'Dispatch booking failed');
+            }
+
+            const ride = await res.json();
+            setConfirmedRideId(ride.id);
+            setBookingConfirmed(true);
+        } catch (err: any) {
+            console.error('Ride booking error:', err);
+            setErrorMessage(err.message || 'Failed to dispatch ride request');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleBookRide = async () => {
         if (!selectedVehicle) return;
-        // Prompt for login/register
-        setShowAuth(true);
+        // Direct instant booking for preview testing
+        await bookRideAction();
     };
 
     const handleAuthSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
-        // Simulate Auth API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setLoading(false);
-        setBookingConfirmed(true);
-
-        // In a real app, we would redirect here or after a delay
-        // const mockTripId = `trip_${Date.now()}`;
-        // window.location.href = `/trip/${mockTripId}`;
+        await bookRideAction();
     };
 
     if (bookingConfirmed) {
         return (
-            <div className="glass p-8 rounded-3xl shadow-2xl max-w-md w-full border border-brand-yellow/20 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-yellow to-brand-accent"></div>
+            <div className="glass p-8 rounded-3xl shadow-2xl max-w-md w-full border border-brand-yellow/30 relative overflow-hidden backdrop-blur-xl">
+                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-400 via-yellow-400 to-emerald-400"></div>
                 <div className="text-center">
-                    <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <span className="text-4xl">✅</span>
+                    <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-500/30">
+                        <span className="text-3xl">🚖</span>
                     </div>
-                    <h2 className="text-3xl font-bold mb-2 text-white">Ride Booked!</h2>
-                    <p className="text-gray-400 mb-8">Your driver is on the way. We've sent the details to your device.</p>
+                    <h2 className="text-2xl font-bold mb-1 text-white">Ride Requested!</h2>
+                    <p className="text-xs text-amber-400 font-mono mb-3">ID: {confirmedRideId}</p>
+                    <p className="text-gray-300 text-sm mb-6">
+                        Trip dispatch initiated. The nearest driver has 20 seconds to accept before auto-escalating.
+                    </p>
+
+                    <div className="space-y-3 mb-6">
+                        {confirmedRideId && (
+                            <a
+                                href={`/tracking/${confirmedRideId}`}
+                                className="block w-full py-3.5 px-4 rounded-xl font-bold text-black bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 transition-all shadow-lg shadow-amber-400/20 text-center"
+                            >
+                                📡 Track Live Ride Status
+                            </a>
+                        )}
+
+                        <a
+                            href="http://localhost:3002"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="block w-full py-2.5 px-4 rounded-xl text-xs font-semibold text-gray-300 bg-white/10 hover:bg-white/15 transition-all text-center border border-white/10"
+                        >
+                            Open Dispatch Console (Port 3002) ↗
+                        </a>
+                    </div>
+
                     <button
                         onClick={() => {
                             setBookingConfirmed(false);
@@ -76,10 +155,12 @@ export default function WebBookingWidget() {
                             setVehicleOptions([]);
                             setSelectedVehicle(null);
                             setShowAuth(false);
+                            setConfirmedRideId(null);
+                            setErrorMessage(null);
                         }}
-                        className="text-brand-yellow font-bold hover:text-white transition-colors uppercase tracking-wider text-sm"
+                        className="text-gray-400 hover:text-white transition-colors text-xs font-medium"
                     >
-                        Book another ride
+                        ← Book another ride
                     </button>
                 </div>
             </div>
@@ -201,7 +282,11 @@ export default function WebBookingWidget() {
                                 <div className="font-bold text-xl text-brand-yellow">${v.price.toFixed(2)}</div>
                             </div>
                         ))}
-                    </div>
+                    {errorMessage && (
+                        <div className="p-3 bg-red-500/20 border border-red-500/40 rounded-xl text-xs text-red-300">
+                            {errorMessage}
+                        </div>
+                    )}
 
                     <div className="flex space-x-4 pt-4">
                         <button

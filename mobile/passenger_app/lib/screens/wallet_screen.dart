@@ -141,9 +141,12 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             return const Center(child: Text('Could not load wallet details.'));
           }
 
-          final balance = walletData['balance'] as double;
-          final transactions = walletData['transactions'] as List;
-          final payoutMethod = walletData['payoutMethod'] as Map;
+          final balance = ((walletData['balance'] ?? 0) as num).toDouble();
+          final transactions = (walletData['transactions'] as List?) ?? [];
+          final payoutMethod = (walletData['payoutMethod'] as Map?) ?? {
+            'bankName': 'Not set',
+            'accountNumber': '—',
+          };
 
           return RefreshIndicator(
             onRefresh: () async => _fetchData(),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
+import 'reset_password_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -8,14 +10,14 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _identifierController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool _emailSent = false;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _identifierController.dispose();
     super.dispose();
   }
 
@@ -28,12 +30,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       _isLoading = true;
     });
 
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final authService = AuthService();
+      final result = await authService.forgotPassword(_identifierController.text);
 
-    setState(() {
-      _isLoading = false;
-      _emailSent = true;
-    });
+      if (result.error == null) {
+        setState(() {
+          _emailSent = true;
+        });
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.error!)),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -98,7 +115,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'No worries! Enter your email address and we\'ll send you a link to reset your password.',
+              'No worries! Enter your email address or phone number and we\'ll send you a link to reset your password.',
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.grey[600],
@@ -120,11 +137,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ],
               ),
               child: TextFormField(
-                controller: _emailController,
+                controller: _identifierController,
                 keyboardType: TextInputType.emailAddress,
+                style: const TextStyle(color: Colors.black),
                 decoration: InputDecoration(
-                  labelText: 'Email Address',
-                  hintText: 'Enter your registered email',
+                  labelText: 'Email or Phone Number',
+                  hintText: 'Enter your registered email or phone',
                   prefixIcon: const Icon(
                     Icons.email_outlined,
                     color: Color(0xFFF59E0B),
@@ -142,11 +160,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
+                    return 'Please enter your email or phone number';
                   }
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                      .hasMatch(value)) {
-                    return 'Please enter a valid email';
+
+                  final isEmail = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value);
+                  final isPhone = RegExp(r'^\+?[0-9]{10,15}$').hasMatch(value.replaceAll(RegExp(r'\s+'), ''));
+
+                  if (!isEmail && !isPhone) {
+                    return 'Please enter a valid email or phone number';
                   }
                   return null;
                 },
@@ -171,8 +192,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         width: 24,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.black),
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
                         ),
                       )
                     : const Row(
@@ -256,7 +276,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              _emailController.text,
+              _identifierController.text,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -265,6 +285,35 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ResetPasswordScreen(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFBBF24),
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: const Text(
+                  'Enter Reset Token',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               height: 56,
@@ -292,5 +341,3 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 }
-
-

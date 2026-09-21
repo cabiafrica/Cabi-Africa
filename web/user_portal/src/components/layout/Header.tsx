@@ -35,6 +35,7 @@ export default function Header() {
         ] : []),
         ...(hasPermission('ORGANIZATION_VIEW') ? [{ name: 'Organization', href: '/organizations/dashboard' }] : []),
         { name: 'Fleet Portal', href: '/fleet/dashboard' },
+        { name: 'Corporate', href: '/corporate/dashboard' },
     ] : baseNavLinks;
 
     const registrationLinks = [

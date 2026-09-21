@@ -34,7 +34,11 @@ class RideRequestModal extends StatelessWidget {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => TripInProgressScreen(
-                  rideId: requestData['rideId'], driverId: driverId),
+                rideId: requestData['rideId'],
+                driverId: driverId,
+                isExtendedPickup: requestData['isExtendedPickup'] == true,
+                subsidyAmount: (requestData['extendedPickupSubsidy'] as num?)?.toDouble(),
+              ),
             ),
           );
         }
@@ -50,12 +54,11 @@ class RideRequestModal extends StatelessWidget {
     }
 
     void handlePass({String? reason}) {
-      // If passenger is not verified, add default reason
       final passReason = reason ?? 
           (requestData['isVerifiedPassenger'] == false 
               ? 'unverified passenger' 
-              : null);
-      service.rejectRide(requestData['rideId'], driverId, passReason);
+              : 'Driver passed trip');
+      service.passRide(requestData['rideId'], driverId, passReason);
       rideProvider.clearRideRequest();
     }
 
@@ -119,6 +122,53 @@ class RideRequestModal extends StatelessWidget {
                 Text('Pickup: ${requestData['pickupAddress']}'),
                 Text('Distance to pickup: ${requestData['distanceToPickup']}'),
                 Text('Passenger Rating: ${requestData['passengerRating']} ★'),
+
+                // Show Extended Pickup System Subsidy
+                if (requestData['isExtendedPickup'] == true ||
+                    (requestData['extendedPickupSubsidy'] != null &&
+                        (requestData['extendedPickupSubsidy'] as num) > 0)) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFFD4AF37),
+                        width: 1.2,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.bolt_rounded, size: 18, color: Color(0xFFD4AF37)),
+                            const SizedBox(width: 6),
+                            Text(
+                              '+KES ${requestData['extendedPickupSubsidy'] ?? 60} System Fuel Subsidy',
+                              style: const TextStyle(
+                                color: Color(0xFFD4AF37),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          'Passenger is beyond your standard radius. Cabi compensates your extra mileage directly to your wallet.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 
                 // Show passenger verification status
                 if (requestData['isVerifiedPassenger'] == true) ...[
@@ -176,40 +226,92 @@ class RideRequestModal extends StatelessWidget {
                     compact: true,
                   ),
                 ],
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
                 Stack(
                   alignment: Alignment.center,
                   children: [
                     SizedBox(
-                      height: 60,
-                      width: 60,
+                      height: 68,
+                      width: 68,
                       child: CircularProgressIndicator(
-                        value: rideProvider.countdown / 30.0,
+                        value: (rideProvider.countdown / 20.0).clamp(0.0, 1.0),
                         strokeWidth: 6,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          rideProvider.countdown <= 5
+                              ? Colors.redAccent
+                              : (rideProvider.countdown <= 10
+                                  ? Colors.orangeAccent
+                                  : const Color(0xFF10B981)),
+                        ),
                         backgroundColor: Colors.grey.shade300,
                       ),
                     ),
-                    Text(
-                      '${rideProvider.countdown}',
-                      style: Theme.of(context).textTheme.headlineMedium,
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${rideProvider.countdown}s',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: rideProvider.countdown <= 5
+                                    ? Colors.redAccent
+                                    : null,
+                              ),
+                        ),
+                        const Text(
+                          'to accept',
+                          style: TextStyle(fontSize: 10, color: Colors.grey),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 22),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    ElevatedButton(
-                      onPressed: showPassDialog,
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                      child: const Text('Pass'),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: showPassDialog,
+                        icon: const Icon(Icons.close_rounded, color: Colors.redAccent),
+                        label: const Text(
+                          'Pass',
+                          style: TextStyle(
+                            color: Colors.redAccent,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.redAccent, width: 1.5),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                      ),
                     ),
-                    ElevatedButton(
-                      onPressed: handleAccept,
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green),
-                      child: const Text('Accept'),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      flex: 2,
+                      child: ElevatedButton.icon(
+                        onPressed: handleAccept,
+                        icon: const Icon(Icons.check_circle_rounded, color: Colors.white),
+                        label: const Text(
+                          'Accept Ride',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF10B981),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

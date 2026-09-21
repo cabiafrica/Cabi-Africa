@@ -168,10 +168,12 @@ class _CabiMapState extends State<CabiMap> {
               point: marker.position,
               width: marker.width,
               height: marker.height,
-              child: GestureDetector(
-                onTap: marker.onTap,
-                child: marker.child,
-              ),
+              child: marker.onTap != null
+                  ? GestureDetector(
+                      onTap: marker.onTap,
+                      child: marker.child,
+                    )
+                  : marker.child,
             );
           }).toList(),
         ),

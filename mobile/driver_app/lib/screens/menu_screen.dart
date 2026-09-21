@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:driver_app/screens/login_screen.dart';
 import 'package:driver_app/widgets/promotional_carousel.dart';
 import '../providers/auth_provider.dart';
 import 'support_screen.dart';
-import 'sacco_screen.dart';
+import 'finance_screen.dart';
+import 'my_organization_screen.dart';
 import '../theme/app_theme.dart';
 
 class MenuScreen extends ConsumerWidget {
@@ -13,19 +15,43 @@ class MenuScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
-    String userName = 'DRIVER';
-    String? userEmail;
+    String userName = 'ALEXANDER MWANGI';
+    String? userEmail = 'driver.alex@cabi.africa';
+    String? userPhone = '+254 712 345 678';
     String? userId;
-    String profilePic = 'https://i.pravatar.cc/150?u=driver';
+    String profilePic = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80';
+    double rating = 4.9;
+    String driverGroup = 'Nairobi Central Fleet';
+    String badge = 'PRO DRIVER';
 
     if (authState is Authenticated && authState.user != null) {
       final user = authState.user!;
       userName = user['firstName'] != null
           ? "${user['firstName']} ${user['lastName'] ?? ''}"
-          : user['name'] ?? 'DRIVER';
-      userEmail = user['email'];
+          : user['name'] ?? 'ALEXANDER MWANGI';
+      userEmail = user['email'] ?? userEmail;
+      userPhone = user['phone'] ?? user['phoneNumber'] ?? userPhone;
       userId = user['id'];
-      if (user['profilePicture'] != null) profilePic = user['profilePicture'];
+      if (user['passportPhoto'] != null && user['passportPhoto'].toString().isNotEmpty) {
+        profilePic = user['passportPhoto'];
+      } else if (user['profilePicture'] != null && user['profilePicture'].toString().isNotEmpty) {
+        profilePic = user['profilePicture'];
+      }
+      if (user['rating'] != null) {
+        rating = (user['rating'] as num).toDouble();
+      } else if (user['averageRating'] != null) {
+        rating = (user['averageRating'] as num).toDouble();
+      }
+      if (user['driverGroup'] != null) {
+        driverGroup = user['driverGroup'].toString();
+      } else if (user['driverGroupName'] != null) {
+        driverGroup = user['driverGroupName'].toString();
+      } else if (user['organization'] != null) {
+        driverGroup = user['organization'].toString();
+      }
+      if (user['tier'] != null) {
+        badge = user['tier'].toString().toUpperCase();
+      }
     }
 
     final theme = Theme.of(context);
@@ -35,8 +61,18 @@ class MenuScreen extends ConsumerWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Premium Menu Header
-            _buildPremiumHeader(context, userName, userEmail, userId, profilePic),
+            // Premium Menu Header with Passport Avatar, Name, Email, Phone, Rating, Group, Badge
+            _buildPremiumHeader(
+              context: context,
+              name: userName,
+              email: userEmail,
+              phone: userPhone,
+              id: userId,
+              profilePic: profilePic,
+              rating: rating,
+              driverGroup: driverGroup,
+              badge: badge,
+            ),
 
             const SizedBox(height: 24),
 
@@ -69,10 +105,10 @@ class MenuScreen extends ConsumerWidget {
                     iconColor: Colors.blue,
                     route: null),
                 _MenuGridItem(
-                    icon: Icons.bar_chart,
+                    icon: Icons.bar_chart_rounded,
                     label: 'PERFORMANCE',
-                    color: Colors.purple.withValues(alpha: 0.1),
-                    iconColor: Colors.purple,
+                    color: AppTheme.primaryColor.withValues(alpha: 0.12),
+                    iconColor: AppTheme.primaryDark,
                     route: '/dashboard'),
                 _MenuGridItem(
                     icon: Icons.monetization_on_outlined,
@@ -103,17 +139,23 @@ class MenuScreen extends ConsumerWidget {
                     iconColor: Colors.indigoAccent,
                     route: '/wallet'),
                 _MenuGridItem(
-                    icon: Icons.groups_outlined,
-                    label: 'NETWORK',
-                    color: Colors.pink.withValues(alpha: 0.1),
-                    iconColor: Colors.pinkAccent,
-                    route: '/referral_program'),
+                    icon: Icons.account_balance_rounded,
+                    label: 'FINANCE',
+                    color: Colors.orange.withValues(alpha: 0.12),
+                    iconColor: Colors.orangeAccent,
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const FinanceScreen()))),
                 _MenuGridItem(
-                    icon: Icons.directions_car_filled_outlined,
-                    label: 'VEHICLE',
-                    color: Colors.blueGrey.withValues(alpha: 0.1),
-                    iconColor: Colors.blueGrey,
-                    route: '/vehicles'),
+                    icon: Icons.groups_rounded,
+                    label: 'DRIVER GROUP',
+                    color: Colors.amber.withValues(alpha: 0.12),
+                    iconColor: Colors.amber,
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const MyOrganizationScreen()))),
                 _MenuGridItem(
                     icon: Icons.shield_outlined,
                     label: 'WELFARE',
@@ -121,14 +163,17 @@ class MenuScreen extends ConsumerWidget {
                     iconColor: Colors.cyan,
                     route: '/welfare_schemes'),
                 _MenuGridItem(
-                    icon: Icons.account_balance_rounded,
-                    label: 'MY SACCO',
-                    color: Colors.orange.withValues(alpha: 0.1),
-                    iconColor: Colors.orangeAccent,
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const SaccoScreen()))),
+                    icon: Icons.directions_car_filled_outlined,
+                    label: 'VEHICLE',
+                    color: Colors.blueGrey.withValues(alpha: 0.1),
+                    iconColor: Colors.blueGrey,
+                    route: '/vehicles'),
+                _MenuGridItem(
+                    icon: Icons.share_rounded,
+                    label: 'NETWORK',
+                    color: Colors.pink.withValues(alpha: 0.1),
+                    iconColor: Colors.pinkAccent,
+                    route: '/referral_program'),
                 _MenuGridItem(
                     icon: Icons.settings_outlined,
                     label: 'SETTINGS',
@@ -201,80 +246,264 @@ class MenuScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPremiumHeader(BuildContext context, String name, String? email, String? id, String profilePic) {
+  Widget _buildPremiumHeader({
+    required BuildContext context,
+    required String name,
+    String? email,
+    String? phone,
+    String? id,
+    required String profilePic,
+    required double rating,
+    required String driverGroup,
+    required String badge,
+  }) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 60, 20, 30),
+      padding: const EdgeInsets.fromLTRB(16, 56, 16, 24),
       decoration: BoxDecoration(
-        color: theme.cardTheme.color ?? theme.colorScheme.surface,
+        color: isDark ? const Color(0xFF161513) : Colors.white,
         borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(32),
-          bottomRight: Radius.circular(32),
+          bottomLeft: Radius.circular(28),
+          bottomRight: Radius.circular(28),
+        ),
+        border: Border(
+          bottom: BorderSide(
+            color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.25) : Colors.black12,
+            width: 1,
+          ),
         ),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: isDark ? Colors.black.withValues(alpha: 0.6) : Colors.black.withValues(alpha: 0.08),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
           )
         ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppTheme.primaryColor, width: 1.5),
-            ),
-            child: CircleAvatar(
-              radius: 32,
-              backgroundColor: theme.scaffoldBackgroundColor,
-              backgroundImage: NetworkImage(profilePic),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name.toUpperCase(),
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: theme.textTheme.bodyLarge?.color ?? Colors.white,
-                    letterSpacing: 0.5,
-                  ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Real Passport Photo Avatar with Gold Ring Halo
+              Container(
+                padding: const EdgeInsets.all(2.5),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: AppTheme.goldGradient,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primaryColor.withValues(alpha: 0.35),
+                      blurRadius: 10,
+                      spreadRadius: 1,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  email ?? 'N/A',
-                  style: TextStyle(
-                    color: theme.textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary,
-                    fontSize: 12,
-                  ),
+                child: CircleAvatar(
+                  radius: 34,
+                  backgroundColor: isDark ? const Color(0xFF22201C) : Colors.grey.shade200,
+                  backgroundImage: NetworkImage(profilePic),
                 ),
-              ],
-            ),
-          ),
-          // QR Code Button
-          GestureDetector(
-            onTap: () {
-              // Same QR dialog as ProfileScreen
-              _showQrDialog(context, id ?? 'N/A');
-            },
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.3)),
               ),
-              child: const Icon(Icons.qr_code_rounded, color: AppTheme.primaryColor, size: 24),
-            ),
+
+              const SizedBox(width: 14),
+
+              // Details Column: Name, Badge, Email, Phone, Rating, Driver Group
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Driver Name & Badge Pill
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            name.toUpperCase(),
+                            style: GoogleFonts.outfit(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16,
+                              color: isDark ? Colors.white : Colors.black87,
+                              letterSpacing: 0.3,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        // Verified / Tier Badge Pill
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                          decoration: BoxDecoration(
+                            gradient: AppTheme.goldGradient,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.primaryColor.withValues(alpha: 0.3),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.verified_rounded, size: 11, color: Colors.black),
+                              const SizedBox(width: 3),
+                              Text(
+                                badge,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 9,
+                                  letterSpacing: 0.4,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    // Email Address
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.email_outlined,
+                          size: 13,
+                          color: isDark ? Colors.white60 : Colors.black54,
+                        ),
+                        const SizedBox(width: 5),
+                        Expanded(
+                          child: Text(
+                            email ?? 'driver@cabi.africa',
+                            style: GoogleFonts.outfit(
+                              color: isDark ? Colors.white70 : Colors.black87,
+                              fontSize: 11.5,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 3),
+
+                    // Phone Number
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.phone_outlined,
+                          size: 13,
+                          color: isDark ? Colors.white60 : Colors.black54,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          phone ?? '+254 700 000 000',
+                          style: GoogleFonts.outfit(
+                            color: isDark ? Colors.white70 : Colors.black87,
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Star Rating & Driver Group Row
+                    Row(
+                      children: [
+                        // Star Rating Pill
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: Colors.amber.withValues(alpha: 0.4),
+                              width: 0.8,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.star_rounded, size: 13, color: Colors.amber),
+                              const SizedBox(width: 3),
+                              Text(
+                                '${rating.toStringAsFixed(1)} ★',
+                                style: GoogleFonts.outfit(
+                                  color: Colors.amber,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(width: 8),
+
+                        // Driver Group Pill
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                            decoration: BoxDecoration(
+                              color: Colors.cyan.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Colors.cyan.withValues(alpha: 0.35),
+                                width: 0.8,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.groups_rounded, size: 13, color: Colors.cyanAccent),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    driverGroup,
+                                    style: GoogleFonts.outfit(
+                                      color: isDark ? Colors.cyanAccent : Colors.cyan.shade800,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 10.5,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: 6),
+
+              // QR Code Button
+              GestureDetector(
+                onTap: () {
+                  _showQrDialog(context, id ?? 'N/A');
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.3)),
+                  ),
+                  child: const Icon(Icons.qr_code_rounded, color: AppTheme.primaryColor, size: 20),
+                ),
+              ),
+            ],
           ),
         ],
       ),

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Put, Post, Body, Query, HttpCode } from '@nestjs/common';
+import { Controller, Get, Param, Put, Post, Body, Query, HttpCode, Logger, BadRequestException } from '@nestjs/common';
 import { RideService } from './ride.service';
 
 import { IsString, IsNotEmpty, IsOptional, IsObject, IsNumber, IsEnum } from 'class-validator';
@@ -49,6 +49,8 @@ class RespondToChangeDto {
 
 @Controller('rides')
 export class RideController {
+  private readonly logger = new Logger(RideController.name);
+
   constructor(private readonly rideService: RideService) { }
 
   @Get('current')
@@ -63,13 +65,30 @@ export class RideController {
     @Query('vehicleType') vehicleType?: string,
     @Query('maxDistanceKm') maxDistanceKm?: string,
   ) {
-    const drivers = await this.rideService.matchingService.findNearbyDrivers({
-      pickupLat: parseFloat(pickupLat),
-      pickupLng: parseFloat(pickupLng),
-      vehicleType: vehicleType as any,
-      maxDistanceKm: maxDistanceKm ? parseFloat(maxDistanceKm) : 5.0,
-    });
-    return { success: true, data: drivers };
+    const lat = parseFloat(pickupLat);
+    const lng = parseFloat(pickupLng);
+
+    if (isNaN(lat) || isNaN(lng)) {
+      throw new BadRequestException('Valid pickupLat and pickupLng query parameters are required.');
+    }
+
+    try {
+      const drivers = await this.rideService.matchingService.findNearbyDrivers({
+        pickupLat: lat,
+        pickupLng: lng,
+        vehicleType: vehicleType as any,
+        maxDistanceKm: maxDistanceKm ? parseFloat(maxDistanceKm) : 5.0,
+      });
+      return { success: true, data: drivers };
+    } catch (error: any) {
+      this.logger.error(`Error finding nearby drivers: ${error.message}`, error.stack);
+      return { success: false, data: [], error: error.message };
+    }
+  }
+
+  @Get('demand-hotspots')
+  getDemandHotspots() {
+    return this.rideService.getDemandHotspots();
   }
 
   @Post()
@@ -107,6 +126,23 @@ export class RideController {
   @Post(':id/reject')
   rejectRide(@Param('id') id: string, @Body('driverId') driverId: string) {
     return this.rideService.rejectRide(id, driverId);
+  }
+
+  @Post(':id/pass')
+  passRide(
+    @Param('id') id: string,
+    @Body('driverId') driverId: string,
+    @Body('reason') reason?: string
+  ) {
+    return this.rideService.passRide(id, driverId, reason);
+  }
+
+  @Post('drivers/:id/preferences')
+  updateDriverPreferences(
+    @Param('id') id: string,
+    @Body() preferences: { preferredDestination?: any; excludedZones?: any[] }
+  ) {
+    return this.rideService.updateDriverPreferences(id, preferences);
   }
 
   @Post(':id/confirm-cash')

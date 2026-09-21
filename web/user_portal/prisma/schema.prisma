@@ -131,6 +131,10 @@ model DriverProfile {
   welfareEnrollments  WelfareEnrollment[]
   welfareDeductions   WelfareDeduction[]
 
+  // Driver Destination Mode & Excluded Zones
+  preferredDestination Json?
+  excludedZones        Json?
+
   @@index([isOnline])
   @@index([referrerId])
   @@index([driverGroupId])
@@ -317,6 +321,8 @@ model Ride {
   matchingStartedAt    DateTime?
   requestedVehicleType VehicleType?
   surgeMultiplier      Float?         @default(1.0)
+  passedDriverIds      String[]       @default([])
+  assignmentExpiresAt  DateTime?
   occurrences          Occurrence[]   @relation("RideOccurrences")
   driver               DriverProfile? @relation("DriverRides", fields: [driverId], references: [id])
   passenger            User           @relation("PassengerRides", fields: [passengerId], references: [id])

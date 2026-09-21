@@ -5,8 +5,6 @@ import 'earnings_dashboard_screen.dart';
 import 'menu_screen.dart';
 import 'package:driver_app/theme/app_theme.dart';
 
-import 'sos_alert_screen.dart';
-
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
@@ -34,17 +32,6 @@ class _MainShellState extends State<MainShell> {
         index: _currentIndex,
         children: _screens,
       ),
-      floatingActionButton: _currentIndex != 3 ? FloatingActionButton(
-        heroTag: 'global_sos_btn',
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SosAlertScreen(alertData: {})),
-          );
-        },
-        backgroundColor: Colors.redAccent,
-        child: const Text('SOS', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-      ) : null,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: prestigeBlack,

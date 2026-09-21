@@ -55,7 +55,34 @@ extension _HomeScreenPanels on _HomeScreenState {
                 )
               ],
             ),
-            const Divider(height: 30),
+            if (_currentRideData?['isExtendedPickup'] == true || _arrivalDurationMinutes > 10) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD4AF37).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.35)),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.info_outline_rounded, color: Color(0xFFD4AF37), size: 18),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Driver is traveling from outside their zone. Standard fare applies (0 extra fees). Please stay in contact.',
+                        style: TextStyle(
+                          color: Color(0xFFD4AF37),
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            const Divider(height: 24),
 
             // Driver Info
             Row(
@@ -844,71 +871,111 @@ extension _HomeScreenPanels on _HomeScreenState {
   }
 
   Widget _buildSearchingPanel(Color primaryColor) {
+    final vehicleName = _selectedVehicleType ?? 'Standard Ride';
+
     return Positioned(
       bottom: 0,
       left: 0,
       right: 0,
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
         decoration: BoxDecoration(
           color: AppTheme.darkSurface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.1), width: 1),
+          border: Border.all(
+              color: AppTheme.primaryColor.withValues(alpha: 0.15), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 20,
-              spreadRadius: 5,
+              color: Colors.black.withValues(alpha: 0.4),
+              blurRadius: 24,
+              spreadRadius: 6,
+              offset: const Offset(0, -4),
             ),
           ],
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 10),
-            SizedBox(
-              height: 60,
-              width: 60,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
-                strokeWidth: 4,
+            // Top Drag Handle
+            Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: 24),
-            Text(
+            const SizedBox(height: 18),
+
+            // Animated Radar Pulse
+            SearchingRadarPulse(
+              color: primaryColor,
+              size: 80,
+            ),
+            const SizedBox(height: 18),
+
+            const Text(
               "Finding your driver...",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey.shade800,
+                color: Colors.white,
+                letterSpacing: 0.3,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
-              "Connecting you to nearby drivers",
-              style: TextStyle(
+              "Scanning nearby drivers for $vehicleName",
+              textAlign: TextAlign.center,
+              style: const TextStyle(
                 fontSize: 14,
-                color: Colors.grey.shade600,
+                color: Colors.white70,
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 24),
+
+            // Cancel Request Button
             SizedBox(
               width: double.infinity,
-              height: 50,
+              height: 52,
               child: OutlinedButton(
-                onPressed: () {
-                  _updateState(() {
-                    _tripStatus = TripStatus.idle;
-                    _roadRoute = null;
-                  });
-                },
+                onPressed: _isCancelling ? null : _cancelRideSearch,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.red,
-                  side: const BorderSide(color: Colors.red),
+                  foregroundColor: Colors.redAccent,
+                  side: BorderSide(
+                    color: Colors.redAccent.withValues(alpha: 0.7),
+                    width: 1.5,
+                  ),
+                  backgroundColor: Colors.redAccent.withValues(alpha: 0.06),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                child: const Text("Cancel Request"),
+                child: _isCancelling
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.redAccent),
+                        ),
+                      )
+                    : const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.close_rounded, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            "Cancel Request",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                        ],
+                      ),
               ),
             ),
             const SizedBox(height: 10),
@@ -922,14 +989,12 @@ extension _HomeScreenPanels on _HomeScreenState {
     final authState = ref.watch(passengerAuthProvider);
     String userName = "Guest";
     String userEmail = "";
-    String initials = "G";
 
     if (authState is Authenticated) {
       userName = authState.user?['firstName'] != null
           ? "${authState.user!['firstName']} ${authState.user!['lastName'] ?? ''}"
           : authState.user?['name'] ?? 'User';
       userEmail = authState.user?['email'] ?? "";
-      initials = userName.isNotEmpty ? userName[0].toUpperCase() : "U";
     }
 
     return Drawer(
@@ -1296,5 +1361,236 @@ extension _HomeScreenPanels on _HomeScreenState {
       ),
     );
   }
+
+  Widget _buildFullScreenFloatingBar(Color primaryColor) {
+    String statusText;
+    switch (_tripStatus) {
+      case TripStatus.searching:
+        statusText = 'Searching for nearby drivers...';
+        break;
+      case TripStatus.selectingService:
+        statusText = 'Selecting ride service';
+        break;
+      case TripStatus.driverFound:
+        statusText = 'Driver assigned • Arriving in $_arrivalDurationMinutes mins';
+        break;
+      case TripStatus.onTrip:
+        statusText = 'Trip in progress';
+        break;
+      case TripStatus.arrived:
+        statusText = 'Arrived at destination';
+        break;
+      case TripStatus.idle:
+        statusText = _destination != 'Where to?' ? _destination : 'Tap to book a trip';
+        break;
+    }
+
+    return Positioned(
+      bottom: MediaQuery.of(context).padding.bottom + 16,
+      left: 16,
+      right: 16,
+      child: GestureDetector(
+        onTap: _exitFullScreenMap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          decoration: BoxDecoration(
+            color: AppTheme.darkSurface.withValues(alpha: 0.95),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: primaryColor.withValues(alpha: 0.4), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.5),
+                blurRadius: 18,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: primaryColor.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  _tripStatus == TripStatus.searching
+                      ? Icons.radar_rounded
+                      : Icons.location_on_rounded,
+                  color: primaryColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'FULL SCREEN MAP',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      statusText,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.fullscreen_exit_rounded, color: Colors.black, size: 16),
+                    SizedBox(width: 4),
+                    Text(
+                      'Restore',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
+class SearchingRadarPulse extends StatefulWidget {
+  final Color color;
+  final double size;
+
+  const SearchingRadarPulse({
+    super.key,
+    this.color = AppTheme.primaryColor,
+    this.size = 80.0,
+  });
+
+  @override
+  State<SearchingRadarPulse> createState() => _SearchingRadarPulseState();
+}
+
+class _SearchingRadarPulseState extends State<SearchingRadarPulse>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: widget.size,
+      height: widget.size,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Stack(
+            alignment: Alignment.center,
+            children: [
+              // Outer Ripple
+              Transform.scale(
+                scale: 1.0 + (_controller.value * 0.8),
+                child: Container(
+                  width: widget.size * 0.6,
+                  height: widget.size * 0.6,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: widget.color.withValues(
+                          alpha: (1.0 - _controller.value) * 0.5),
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+              // Inner Ripple
+              Transform.scale(
+                scale: 1.0 + (((_controller.value + 0.5) % 1.0) * 0.8),
+                child: Container(
+                  width: widget.size * 0.6,
+                  height: widget.size * 0.6,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: widget.color.withValues(
+                          alpha: (1.0 - ((_controller.value + 0.5) % 1.0)) * 0.5),
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+              // Glowing Central Radar Circle
+              Container(
+                width: widget.size * 0.55,
+                height: widget.size * 0.55,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF161616),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: widget.color.withValues(alpha: 0.8),
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: widget.color.withValues(alpha: 0.35),
+                      blurRadius: 14,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: RotationTransition(
+                    turns: _controller,
+                    child: Icon(
+                      Icons.radar_rounded,
+                      color: widget.color,
+                      size: widget.size * 0.3,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}

@@ -1,9 +1,31 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req, UnauthorizedException } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 
 @Controller('payment')
 export class PaymentController {
     constructor(private readonly paymentService: PaymentService) { }
+
+    /**
+     * GET /api/payment/wallet
+     * Returns wallet for the authenticated user (reads userId from JWT).
+     * This is what the mobile passenger app calls as GET /api/wallet (via gateway route).
+     */
+    @Get('wallet')
+    async getMyWallet(@Req() req: any) {
+        const userId = req.user?.sub || req.user?.id || req.user?.userId;
+        if (!userId) {
+            throw new UnauthorizedException('Could not extract user identity from token.');
+        }
+        const wallet = await this.paymentService.getWallet(userId);
+        return {
+            balance: (wallet?.balance ?? 0) as number,
+            transactions: [],        // future: pull from DB
+            payoutMethod: {          // future: pull from DB
+                bankName: 'Not set',
+                accountNumber: '—',
+            },
+        };
+    }
 
     @Get('wallet/:userId')
     getWallet(@Param('userId') userId: string) {

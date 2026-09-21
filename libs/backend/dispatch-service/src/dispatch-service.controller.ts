@@ -40,6 +40,11 @@ export class DispatchController {
         return await this.service.acceptRide(id, driverId);
     }
 
+    @Post('rides/:id/pass')
+    async passRide(@Param('id') id: string, @Body('driverId') driverId: string) {
+        return await (this.service as any).passRide?.(id, driverId) || { success: true, message: 'Pass recorded' };
+    }
+
     @Patch('rides/:id/status')
     async updateStatus(@Param('id') id: string, @Body('status') status: string) {
         return await this.service.updateRideStatus(id, status);

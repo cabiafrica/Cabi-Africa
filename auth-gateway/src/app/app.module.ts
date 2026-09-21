@@ -4,11 +4,12 @@ import { AdminModule } from '@cabi/backend/admin-service';
 import { DispatchModule } from '@cabi/backend/dispatch-service';
 import { RatingModule } from '@cabi/backend/rating-service';
 import { SettingsModule } from '@cabi/backend/settings';
+import { PaymentModule } from '@cabi/backend/payment-service';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
-  imports: [UserModule, AdminModule, DispatchModule, RatingModule, SettingsModule],
+  imports: [UserModule, AdminModule, DispatchModule, RatingModule, SettingsModule, PaymentModule],
   controllers: [AppController],
   providers: [AppService],
 })

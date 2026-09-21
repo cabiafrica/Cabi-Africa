@@ -9,7 +9,7 @@ import { NotificationModule } from '@cabi/backend/notification-service';
 
 @Module({
   imports: [PrismaModule, SettingsModule, NotificationModule],
-  controllers: [DispatchController, RideController],
+  controllers: [DispatchController],
   providers: [DispatchService, DispatchGateway],
   exports: [DispatchService],
 })

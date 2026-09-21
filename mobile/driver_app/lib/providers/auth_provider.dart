@@ -71,11 +71,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final result = await _authService.signIn(email, password);
 
       if (result.isSignedIn && result.token != null) {
+        // Validate that the user has the DRIVER role
+        final userRole = result.user?['role']?.toString().toUpperCase();
+        if (userRole != 'DRIVER') {
+          state = const Unauthenticated();
+          throw Exception('This account is not registered as a driver. Please use the passenger app or contact support.');
+        }
+
         if (rememberMe) {
           await _storage.write(key: 'jwt_token', value: result.token);
         } else {
-          await _storage.delete(
-              key: 'jwt_token'); // Ensure old sessions are wiped
+          // Don't persist — session only; do not actively delete existing token
         }
         state = Authenticated(result.token!, result.user);
       } else {

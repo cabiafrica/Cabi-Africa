@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import '../config/app_config.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
 
@@ -18,7 +19,7 @@ class _WelfareSchemeScreenState extends ConsumerState<WelfareSchemeScreen> {
   List<dynamic> _summaries = [];
   String? _error;
 
-  final String _baseUrl = 'http://localhost:3334/api/welfare'; // Update with actual API URL
+  String get _baseUrl => '${AppConfig.dispatchApiUrl}/welfare';
 
   @override
   void initState() {

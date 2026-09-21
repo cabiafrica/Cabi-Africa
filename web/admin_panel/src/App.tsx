@@ -200,17 +200,60 @@ function App() {
     setDarkMode(prev => !prev);
   };
 
-  // Detached Visualization Mode
+  // Detached Visualization Mode for External Screens
   if (location.pathname.startsWith('/visualize')) {
     return (
-      <div className="min-h-screen w-screen bg-slate-900 text-white p-6 overflow-hidden flex items-center justify-center">
-        <div className="w-full h-full max-w-7xl max-h-[90vh]">
-          <Routes>
-            <Route path="/visualize/revenue" element={<RevenueWidget />} />
-            <Route path="/visualize/ride-status" element={<RideStatusWidget />} />
-            <Route path="/visualize/growth" element={<NetworkGrowthWidget />} />
-            <Route path="/visualize/acquisition" element={<AcquisitionChannelWidget />} />
-          </Routes>
+      <div className="min-h-screen w-screen bg-slate-950 text-white flex flex-col antialiased">
+        <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-3 bg-slate-900/90 backdrop-blur-xl border-b border-slate-800 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-md shadow-blue-500/20">
+              C
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-white font-semibold text-sm tracking-wide">Cabi Admin Telemetry</span>
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  EXTERNAL SCREEN
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400">Undocked display monitor</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                if (!document.fullscreenElement) {
+                  document.documentElement.requestFullscreen?.().catch(() => {});
+                } else {
+                  document.exitFullscreen?.().catch(() => {});
+                }
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700/60 rounded-lg transition-colors cursor-pointer"
+              title="Toggle Fullscreen"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+              Fullscreen
+            </button>
+            <button
+              onClick={() => window.close()}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 border border-blue-400/30 rounded-lg transition-all shadow-md shadow-blue-600/30 cursor-pointer"
+              title="Close window and return to main panel"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+              Dock to Main Display
+            </button>
+          </div>
+        </header>
+        <div className="flex-1 p-6 overflow-y-auto flex items-center justify-center">
+          <div className="w-full max-w-7xl">
+            <Routes>
+              <Route path="/visualize/revenue" element={<RevenueWidget />} />
+              <Route path="/visualize/ride-status" element={<RideStatusWidget />} />
+              <Route path="/visualize/growth" element={<NetworkGrowthWidget />} />
+              <Route path="/visualize/acquisition" element={<AcquisitionChannelWidget />} />
+            </Routes>
+          </div>
         </div>
       </div>
     );

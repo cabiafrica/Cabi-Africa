@@ -1,19 +1,19 @@
 import 'package:flutter/foundation.dart';
 
 class AppConfig {
-  // Configurable via --dart-define=IS_PRODUCTION=true
-  static const bool isProduction = bool.fromEnvironment('IS_PRODUCTION', defaultValue: false);
+  // Configurable via --dart-define=IS_PRODUCTION=true, automatically true in release mode
+  static const bool isProduction = bool.fromEnvironment('IS_PRODUCTION', defaultValue: kReleaseMode);
   
   // Custom API host override via --dart-define=API_HOST=192.168.100.35
-  static const String customHost = String.fromEnvironment('API_HOST', defaultValue: '192.168.100.35');
+  static const String customHost = String.fromEnvironment('API_HOST', defaultValue: '');
 
   static String get host {
     if (kIsWeb) return 'localhost';
     if (isProduction) return 'auth-gateway-746659778850.us-central1.run.app';
     if (customHost.isNotEmpty) return customHost;
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return '192.168.100.35'; // Default to PC LAN IP for physical handset testing
-    }
+    // Physical devices with `adb reverse` + emulators with adb reverse: 127.0.0.1
+    // (adb reverse tcp:PORT tcp:PORT maps device localhost → host localhost)
+    if (defaultTargetPlatform == TargetPlatform.android) return '127.0.0.1';
     return '127.0.0.1';
   }
 

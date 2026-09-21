@@ -4,6 +4,7 @@ import 'package:driver_app/config/app_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:driver_app/theme/app_theme.dart';
 import '../providers/auth_provider.dart';
+import 'forgot_password_screen.dart';
 import 'main_shell.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -261,7 +262,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ],
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const ForgotPasswordScreen(),
+                                  ),
+                                );
+                              },
                               child: Text(
                                 'Forgot Password?',
                                 style: TextStyle(color: AppTheme.primaryColor.withValues(alpha: 0.8), fontSize: 12, fontWeight: FontWeight.bold),

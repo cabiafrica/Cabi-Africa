@@ -42,10 +42,13 @@ class RideService {
     try {
       final response = await _client.get(
         Uri.parse(
-            '$_dispatchBaseUrl/dispatch/rides/current?userId=$userId&role=$role'),
+            '$_dispatchBaseUrl/rides/current?userId=$userId&role=$role'),
       );
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+      if (response.statusCode == 200 && response.body.isNotEmpty && response.body.trim() != 'null') {
+        final decoded = jsonDecode(response.body);
+        if (decoded is Map<String, dynamic>) {
+          return decoded;
+        }
       }
     } catch (e) {
       debugPrint('Error fetching current ride: $e');
@@ -56,23 +59,24 @@ class RideService {
   // Complete a trip
   Future<double> completeTrip(String tripId) async {
     try {
-      final response = await _client.patch(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$tripId/complete'),
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/rides/$tripId/complete'),
+        headers: {'Content-Type': 'application/json'},
       );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        debugPrint('Trip $tripId completed via backend.');
-        
-        // Try to get actual fare from backend response
-        if (data['fare'] != null) {
-          return (data['fare'] as num).toDouble();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.body.isNotEmpty && response.body.trim() != 'null') {
+          final data = jsonDecode(response.body);
+          debugPrint('Trip $tripId completed via backend.');
+          
+          if (data['fare'] != null) {
+            return (data['fare'] as num).toDouble();
+          }
+          if (data['ride'] != null && data['ride']['fare'] != null) {
+            return (data['ride']['fare'] as num).toDouble();
+          }
         }
-        if (data['ride'] != null && data['ride']['fare'] != null) {
-          return (data['ride']['fare'] as num).toDouble();
-        }
-        
-        return 0.0; // Return 0 if no fare data found, UI should handle this
+        return 0.0;
       } else {
         debugPrint('Backend completeTrip failed: ${response.statusCode} - ${response.body}');
       }
@@ -85,7 +89,7 @@ class RideService {
   Future<void> acceptRide(String rideId, String driverId) async {
     try {
       final response = await _client.post(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/accept'),
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/accept'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'driverId': driverId}),
       );
@@ -103,10 +107,9 @@ class RideService {
 
   Future<void> startTrip(String rideId) async {
     try {
-      final response = await _client.patch(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/status'),
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/start'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'status': 'IN_PROGRESS'}),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -123,9 +126,9 @@ class RideService {
   Future<void> rejectRide(String rideId, String driverId,
       [String? reason]) async {
     try {
-      final body = jsonEncode({'status': 'CANCELLED'});
-      await _client.patch(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$rideId/status'),
+      final body = jsonEncode({'driverId': driverId, 'reason': reason});
+      await _client.post(
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/reject'),
         headers: {'Content-Type': 'application/json'},
         body: body,
       );
@@ -145,9 +148,9 @@ class RideService {
       {required String tripId, required double rating, String? comment}) async {
     try {
       await _client.post(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$tripId/rate'),
+        Uri.parse('$_dispatchBaseUrl/rides/$tripId/rate'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'rating': rating, 'comment': comment}),
+        body: jsonEncode({'rating': rating.round(), 'comment': comment}),
       );
       debugPrint('Ride $tripId rated $rating stars.');
     } catch (e) {
@@ -158,7 +161,7 @@ class RideService {
   Future<void> confirmCashPayment(String tripId, double amount) async {
     try {
       await _client.post(
-        Uri.parse('$_dispatchBaseUrl/dispatch/rides/$tripId/confirm-cash'),
+        Uri.parse('$_dispatchBaseUrl/rides/$tripId/confirm-cash'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'amount': amount}),
       );
@@ -179,6 +182,62 @@ class RideService {
     } catch (e) {
       debugPrint('Error updating location: $e');
     }
+  }
+
+  Future<void> passRide(String rideId, String driverId, [String? reason]) async {
+    try {
+      final body = jsonEncode({'driverId': driverId, 'reason': reason ?? 'Driver passed'});
+      await _client.post(
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/pass'),
+        headers: {'Content-Type': 'application/json'},
+        body: body,
+      );
+      debugPrint('Ride $rideId passed via backend. Reason: ${reason ?? "Driver passed"}');
+    } catch (e) {
+      debugPrint('Error passing ride: $e');
+    }
+  }
+
+  Future<bool> updateDriverPreferences(
+    String driverId, {
+    Map<String, dynamic>? preferredDestination,
+    List<Map<String, dynamic>>? excludedZones,
+  }) async {
+    try {
+      final Map<String, dynamic> body = {};
+      if (preferredDestination != null) {
+        body['preferredDestination'] = preferredDestination;
+      }
+      if (excludedZones != null) {
+        body['excludedZones'] = excludedZones;
+      }
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/rides/drivers/$driverId/preferences'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      debugPrint('Error updating driver preferences: $e');
+      return false;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getDemandHotspots() async {
+    try {
+      final response = await _client.get(
+        Uri.parse('$_dispatchBaseUrl/rides/demand-hotspots'),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data is Map<String, dynamic> && data['data'] is List) {
+          return List<Map<String, dynamic>>.from(data['data']);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching demand hotspots: $e');
+    }
+    return [];
   }
 }
 

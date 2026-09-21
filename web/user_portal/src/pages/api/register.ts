@@ -4,7 +4,11 @@ import formidable from 'formidable';
 import fs from 'fs';
 import FormData from 'form-data';
 
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3335/api';
+const BACKEND_URL =
+    process.env.BACKEND_URL ||
+    process.env.AUTH_GATEWAY_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    'https://auth-gateway-746659778850.us-central1.run.app/api';
 
 export const config = {
     api: {
@@ -49,7 +53,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (role === 'driver') endpoint = '/auth/register-driver';
         if (role === 'organization') endpoint = '/auth/register-organization';
 
-        const response = await axios.post(`${BACKEND_URL}${endpoint}`, backendFormData, {
+        const cleanBaseUrl = BACKEND_URL.replace(/\/+$/, '');
+        const targetUrl = cleanBaseUrl.endsWith('/api') ? `${cleanBaseUrl}${endpoint}` : `${cleanBaseUrl}/api${endpoint}`;
+
+        const response = await axios.post(targetUrl, backendFormData, {
             headers: {
                 ...backendFormData.getHeaders(),
             },

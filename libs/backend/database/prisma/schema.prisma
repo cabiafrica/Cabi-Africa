@@ -131,11 +131,16 @@ model DriverProfile {
   welfareEnrollments  WelfareEnrollment[]
   welfareDeductions   WelfareDeduction[]
 
-  // External Sacco integration
-  saccoEnrolled       Boolean              @default(false)
+  // External Sacco & Financial Services integration
+  saccoEnrolled       Boolean                  @default(false)
   saccoPartnerId      String?
   saccoEnrolledAt     DateTime?
-  saccoPartner        SaccoPartner?        @relation(fields: [saccoPartnerId], references: [id])
+  saccoPartner        SaccoPartner?            @relation(fields: [saccoPartnerId], references: [id])
+  financialConsents   DriverFinancialConsent[]
+
+  // Driver Destination Mode & Excluded Zones
+  preferredDestination Json?
+  excludedZones        Json?
 
   @@index([isOnline])
   @@index([referrerId])
@@ -335,6 +340,8 @@ model Ride {
   matchingStartedAt    DateTime?
   requestedVehicleType VehicleType?
   surgeMultiplier      Float?         @default(1.0)
+  passedDriverIds      String[]       @default([])
+  assignmentExpiresAt  DateTime?
   occurrences          Occurrence[]   @relation("RideOccurrences")
   stops                RideStop[]
   driver               DriverProfile? @relation("DriverRides", fields: [driverId], references: [id])
@@ -1283,26 +1290,92 @@ enum ClaimStatus {
 // ─── External Sacco Integration ────────────────────────────────────────────────
 
 model SaccoPartner {
-  id              String          @id @default(uuid())
+  id              String                  @id @default(uuid())
   name            String
   contactEmail    String
   apiBaseUrl      String?
   apiKey          String?
-  connectorType   ConnectorType   @default(REST_API)
-  isActive        Boolean         @default(false)
-  testMode        Boolean         @default(true)
-  logoUrl         String?
-  description     String?
-  website         String?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  enrolledDrivers DriverProfile[]
+  connectorType   ConnectorType           @default(REST_API)
+  serviceCategory    FinancialServiceType    @default(SACCO)
+  optOutNoticeMonths Int                     @default(1) // 1 (next month), 3 (3 months), 6 (6 months), 12 (1 year)
+  isActive           Boolean                 @default(false)
+  testMode           Boolean                 @default(true)
+  logoUrl            String?
+  description        String?
+  website            String?
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  enrolledDrivers    DriverProfile[]
+  consents           DriverFinancialConsent[]
 
   @@map("sacco_partners")
 }
+
 
 enum ConnectorType {
   REST_API
   WEBHOOK
   LEDGER_EXPORT
+}
+
+enum FinancialServiceType {
+  SACCO
+  INSURANCE_HEALTH
+  INSURANCE_VEHICLE
+  INSURANCE_LIFE
+  INVESTMENT_MMF
+  PENSION
+  CUSTOM
+}
+
+enum ConsentStatus {
+  ACTIVE
+  PENDING_OPT_OUT
+  REVOKED
+}
+
+enum IncentiveRuleType {
+  TENURE_DURATION
+  BADGE_TIER
+  TRIP_COUNT
+  RATING
+}
+
+model DriverFinancialConsent {
+  id                String               @id @default(uuid())
+  driverProfileId   String
+  partnerId         String
+  serviceType       FinancialServiceType @default(SACCO)
+  deductionPct      Decimal              @db.Decimal(5, 4) // e.g. 0.0200 = 2%
+  isConsented       Boolean              @default(true)
+  termsVersion      String
+  termsHash         String?
+  otpVerifiedAt     DateTime?
+  otpPhoneNumber    String?
+  optOutRequestedAt DateTime?
+  optOutEffectiveAt DateTime?            // Effective on 1st of next month cycle
+  status            ConsentStatus        @default(ACTIVE)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  driverProfile     DriverProfile        @relation(fields: [driverProfileId], references: [id])
+  partner           SaccoPartner         @relation(fields: [partnerId], references: [id])
+
+  @@unique([driverProfileId, partnerId])
+  @@index([driverProfileId, status])
+  @@map("driver_financial_consents")
+}
+
+model FinancialIncentiveRule {
+  id           String               @id @default(uuid())
+  name         String
+  serviceType  FinancialServiceType @default(SACCO)
+  ruleType     IncentiveRuleType    @default(TENURE_DURATION)
+  criteria     Json                 // e.g. { "badgeTier": "GOLD" } or { "maxTenureDays": 365 }
+  incentivePct Decimal              @db.Decimal(5, 4) // e.g. 0.0300 = 3%
+  isStackable  Boolean              @default(true)
+  isActive     Boolean              @default(true)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  @@map("financial_incentive_rules")
 }

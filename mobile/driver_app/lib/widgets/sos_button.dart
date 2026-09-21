@@ -1,128 +1,316 @@
 import 'package:flutter/material.dart';
+import 'package:driver_app/theme/app_theme.dart';
+import 'package:driver_app/screens/sos_alert_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SosButton extends StatefulWidget {
-  final VoidCallback onDistressSignal;
-  final VoidCallback onEmergencyParams;
+  final VoidCallback? onTriggered;
+  final VoidCallback? onDistressSignal;
+  final VoidCallback? onEmergencyParams;
+  final double size;
 
   const SosButton({
     super.key,
-    required this.onDistressSignal,
-    required this.onEmergencyParams,
+    this.onTriggered,
+    this.onDistressSignal,
+    this.onEmergencyParams,
+    this.size = 50.0,
   });
 
   @override
   State<SosButton> createState() => _SosButtonState();
 }
 
-class _SosButtonState extends State<SosButton> {
-  // Triple tap logic
-  int _tapCount = 0;
-  DateTime? _lastTapTime;
+class _SosButtonState extends State<SosButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
+  late Animation<double> _fadeAnimation;
 
-  // Slide logic - Vertical slide UP
-  double _dragValue = 0.0;
-  static const double _maxSlide = 60.0; // Distance to slide up
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1600),
+    )..repeat();
 
-  void _handleTap() {
-    final now = DateTime.now();
-    if (_lastTapTime == null ||
-        now.difference(_lastTapTime!) > const Duration(seconds: 1)) {
-      _tapCount = 1;
-    } else {
-      _tapCount++;
-    }
-    _lastTapTime = now;
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.35).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeOutQuad),
+    );
 
-    if (_tapCount >= 3) {
-      widget.onEmergencyParams();
-      _tapCount = 0;
-    }
-  }
-
-  void _onVerticalDragUpdate(DragUpdateDetails details) {
-    // details.primaryDelta is negative when dragging UP
-    setState(() {
-      // Clamp between 0 (bottom) and _maxSlide (top)
-      // Dragging up increases the "progress" visually, but delta y is negative
-      double delta = -details.delta.dy;
-      _dragValue = (_dragValue + delta).clamp(0.0, _maxSlide);
-    });
-  }
-
-  void _onVerticalDragEnd(DragEndDetails details) {
-    if (_dragValue >= _maxSlide * 0.8) {
-      // Threshold reached for distress signal
-      widget.onDistressSignal();
-    }
-
-    // Animate back to bottom
-    // For simplicity in a short snippet, we just reset state.
-    // Ideally use AnimationController for smooth return
-    setState(() {
-      _dragValue = 0.0;
-    });
+    _fadeAnimation = Tween<double>(begin: 0.5, end: 0.0).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeOutQuad),
+    );
   }
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 60 + _maxSlide, // Room to slide up
-      width: 60,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          // Background track (optional visual cue)
-          Container(
-            height: 60 + _maxSlide,
-            width: 4,
-            decoration: BoxDecoration(
-              color: Colors.red.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
 
-          // The Button
-          Positioned(
-            bottom: _dragValue,
-            child: GestureDetector(
-              onTap: _handleTap,
-              onVerticalDragUpdate: _onVerticalDragUpdate,
-              onVerticalDragEnd: _onVerticalDragEnd,
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                    color: const Color(0xFFD32F2F), // Red
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 10,
-                          spreadRadius: 1,
-                          offset: const Offset(0, 5))
-                    ]),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.sos, color: Colors.white, size: 24),
-                      if (_dragValue > 10) // Hide text when sliding up
-                        const SizedBox.shrink()
-                      else
-                        const Text("SOS",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold))
-                    ],
+  void _handleTap() {
+    if (widget.onTriggered != null) {
+      widget.onTriggered!();
+      return;
+    }
+    _showEmergencySafetyModal(context);
+  }
+
+  void _showEmergencySafetyModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) => Container(
+        padding: EdgeInsets.fromLTRB(
+          24,
+          20,
+          24,
+          MediaQuery.of(ctx).padding.bottom + 20,
+        ),
+        decoration: BoxDecoration(
+          color: const Color(0xFF161616),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          border: Border.all(
+            color: AppTheme.errorRed.withValues(alpha: 0.4),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.errorRed.withValues(alpha: 0.2),
+              blurRadius: 30,
+              offset: const Offset(0, -6),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 44,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppTheme.errorRed.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: AppTheme.errorRed.withValues(alpha: 0.5),
+                  width: 2,
+                ),
+              ),
+              child: const Icon(
+                Icons.emergency_rounded,
+                color: AppTheme.errorRed,
+                size: 36,
+              ),
+            ),
+            const SizedBox(height: 14),
+            const Text(
+              'EMERGENCY SOS DISPATCH',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: 18,
+                letterSpacing: 1.2,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Are you in immediate danger? Cabi Africa Safety & Response Operations Center is on standby 24/7.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey.shade400,
+                fontSize: 13,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Primary Emergency Alert Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  widget.onDistressSignal?.call();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SosAlertScreen(alertData: {}),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.shield_rounded, color: Colors.white, size: 20),
+                label: const Text(
+                  'BROADCAST DISTRESS ALERT',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.0,
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.errorRed,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  elevation: 4,
+                  shadowColor: AppTheme.errorRed.withValues(alpha: 0.5),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Call Police Button
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () async {
+                  Navigator.pop(ctx);
+                  final Uri phoneUri = Uri(scheme: 'tel', path: '999');
+                  if (await canLaunchUrl(phoneUri)) {
+                    await launchUrl(phoneUri);
+                  }
+                },
+                icon: const Icon(Icons.phone_in_talk_rounded, color: Colors.white, size: 18),
+                label: const Text(
+                  'CALL POLICE (999 / 112)',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 13.5,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(
+                'Cancel / False Alarm',
+                style: TextStyle(
+                  color: Colors.grey.shade400,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-}
 
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _pulseController,
+      builder: (context, child) {
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            // Pulse wave ring
+            Transform.scale(
+              scale: _pulseAnimation.value,
+              child: Container(
+                width: widget.size,
+                height: widget.size,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.errorRed.withValues(
+                    alpha: _fadeAnimation.value,
+                  ),
+                  border: Border.all(
+                    color: AppTheme.errorRed.withValues(
+                      alpha: _fadeAnimation.value * 1.5,
+                    ),
+                    width: 1.5,
+                  ),
+                ),
+              ),
+            ),
+            // Main SOS Button
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: _handleTap,
+                customBorder: const CircleBorder(),
+                child: Ink(
+                  width: widget.size,
+                  height: widget.size,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFFEF4444),
+                        Color(0xFF991B1B),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.95),
+                      width: 1.8,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFDC2626).withValues(alpha: 0.45),
+                        blurRadius: 10,
+                        spreadRadius: 1,
+                        offset: const Offset(0, 3),
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.35),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.shield_rounded,
+                          color: Colors.white,
+                          size: 15,
+                        ),
+                        SizedBox(height: 1),
+                        Text(
+                          'SOS',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.8,
+                            height: 1.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}

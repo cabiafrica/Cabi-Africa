@@ -30,7 +30,9 @@
     "admin:verify": "node scripts/verify-admin-final.js",
     "db:clean": "ts-node scripts/clean_data.ts",
     "db:seed-roles": "ts-node scripts/seed_roles.ts",
-    "mobile:build:android": "cd mobile && flutter build apk --release && mkdir -p ../dist/mobile && cp build/app/outputs/flutter-apk/app-release.apk ../dist/mobile/Cabi-Africa-Latest.apk"
+    "mobile:build:prod": "powershell -ExecutionPolicy Bypass -File scripts/build-mobile-release.ps1",
+    "mobile:build:bundle": "powershell -ExecutionPolicy Bypass -File scripts/build-mobile-release.ps1 -BuildAppBundle",
+    "mobile:build:android": "powershell -ExecutionPolicy Bypass -File scripts/build-mobile-release.ps1"
   },
   "private": true,
   "dependencies": {
