@@ -11,9 +11,9 @@ class AppConfig {
     if (kIsWeb) return 'localhost';
     if (isProduction) return 'auth-gateway-746659778850.us-central1.run.app';
     if (customHost.isNotEmpty) return customHost;
-    // Physical devices with `adb reverse` + emulators with adb reverse: 127.0.0.1
-    // (adb reverse tcp:PORT tcp:PORT maps device localhost → host localhost)
-    if (defaultTargetPlatform == TargetPlatform.android) return '127.0.0.1';
+    // Android emulators use 10.0.2.2 to reach host localhost.
+    // For physical devices with adb reverse: use 127.0.0.1 (set via API_HOST dart-define).
+    if (defaultTargetPlatform == TargetPlatform.android) return '10.0.2.2';
     return '127.0.0.1';
   }
 

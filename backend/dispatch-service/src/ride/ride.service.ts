@@ -310,9 +310,9 @@ export class RideService implements OnModuleInit {
     const ride = await this.prisma.ride.findUnique({ where: { id: rideId } });
     if (!ride) throw new NotFoundException('Ride not found');
 
-    // Check if ride is available
-    if (ride.status !== 'REQUESTED' && ride.status !== 'DRIVER_ASSIGNED' && ride.status !== 'MATCHING') {
-      throw new Error('Ride is not available');
+    // Check if ride is in an acceptable state
+    if (!['REQUESTED', 'DRIVER_ASSIGNED', 'MATCHING'].includes(ride.status)) {
+      throw new Error(`Ride is not available for acceptance (current status: ${ride.status})`);
     }
 
     // Fetch driver with vehicle information (support both driverProfile.id and user.id)
@@ -336,18 +336,26 @@ export class RideService implements OnModuleInit {
       }
     }
 
+    // Remove this driver from passedDriverIds if present due to timeout race condition
+    // (driver accepts slightly after 20s window, which erroneously marks them as passed)
+    const currentPassed: string[] = (ride as any).passedDriverIds || [];
+    const cleanedPassed = currentPassed.filter(id => id !== driver.id && id !== driverId);
+
     const updatedRide = await this.prisma.ride.update({
       where: { id: rideId },
       data: {
         driverId: driver.id,
         status: 'DRIVER_ASSIGNED',
         assignmentExpiresAt: null, // Clear countdown once accepted
-      },
+        passedDriverIds: cleanedPassed, // Clean up race-condition entries
+      } as any,
       include: { passenger: true, driver: true }
     });
 
     // Reset consecutive missed qualifying trips on acceptance
     this.driverMissedQualifyingMap.delete(driver.id);
+
+    this.logger.log(`Ride ${rideId} accepted by driver ${driver.id}.`);
 
     // Notify passenger
     this.notificationService.sendNotification({
@@ -601,16 +609,23 @@ export class RideService implements OnModuleInit {
     const ride = await this.prisma.ride.findUnique({ where: { id: rideId } });
     if (!ride) throw new NotFoundException('Ride not found');
 
+    // Guard: only allow starting a ride that has been assigned or driver has arrived
+    if (!['DRIVER_ASSIGNED', 'DRIVER_ARRIVED'].includes(ride.status)) {
+      throw new Error(`Cannot start ride in status: ${ride.status}. Must be DRIVER_ASSIGNED or DRIVER_ARRIVED.`);
+    }
+
     const updatedRide = await this.prisma.ride.update({
       where: { id: rideId },
       data: { status: 'IN_PROGRESS' }
     });
 
+    this.logger.log(`Ride ${rideId} started (IN_PROGRESS).`);
+
     // Notify passenger
     this.notificationService.sendNotification({
       userId: ride.passengerId,
       title: 'Ride Started',
-      body: `You are on your way to destination.`
+      body: `You are on your way to your destination.`
     });
 
     return updatedRide;
@@ -622,9 +637,27 @@ export class RideService implements OnModuleInit {
       throw new NotFoundException('Ride not found');
     }
 
-    // Calculate final fare (Simplified)
-    // In real app, we check actual distance/time from GPS logs
-    // Using mock base fare + wait time
+    // Guard: only allow completing a ride that is IN_PROGRESS
+    if (ride.status !== 'IN_PROGRESS') {
+      throw new Error(`Cannot complete ride in status: ${ride.status}. Must be IN_PROGRESS.`);
+    }
+
+    // Estimate distance from pickup→dropoff using Haversine (real GPS logs would replace this)
+    const pickup = ride.pickupLocation as any;
+    const dropoff = ride.dropoffLocation as any;
+    let estimatedDistanceKm = 0;
+    if (pickup?.lat && pickup?.lng && dropoff?.lat && dropoff?.lng) {
+      const R = 6371; // Earth radius in km
+      const dLat = ((dropoff.lat - pickup.lat) * Math.PI) / 180;
+      const dLon = ((dropoff.lng - pickup.lng) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos((pickup.lat * Math.PI) / 180) *
+          Math.cos((dropoff.lat * Math.PI) / 180) *
+          Math.sin(dLon / 2) ** 2;
+      estimatedDistanceKm = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
     const baseFare = Number(ride.fare) || 350.0;
     // We would need to store `totalWaitTimeFee` somewhere. 
     // The previous mock had it on the object. The schema has `fare` but maybe we need more fields.
@@ -654,7 +687,8 @@ export class RideService implements OnModuleInit {
       where: { id: rideId },
       data: {
         status: 'COMPLETED',
-        fare: finalFare
+        fare: finalFare,
+        distance: estimatedDistanceKm > 0 ? estimatedDistanceKm : undefined,
       }
     });
 
