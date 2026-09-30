@@ -1,3 +1,4 @@
+// CABI Africa - Driver App Root Build Configuration
 allprojects {
     repositories {
         google()

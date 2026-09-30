@@ -52,7 +52,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   double _hudTopFraction = 0.45;
   bool _hudMinimised = false;
 
-  void _showAutoOfflineNotice() {
+  void showAutoOfflineNotice() {
     if (!mounted) return;
     showDialog(
       context: context,
@@ -100,6 +100,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   LatLng? _preferredDestinationLatLng;
   bool _isDestinationModeActive = false;
   final Set<String> _excludedZones = {};
+
+  void _updateState(VoidCallback fn) {
+    if (mounted) setState(fn);
+  }
 
   double _calculateZoomForRadius(double radiusKm) {
     final clamped = radiusKm.clamp(1.0, 5.0);
@@ -2193,13 +2197,13 @@ extension _FavouritePlacesUI on _HomeScreenState {
                       },
                       onTap: () {
                         if (isActive) {
-                          setState(() {
+                          _updateState(() {
                             _isDestinationModeActive = false;
                             _preferredDestinationName = null;
                             _preferredDestinationLatLng = null;
                           });
                         } else {
-                          setState(() {
+                          _updateState(() {
                             _isDestinationModeActive = true;
                             _preferredDestinationName = label;
                             _preferredDestinationLatLng = null;
