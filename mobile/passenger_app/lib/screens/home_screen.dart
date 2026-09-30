@@ -30,6 +30,7 @@ import '../providers/providers.dart';
 import '../widgets/security_verification_modal.dart';
 import '../widgets/sos_button.dart';
 import '../services/audio_notification_service.dart';
+import '../services/passenger_biometric_service.dart';
 part 'home_screen_panels.dart';
 part 'home_screen_logic.dart';
 

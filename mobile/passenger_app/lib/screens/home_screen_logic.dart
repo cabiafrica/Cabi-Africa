@@ -604,30 +604,38 @@ extension _HomeScreenLogic on _HomeScreenState {
     // Use persistent guest ID for unauthenticated requests
     userId ??= '00000000-0000-0000-0000-000000000000';
 
-    // 1. Mandatory Identity & Passenger Verification Gate (Enforced for all ride requests)
-    final user = (authState is Authenticated) ? authState.user : null;
-    final userPhone = user?['phone']?.toString();
-    final userName = user?['firstName'] != null
-        ? "${user?['firstName']} ${user?['lastName'] ?? ''}".trim()
-        : user?['name']?.toString();
+    // 1. One-Time Identity & Passenger Biometric Gate (Configured on install)
+    final isBiometricConfigured = await PassengerBiometricService.isConfigured();
+    bool verified = isBiometricConfigured;
+    VerificationMethod chosenMethod = isBiometricConfigured
+        ? PassengerBiometricService.methodFromString(await PassengerBiometricService.getPreferredMethod())
+        : VerificationMethod.face;
 
-    bool verified = false;
-    VerificationMethod chosenMethod = VerificationMethod.face;
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      enableDrag: false,
-      builder: (context) => SecurityVerificationModal(
-        onVerified: () => verified = true,
-        onVerifiedDetails: (method, selfie) {
-          verified = true;
-          chosenMethod = method;
-        },
-        userPhone: userPhone,
-        userName: userName,
-      ),
-    );
+    if (!isBiometricConfigured) {
+      final user = (authState is Authenticated) ? authState.user : null;
+      final userPhone = user?['phone']?.toString();
+      final userName = user?['firstName'] != null
+          ? "${user?['firstName']} ${user?['lastName'] ?? ''}".trim()
+          : user?['name']?.toString();
+
+      if (!mounted) return;
+      await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        enableDrag: false,
+        builder: (context) => SecurityVerificationModal(
+          isFirstTimeSetup: true,
+          onVerified: () => verified = true,
+          onVerifiedDetails: (method, selfie) {
+            verified = true;
+            chosenMethod = method;
+          },
+          userPhone: userPhone,
+          userName: userName,
+        ),
+      );
+    }
 
     if (!verified) {
       _updateState(() {

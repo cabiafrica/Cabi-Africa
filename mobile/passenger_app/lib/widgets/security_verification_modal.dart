@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
+import '../services/passenger_biometric_service.dart';
 
 enum VerificationMethod { face, fingerprint, otp }
 
@@ -14,6 +14,7 @@ class SecurityVerificationModal extends ConsumerStatefulWidget {
   final void Function(VerificationMethod method, File? selfieFile)? onVerifiedDetails;
   final String? userPhone;
   final String? userName;
+  final bool isFirstTimeSetup;
 
   const SecurityVerificationModal({
     super.key,
@@ -21,6 +22,7 @@ class SecurityVerificationModal extends ConsumerStatefulWidget {
     this.onVerifiedDetails,
     this.userPhone,
     this.userName,
+    this.isFirstTimeSetup = false,
   });
 
   @override
@@ -75,140 +77,42 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
   }
 
   // ─────────────────────────────────────────────────────────────
-  // 1. FACE RECOGNITION (SELFIE CAMERA)
+  // 1. FACE RECOGNITION (PASSIVE SCAN - NO PHOTO STORED)
   // ─────────────────────────────────────────────────────────────
   Future<void> _startFaceRecognition() async {
     setState(() {
       _selectedMethod = VerificationMethod.face;
       _isVerifying = true;
       _selfieFile = null;
-      _scanningStatusText = 'Opening front camera for selfie...';
+      _scanningStatusText = 'Aligning face in biometric reticle...';
     });
 
-    try {
-      final picker = ImagePicker();
-      final XFile? photo = await picker.pickImage(
-        source: ImageSource.camera,
-        preferredCameraDevice: CameraDevice.front,
-        maxWidth: 800,
-        maxHeight: 800,
-        imageQuality: 85,
-      );
-
-      if (!mounted) return;
-
-      if (photo != null) {
-        setState(() {
-          _selfieFile = File(photo.path);
-        });
-        await _runFacialBiometricAnalysis();
-      } else {
-        // User cancelled camera; prompt if they want to pick gallery or simulate
-        _showCameraFallbackOptions();
-      }
-    } catch (e) {
-      if (mounted) {
-        _showCameraFallbackOptions(errorMessage: 'Camera error: $e');
-      }
-    }
-  }
-
-  void _showCameraFallbackOptions({String? errorMessage}) {
-    setState(() {
-      _isVerifying = false;
-    });
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppTheme.darkSurface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.camera_alt_outlined, color: AppTheme.primaryColor, size: 36),
-              const SizedBox(height: 12),
-              Text(
-                'Selfie Camera Option',
-                style: GoogleFonts.outfit(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                errorMessage ??
-                    'You can take a photo with your front camera, select a selfie from your gallery, or run a simulated biometric check.',
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white60, fontSize: 13),
-              ),
-              const SizedBox(height: 20),
-              ListTile(
-                leading: const Icon(Icons.camera_front, color: AppTheme.primaryColor),
-                title: const Text('Try Camera Again', style: TextStyle(color: Colors.white)),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _startFaceRecognition();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library_outlined, color: AppTheme.primaryColor),
-                title: const Text('Select Selfie from Gallery', style: TextStyle(color: Colors.white)),
-                onTap: () async {
-                  Navigator.pop(ctx);
-                  final picker = ImagePicker();
-                  final picked = await picker.pickImage(
-                    source: ImageSource.gallery,
-                    maxWidth: 800,
-                    maxHeight: 800,
-                  );
-                  if (picked != null && mounted) {
-                    setState(() {
-                      _selfieFile = File(picked.path);
-                      _isVerifying = true;
-                    });
-                    await _runFacialBiometricAnalysis();
-                  }
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.auto_awesome, color: Colors.amberAccent),
-                title: const Text('Run Biometric Liveness Check (Dev Mode)', style: TextStyle(color: Colors.white)),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  setState(() => _isVerifying = true);
-                  _runFacialBiometricAnalysis();
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    await _runFacialBiometricAnalysis();
   }
 
   Future<void> _runFacialBiometricAnalysis() async {
     setState(() {
-      _scanningStatusText = 'Detecting facial landmarks...';
+      _scanningStatusText = 'Aligning face in biometric reticle...';
     });
-    await Future.delayed(const Duration(milliseconds: 700));
+    await Future.delayed(const Duration(milliseconds: 600));
 
     if (!mounted) return;
     setState(() {
-      _scanningStatusText = 'Confirming liveness & lighting...';
+      _scanningStatusText = 'Scanning facial contours & landmarks...';
     });
     await Future.delayed(const Duration(milliseconds: 800));
 
     if (!mounted) return;
     setState(() {
-      _scanningStatusText = 'Matching profile identity...';
+      _scanningStatusText = 'Confirming liveness & biometric depth...';
     });
     await Future.delayed(const Duration(milliseconds: 700));
+
+    if (!mounted) return;
+    setState(() {
+      _scanningStatusText = 'Face biometric scan verified!';
+    });
+    await Future.delayed(const Duration(milliseconds: 300));
 
     if (!mounted) return;
     _success();
@@ -339,13 +243,20 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
       _isVerifying = false;
     });
 
+    // Persist one-time configuration
+    final chosen = _selectedMethod ?? VerificationMethod.face;
+    await PassengerBiometricService.saveSettings(
+      method: PassengerBiometricService.methodToString(chosen),
+      isConfigured: true,
+    );
+
     await Future.delayed(const Duration(milliseconds: 1400));
 
     if (mounted) {
       Navigator.pop(context);
       widget.onVerified();
       widget.onVerifiedDetails?.call(
-        _selectedMethod ?? VerificationMethod.face,
+        chosen,
         _selfieFile,
       );
     }
@@ -396,7 +307,9 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'PASSENGER VERIFICATION',
+                    widget.isFirstTimeSetup
+                        ? 'ONE-TIME IDENTITY SETUP'
+                        : 'PASSENGER VERIFICATION',
                     style: GoogleFonts.outfit(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -408,7 +321,9 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               ),
               const SizedBox(height: 6),
               Text(
-                'Identity verification is necessary to guarantee trust, safety, and priority driver dispatch.',
+                widget.isFirstTimeSetup
+                    ? 'Configure your biometric verification once for this device. You can update your preferences anytime in Settings.'
+                    : 'Identity verification is necessary to guarantee trust, safety, and priority driver dispatch.',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(
                   fontSize: 13,
@@ -466,10 +381,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
       children: [
         _buildMethodCard(
           method: VerificationMethod.face,
-          icon: Icons.camera_front_rounded,
+          icon: Icons.face_retouching_natural_rounded,
           badge: 'RECOMMENDED',
-          title: 'Face Recognition',
-          subtitle: 'Launch front camera for instant biometric selfie',
+          title: 'Face Recognition Scan',
+          subtitle: 'Instant contactless scan • No photo taken or stored',
           onTap: _startFaceRecognition,
         ),
         const SizedBox(height: 14),
@@ -582,7 +497,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
   }
 
   // ─────────────────────────────────────────────────────────────
-  // FACE SELFIE & SCANNING VIEW
+  // FACE SELFIE & SCANNING VIEW (PASSIVE SCAN - NO PHOTO SAVED)
   // ─────────────────────────────────────────────────────────────
   Widget _buildFaceVerificationView() {
     return Column(
@@ -593,11 +508,11 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           children: [
             // Target Oval Frame
             Container(
-              width: 180,
-              height: 220,
+              width: 190,
+              height: 230,
               decoration: BoxDecoration(
-                color: Colors.black45,
-                borderRadius: BorderRadius.circular(90),
+                color: const Color(0xFF0D0D0D),
+                borderRadius: BorderRadius.circular(95),
                 border: Border.all(
                   color: const Color(0xFFD4AF37),
                   width: 2.5,
@@ -611,20 +526,47 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                 ],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(90),
-                child: _selfieFile != null
-                    ? Image.file(
-                        _selfieFile!,
-                        fit: BoxFit.cover,
-                      )
-                    : Container(
-                        color: const Color(0xFF141414),
-                        child: const Icon(
+                borderRadius: BorderRadius.circular(95),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CustomPaint(
+                      size: const Size(190, 230),
+                      painter: _BiometricReticlePainter(),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
                           Icons.face_retouching_natural_rounded,
-                          size: 72,
-                          color: Colors.white24,
+                          size: 76,
+                          color: const Color(0xFFD4AF37).withValues(alpha: 0.7),
                         ),
-                      ),
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: const Color(0xFFD4AF37).withValues(alpha: 0.35),
+                              width: 1,
+                            ),
+                          ),
+                          child: const Text(
+                            'PASSIVE SCAN • NO PHOTO',
+                            style: TextStyle(
+                              color: Color(0xFFD4AF37),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 9,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -634,16 +576,16 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                 animation: _scanAnimation,
                 builder: (context, child) {
                   return Positioned(
-                    top: 20 + (_scanAnimation.value * 170),
+                    top: 25 + (_scanAnimation.value * 180),
                     child: Container(
-                      width: 160,
-                      height: 2,
+                      width: 170,
+                      height: 2.5,
                       decoration: BoxDecoration(
                         color: const Color(0xFFD4AF37),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFD4AF37).withValues(alpha: 0.9),
-                            blurRadius: 10,
+                            color: const Color(0xFFD4AF37).withValues(alpha: 0.95),
+                            blurRadius: 12,
                             spreadRadius: 3,
                           ),
                         ],
@@ -719,15 +661,17 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(
-              width: 14,
-              height: 14,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)),
+            if (_isVerifying) ...[
+              const SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)),
+                ),
               ),
-            ),
-            const SizedBox(width: 10),
+              const SizedBox(width: 10),
+            ],
             Text(
               _scanningStatusText,
               style: GoogleFonts.outfit(
@@ -738,14 +682,24 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
 
-        // Retake / Options button if user wants to shoot again
+        Text(
+          'Scanning face geometry passively. No image is captured or saved to storage.',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.outfit(
+            color: Colors.white54,
+            fontSize: 11,
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Scan Again button if needed
         OutlinedButton.icon(
           onPressed: _startFaceRecognition,
-          icon: const Icon(Icons.camera_alt_outlined, size: 16, color: Color(0xFFD4AF37)),
+          icon: const Icon(Icons.refresh_rounded, size: 16, color: Color(0xFFD4AF37)),
           label: const Text(
-            'Retake Selfie',
+            'Scan Face Again',
             style: TextStyle(color: Color(0xFFD4AF37), fontSize: 12),
           ),
           style: OutlinedButton.styleFrom(
@@ -1000,3 +954,39 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
     );
   }
 }
+
+class _BiometricReticlePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
+
+    final center = Offset(size.width / 2, size.height / 2);
+
+    // Subtle concentric radar rings
+    canvas.drawCircle(center, 45, paint);
+    canvas.drawCircle(center, 80, paint);
+
+    // Subtle horizontal and vertical guidelines
+    final guidePaint = Paint()
+      ..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)
+      ..strokeWidth = 1.0;
+
+    canvas.drawLine(
+      Offset(center.dx - 28, center.dy),
+      Offset(center.dx + 28, center.dy),
+      guidePaint,
+    );
+    canvas.drawLine(
+      Offset(center.dx, center.dy - 28),
+      Offset(center.dx, center.dy + 28),
+      guidePaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+

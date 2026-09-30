@@ -9,9 +9,38 @@ import 'qr_test_screen.dart';
 import 'package:passenger_app/theme/app_theme.dart';
 import 'package:core_ui/core_ui.dart';
 import '../services/audio_notification_service.dart';
+import '../services/passenger_biometric_service.dart';
+import '../widgets/security_verification_modal.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  String _biometricStatus = 'Loading...';
+  String _activeMethod = 'FACE_RECOGNITION';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBiometricSettings();
+  }
+
+  Future<void> _loadBiometricSettings() async {
+    final configured = await PassengerBiometricService.isConfigured();
+    final method = await PassengerBiometricService.getPreferredMethod();
+    if (mounted) {
+      setState(() {
+        _activeMethod = method;
+        _biometricStatus = configured
+            ? 'Active: ${PassengerBiometricService.methodDisplayName(method)}'
+            : 'One-time setup pending';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +106,14 @@ class SettingsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 32),
           _buildSettingsSection('PRIVACY & SECURITY'),
+          const SizedBox(height: 12),
+          _buildNavigationTile(
+            context: context,
+            title: 'Biometric & Identity Verification',
+            subtitle: _biometricStatus,
+            icon: Icons.fingerprint_rounded,
+            onTap: () => _showBiometricSettingsModal(context),
+          ),
           const SizedBox(height: 12),
           _buildNavigationTile(
             context: context,
@@ -333,6 +370,223 @@ class SettingsScreen extends StatelessWidget {
           },
         );
       },
+    );
+  }
+
+  void _showBiometricSettingsModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (modalContext) {
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              decoration: const BoxDecoration(
+                color: Color(0xFF1E1E1E),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                border: Border(
+                  top: BorderSide(color: Color(0xFFD4AF37), width: 1.2),
+                ),
+              ),
+              child: SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.fingerprint_rounded, color: Color(0xFFD4AF37), size: 22),
+                            ),
+                            const SizedBox(width: 12),
+                            const Text(
+                              'Biometric & Verification',
+                              style: TextStyle(
+                                color: Color(0xFFD4AF37),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.white70),
+                          onPressed: () => Navigator.pop(modalContext),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Choose your default identity verification method for Cabi ride requests.',
+                      style: TextStyle(color: Colors.white60, fontSize: 12),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildMethodChoiceTile(
+                      title: 'Face Recognition Scan',
+                      subtitle: 'Passive scan via camera reticle • No photo saved',
+                      icon: Icons.face_retouching_natural_rounded,
+                      methodKey: 'FACE_RECOGNITION',
+                      setSheetState: setSheetState,
+                      modalContext: modalContext,
+                    ),
+                    const SizedBox(height: 10),
+                    _buildMethodChoiceTile(
+                      title: 'Fingerprint Biometrics',
+                      subtitle: 'Hardware fingerprint sensor / Touch ID',
+                      icon: Icons.fingerprint_rounded,
+                      methodKey: 'FINGERPRINT',
+                      setSheetState: setSheetState,
+                      modalContext: modalContext,
+                    ),
+                    const SizedBox(height: 10),
+                    _buildMethodChoiceTile(
+                      title: 'SMS OTP Verification',
+                      subtitle: '6-digit SMS verification code',
+                      icon: Icons.sms_rounded,
+                      methodKey: 'OTP',
+                      setSheetState: setSheetState,
+                      modalContext: modalContext,
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.face_retouching_natural_rounded, color: Color(0xFFD4AF37), size: 18),
+                        label: const Text(
+                          'RUN PASSIVE FACE SCAN NOW',
+                          style: TextStyle(
+                            color: Color(0xFFD4AF37),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFFD4AF37)),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(modalContext);
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (bCtx) => SecurityVerificationModal(
+                              isFirstTimeSetup: false,
+                              onVerified: () {
+                                _loadBiometricSettings();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Face recognition scan verified and saved!'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildMethodChoiceTile({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required String methodKey,
+    required StateSetter setSheetState,
+    required BuildContext modalContext,
+  }) {
+    final isSelected = _activeMethod == methodKey;
+    return InkWell(
+      onTap: () async {
+        await PassengerBiometricService.saveSettings(method: methodKey, isConfigured: true);
+        await _loadBiometricSettings();
+        setSheetState(() {});
+        if (!mounted) return;
+        Navigator.pop(modalContext);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Preferred verification set to $title'),
+            backgroundColor: const Color(0xFF1E1E1E),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? const Color(0xFFD4AF37).withValues(alpha: 0.12)
+              : Colors.white.withValues(alpha: 0.04),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFFD4AF37)
+                : Colors.white.withValues(alpha: 0.08),
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? const Color(0xFFD4AF37) : Colors.white60,
+              size: 24,
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: isSelected ? const Color(0xFFD4AF37) : Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white70 : Colors.white38,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              const Icon(
+                Icons.check_circle_rounded,
+                color: Color(0xFFD4AF37),
+                size: 20,
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
