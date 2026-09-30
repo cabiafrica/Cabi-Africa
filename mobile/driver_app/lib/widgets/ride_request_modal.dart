@@ -7,7 +7,6 @@ import '../screens/trip_in_progress_screen.dart';
 import 'package:driver_app/widgets/badge_showcase_widget.dart';
 import 'package:driver_app/services/badge_service.dart' as badge_service;
 import '../services/audio_notification_service.dart';
-import '../theme/app_theme.dart';
 
 class RideRequestModal extends StatelessWidget {
   final Map<String, dynamic> requestData;
