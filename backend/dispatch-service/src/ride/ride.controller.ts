@@ -30,6 +30,10 @@ class CreateRideDto {
   @IsString()
   @IsOptional()
   verificationMethod?: string;
+
+  @IsString()
+  @IsOptional()
+  preferredPublicName?: string;
 }
 
 class AcceptRideDto {
@@ -120,6 +124,11 @@ export class RideController {
   @Post(':id/accept')
   acceptRide(@Param('id') id: string, @Body() body: AcceptRideDto) {
     return this.rideService.acceptRide(id, body.driverId);
+  }
+
+  @Post(':id/arrive')
+  arriveAtPickup(@Param('id') id: string) {
+    return this.rideService.arriveDriver(id);
   }
 
   @Post(':id/start')

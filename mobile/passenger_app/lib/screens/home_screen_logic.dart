@@ -395,7 +395,7 @@ extension _HomeScreenLogic on _HomeScreenState {
         AudioNotificationService.instance.play('driver_matched');
         _startArrivalTimer();
       }
-    } else if (status == 'ARRIVED') {
+    } else if (status == 'ARRIVED' || status == 'DRIVER_ARRIVED') {
       _searchCountdownTimer?.cancel();
       if (_tripStatus != TripStatus.arrived) {
         _tripStatus = TripStatus.arrived;

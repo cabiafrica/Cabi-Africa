@@ -106,21 +106,33 @@ class AudioNotificationService {
         case 'driver_accepted':
         case 'driver_arrived':
         case 'trip_started':
+          await SystemSound.play(SystemSoundType.click);
           await SystemSound.play(SystemSoundType.alert);
           await HapticFeedback.mediumImpact();
+          await Future.delayed(const Duration(milliseconds: 140));
+          await SystemSound.play(SystemSoundType.click);
+          await HapticFeedback.heavyImpact();
           break;
 
         case 'driver_request_incoming':
+          await SystemSound.play(SystemSoundType.click);
           await SystemSound.play(SystemSoundType.alert);
           await HapticFeedback.heavyImpact();
-          await Future.delayed(const Duration(milliseconds: 250));
+          await Future.delayed(const Duration(milliseconds: 180));
+          await SystemSound.play(SystemSoundType.click);
+          await Future.delayed(const Duration(milliseconds: 180));
+          await SystemSound.play(SystemSoundType.click);
           await HapticFeedback.heavyImpact();
           break;
 
         case 'trip_ended':
+          await SystemSound.play(SystemSoundType.click);
           await SystemSound.play(SystemSoundType.alert);
           await HapticFeedback.selectionClick();
-          await Future.delayed(const Duration(milliseconds: 150));
+          await Future.delayed(const Duration(milliseconds: 120));
+          await SystemSound.play(SystemSoundType.click);
+          await Future.delayed(const Duration(milliseconds: 120));
+          await SystemSound.play(SystemSoundType.click);
           await HapticFeedback.mediumImpact();
           break;
 
