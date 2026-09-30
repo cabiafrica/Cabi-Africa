@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'vehicle_account_screen.dart';
 
 class VehiclesScreen extends StatefulWidget {
   const VehiclesScreen({super.key});
@@ -199,6 +200,39 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                           ],
                         ),
                         const SizedBox(height: 16),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (ctx) => VehicleAccountScreen(
+                                    vehicleData: vehicle,
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.stars_rounded, color: Colors.black, size: 18),
+                            label: const Text(
+                              'CAR ACCOUNT & INCENTIVES',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFFBE0B),
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
                         Row(
                           children: [
                             if (!vehicle['isActive'])

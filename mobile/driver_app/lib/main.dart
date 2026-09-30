@@ -25,10 +25,14 @@ import 'providers/ride_request_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:core_ui/core_ui.dart';
+import 'package:driver_app/providers/language_provider.dart';
+import 'package:driver_app/screens/language_selection_screen.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Load theme preference synchronously before running app
+  // Load preferences synchronously before running app
   final prefs = await SharedPreferences.getInstance();
   final themeString = prefs.getString(ThemeNotifier.themeKey);
   ThemeMode initialThemeMode = ThemeMode.system;
@@ -39,11 +43,15 @@ Future<void> main() async {
     initialThemeMode = ThemeMode.dark;
   }
 
+  final langCode = prefs.getString(LanguageNotifier.languageKey) ?? 'en';
+  final initialLocale = Locale(langCode);
+
   // Amplify configuration removed - app uses direct HTTP API calls
   runApp(
     ProviderScope(
       overrides: [
         themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
+        languageProvider.overrideWith((ref) => LanguageNotifier(initialLocale)),
       ],
       child: const CabiDriverApp(),
     ),
@@ -56,6 +64,7 @@ class CabiDriverApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
+    final locale = ref.watch(languageProvider);
 
     return legacy_provider.MultiProvider(
       providers: [
@@ -67,6 +76,13 @@ class CabiDriverApp extends ConsumerWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: themeMode,
+        locale: locale,
+        supportedLocales: CabiLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          CabiLocalizations.delegate,
+          DefaultMaterialLocalizations.delegate,
+          DefaultWidgetsLocalizations.delegate,
+        ],
         home: const SplashScreen(),
         routes: {
           '/home': (context) => const HomeScreen(),
@@ -74,6 +90,7 @@ class CabiDriverApp extends ConsumerWidget {
           '/profile': (context) =>
               const ProfileScreen(), // Ensure this file is imported
           '/settings': (context) => const SettingsScreen(),
+          '/language': (context) => const LanguageSelectionScreen(),
           '/wallet': (context) => const WalletScreen(),
           '/vehicles': (context) => const VehicleListScreen(),
           '/document_history': (context) => const DocumentHistoryScreen(

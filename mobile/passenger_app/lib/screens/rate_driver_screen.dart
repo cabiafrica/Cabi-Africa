@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/ride_service.dart';
 
 class RateDriverScreen extends StatefulWidget {
   final String rideId;
@@ -12,19 +13,37 @@ class RateDriverScreen extends StatefulWidget {
 }
 
 class _RateDriverScreenState extends State<RateDriverScreen> {
+  final RideService _rideService = RideService();
   int _rating = 0;
   int? _selectedTipPercent;
   double? _customTip;
   final _commentController = TextEditingController();
+  bool _isSubmitting = false;
 
-  void _submit() {
-    if (_rating == 0) return;
-    // API Call: POST /ratings
-    debugPrint('Rating Driver: $_rating stars');
-    if (_selectedTipPercent != null) {
-      debugPrint('Tip Added: $_selectedTipPercent%');
+  Future<void> _submit() async {
+    if (_rating == 0 || _isSubmitting) return;
+    setState(() => _isSubmitting = true);
+
+    try {
+      await _rideService.rateDriver(
+        widget.rideId,
+        _rating,
+        _commentController.text,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Thank you! Feedback recorded in occurrence book.')),
+        );
+        Navigator.of(context).popUntil((route) => route.isFirst); // Back to home
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error submitting rating: $e')),
+        );
+        setState(() => _isSubmitting = false);
+      }
     }
-    Navigator.of(context).popUntil((route) => route.isFirst); // Back to home
   }
 
   @override

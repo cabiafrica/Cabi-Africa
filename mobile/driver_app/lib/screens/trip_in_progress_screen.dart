@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:cabi_maps/cabi_maps.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:driver_app/providers/map_provider.dart';
 import 'package:driver_app/widgets/back_to_back_offer_widget.dart';
 import 'package:driver_app/widgets/swipeable_action_button.dart';
 import 'package:driver_app/theme/app_theme.dart';
 import 'package:driver_app/services/ride_service.dart';
+import 'rate_passenger_screen.dart';
+import '../services/audio_notification_service.dart';
 
 class TripInProgressScreen extends StatefulWidget {
   final String? rideId;
   final String? driverId;
+  final String? passengerName;
+  final String? tripCode;
   final RideService? rideService; 
   final bool isExtendedPickup;
   final double? subsidyAmount;
@@ -20,6 +25,8 @@ class TripInProgressScreen extends StatefulWidget {
     super.key,
     this.rideId,
     this.driverId,
+    this.passengerName,
+    this.tripCode,
     this.rideService,
     this.isExtendedPickup = false,
     this.subsidyAmount,
@@ -31,6 +38,7 @@ class TripInProgressScreen extends StatefulWidget {
 
 class _TripInProgressScreenState extends State<TripInProgressScreen> {
   bool _showOffer = false;
+  bool _allowBackToBack = true;
   Timer? _tripTimer;
   double _currentFare = 150.0; 
   double _distanceKm = 0.0;
@@ -45,13 +53,28 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
   void initState() {
     super.initState();
     _rideService = widget.rideService ?? RideService();
+    _loadBackToBackPreference();
     _startBackendTrip();
     _startTripSimulation();
+  }
+
+  Future<void> _loadBackToBackPreference() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (mounted) {
+        setState(() {
+          _allowBackToBack = prefs.getBool('cabi_driver_back_to_back') ?? true;
+        });
+      }
+    } catch (e) {
+      debugPrint('[B2B] Error loading back-to-back: $e');
+    }
   }
 
   Future<void> _startBackendTrip() async {
     if (widget.rideId != null) {
       await _rideService.startTrip(widget.rideId!);
+      AudioNotificationService.instance.play('trip_started');
     }
   }
 
@@ -145,7 +168,17 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    if (_isTripEnded) {
+                    if (_isTripEnded && widget.rideId != null) {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (_) => RatePassengerScreen(
+                            rideId: widget.rideId!,
+                            passengerName: widget.passengerName ?? 'Passenger',
+                            finalFare: _currentFare,
+                          ),
+                        ),
+                      );
+                    } else if (_isTripEnded) {
                       Navigator.of(context).pushReplacementNamed('/home');
                     }
                   },
@@ -289,6 +322,48 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                       ),
                     ),
                   ],
+                  if (widget.tripCode != null) ...[
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFFD4AF37), width: 1.2),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.qr_code_2_rounded, color: Color(0xFFD4AF37), size: 18),
+                              const SizedBox(width: 8),
+                              Text(
+                                'TRIP CODE: ${widget.tripCode}',
+                                style: const TextStyle(
+                                  color: Color(0xFFD4AF37),
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.5,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: Colors.black45,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'VERIFY PIN',
+                              style: TextStyle(color: Colors.white70, fontSize: 9, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   Row(
                     children: [
                       Container(
@@ -393,6 +468,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                   debugPrint('Error completing trip: $e');
                                 }
                               }
+                              AudioNotificationService.instance.play('trip_ended');
                               setState(() => _isTripEnded = true);
                               _showWaybill(); 
                             }),
@@ -404,7 +480,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
             ),
           ),
 
-          if (_showOffer)
+          if (_showOffer && _allowBackToBack)
             BackToBackOfferWidget(
               onAccept: _handleOfferAccepted,
               onDecline: _handleOfferDeclined,

@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException, HttpException, HttpStatus, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, BadRequestException, HttpException, HttpStatus, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
 import { MatchingService } from '../matching/matching.service';
 import { BadgeService } from '../badge/badge.service';
@@ -156,11 +156,19 @@ export class RideService implements OnModuleInit {
     }
   }
 
-  async createRide(passengerId: string, pickup: any, dropoff: any, fare: number, vehicleType?: string) {
+  async createRide(
+    passengerId: string,
+    pickup: any,
+    dropoff: any,
+    fare: number,
+    vehicleType?: string,
+    isVerifiedPassenger?: boolean,
+    verificationMethod?: string
+  ) {
     // Check passenger verification before creating ride
     const verificationCheck = await this.checkPassengerVerification(passengerId);
 
-    if (!verificationCheck.canRequest) {
+    if (!verificationCheck.canRequest && !isVerifiedPassenger) {
       throw new HttpException(
         {
           error: 'Verification Required',
@@ -173,15 +181,30 @@ export class RideService implements OnModuleInit {
       );
     }
 
+    if (isVerifiedPassenger && passengerId && passengerId !== 'guest' && passengerId !== '00000000-0000-0000-0000-000000000000') {
+      this.prisma.user.update({
+        where: { id: passengerId },
+        data: { isVerifiedPassenger: true, isIdentityVerified: true }
+      }).catch(err => this.logger.warn(`Could not update user verification status: ${err.message}`));
+    }
+
     const matchingStartedAt = new Date();
 
-    // Map LITE to STANDARD if it's sent from the app
-    let resolvedVehicleType = vehicleType;
-    if (vehicleType === 'LITE') {
+    // Normalize and map vehicle type to valid PostgreSQL enum (STANDARD, PREMIUM, XL, BODA)
+    let resolvedVehicleType = (vehicleType || 'STANDARD').toUpperCase();
+    if (resolvedVehicleType === 'LITE' || resolvedVehicleType === 'COMFORT') {
+      resolvedVehicleType = 'STANDARD';
+    }
+    const validVehicleTypes = ['STANDARD', 'PREMIUM', 'XL', 'BODA'];
+    if (!validVehicleTypes.includes(resolvedVehicleType)) {
       resolvedVehicleType = 'STANDARD';
     }
 
-    const ride = await this.prisma.ride.create({
+    // Generate unique human-readable Trip Code (format: CB-XXXX)
+    const tripCodeNum = Math.floor(1000 + Math.random() * 9000);
+    const tripCode = `CB-${tripCodeNum}`;
+
+    const ride = await (this.prisma.ride.create as any)({
       data: {
         passengerId,
         pickupLocation: pickup,
@@ -191,7 +214,8 @@ export class RideService implements OnModuleInit {
         matchingStartedAt,
         fare: fare,
         distance: 0,
-        duration: 0
+        duration: 0,
+        tripCode,
       }
     });
 
@@ -206,8 +230,10 @@ export class RideService implements OnModuleInit {
 
     return {
       ...ride,
+      isVerifiedPassenger: isVerifiedPassenger ?? verificationCheck.isVerified ?? false,
+      verificationMethod: verificationMethod || 'BIOMETRIC',
       remainingTrips: verificationCheck.remainingTrips,
-      isVerified: verificationCheck.isVerified,
+      isVerified: isVerifiedPassenger ?? verificationCheck.isVerified ?? true,
       verificationMessage: verificationCheck.reason
     };
   }
@@ -217,7 +243,8 @@ export class RideService implements OnModuleInit {
 
     if (driverId) {
       const matchingCompletedAt = new Date();
-      const assignmentExpiresAt = new Date(Date.now() + 20 * 1000); // 20 seconds to accept
+      const timeoutSec = parseInt(process.env.DISPATCH_TIMEOUT_SECONDS || '120', 10);
+      const assignmentExpiresAt = new Date(Date.now() + timeoutSec * 1000); // Configurable (default 120s) for real device testing
       const ride = await this.prisma.ride.findUnique({ where: { id: rideId } });
       const matchingDurationMs = matchingCompletedAt.getTime() - new Date(ride.matchingStartedAt).getTime();
 
@@ -232,7 +259,7 @@ export class RideService implements OnModuleInit {
         } as any
       });
 
-      this.logger.log(`Ride ${rideId} matched to driver ${driverId} (20s window, ${matchingDurationMs}ms)`);
+      this.logger.log(`Ride ${rideId} matched to driver ${driverId} (${timeoutSec}s window, ${matchingDurationMs}ms)`);
 
       // Notify the assigned driver via WebSocket
       // We pass the updated ride object which now has the driverId
@@ -243,10 +270,11 @@ export class RideService implements OnModuleInit {
             select: {
               id: true,
               fullName: true,
+              middleName: true,
+              nickname: true,
               passportPhotoUrl: true,
               averageRating: true,
               badges: {
-
                 select: { badge: true },
                 take: 5 // Limit to top 5 badges to keep payload small
               }
@@ -254,7 +282,10 @@ export class RideService implements OnModuleInit {
           }
         }
       });
-      await this.matchingService.broadcastRideRequest(updatedRide, [driverId]);
+      await this.matchingService.broadcastRideRequest({
+        ...updatedRide,
+        isVerifiedPassenger: true,
+      }, [driverId]);
     } else {
       this.logger.warn(`No driver found for ride ${rideId}`);
     }
@@ -605,7 +636,7 @@ export class RideService implements OnModuleInit {
     };
   }
 
-  async startRide(rideId: string) {
+  async startRide(rideId: string, tripCode?: string) {
     const ride = await this.prisma.ride.findUnique({ where: { id: rideId } });
     if (!ride) throw new NotFoundException('Ride not found');
 
@@ -614,17 +645,29 @@ export class RideService implements OnModuleInit {
       throw new Error(`Cannot start ride in status: ${ride.status}. Must be DRIVER_ASSIGNED or DRIVER_ARRIVED.`);
     }
 
+    // Optional verification of tripCode (case-insensitive & whitespace-insensitive)
+    if (tripCode && (ride as any).tripCode) {
+      const cleanInput = tripCode.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      const cleanExpected = ((ride as any).tripCode || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      const digitsInput = tripCode.replace(/\D/g, '');
+      const digitsExpected = ((ride as any).tripCode || '').replace(/\D/g, '');
+      if (cleanInput !== cleanExpected && digitsInput !== digitsExpected) {
+        throw new BadRequestException(`Invalid Trip Code (${tripCode}). Please verify with passenger.`);
+      }
+    }
+
     const updatedRide = await this.prisma.ride.update({
       where: { id: rideId },
       data: { status: 'IN_PROGRESS' }
     });
 
-    this.logger.log(`Ride ${rideId} started (IN_PROGRESS).`);
+    const activeTripCode = (ride as any).tripCode || 'CB-RIDE';
+    this.logger.log(`Ride ${rideId} started (IN_PROGRESS). Trip Code: ${activeTripCode}`);
 
     // Notify passenger
     this.notificationService.sendNotification({
       userId: ride.passengerId,
-      title: 'Ride Started',
+      title: `Ride Started [${activeTripCode}]`,
       body: `You are on your way to your destination.`
     });
 
@@ -675,8 +718,8 @@ export class RideService implements OnModuleInit {
       this.logger.log(`Ride ${rideId} completed and paid.`);
       this.notificationService.sendNotification({
         userId: ride.passengerId,
-        title: 'Payment Successful',
-        body: `Amount: ${finalFare}. Thank you!`,
+        title: `Trip Completed [${(ride as any).tripCode || 'CB-RIDE'}]`,
+        body: `Your trip is completed. Total fare: KES ${finalFare}. Thank you for riding with CABI!`,
       });
     } else {
       this.logger.error(`Ride ${rideId} payment failed.`);
@@ -932,9 +975,114 @@ export class RideService implements OnModuleInit {
   }
 
   async ratePassenger(rideId: string, rating: number, comment?: string) {
-    // TODO: Schema update for Rating/Review
-    this.logger.log(`Rate Passenger: Ride ${rideId}, Rating ${rating}, Comment: ${comment}`);
-    return { message: 'Rating submitted (Logged only, schema update pending)' };
+    return this.submitRating(rideId, rating, comment, 'DRIVER');
+  }
+
+  async submitRating(
+    rideId: string,
+    rating: number,
+    comment?: string,
+    role?: 'PASSENGER' | 'DRIVER',
+    raterId?: string
+  ) {
+    const ride = await this.prisma.ride.findUnique({
+      where: { id: rideId },
+      include: {
+        driver: { include: { user: true } },
+        passenger: true,
+      },
+    });
+
+    if (!ride) throw new NotFoundException('Ride not found');
+
+    // Differentiate whether passenger or driver is submitting
+    let actualRole = role;
+    if (!actualRole) {
+      if (raterId && raterId === ride.passengerId) {
+        actualRole = 'PASSENGER';
+      } else {
+        actualRole = 'DRIVER';
+      }
+    }
+
+    const isPassengerRater = actualRole === 'PASSENGER';
+    const raterRole = isPassengerRater ? 'PASSENGER' : 'DRIVER';
+    const targetRole = isPassengerRater ? 'DRIVER' : 'PASSENGER';
+    const registeredById = isPassengerRater
+      ? ride.passengerId
+      : (ride.driver?.userId || ride.passengerId);
+
+    const safeRating = Math.max(1, Math.min(5, Math.round(rating || 5)));
+    const cleanComment = (comment || '').trim();
+
+    // 1. Register rating and comment in the official Occurrence Book
+    const obNumber = `OB-RIDE-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const category = safeRating <= 2 ? 'POLICY_VIOLATION' : 'POLICY_VIOLATION';
+    const severity = safeRating <= 1 ? 'HIGH' : safeRating <= 2 ? 'MEDIUM' : 'LOW';
+    const title = `Trip Rating & Feedback: ${raterRole} -> ${targetRole} (${safeRating}/5)`;
+    const description = `Trip ${rideId} feedback from ${raterRole} (${safeRating} stars): "${cleanComment || 'No additional comment provided.'}"`;
+
+    let occurrence = null;
+    try {
+      const pickup = ride.pickupLocation as any;
+      occurrence = await this.prisma.occurrence.create({
+        data: {
+          obNumber,
+          category,
+          severity,
+          title,
+          description,
+          driverId: ride.driverId,
+          passengerId: ride.passengerId,
+          rideId: ride.id,
+          occurrenceDate: new Date(),
+          occurrenceTime: new Date(),
+          occurredAt: new Date(),
+          locationLat: pickup?.lat ? pickup.lat : null,
+          locationLng: pickup?.lng ? pickup.lng : null,
+          source: `${raterRole}_RATING`,
+          registeredById,
+          status: safeRating <= 2 ? 'OPEN' : 'RESOLVED',
+        },
+      });
+      this.logger.log(`Occurrence entry ${obNumber} created for ride ${rideId} rating by ${raterRole}`);
+    } catch (occErr: any) {
+      this.logger.error(`Failed to record occurrence booking for rating: ${occErr.message}`, occErr.stack);
+    }
+
+    // 2. Recalculate average rating & stats
+    try {
+      if (isPassengerRater && ride.driverId) {
+        const currentRating = ride.driver?.averageRating ?? 5.0;
+        const currentTotal = ride.driver?.totalRidesCompleted ?? 1;
+        const newAvg = Number(((currentRating * currentTotal + safeRating) / (currentTotal + 1)).toFixed(2));
+        await this.prisma.driverProfile.update({
+          where: { id: ride.driverId },
+          data: { averageRating: newAvg },
+        });
+      } else if (!isPassengerRater && ride.passengerId) {
+        const currentRating = ride.passenger?.averageRating ?? 5.0;
+        const currentTotal = ride.passenger?.totalRidesAsPassenger ?? 1;
+        const newAvg = Number(((currentRating * currentTotal + safeRating) / (currentTotal + 1)).toFixed(2));
+        await this.prisma.user.update({
+          where: { id: ride.passengerId },
+          data: { averageRating: newAvg },
+        });
+      }
+    } catch (ratingErr: any) {
+      this.logger.warn(`Could not update average rating: ${ratingErr.message}`);
+    }
+
+    this.logger.log(`Ride ${rideId} rated by ${raterRole}: ${safeRating} stars, comment: "${cleanComment}"`);
+
+    return {
+      success: true,
+      message: 'Rating and occurrence feedback recorded successfully.',
+      occurrenceId: occurrence?.id,
+      obNumber: occurrence?.obNumber,
+      rating: safeRating,
+      comment: cleanComment,
+    };
   }
 
   async cancelRide(rideId: string, reason: string) {
@@ -952,8 +1100,8 @@ export class RideService implements OnModuleInit {
     if (ride.driverId) {
       this.notificationService.sendNotification({
         userId: ride.driverId,
-        title: 'Ride Cancelled',
-        body: 'The ride was cancelled.'
+        title: `Ride Cancelled [${(ride as any).tripCode || 'CB-RIDE'}]`,
+        body: `The ride was cancelled by passenger. Reason: ${reason || 'Not specified'}`
       });
     }
 

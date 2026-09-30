@@ -243,6 +243,7 @@ class AuthService {
 
   Future<AuthResult> updateProfile({
     required String name,
+    String? preferredPublicName,
     String? imagePath,
     String? imageUrl,
   }) async {
@@ -270,6 +271,10 @@ class AuthService {
 
       final body = <String, dynamic>{
         'fullName': name,
+        if (preferredPublicName != null && preferredPublicName.trim().isNotEmpty) ...{
+          'preferredPublicName': preferredPublicName.trim(),
+          'nickname': preferredPublicName.trim(),
+        },
         if (photoData != null) 'passportPhotoUrl': photoData,
         if (photoData != null) 'profilePicture': photoData,
       };

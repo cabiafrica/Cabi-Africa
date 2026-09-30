@@ -55,6 +55,48 @@ extension _HomeScreenPanels on _HomeScreenState {
                 )
               ],
             ),
+            if (_currentRideData?['tripCode'] != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFD4AF37), width: 1.2),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.qr_code_2_rounded, color: Color(0xFFD4AF37), size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          "TRIP CODE: ${_currentRideData!['tripCode']}",
+                          style: const TextStyle(
+                            color: Color(0xFFD4AF37),
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.black45,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        "SHARE PIN",
+                        style: TextStyle(color: Colors.white70, fontSize: 9, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             if (_currentRideData?['isExtendedPickup'] == true || _arrivalDurationMinutes > 10) ...[
               const SizedBox(height: 12),
               Container(
@@ -85,52 +127,127 @@ extension _HomeScreenPanels on _HomeScreenState {
             const Divider(height: 24),
 
             // Driver Info
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundImage: _currentRideData?['driver']?['profilePicture'] != null
-                      ? NetworkImage(_currentRideData!['driver']['profilePicture'])
-                      : const NetworkImage('https://i.pravatar.cc/150?u=driver_default'),
-                ),
-                const SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(_currentRideData?['driver']?['fullName'] ?? "Driver Found",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
-                    Row(
+            () {
+              final driverMap = _currentRideData?['driver'] as Map<String, dynamic>?;
+              final driverUser = driverMap?['user'] as Map<String, dynamic>?;
+              final driverPreferredName = (driverMap?['preferredPublicName'] ??
+                      driverMap?['nickname'] ??
+                      driverUser?['nickname'] ??
+                      driverUser?['fullName'] ??
+                      driverMap?['fullName'] ??
+                      'Driver Found')
+                  .toString();
+              final driverPhoto = (driverMap?['profilePicture'] ??
+                      driverUser?['passportPhotoUrl'])
+                  ?.toString();
+              final vehicleMap = driverMap?['vehicle'] as Map<String, dynamic>?;
+              final vehiclePlate = (vehicleMap?['licensePlate'] ??
+                      vehicleMap?['plateNumber'] ??
+                      'KCZ 123A')
+                  .toString();
+              final vehicleColor = (vehicleMap?['color'] ?? 'Silver').toString();
+              final vehicleModel = (vehicleMap?['model'] ?? 'Toyota Axio').toString();
+
+              return Row(
+                children: [
+                  ProfileAvatarBadge(
+                    imageUrl: driverPhoto,
+                    name: driverPreferredName,
+                    radius: 25,
+                    borderColor: AppTheme.primaryColor,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.star, color: Colors.amber, size: 16),
-                        Text(" ${_currentRideData?['driver']?['rating'] ?? '4.9'} ",
-                            style: const TextStyle(fontWeight: FontWeight.bold)),
-                        Text("• ${_currentRideData?['driver']?['vehicle']?['licensePlate'] ?? 'KCZ 123A'} • ${_currentRideData?['driver']?['vehicle']?['model'] ?? 'Toyota Axio'}",
-                            style: TextStyle(
-                                color: Colors.white70, fontSize: 13)),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                driverPreferredName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            const Icon(Icons.star, color: Colors.amber, size: 14),
+                            Text(
+                              " ${_currentRideData?['driver']?['rating'] ?? '4.9'}",
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFD4AF37).withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                  color: const Color(0xFFD4AF37).withOpacity(0.5),
+                                  width: 0.8,
+                                ),
+                              ),
+                              child: Text(
+                                vehiclePlate,
+                                style: const TextStyle(
+                                  color: Color(0xFFD4AF37),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                "$vehicleColor • $vehicleModel",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
-                    )
-                  ],
-                ),
-                const Spacer(),
-                // Call / Message Actions
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.grey[100], shape: BoxShape.circle),
-                  child: IconButton(
-                      icon: const Icon(Icons.phone, color: Colors.green),
-                      onPressed: () {}),
-                ),
-                const SizedBox(width: 10),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.grey[100], shape: BoxShape.circle),
-                  child: IconButton(
-                      icon: const Icon(Icons.message, color: Colors.blue),
-                      onPressed: () {}),
-                ),
-              ],
-            ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  // Call / Message Actions
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[900], shape: BoxShape.circle),
+                    child: IconButton(
+                        icon: const Icon(Icons.phone, color: Colors.greenAccent, size: 18),
+                        onPressed: () {}),
+                  ),
+                  const SizedBox(width: 6),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[900], shape: BoxShape.circle),
+                    child: IconButton(
+                        icon: const Icon(Icons.message, color: Colors.blueAccent, size: 18),
+                        onPressed: () {}),
+                  ),
+                ],
+              );
+            }(),
 
             const SizedBox(height: 20),
 
@@ -183,53 +300,121 @@ extension _HomeScreenPanels on _HomeScreenState {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Driver/Trip Header
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundImage: _currentRideData?['driver']?['profilePicture'] != null
-                      ? NetworkImage(_currentRideData!['driver']['profilePicture'])
-                      : const NetworkImage('https://i.pravatar.cc/150?u=driver_default'),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _tripStatus == TripStatus.arrived
-                            ? 'Arrived at Destination'
-                            : 'On Trip with ${_currentRideData?['driver']?['fullName'] ?? 'Driver'}',
-                        style: TextStyle(
-                            color: _tripStatus == TripStatus.arrived
-                                ? Colors.greenAccent
-                                : Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
+            Builder(
+              builder: (context) {
+                final driverMap = _currentRideData?['driver'] as Map<String, dynamic>?;
+                final driverUser = driverMap?['user'] as Map<String, dynamic>?;
+                final driverPreferredName = (driverMap?['preferredPublicName'] ??
+                        driverMap?['nickname'] ??
+                        driverUser?['nickname'] ??
+                        driverUser?['fullName'] ??
+                        driverMap?['fullName'] ??
+                        'Driver')
+                    .toString();
+                final driverPhoto = (driverMap?['profilePicture'] ??
+                        driverUser?['passportPhotoUrl'])
+                    ?.toString();
+                final vehicleMap = driverMap?['vehicle'] as Map<String, dynamic>?;
+                final vehiclePlate = (vehicleMap?['licensePlate'] ??
+                        vehicleMap?['plateNumber'] ??
+                        'KCZ 123A')
+                    .toString();
+                final vehicleColor = (vehicleMap?['color'] ?? 'Silver').toString();
+                final vehicleModel = (vehicleMap?['model'] ?? 'Toyota Axio').toString();
+
+                return Row(
+                  children: [
+                    ProfileAvatarBadge(
+                      imageUrl: driverPhoto,
+                      name: driverPreferredName,
+                      radius: 20,
+                      borderColor: AppTheme.primaryColor,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _tripStatus == TripStatus.arrived
+                                ? 'Arrived at Destination'
+                                : 'On Trip with $driverPreferredName',
+                            style: TextStyle(
+                                color: _tripStatus == TripStatus.arrived
+                                    ? Colors.greenAccent
+                                    : Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
+                          ),
+                          Text(
+                            '$vehiclePlate ($vehicleColor $vehicleModel) • To: $_destination',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                color: Colors.white70, fontSize: 12),
+                          ),
+                        ],
                       ),
-                      Text(
-                        'To: $_destination • ${_distanceKm.toStringAsFixed(2)} km',
+                    ),
+                    Container(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 66, 66, 66),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        formattedTime,
                         style: const TextStyle(
-                            color: Colors.white70, fontSize: 13),
+                            color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
                       ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 66, 66, 66),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    formattedTime,
-                    style: const TextStyle(
-                        color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
+                    ),
+                  ],
+                );
+              },
             ),
+            if (_currentRideData?['tripCode'] != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFD4AF37), width: 1.2),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.qr_code_2_rounded, color: Color(0xFFD4AF37), size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          "TRIP CODE: ${_currentRideData!['tripCode']}",
+                          style: const TextStyle(
+                            color: Color(0xFFD4AF37),
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.5,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.black45,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        "ACTIVE TRIP PIN",
+                        style: TextStyle(color: Colors.white70, fontSize: 9, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const Divider(color: Colors.white24, height: 24),
 
             // Live Fare Display
@@ -912,7 +1097,7 @@ extension _HomeScreenPanels on _HomeScreenState {
               color: primaryColor,
               size: 80,
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 16),
 
             const Text(
               "Finding your driver...",
@@ -932,21 +1117,59 @@ extension _HomeScreenPanels on _HomeScreenState {
                 color: Colors.white70,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 14),
 
-            // Cancel Request Button
+            // Wave Countdown Badge (Auto-restarts when it hits 00:00)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.35),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.timer_outlined, size: 16, color: AppTheme.primaryColor),
+                  const SizedBox(width: 6),
+                  Text(
+                    "00:${_searchCountdownSeconds.toString().padLeft(2, '0')}",
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    "• Auto-restarting wave",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white.withValues(alpha: 0.75),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Cancel Search & Change Service Button
             SizedBox(
               width: double.infinity,
               height: 52,
               child: OutlinedButton(
                 onPressed: _isCancelling ? null : _cancelRideSearch,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.redAccent,
+                  foregroundColor: Colors.amberAccent,
                   side: BorderSide(
-                    color: Colors.redAccent.withValues(alpha: 0.7),
+                    color: Colors.amberAccent.withValues(alpha: 0.8),
                     width: 1.5,
                   ),
-                  backgroundColor: Colors.redAccent.withValues(alpha: 0.06),
+                  backgroundColor: Colors.amber.withValues(alpha: 0.08),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -958,19 +1181,19 @@ extension _HomeScreenPanels on _HomeScreenState {
                         child: CircularProgressIndicator(
                           strokeWidth: 2.5,
                           valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.redAccent),
+                              AlwaysStoppedAnimation<Color>(Colors.amberAccent),
                         ),
                       )
                     : const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.close_rounded, size: 20),
+                          Icon(Icons.swap_horiz_rounded, size: 22),
                           SizedBox(width: 8),
                           Text(
-                            "Cancel Request",
+                            "Cancel & Choose Another Service",
                             style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 0.3,
                             ),
                           ),
@@ -978,7 +1201,15 @@ extension _HomeScreenPanels on _HomeScreenState {
                       ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
+            Text(
+              "Need a faster pickup? Tap above to switch vehicle tier",
+              style: TextStyle(
+                fontSize: 11,
+                color: Colors.white.withValues(alpha: 0.5),
+              ),
+            ),
+            const SizedBox(height: 6),
           ],
         ),
       ),

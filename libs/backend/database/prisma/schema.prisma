@@ -342,6 +342,7 @@ model Ride {
   surgeMultiplier      Float?         @default(1.0)
   passedDriverIds      String[]       @default([])
   assignmentExpiresAt  DateTime?
+  tripCode             String?
   occurrences          Occurrence[]   @relation("RideOccurrences")
   stops                RideStop[]
   driver               DriverProfile? @relation("DriverRides", fields: [driverId], references: [id])
@@ -351,6 +352,7 @@ model Ride {
   @@index([driverId])
   @@index([status])
   @@index([createdAt])
+  @@index([tripCode])
   @@map("rides")
 }
 

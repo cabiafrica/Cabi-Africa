@@ -23,6 +23,13 @@ class CreateRideDto {
   @IsNumber()
   @IsNotEmpty()
   fare: number;
+
+  @IsOptional()
+  isVerifiedPassenger?: boolean;
+
+  @IsString()
+  @IsOptional()
+  verificationMethod?: string;
 }
 
 class AcceptRideDto {
@@ -45,6 +52,12 @@ class AddStopDto {
 class RespondToChangeDto {
   @IsEnum(['accepted', 'declined'])
   response: 'accepted' | 'declined';
+}
+
+class StartRideDto {
+  @IsString()
+  @IsOptional()
+  tripCode?: string;
 }
 
 @Controller('rides')
@@ -98,7 +111,9 @@ export class RideController {
       body.pickupLocation,
       body.dropoffLocation,
       body.fare,
-      body.vehicleType
+      body.vehicleType,
+      body.isVerifiedPassenger,
+      body.verificationMethod
     );
   }
 
@@ -108,8 +123,8 @@ export class RideController {
   }
 
   @Post(':id/start')
-  startRide(@Param('id') id: string) {
-    return this.rideService.startRide(id);
+  startRide(@Param('id') id: string, @Body() body?: StartRideDto) {
+    return this.rideService.startRide(id, body?.tripCode);
   }
 
   @Post(':id/complete')
@@ -151,12 +166,14 @@ export class RideController {
   }
 
   @Post(':id/rate')
-  ratePassenger(
+  rateRide(
     @Param('id') id: string,
     @Body('rating') rating: number,
-    @Body('comment') comment?: string
+    @Body('comment') comment?: string,
+    @Body('role') role?: 'PASSENGER' | 'DRIVER',
+    @Body('raterId') raterId?: string
   ) {
-    return this.rideService.ratePassenger(id, rating, comment);
+    return this.rideService.submitRating(id, rating, comment, role, raterId);
   }
 
   @Post(':id/cancel')

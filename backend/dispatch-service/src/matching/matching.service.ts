@@ -299,7 +299,9 @@ export class MatchingService {
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const pickup = ride.pickupLocation as any;
-        if (!pickup.lat || !pickup.lng) {
+        const pLat = pickup?.lat ?? pickup?.latitude;
+        const pLng = pickup?.lng ?? pickup?.longitude;
+        if (pLat === undefined || pLng === undefined) {
             this.logger.error(`Invalid pickup location for ride ${rideId}`);
             return null;
         }
@@ -315,8 +317,8 @@ export class MatchingService {
 
         // Find nearby drivers with badge priority if enabled
         const nearbyDrivers = await this.findNearbyDrivers({
-            pickupLat: pickup.lat,
-            pickupLng: pickup.lng,
+            pickupLat: Number(pLat),
+            pickupLng: Number(pLng),
             vehicleType: ride.requestedVehicleType || undefined,
             maxDistanceKm: maxDistance,
             maxDrivers: 15,
@@ -429,20 +431,35 @@ export class MatchingService {
         );
 
         // Get passenger verification status
-        let passengerVerificationStatus = 'UNKNOWN';
-        let isVerified = false;
-        
-        // In production, query the verification service
-        // For now, use the status from the ride object
-        if (ride.passengerVerificationStatus) {
-            passengerVerificationStatus = ride.passengerVerificationStatus;
-            isVerified = ride.isVerified || false;
-        }
+        const isVerified = Boolean(
+            ride.isVerifiedPassenger ??
+            ride.isVerified ??
+            ride.passenger?.isVerifiedPassenger ??
+            ride.passenger?.isIdentityVerified ??
+            (ride.passengerVerificationStatus === 'VERIFIED')
+        );
+        const passengerVerificationStatus = isVerified ? 'VERIFIED' : (ride.passengerVerificationStatus || 'UNVERIFIED');
+
+        // Determine passenger preferred public name
+        const passenger = ride.passenger;
+        const passengerPreferredName = passenger?.nickname ||
+            (passenger?.fullName ? passenger.fullName.split(' ')[0] : 'Passenger');
+        const passengerPhoto = passenger?.passportPhotoUrl || null;
+        const destination = ride.dropoffLocation?.address || ride.dropoffAddress || 'Destination';
+        const pickup = ride.pickupLocation?.address || ride.pickupAddress || 'Pickup Location';
+        const fare = Number(ride.fare || 0);
 
         for (const driverId of driverIds) {
-            // Include passenger verification info for driver to make informed decision
+            // Include passenger preferred name, photo, destination, fare, and verification info
             this.tripTrackingGateway.broadcastRideRequest(driverId, {
                 ...ride,
+                passengerName: passengerPreferredName,
+                passengerPhoto: passengerPhoto,
+                destination,
+                dropoffAddress: destination,
+                pickupAddress: pickup,
+                fare,
+                amount: fare,
                 passengerVerificationStatus,
                 isVerifiedPassenger: isVerified,
                 passengerWarning: isVerified 

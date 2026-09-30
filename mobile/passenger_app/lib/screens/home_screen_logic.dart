@@ -340,30 +340,104 @@ extension _HomeScreenLogic on _HomeScreenState {
     }
   }
 
+  void _startSearchCountdown() {
+    _searchCountdownTimer?.cancel();
+    _searchCountdownSeconds = 30;
+    _searchCountdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted || _tripStatus != TripStatus.searching) {
+        timer.cancel();
+        return;
+      }
+      _updateState(() {
+        if (_searchCountdownSeconds > 1) {
+          _searchCountdownSeconds--;
+        } else {
+          // Timer finished without finding driver -> auto-restart search wave
+          _searchCountdownSeconds = 30;
+          AudioNotificationService.instance.play('passenger_ready');
+          debugPrint('[SEARCH] Wave search timer expired, auto-restarting 30s countdown...');
+        }
+      });
+    });
+  }
+
+  void _resetToIdle() {
+    _searchCountdownTimer?.cancel();
+    _rideUpdateTimer?.cancel();
+    _arrivalTimer?.cancel();
+    _tripTimer?.cancel();
+    _tripStatus = TripStatus.idle;
+    _roadRoute = null;
+    _pickupLocation = null;
+    _dropoffLocation = null;
+    _destination = "Where to?";
+    _pickupAddress = "Current Location";
+    _currentRideId = null;
+    _currentRideData = null;
+    _isCancelling = false;
+    _searchCountdownSeconds = 30;
+    _mapController?.moveCamera(_passengerLocation, zoom: 15.0);
+  }
+
   void _updateTripStatusFromBackend(Map<String, dynamic> ride) {
     _currentRideData = ride;
     final status = ride['status']?.toString().toUpperCase();
     if (status == 'REQUESTED') {
-      _tripStatus = TripStatus.searching;
-    } else if (status == 'DRIVER_ASSIGNED') {
+      if (_tripStatus != TripStatus.searching) {
+        _tripStatus = TripStatus.searching;
+        _startSearchCountdown();
+      }
+    } else if (status == 'DRIVER_ASSIGNED' || status == 'ACCEPTED') {
+      _searchCountdownTimer?.cancel();
       if (_tripStatus != TripStatus.driverFound) {
         _tripStatus = TripStatus.driverFound;
         _arrivalDurationMinutes = 5;
+        AudioNotificationService.instance.play('driver_matched');
         _startArrivalTimer();
       }
+    } else if (status == 'ARRIVED') {
+      _searchCountdownTimer?.cancel();
+      if (_tripStatus != TripStatus.arrived) {
+        _tripStatus = TripStatus.arrived;
+        AudioNotificationService.instance.play('driver_arrived');
+      }
     } else if (status == 'IN_PROGRESS') {
+      _searchCountdownTimer?.cancel();
       if (_tripStatus != TripStatus.onTrip) {
         _tripStatus = TripStatus.onTrip;
+        AudioNotificationService.instance.play('trip_started');
         _startTripSimulation();
       }
     } else if (status == 'COMPLETED' || status == 'CANCELLED') {
       if (_tripStatus != TripStatus.idle) {
-        _tripStatus = TripStatus.idle;
-        _roadRoute = null;
-        _currentRideId = null;
-        _rideUpdateTimer?.cancel();
-        _arrivalTimer?.cancel();
-        _tripTimer?.cancel();
+        final completedRideId = _currentRideId ?? ride['id']?.toString() ?? '';
+        final driverName = ride['driver']?['user']?['fullName']?.toString() ?? 'Your Driver';
+        final wasCompleted = status == 'COMPLETED';
+
+        AudioNotificationService.instance.play(wasCompleted ? 'trip_ended' : 'passenger_cancelled');
+
+        if (wasCompleted && completedRideId.isNotEmpty && mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => RateDriverScreen(
+                    rideId: completedRideId,
+                    driverName: driverName,
+                  ),
+                ),
+              ).then((_) {
+                if (mounted) {
+                  _updateState(() {
+                    _resetToIdle();
+                  });
+                }
+              });
+            }
+          });
+        } else {
+          _resetToIdle();
+        }
       }
     }
   }
@@ -530,18 +604,30 @@ extension _HomeScreenLogic on _HomeScreenState {
     // Use persistent guest ID for unauthenticated requests
     userId ??= '00000000-0000-0000-0000-000000000000';
 
-    // 1. Identity Gate (MANDATORY FOR REGISTERED USERS, SKIPPED FOR GUESTS)
-    bool verified = userId == '00000000-0000-0000-0000-000000000000';
-    if (!verified) {
-      await showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (context) => SecurityVerificationModal(
-          onVerified: () => verified = true,
-        ),
-      );
-    }
+    // 1. Mandatory Identity & Passenger Verification Gate (Enforced for all ride requests)
+    final user = (authState is Authenticated) ? authState.user : null;
+    final userPhone = user?['phone']?.toString();
+    final userName = user?['firstName'] != null
+        ? "${user?['firstName']} ${user?['lastName'] ?? ''}".trim()
+        : user?['name']?.toString();
+
+    bool verified = false;
+    VerificationMethod chosenMethod = VerificationMethod.face;
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      enableDrag: false,
+      builder: (context) => SecurityVerificationModal(
+        onVerified: () => verified = true,
+        onVerifiedDetails: (method, selfie) {
+          verified = true;
+          chosenMethod = method;
+        },
+        userPhone: userPhone,
+        userName: userName,
+      ),
+    );
 
     if (!verified) {
       _updateState(() {
@@ -553,9 +639,15 @@ extension _HomeScreenLogic on _HomeScreenState {
     _updateState(() {
       _tripStatus = TripStatus.searching;
     });
+    _startSearchCountdown();
+    AudioNotificationService.instance.play('passenger_ready');
 
     final searchCenter = _pickupLocation ?? _passengerLocation;
     _mapController?.moveCamera(searchCenter, zoom: 15.0);
+
+    final methodCode = chosenMethod == VerificationMethod.face
+        ? 'FACE_RECOGNITION'
+        : (chosenMethod == VerificationMethod.fingerprint ? 'FINGERPRINT' : 'OTP');
 
     try {
       final rideService = ref.read(rideServiceProvider);
@@ -572,6 +664,8 @@ extension _HomeScreenLogic on _HomeScreenState {
           'address': _destination
         },
         vehicleType: _selectedVehicleType,
+        isVerifiedPassenger: true,
+        verificationMethod: methodCode,
       );
 
       if (ride['id'] != 'mock-ride-id') {
@@ -585,8 +679,9 @@ extension _HomeScreenLogic on _HomeScreenState {
     } catch (e) {
       debugPrint("Error requesting real ride: $e");
       if (mounted) {
+        _searchCountdownTimer?.cancel();
         _updateState(() {
-          _tripStatus = TripStatus.idle;
+          _tripStatus = TripStatus.selectingService;
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error requesting ride: $e')),
@@ -601,25 +696,29 @@ extension _HomeScreenLogic on _HomeScreenState {
 
     final rideIdToCancel = _currentRideId;
 
-    // Immediately stop polling and active timers
+    // Immediately stop search countdown timer and polling
+    _searchCountdownTimer?.cancel();
     _rideUpdateTimer?.cancel();
     _arrivalTimer?.cancel();
     _tripTimer?.cancel();
 
-    // Reset local trip state and return cleanly to the home screen
+    // Redirect to choose a service panel, preserving user's route, pickup & dropoff
     _updateState(() {
-      _tripStatus = TripStatus.idle;
-      _roadRoute = null;
-      _pickupLocation = null;
-      _dropoffLocation = null;
-      _destination = "Where to?";
-      _pickupAddress = "Current Location";
+      _tripStatus = TripStatus.selectingService;
       _currentRideId = null;
       _currentRideData = null;
+      _searchCountdownSeconds = 30;
     });
 
-    // Re-center map to passenger's live position
-    _mapController?.moveCamera(_passengerLocation, zoom: 15.0);
+    // Re-center map to show the route between pickup and destination
+    if (_pickupLocation != null && _dropoffLocation != null) {
+      _mapController?.fitBounds(
+        [_pickupLocation!, _dropoffLocation!],
+        padding: 60.0,
+      );
+    } else {
+      _mapController?.moveCamera(_pickupLocation ?? _passengerLocation, zoom: 15.0);
+    }
 
     // Cancel on backend if ride was created
     if (rideIdToCancel != null && rideIdToCancel != 'mock-ride-id') {
@@ -627,7 +726,7 @@ extension _HomeScreenLogic on _HomeScreenState {
         final rideService = ref.read(rideServiceProvider);
         await rideService.cancelRide(
           rideIdToCancel,
-          reason: 'Passenger cancelled driver search',
+          reason: 'Passenger cancelled to choose a different service tier',
         );
       } catch (e) {
         debugPrint('Error notifying backend of ride cancellation: $e');
@@ -641,12 +740,17 @@ extension _HomeScreenLogic on _HomeScreenState {
         SnackBar(
           content: const Row(
             children: [
-              Icon(Icons.check_circle_outline, color: AppTheme.primaryLight, size: 20),
+              Icon(Icons.swap_horiz_rounded, color: AppTheme.primaryLight, size: 20),
               SizedBox(width: 8),
-              Text('Driver search cancelled', style: TextStyle(color: Colors.white)),
+              Expanded(
+                child: Text(
+                  'Driver search cancelled. Please choose another service tier.',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
             ],
           ),
-          duration: const Duration(seconds: 2),
+          duration: const Duration(seconds: 3),
           backgroundColor: const Color(0xFF1E1E1E),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cabi Africa — End-to-End Market Launch Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070a12;
+      --card-bg: #0f1626;
+      --card-card2: #141f36;
+      --card-border: #1e2c4d;
+      --gold: #f59e0b;
+      --gold-dark: #b8860b;
+      --green: #10b981;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --purple: #8b5cf6;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 16px 40px;
+    }
+
+    /* Top Navigation Header */
+    .header {
+      width: 100%;
+      max-width: 1180px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 0.5px;
+    }
+    .logo-badge {
+      background: linear-gradient(135deg, var(--gold), #d97706);
+      color: #000;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--green);
+      font-weight: 600;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    /* Role Perspective Switcher Bar */
+    .role-bar {
+      width: 100%;
+      max-width: 1180px;
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 6px;
+      overflow-x: auto;
+    }
+    .role-btn {
+      flex: 1;
+      min-width: 160px;
+      padding: 10px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .role-btn:hover { color: #fff; background: rgba(255,255,255,0.04); }
+    .role-btn.active {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.1));
+      color: var(--gold);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
+    }
+
+    /* Admin Flow Visualizer Stepper */
+    .flow-stepper {
+      width: 100%;
+      max-width: 1180px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+    .flow-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .flow-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      position: relative;
+    }
+    @media (max-width: 860px) {
+      .steps-container { grid-template-columns: repeat(3, 1fr); }
+    }
+    .step-box {
+      background: var(--card-card2);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .step-box.active {
+      border-color: var(--gold);
+      background: rgba(245, 158, 11, 0.12);
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.25);
+    }
+    .step-box.completed {
+      border-color: var(--green);
+      background: rgba(16, 185, 129, 0.08);
+    }
+    .step-num {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .step-box.active .step-num { color: var(--gold); }
+    .step-box.completed .step-num { color: var(--green); }
+    .step-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .step-sub {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Main Container Grid */
+    .container {
+      width: 100%;
+      max-width: 1180px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 860px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #1e293b;
+      color: var(--text-muted);
+    }
+    .badge-gold { background: rgba(245, 158, 11, 0.2); color: var(--gold); border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-green { background: rgba(16, 185, 129, 0.2); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.4); }
+
+    .field-group { margin-bottom: 14px; }
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      background: #080c16;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn {
+      width: 100%;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--gold), #d97706); color: #000; }
+    .btn-primary:hover { background: linear-gradient(135deg, #fbbf24, #f59e0b); transform: translateY(-1px); }
+    .btn-success { background: var(--green); color: #000; }
+    .btn-success:hover { background: #34d399; }
+    .btn-danger { background: var(--red); color: #fff; }
+    .btn-danger:hover { background: #f87171; }
+    .btn-secondary { background: var(--card-card2); color: var(--text); border: 1px solid var(--card-border); }
+    .btn-secondary:hover { background: #1e2c4d; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Verification Box Styles */
+    .verify-box {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(245, 158, 11, 0.05));
+      border: 1.5px solid rgba(245, 158, 11, 0.35);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+    .verify-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      background: rgba(0,0,0,0.3);
+      padding: 4px;
+      border-radius: 8px;
+    }
+    .verify-tab-btn {
+      flex: 1;
+      padding: 6px 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .verify-tab-btn.active {
+      background: var(--gold);
+      color: #000;
+    }
+    .camera-frame {
+      width: 100%;
+      height: 190px;
+      background: #000;
+      border-radius: 12px;
+      border: 2px dashed rgba(245, 158, 11, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .camera-oval {
+      width: 120px;
+      height: 150px;
+      border: 2px solid var(--gold);
+      border-radius: 60px;
+      position: absolute;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+      pointer-events: none;
+    }
+    .scan-laser {
+      position: absolute;
+      width: 110px;
+      height: 2px;
+      background: var(--gold);
+      box-shadow: 0 0 10px var(--gold);
+      animation: scanAnim 1.6s infinite alternate ease-in-out;
+      pointer-events: none;
+    }
+    @keyframes scanAnim {
+      0% { top: 25px; }
+      100% { top: 155px; }
+    }
+
+    /* Driver Live Request Modal Card */
+    .driver-request-card {
+      background: linear-gradient(135deg, #161e31, #0d1424);
+      border: 1.5px solid var(--gold);
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 14px;
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.2);
+    }
+    .fare-banner {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.08));
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 12px 0;
+    }
+    .fare-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--gold);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Dispatcher Activity Stream */
+    .logs-panel {
+      grid-column: 1 / -1;
+      background: #050811;
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--green);
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .log-line {
+      margin-bottom: 5px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      padding-bottom: 3px;
+    }
+    .log-time { color: var(--text-dim); flex-shrink: 0; }
+    .log-tag {
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      flex-shrink: 0;
+    }
+    .tag-VERIFY { background: rgba(16, 185, 129, 0.2); color: var(--green); }
+    .tag-DISPATCH { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
+    .tag-DRIVER { background: rgba(139, 92, 246, 0.2); color: var(--purple); }
+    .tag-TRIP { background: rgba(245, 158, 11, 0.2); color: var(--gold); }
+    .tag-AUDIO { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+    /* Audio Settings */
+    .sound-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 8px 12px;
+      background: #080c16;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+    }
+    .sound-btn {
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--card-border);
+      background: #1f2d4d;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .sound-btn:hover { background: var(--gold); color: #000; }
+
+    /* Status Badge */
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-WAITING { background: #3b82f6; color: #fff; }
+    .badge-MATCHING { background: #f59e0b; color: #000; }
+    .badge-ACCEPTED { background: #8b5cf6; color: #fff; }
+    .badge-ARRIVED { background: #10b981; color: #000; }
+    .badge-IN_PROGRESS { background: #06b6d4; color: #000; }
+    .badge-COMPLETED { background: #10b981; color: #000; }
+    .badge-CANCELLED { background: #ef4444; color: #fff; }
+
+    .stars { display: flex; gap: 8px; font-size: 1.8rem; cursor: pointer; user-select: none; margin: 10px 0; }
+    .star { color: #374151; transition: color 0.2s; }
+    .star.active { color: #f59e0b; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="header">
+    <div class="logo">
+      <span>🚕 Cabi Africa</span>
+      <span class="logo-badge">Market Launch Command</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="status-pill" id="backendPill">
+        <div class="status-dot"></div>
+        <span id="backendStatus">Connecting...</span>
+      </div>
+      <button class="sound-btn" onclick="checkBackendHealth()">🔄 Refresh</button>
+    </div>
+  </header>
+
+  <!-- Role Perspective Filter Bar -->
+  <div class="role-bar">
+    <button class="role-btn active" id="btnRoleAll" onclick="setRoleView('ALL')">🌐 Unified 4-in-1 Flow</button>
+    <button class="role-btn" id="btnRolePassenger" onclick="setRoleView('PASSENGER')">👤 Passenger View</button>
+    <button class="role-btn" id="btnRoleDriver" onclick="setRoleView('DRIVER')">🚗 Driver View</button>
+    <button class="role-btn" id="btnRoleDispatcher" onclick="setRoleView('DISPATCHER')">📡 Dispatcher Stream</button>
+    <button class="role-btn" id="btnRoleAdmin" onclick="setRoleView('ADMIN')">📊 Admin Flow Graph</button>
+  </div>
+
+  <!-- Admin Flow Visualizer Stepper -->
+  <section class="flow-stepper" id="adminFlowSection">
+    <div class="flow-header">
+      <div class="flow-title">
+        <span>📊 Admin Flow State Machine Visualizer</span>
+        <span class="badge badge-gold" id="flowLiveBadge">LIVE OBSERVER</span>
+      </div>
+      <div style="font-size: 0.78rem; color: var(--text-muted);">
+        Active Trip: <strong id="flowTripCode" style="color: var(--gold);">-</strong>
+      </div>
+    </div>
+    <div class="steps-container">
+      <div class="step-box" id="step1">
+        <span class="step-num">Step 1</span>
+        <span class="step-label">🛡️ Verification</span>
+        <span class="step-sub" id="step1Sub">Selfie Face / Biometric</span>
+      </div>
+      <div class="step-box" id="step2">
+        <span class="step-num">Step 2</span>
+        <span class="step-label">📍 Ride Booking</span>
+        <span class="step-sub" id="step2Sub">Pickup & Fare Geocoded</span>
+      </div>
+      <div class="step-box" id="step3">
+        <span class="step-num">Step 3</span>
+        <span class="step-label">📡 Dispatch Wave</span>
+        <span class="step-sub" id="step3Sub">5.0km Driver Radar</span>
+      </div>
+      <div class="step-box" id="step4">
+        <span class="step-num">Step 4</span>
+        <span class="step-label">🚗 Driver Match</span>
+        <span class="step-sub" id="step4Sub">Plate & Name Assigned</span>
+      </div>
+      <div class="step-box" id="step5">
+        <span class="step-num">Step 5</span>
+        <span class="step-label">🏁 Live Trip</span>
+        <span class="step-sub" id="step5Sub">Arrived & In Progress</span>
+      </div>
+      <div class="step-box" id="step6">
+        <span class="step-num">Step 6</span>
+        <span class="step-label">📖 Settlement</span>
+        <span class="step-sub" id="step6Sub">Fare & Occurrence Book</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+
+    <!-- Card 1: Passenger Profile & Verification Gate -->
+    <div class="card" id="cardPassenger">
+      <div class="card-title">
+        <span>👤 1. Passenger Identity & Verification</span>
+        <span class="badge badge-gold">Mandatory Gate</span>
+      </div>
+
+      <div class="field-group">
+        <label>Dispatch Host</label>
+        <input type="text" id="apiHost" value="http://localhost:3334">
+      </div>
+
+      <div class="grid-2">
+        <div class="field-group">
+          <label>Official Registered Legal Names</label>
+          <input type="text" id="officialName" value="Brian Kiptoo Cheruiyot" oninput="generatePublicNameOptions(this.value)">
+        </div>
+        <div class="field-group">
+          <label>Preferred Public Name (Derived)</label>
+          <select id="preferredPublicName">
+            <option value="Brian K.">Brian K.</option>
+            <option value="Brian">Brian</option>
+            <option value="Brian Kiptoo">Brian Kiptoo</option>
+            <option value="Brian Cheruiyot">Brian Cheruiyot</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field-group">
+          <label>Phone Number</label>
+          <input type="text" id="passengerPhone" value="+254 711 998877">
+        </div>
+        <div class="field-group">
+          <label>Passenger User ID</label>
+          <input type="text" id="passengerId" value="2fd3e7ed-6059-48aa-9361-e2ecad8dc367">
+        </div>
+      </div>
+
+      <!-- Verification Selection Box -->
+      <div class="verify-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <label style="margin: 0; color: #fff;">🔒 Mandatory Verification Method</label>
+          <span id="paxVerifiedBadge" class="badge" style="background: rgba(239, 68, 68, 0.2); color: var(--red);">UNVERIFIED</span>
+        </div>
+
+        <div class="verify-tabs">
+          <button class="verify-tab-btn active" id="tabFace" onclick="switchVerifyTab('FACE')">📸 Face Selfie</button>
+          <button class="verify-tab-btn" id="tabFinger" onclick="switchVerifyTab('FINGER')">👆 Fingerprint</button>
+          <button class="verify-tab-btn" id="tabOtp" onclick="switchVerifyTab('OTP')">💬 SMS OTP</button>
+        </div>
+
+        <!-- 1. Face Recognition UI -->
+        <div id="verifyFaceContent">
+          <div class="camera-frame">
+            <video id="webcamVideo" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: none;"></video>
+            <canvas id="selfieCanvas" style="display: none;"></canvas>
+            <img id="selfieImgPreview" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+            <div class="camera-oval" id="ovalReticle">
+              <div class="scan-laser" id="laserScan"></div>
+            </div>
+            <div id="cameraPlaceholder" style="text-align: center; color: var(--text-dim); padding: 10px;">
+              <div style="font-size: 2rem; margin-bottom: 4px;">📷</div>
+              <div style="font-size: 0.8rem;">Front camera selfie with biometric scan</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary" style="flex: 1; font-size: 0.82rem;" onclick="startWebcam()">
+              📹 Launch Camera
+            </button>
+            <button class="btn btn-primary" id="btnSnapSelfie" style="flex: 1; font-size: 0.82rem;" onclick="captureSelfie()">
+              📸 Take Selfie & Verify
+            </button>
+            <button class="btn btn-secondary" style="flex: 1; font-size: 0.82rem;" onclick="quickDemoVerify('FACE_RECOGNITION')">
+              ⚡ Demo Face Check
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. Fingerprint UI -->
+        <div id="verifyFingerContent" style="display: none; text-align: center; padding: 14px 10px;">
+          <div style="font-size: 3rem; margin-bottom: 8px;">🫆</div>
+          <div style="font-size: 0.88rem; font-weight: 700; margin-bottom: 4px;">Touch Sensor Biometric Scan</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px;">Place finger on your phone biometric sensor or click below to simulate.</div>
+          <button class="btn btn-primary" onclick="quickDemoVerify('FINGERPRINT')">
+            👆 Authenticate Fingerprint
+          </button>
+        </div>
+
+        <!-- 3. OTP UI -->
+        <div id="verifyOtpContent" style="display: none; padding: 8px 0;">
+          <div class="grid-2" style="margin-bottom: 10px;">
+            <div>
+              <label>6-Digit SMS Passcode</label>
+              <input type="text" id="otpInput" maxlength="6" value="123456" style="font-family: monospace; font-size: 1.1rem; letter-spacing: 4px; text-align: center;">
+            </div>
+            <div style="display: flex; flex-direction: column; justify-content: flex-end;">
+              <button class="btn btn-secondary" style="font-size: 0.8rem; padding: 10px;" onclick="document.getElementById('otpInput').value='123456'; quickDemoVerify('OTP');">
+                ⚡ Autofill Demo PIN (123456)
+              </button>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="quickDemoVerify('OTP')">
+            💬 Confirm SMS Passcode
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Card 2: Ride Request & Pricing Engine -->
+    <div class="card" id="cardRideBooking">
+      <div class="card-title">
+        <span>📍 2. Ride Request Details</span>
+        <span class="badge badge-gold">Dispatch Ready</span>
+      </div>
+
+      <div class="grid-2">
+        <div class="field-group">
+          <label>Pickup Lat</label>
+          <input type="number" step="0.0001" id="pickupLat" value="-1.207367">
+        </div>
+        <div class="field-group">
+          <label>Pickup Lng</label>
+          <input type="number" step="0.0001" id="pickupLng" value="36.874090">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Pickup Address</label>
+        <input type="text" id="pickupAddress" value="Epitome Lane 25, Nairobi">
+      </div>
+
+      <div class="field-group">
+        <label>Dropoff Address (Destination)</label>
+        <input type="text" id="dropoffAddress" value="Thika Road Mall, Nairobi">
+      </div>
+
+      <div class="grid-2">
+        <div class="field-group">
+          <label>Amount To Be Paid (KES)</label>
+          <input type="number" id="fare" value="350">
+        </div>
+        <div class="field-group">
+          <label>Vehicle Type</label>
+          <select id="vehicleType">
+            <option value="STANDARD">Standard (Toyota Axio / Corolla)</option>
+            <option value="PREMIUM">Premium (Mercedes / Prado)</option>
+            <option value="BODA">Boda (Motorcycle)</option>
+            <option value="XL">XL (7-Seater)</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="requestRideBtn" onclick="requestRide()" style="margin-top: 8px;">
+        🚀 Request Ride (Dispatch to Drivers)
+      </button>
+    </div>
+
+    <!-- Card 3: Driver Perspective & Interactive Response -->
+    <div class="card" id="cardDriver" style="grid-column: 1 / -1;">
+      <div class="card-title">
+        <span>🚗 3. Driver App Experience (Simulated or Live On-Phone)</span>
+        <span class="badge badge-gold">Seamless Driver Flow</span>
+      </div>
+
+      <div class="driver-request-card" id="driverOfferBox">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+          <div>
+            <div style="font-size: 0.75rem; color: var(--gold); font-weight: 700; text-transform: uppercase;">INCOMING TRIP REQUEST</div>
+            <div style="font-size: 1.25rem; font-weight: 800; color: #fff; margin-top: 2px;" id="drvTripCodeBanner">WAITING FOR REQUEST...</div>
+          </div>
+          <div id="drvPaxVerifiedTag" class="badge" style="background: rgba(16, 185, 129, 0.2); color: var(--green); font-size: 0.8rem; padding: 4px 10px;">
+            🛡️ VERIFIED PASSENGER
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 80px 1fr 1fr; gap: 14px; align-items: center;">
+          <!-- Passenger Photo -->
+          <div style="width: 72px; height: 72px; border-radius: 50%; border: 2px solid var(--gold); background: #080c16; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            <img id="drvPaxPhoto" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+            <span id="drvPaxInitials" style="font-size: 1.4rem; font-weight: 800; color: var(--gold);">BK</span>
+          </div>
+
+          <!-- Passenger Details -->
+          <div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">PASSENGER PUBLIC NAME</div>
+            <div id="drvPaxName" style="font-size: 1.15rem; font-weight: 800; color: #fff;">Brian K.</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">⭐ 4.9 Rating • 24 Trips</div>
+          </div>
+
+          <!-- Route Info -->
+          <div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">DESTINATION</div>
+            <div id="drvDestination" style="font-size: 0.92rem; font-weight: 700; color: #fff;">Thika Road Mall, Nairobi</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Pickup: <span id="drvPickup">Epitome Lane 25</span></div>
+          </div>
+        </div>
+
+        <!-- High-Visibility Gold Fare Banner -->
+        <div class="fare-banner">
+          <div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">AMOUNT TO BE PAID</div>
+            <div class="fare-val" id="drvFareVal">KES 350.00</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.72rem; color: var(--text-muted);">PAYMENT MODE</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff;">CASH / M-PESA</div>
+          </div>
+        </div>
+
+        <!-- Driver Quick Action Flow Buttons -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px;">
+          <button class="btn btn-success" id="btnDrvAccept" onclick="driverAction('ACCEPT')">
+            ✅ 1. Accept Trip
+          </button>
+          <button class="btn btn-secondary" id="btnDrvArrive" onclick="driverAction('ARRIVE')">
+            📍 2. Arrived at Pickup
+          </button>
+          <button class="btn btn-secondary" id="btnDrvStart" onclick="driverAction('START')">
+            🚗 3. Start Trip
+          </button>
+          <button class="btn btn-primary" id="btnDrvComplete" onclick="driverAction('COMPLETE')">
+            🏁 4. Complete & Collect
+          </button>
+        </div>
+
+        <!-- Driver's Assigned Vehicle Spec -->
+        <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--card-border); display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted);">
+          <span>🚗 Driver Vehicle: <strong style="color: #fff;" id="drvVehicleSpec">Silver • Toyota Axio</strong></span>
+          <span>🔢 Registration Plate: <strong style="color: var(--gold);" id="drvPlateSpec">KDA 123A</strong></span>
+          <span>🧑 Driver Name: <strong style="color: #fff;" id="drvNameSpec">John Kamau</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: Live Trip Status & Occurrence Book -->
+    <div class="card" id="cardTripStatus" style="grid-column: 1 / -1;">
+      <div class="card-title">
+        <span>⏱️ 4. Live Trip Tracking & Telemetry</span>
+        <span id="tripStatusBadge" class="status-badge badge-WAITING">NO ACTIVE RIDE</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px;">
+        <div style="background: #080c16; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border);">
+          <div style="font-size: 0.72rem; color: var(--text-muted);">SPECIAL TRIP CODE</div>
+          <div id="activeTripCode" style="font-size: 1.35rem; font-weight: 800; color: var(--gold); font-family: monospace;">-</div>
+        </div>
+        <div style="background: #080c16; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border);">
+          <div style="font-size: 0.72rem; color: var(--text-muted);">ACTIVE RIDE ID</div>
+          <div id="activeRideId" style="font-size: 0.88rem; font-weight: 600; font-family: monospace; color: #fff;">-</div>
+        </div>
+        <div style="background: #080c16; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border);">
+          <div style="font-size: 0.72rem; color: var(--text-muted);">ASSIGNED DRIVER & VEHICLE</div>
+          <div id="assignedDriver" style="font-size: 0.88rem; font-weight: 700; color: #fff;">None</div>
+        </div>
+        <div style="background: #080c16; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border);">
+          <div style="font-size: 0.72rem; color: var(--text-muted);">OCCURRENCE BOOK (OB#)</div>
+          <div id="obEntry" style="font-size: 0.95rem; font-weight: 700; color: var(--green);">-</div>
+        </div>
+      </div>
+
+      <!-- Wave Search Countdown Banner -->
+      <div id="searchWaveBanner" style="display: none; background: rgba(245, 158, 11, 0.12); border: 1.5px solid var(--gold); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; align-items: center; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="font-size: 1.6rem;">📡</div>
+          <div>
+            <div style="font-size: 0.92rem; font-weight: 700; color: var(--gold); display: flex; align-items: center; gap: 8px;">
+              <span>MATCHING WAVE COUNTDOWN:</span>
+              <span id="searchTimerVal" style="font-family: monospace; font-size: 1.15rem; background: #000; color: var(--gold); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--gold);">00:30</span>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
+              Auto-restarts when timer ends if no driver accepts yet.
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-danger" style="width: auto; padding: 8px 14px; font-size: 0.85rem;" onclick="cancelAndChangeService()">
+          🔄 Cancel & Change Service
+        </button>
+      </div>
+
+      <!-- Rating Section -->
+      <div id="ratingSection" style="display: none; background: #131c31; border: 1px solid var(--gold); padding: 16px; border-radius: 12px; margin-top: 14px;">
+        <h4 style="color: var(--gold); margin-bottom: 6px;">⭐ Rate Your Driver & Record in Occurrence Book</h4>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px;">Trip is completed! Leave your 1–5 star rating and comment to register it into the official Occurrence Book.</p>
+
+        <div class="stars" id="starContainer">
+          <span class="star active" data-rating="1">★</span>
+          <span class="star active" data-rating="2">★</span>
+          <span class="star active" data-rating="3">★</span>
+          <span class="star active" data-rating="4">★</span>
+          <span class="star active" data-rating="5">★</span>
+        </div>
+
+        <div class="field-group">
+          <label>Your Comment / Incident Details</label>
+          <input type="text" id="ratingComment" value="Professional driver, clean car, exact change. Smooth ride!">
+        </div>
+
+        <button class="btn btn-success" id="submitRatingBtn" onclick="submitRating()">
+          📝 Submit Rating & Save to Occurrence Book
+        </button>
+      </div>
+    </div>
+
+    <!-- Card 5: Audio Notification & Sound Settings -->
+    <div class="card" id="cardAudio" style="grid-column: 1 / -1;">
+      <div class="card-title">
+        <span>🔔 5. Audio Notifications & Sound Settings</span>
+        <span class="badge badge-gold">12 Custom Chimes</span>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--card-border);">
+        <div style="flex: 1; min-width: 180px;">
+          <label>Sound Preset</label>
+          <select id="soundPreset" onchange="updateSoundPreset(this.value)">
+            <option value="modern">Modern Chime (Harmonic & Crisp)</option>
+            <option value="bell">Soft Bell (Warm Resonance)</option>
+            <option value="digital">Digital Pulse (Futuristic Arpeggio)</option>
+          </select>
+        </div>
+        <div style="flex: 1; min-width: 140px;">
+          <label>Master Volume: <span id="volVal">70%</span></label>
+          <input type="range" id="masterVolume" min="0" max="100" value="70" oninput="setMasterVolume(this.value)">
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; margin-top: 14px;">
+          <input type="checkbox" id="soundMuted" style="width: auto;" onchange="toggleMute(this.checked)">
+          <label for="soundMuted" style="margin: 0; cursor: pointer;">Mute All Sounds</label>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" id="soundEventGrid">
+        <!-- 12 Events Injected dynamically -->
+      </div>
+    </div>
+
+    <!-- Dispatcher Live Activity Feed -->
+    <div class="logs-panel" id="logsPanel">
+      <div class="log-line">
+        <span class="log-time">[Init]</span>
+        <span class="log-tag tag-DISPATCH">READY</span>
+        <span>Cabi Africa Market Launch Command initialized. Dispatcher stream active.</span>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    let currentRideId = null;
+    let currentTripCode = null;
+    let pollInterval = null;
+    let selectedRating = 5;
+    let previousRideStatus = null;
+    let webcamStream = null;
+
+    // Passenger verification state
+    let isPassengerVerified = true; // Auto-verified in market console for seamless testing
+    let verifiedMethod = 'FACE_RECOGNITION';
+    let verifiedSelfieDataUri = null;
+
+    // Driver state
+    let assignedDriverData = {
+      name: 'John Kamau',
+      phone: '+254 722 001122',
+      color: 'Silver',
+      model: 'Toyota Axio',
+      plate: 'KDA 123A',
+      rating: '4.9'
+    };
+
+    // --- 12 Notification Events Definition ---
+    const NOTIFICATION_EVENTS = [
+      { id: 'driver_online', name: 'Driver App Going Live', desc: 'Driver turns status online', defaultOn: true },
+      { id: 'driver_offline', name: 'Driver App Going Offline', desc: 'Driver turns status offline', defaultOn: true },
+      { id: 'passenger_ready', name: 'Passenger App Ready to Request', desc: 'Booking requested', defaultOn: true },
+      { id: 'driver_matched', name: 'Passenger Finds Available Driver', desc: 'Driver assigned to trip', defaultOn: true },
+      { id: 'driver_request_incoming', name: 'Driver App Gets Request', desc: 'Incoming ride request offer', defaultOn: true },
+      { id: 'driver_accepted', name: 'Driver Accepts Trip', desc: 'Driver confirms ride offer', defaultOn: true },
+      { id: 'driver_rejected', name: 'Driver Rejects Trip', desc: 'Driver declined ride offer', defaultOn: true },
+      { id: 'trip_passed', name: "Passenger's Trip is Passed", desc: 'Ride escalated to next nearby driver', defaultOn: true },
+      { id: 'driver_arrived', name: 'Driver Arrives', desc: 'Driver reaches pickup pin', defaultOn: true },
+      { id: 'trip_started', name: 'Trip Starts', desc: 'Passenger boards and meter begins', defaultOn: true },
+      { id: 'trip_ended', name: 'Trip Ends', desc: 'Destination reached & fare finalized', defaultOn: true },
+      { id: 'passenger_cancelled', name: 'Passenger Cancels Trip', desc: 'Ride cancelled by passenger', defaultOn: true }
+    ];
+
+    let soundSettings = {
+      preset: localStorage.getItem('cabi_sound_preset') || 'modern',
+      volume: parseFloat(localStorage.getItem('cabi_sound_volume') || '0.7'),
+      muted: localStorage.getItem('cabi_sound_muted') === 'true',
+      events: JSON.parse(localStorage.getItem('cabi_sound_events') || '{}')
+    };
+
+    NOTIFICATION_EVENTS.forEach(ev => {
+      if (soundSettings.events[ev.id] === undefined) {
+        soundSettings.events[ev.id] = ev.defaultOn;
+      }
+    });
+
+    // Web Audio Synthesizer
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playToneSequence(frequencies, timings, type = 'sine') {
+      if (soundSettings.muted) return;
+      const ctx = getAudioContext();
+      const masterVol = soundSettings.volume;
+
+      frequencies.forEach((freq, index) => {
+        const startTime = ctx.currentTime + (timings[index]?.offset || index * 0.12);
+        const duration = timings[index]?.duration || 0.18;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0.0001, startTime);
+        gain.gain.exponentialRampToValueAtTime(masterVol * 0.3, startTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration + 0.05);
+      });
+    }
+
+    function playNotificationSound(eventId) {
+      if (!soundSettings.events[eventId]) return;
+      const preset = soundSettings.preset;
+      const waveType = preset === 'modern' ? 'triangle' : (preset === 'bell' ? 'sine' : 'sawtooth');
+
+      switch (eventId) {
+        case 'driver_online':
+          playToneSequence([523.25, 659.25, 783.99], [{duration: 0.15}, {duration: 0.15}, {duration: 0.25}], waveType);
+          break;
+        case 'driver_offline':
+          playToneSequence([392.00, 329.63, 261.63], [{duration: 0.15}, {duration: 0.15}, {duration: 0.25}], waveType);
+          break;
+        case 'passenger_ready':
+          playToneSequence([440.00, 523.25], [{duration: 0.12}, {duration: 0.2}], waveType);
+          break;
+        case 'driver_matched':
+          playToneSequence([659.25, 830.61, 987.77, 1318.51], [{duration: 0.1}, {duration: 0.1}, {duration: 0.1}, {duration: 0.3}], waveType);
+          break;
+        case 'driver_request_incoming':
+          playToneSequence([659.25, 880.00, 659.25, 880.00], [{duration: 0.12}, {duration: 0.12}, {duration: 0.12}, {duration: 0.2}], 'triangle');
+          break;
+        case 'driver_accepted':
+          playToneSequence([523.25, 659.25, 783.99, 1046.50], [{duration: 0.12}, {duration: 0.12}, {duration: 0.15}, {duration: 0.35}], waveType);
+          break;
+        case 'driver_rejected':
+          playToneSequence([349.23, 293.66], [{duration: 0.15}, {duration: 0.25}], 'sawtooth');
+          break;
+        case 'trip_passed':
+          playToneSequence([440.00, 587.33, 440.00], [{duration: 0.12}, {duration: 0.15}, {duration: 0.25}], waveType);
+          break;
+        case 'driver_arrived':
+          playToneSequence([783.99, 1046.50, 1318.51], [{duration: 0.18}, {duration: 0.18}, {duration: 0.35}], waveType);
+          break;
+        case 'trip_started':
+          playToneSequence([261.63, 392.00, 523.25], [{duration: 0.14}, {duration: 0.14}, {duration: 0.3}], waveType);
+          break;
+        case 'trip_ended':
+          playToneSequence([523.25, 659.25, 783.99, 1046.50], [{duration: 0.15}, {duration: 0.15}, {duration: 0.18}, {duration: 0.5}], waveType);
+          break;
+        case 'passenger_cancelled':
+          playToneSequence([587.33, 440.00, 329.63], [{duration: 0.14}, {duration: 0.14}, {duration: 0.3}], waveType);
+          break;
+        default:
+          playToneSequence([440, 880], [{duration: 0.1}, {duration: 0.1}], 'sine');
+      }
+    }
+
+    // --- Preferred Public Name Options Generator ---
+    function generatePublicNameOptions(officialName) {
+      const select = document.getElementById('preferredPublicName');
+      select.innerHTML = '';
+      const tokens = (officialName || '').trim().split(/\s+/).filter(Boolean);
+      if (!tokens.length) {
+        select.innerHTML = '<option value="Passenger">Passenger</option>';
+        return;
+      }
+      const first = tokens[0];
+      const last = tokens.length > 1 ? tokens[tokens.length - 1] : '';
+      const middle = tokens.length > 2 ? tokens[1] : '';
+
+      const options = [];
+      if (last) options.push(`${first} ${last[0]}.`);
+      options.push(first);
+      if (last) options.push(`${first} ${last}`);
+      if (middle) options.push(`${first} ${middle}`);
+      options.push(tokens.join(' '));
+
+      const unique = [...new Set(options)];
+      unique.forEach(opt => {
+        const el = document.createElement('option');
+        el.value = opt;
+        el.textContent = opt;
+        select.appendChild(el);
+      });
+      log(`Generated ${unique.length} derived public name options from official name.`);
+    }
+
+    // --- Verification Tabs & Methods ---
+    function switchVerifyTab(tab) {
+      document.getElementById('tabFace').classList.toggle('active', tab === 'FACE');
+      document.getElementById('tabFinger').classList.toggle('active', tab === 'FINGER');
+      document.getElementById('tabOtp').classList.toggle('active', tab === 'OTP');
+
+      document.getElementById('verifyFaceContent').style.display = tab === 'FACE' ? 'block' : 'none';
+      document.getElementById('verifyFingerContent').style.display = tab === 'FINGER' ? 'block' : 'none';
+      document.getElementById('verifyOtpContent').style.display = tab === 'OTP' ? 'block' : 'none';
+    }
+
+    async function startWebcam() {
+      try {
+        const video = document.getElementById('webcamVideo');
+        const placeholder = document.getElementById('cameraPlaceholder');
+        webcamStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
+        });
+        video.srcObject = webcamStream;
+        video.style.display = 'block';
+        placeholder.style.display = 'none';
+        document.getElementById('selfieImgPreview').style.display = 'none';
+        log('📹 Camera stream launched for passenger selfie capture.', 'VERIFY');
+      } catch (e) {
+        log(`Camera access: ${e.message}. Using demo selfie fallback.`, 'VERIFY');
+        quickDemoVerify('FACE_RECOGNITION');
+      }
+    }
+
+    function captureSelfie() {
+      const video = document.getElementById('webcamVideo');
+      const canvas = document.getElementById('selfieCanvas');
+      const img = document.getElementById('selfieImgPreview');
+
+      if (webcamStream && video.videoWidth) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        verifiedSelfieDataUri = canvas.toDataURL('image/jpeg');
+        img.src = verifiedSelfieDataUri;
+        img.style.display = 'block';
+        video.style.display = 'none';
+
+        // Stop stream
+        webcamStream.getTracks().forEach(t => t.stop());
+        webcamStream = null;
+      }
+      quickDemoVerify('FACE_RECOGNITION');
+    }
+
+    function quickDemoVerify(method) {
+      verifiedMethod = method;
+      isPassengerVerified = true;
+
+      const badge = document.getElementById('paxVerifiedBadge');
+      badge.textContent = '🛡️ PASSENGER VERIFIED';
+      badge.className = 'badge badge-green';
+
+      const drvBadge = document.getElementById('drvPaxVerifiedTag');
+      if (drvBadge) drvBadge.style.display = 'inline-block';
+
+      // Update Step 1 in Admin visualizer
+      updateAdminStep(1, 'completed', 'Verified via ' + method);
+
+      // Sound chime
+      playToneSequence([523.25, 659.25, 783.99], [{duration: 0.1}, {duration: 0.1}, {duration: 0.2}], 'triangle');
+
+      log(`✅ Passenger verification successful via ${method}. Ready for dispatch!`, 'VERIFY');
+    }
+
+    // --- Admin Flow Stepper Engine ---
+    function updateAdminStep(stepNum, status, note) {
+      for (let i = 1; i <= 6; i++) {
+        const stepEl = document.getElementById(`step${i}`);
+        if (i < stepNum) {
+          stepEl.className = 'step-box completed';
+        } else if (i === stepNum) {
+          stepEl.className = `step-box ${status}`;
+          if (note) document.getElementById(`step${i}Sub`).textContent = note;
+        } else {
+          stepEl.className = 'step-box';
+        }
+      }
+    }
+
+    // --- Dispatcher Log Writer ---
+    function log(msg, tag = 'DISPATCH') {
+      const panel = document.getElementById('logsPanel');
+      const time = new Date().toLocaleTimeString();
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      line.innerHTML = `
+        <span class="log-time">[${time}]</span>
+        <span class="log-tag tag-${tag}">${tag}</span>
+        <span>${msg}</span>
+      `;
+      panel.appendChild(line);
+      panel.scrollTop = panel.scrollHeight;
+    }
+
+    // --- Role Switcher ---
+    function setRoleView(role) {
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`btnRole${role.charAt(0) + role.slice(1).toLowerCase()}`)?.classList.add('active');
+
+      const cardPax = document.getElementById('cardPassenger');
+      const cardBooking = document.getElementById('cardRideBooking');
+      const cardDriver = document.getElementById('cardDriver');
+      const cardStatus = document.getElementById('cardTripStatus');
+      const cardAudio = document.getElementById('cardAudio');
+      const adminSection = document.getElementById('adminFlowSection');
+
+      if (role === 'ALL') {
+        cardPax.style.display = 'block';
+        cardBooking.style.display = 'block';
+        cardDriver.style.display = 'block';
+        cardStatus.style.display = 'block';
+        cardAudio.style.display = 'block';
+        adminSection.style.display = 'block';
+      } else if (role === 'PASSENGER') {
+        cardPax.style.display = 'block';
+        cardBooking.style.display = 'block';
+        cardDriver.style.display = 'none';
+        cardStatus.style.display = 'block';
+        cardAudio.style.display = 'none';
+        adminSection.style.display = 'none';
+      } else if (role === 'DRIVER') {
+        cardPax.style.display = 'none';
+        cardBooking.style.display = 'none';
+        cardDriver.style.display = 'block';
+        cardStatus.style.display = 'block';
+        cardAudio.style.display = 'none';
+        adminSection.style.display = 'none';
+      } else if (role === 'DISPATCHER') {
+        cardPax.style.display = 'none';
+        cardBooking.style.display = 'none';
+        cardDriver.style.display = 'none';
+        cardStatus.style.display = 'block';
+        cardAudio.style.display = 'none';
+        adminSection.style.display = 'block';
+      } else if (role === 'ADMIN') {
+        cardPax.style.display = 'block';
+        cardBooking.style.display = 'block';
+        cardDriver.style.display = 'block';
+        cardStatus.style.display = 'block';
+        cardAudio.style.display = 'block';
+        adminSection.style.display = 'block';
+      }
+    }
+
+    // --- Backend Health Check ---
+    async function checkBackendHealth() {
+      const host = document.getElementById('apiHost').value.trim();
+      const statusSpan = document.getElementById('backendStatus');
+      const pill = document.getElementById('backendPill');
+
+      statusSpan.textContent = 'Checking...';
+      try {
+        const res = await fetch(`${host}/api/health`).catch(() => null) ||
+                    await fetch(`${host}/api/rides/nearby-drivers?pickupLat=-1.207367&pickupLng=36.874090`).catch(() => null);
+
+        if (res && res.ok) {
+          statusSpan.textContent = 'Connected (:3334)';
+          pill.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+          pill.style.color = 'var(--green)';
+          log(`Connected to Dispatch API on ${host}`, 'DISPATCH');
+        } else {
+          throw new Error('Port not responding');
+        }
+      } catch (err) {
+        statusSpan.textContent = 'Offline (Start :3334)';
+        pill.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+        pill.style.color = 'var(--red)';
+        log(`Could not connect to ${host}. Ensure 'npx nx serve dispatch-service' is active.`, 'DISPATCH');
+      }
+    }
+
+    // --- Request Ride Action ---
+    async function requestRide() {
+      if (!isPassengerVerified) {
+        alert('Please complete passenger verification (Face Selfie, Fingerprint, or OTP) first!');
+        return;
+      }
+
+      const host = document.getElementById('apiHost').value.trim();
+      const passengerId = document.getElementById('passengerId').value.trim();
+      const preferredName = document.getElementById('preferredPublicName').value;
+      const pickupLat = parseFloat(document.getElementById('pickupLat').value);
+      const pickupLng = parseFloat(document.getElementById('pickupLng').value);
+      const pickupAddress = document.getElementById('pickupAddress').value;
+      const dropoffAddress = document.getElementById('dropoffAddress').value;
+      const fare = parseFloat(document.getElementById('fare').value);
+      const vehicleType = document.getElementById('vehicleType').value;
+
+      const payload = {
+        passengerId,
+        pickupLocation: {
+          address: pickupAddress,
+          lat: pickupLat,
+          lng: pickupLng,
+          latitude: pickupLat,
+          longitude: pickupLng
+        },
+        dropoffLocation: {
+          address: dropoffAddress,
+          lat: pickupLat + 0.02,
+          lng: pickupLng + 0.02,
+          latitude: pickupLat + 0.02,
+          longitude: pickupLng + 0.02
+        },
+        fare,
+        vehicleType,
+        isVerifiedPassenger: true,
+        verificationMethod: verifiedMethod,
+        preferredPublicName: preferredName
+      };
+
+      log(`Dispatching ride offer for "${preferredName}" (Fare: KES ${fare})`, 'DISPATCH');
+      document.getElementById('requestRideBtn').disabled = true;
+      playNotificationSound('passenger_ready');
+
+      updateAdminStep(2, 'completed', `Fare KES ${fare}`);
+      updateAdminStep(3, 'active', 'Scanning 5km radius');
+
+      try {
+        const res = await fetch(`${host}/api/rides`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(`Server returned ${res.status}: ${errText}`);
+        }
+
+        const data = await res.json();
+        currentRideId = data.id || (data.data && data.data.id);
+        currentTripCode = data.tripCode || (data.data && data.data.tripCode) || 'CB-XXXX';
+
+        document.getElementById('activeRideId').textContent = currentRideId;
+        document.getElementById('activeTripCode').textContent = currentTripCode;
+        document.getElementById('flowTripCode').textContent = currentTripCode;
+        document.getElementById('drvTripCodeBanner').textContent = currentTripCode;
+        document.getElementById('drvPaxName').textContent = preferredName;
+        document.getElementById('drvDestination').textContent = dropoffAddress;
+        document.getElementById('drvPickup').textContent = pickupAddress;
+        document.getElementById('drvFareVal').textContent = `KES ${fare.toFixed(2)}`;
+
+        updateBadge('MATCHING');
+        previousRideStatus = 'MATCHING';
+
+        startSearchTimer();
+        startPolling(host, currentRideId);
+
+        log(`🎉 Trip created [${currentTripCode}]. Radar broadcasting to drivers.`, 'TRIP');
+
+      } catch (err) {
+        log(`Error creating ride: ${err.message}`, 'DISPATCH');
+        document.getElementById('requestRideBtn').disabled = false;
+        stopSearchTimer();
+      }
+    }
+
+    // --- Driver Action Handlers ---
+    async function driverAction(action) {
+      const host = document.getElementById('apiHost').value.trim();
+      if (!currentRideId && action !== 'ACCEPT') {
+        alert('No active trip to perform driver action on!');
+        return;
+      }
+
+      if (action === 'ACCEPT') {
+        log(`Driver ${assignedDriverData.name} tapped ACCEPT trip [${currentTripCode || 'CB-XXXX'}]`, 'DRIVER');
+        stopSearchTimer();
+        updateBadge('ACCEPTED');
+        playNotificationSound('driver_accepted');
+
+        updateAdminStep(4, 'completed', `${assignedDriverData.name} (${assignedDriverData.plate})`);
+        updateAdminStep(5, 'active', 'Driver en route to pickup');
+
+        document.getElementById('assignedDriver').textContent = `${assignedDriverData.name} • ${assignedDriverData.color} ${assignedDriverData.model} (${assignedDriverData.plate})`;
+        document.getElementById('drvVehicleSpec').textContent = `${assignedDriverData.color} • ${assignedDriverData.model}`;
+        document.getElementById('drvPlateSpec').textContent = assignedDriverData.plate;
+        document.getElementById('drvNameSpec').textContent = assignedDriverData.name;
+
+        if (currentRideId) {
+          await fetch(`${host}/api/rides/${currentRideId}/accept`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ driverId: 'd0000000-0000-0000-0000-000000000001' })
+          }).catch(() => null);
+        }
+
+      } else if (action === 'ARRIVE') {
+        log(`Driver arrived at pickup location. Waiting countdown started.`, 'DRIVER');
+        updateBadge('ARRIVED');
+        playNotificationSound('driver_arrived');
+        updateAdminStep(5, 'active', 'Driver arrived at pickup');
+
+      } else if (action === 'START') {
+        log(`Passenger onboard. Trip started, GPS odometer tracking live.`, 'TRIP');
+        updateBadge('IN_PROGRESS');
+        playNotificationSound('trip_started');
+        updateAdminStep(5, 'active', 'In progress to destination');
+
+      } else if (action === 'COMPLETE') {
+        log(`Destination reached. Fare settled KES 350. Occurrence Book logged.`, 'TRIP');
+        updateBadge('COMPLETED');
+        playNotificationSound('trip_ended');
+        updateAdminStep(5, 'completed', 'Trip completed');
+        updateAdminStep(6, 'completed', 'OB Record Created');
+
+        document.getElementById('obEntry').textContent = `OB-${Math.floor(1000 + Math.random() * 9000)}`;
+        document.getElementById('ratingSection').style.display = 'block';
+        if (pollInterval) clearInterval(pollInterval);
+      }
+    }
+
+    // --- Search Timer ---
+    let searchTimerSeconds = 30;
+    let searchTimerInterval = null;
+
+    function startSearchTimer() {
+      if (searchTimerInterval) clearInterval(searchTimerInterval);
+      searchTimerSeconds = 30;
+      const banner = document.getElementById('searchWaveBanner');
+      if (banner) banner.style.display = 'flex';
+      const timerVal = document.getElementById('searchTimerVal');
+      if (timerVal) timerVal.textContent = '00:30';
+
+      searchTimerInterval = setInterval(() => {
+        if (searchTimerSeconds > 1) {
+          searchTimerSeconds--;
+          if (timerVal) timerVal.textContent = `00:${searchTimerSeconds.toString().padStart(2, '0')}`;
+        } else {
+          searchTimerSeconds = 30;
+          if (timerVal) timerVal.textContent = '00:30';
+          playNotificationSound('passenger_ready');
+          log('Wave countdown ended: auto-restarting 30s matching radar...', 'DISPATCH');
+        }
+      }, 1000);
+    }
+
+    function stopSearchTimer() {
+      if (searchTimerInterval) {
+        clearInterval(searchTimerInterval);
+        searchTimerInterval = null;
+      }
+      const banner = document.getElementById('searchWaveBanner');
+      if (banner) banner.style.display = 'none';
+    }
+
+    async function cancelAndChangeService() {
+      stopSearchTimer();
+      if (pollInterval) clearInterval(pollInterval);
+      if (currentRideId) {
+        const host = document.getElementById('apiHost').value.trim();
+        await fetch(`${host}/api/rides/${currentRideId}/cancel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reason: 'Passenger changed service' })
+        }).catch(() => null);
+        playNotificationSound('passenger_cancelled');
+      }
+      currentRideId = null;
+      currentTripCode = '-';
+      document.getElementById('activeRideId').textContent = '-';
+      document.getElementById('activeTripCode').textContent = '-';
+      document.getElementById('assignedDriver').textContent = 'None';
+      document.getElementById('requestRideBtn').disabled = false;
+      updateBadge('WAITING');
+      log('Ride search cancelled. Passenger selecting another service tier.', 'PASSENGER');
+    }
+
+    function updateBadge(status) {
+      const badge = document.getElementById('tripStatusBadge');
+      badge.textContent = status;
+      badge.className = `status-badge badge-${status}`;
+    }
+
+    function startPolling(host, rideId) {
+      if (pollInterval) clearInterval(pollInterval);
+      pollInterval = setInterval(async () => {
+        try {
+          const res = await fetch(`${host}/api/rides/current?userId=${document.getElementById('passengerId').value}&role=PASSENGER`);
+          if (res.ok) {
+            const ride = await res.json();
+            if (ride && ride.id === rideId) {
+              const newStatus = ride.status;
+              if (ride.tripCode && ride.tripCode !== currentTripCode) {
+                currentTripCode = ride.tripCode;
+                document.getElementById('activeTripCode').textContent = currentTripCode;
+                document.getElementById('flowTripCode').textContent = currentTripCode;
+              }
+              if (newStatus !== previousRideStatus) {
+                log(`Transition: ${previousRideStatus || 'INIT'} ➔ ${newStatus}`, 'TRIP');
+                if (newStatus === 'ACCEPTED') {
+                  driverAction('ACCEPT');
+                } else if (newStatus === 'ARRIVED') {
+                  driverAction('ARRIVE');
+                } else if (newStatus === 'IN_PROGRESS') {
+                  driverAction('START');
+                } else if (newStatus === 'COMPLETED') {
+                  driverAction('COMPLETE');
+                }
+                previousRideStatus = newStatus;
+                updateBadge(newStatus);
+              }
+            }
+          }
+        } catch (e) {}
+      }, 2500);
+    }
+
+    // --- Star Rating & Occurrence Book ---
+    document.querySelectorAll('.star').forEach(star => {
+      star.addEventListener('click', (e) => {
+        selectedRating = parseInt(e.target.dataset.rating);
+        document.querySelectorAll('.star').forEach(s => {
+          s.classList.toggle('active', parseInt(s.dataset.rating) <= selectedRating);
+        });
+      });
+    });
+
+    async function submitRating() {
+      const host = document.getElementById('apiHost').value.trim();
+      const comment = document.getElementById('ratingComment').value;
+      const passengerId = document.getElementById('passengerId').value;
+
+      log(`Submitting ${selectedRating}-star rating + comment: "${comment}"`, 'PASSENGER');
+      document.getElementById('submitRatingBtn').disabled = true;
+
+      try {
+        if (currentRideId) {
+          await fetch(`${host}/api/rides/${currentRideId}/rate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              rating: selectedRating,
+              comment,
+              role: 'PASSENGER',
+              raterId: passengerId
+            })
+          }).catch(() => null);
+        }
+        document.getElementById('ratingSection').innerHTML = `
+          <div style="color: var(--green); font-weight: 700; text-align: center; padding: 18px;">
+            🎉 Rating & Occurrence Book record successfully registered! Full E2E Market Test Complete!
+          </div>
+        `;
+        log('✅ Occurrence Book entry recorded. Market flow complete!', 'DISPATCH');
+      } catch (e) {
+        log(`Rating error: ${e.message}`, 'DISPATCH');
+      }
+    }
+
+    // --- Audio Settings & Chimes Render ---
+    function renderSoundSettings() {
+      const container = document.getElementById('soundEventGrid');
+      container.innerHTML = '';
+      NOTIFICATION_EVENTS.forEach(ev => {
+        const row = document.createElement('div');
+        row.className = 'sound-row';
+        const isChecked = soundSettings.events[ev.id] !== false;
+        row.innerHTML = `
+          <div>
+            <strong style="color: #fff;">${ev.name}</strong>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">${ev.desc}</div>
+          </div>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; text-transform: none; margin: 0;">
+            <input type="checkbox" id="toggle_${ev.id}" ${isChecked ? 'checked' : ''} onchange="toggleEventSound('${ev.id}', this.checked)">
+            <span>${isChecked ? 'Enabled' : 'Muted'}</span>
+          </label>
+          <button class="sound-btn" onclick="playNotificationSound('${ev.id}')">🔊 Test</button>
+        `;
+        container.appendChild(row);
+      });
+      document.getElementById('soundPreset').value = soundSettings.preset;
+      document.getElementById('masterVolume').value = Math.round(soundSettings.volume * 100);
+      document.getElementById('volVal').textContent = `${Math.round(soundSettings.volume * 100)}%`;
+      document.getElementById('soundMuted').checked = soundSettings.muted;
+    }
+
+    function toggleEventSound(eventId, enabled) {
+      soundSettings.events[eventId] = enabled;
+      localStorage.setItem('cabi_sound_events', JSON.stringify(soundSettings.events));
+      renderSoundSettings();
+    }
+
+    function updateSoundPreset(preset) {
+      soundSettings.preset = preset;
+      localStorage.setItem('cabi_sound_preset', preset);
+      playNotificationSound('driver_accepted');
+    }
+
+    function setMasterVolume(val) {
+      soundSettings.volume = val / 100;
+      localStorage.setItem('cabi_sound_volume', soundSettings.volume.toString());
+      document.getElementById('volVal').textContent = `${val}%`;
+    }
+
+    function toggleMute(muted) {
+      soundSettings.muted = muted;
+      localStorage.setItem('cabi_sound_muted', muted.toString());
+    }
+
+    window.onload = () => {
+      checkBackendHealth();
+      renderSoundSettings();
+      generatePublicNameOptions(document.getElementById('officialName').value);
+      quickDemoVerify('FACE_RECOGNITION'); // Default verified state for instant testing
+    };
+  </script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:core_ui/core_ui.dart';
 import '../services/safety_service.dart';
 
 class DriverDetailsPanel extends StatelessWidget {
@@ -7,6 +8,8 @@ class DriverDetailsPanel extends StatelessWidget {
   final String carModel;
   final String licensePlate;
   final String eta;
+  final String? vehicleColor;
+  final String? profilePictureUrl;
 
   const DriverDetailsPanel({
     super.key,
@@ -14,6 +17,8 @@ class DriverDetailsPanel extends StatelessWidget {
     required this.carModel,
     required this.licensePlate,
     required this.eta,
+    this.vehicleColor,
+    this.profilePictureUrl,
   });
 
   Future<void> _handleSOS(BuildContext context) async {
@@ -57,15 +62,19 @@ class DriverDetailsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorText = (vehicleColor != null && vehicleColor!.isNotEmpty)
+        ? '$vehicleColor '
+        : '';
+
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 10,
-            offset: const Offset(0, -2),
+            offset: Offset(0, -2),
           ),
         ],
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
@@ -75,12 +84,13 @@ class DriverDetailsPanel extends StatelessWidget {
         children: [
           Row(
             children: [
-              const CircleAvatar(
+              ProfileAvatarBadge(
+                imageUrl: profilePictureUrl,
+                name: driverName,
                 radius: 24,
-                backgroundColor: Colors.grey,
-                child: Icon(Icons.person, color: Colors.white),
+                borderColor: const Color(0xFFD4AF37),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,13 +98,45 @@ class DriverDetailsPanel extends StatelessWidget {
                     Text(
                       driverName,
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 17,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      '$carModel • $licensePlate',
-                      style: const TextStyle(color: Colors.grey),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 1.5),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.shade100,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                                color: Colors.amber.shade700, width: 0.8),
+                          ),
+                          child: Text(
+                            licensePlate,
+                            style: TextStyle(
+                              color: Colors.amber.shade900,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            '$colorText• $carModel',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

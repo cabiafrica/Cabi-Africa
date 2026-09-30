@@ -10,6 +10,7 @@ import 'package:passenger_app/screens/saved_places_screen.dart';
 import 'package:passenger_app/screens/referral_status_screen.dart';
 import 'package:passenger_app/screens/wallet_screen.dart';
 import 'package:passenger_app/screens/settings_screen.dart';
+import 'package:passenger_app/screens/language_selection_screen.dart';
 import 'package:passenger_app/screens/help_center_screen.dart';
 import 'package:passenger_app/services/settings_service.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -362,6 +363,17 @@ class _MenuScreenState extends State<MenuScreen> {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const WalletScreen()),
+                  ),
+                ),
+                MenuGridItem(
+                  icon: Icons.language_rounded,
+                  title: 'Language',
+                  subtitle: 'Select app language',
+                  badge: 'MULTI',
+                  baseColor: const Color(0xFF6366F1), // Indigo
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LanguageSelectionScreen()),
                   ),
                 ),
                 MenuGridItem(

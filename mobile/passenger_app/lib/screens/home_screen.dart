@@ -7,6 +7,7 @@ import 'package:cabi_maps/cabi_maps.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:passenger_app/theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:core_ui/core_ui.dart';
 
 // Import Screens for Navigation
 import 'ride_history_screen.dart';
@@ -20,6 +21,7 @@ import 'user_dashboard_screen.dart';
 import 'package:passenger_app/screens/menu_screen.dart';
 import 'package:passenger_app/widgets/promotional_carousel.dart';
 import 'package:passenger_app/widgets/profile_avatar_with_qr.dart';
+import 'rate_driver_screen.dart';
 // import 'login_screen.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +29,7 @@ import '../providers/auth_provider.dart';
 import '../providers/providers.dart';
 import '../widgets/security_verification_modal.dart';
 import '../widgets/sos_button.dart';
+import '../services/audio_notification_service.dart';
 part 'home_screen_panels.dart';
 part 'home_screen_logic.dart';
 
@@ -58,6 +61,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   TripStatus _tripStatus = TripStatus.idle;
   int _arrivalDurationMinutes = 5;
+  int _searchCountdownSeconds = 30;
+  Timer? _searchCountdownTimer;
 
   CabiMapController? _mapController;
   bool _isFollowingLocation = true;
@@ -144,6 +149,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void dispose() {
+    _searchCountdownTimer?.cancel();
     _rideUpdateTimer?.cancel();
     _arrivalTimer?.cancel();
     _tripTimer?.cancel();

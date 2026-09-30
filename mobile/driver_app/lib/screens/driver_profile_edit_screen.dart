@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:core_ui/core_ui.dart';
 import '../providers/auth_provider.dart';
 import '../services/auth_service.dart';
 import '../theme/app_theme.dart';
@@ -10,11 +11,13 @@ import '../theme/app_theme.dart';
 class DriverProfileEditScreen extends ConsumerStatefulWidget {
   final String currentName;
   final String? currentProfilePictureUrl;
+  final String? currentPreferredName;
 
   const DriverProfileEditScreen({
     super.key,
     required this.currentName,
     this.currentProfilePictureUrl,
+    this.currentPreferredName,
   });
 
   @override
@@ -27,12 +30,33 @@ class _DriverProfileEditScreenState
   late TextEditingController _nameController;
   String? _selectedImagePath;
   bool _isLoading = false;
+  String? _selectedPreferredName;
   final AuthService _authService = AuthService();
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.currentName);
+    final options = PublicNameHelper.generateOptions(widget.currentName);
+    if (widget.currentPreferredName != null &&
+        options.contains(widget.currentPreferredName)) {
+      _selectedPreferredName = widget.currentPreferredName;
+    } else if (options.isNotEmpty) {
+      _selectedPreferredName = options.first;
+    }
+
+    _nameController.addListener(() {
+      final updatedOptions =
+          PublicNameHelper.generateOptions(_nameController.text);
+      if (_selectedPreferredName == null ||
+          !updatedOptions.contains(_selectedPreferredName)) {
+        if (updatedOptions.isNotEmpty && mounted) {
+          setState(() {
+            _selectedPreferredName = updatedOptions.first;
+          });
+        }
+      }
+    });
   }
 
   @override
@@ -165,11 +189,16 @@ class _DriverProfileEditScreenState
       final res = await _authService.updateProfile(
         userId: userId,
         name: name,
+        preferredPublicName: _selectedPreferredName,
         imagePath: _selectedImagePath,
       );
 
       if (res.isSignedIn && res.user != null) {
         final updatedMap = Map<String, dynamic>.from(res.user!);
+        if (_selectedPreferredName != null && _selectedPreferredName!.isNotEmpty) {
+          updatedMap['preferredPublicName'] = _selectedPreferredName;
+          updatedMap['nickname'] = _selectedPreferredName;
+        }
         ref.read(authProvider.notifier).updateUser(updatedMap);
 
         if (mounted) {
@@ -205,6 +234,225 @@ class _DriverProfileEditScreenState
         });
       }
     }
+  }
+
+  Widget _buildPreferredPublicNameSection() {
+    final options = PublicNameHelper.generateOptions(_nameController.text);
+    final selectedName = (_selectedPreferredName != null &&
+            options.contains(_selectedPreferredName))
+        ? _selectedPreferredName!
+        : (options.isNotEmpty ? options.first : _nameController.text);
+
+    final authState = ref.watch(authProvider);
+    final user = (authState is Authenticated) ? authState.user : null;
+    final dynamic vehiclesRaw = user?['vehicles'];
+    final dynamic vehicleRaw = (vehiclesRaw is List && vehiclesRaw.isNotEmpty)
+        ? vehiclesRaw.first
+        : (user?['vehicle'] ?? {});
+    final Map<String, dynamic> vehicle = (vehicleRaw is Map<String, dynamic>)
+        ? vehicleRaw
+        : <String, dynamic>{};
+
+    final vehicleModel =
+        "${vehicle['make'] ?? ''} ${vehicle['model'] ?? 'Vehicle'}".trim();
+    final vehicleColor = vehicle['color'] ?? 'Standard';
+    final plate = vehicle['plateNumber'] ??
+        vehicle['licensePlate'] ??
+        vehicle['registration'] ??
+        'KCB 123A';
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.darkSurface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.primaryColor.withValues(alpha: 0.25),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                ),
+                child: const Icon(
+                  Icons.badge_outlined,
+                  color: AppTheme.primaryColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'PREFERRED PUBLIC NAME',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                    color: AppTheme.primaryColor,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Text(
+                  'PASSENGER VISIBLE',
+                  style: TextStyle(
+                    color: AppTheme.primaryColor,
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Select which name variation passengers see when you accept their ride. Derived strictly from your official registered legal name.',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.white.withValues(alpha: 0.6),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: options.map((opt) {
+              final isSelected = opt == selectedName;
+              return ChoiceChip(
+                label: Text(
+                  opt,
+                  style: TextStyle(
+                    color: isSelected ? Colors.black : Colors.white,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    fontSize: 13,
+                  ),
+                ),
+                selected: isSelected,
+                selectedColor: AppTheme.primaryColor,
+                backgroundColor: AppTheme.darkBackground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: isSelected
+                        ? AppTheme.primaryColor
+                        : Colors.white.withValues(alpha: 0.1),
+                  ),
+                ),
+                onSelected: (selected) {
+                  if (selected) {
+                    setState(() {
+                      _selectedPreferredName = opt;
+                    });
+                  }
+                },
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 16),
+          // Live Dispatch Preview Card showing Driver info as seen by passenger
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.darkBackground,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            ),
+            child: Row(
+              children: [
+                ProfileAvatarBadge(
+                  imageUrl: widget.currentProfilePictureUrl,
+                  imageFile: _selectedImagePath != null
+                      ? File(_selectedImagePath!)
+                      : null,
+                  fallbackName: selectedName,
+                  size: 44,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'PASSENGER DISPATCH VIEW',
+                        style: TextStyle(
+                          color: Colors.white38,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              selectedName,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          const Icon(Icons.verified,
+                              color: Colors.lightGreenAccent, size: 14),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Text(
+                            '$vehicleColor • $vehicleModel',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 11,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 1.5),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFDB913),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              plate,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 9,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -369,6 +617,11 @@ class _DriverProfileEditScreenState
                 ),
               ),
 
+              const SizedBox(height: 20),
+
+              // Preferred Public Name Selector
+              _buildPreferredPublicNameSection(),
+
               const SizedBox(height: 24),
 
               // Info Card
@@ -391,7 +644,7 @@ class _DriverProfileEditScreenState
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Your profile photo and verified name are displayed to passengers upon ride assignment.',
+                        'Your preferred name, profile photo, vehicle color, and registration plate are displayed to passengers upon ride assignment.',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.white.withValues(alpha: 0.7),

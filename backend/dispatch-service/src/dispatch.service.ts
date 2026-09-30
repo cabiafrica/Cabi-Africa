@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
-import { RideStatus, VehicleType } from '@prisma/client';
+import { RideStatus, VehicleType, ShiftStatus, ClaimStatus } from '@prisma/client';
 
 // Safe user fields for dispatch panel (excludes sensitive auth fields)
 const SAFE_PASSENGER_SELECT = {
@@ -157,5 +157,97 @@ export class DispatchService {
             },
             orderBy: { createdAt: 'desc' }
         });
+    }
+
+    // ── Vehicle Account Management ──────────────────────────────────────────
+
+    async getVehicles() {
+        return (this.prisma as any).vehicle.findMany({
+            include: {
+                driver_profiles: { select: { id: true, isOnline: true, user: { select: { fullName: true, phone: true } } } },
+                vehicleDrivers: {
+                    where: { isActive: true },
+                    include: { driver: { select: { id: true, user: { select: { fullName: true } } } } },
+                },
+                vehicleShifts: {
+                    where: { status: ShiftStatus.ACTIVE },
+                    take: 1,
+                    orderBy: { startedAt: 'desc' },
+                },
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+    }
+
+    async getVehicleAccount(vehicleId: string) {
+        const vehicle = await (this.prisma as any).vehicle.findUnique({
+            where: { id: vehicleId },
+            include: {
+                driver_profiles: { select: { id: true, totalRidesCompleted: true, isOnline: true, user: { select: { fullName: true, phone: true, passportPhotoUrl: true } } } },
+                vehicleDrivers: {
+                    where: { isActive: true },
+                    include: { driver: { select: { id: true, totalRidesCompleted: true, user: { select: { fullName: true } } } } },
+                },
+                vehicleShifts: {
+                    orderBy: { startedAt: 'desc' },
+                    take: 10,
+                },
+                benefitClaims: {
+                    include: { benefit: true },
+                    orderBy: { reportedAt: 'desc' },
+                },
+            },
+        });
+
+        if (!vehicle) throw new NotFoundException(`Vehicle ${vehicleId} not found`);
+
+        // Aggregate trip stats from rides
+        const rides = await this.prisma.ride.findMany({
+            where: { driverId: vehicle.driverProfileId ?? undefined, status: RideStatus.COMPLETED },
+            select: { fare: true, distance: true, createdAt: true },
+        });
+
+        const totalTrips = rides.length;
+        const totalRevenue = rides.reduce((sum, r) => sum + Number(r.fare ?? 0), 0);
+        const totalDistanceKm = rides.reduce((sum, r) => sum + Number(r.distance ?? 0), 0);
+
+        const approvedClaims = vehicle.benefitClaims.filter((c: any) => c.status === ClaimStatus.APPROVED);
+        const pendingClaims = vehicle.benefitClaims.filter((c: any) => c.status === ClaimStatus.PENDING);
+
+        return {
+            ...vehicle,
+            stats: {
+                totalTrips,
+                totalRevenue,
+                totalDistanceKm: Math.round(totalDistanceKm * 10) / 10,
+                approvedClaimsCount: approvedClaims.length,
+                pendingClaimsCount: pendingClaims.length,
+            },
+        };
+    }
+
+    async claimVehicleIncentive(vehicleId: string, data: { benefitId: string; driverProfileId: string; notes?: string; evidenceUrl?: string }) {
+        // Prevent duplicate pending claims
+        const existing = await (this.prisma as any).vehicleBenefitClaim.findFirst({
+            where: { vehicleId, benefitId: data.benefitId, status: ClaimStatus.PENDING },
+        });
+
+        if (existing) {
+            return { message: 'A pending claim already exists for this benefit.', claim: existing };
+        }
+
+        const claim = await (this.prisma as any).vehicleBenefitClaim.create({
+            data: {
+                vehicleId,
+                benefitId: data.benefitId,
+                reportedByDriverId: data.driverProfileId,
+                notes: data.notes ?? null,
+                evidenceUrl: data.evidenceUrl ?? null,
+                status: ClaimStatus.PENDING,
+            },
+            include: { benefit: true },
+        });
+
+        return { message: 'Incentive claim submitted successfully.', claim };
     }
 }

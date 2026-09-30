@@ -119,12 +119,14 @@ class RideService {
     return [];
   }
 
-  // Create a ride request with vehicle type support
+  // Create a ride request with vehicle type support and verification status
   Future<Map<String, dynamic>> createRide(
     String passengerId,
     dynamic pickup,
     dynamic dropoff, {
     String? vehicleType,
+    bool isVerifiedPassenger = true,
+    String? verificationMethod,
   }) async {
     try {
       final response = await _client.post(
@@ -135,6 +137,8 @@ class RideService {
           'pickupLocation': pickup,
           'dropoffLocation': dropoff,
           'vehicleType': vehicleType,
+          'isVerifiedPassenger': isVerifiedPassenger,
+          if (verificationMethod != null) 'verificationMethod': verificationMethod,
           'fare': 0,
         }),
       );
@@ -210,13 +214,29 @@ class RideService {
       final response = await _client.post(
         Uri.parse('$_dispatchBaseUrl/rides/$rideId/rate'),
         headers: _headers,
-        body: jsonEncode({'rating': rating, 'comment': comment}),
+        body: jsonEncode({'rating': rating, 'comment': comment, 'role': 'DRIVER'}),
       );
       if (response.statusCode != 200 && response.statusCode != 201) {
         debugPrint('ratePassenger failed: ${response.statusCode} ${response.body}');
       }
     } catch (e) {
       debugPrint('Error rating passenger: $e');
+    }
+  }
+
+  // Rate a driver after a ride
+  Future<void> rateDriver(String rideId, int rating, String comment) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/rate'),
+        headers: _headers,
+        body: jsonEncode({'rating': rating, 'comment': comment, 'role': 'PASSENGER'}),
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        debugPrint('rateDriver failed: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error rating driver: $e');
     }
   }
 

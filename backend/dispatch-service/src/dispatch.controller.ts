@@ -61,4 +61,24 @@ export class DispatchController {
     ) {
         return this.dispatchService.getCurrentRide(userId, role);
     }
+
+    // ── Vehicle Account ─────────────────────────────────────────────────────
+
+    @Get('vehicles')
+    async getVehicles() {
+        return this.dispatchService.getVehicles();
+    }
+
+    @Get('vehicles/:vehicleId/account')
+    async getVehicleAccount(@Param('vehicleId') vehicleId: string) {
+        return this.dispatchService.getVehicleAccount(vehicleId);
+    }
+
+    @Post('vehicles/:vehicleId/incentives/claim')
+    async claimVehicleIncentive(
+        @Param('vehicleId') vehicleId: string,
+        @Body() body: { benefitId: string; driverProfileId: string; notes?: string; evidenceUrl?: string },
+    ) {
+        return this.dispatchService.claimVehicleIncentive(vehicleId, body);
+    }
 }

@@ -6,6 +6,7 @@ class Trip {
   final String dropoffAddress;
   final double fare;
   final String status;
+  final String? tripCode;
   final DateTime? createdAt;
 
   Trip({
@@ -16,6 +17,7 @@ class Trip {
     required this.dropoffAddress,
     required this.fare,
     required this.status,
+    this.tripCode,
     this.createdAt,
   });
 
@@ -28,6 +30,7 @@ class Trip {
       dropoffAddress: json['dropoffAddress'] as String,
       fare: (json['fare'] as num).toDouble(),
       status: json['status'] as String,
+      tripCode: json['tripCode'] as String?,
       createdAt: json['createdAt'] != null 
           ? DateTime.parse(json['createdAt'] as String)
           : null,
@@ -43,6 +46,7 @@ class Trip {
       'dropoffAddress': dropoffAddress,
       'fare': fare,
       'status': status,
+      'tripCode': tripCode,
       'createdAt': createdAt?.toIso8601String(),
     };
   }

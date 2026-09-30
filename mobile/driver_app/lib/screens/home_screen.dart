@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,8 @@ import '../widgets/face_verification_modal.dart';
 import '../widgets/swipeable_online_button.dart';
 import '../widgets/sos_button.dart';
 import '../providers/providers.dart';
+import '../services/audio_notification_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -31,11 +34,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _isVerificationInProgress = false;
   double _tripRadiusKm = 5.0; // Max radius 5.0 km
   bool _isRadiusSliderOpen = false; // Collapsible radius slider
+  bool _allowBackToBack = true; // Back-to-back trip requests toggle
   LatLng _driverLocation =
       const LatLng(-1.286389, 36.817223); // Nairobi default
   CabiMapController? _mapController;
   StreamSubscription<Position>? _locationSubscription;
   Timer? _ridePollingTimer;
+
+  // ──────────────────── Favourite Places ────────────────────
+  // Each entry: {'label': ..., 'address': ..., 'lat': ..., 'lng': ..., 'icon': ...}
+  List<Map<String, dynamic>> _favouritePlaces = [];
+  static const String _kFavPlacesKey = 'cabi_driver_fav_places';
+
+  // ──────────────────── Floating HUD Overlay ────────────────────
+  OverlayEntry? _hudOverlay;
+  // Draggable position (right edge, vertical fraction)
+  double _hudTopFraction = 0.45;
+  bool _hudMinimised = false;
 
   void _showAutoOfflineNotice() {
     if (!mounted) return;
@@ -205,6 +220,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
               final formattedRequest = {
                 'rideId': currentRide['id'],
+                'tripCode': currentRide['tripCode'] ?? 'CB-XXXX',
                 'pickupAddress': (pickup is Map && pickup['address'] != null)
                     ? pickup['address']
                     : (currentRide['pickupAddress'] ?? 'Kenyatta Ave, Nairobi'),
@@ -217,10 +233,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 'isVerifiedPassenger': passenger?['isVerifiedPassenger'] ?? true,
                 'passengerName': passenger?['fullName'] ?? 'Guest Passenger',
               };
+              AudioNotificationService.instance.play('driver_request_incoming');
               rideReqProvider.setRideRequest(
                 formattedRequest,
                 onTimeout: () {
                   debugPrint('[DRIVER_POLL] 20 seconds expired without response. Auto-passing ride ${currentRide['id']} to next driver...');
+                  AudioNotificationService.instance.play('trip_passed');
                   rideService.passRide(currentRide['id'], driverId, 'Timeout - 20s expired');
                 },
               );
@@ -254,12 +272,70 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         }
       }
       _initLocation();
+      _loadBackToBackPreference();
+      _loadFavouritePlaces();
       _fetchDemandHotspots();
       _hotspotsRefreshTimer = Timer.periodic(
         const Duration(seconds: 30),
         (_) => _fetchDemandHotspots(),
       );
+      // Insert the persistent floating HUD
+      _insertHudOverlay();
     });
+  }
+
+  Future<void> _loadBackToBackPreference() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (mounted) {
+        setState(() {
+          _allowBackToBack = prefs.getBool('cabi_driver_back_to_back') ?? true;
+        });
+      }
+    } catch (e) {
+      debugPrint('[B2B] Error loading back-to-back preference: $e');
+    }
+  }
+
+  Future<void> _toggleBackToBack() async {
+    final nextState = !_allowBackToBack;
+    setState(() {
+      _allowBackToBack = nextState;
+    });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('cabi_driver_back_to_back', nextState);
+    } catch (e) {
+      debugPrint('[B2B] Error saving back-to-back preference: $e');
+    }
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 3),
+          backgroundColor: const Color(0xFF1E1E1E),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          content: Row(
+            children: [
+              Icon(
+                nextState ? Icons.check_circle : Icons.pause_circle_outline,
+                color: nextState ? const Color(0xFF10B981) : Colors.orangeAccent,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  nextState
+                      ? 'Back-to-Back Requests ON: You can receive incoming trips before completing current ride'
+                      : 'Back-to-Back Requests OFF: No incoming trip offers until you finish your ride',
+                  style: const TextStyle(color: Colors.white, fontSize: 13),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> _initLocation() async {
@@ -364,6 +440,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           _isLoading = false;
         });
         if (_isOnline) {
+          AudioNotificationService.instance.play('driver_online');
           _updateDriverLocationOnServer(_driverLocation);
           _mapController?.animateCamera(
             _driverLocation,
@@ -371,8 +448,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           );
           _startRidePolling();
         } else {
+          AudioNotificationService.instance.play('driver_offline');
           _ridePollingTimer?.cancel();
         }
+        _refreshHud(); // keep HUD in sync
       }
     } catch (e) {
       if (mounted) {
@@ -461,8 +540,226 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
+  // ──────────────────── Favourite Places Persistence ────────────────────
+  Future<void> _loadFavouritePlaces() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_kFavPlacesKey);
+      if (raw != null && mounted) {
+        final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;
+        setState(() {
+          _favouritePlaces = decoded
+              .map((e) => Map<String, dynamic>.from(e as Map))
+              .toList();
+        });
+      }
+    } catch (e) {
+      debugPrint('[FAV_PLACES] Load error: $e');
+    }
+  }
+
+  Future<void> _saveFavouritePlaces() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_kFavPlacesKey, jsonEncode(_favouritePlaces));
+    } catch (e) {
+      debugPrint('[FAV_PLACES] Save error: $e');
+    }
+  }
+
+  void _showAddFavouriteDialog({Map<String, dynamic>? existing, int? index}) {
+    final labelCtrl = TextEditingController(text: existing?['label'] ?? '');
+    final addrCtrl = TextEditingController(text: existing?['address'] ?? '');
+    String selectedIcon = existing?['icon'] ?? 'home';
+
+    final iconOptions = [
+      ('home', Icons.home_outlined, 'Home'),
+      ('work', Icons.work_outline, 'Work'),
+      ('school', Icons.school_outlined, 'School'),
+      ('hospital', Icons.local_hospital_outlined, 'Hospital'),
+      ('market', Icons.shopping_cart_outlined, 'Market'),
+      ('other', Icons.location_on_outlined, 'Other'),
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModal) => Container(
+          padding: EdgeInsets.only(
+            left: 20, right: 20, top: 20,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 28,
+          ),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 38, height: 4,
+                  margin: const EdgeInsets.only(bottom: 14),
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              Text(
+                existing == null ? 'Add Favourite Place' : 'Edit Favourite Place',
+                style: GoogleFonts.outfit(
+                  fontSize: 18, fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleLarge?.color,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Icon picker
+              Wrap(
+                spacing: 10,
+                children: iconOptions.map((opt) {
+                  final (key, icon, _) = opt;
+                  final isSel = selectedIcon == key;
+                  return GestureDetector(
+                    onTap: () => setModal(() => selectedIcon = key),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: isSel
+                            ? AppTheme.primaryColor.withValues(alpha: 0.15)
+                            : Colors.white.withValues(alpha: 0.06),
+                        shape: BoxShape.circle,
+                        border: isSel
+                            ? Border.all(color: AppTheme.primaryColor, width: 2)
+                            : null,
+                      ),
+                      child: Icon(icon,
+                          color: isSel ? AppTheme.primaryColor : Colors.white54,
+                          size: 22),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 14),
+              TextField(
+                controller: labelCtrl,
+                decoration: InputDecoration(
+                  labelText: 'Place Name (e.g. Home)',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: addrCtrl,
+                decoration: InputDecoration(
+                  labelText: 'Address',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                maxLines: 2,
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    foregroundColor: Colors.black,
+                    minimumSize: const Size.fromHeight(48),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    final label = labelCtrl.text.trim();
+                    final addr = addrCtrl.text.trim();
+                    if (label.isEmpty || addr.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please fill in all fields.')),
+                      );
+                      return;
+                    }
+                    final entry = {
+                      'label': label,
+                      'address': addr,
+                      'icon': selectedIcon,
+                    };
+                    setState(() {
+                      if (index != null) {
+                        _favouritePlaces[index] = entry;
+                      } else {
+                        _favouritePlaces.add(entry);
+                      }
+                    });
+                    _saveFavouritePlaces();
+                    Navigator.pop(ctx);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('"$label" saved to favourites.')),
+                    );
+                  },
+                  child: Text(existing == null ? 'Save Place' : 'Update Place'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _deleteFavouritePlace(int index) {
+    final label = _favouritePlaces[index]['label'];
+    setState(() => _favouritePlaces.removeAt(index));
+    _saveFavouritePlaces();
+    if (mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('"$label" removed.')));
+    }
+  }
+
+  IconData _iconDataForKey(String key) {
+    switch (key) {
+      case 'work': return Icons.work_outline;
+      case 'school': return Icons.school_outlined;
+      case 'hospital': return Icons.local_hospital_outlined;
+      case 'market': return Icons.shopping_cart_outlined;
+      case 'home': return Icons.home_outlined;
+      default: return Icons.location_on_outlined;
+    }
+  }
+
+  // ──────────────────── Floating HUD Overlay ────────────────────
+  void _insertHudOverlay() {
+    _hudOverlay?.remove();
+    _hudOverlay = OverlayEntry(builder: (ctx) => _HudWidget(
+      isOnline: _isOnline,
+      topFraction: _hudTopFraction,
+      minimised: _hudMinimised,
+      onDrag: (frac) {
+        _hudTopFraction = frac;
+        _hudOverlay?.markNeedsBuild();
+      },
+      onToggleOnline: () {
+        _toggleOnline();
+      },
+      onToggleMinimise: () {
+        _hudMinimised = !_hudMinimised;
+        _hudOverlay?.markNeedsBuild();
+      },
+    ));
+    Overlay.of(context).insert(_hudOverlay!);
+  }
+
+  void _refreshHud() {
+    _hudOverlay?.markNeedsBuild();
+  }
+
   @override
   void dispose() {
+    _hudOverlay?.remove();
+    _hudOverlay = null;
     _hotspotsRefreshTimer?.cancel();
     _ridePollingTimer?.cancel();
     _locationSubscription?.cancel();
@@ -551,6 +848,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     );
                   },
+                ),
+                const SizedBox(width: 8),
+                _MapButton(
+                  icon: Icons.queue_play_next_rounded,
+                  iconColor: _allowBackToBack ? const Color(0xFF10B981) : Colors.white54,
+                  tooltip: _allowBackToBack ? 'Back-to-Back Trips: ON' : 'Back-to-Back Trips: OFF',
+                  onTap: _toggleBackToBack,
                 ),
                 const SizedBox(width: 8),
                 _MapButton(
@@ -954,6 +1258,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ],
                       ),
                     ),
+
+                    // ──── Favourite Places Quick-Access ────
+                    _buildFavouritePlacesRow(isDark, theme),
                   ],
 
                   // Swipeable Luxury Slider Button
@@ -1751,3 +2058,458 @@ class _StatCard extends StatelessWidget {
   }
 }
 
+// ════════════════════════════════════════════════════════════
+// Favourite Places Row (extension on _HomeScreenState)
+// ════════════════════════════════════════════════════════════
+extension _FavouritePlacesUI on _HomeScreenState {
+  Widget _buildFavouritePlacesRow(bool isDark, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.star_rounded, color: AppTheme.primaryColor, size: 16),
+            const SizedBox(width: 6),
+            Text(
+              'Favourite Places',
+              style: GoogleFonts.outfit(
+                color: theme.textTheme.bodyLarge?.color,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
+            ),
+            const Spacer(),
+            GestureDetector(
+              onTap: () => _showAddFavouriteDialog(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                      color: AppTheme.primaryColor.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.add, color: AppTheme.primaryColor, size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Add',
+                      style: GoogleFonts.outfit(
+                        color: AppTheme.primaryColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        if (_favouritePlaces.isEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Text(
+              'Save your home, work or frequent spots for fast destination setting.',
+              style: GoogleFonts.outfit(
+                color: isDark ? Colors.white38 : Colors.black38,
+                fontSize: 12,
+              ),
+            ),
+          )
+        else
+          Column(
+            children: [
+              SizedBox(
+                height: 70,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _favouritePlaces.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 10),
+                  itemBuilder: (context, i) {
+                    final place = _favouritePlaces[i];
+                    final label = place['label'] as String? ?? 'Place';
+                    final address = place['address'] as String? ?? '';
+                    final iconKey = place['icon'] as String? ?? 'other';
+                    final isActive = _isDestinationModeActive &&
+                        _preferredDestinationName == label;
+                    return GestureDetector(
+                      onLongPress: () {
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.transparent,
+                          builder: (ctx) => Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: theme.scaffoldBackgroundColor,
+                              borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(20)),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(label,
+                                    style: GoogleFonts.outfit(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                        color: theme
+                                            .textTheme.titleLarge?.color)),
+                                const SizedBox(height: 6),
+                                Text(address,
+                                    style: GoogleFonts.outfit(
+                                        color: isDark
+                                            ? Colors.white54
+                                            : Colors.black54,
+                                        fontSize: 13)),
+                                const SizedBox(height: 18),
+                                ListTile(
+                                  leading: const Icon(Icons.edit_outlined,
+                                      color: AppTheme.primaryColor),
+                                  title: const Text('Edit Place'),
+                                  onTap: () {
+                                    Navigator.pop(ctx);
+                                    _showAddFavouriteDialog(
+                                        existing: place, index: i);
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.delete_outline,
+                                      color: Colors.redAccent),
+                                  title: const Text('Remove',
+                                      style: TextStyle(
+                                          color: Colors.redAccent)),
+                                  onTap: () {
+                                    Navigator.pop(ctx);
+                                    _deleteFavouritePlace(i);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      onTap: () {
+                        if (isActive) {
+                          setState(() {
+                            _isDestinationModeActive = false;
+                            _preferredDestinationName = null;
+                            _preferredDestinationLatLng = null;
+                          });
+                        } else {
+                          setState(() {
+                            _isDestinationModeActive = true;
+                            _preferredDestinationName = label;
+                            _preferredDestinationLatLng = null;
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('📍 Heading to: $label'),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 220),
+                        width: 110,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isActive
+                              ? AppTheme.primaryColor.withValues(alpha: 0.18)
+                              : (isDark
+                                  ? Colors.white.withValues(alpha: 0.05)
+                                  : Colors.black.withValues(alpha: 0.04)),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isActive
+                                ? AppTheme.primaryColor
+                                : (isDark
+                                    ? Colors.white12
+                                    : Colors.black12),
+                            width: isActive ? 1.5 : 1.0,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(_iconDataForKey(iconKey),
+                                color: isActive
+                                    ? AppTheme.primaryColor
+                                    : (isDark
+                                        ? Colors.white60
+                                        : Colors.black54),
+                                size: 18),
+                            const SizedBox(height: 4),
+                            Text(
+                              label,
+                              style: GoogleFonts.outfit(
+                                color: isActive
+                                    ? AppTheme.primaryColor
+                                    : theme.textTheme.bodyLarge?.color,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              address,
+                              style: GoogleFonts.outfit(
+                                color: isDark
+                                    ? Colors.white38
+                                    : Colors.black38,
+                                fontSize: 10,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// Floating HUD Widget (rendered via Overlay — stays on top of all screens)
+// ════════════════════════════════════════════════════════════
+class _HudWidget extends StatefulWidget {
+  final bool isOnline;
+  final double topFraction;
+  final bool minimised;
+  final ValueChanged<double> onDrag;
+  final VoidCallback onToggleOnline;
+  final VoidCallback onToggleMinimise;
+
+  const _HudWidget({
+    required this.isOnline,
+    required this.topFraction,
+    required this.minimised,
+    required this.onDrag,
+    required this.onToggleOnline,
+    required this.onToggleMinimise,
+  });
+
+  @override
+  State<_HudWidget> createState() => _HudWidgetState();
+}
+
+class _HudWidgetState extends State<_HudWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pulse;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulse = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenH = MediaQuery.of(context).size.height;
+    final top =
+        (screenH * widget.topFraction).clamp(60.0, screenH - 120.0);
+    final onlineColor =
+        widget.isOnline ? const Color(0xFF10B981) : Colors.orangeAccent;
+
+    return Positioned(
+      top: top,
+      right: 0,
+      child: GestureDetector(
+        onVerticalDragUpdate: (d) {
+          final newFrac =
+              ((top + d.delta.dy) / screenH).clamp(0.07, 0.88);
+          widget.onDrag(newFrac);
+        },
+        child: AnimatedBuilder(
+          animation: _pulse,
+          builder: (ctx, _) {
+            final glowOpacity =
+                widget.isOnline ? 0.3 + _pulse.value * 0.4 : 0.15;
+            return Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF0F0E0C),
+                borderRadius: const BorderRadius.horizontal(
+                    left: Radius.circular(18)),
+                border: Border.all(
+                    color: onlineColor.withValues(alpha: 0.55),
+                    width: 1.2),
+                boxShadow: [
+                  BoxShadow(
+                    color: onlineColor.withValues(alpha: glowOpacity),
+                    blurRadius: 14,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: widget.minimised
+                  ? _MinimisedHud(
+                      onlineColor: onlineColor,
+                      isOnline: widget.isOnline,
+                      onExpand: widget.onToggleMinimise,
+                    )
+                  : _ExpandedHud(
+                      onlineColor: onlineColor,
+                      isOnline: widget.isOnline,
+                      onToggleOnline: widget.onToggleOnline,
+                      onMinimise: widget.onToggleMinimise,
+                    ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _MinimisedHud extends StatelessWidget {
+  final Color onlineColor;
+  final bool isOnline;
+  final VoidCallback onExpand;
+
+  const _MinimisedHud({
+    required this.onlineColor,
+    required this.isOnline,
+    required this.onExpand,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onExpand,
+      child: Container(
+        width: 42,
+        height: 56,
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              isOnline ? Icons.wifi_tethering : Icons.wifi_tethering_off,
+              color: onlineColor,
+              size: 22,
+            ),
+            const SizedBox(height: 2),
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: onlineColor,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExpandedHud extends StatelessWidget {
+  final Color onlineColor;
+  final bool isOnline;
+  final VoidCallback onToggleOnline;
+  final VoidCallback onMinimise;
+
+  const _ExpandedHud({
+    required this.onlineColor,
+    required this.isOnline,
+    required this.onToggleOnline,
+    required this.onMinimise,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Minimise handle
+          GestureDetector(
+            onTap: onMinimise,
+            child: Container(
+              width: 28,
+              height: 3,
+              margin: const EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          // Status dot + label
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: onlineColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                isOnline ? 'ONLINE' : 'OFFLINE',
+                style: GoogleFonts.outfit(
+                  color: onlineColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.1,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Quick-toggle button
+          GestureDetector(
+            onTap: onToggleOnline,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: onlineColor.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(10),
+                border:
+                    Border.all(color: onlineColor.withValues(alpha: 0.5)),
+              ),
+              child: Text(
+                isOnline ? 'Go Offline' : 'Go Online',
+                style: GoogleFonts.outfit(
+                  color: onlineColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -567,6 +567,7 @@ export class UserService {
       profilePicture: user.passportPhotoUrl,
       city: user.city,
       nickname: user.nickname,
+      preferredPublicName: user.nickname,
       driverProfile: user.driverProfile,
     };
   }
@@ -580,6 +581,7 @@ export class UserService {
     photoUrl?: string;
     city?: string;
     nickname?: string;
+    preferredPublicName?: string;
     phone?: string;
   }) {
     const user = await this.prisma.user.findUnique({
@@ -614,6 +616,7 @@ export class UserService {
 
     if (data.city !== undefined) updateData.city = data.city;
     if (data.nickname !== undefined) updateData.nickname = data.nickname;
+    if (data.preferredPublicName !== undefined) updateData.nickname = data.preferredPublicName;
     if (data.phone !== undefined) updateData.phone = data.phone;
 
     const updated = await this.prisma.user.update({
@@ -642,6 +645,7 @@ export class UserService {
       profilePicture: updated.passportPhotoUrl,
       city: updated.city,
       nickname: updated.nickname,
+      preferredPublicName: updated.nickname,
       driverProfile: updated.driverProfile,
     };
   }

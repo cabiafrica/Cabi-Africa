@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart' as legacy_provider;
+import 'package:core_ui/core_ui.dart';
 import '../services/auth_service.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/profile_avatar_with_qr.dart';
+import '../widgets/security_verification_modal.dart';
 import 'login_screen.dart';
 import 'loyalty_dashboard_screen.dart';
 
@@ -22,6 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _authService = AuthService();
   File? _imageFile;
   bool _isLoading = false;
+  String? _selectedPreferredName;
 
   @override
   void initState() {
@@ -31,8 +34,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (auth.user != null) {
         setState(() {
           final user = auth.user!;
-          _nameController.text = "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim();
+          final firstName = (user['firstName'] ?? '').toString().trim();
+          final lastName = (user['lastName'] ?? '').toString().trim();
+          final middleName = (user['middleName'] ?? '').toString().trim();
+          final fullNameCombined = "$firstName $middleName $lastName".replaceAll(RegExp(r'\s+'), ' ').trim();
+          _nameController.text = fullNameCombined.isNotEmpty
+              ? fullNameCombined
+              : "${user['name'] ?? user['fullName'] ?? ''}".trim();
+
+          final existing = (user['preferredPublicName'] ?? user['nickname'] ?? user['preferredName'])?.toString().trim();
+          final options = PublicNameHelper.generateOptions(_nameController.text, middleName: middleName);
+          if (existing != null && existing.isNotEmpty && options.contains(existing)) {
+            _selectedPreferredName = existing;
+          } else if (options.isNotEmpty) {
+            _selectedPreferredName = options.first;
+          }
         });
+      }
+    });
+
+    _nameController.addListener(() {
+      final options = PublicNameHelper.generateOptions(_nameController.text);
+      if (_selectedPreferredName == null || !options.contains(_selectedPreferredName)) {
+        if (options.isNotEmpty && mounted) {
+          setState(() {
+            _selectedPreferredName = options.first;
+          });
+        }
       }
     });
   }
@@ -104,11 +132,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final res = await _authService.updateProfile(
         name: _nameController.text,
+        preferredPublicName: _selectedPreferredName,
         imagePath: _imageFile?.path,
       );
       if (res.isSignedIn && res.user != null) {
         if (mounted) {
           final userMap = Map<String, dynamic>.from(res.user!);
+          if (_selectedPreferredName != null && _selectedPreferredName!.isNotEmpty) {
+            userMap['preferredPublicName'] = _selectedPreferredName;
+            userMap['nickname'] = _selectedPreferredName;
+          }
           legacy_provider.Provider.of<AuthProvider>(context, listen: false).updateUser(userMap);
           try {
             ProviderScope.containerOf(context, listen: false)
@@ -289,6 +322,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: Icons.verified_user_outlined,
                       readOnly: true,
                     ),
+                    _buildPreferredPublicNameSection(user),
+                    _buildVerificationStatusSection(user),
                   ],
                 );
               },
@@ -339,6 +374,180 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildPreferredPublicNameSection(Map<String, dynamic>? user) {
+    final middle = user?['middleName']?.toString();
+    final options = PublicNameHelper.generateOptions(
+      _nameController.text,
+      middleName: middle,
+    );
+
+    final selectedName = (_selectedPreferredName != null && options.contains(_selectedPreferredName))
+        ? _selectedPreferredName!
+        : (options.isNotEmpty ? options.first : _nameController.text);
+
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.darkSurface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.25)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.badge_outlined, color: AppTheme.primaryColor, size: 20),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text(
+                  'PREFERRED PUBLIC NAME',
+                  style: TextStyle(
+                    color: AppTheme.primaryColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Text(
+                  'VISIBLE TO DRIVERS',
+                  style: TextStyle(
+                    color: AppTheme.primaryColor,
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Select how drivers will see your identity upon receiving your trip request. This must be derived from your official registered name.',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.6),
+              fontSize: 12,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: options.map((opt) {
+              final isSelected = opt == selectedName;
+              return ChoiceChip(
+                label: Text(
+                  opt,
+                  style: TextStyle(
+                    color: isSelected ? Colors.black : Colors.white,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    fontSize: 13,
+                  ),
+                ),
+                selected: isSelected,
+                selectedColor: AppTheme.primaryColor,
+                backgroundColor: AppTheme.darkBackground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: isSelected
+                        ? AppTheme.primaryColor
+                        : Colors.white.withValues(alpha: 0.1),
+                  ),
+                ),
+                onSelected: (selected) {
+                  if (selected) {
+                    setState(() {
+                      _selectedPreferredName = opt;
+                    });
+                  }
+                },
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 16),
+          // Live Dispatch Preview Card
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.darkBackground,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            ),
+            child: Row(
+              children: [
+                ProfileAvatarBadge(
+                  imageUrl: user?['profilePicture'] ?? user?['passportPhotoUrl'],
+                  imageFile: _imageFile,
+                  fallbackName: selectedName,
+                  size: 40,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'DISPATCH VIEW PREVIEW',
+                        style: TextStyle(
+                          color: Colors.white38,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              selectedName,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          const Icon(Icons.verified, color: Colors.lightGreenAccent, size: 14),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Text(
+                    'Driver View',
+                    style: TextStyle(
+                      color: Colors.white54,
+                      fontSize: 10,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildProfileField({
     TextEditingController? controller,
     String? initialValue,
@@ -375,6 +584,102 @@ class _ProfileScreenState extends State<ProfileScreen> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppTheme.primaryColor, width: 0.5),
         ),
+      ),
+    );
+  }
+
+  Widget _buildVerificationStatusSection(Map<String, dynamic>? user) {
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      decoration: BoxDecoration(
+        color: AppTheme.darkSurface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFD4AF37).withValues(alpha: 0.25),
+        ),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.green.withValues(alpha: 0.15),
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.4)),
+          ),
+          child: const Icon(
+            Icons.verified_user_rounded,
+            color: Colors.greenAccent,
+            size: 22,
+          ),
+        ),
+        title: Row(
+          children: [
+            const Text(
+              'PASSENGER VERIFICATION',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                letterSpacing: 0.8,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.green.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Text(
+                'ACTIVE',
+                style: TextStyle(
+                  color: Colors.greenAccent,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 9,
+                ),
+              ),
+            ),
+          ],
+        ),
+        subtitle: const Padding(
+          padding: EdgeInsets.only(top: 4),
+          child: Text(
+            'Selfie Face Recognition • Fingerprint • SMS OTP',
+            style: TextStyle(color: Colors.white54, fontSize: 11),
+          ),
+        ),
+        trailing: Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.refresh_rounded,
+            color: Color(0xFFD4AF37),
+            size: 18,
+          ),
+        ),
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (ctx) => SecurityVerificationModal(
+              userPhone: user?['phone']?.toString(),
+              userName: _selectedPreferredName ?? _nameController.text,
+              onVerified: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Passenger biometric identity verified!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }

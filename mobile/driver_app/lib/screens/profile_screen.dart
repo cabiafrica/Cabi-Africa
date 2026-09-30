@@ -153,6 +153,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final name = user['firstName'] != null
         ? "${user['firstName']} ${user['lastName'] ?? ''}"
         : user['name'] ?? 'DRIVER';
+    final preferredName = (user['preferredPublicName'] ?? user['nickname'])?.toString();
+    final displayName = (preferredName != null && preferredName.trim().isNotEmpty) ? preferredName.trim() : name;
     final email = user['email'] ?? 'No Email';
     final phone = user['phone'] ?? 'No Phone';
     final id = user['id'] ?? 'N/A';
@@ -181,6 +183,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   builder: (context) => DriverProfileEditScreen(
                     currentName: name,
                     currentProfilePictureUrl: profilePic,
+                    currentPreferredName: (user['preferredPublicName'] ?? user['nickname'])?.toString(),
                   ),
                 ),
               );
@@ -206,7 +209,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             padding: EdgeInsets.zero,
             child: Column(
               children: [
-                _buildModernHeader(context, name, email, profilePic, id),
+                _buildModernHeader(context, displayName, name, email, profilePic, id),
                 Transform.translate(
                   offset: const Offset(0, -40),
                   child: Padding(
@@ -217,7 +220,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         _buildStatsRow(rating, tier, trips),
                         const SizedBox(height: 24),
                         _buildSectionTitle("VERIFIED INFORMATION"),
-                        _buildProfileDetailsCard(phone, user['status'] ?? 'Active', user['createdAt'] ?? 'N/A'),
+                        _buildProfileDetailsCard(
+                          phone: phone,
+                          status: user['status'] ?? 'Active',
+                          memberSince: user['createdAt'] ?? 'N/A',
+                          preferredName: preferredName,
+                          officialName: name,
+                        ),
                         const SizedBox(height: 24),
                         _buildSectionTitle("PROFESSIONAL TOOLS"),
                         _buildOrganizationCard(context),
@@ -255,7 +264,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildModernHeader(BuildContext context, String name, String email, String profilePic, String id) {
+  Widget _buildModernHeader(BuildContext context, String displayName, String officialName, String email, String profilePic, String id) {
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
@@ -330,7 +339,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  name.toUpperCase(),
+                  displayName.toUpperCase(),
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -338,6 +347,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     letterSpacing: 1,
                   ),
                 ),
+                if (displayName.toLowerCase() != officialName.toLowerCase()) ...[
+                  const SizedBox(height: 3),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'OFFICIAL: ${officialName.toUpperCase()}',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryColor,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.verified, color: Colors.lightGreenAccent, size: 12),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 4),
                 Text(
                   email,
@@ -439,7 +467,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileDetailsCard(String phone, String status, String memberSince) {
+  Widget _buildProfileDetailsCard({
+    required String phone,
+    required String status,
+    required String memberSince,
+    String? preferredName,
+    String? officialName,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.darkSurface,
@@ -448,6 +482,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
       child: Column(
         children: [
+          if (preferredName != null && preferredName.trim().isNotEmpty) ...[
+            _buildDetailTile(Icons.badge_outlined, 'PREFERRED PUBLIC NAME', preferredName.trim(), AppTheme.primaryColor),
+            Divider(height: 1, color: Colors.white.withValues(alpha: 0.05)),
+          ],
+          if (officialName != null && officialName.trim().isNotEmpty) ...[
+            _buildDetailTile(Icons.assignment_ind_outlined, 'OFFICIAL LEGAL NAME', officialName.trim(), Colors.amberAccent),
+            Divider(height: 1, color: Colors.white.withValues(alpha: 0.05)),
+          ],
           _buildDetailTile(Icons.phone_iphone_rounded, 'PHONE', phone, Colors.blue),
           Divider(height: 1, color: Colors.white.withValues(alpha: 0.05)),
           _buildDetailTile(Icons.verified_user_rounded, 'STATUS', status.toUpperCase(), Colors.green, isStatus: true),

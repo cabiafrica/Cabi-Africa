@@ -167,6 +167,7 @@ class AuthService {
   Future<AuthResult> updateProfile({
     required String userId,
     String? name,
+    String? preferredPublicName,
     String? imagePath,
     String? imageUrl,
   }) async {
@@ -191,6 +192,10 @@ class AuthService {
 
       final body = <String, dynamic>{
         if (name != null && name.trim().isNotEmpty) 'fullName': name.trim(),
+        if (preferredPublicName != null && preferredPublicName.trim().isNotEmpty) ...{
+          'preferredPublicName': preferredPublicName.trim(),
+          'nickname': preferredPublicName.trim(),
+        },
         if (photoData != null) 'passportPhotoUrl': photoData,
         if (photoData != null) 'profilePicture': photoData,
       };
