@@ -16,6 +16,7 @@ import 'package:driver_app/screens/trip_in_progress_screen.dart';
 import 'package:driver_app/screens/ratings_screen.dart';
 import 'package:driver_app/screens/saved_places_screen.dart';
 import 'package:driver_app/screens/welfare_schemes_screen.dart';
+import 'package:driver_app/screens/login_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart' as legacy_provider;
 
@@ -104,6 +105,7 @@ class CabiDriverApp extends ConsumerWidget {
           '/ratings': (context) => const RatingsScreen(),
           '/saved_places': (context) => const SavedPlacesScreen(),
           '/welfare_schemes': (context) => const WelfareSchemeScreen(),
+          '/login': (context) => const LoginScreen(),
         },
       ),
     );

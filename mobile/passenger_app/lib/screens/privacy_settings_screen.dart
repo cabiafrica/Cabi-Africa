@@ -44,7 +44,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Privacy & Data'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: const Color(0xFFD4AF37),
         foregroundColor: Colors.white,
       ),
       body: ListView(
@@ -54,7 +54,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.deepPurple.shade50, Colors.white],
+                colors: [const Color(0xFF0F1510), Colors.white],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -65,7 +65,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                 Row(
                   children: [
                     Icon(Icons.shield,
-                        size: 40, color: Colors.deepPurple.shade700),
+                        size: 40, color: const Color(0xFFD4AF37)),
                     const SizedBox(width: 12),
                     const Expanded(
                       child: Column(
@@ -137,7 +137,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
             'Data Sharing with Partners',
             'Share anonymized data with trusted partners for service improvements',
             Icons.people,
-            Colors.purple,
+            const Color(0xFFD4AF37),
           ),
 
           const Divider(height: 32),
@@ -204,7 +204,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
             child: ElevatedButton(
               onPressed: _isSaving ? null : _saveSettings,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: const Color(0xFFD4AF37),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(

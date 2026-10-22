@@ -65,6 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const hasPermission = (permission: string) => {
         if (!user) return false;
+        if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') return true;
         // Super/System Admin check (if implemented) or wildcard
         if (user.permissions?.includes('*')) return true;
         return user.permissions?.includes(permission) || false;

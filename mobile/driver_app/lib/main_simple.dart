@@ -199,8 +199,8 @@ class _DriverMapViewState extends State<DriverMapView> {
           children: [
             const CircleAvatar(
               radius: 40,
-              backgroundColor: Colors.deepPurple,
-              child: Icon(Icons.person, size: 40, color: Colors.white),
+              backgroundColor: Color(0xFFD4AF37),
+              child: Icon(Icons.person, size: 40, color: Colors.black),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -282,23 +282,23 @@ class _DriverMapViewState extends State<DriverMapView> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.purple.shade50,
+                  color: const Color(0xFFD4AF37).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.purple.shade200),
+                  border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.5)),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.flash_on, color: Colors.purple, size: 20),
+                    const Icon(Icons.flash_on, color: Color(0xFFD4AF37), size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Includes ${request['surgeBonus']} Platform Bonus!',
                         style: const TextStyle(
-                            color: Colors.purple, fontWeight: FontWeight.bold),
+                            color: Color(0xFFD4AF37), fontWeight: FontWeight.bold),
                       ),
                     ),
                     const Icon(Icons.info_outline,
-                        color: Colors.purple, size: 16),
+                        color: Color(0xFFD4AF37), size: 16),
                   ],
                 ),
               ),
@@ -334,9 +334,10 @@ class _DriverMapViewState extends State<DriverMapView> {
                       _acceptRide(request);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple,
+                      backgroundColor: const Color(0xFFD4AF37),
+                      foregroundColor: Colors.black,
                     ),
-                    child: const Text('Accept'),
+                    child: const Text('Accept', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -660,7 +661,8 @@ class _DriverMapViewState extends State<DriverMapView> {
           ? FloatingActionButton(
               onPressed: _setDestination,
               backgroundColor:
-                  _destination != null ? Colors.amber : Colors.deepPurple,
+                  _destination != null ? const Color(0xFF10B981) : const Color(0xFFD4AF37),
+              foregroundColor: Colors.black,
               tooltip: 'Set Destination',
               child:
                   Icon(_destination != null ? Icons.flag : Icons.flag_outlined),
@@ -751,7 +753,7 @@ class _DriverMapViewState extends State<DriverMapView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(Icons.flag,
-                            size: 16, color: Colors.deepPurple),
+                            size: 16, color: Color(0xFFD4AF37)),
                         const SizedBox(width: 8),
                         Text('Heading to: $_destination',
                             style:
@@ -843,7 +845,8 @@ class _DriverMapViewState extends State<DriverMapView> {
                     child: ElevatedButton(
                       onPressed: () => setState(() => _isOnline = true),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
+                        backgroundColor: const Color(0xFF10B981),
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 18),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30)),

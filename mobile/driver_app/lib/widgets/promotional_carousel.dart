@@ -42,7 +42,7 @@ class PromotionalCarousel extends StatelessWidget {
           _buildBannerItem(
             'New Feature Alert\nScheduled Rides are here!',
             'https://via.placeholder.com/600x200/6A1B9A/FFFFFF?text=Scheduled+Rides',
-            Colors.purple.shade900,
+            const Color(0xFF1E1A14),
           ),
         ],
       ),

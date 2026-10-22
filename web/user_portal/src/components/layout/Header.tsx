@@ -72,8 +72,8 @@ export default function Header() {
                     </div>
 
                     <div className="flex items-center gap-2 md:gap-6">
-                        <div className="hidden md:flex items-center space-x-6">
-                            {mounted ? <ThemeToggle /> : <div className="w-9 h-9" />}
+                        <div className="hidden lg:flex items-center space-x-6">
+                            <ThemeToggle />
                             
                             {mounted ? (isAuthenticated ? (
                                 <div className="relative flex items-center gap-4">
@@ -94,9 +94,10 @@ export default function Header() {
                                         type="button"
                                         className="flex items-center gap-2 text-sm font-bold text-slate-800 hover:text-slate-950 dark:text-white/80 dark:hover:text-white transition-all duration-500"
                                         onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                        suppressHydrationWarning
                                     >
                                         <span className="max-w-[80px] truncate">Hi {user?.firstName}</span>
-                                        {mounted && <ChevronDown className={`h-4 w-4 text-brand-yellow/70 transition-transform duration-500 ${isMenuOpen ? 'rotate-180' : ''}`} />}
+                                        <ChevronDown className={`h-4 w-4 text-brand-yellow/70 transition-transform duration-500 ${isMenuOpen ? 'rotate-180' : ''}`} />
                                     </button>
                                 </div>
                             ) : (
@@ -109,21 +110,22 @@ export default function Header() {
                             )) : <div className="w-[105px] h-[44px]"></div>}
                         </div>
 
-                        <div className="flex lg:hidden items-center gap-2">
-                            {mounted ? <ThemeToggle /> : <div className="w-9 h-9" />}
+                        <div className="flex lg:hidden items-center gap-2" suppressHydrationWarning>
+                            <ThemeToggle />
                             <button
                                 onClick={toggleMenu}
                                 type="button"
                                 className={`inline-flex items-center justify-center p-2.5 rounded-xl transition-all duration-500 ${isMenuOpen ? 'bg-brand-yellow text-black rotate-90' : 'bg-white/5 text-white/70 hover:text-white hover:bg-white/10'}`}
                                 aria-controls="mobile-menu"
                                 aria-expanded={isMenuOpen}
+                                suppressHydrationWarning
                             >
                                 <span className="sr-only">Open main menu</span>
-                                {mounted && (isMenuOpen ? (
+                                {isMenuOpen ? (
                                     <X className="block h-6 w-6" />
                                 ) : (
                                     <Menu className="block h-6 w-6" />
-                                ))}
+                                )}
                             </button>
                         </div>
                     </div>

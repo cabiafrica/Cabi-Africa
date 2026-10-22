@@ -494,6 +494,9 @@
     <button class="role-btn" id="btnRoleDriver" onclick="setRoleView('DRIVER')">🚗 Driver View</button>
     <button class="role-btn" id="btnRoleDispatcher" onclick="setRoleView('DISPATCHER')">📡 Dispatcher Stream</button>
     <button class="role-btn" id="btnRoleAdmin" onclick="setRoleView('ADMIN')">📊 Admin Flow Graph</button>
+    <a href="driver_test_console.html" target="_blank" class="role-btn" style="text-decoration: none; color: var(--gold); border: 1px solid rgba(245, 158, 11, 0.4); margin-left: auto;">
+      🚗 Open Dedicated Driver Console ↗
+    </a>
   </div>
 
   <!-- Admin Flow Visualizer Stepper -->
@@ -582,43 +585,118 @@
         </div>
       </div>
 
+      <!-- Baseline Passport Photo & Biometric Reference -->
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 50px; height: 50px; border-radius: 8px; border: 1.5px solid var(--gold); background: #080c16; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative;">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--gold);">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <div style="position: absolute; bottom: 0; right: 0; background: var(--green); width: 10px; height: 10px; border-radius: 50%; border: 2px solid #000;"></div>
+          </div>
+          <div>
+            <div style="font-size: 0.72rem; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Registered Baseline Passport Photo</div>
+            <div style="font-size: 0.92rem; font-weight: 700; color: #fff;">Brian Kiptoo Cheruiyot</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Doc ID: KE-PASS-884210 • Verified Government Identity</div>
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge badge-green" style="font-size: 0.7rem;">BASELINE ON FILE</span>
+        </div>
+      </div>
+
       <!-- Verification Selection Box -->
       <div class="verify-box">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <label style="margin: 0; color: #fff;">🔒 Mandatory Verification Method</label>
-          <span id="paxVerifiedBadge" class="badge" style="background: rgba(239, 68, 68, 0.2); color: var(--red);">UNVERIFIED</span>
+          <span id="paxVerifiedBadge" class="badge" style="background: rgba(16, 185, 129, 0.2); color: var(--green);">🛡️ PASSENGER VERIFIED</span>
         </div>
 
         <div class="verify-tabs">
-          <button class="verify-tab-btn active" id="tabFace" onclick="switchVerifyTab('FACE')">📸 Face Selfie</button>
+          <button class="verify-tab-btn active" id="tabFace" onclick="switchVerifyTab('FACE')">👤 Face Scan (No Photo Stored)</button>
           <button class="verify-tab-btn" id="tabFinger" onclick="switchVerifyTab('FINGER')">👆 Fingerprint</button>
           <button class="verify-tab-btn" id="tabOtp" onclick="switchVerifyTab('OTP')">💬 SMS OTP</button>
         </div>
 
-        <!-- 1. Face Recognition UI -->
+        <!-- Attempts Counter & Status Banner -->
+        <div id="paxAttemptBanner" style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 6px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem;">
+          <span style="color: var(--text-muted);">Biometric Attempts: <strong id="paxAttemptsLeft" style="color: var(--gold);">3 of 3 remaining</strong></span>
+          <span style="color: var(--text-dim); font-size: 0.7rem;">3 fails leads to temporary lockout</span>
+        </div>
+
+        <!-- Temporary Deactivation / Lockout Alert Container -->
+        <div id="paxDeactivatedBox" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1.5px solid var(--red); border-radius: 12px; padding: 14px; margin-bottom: 14px;">
+          <div style="display: flex; align-items: flex-start; gap: 10px;">
+            <div style="font-size: 1.8rem; line-height: 1;">🚨</div>
+            <div style="flex: 1;">
+              <div style="font-size: 0.92rem; font-weight: 800; color: var(--red); text-transform: uppercase;">
+                Account Temporarily Deactivated
+              </div>
+              <div style="font-size: 0.78rem; color: #fca5a5; margin-top: 3px; line-height: 1.35;">
+                Face scan failed 3 consecutive times against registered passport photo. Access has been temporarily locked to prevent unauthorized usage.
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(239, 68, 68, 0.25);">
+            <div style="font-size: 0.74rem; font-weight: 700; color: #fff; margin-bottom: 8px; text-transform: uppercase;">
+              Unlock Account via Alternative Methods:
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="btn btn-secondary" style="flex: 1; min-width: 140px; font-size: 0.78rem;" onclick="unlockAccount('PASSENGER', 'SMS OTP')">
+                💬 Unlock via SMS OTP (123456)
+              </button>
+              <button class="btn btn-secondary" style="flex: 1; min-width: 140px; font-size: 0.78rem;" onclick="unlockAccount('PASSENGER', 'FINGERPRINT')">
+                👆 Unlock via Fingerprint
+              </button>
+            </div>
+          </div>
+
+          <div style="margin-top: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem;">
+            <span style="color: var(--text-muted);">Need Help? Contact Customer Care:</span>
+            <div style="display: flex; gap: 8px;">
+              <a href="tel:+254700222423" style="color: var(--gold); text-decoration: none; font-weight: 700;">📞 0700 222 423</a>
+              <span style="color: var(--text-dim);">|</span>
+              <a href="https://wa.me/254700222423" target="_blank" style="color: var(--green); text-decoration: none; font-weight: 700;">💬 WhatsApp</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. Face Recognition UI (Passive Scan vs Registered Passport Photo) -->
         <div id="verifyFaceContent">
           <div class="camera-frame">
             <video id="webcamVideo" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: none;"></video>
             <canvas id="selfieCanvas" style="display: none;"></canvas>
-            <img id="selfieImgPreview" style="width: 100%; height: 100%; object-fit: cover; display: none;">
             <div class="camera-oval" id="ovalReticle">
               <div class="scan-laser" id="laserScan"></div>
             </div>
             <div id="cameraPlaceholder" style="text-align: center; color: var(--text-dim); padding: 10px;">
-              <div style="font-size: 2rem; margin-bottom: 4px;">📷</div>
-              <div style="font-size: 0.8rem;">Front camera selfie with biometric scan</div>
+              <div style="font-size: 2.2rem; margin-bottom: 4px;">👤</div>
+              <div style="font-size: 0.85rem; font-weight: 600; color: #fff;">Passive Face Biometric Scanner</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
+                Fit your face within the oval reticle • Scans contours in-memory • Zero images stored
+              </div>
             </div>
           </div>
 
-          <div style="display: flex; gap: 8px;">
-            <button class="btn btn-secondary" style="flex: 1; font-size: 0.82rem;" onclick="startWebcam()">
+          <!-- Real-Time Match Score Indicator -->
+          <div id="paxScanScoreBox" style="background: #080c16; border: 1px solid var(--card-border); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;">
+            <span id="paxScanStatusText" style="color: var(--green); font-weight: 600;">
+              ✅ Face match confirmed with registered passport photo (98.4%)
+            </span>
+            <span id="paxMatchScoreBadge" class="badge badge-green">98.4% MATCH</span>
+          </div>
+
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-secondary" style="flex: 1; min-width: 120px; font-size: 0.8rem;" onclick="startWebcam()">
               📹 Launch Camera
             </button>
-            <button class="btn btn-primary" id="btnSnapSelfie" style="flex: 1; font-size: 0.82rem;" onclick="captureSelfie()">
-              📸 Take Selfie & Verify
+            <button class="btn btn-primary" id="btnPassiveScanPass" style="flex: 1; min-width: 150px; font-size: 0.8rem;" onclick="performPassiveFaceScan('PASSENGER', false)">
+              ⚡ Scan & Match Passport
             </button>
-            <button class="btn btn-secondary" style="flex: 1; font-size: 0.82rem;" onclick="quickDemoVerify('FACE_RECOGNITION')">
-              ⚡ Demo Face Check
+            <button class="btn btn-danger" id="btnPassiveScanFail" style="width: auto; padding: 0 12px; font-size: 0.8rem;" onclick="performPassiveFaceScan('PASSENGER', true)" title="Simulate failed face match attempt">
+              ❌ Fail Attempt
             </button>
           </div>
         </div>
@@ -1066,6 +1144,14 @@
       document.getElementById('verifyOtpContent').style.display = tab === 'OTP' ? 'block' : 'none';
     }
 
+    let paxFailedAttempts = 0;
+    const maxPaxAttempts = 3;
+    let isPaxDeactivated = false;
+
+    let drvFailedAttempts = 0;
+    const maxDrvAttempts = 3;
+    let isDrvDeactivated = false;
+
     async function startWebcam() {
       try {
         const video = document.getElementById('webcamVideo');
@@ -1076,34 +1162,122 @@
         video.srcObject = webcamStream;
         video.style.display = 'block';
         placeholder.style.display = 'none';
-        document.getElementById('selfieImgPreview').style.display = 'none';
-        log('📹 Camera stream launched for passenger selfie capture.', 'VERIFY');
+        log('📹 Camera stream launched for passive biometric face scanning. (No photos stored)', 'VERIFY');
       } catch (e) {
-        log(`Camera access: ${e.message}. Using demo selfie fallback.`, 'VERIFY');
-        quickDemoVerify('FACE_RECOGNITION');
+        log(`Camera access info: ${e.message}. Running in simulated sensor mode.`, 'VERIFY');
       }
     }
 
-    function captureSelfie() {
-      const video = document.getElementById('webcamVideo');
-      const canvas = document.getElementById('selfieCanvas');
-      const img = document.getElementById('selfieImgPreview');
-
-      if (webcamStream && video.videoWidth) {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        verifiedSelfieDataUri = canvas.toDataURL('image/jpeg');
-        img.src = verifiedSelfieDataUri;
-        img.style.display = 'block';
-        video.style.display = 'none';
-
-        // Stop stream
-        webcamStream.getTracks().forEach(t => t.stop());
-        webcamStream = null;
+    async function performPassiveFaceScan(role, simulateMismatch = false) {
+      if (role === 'PASSENGER' && isPaxDeactivated) {
+        log('⛔ Passenger account is temporarily locked. Please unlock via OTP or contact Customer Care.', 'VERIFY');
+        return;
       }
-      quickDemoVerify('FACE_RECOGNITION');
+
+      log(`👤 Scanning live face contours for ${role} (passive stream - zero image saved)...`, 'VERIFY');
+      
+      const laser = document.getElementById('laserScan');
+      if (laser) {
+        laser.style.display = 'block';
+        laser.style.animation = 'laserSweep 1.2s infinite ease-in-out';
+      }
+
+      const statusEl = document.getElementById('paxScanStatusText');
+      const badgeEl = document.getElementById('paxMatchScoreBadge');
+      if (statusEl) {
+        statusEl.textContent = '🔍 Scanning live facial landmarks & comparing with registered passport photo...';
+        statusEl.style.color = 'var(--gold)';
+      }
+      if (badgeEl) {
+        badgeEl.textContent = 'SCANNING...';
+        badgeEl.className = 'badge badge-gold';
+      }
+
+      await new Promise(r => setTimeout(r, 1200));
+
+      if (simulateMismatch) {
+        if (role === 'PASSENGER') {
+          paxFailedAttempts++;
+          const remaining = Math.max(0, maxPaxAttempts - paxFailedAttempts);
+          document.getElementById('paxAttemptsLeft').textContent = `${remaining} of ${maxPaxAttempts} remaining`;
+          
+          if (paxFailedAttempts >= maxPaxAttempts) {
+            isPaxDeactivated = true;
+            isPassengerVerified = false;
+            document.getElementById('paxDeactivatedBox').style.display = 'block';
+            document.getElementById('paxVerifiedBadge').textContent = '🚨 LOCKED (3 FAILS)';
+            document.getElementById('paxVerifiedBadge').className = 'badge';
+            document.getElementById('paxVerifiedBadge').style.background = 'rgba(239, 68, 68, 0.2)';
+            document.getElementById('paxVerifiedBadge').style.color = 'var(--red)';
+            
+            if (statusEl) {
+              statusEl.textContent = '❌ Face mismatch: Account temporarily deactivated after 3 failed attempts.';
+              statusEl.style.color = 'var(--red)';
+            }
+            if (badgeEl) {
+              badgeEl.textContent = 'ACCESS DENIED';
+              badgeEl.className = 'badge';
+              badgeEl.style.background = 'rgba(239, 68, 68, 0.3)';
+              badgeEl.style.color = 'var(--red)';
+            }
+            log('🚨 CRITICAL: Passenger account temporarily deactivated due to 3 consecutive face mismatches vs passport photo.', 'VERIFY');
+          } else {
+            if (statusEl) {
+              statusEl.textContent = `⚠️ Face mismatch! Attempt ${paxFailedAttempts} of ${maxPaxAttempts}. Adjust lighting and try again.`;
+              statusEl.style.color = 'var(--gold)';
+            }
+            if (badgeEl) {
+              badgeEl.textContent = 'MISMATCH (61%)';
+              badgeEl.className = 'badge badge-gold';
+            }
+            log(`⚠️ Passenger face mismatch detected (Attempt ${paxFailedAttempts}/${maxPaxAttempts}). Access not granted.`, 'VERIFY');
+          }
+        }
+      } else {
+        // MATCH SUCCESS
+        if (role === 'PASSENGER') {
+          paxFailedAttempts = 0;
+          isPaxDeactivated = false;
+          isPassengerVerified = true;
+          document.getElementById('paxDeactivatedBox').style.display = 'none';
+          document.getElementById('paxAttemptsLeft').textContent = '3 of 3 remaining';
+          
+          if (statusEl) {
+            statusEl.textContent = '✅ Face match confirmed with registered passport photo (98.4%) — Access Granted';
+            statusEl.style.color = 'var(--green)';
+          }
+          if (badgeEl) {
+            badgeEl.textContent = '98.4% MATCH';
+            badgeEl.className = 'badge badge-green';
+          }
+          
+          quickDemoVerify('FACE_RECOGNITION');
+        }
+      }
+    }
+
+    function unlockAccount(role, method) {
+      if (role === 'PASSENGER') {
+        paxFailedAttempts = 0;
+        isPaxDeactivated = false;
+        isPassengerVerified = true;
+        document.getElementById('paxDeactivatedBox').style.display = 'none';
+        document.getElementById('paxAttemptsLeft').textContent = '3 of 3 remaining';
+        
+        const statusEl = document.getElementById('paxScanStatusText');
+        const badgeEl = document.getElementById('paxMatchScoreBadge');
+        if (statusEl) {
+          statusEl.textContent = `✅ Account unlocked and re-activated via ${method}. Access Granted.`;
+          statusEl.style.color = 'var(--green)';
+        }
+        if (badgeEl) {
+          badgeEl.textContent = 'UNLOCKED';
+          badgeEl.className = 'badge badge-green';
+        }
+
+        log(`🔑 Passenger account successfully unlocked and reactivated via ${method}!`, 'VERIFY');
+        quickDemoVerify(method === 'SMS OTP' ? 'OTP' : 'FINGERPRINT');
+      }
     }
 
     function quickDemoVerify(method) {
@@ -1113,6 +1287,8 @@
       const badge = document.getElementById('paxVerifiedBadge');
       badge.textContent = '🛡️ PASSENGER VERIFIED';
       badge.className = 'badge badge-green';
+      badge.style.background = 'rgba(16, 185, 129, 0.2)';
+      badge.style.color = 'var(--green)';
 
       const drvBadge = document.getElementById('drvPaxVerifiedTag');
       if (drvBadge) drvBadge.style.display = 'inline-block';
@@ -1123,7 +1299,7 @@
       // Sound chime
       playToneSequence([523.25, 659.25, 783.99], [{duration: 0.1}, {duration: 0.1}, {duration: 0.2}], 'triangle');
 
-      log(`✅ Passenger verification successful via ${method}. Ready for dispatch!`, 'VERIFY');
+      log(`✅ Passenger verification confirmed via ${method}. Ready for dispatch!`, 'VERIFY');
     }
 
     // --- Admin Flow Stepper Engine ---
@@ -1235,8 +1411,13 @@
 
     // --- Request Ride Action ---
     async function requestRide() {
+      if (isPaxDeactivated) {
+        alert('Your passenger account is temporarily locked due to 3 biometric mismatches against your passport photo. Please unlock using SMS OTP or contact Customer Care (0700 222 423).');
+        log('⛔ Ride request blocked: Account temporarily deactivated.', 'VERIFY');
+        return;
+      }
       if (!isPassengerVerified) {
-        alert('Please complete passenger verification (Face Selfie, Fingerprint, or OTP) first!');
+        alert('Please complete passenger identity verification (Face Scan, Fingerprint, or OTP) first!');
         return;
       }
 
@@ -1314,9 +1495,24 @@
         log(`🎉 Trip created [${currentTripCode}]. Radar broadcasting to drivers.`, 'TRIP');
 
       } catch (err) {
-        log(`Error creating ride: ${err.message}`, 'DISPATCH');
-        document.getElementById('requestRideBtn').disabled = false;
-        stopSearchTimer();
+        log(`Dispatch server offline (${err.message}). Running in full offline simulation mode.`, 'DISPATCH');
+        currentRideId = 'SIM-' + Math.floor(1000 + Math.random() * 9000);
+        currentTripCode = 'CB-' + Math.floor(1000 + Math.random() * 9000);
+
+        document.getElementById('activeRideId').textContent = currentRideId;
+        document.getElementById('activeTripCode').textContent = currentTripCode;
+        document.getElementById('flowTripCode').textContent = currentTripCode;
+        document.getElementById('drvTripCodeBanner').textContent = currentTripCode;
+        document.getElementById('drvPaxName').textContent = preferredName;
+        document.getElementById('drvDestination').textContent = dropoffAddress;
+        document.getElementById('drvPickup').textContent = pickupAddress;
+        document.getElementById('drvFareVal').textContent = `KES ${fare.toFixed(2)}`;
+
+        updateBadge('MATCHING');
+        previousRideStatus = 'MATCHING';
+
+        startSearchTimer();
+        log(`🎉 Trip created [${currentTripCode}]. Radar scanning for drivers in simulation mode.`, 'TRIP');
       }
     }
 

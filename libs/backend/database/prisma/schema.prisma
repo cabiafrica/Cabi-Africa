@@ -338,6 +338,7 @@ model Ride {
   matchingCompletedAt  DateTime?
   matchingDurationMs   Int?
   matchingStartedAt    DateTime?
+  driverArrivedAt      DateTime?
   requestedVehicleType VehicleType?
   surgeMultiplier      Float?         @default(1.0)
   passedDriverIds      String[]       @default([])

@@ -183,8 +183,8 @@ class MenuScreen extends ConsumerWidget {
                 _MenuGridItem(
                     icon: Icons.translate_rounded,
                     label: 'LANGUAGE',
-                    color: Colors.deepPurple.withValues(alpha: 0.1),
-                    iconColor: Colors.deepPurpleAccent,
+                    color: const Color(0xFFD4AF37).withValues(alpha: 0.08),
+                    iconColor: const Color(0xFFD4AF37),
                     route: '/language'),
                 _MenuGridItem(
                     icon: Icons.headset_mic_outlined,

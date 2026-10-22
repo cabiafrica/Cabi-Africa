@@ -11,7 +11,8 @@ import 'package:passenger_app/screens/referral_status_screen.dart';
 import 'package:passenger_app/screens/wallet_screen.dart';
 import 'package:passenger_app/screens/settings_screen.dart';
 import 'package:passenger_app/screens/language_selection_screen.dart';
-import 'package:passenger_app/screens/help_center_screen.dart';
+import 'package:passenger_app/screens/support_screen.dart';
+import 'package:passenger_app/screens/scheduled_rides_screen.dart';
 import 'package:passenger_app/services/settings_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:passenger_app/screens/profile_screen.dart';
@@ -334,6 +335,17 @@ class _MenuScreenState extends State<MenuScreen> {
                   onTap: _isLoadingToursUrl ? () {} : _launchToursUrl,
                 ),
                 MenuGridItem(
+                  icon: Icons.calendar_month_rounded,
+                  title: 'Scheduled Rides',
+                  subtitle: 'Reserved chauffeurs',
+                  badge: 'VIP',
+                  baseColor: const Color(0xFFD4AF37), // Classic Gold
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ScheduledRidesScreen()),
+                  ),
+                ),
+                MenuGridItem(
                   icon: Icons.celebration_rounded,
                   title: 'Refer & Earn',
                   subtitle: 'Invite & get KES 500',
@@ -389,12 +401,12 @@ class _MenuScreenState extends State<MenuScreen> {
                 MenuGridItem(
                   icon: Icons.support_agent_rounded,
                   title: 'Concierge',
-                  subtitle: 'Help center & chat',
+                  subtitle: 'VIP help & lost item',
                   badge: '24/7',
-                  baseColor: const Color(0xFF0D9488), // Teal Green
+                  baseColor: const Color(0xFFD4AF37), // Metallic Gold
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const HelpCenterScreen()),
+                    MaterialPageRoute(builder: (_) => const SupportScreen()),
                   ),
                 ),
                 MenuGridItem(

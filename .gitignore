@@ -69,6 +69,9 @@ project-graph.json
 **/flutter/**/build/
 # Flutter engine/SDK (use system-installed Flutter)
 tools/flutter/
+*.apk
+apks/
+
 
 # ===================================
 # React Native / Expo

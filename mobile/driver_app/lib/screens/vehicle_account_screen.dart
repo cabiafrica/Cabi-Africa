@@ -90,7 +90,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
   int _totalTrips = 84;
   double _totalKm = 1420.5;
   double _totalRevenue = 92450.0;
-  double _rating = 4.88;
+  final double _rating = 4.88;
 
   late List<VehicleIncentive> _incentives;
   late List<VehicleTripItem> _trips;
@@ -405,7 +405,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Car qualifies based on ${_totalTrips} completed trips!',
+                      'Car qualifies based on $_totalTrips completed trips!',
                       style: const TextStyle(color: Colors.green, fontSize: 12),
                     ),
                   ),

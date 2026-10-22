@@ -18,6 +18,7 @@ import '../widgets/swipeable_online_button.dart';
 import '../widgets/sos_button.dart';
 import '../providers/providers.dart';
 import '../services/audio_notification_service.dart';
+import '../services/floating_bubble_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -27,7 +28,8 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with WidgetsBindingObserver {
   bool _isOnline = false;
   bool _isLoading = false;
   bool _isFaceVerified = false;
@@ -49,8 +51,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   // ──────────────────── Floating HUD Overlay ────────────────────
   OverlayEntry? _hudOverlay;
   // Draggable position (right edge, vertical fraction)
-  double _hudTopFraction = 0.45;
-  bool _hudMinimised = false;
+  final double _hudTopFraction = 0.45;
+  final bool _hudMinimised = false;
 
   void showAutoOfflineNotice() {
     if (!mounted) return;
@@ -258,22 +260,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authState = ref.read(authProvider);
-      if (authState is Authenticated) {
-        final driverProfile = authState.user?['driverProfile'];
-        if (driverProfile != null && mounted) {
-          setState(() {
-            if (driverProfile['isOnline'] == true) {
-              _isOnline = true;
-              _updateDriverLocationOnServer(_driverLocation);
-              _startRidePolling();
-            }
-            if (driverProfile['isBiometricVerified'] == true) {
-              _isFaceVerified = true;
-            }
-          });
+      if (authState is! Authenticated) {
+        if (mounted) {
+          Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
         }
+        return;
+      }
+      final driverProfile = authState.user?['driverProfile'];
+      if (driverProfile == null) {
+        if (mounted) {
+          Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+        }
+        return;
+      }
+
+      if (mounted) {
+        setState(() {
+          if (driverProfile['isOnline'] == true) {
+            _isOnline = true;
+            _updateDriverLocationOnServer(_driverLocation);
+            _startRidePolling();
+          }
+          if (driverProfile['isBiometricVerified'] == true) {
+            _isFaceVerified = true;
+          }
+        });
       }
       _initLocation();
       _loadBackToBackPreference();
@@ -283,9 +297,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         const Duration(seconds: 30),
         (_) => _fetchDemandHotspots(),
       );
-      // Insert the persistent floating HUD
-      _insertHudOverlay();
+      // Ensure native floating bubble is hidden while driver app is in foreground
+      FloatingBubbleService.instance.hideBubble();
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      // Driver app launched / in foreground -> do not show floating icon
+      FloatingBubbleService.instance.hideBubble();
+    } else if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      // Driver app minimized / driver using other apps -> show floating bubble if online
+      if (_isOnline) {
+        FloatingBubbleService.instance.showBubble();
+      } else {
+        FloatingBubbleService.instance.hideBubble();
+      }
+    }
   }
 
   Future<void> _loadBackToBackPreference() async {
@@ -392,9 +422,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Future<void> _toggleOnline() async {
     final authState = ref.read(authProvider);
     if (authState is! Authenticated) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please log in first to go online.')),
-      );
+      if (mounted) {
+        Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+      }
       return;
     }
     
@@ -413,9 +443,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     if (driverProfile == null) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No driver profile found for this account.')),
-      );
+      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
       return;
     }
     final driverId = driverProfile['id'];
@@ -437,7 +465,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     setState(() => _isLoading = true);
     
     try {
-      await rideService.toggleOnlineStatus(driverId, !_isOnline);
+      final success = await rideService.toggleOnlineStatus(driverId, !_isOnline);
+      if (!success) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to update online status on dispatch server.'),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+        return;
+      }
+
       if (mounted) {
         setState(() {
           _isOnline = !_isOnline;
@@ -451,9 +492,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             zoom: _calculateZoomForRadius(_tripRadiusKm),
           );
           _startRidePolling();
+          FloatingBubbleService.instance.checkPermission().then((granted) {
+            if (!granted) {
+              FloatingBubbleService.instance.requestPermission();
+            }
+          });
         } else {
           AudioNotificationService.instance.play('driver_offline');
           _ridePollingTimer?.cancel();
+          FloatingBubbleService.instance.hideBubble();
         }
         _refreshHud(); // keep HUD in sync
       }
@@ -736,32 +783,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   // ──────────────────── Floating HUD Overlay ────────────────────
   void _insertHudOverlay() {
-    _hudOverlay?.remove();
-    _hudOverlay = OverlayEntry(builder: (ctx) => _HudWidget(
-      isOnline: _isOnline,
-      topFraction: _hudTopFraction,
-      minimised: _hudMinimised,
-      onDrag: (frac) {
-        _hudTopFraction = frac;
-        _hudOverlay?.markNeedsBuild();
-      },
-      onToggleOnline: () {
-        _toggleOnline();
-      },
-      onToggleMinimise: () {
-        _hudMinimised = !_hudMinimised;
-        _hudOverlay?.markNeedsBuild();
-      },
-    ));
-    Overlay.of(context).insert(_hudOverlay!);
+    // Disabled in-app: native overlay displays over other apps when minimized
   }
 
   void _refreshHud() {
-    _hudOverlay?.markNeedsBuild();
+    // Kept for backward compatibility
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    FloatingBubbleService.instance.hideBubble();
     _hudOverlay?.remove();
     _hudOverlay = null;
     _hotspotsRefreshTimer?.cancel();

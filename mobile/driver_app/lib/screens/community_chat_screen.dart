@@ -89,7 +89,7 @@ class _CommunityChatScreenState extends State<CommunityChatScreen> {
                                   decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                          color: story['viewed'] ? Colors.grey : Colors.deepPurple,
+                                          color: story['viewed'] ? Colors.grey : const Color(0xFFD4AF37),
                                           width: 2,
                                       )
                                   ),

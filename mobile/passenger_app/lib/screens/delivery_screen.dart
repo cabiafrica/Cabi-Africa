@@ -88,7 +88,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
           child: Column(
             children: [
               const Icon(Icons.check_circle_rounded,
-                  color: Colors.purple, size: 80),
+                  color: Color(0xFFD4AF37), size: 80),
               const SizedBox(height: 20),
               const Text(
                 'Request Confirmed!',
@@ -109,8 +109,8 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple.shade700,
-                    foregroundColor: Colors.white,
+                    backgroundColor: const Color(0xFFD4AF37),
+                    foregroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
@@ -157,7 +157,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.purple.withValues(alpha: 0.05),
+                      color: const Color(0xFFD4AF37).withValues(alpha: 0.08),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -173,7 +173,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                         child: Row(
                           children: [
                             const Icon(Icons.circle,
-                                color: Colors.purple, size: 14),
+                                color: Color(0xFFD4AF37), size: 14),
                             const SizedBox(width: 15),
                             Expanded(
                               child: Column(
@@ -194,7 +194,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                               ),
                             ),
                             const Icon(Icons.edit_location_alt_outlined,
-                                color: Colors.purple, size: 20),
+                                color: Color(0xFFD4AF37), size: 20),
                           ],
                         ),
                       ),
@@ -202,7 +202,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 6.0),
                       child: Container(
-                          width: 2, height: 30, color: Colors.purple.shade100),
+                          width: 2, height: 30, color: const Color(0xFFD4AF37).withValues(alpha: 0.2)),
                     ),
                     InkWell(
                       onTap: () => _selectLocation(false),
@@ -236,7 +236,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                               ),
                             ),
                             const Icon(Icons.search_rounded,
-                                color: Colors.purple),
+                                color: Color(0xFFD4AF37)),
                           ],
                         ),
                       ),
@@ -266,12 +266,12 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? Colors.purple.shade700
+                              ? const Color(0xFFD4AF37)
                               : Colors.white,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: isSelected
-                                ? Colors.purple.shade700
+                                ? const Color(0xFFD4AF37)
                                 : Colors.transparent,
                             width: 2,
                           ),
@@ -281,14 +281,14 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                           children: [
                             Icon(size['icon'],
                                 color:
-                                    isSelected ? Colors.white : Colors.purple,
+                                    isSelected ? Colors.black : const Color(0xFFD4AF37),
                                 size: 30),
                             const Spacer(),
                             Text(size['title'],
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: isSelected
-                                        ? Colors.white
+                                        ? Colors.black
                                         : Colors.black)),
                             Text(size['price'],
                                 style: TextStyle(
@@ -358,13 +358,13 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                 child: ElevatedButton(
                   onPressed: _bookDelivery,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple.shade700,
-                    foregroundColor: Colors.white,
+                    backgroundColor: const Color(0xFFD4AF37),
+                    foregroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(vertical: 18),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
                     elevation: 5,
-                    shadowColor: Colors.purple.withValues(alpha: 0.4),
+                    shadowColor: const Color(0xFFD4AF37).withValues(alpha: 0.4),
                   ),
                   child: const Text('Confirm & Book Delivery',
                       style:

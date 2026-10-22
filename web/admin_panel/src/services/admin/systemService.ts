@@ -1,5 +1,5 @@
 import apiClient from '../apiClient';
-import { Permission, Role, BlogPost } from './types';
+import { Permission, Role, BlogPost, CategoryPricingConfig } from './types';
 
 export class SystemService {
     async getPermissions(): Promise<Permission[]> {
@@ -67,6 +67,35 @@ export class SystemService {
     async getVehicleCategories(): Promise<any[]> {
         const res = await apiClient.get('/v1/vehicles/categories');
         return res.data;
+    }
+
+    async getPricingCategories(): Promise<CategoryPricingConfig[]> {
+        try {
+            const res = await apiClient.get('/pricing/categories');
+            return res.data;
+        } catch {
+            const cached = localStorage.getItem('cabi_pricing_categories');
+            if (cached) {
+                try { return JSON.parse(cached); } catch {}
+            }
+            return [
+                { category: 'BODA', displayName: 'Boda Boda (Motorcycle)', baseFare: 50, perKmRate: 25, perMinuteRate: 2, minimumFare: 50, roundingStep: 10, isActive: true, description: 'Motorcycles with nearest 10 rounding' },
+                { category: 'BASIC', displayName: 'Cabi Basic (Economy)', baseFare: 100, perKmRate: 35, perMinuteRate: 3, minimumFare: 100, roundingStep: 25, isActive: true, description: 'Economy cars with nearest 25 rounding' },
+                { category: 'STANDARD', displayName: 'Cabi Standard (Sedan)', baseFare: 150, perKmRate: 45, perMinuteRate: 5, minimumFare: 150, roundingStep: 50, isActive: true, description: 'Standard sedans with nearest 50 rounding' },
+                { category: 'XL', displayName: 'Cabi XL (SUV / 6-Seater)', baseFare: 250, perKmRate: 65, perMinuteRate: 7, minimumFare: 250, roundingStep: 50, isActive: true, description: 'Spacious XL with nearest 50 rounding' },
+                { category: 'PREMIUM', displayName: 'Cabi Premium (Executive)', baseFare: 300, perKmRate: 85, perMinuteRate: 10, minimumFare: 300, roundingStep: 50, isActive: true, description: 'Premium executive rides with nearest 50 rounding' },
+            ];
+        }
+    }
+
+    async updatePricingCategories(configs: CategoryPricingConfig[]): Promise<CategoryPricingConfig[]> {
+        localStorage.setItem('cabi_pricing_categories', JSON.stringify(configs));
+        try {
+            const res = await apiClient.put('/pricing/categories', configs);
+            return res.data;
+        } catch {
+            return configs;
+        }
     }
 
     async getPromoCodes(): Promise<any[]> {

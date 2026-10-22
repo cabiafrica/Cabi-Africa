@@ -104,11 +104,11 @@ class PositiveFeedbackScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isRating
                         ? Colors.amber.shade100
-                        : Colors.purple.shade100,
+                        : const Color(0xFFD4AF37).withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(item['icon'],
-                      color: isRating ? Colors.amber.shade800 : Colors.purple,
+                      color: isRating ? Colors.amber.shade800 : const Color(0xFFD4AF37),
                       size: 20),
                 ),
                 const SizedBox(width: 12),

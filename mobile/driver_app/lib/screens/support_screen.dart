@@ -164,7 +164,7 @@ class DriverSupportScreen extends StatelessWidget {
               icon: Icons.chat_bubble_outline,
               title: "Driver Chatbot",
               subtitle: "Instant automated assistance",
-              iconColor: Colors.purple,
+              iconColor: const Color(0xFFD4AF37),
               onTap: () {
                 // Open Chat
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

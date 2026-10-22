@@ -3,8 +3,8 @@ import { useAuth } from '../AuthContext';
 import axios from 'axios';
 
 export const LoginPage = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('dispatcher@cabi.africa');
+    const [password, setPassword] = useState('Password123!');
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const { login } = useAuth();
@@ -14,15 +14,16 @@ export const LoginPage = () => {
         setIsLoading(true);
 
         try {
-            const BACKEND_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:3333/api';
+            const BACKEND_URL = (import.meta as any).env.VITE_AUTH_API_URL || 'http://localhost:3333/api';
             
             const response = await axios.post(`${BACKEND_URL}/auth/login`, {
                 email,
                 password
             });
 
-            if (response.data && response.data.token) {
-                const { token, user } = response.data;
+            if (response.data && (response.data.token || response.data.accessToken)) {
+                const token = response.data.token || response.data.accessToken;
+                const user = response.data.user;
                 login(token, {
                     id: user.id,
                     email: user.email,

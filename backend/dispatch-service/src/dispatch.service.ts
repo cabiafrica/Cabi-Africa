@@ -135,7 +135,7 @@ export class DispatchService {
 
     async getCurrentRide(userId: string, role: 'PASSENGER' | 'DRIVER') {
         const whereClause: any = {
-            status: { in: [RideStatus.REQUESTED, RideStatus.MATCHING, RideStatus.DRIVER_ASSIGNED, RideStatus.IN_PROGRESS] }
+            status: { in: [RideStatus.REQUESTED, RideStatus.MATCHING, RideStatus.DRIVER_ASSIGNED, RideStatus.DRIVER_ARRIVED, RideStatus.IN_PROGRESS] }
         };
 
         if (role === 'PASSENGER') {

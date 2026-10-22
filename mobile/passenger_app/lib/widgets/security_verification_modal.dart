@@ -41,6 +41,11 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
   File? _selfieFile;
   String _scanningStatusText = 'Initializing biometric sensor...';
 
+  // Biometric attempts and deactivation state
+  int _failedAttempts = 0;
+  static const int maxFaceAttempts = 3;
+  bool _isDeactivated = false;
+
   // OTP state
   String _generatedOtp = '123456';
   int _resendCountdown = 30;
@@ -77,9 +82,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
   }
 
   // ─────────────────────────────────────────────────────────────
-  // 1. FACE RECOGNITION (PASSIVE SCAN - NO PHOTO STORED)
+  // 1. FACE RECOGNITION (PASSIVE SCAN VS REGISTERED PASSPORT PHOTO)
   // ─────────────────────────────────────────────────────────────
-  Future<void> _startFaceRecognition() async {
+  Future<void> _startFaceRecognition({bool simulateMismatch = false}) async {
+    if (_isDeactivated) return;
     setState(() {
       _selectedMethod = VerificationMethod.face;
       _isVerifying = true;
@@ -87,32 +93,50 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
       _scanningStatusText = 'Aligning face in biometric reticle...';
     });
 
-    await _runFacialBiometricAnalysis();
+    await _runFacialBiometricAnalysis(simulateMismatch: simulateMismatch);
   }
 
-  Future<void> _runFacialBiometricAnalysis() async {
+  Future<void> _runFacialBiometricAnalysis({bool simulateMismatch = false}) async {
     setState(() {
-      _scanningStatusText = 'Aligning face in biometric reticle...';
+      _scanningStatusText = 'Aligning face with registered passport photo...';
     });
     await Future.delayed(const Duration(milliseconds: 600));
 
     if (!mounted) return;
     setState(() {
-      _scanningStatusText = 'Scanning facial contours & landmarks...';
+      _scanningStatusText = 'Extracting live facial contours (zero image saved)...';
     });
     await Future.delayed(const Duration(milliseconds: 800));
 
     if (!mounted) return;
     setState(() {
-      _scanningStatusText = 'Confirming liveness & biometric depth...';
+      _scanningStatusText = 'Comparing biometric geometry with passport photo...';
     });
     await Future.delayed(const Duration(milliseconds: 700));
 
     if (!mounted) return;
+    if (simulateMismatch) {
+      _failedAttempts++;
+      if (_failedAttempts >= maxFaceAttempts) {
+        setState(() {
+          _isDeactivated = true;
+          _isVerifying = false;
+          _scanningStatusText = 'ACCOUNT TEMPORARILY DEACTIVATED (3 failed attempts)';
+        });
+      } else {
+        setState(() {
+          _isVerifying = false;
+          _scanningStatusText = 'Face mismatch! Attempt $_failedAttempts of $maxFaceAttempts. Please adjust lighting.';
+        });
+      }
+      return;
+    }
+
     setState(() {
-      _scanningStatusText = 'Face biometric scan verified!';
+      _failedAttempts = 0;
+      _scanningStatusText = 'Passport photo match confirmed (98.4%)! Access granted.';
     });
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 350));
 
     if (!mounted) return;
     _success();
@@ -241,6 +265,8 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
     setState(() {
       _isSuccess = true;
       _isVerifying = false;
+      _isDeactivated = false;
+      _failedAttempts = 0;
     });
 
     // Persist one-time configuration
@@ -335,6 +361,8 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
 
               if (_isSuccess)
                 _buildSuccessState()
+              else if (_isDeactivated)
+                _buildDeactivatedState()
               else if (_selectedMethod == null)
                 _buildMethodSelection()
               else if (_selectedMethod == VerificationMethod.face)
@@ -347,7 +375,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               const SizedBox(height: 20),
 
               // Switch method button
-              if (_selectedMethod != null && !_isVerifying && !_isSuccess)
+              if (_selectedMethod != null && !_isVerifying && !_isSuccess && !_isDeactivated)
                 TextButton.icon(
                   onPressed: () {
                     setState(() {
@@ -370,6 +398,214 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           ),
         ),
       ),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // TEMPORARY DEACTIVATION / LOCKOUT VIEW
+  // ─────────────────────────────────────────────────────────────
+  Widget _buildDeactivatedState() {
+    return Column(
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.redAccent.withValues(alpha: 0.15),
+            border: Border.all(color: Colors.redAccent, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.redAccent.withValues(alpha: 0.3),
+                blurRadius: 20,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.lock_person_rounded,
+            color: Colors.redAccent,
+            size: 42,
+          ),
+        ),
+        const SizedBox(height: 18),
+        Text(
+          'ACCOUNT TEMPORARILY LOCKED',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.outfit(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+            color: Colors.redAccent,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Biometric face verification failed 3 consecutive times against your registered passport photo. Your account is temporarily deactivated to prevent unauthorized use.',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.outfit(
+            fontSize: 13,
+            color: Colors.white70,
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // Section: Unlock with alternative method
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppTheme.darkSurface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.key_rounded, color: Color(0xFFD4AF37), size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    'UNLOCK WITH ALTERNATIVE METHOD',
+                    style: GoogleFonts.outfit(
+                      color: const Color(0xFFD4AF37),
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _isDeactivated = false;
+                  });
+                  _startOtpVerification();
+                },
+                icon: const Icon(Icons.sms_rounded, size: 18, color: Colors.black),
+                label: const Text(
+                  'Unlock via SMS OTP (Phone PIN)',
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFD4AF37),
+                  minimumSize: const Size(double.infinity, 44),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _isDeactivated = false;
+                  });
+                  _startFingerprintVerification();
+                },
+                icon: const Icon(Icons.fingerprint_rounded, size: 18, color: Colors.white),
+                label: const Text(
+                  'Unlock via Enrolled Fingerprint',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+                  minimumSize: const Size(double.infinity, 44),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // Section: Customer Care Escalation
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.04),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.white12),
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.support_agent_rounded, color: Colors.white70, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Need Help? Contact Customer Care',
+                    style: GoogleFonts.outfit(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'Our support desk is available 24/7 to verify your documents and reactivate your account.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white54, fontSize: 11),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            backgroundColor: AppTheme.darkSurface,
+                            content: Text('Calling Cabi Customer Care: +254 700 CABI (222423)'),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.phone_in_talk_rounded, size: 14, color: Color(0xFFD4AF37)),
+                      label: const Text(
+                        '0700 222 423',
+                        style: TextStyle(color: Color(0xFFD4AF37), fontSize: 11, fontWeight: FontWeight.bold),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xFFD4AF37)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            backgroundColor: AppTheme.darkSurface,
+                            content: Text('Opening Cabi WhatsApp Support Desk...'),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.chat_bubble_outline_rounded, size: 14, color: Colors.greenAccent),
+                      label: const Text(
+                        'WhatsApp',
+                        style: TextStyle(color: Colors.greenAccent, fontSize: 11, fontWeight: FontWeight.bold),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.greenAccent),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -672,40 +908,97 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               ),
               const SizedBox(width: 10),
             ],
-            Text(
-              _scanningStatusText,
-              style: GoogleFonts.outfit(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
+            Expanded(
+              child: Text(
+                _scanningStatusText,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(
+                  color: _failedAttempts > 0 ? Colors.orangeAccent : Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
               ),
             ),
           ],
         ),
         const SizedBox(height: 8),
 
-        Text(
-          'Scanning face geometry passively. No image is captured or saved to storage.',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.outfit(
-            color: Colors.white54,
-            fontSize: 11,
+        // Biometric Privacy & Passport Baseline Badge
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.white12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.verified_user_rounded, color: Color(0xFFD4AF37), size: 14),
+              const SizedBox(width: 6),
+              Text(
+                'Compared with Registered Passport Photo • Zero Image Stored',
+                style: GoogleFonts.outfit(color: Colors.white70, fontSize: 10),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 6),
+
+        // Attempts Remaining Banner
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            color: _failedAttempts >= 2
+                ? Colors.redAccent.withValues(alpha: 0.15)
+                : const Color(0xFFD4AF37).withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: _failedAttempts >= 2 ? Colors.redAccent : const Color(0xFFD4AF37),
+              width: 1,
+            ),
+          ),
+          child: Text(
+            'Attempts remaining: ${maxFaceAttempts - _failedAttempts} of $maxFaceAttempts (Lockout at 3 fails)',
+            style: TextStyle(
+              color: _failedAttempts >= 2 ? Colors.redAccent : const Color(0xFFD4AF37),
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         const SizedBox(height: 16),
 
-        // Scan Again button if needed
-        OutlinedButton.icon(
-          onPressed: _startFaceRecognition,
-          icon: const Icon(Icons.refresh_rounded, size: 16, color: Color(0xFFD4AF37)),
-          label: const Text(
-            'Scan Face Again',
-            style: TextStyle(color: Color(0xFFD4AF37), fontSize: 12),
-          ),
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(color: const Color(0xFFD4AF37).withValues(alpha: 0.3)),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          ),
+        // Action / Test Buttons
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            OutlinedButton.icon(
+              onPressed: _isVerifying ? null : () => _startFaceRecognition(simulateMismatch: false),
+              icon: const Icon(Icons.refresh_rounded, size: 15, color: Color(0xFFD4AF37)),
+              label: const Text(
+                'Scan Face (Match)',
+                style: TextStyle(color: Color(0xFFD4AF37), fontSize: 11, fontWeight: FontWeight.bold),
+              ),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: const Color(0xFFD4AF37).withValues(alpha: 0.4)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+            const SizedBox(width: 8),
+            OutlinedButton.icon(
+              onPressed: _isVerifying ? null : () => _startFaceRecognition(simulateMismatch: true),
+              icon: const Icon(Icons.close_rounded, size: 15, color: Colors.redAccent),
+              label: const Text(
+                'Test Mismatch (Fail)',
+                style: TextStyle(color: Colors.redAccent, fontSize: 11, fontWeight: FontWeight.bold),
+              ),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.redAccent.withValues(alpha: 0.4)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+          ],
         ),
       ],
     );

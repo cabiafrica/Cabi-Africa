@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:driver_app/theme/app_theme.dart';
 
+/// Obsidian Gold stat card used in the driver dashboard grid.
+/// Matches Stitch project 5681992570744779348 bento-stack design.
 class DashboardStatCard extends StatelessWidget {
   final String title;
   final String value;
@@ -9,6 +12,7 @@ class DashboardStatCard extends StatelessWidget {
   final String? statusLabel;
   final Color? statusColor;
   final VoidCallback? onTap;
+  final bool highlight; // gold-border emphasis mode
 
   const DashboardStatCard({
     super.key,
@@ -20,107 +24,128 @@ class DashboardStatCard extends StatelessWidget {
     this.statusLabel,
     this.statusColor,
     this.onTap,
+    this.highlight = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Determine if it's dark mode based on theme or context
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = iconColor ?? AppTheme.primaryColor;
 
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: isDark
-              ? const Color(0xFF2C3E50)
-              : Colors.white, // Dark slate for dark mode cards
-          borderRadius: BorderRadius.circular(12),
-          border:
-              Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
+          color: const Color(0xFF1A1A1D),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: highlight
+                ? AppTheme.primaryColor.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.06),
+            width: highlight ? 1.5 : 1.0,
+          ),
           boxShadow: [
-            if (!isDark)
+            if (highlight)
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+                color: AppTheme.primaryColor.withValues(alpha: 0.12),
+                blurRadius: 16,
+                spreadRadius: 1,
               ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.35),
+              blurRadius: 8,
+            ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // ── Top row: label + icon ──
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Text(
-                    title,
+                    title.toUpperCase(),
                     style: TextStyle(
-                      fontSize: 14,
-                      color: isDark ? Colors.white70 : Colors.grey[600],
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.7,
+                      color: Colors.white.withValues(alpha: 0.42),
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (icon != null)
-                  Icon(icon,
-                      size: 16,
-                      color: isDark ? Colors.white54 : Colors.grey[400]),
-                // Arrow right usually
-              ],
-            ),
-            const SizedBox(height: 12),
-            if (icon != null && subtitle == null && statusLabel == null) ...[
-              // Layout where icon is prominent? No, screenshot shows text
-            ],
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black87,
-                  ),
-                ),
-                if (subtitle != null) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle!,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDark ? Colors.white38 : Colors.grey[500],
+                if (icon != null) ...[
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
                     ),
+                    child: Icon(icon, size: 14, color: accent),
                   ),
                 ],
-                if (statusLabel != null) ...[
-                  const SizedBox(height: 8),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: statusColor ?? Colors.red,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      statusLabel!,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  )
-                ]
               ],
             ),
+            const SizedBox(height: 10),
+
+            // ── Value ──
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: highlight ? AppTheme.primaryColor : Colors.white,
+                height: 1.0,
+              ),
+            ),
+
+            // ── Subtitle ──
+            if (subtitle != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                subtitle!,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.white.withValues(alpha: 0.38),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+
+            // ── Status pill ──
+            if (statusLabel != null) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: (statusColor ?? AppTheme.errorRed)
+                      .withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: (statusColor ?? AppTheme.errorRed)
+                        .withValues(alpha: 0.4),
+                    width: 0.8,
+                  ),
+                ),
+                child: Text(
+                  statusLabel!,
+                  style: TextStyle(
+                    color: statusColor ?? AppTheme.errorRed,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 }
-

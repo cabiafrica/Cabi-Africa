@@ -22,14 +22,14 @@ class OrganizationActivitiesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Organization'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: const Color(0xFFD4AF37),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(20),
-            color: Colors.deepPurple.shade50,
+            color: const Color(0xFF0F1510),
             width: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +72,7 @@ class OrganizationActivitiesScreen extends StatelessWidget {
                         Text(
                           activity['date']!,
                           style: const TextStyle(
-                            color: Colors.deepPurple,
+                            color: const Color(0xFFD4AF37),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -87,7 +87,7 @@ class OrganizationActivitiesScreen extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
+                        backgroundColor: const Color(0xFFD4AF37),
                         foregroundColor: Colors.white,
                       ),
                       child: const Text('RSVP'),

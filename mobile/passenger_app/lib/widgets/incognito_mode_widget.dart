@@ -59,7 +59,8 @@ class IncognitoModeWidget extends StatelessWidget {
                 Switch(
                   value: isIncognito,
                   onChanged: onChanged,
-                  activeTrackColor: Colors.deepPurple,
+                  activeTrackColor: const Color(0xFF1A3A3A),
+                  activeColor: const Color(0xFF0F9B8E),
                 ),
               ],
             ),

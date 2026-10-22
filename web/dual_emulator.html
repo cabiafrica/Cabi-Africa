@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cabi Africa — Dual Mobile Emulator Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060911;
+      --panel-bg: #0c1220;
+      --card-bg: #111a2e;
+      --card-card2: #16223d;
+      --border: #1e2c4d;
+      --border-light: #2b3d6b;
+      --gold: #f59e0b;
+      --gold-dark: #b8860b;
+      --gold-glow: rgba(245, 158, 11, 0.35);
+      --green: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.35);
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --phone-w: 360px;
+      --phone-h: 750px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 16px 40px;
+      overflow-x: auto;
+    }
+
+    .studio-header {
+      width: 100%;
+      max-width: 1400px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .logo-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--gold), #d97706);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: #000;
+      box-shadow: 0 0 20px var(--gold-glow);
+    }
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-title span {
+      font-size: 0.72rem;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--gold);
+      padding: 2px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .brand-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--green);
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
+
+    /* Master Orchestrator Stepper Bar */
+    .master-stepper-bar {
+      width: 100%;
+      max-width: 1400px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 18px;
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .stepper-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .stepper-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .stepper-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-step-action {
+      background: linear-gradient(135deg, var(--gold), #d97706);
+      color: #000;
+      font-weight: 800;
+      font-size: 0.82rem;
+      padding: 7px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-step-action:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-step-action:active { transform: scale(0.98); }
+    .btn-step-ghost {
+      background: #162035;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 0.78rem;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-step-ghost:hover { color: #fff; border-color: var(--border-light); }
+
+    .stepper-track {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 4px 0;
+    }
+    .step-node {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #090e1a;
+      border: 1px solid var(--border);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      white-space: nowrap;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .step-node.active {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: var(--gold);
+      color: var(--gold);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+    }
+    .step-node.completed {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.5);
+      color: var(--green);
+    }
+    .step-node-num {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+    .step-arrow { color: var(--text-dim); font-size: 0.75rem; }
+
+    /* Zoom / Scale Controller */
+    .scale-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #090e1a;
+      padding: 3px 6px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .scale-btn {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .scale-btn:hover { background: #16223d; color: var(--gold); }
+    .scale-btn.active {
+      background: #1a2744;
+      color: var(--gold);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    /* DUAL PHONE EMULATOR STAGE */
+    .stage-container {
+      width: 100%;
+      max-width: 1400px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 24px;
+      padding: 10px 0;
+      transition: transform 0.2s ease;
+      transform-origin: top center;
+    }
+
+    /* Phone Shell Outer Hardware */
+    .phone-emulator {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      background: #000;
+      border-radius: 50px;
+      padding: 12px;
+      box-shadow: 
+        0 0 0 3px #242c3d,
+        0 0 0 6px #101522,
+        0 25px 60px -10px rgba(0, 0, 0, 0.8),
+        0 0 40px rgba(245, 158, 11, 0.08);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      border: 2px solid #2e3b55;
+    }
+    .phone-emulator.driver-phone {
+      box-shadow: 
+        0 0 0 3px #3b2c15,
+        0 0 0 6px #1c1509,
+        0 25px 60px -10px rgba(0, 0, 0, 0.8),
+        0 0 40px rgba(245, 158, 11, 0.15);
+      border-color: #554018;
+    }
+
+    /* Device Buttons (Hardware side buttons) */
+    .phone-btn-vol-up {
+      position: absolute;
+      left: -9px;
+      top: 130px;
+      width: 5px;
+      height: 48px;
+      background: #242c3d;
+      border-radius: 3px 0 0 3px;
+    }
+    .phone-btn-vol-down {
+      position: absolute;
+      left: -9px;
+      top: 190px;
+      width: 5px;
+      height: 48px;
+      background: #242c3d;
+      border-radius: 3px 0 0 3px;
+    }
+    .phone-btn-power {
+      position: absolute;
+      right: -9px;
+      top: 150px;
+      width: 5px;
+      height: 64px;
+      background: #242c3d;
+      border-radius: 0 3px 3px 0;
+    }
+
+    /* Device Screen Display */
+    .screen-glass {
+      width: 100%;
+      height: 100%;
+      background: #070b14;
+      border-radius: 40px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Dynamic Island & Notch */
+    .dynamic-island-container {
+      position: absolute;
+      top: 8px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 100;
+      pointer-events: none;
+    }
+    .dynamic-island {
+      background: #000;
+      width: 110px;
+      height: 26px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      border: 1px solid #1a1a1a;
+    }
+    .island-camera {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #081226;
+      border: 1.5px solid #14284d;
+    }
+    .island-sensor {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #111;
+    }
+
+    /* Status Bar */
+    .phone-status-bar {
+      height: 42px;
+      padding: 8px 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fff;
+      z-index: 90;
+      background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%);
+    }
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Phone Device Header / Mode Switcher */
+    .device-app-bar {
+      padding: 6px 14px;
+      background: #0b1120;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 85;
+    }
+    .device-identity {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .device-identity-icon {
+      font-size: 1.1rem;
+    }
+    .device-identity-name {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .device-identity-badge {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-passenger { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .badge-driver { background: rgba(245, 158, 11, 0.2); color: var(--gold); border: 1px solid rgba(245, 158, 11, 0.4); }
+
+    .view-mode-toggle {
+      display: flex;
+      background: #060911;
+      padding: 2px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .toggle-opt-btn {
+      padding: 3px 8px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .toggle-opt-btn.active {
+      background: #1c2742;
+      color: #fff;
+    }
+    .phone-emulator.driver-phone .toggle-opt-btn.active {
+      background: #36280e;
+      color: var(--gold);
+    }
+
+    /* Phone Screen Viewports */
+    .viewport-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Viewport: Live Flutter Web Iframe */
+    .flutter-iframe-view {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #000;
+      display: none;
+    }
+    .flutter-iframe-view.active-view {
+      display: block;
+    }
+
+    /* Viewport: Real Android Emulator Screen Stream & Touch Bridge */
+    .real-android-view {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: none;
+      flex-direction: column;
+      background: #000;
+      user-select: none;
+    }
+    .real-android-view.active-view {
+      display: flex;
+    }
+    .android-screen-wrapper {
+      flex: 1;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: crosshair;
+    }
+    .android-screen-img {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      display: block;
+      pointer-events: auto;
+    }
+    .android-nav-bar {
+      height: 42px;
+      background: #0a0f1d;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 6px;
+      z-index: 10;
+    }
+    .android-nav-btn {
+      background: #141c2e;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 5px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .android-nav-btn:hover { background: #1e2c4d; color: #fff; }
+    .android-nav-btn.primary { background: rgba(245, 158, 11, 0.2); color: var(--gold); border-color: rgba(245, 158, 11, 0.4); }
+    .android-touch-ripple {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, 0.6);
+      box-shadow: 0 0 12px var(--gold);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      animation: rippleAnim 0.4s ease-out forwards;
+    }
+    @keyframes rippleAnim { 0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(2.2); } }
+
+    /* Viewport: Native Interactive Studio Controls */
+    .interactive-native-view {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .interactive-native-view.active-view {
+      display: flex;
+    }
+    .interactive-native-view::-webkit-scrollbar { width: 4px; }
+    .interactive-native-view::-webkit-scrollbar-thumb { background: #1f2c4d; border-radius: 4px; }
+
+    /* Home Bar Indicator */
+    .phone-home-indicator {
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #070b14;
+      z-index: 90;
+    }
+    .home-bar {
+      width: 120px;
+      height: 4px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 4px;
+    }
+
+    /* Common Card Styling inside Phones */
+    .app-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    }
+    .app-card-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .app-card-title span.val {
+      color: #fff;
+      font-weight: 800;
+    }
+
+    /* Interactive Form Elements */
+    .input-box {
+      width: 100%;
+      background: #080c16;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: #fff;
+      font-size: 0.82rem;
+      outline: none;
+      margin-bottom: 8px;
+    }
+    .input-box:focus { border-color: var(--gold); }
+
+    .route-display {
+      background: #080c16;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+    .route-point {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+    }
+    .dot-green { width: 10px; height: 10px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+    .dot-gold { width: 10px; height: 10px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+    .route-text { font-weight: 600; color: #fff; }
+    .route-sub { font-size: 0.7rem; color: var(--text-muted); }
+
+    /* Tier Picker Grid */
+    .tier-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .tier-card {
+      background: #080c16;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tier-card:hover { border-color: var(--border-light); }
+    .tier-card.selected {
+      border-color: var(--gold);
+      background: rgba(245, 158, 11, 0.12);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+    }
+    .tier-icon { font-size: 1.1rem; margin-bottom: 2px; }
+    .tier-name { font-size: 0.72rem; font-weight: 700; color: #fff; }
+    .tier-price { font-size: 0.68rem; color: var(--gold); font-weight: 800; }
+
+    /* Primary Phone Action Buttons */
+    .btn-action-primary {
+      width: 100%;
+      background: linear-gradient(135deg, var(--gold), #d97706);
+      color: #000;
+      font-weight: 800;
+      font-size: 0.88rem;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+      transition: all 0.2s;
+    }
+    .btn-action-primary:hover { filter: brightness(1.1); }
+    .btn-action-primary:active { transform: scale(0.98); }
+    .btn-action-primary:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
+
+    .btn-action-green {
+      width: 100%;
+      background: linear-gradient(135deg, var(--green), #059669);
+      color: #000;
+      font-weight: 800;
+      font-size: 0.88rem;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s;
+    }
+    .btn-action-green:hover { filter: brightness(1.1); }
+    .btn-action-green:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-action-danger {
+      width: 100%;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: var(--red);
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-action-danger:hover { background: rgba(239, 68, 68, 0.25); }
+
+    /* Driver Online Switch */
+    .driver-online-switch-box {
+      background: #080c16;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .switch-info-title { font-size: 0.82rem; font-weight: 700; color: #fff; }
+    .switch-info-sub { font-size: 0.7rem; color: var(--text-muted); }
+    .btn-toggle-online {
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.78rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+    }
+    .btn-toggle-online.offline {
+      background: #1e293b;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-toggle-online.online {
+      background: linear-gradient(135deg, var(--green), #059669);
+      color: #000;
+      box-shadow: 0 0 16px var(--green-glow);
+    }
+
+    /* Incoming Offer Modal Overlay on Driver Screen */
+    .incoming-offer-overlay {
+      position: absolute;
+      top: 50px;
+      left: 10px;
+      right: 10px;
+      background: #0f182b;
+      border: 2px solid var(--gold);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(245, 158, 11, 0.4);
+      z-index: 150;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popIn { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+    .offer-timer-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: #080c16;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .offer-timer-bar {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--gold));
+      transition: width 1s linear;
+    }
+
+    /* Live Telemetry Ticker at Bottom */
+    .telemetry-tray {
+      width: 100%;
+      max-width: 1400px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-top: 18px;
+      overflow: hidden;
+    }
+    .telemetry-header {
+      padding: 10px 18px;
+      background: #080d18;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .telemetry-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .telemetry-logs {
+      height: 130px;
+      overflow-y: auto;
+      padding: 10px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      background: #050811;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .log-line {
+      display: flex;
+      gap: 10px;
+      color: #94a3b8;
+    }
+    .log-time { color: #475569; }
+    .log-tag { font-weight: 700; padding: 0 4px; border-radius: 3px; font-size: 0.65rem; }
+    .tag-DISPATCH { background: rgba(245, 158, 11, 0.2); color: var(--gold); }
+    .tag-DRIVER { background: rgba(16, 185, 129, 0.2); color: var(--green); }
+    .tag-PASSENGER { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .tag-SYSTEM { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
+
+    /* Star Rating */
+    .star-rating-box {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      font-size: 1.6rem;
+      color: #334155;
+      cursor: pointer;
+      margin: 8px 0;
+    }
+    .star-rating-box span.active { color: var(--gold); text-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+
+    /* Expressway Progress Bar */
+    .expressway-progress-wrap {
+      background: #080c16;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 6px;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #1e293b;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 8px 0 4px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold), var(--green));
+      border-radius: 999px;
+      transition: width 0.5s ease;
+    }
+
+    @media (max-width: 950px) {
+      .stage-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Studio Header -->
+  <header class="studio-header">
+    <div class="brand-group">
+      <div class="logo-badge">C</div>
+      <div>
+        <div class="brand-title">
+          Cabi Africa <span>Dual Mobile Studio</span>
+        </div>
+        <div class="brand-sub">Real-Time Interactive Passenger & Driver Simulation on Chrome</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="status-pill">
+        <div class="pulse-dot"></div>
+        <span>Dispatch :3334</span>
+      </div>
+      <div class="status-pill" style="border-color: rgba(59, 130, 246, 0.3); color: #60a5fa; background: rgba(59, 130, 246, 0.1);">
+        <div class="pulse-dot" style="color: #60a5fa;"></div>
+        <span>Auth :3333</span>
+      </div>
+
+      <div class="scale-controls">
+        <span>View:</span>
+        <button class="scale-btn active" id="btnViewDual" onclick="setDeviceView('dual')">👥 Dual</button>
+        <button class="scale-btn" id="btnViewPass" onclick="setDeviceView('passenger')">🧍 Passenger</button>
+        <button class="scale-btn" id="btnViewDriver" onclick="setDeviceView('driver')">🚕 Driver</button>
+      </div>
+
+      <div class="scale-controls">
+        <span>Zoom:</span>
+        <button class="scale-btn" onclick="setStudioScale(0.85)">85%</button>
+        <button class="scale-btn" onclick="setStudioScale(0.95)">95%</button>
+        <button class="scale-btn" onclick="setStudioScale(1.0)">100%</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Master Orchestrator Stepper Bar -->
+  <section class="master-stepper-bar">
+    <div class="stepper-header">
+      <div class="stepper-title">
+        <span>⚡</span> Trip Journey Orchestration (Kenyatta Ave ➔ JKIA)
+      </div>
+      <div class="stepper-controls">
+        <button class="btn-step-action" id="btnRunFullDemo" onclick="runAutomatedTripDemo()">
+          <span>▶</span> 1-Click Auto Demo
+        </button>
+        <button class="btn-step-ghost" onclick="resetStudioState()">
+          <span>↺</span> Reset Trip
+        </button>
+        <button class="btn-step-ghost" id="btnAudioToggle" onclick="toggleAudio()" title="Sound Effects">
+          <span>🔊</span> Sound: ON
+        </button>
+      </div>
+    </div>
+
+    <!-- Step Track -->
+    <div class="stepper-track">
+      <div class="step-node active" id="stepNode1" onclick="jumpToStep(1)">
+        <div class="step-node-num">1</div>
+        <span>Driver Online</span>
+      </div>
+      <div class="step-arrow">➔</div>
+
+      <div class="step-node" id="stepNode2" onclick="jumpToStep(2)">
+        <div class="step-node-num">2</div>
+        <span>Passenger Request</span>
+      </div>
+      <div class="step-arrow">➔</div>
+
+      <div class="step-node" id="stepNode3" onclick="jumpToStep(3)">
+        <div class="step-node-num">3</div>
+        <span>Driver Accept</span>
+      </div>
+      <div class="step-arrow">➔</div>
+
+      <div class="step-node" id="stepNode4" onclick="jumpToStep(4)">
+        <div class="step-node-num">4</div>
+        <span>Driver Arrived</span>
+      </div>
+      <div class="step-arrow">➔</div>
+
+      <div class="step-node" id="stepNode5" onclick="jumpToStep(5)">
+        <div class="step-node-num">5</div>
+        <span>Start Trip (Expressway)</span>
+      </div>
+      <div class="step-arrow">➔</div>
+
+      <div class="step-node" id="stepNode6" onclick="jumpToStep(6)">
+        <div class="step-node-num">6</div>
+        <span>Arrive & Complete</span>
+      </div>
+      <div class="step-arrow">➔</div>
+
+      <div class="step-node" id="stepNode7" onclick="jumpToStep(7)">
+        <div class="step-node-num">7</div>
+        <span>Cash Pay & Rate</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- STAGE: DUAL PHONES SIDE BY SIDE -->
+  <main class="stage-container" id="stageContainer">
+
+    <!-- ============================================== -->
+    <!-- LEFT PHONE: PASSENGER APP (CABI GO)            -->
+    <!-- ============================================== -->
+    <div class="phone-emulator passenger-phone">
+      <div class="phone-btn-vol-up"></div>
+      <div class="phone-btn-vol-down"></div>
+      <div class="phone-btn-power"></div>
+
+      <div class="screen-glass">
+        <!-- Dynamic Island -->
+        <div class="dynamic-island-container">
+          <div class="dynamic-island">
+            <div class="island-camera"></div>
+            <div class="island-sensor"></div>
+          </div>
+        </div>
+
+        <!-- Phone Status Bar -->
+        <div class="phone-status-bar">
+          <span id="pTime">12:30</span>
+          <div class="status-icons">
+            <span>5G</span>
+            <span>📶</span>
+            <span>100%</span>
+          </div>
+        </div>
+
+        <!-- Device Identity & Mode Switcher -->
+        <div class="device-app-bar">
+          <div class="device-identity">
+            <span class="device-identity-icon">🧍</span>
+            <div>
+              <div class="device-identity-name">Cabi Go</div>
+            </div>
+            <span class="device-identity-badge badge-passenger">Passenger</span>
+          </div>
+
+          <div class="view-mode-toggle">
+            <button class="toggle-opt-btn" id="btnPModeFlutter" onclick="setPassengerViewMode('flutter')">📱 Real App (Flutter)</button>
+            <button class="toggle-opt-btn" id="btnPModeAndroid" onclick="setPassengerViewMode('android')">📲 Real Android</button>
+            <button class="toggle-opt-btn active" id="btnPModeNative" onclick="setPassengerViewMode('native')">⚡ Quick Actions</button>
+          </div>
+        </div>
+
+        <!-- Viewport Container -->
+        <div class="viewport-container">
+
+          <!-- OPTION A: Live Flutter Web App -->
+          <iframe 
+            id="iframePassenger"
+            class="flutter-iframe-view" 
+            src="http://localhost:8082/index.html" 
+            title="Cabi Passenger App Web">
+          </iframe>
+
+          <!-- OPTION B: Real Android Emulator Live Screen & Touch Bridge -->
+          <div class="real-android-view" id="viewPassengerAndroid">
+            <div class="android-screen-wrapper" id="passengerAndroidWrapper">
+              <img id="passengerAndroidImg" class="android-screen-img" src="/api/emulator/screen" alt="Real Android Emulator Screen" />
+            </div>
+            <div class="android-nav-bar">
+              <button class="android-nav-btn primary" onclick="sendAndroidKey(4)">◀</button>
+              <button class="android-nav-btn primary" onclick="sendAndroidKey(3)">●</button>
+              <button class="android-nav-btn primary" onclick="sendAndroidKey(187)">■</button>
+              <button class="android-nav-btn" onclick="launchAndroidApp('passenger')">🧍 Open Cabi Go</button>
+              <button class="android-nav-btn" onclick="launchAndroidApp('driver')">🚕 Open Driver</button>
+              <button class="android-nav-btn" onclick="refreshPassengerAndroidScreen()">🔄</button>
+            </div>
+          </div>
+
+          <!-- OPTION C: Native Interactive Controls View -->
+          <div class="interactive-native-view active-view" id="viewPassengerNative">
+
+            <!-- Profile & Active Balance Card -->
+            <div class="app-card">
+              <div class="app-card-title">
+                <span>Rider Profile</span>
+                <span class="val" style="color: #60a5fa;">Brian K. ★ 4.90</span>
+              </div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between;">
+                <span>ID: passenger@test.com</span>
+                <span style="color: var(--green); font-weight: 700;">Wallet: KES 4,500</span>
+              </div>
+            </div>
+
+            <!-- Route Selector Card -->
+            <div class="app-card">
+              <div class="app-card-title">
+                <span>Route Details</span>
+                <span class="val" id="pRouteDistance">18.4 km • 28 min</span>
+              </div>
+
+              <div class="route-display">
+                <div class="route-point">
+                  <div class="dot-green"></div>
+                  <div>
+                    <div class="route-text">Kenyatta Avenue, Nairobi CBD</div>
+                    <div class="route-sub">Near GPO / Teleposta Towers</div>
+                  </div>
+                </div>
+                <div style="width: 2px; height: 12px; background: var(--border); margin-left: 4px;"></div>
+                <div class="route-point">
+                  <div class="dot-gold"></div>
+                  <div>
+                    <div class="route-text">JKIA Terminal 1A, Nairobi</div>
+                    <div class="route-sub">International Departures via Expressway</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Vehicle Tier Selector -->
+            <div class="app-card">
+              <div class="app-card-title">
+                <span>Select Ride Tier</span>
+                <span class="val" id="pSelectedTierName">STANDARD</span>
+              </div>
+
+              <div class="tier-grid">
+                <div class="tier-card selected" id="tierStandard" onclick="selectVehicleTier('STANDARD', 1850)">
+                  <div class="tier-icon">🚗</div>
+                  <div class="tier-name">STANDARD</div>
+                  <div class="tier-price">KES 1,850</div>
+                </div>
+                <div class="tier-card" id="tierComfort" onclick="selectVehicleTier('COMFORT', 2400)">
+                  <div class="tier-icon">✨</div>
+                  <div class="tier-name">COMFORT</div>
+                  <div class="tier-price">KES 2,400</div>
+                </div>
+                <div class="tier-card" id="tierXL" onclick="selectVehicleTier('XL', 3100)">
+                  <div class="tier-icon">🚙</div>
+                  <div class="tier-name">CABI XL</div>
+                  <div class="tier-price">KES 3,100</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trip Status Display Card -->
+            <div class="app-card" id="pTripStatusCard" style="display: none;">
+              <div class="app-card-title">
+                <span>Live Ride Status</span>
+                <span class="val" id="pTripStatusBadge" style="color: var(--gold);">SEARCHING</span>
+              </div>
+
+              <div id="pDriverInfoBlock" style="display: none; margin-top: 8px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; background: #080c16; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="font-size: 1.5rem;">👨‍✈️</div>
+                    <div>
+                      <div style="font-size: 0.82rem; font-weight: 800; color: #fff;" id="pDriverName">Test Driver</div>
+                      <div style="font-size: 0.7rem; color: var(--gold);" id="pDriverCar">Toyota Axio Hybrid • KDH 452X</div>
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-size: 0.8rem; font-weight: 800; color: var(--green);">4.95 ★</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted);" id="pDriverEta">2 min away</div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="pExpresswayTrack" class="expressway-progress-wrap" style="display: none;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 700;">
+                  <span>CBD</span>
+                  <span id="pExpresswayCheckpoint">Expressway: Nyayo</span>
+                  <span>JKIA</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" id="pProgressBar"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Settlement & Rating Block -->
+            <div class="app-card" id="pRatingBlock" style="display: none;">
+              <div class="app-card-title">
+                <span>Trip Completed</span>
+                <span class="val" style="color: var(--green);">KES 1,850</span>
+              </div>
+              <div style="text-align: center; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px;">
+                Rate your trip with Test Driver:
+              </div>
+              <div class="star-rating-box" id="pStarRating">
+                <span class="star active" onclick="setStarRating(1)">★</span>
+                <span class="star active" onclick="setStarRating(2)">★</span>
+                <span class="star active" onclick="setStarRating(3)">★</span>
+                <span class="star active" onclick="setStarRating(4)">★</span>
+                <span class="star active" onclick="setStarRating(5)">★</span>
+              </div>
+              <button class="btn-action-primary" style="margin-top: 6px; padding: 10px;" onclick="submitRiderRating()">
+                Submit 5★ Rating
+              </button>
+            </div>
+
+            <!-- Primary Action Button -->
+            <div style="margin-top: auto; padding-top: 10px;">
+              <button class="btn-action-primary" id="btnRequestRide" onclick="passengerRequestRide()">
+                <span>🚕</span> Request Ride Now (KES 1,850)
+              </button>
+              <button class="btn-action-primary" id="btnRetryRide" style="display: none; width: 100%; margin-top: 8px; background: linear-gradient(135deg, var(--gold), #d97706); color: #000; font-weight: 800;" onclick="passengerRetrySearch()">
+                <span>🔄</span> Retry <span id="pCountdownBadge" style="margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: rgba(0,0,0,0.25); font-size: 0.75rem; font-weight: 800;">00:15</span>
+              </button>
+              <button class="btn-step-ghost" id="btnCancelRide" style="display: none; width: 100%; margin-top: 6px; font-size: 0.72rem;" onclick="passengerCancelRide()">
+                Cancel & Choose Another Service
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Phone Home Indicator Bar -->
+        <div class="phone-home-indicator">
+          <div class="home-bar"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- RIGHT PHONE: DRIVER APP (CABI DRIVE)           -->
+    <!-- ============================================== -->
+    <div class="phone-emulator driver-phone">
+      <div class="phone-btn-vol-up"></div>
+      <div class="phone-btn-vol-down"></div>
+      <div class="phone-btn-power"></div>
+
+      <div class="screen-glass">
+        <!-- Dynamic Island -->
+        <div class="dynamic-island-container">
+          <div class="dynamic-island">
+            <div class="island-camera"></div>
+            <div class="island-sensor"></div>
+          </div>
+        </div>
+
+        <!-- Phone Status Bar -->
+        <div class="phone-status-bar">
+          <span id="dTime">12:30</span>
+          <div class="status-icons">
+            <span>5G</span>
+            <span>📶</span>
+            <span>98%</span>
+          </div>
+        </div>
+
+        <!-- Device Identity & Mode Switcher -->
+        <div class="device-app-bar">
+          <div class="device-identity">
+            <span class="device-identity-icon">🚕</span>
+            <div>
+              <div class="device-identity-name">Cabi Drive</div>
+            </div>
+            <span class="device-identity-badge badge-driver">Driver</span>
+          </div>
+
+          <div class="view-mode-toggle">
+            <button class="toggle-opt-btn" id="btnDModeFlutter" onclick="setDriverViewMode('flutter')">📱 Real App (Flutter)</button>
+            <button class="toggle-opt-btn" id="btnDModeAndroid" onclick="setDriverViewMode('android')">📲 Real Android</button>
+            <button class="toggle-opt-btn active" id="btnDModeNative" onclick="setDriverViewMode('native')">⚡ Quick Actions</button>
+          </div>
+        </div>
+
+        <!-- Viewport Container -->
+        <div class="viewport-container">
+
+          <!-- INCOMING RIDE OFFER POPUP OVERLAY -->
+          <div class="incoming-offer-overlay" id="driverOfferPopup">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.75rem; font-weight: 800; color: var(--gold); text-transform: uppercase;">
+                ⚡ New Ride Offer
+              </span>
+              <span id="offerTimerSeconds" style="font-size: 0.85rem; font-weight: 900; color: #fff;">15s</span>
+            </div>
+
+            <div class="offer-timer-bar-wrap">
+              <div class="offer-timer-bar" id="offerTimerBar"></div>
+            </div>
+
+            <div style="background: #080c16; padding: 10px; border-radius: 10px; border: 1px solid var(--border);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                <span style="font-size: 0.82rem; font-weight: 800; color: #fff;">Kenyatta Ave ➔ JKIA</span>
+                <span style="font-size: 0.85rem; font-weight: 900; color: var(--gold);">KES 1,850</span>
+              </div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">
+                Distance: 18.4 km • Est. Time: 28 min • Standard
+              </div>
+              <div style="font-size: 0.72rem; color: #60a5fa; margin-top: 4px;">
+                Rider: Brian K. (4.90 ★)
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button class="btn-action-green" onclick="driverAcceptRideOffer()">
+                <span>✓</span> ACCEPT
+              </button>
+              <button class="btn-action-danger" onclick="driverDeclineRideOffer()">
+                <span>✕</span> PASS
+              </button>
+            </div>
+          </div>
+
+          <!-- OPTION A: Live Flutter Web App -->
+          <iframe 
+            id="iframeDriver"
+            class="flutter-iframe-view" 
+            src="http://localhost:8081/index.html" 
+            title="Cabi Driver App Web">
+          </iframe>
+
+          <!-- OPTION B: Real Android Emulator Live Screen & Touch Bridge -->
+          <div class="real-android-view" id="viewDriverAndroid">
+            <div class="android-screen-wrapper" id="driverAndroidWrapper">
+              <img id="driverAndroidImg" class="android-screen-img" src="/api/emulator/screen" alt="Real Android Emulator Screen" />
+            </div>
+            <div class="android-nav-bar">
+              <button class="android-nav-btn primary" onclick="sendAndroidKey(4)">◀</button>
+              <button class="android-nav-btn primary" onclick="sendAndroidKey(3)">●</button>
+              <button class="android-nav-btn primary" onclick="sendAndroidKey(187)">■</button>
+              <button class="android-nav-btn" onclick="launchAndroidApp('driver')">🚕 Driver</button>
+              <button class="android-nav-btn" onclick="launchAndroidApp('passenger')">🧍 Go</button>
+              <button class="android-nav-btn" onclick="slideDriverOnlineViaAdb()" title="Slide Online via ADB">⚡ Slide</button>
+              <button class="android-nav-btn" onclick="refreshAndroidScreen()">🔄</button>
+            </div>
+          </div>
+
+          <!-- OPTION C: Native Interactive Controls View -->
+          <div class="interactive-native-view active-view" id="viewDriverNative">
+
+            <!-- Driver Shift & Online Toggle -->
+            <div class="driver-online-switch-box">
+              <div>
+                <div class="switch-info-title" id="dOnlineStatusTitle">Driver is OFFLINE</div>
+                <div class="switch-info-sub" id="dOnlineStatusSub">Slide or tap to start receiving dispatches</div>
+              </div>
+              <button class="btn-toggle-online offline" id="btnDriverOnlineToggle" onclick="toggleDriverOnline()">
+                <span>🔴 OFFLINE</span>
+              </button>
+            </div>
+
+            <!-- Profile & Vehicle Badge -->
+            <div class="app-card">
+              <div class="app-card-title">
+                <span>Vehicle & Profile</span>
+                <span class="val" style="color: var(--gold);">★ 4.95 (154 trips)</span>
+              </div>
+              <div style="font-size: 0.78rem; font-weight: 700; color: #fff;">Test Driver (driver@test.com)</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
+                Toyota Axio Hybrid 2022 • Plate: <strong style="color: #fff;">KDH 452X</strong>
+              </div>
+              <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 0.68rem;">
+                <span style="background: rgba(16, 185, 129, 0.15); color: var(--green); padding: 2px 6px; border-radius: 4px;">Biometric: VERIFIED</span>
+                <span style="background: rgba(245, 158, 11, 0.15); color: var(--gold); padding: 2px 6px; border-radius: 4px;">Radius: 5 km</span>
+              </div>
+            </div>
+
+            <!-- Active Trip Controls Panel -->
+            <div class="app-card" id="driverActiveTripPanel" style="display: none;">
+              <div class="app-card-title">
+                <span>Current Assignment</span>
+                <span class="val" id="dActiveTripStatus" style="color: var(--green);">ACCEPTED</span>
+              </div>
+
+              <div style="background: #080c16; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.78rem;">
+                <div style="color: #fff; font-weight: 700; margin-bottom: 2px;">Pickup: Kenyatta Ave, CBD</div>
+                <div style="color: var(--text-muted); font-size: 0.7rem;">Passenger: Brian K. (4.90 ★)</div>
+                <div style="color: var(--gold); font-weight: 800; margin-top: 4px;">Fare: KES 1,850.00 (Cash)</div>
+              </div>
+
+              <!-- Driver Trip Action Pipeline Buttons -->
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                <button class="btn-action-primary" id="btnDriverArrive" onclick="driverMarkArrived()">
+                  <span>📍</span> I Have Arrived at Pickup
+                </button>
+
+                <button class="btn-action-green" id="btnDriverStart" style="display: none;" onclick="driverStartTrip()">
+                  <span>🟢</span> Passenger Boarded — Start Trip
+                </button>
+
+                <button class="btn-action-primary" id="btnDriverComplete" style="display: none;" onclick="driverCompleteTrip()">
+                  <span>🏁</span> Complete Trip at JKIA
+                </button>
+
+                <button class="btn-action-green" id="btnDriverConfirmCash" style="display: none;" onclick="driverConfirmCashPayment()">
+                  <span>💵</span> Confirm Cash Received (KES 1,850)
+                </button>
+              </div>
+
+              <!-- Expressway Telemetry Simulation -->
+              <div id="dExpresswaySimulation" class="expressway-progress-wrap" style="display: none;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 700;">
+                  <span>Nairobi Expressway</span>
+                  <span id="dExpresswayCheckpoint">GPS: Active</span>
+                  <span>JKIA Gate</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" id="dProgressBar"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Driver Radar Scanning Placeholder when Online with No Ride -->
+            <div class="app-card" id="driverRadarCard">
+              <div class="app-card-title">
+                <span>Dispatch Radar</span>
+                <span class="val" id="dRadarPill" style="color: var(--text-muted);">STANDBY</span>
+              </div>
+              <div style="text-align: center; padding: 20px 10px;">
+                <div style="font-size: 2.2rem; margin-bottom: 8px;" id="dRadarIcon">📡</div>
+                <div style="font-size: 0.82rem; font-weight: 700; color: #fff;" id="dRadarText">Driver is currently offline</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
+                  Toggle online above or click "1-Click Auto Demo" in the top bar.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Phone Home Indicator Bar -->
+        <div class="phone-home-indicator">
+          <div class="home-bar"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Live Telemetry Terminal Tray -->
+  <section class="telemetry-tray">
+    <div class="telemetry-header" onclick="toggleTelemetry()">
+      <div class="telemetry-title">
+        <span>⚡</span> LIVE SYSTEM EVENT STREAM & DISPATCH TELEMETRY
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">▾ Click to toggle</span>
+    </div>
+    <div class="telemetry-logs" id="telemetryLogs">
+      <div class="log-line">
+        <span class="log-time">[12:00:00]</span>
+        <span class="log-tag tag-SYSTEM">SYSTEM</span>
+        <span>Dual Mobile Emulator Studio initialized. Ready for interactive simulation.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- JAVASCRIPT SIMULATOR ENGINE -->
+  <script>
+    // State Management
+    let studioScale = 1.0;
+    let audioEnabled = true;
+    let isDriverOnline = false;
+    let currentRideId = null;
+    let currentStep = 1;
+    let selectedTier = 'STANDARD';
+    let selectedFare = 1850;
+    let offerInterval = null;
+    let tripSimulationInterval = null;
+
+    const BACKEND_DISPATCH = 'http://localhost:3334';
+    const BACKEND_AUTH = 'http://localhost:3333';
+
+    // Update Phone Clocks
+    function updateClocks() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('pTime').textContent = timeStr;
+      document.getElementById('dTime').textContent = timeStr;
+    }
+    setInterval(updateClocks, 10000);
+    updateClocks();
+
+    // Scale Controller
+    function setStudioScale(scale) {
+      studioScale = scale;
+      const stage = document.getElementById('stageContainer');
+      stage.style.transform = `scale(${scale})`;
+      log(`🖥️ Studio scale set to ${Math.round(scale * 100)}%`, 'SYSTEM');
+    }
+
+    // Device View Mode (Dual vs Single Phone)
+    function setDeviceView(mode) {
+      const pPhone = document.querySelector('.passenger-phone');
+      const dPhone = document.querySelector('.driver-phone');
+      const btnDual = document.getElementById('btnViewDual');
+      const btnPass = document.getElementById('btnViewPass');
+      const btnDriver = document.getElementById('btnViewDriver');
+
+      [btnDual, btnPass, btnDriver].forEach(b => b.classList.remove('active'));
+
+      if (mode === 'dual') {
+        btnDual.classList.add('active');
+        pPhone.style.display = 'flex';
+        dPhone.style.display = 'flex';
+        log('👥 View layout: DUAL PHONES side-by-side.', 'SYSTEM');
+      } else if (mode === 'passenger') {
+        btnPass.classList.add('active');
+        pPhone.style.display = 'flex';
+        dPhone.style.display = 'none';
+        log('🧍 View layout: PASSENGER PHONE focus.', 'SYSTEM');
+      } else if (mode === 'driver') {
+        btnDriver.classList.add('active');
+        pPhone.style.display = 'none';
+        dPhone.style.display = 'flex';
+        log('🚕 View layout: DRIVER PHONE focus.', 'SYSTEM');
+      }
+    }
+
+    // Audio Engine via Web Audio API
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function playTone(freqs, duration = 0.15) {
+      if (!audioEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') ctx.resume();
+        let startTime = ctx.currentTime;
+        freqs.forEach((f, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, startTime + idx * 0.12);
+          gain.gain.setValueAtTime(0.2, startTime + idx * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + idx * 0.12 + duration);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(startTime + idx * 0.12);
+          osc.stop(startTime + idx * 0.12 + duration);
+        });
+      } catch (e) {
+        // Audio error silent fallback
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById('btnAudioToggle');
+      btn.innerHTML = audioEnabled ? '<span>🔊</span> Sound: ON' : '<span>🔇</span> Sound: OFF';
+      log(`Audio sound effects: ${audioEnabled ? 'ENABLED' : 'MUTED'}`, 'SYSTEM');
+    }
+
+    // Logging Utility
+    function log(msg, tag = 'SYSTEM') {
+      const tray = document.getElementById('telemetryLogs');
+      const now = new Date();
+      const time = now.toTimeString().split(' ')[0];
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      line.innerHTML = `
+        <span class="log-time">[${time}]</span>
+        <span class="log-tag tag-${tag}">${tag}</span>
+        <span>${msg}</span>
+      `;
+      tray.appendChild(line);
+      tray.scrollTop = tray.scrollHeight;
+    }
+
+    function toggleTelemetry() {
+      const logs = document.getElementById('telemetryLogs');
+      logs.style.display = logs.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    // Mode Switchers (Native Controls vs Flutter Web iframe)
+    function setPassengerViewMode(mode) {
+      const btnN = document.getElementById('btnPModeNative');
+      const btnF = document.getElementById('btnPModeFlutter');
+      const btnA = document.getElementById('btnPModeAndroid');
+      const vNative = document.getElementById('viewPassengerNative');
+      const vFlutter = document.getElementById('iframePassenger');
+      const vAndroid = document.getElementById('viewPassengerAndroid');
+
+      [btnN, btnF, btnA].forEach(b => b && b.classList.remove('active'));
+      [vNative, vFlutter, vAndroid].forEach(v => v && v.classList.remove('active-view'));
+
+      if (mode === 'native') {
+        btnN.classList.add('active');
+        vNative.classList.add('active-view');
+        log('📱 Passenger phone: Quick Actions View.', 'PASSENGER');
+      } else if (mode === 'android') {
+        btnA.classList.add('active');
+        vAndroid.classList.add('active-view');
+        refreshPassengerAndroidScreen();
+        log('📲 Passenger phone: Real Android Device Stream (emulator-5556). Click to touch!', 'PASSENGER');
+      } else {
+        btnF.classList.add('active');
+        vFlutter.classList.add('active-view');
+        log('🚀 Passenger phone: Real Flutter Web App view (port 8082).', 'PASSENGER');
+      }
+    }
+
+    function refreshPassengerAndroidScreen() {
+      const img = document.getElementById('passengerAndroidImg');
+      if (img) {
+        img.src = '/api/emulator/screen?t=' + Date.now();
+      }
+    }
+
+    let androidRefreshTimer = null;
+
+    function setDriverViewMode(mode) {
+      const btnN = document.getElementById('btnDModeNative');
+      const btnF = document.getElementById('btnDModeFlutter');
+      const btnA = document.getElementById('btnDModeAndroid');
+      const vNative = document.getElementById('viewDriverNative');
+      const vFlutter = document.getElementById('iframeDriver');
+      const vAndroid = document.getElementById('viewDriverAndroid');
+
+      [btnN, btnF, btnA].forEach(b => b && b.classList.remove('active'));
+      [vNative, vFlutter, vAndroid].forEach(v => v && v.classList.remove('active-view'));
+
+      clearInterval(androidRefreshTimer);
+
+      if (mode === 'native') {
+        btnN.classList.add('active');
+        vNative.classList.add('active-view');
+        log('📱 Driver phone: Quick Actions View.', 'DRIVER');
+      } else if (mode === 'android') {
+        btnA.classList.add('active');
+        vAndroid.classList.add('active-view');
+        refreshAndroidScreen();
+        // Auto-refresh screen every 1.5 seconds
+        androidRefreshTimer = setInterval(refreshAndroidScreen, 1500);
+        log('📲 Driver phone: Real Android Device Stream (emulator-5556). Click to touch!', 'DRIVER');
+      } else {
+        btnF.classList.add('active');
+        vFlutter.classList.add('active-view');
+        log('🚀 Driver phone: Real Flutter Web App view (port 8081).', 'DRIVER');
+      }
+    }
+
+    function refreshAndroidScreen() {
+      const img = document.getElementById('driverAndroidImg');
+      if (img) {
+        img.src = '/api/emulator/screen?t=' + Date.now();
+      }
+    }
+
+    function sendAndroidKey(key) {
+      fetch('/api/emulator/key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key })
+      }).then(() => {
+        setTimeout(refreshAndroidScreen, 400);
+      });
+      playTone([440]);
+      log(`📱 Android Key Event: ${key}`, 'SYSTEM');
+    }
+
+    function launchAndroidApp(app) {
+      fetch('/api/emulator/launch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ app })
+      }).then(() => {
+        setTimeout(refreshAndroidScreen, 1200);
+      });
+      playTone([523.25, 659.25]);
+      log(`🚀 Launching ${app === 'driver' ? 'Cabi Driver' : 'Cabi Go'} on Android device...`, 'SYSTEM');
+    }
+
+    function slideDriverOnlineViaAdb() {
+      fetch('/api/emulator/swipe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ x1: 150, y1: 1520, x2: 920, y2: 1520, duration: 400 })
+      }).then(() => {
+        setTimeout(refreshAndroidScreen, 800);
+      });
+      playTone([523.25, 659.25, 783.99]);
+      log(`⚡ ADB Swipe: Slide to Go Online dispatched to real mobile app!`, 'DRIVER');
+    }
+
+    function bindAndroidTouchEvents(wrapperId, refreshFn, tag) {
+      const wrapper = document.getElementById(wrapperId);
+      if (!wrapper) return;
+
+      let startX = 0, startY = 0, isDragging = false;
+
+      wrapper.addEventListener('mousedown', (e) => {
+        const rect = wrapper.getBoundingClientRect();
+        startX = e.clientX - rect.left;
+        startY = e.clientY - rect.top;
+        isDragging = true;
+      });
+
+      wrapper.addEventListener('mouseup', (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        const rect = wrapper.getBoundingClientRect();
+        const endX = e.clientX - rect.left;
+        const endY = e.clientY - rect.top;
+
+        // Scale to 1080 x 1920 Android coordinate space
+        const scaleX = 1080 / rect.width;
+        const scaleY = 1920 / rect.height;
+
+        const dist = Math.hypot(endX - startX, endY - startY);
+
+        // Show visual ripple
+        const ripple = document.createElement('div');
+        ripple.className = 'android-touch-ripple';
+        ripple.style.left = `${endX}px`;
+        ripple.style.top = `${endY}px`;
+        wrapper.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 400);
+
+        if (dist < 10) {
+          // TAP
+          const tapX = startX * scaleX;
+          const tapY = startY * scaleY;
+          fetch('/api/emulator/tap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ x: tapX, y: tapY })
+          }).then(() => setTimeout(refreshFn, 500));
+          log(`👆 Tap on Real Device: (${Math.round(tapX)}, ${Math.round(tapY)})`, tag);
+        } else {
+          // SWIPE
+          fetch('/api/emulator/swipe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              x1: startX * scaleX,
+              y1: startY * scaleY,
+              x2: endX * scaleX,
+              y2: endY * scaleY,
+              duration: 350
+            })
+          }).then(() => setTimeout(refreshFn, 600));
+          log(`👉 Swipe on Real Device: (${Math.round(startX * scaleX)}, ${Math.round(startY * scaleY)}) ➔ (${Math.round(endX * scaleX)}, ${Math.round(endY * scaleY)})`, tag);
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      bindAndroidTouchEvents('driverAndroidWrapper', refreshAndroidScreen, 'DRIVER');
+      bindAndroidTouchEvents('passengerAndroidWrapper', refreshPassengerAndroidScreen, 'PASSENGER');
+    });
+
+    // Step Stepper Highlight
+    function updateStepIndicator(stepNum) {
+      currentStep = stepNum;
+      for (let i = 1; i <= 7; i++) {
+        const node = document.getElementById(`stepNode${i}`);
+        if (!node) continue;
+        node.classList.remove('active', 'completed');
+        if (i < stepNum) node.classList.add('completed');
+        else if (i === stepNum) node.classList.add('active');
+      }
+    }
+
+    // Vehicle Tier Picker
+    function selectVehicleTier(tier, price) {
+      selectedTier = tier;
+      selectedFare = price;
+      document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
+      if (tier === 'STANDARD') document.getElementById('tierStandard').classList.add('selected');
+      if (tier === 'COMFORT') document.getElementById('tierComfort').classList.add('selected');
+      if (tier === 'XL') document.getElementById('tierXL').classList.add('selected');
+
+      document.getElementById('pSelectedTierName').textContent = tier;
+      document.getElementById('btnRequestRide').innerHTML = `<span>🚕</span> Request Ride Now (KES ${price.toLocaleString()})`;
+      log(`Passenger selected vehicle tier: ${tier} (KES ${price})`, 'PASSENGER');
+    }
+
+    // Driver Online Toggle
+    function toggleDriverOnline() {
+      isDriverOnline = !isDriverOnline;
+      const btn = document.getElementById('btnDriverOnlineToggle');
+      const title = document.getElementById('dOnlineStatusTitle');
+      const sub = document.getElementById('dOnlineStatusSub');
+      const radarIcon = document.getElementById('dRadarIcon');
+      const radarText = document.getElementById('dRadarText');
+      const radarPill = document.getElementById('dRadarPill');
+
+      if (isDriverOnline) {
+        btn.className = 'btn-toggle-online online';
+        btn.innerHTML = '<span>🟢 ONLINE</span>';
+        title.textContent = 'Driver is ONLINE';
+        sub.textContent = 'Scanning Nairobi CBD for incoming ride requests...';
+        radarIcon.textContent = '🌐';
+        radarText.textContent = 'Waiting for ride offers in Nairobi CBD';
+        radarPill.textContent = 'ONLINE';
+        radarPill.style.color = 'var(--green)';
+
+        playTone([523.25, 659.25, 783.99]);
+        log('🟢 Driver Test Driver (KDH 452X) went ONLINE in Nairobi CBD.', 'DRIVER');
+        updateStepIndicator(2);
+      } else {
+        btn.className = 'btn-toggle-online offline';
+        btn.innerHTML = '<span>🔴 OFFLINE</span>';
+        title.textContent = 'Driver is OFFLINE';
+        sub.textContent = 'Slide or tap to start receiving dispatches';
+        radarIcon.textContent = '📡';
+        radarText.textContent = 'Driver is currently offline';
+        radarPill.textContent = 'STANDBY';
+        radarPill.style.color = 'var(--text-muted)';
+
+        playTone([400, 300]);
+        log('🔴 Driver went OFFLINE.', 'DRIVER');
+        updateStepIndicator(1);
+      }
+    }
+
+    // Passenger Requests Ride
+    async function passengerRequestRide() {
+      if (!isDriverOnline) {
+        log('⚠️ Auto-setting driver online so dispatch can find a match...', 'SYSTEM');
+        toggleDriverOnline();
+      }
+
+      currentRideId = 'TRIP-' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('btnRequestRide').style.display = 'none';
+      document.getElementById('btnRetryRide').style.display = 'block';
+      document.getElementById('btnCancelRide').style.display = 'block';
+
+      document.getElementById('pTripStatusCard').style.display = 'block';
+      document.getElementById('pTripStatusBadge').textContent = 'SEARCHING...';
+      document.getElementById('pTripStatusBadge').style.color = 'var(--gold)';
+
+      log(`📡 Passenger requesting ${selectedTier} ride: Kenyatta Ave ➔ JKIA (Fare: KES ${selectedFare})...`, 'PASSENGER');
+      playTone([440, 554.37, 659.25]);
+
+      // Call Backend Dispatch API
+      try {
+        fetch(`${BACKEND_DISPATCH}/api/rides`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            pickupLocation: { latitude: -1.286389, longitude: 36.817223, address: 'Kenyatta Avenue, Nairobi CBD' },
+            dropoffLocation: { latitude: -1.319167, longitude: 36.9275, address: 'JKIA Terminal 1A, Nairobi' },
+            serviceType: selectedTier,
+            estimatedFare: selectedFare,
+            passengerId: 'passenger-brian-test'
+          })
+        }).then(r => r.json()).then(data => {
+          log(`✅ Dispatch service accepted ride request: ID ${data.id || currentRideId}`, 'DISPATCH');
+        }).catch(err => {
+          log(`ℹ️ Local dispatch logged ride: ${currentRideId}`, 'DISPATCH');
+        });
+      } catch (e) {}
+
+      updateStepIndicator(3);
+
+      // Trigger incoming offer modal on Driver Phone after 1 second
+      setTimeout(() => {
+        triggerDriverOfferPopup();
+      }, 1000);
+    }
+
+    // Trigger Incoming Offer on Driver Phone
+    function triggerDriverOfferPopup() {
+      const popup = document.getElementById('driverOfferPopup');
+      popup.style.display = 'flex';
+      playTone([659.25, 880, 1046.5]);
+
+      let timeLeft = 15;
+      const timerSec = document.getElementById('offerTimerSeconds');
+      const timerBar = document.getElementById('offerTimerBar');
+      timerSec.textContent = `${timeLeft}s`;
+      timerBar.style.width = '100%';
+
+      clearInterval(offerInterval);
+      offerInterval = setInterval(() => {
+        timeLeft--;
+        timerSec.textContent = `${timeLeft}s`;
+        timerBar.style.width = `${(timeLeft / 15) * 100}%`;
+
+        if (timeLeft <= 0) {
+          clearInterval(offerInterval);
+          driverDeclineRideOffer();
+        }
+      }, 1000);
+
+      log(`🔔 INCOMING OFFER ring on Driver Phone for ${currentRideId}! Countdown: 15s.`, 'DRIVER');
+    }
+
+    // Driver Accepts Offer
+    function driverAcceptRideOffer() {
+      clearInterval(offerInterval);
+      document.getElementById('driverOfferPopup').style.display = 'none';
+
+      // Show Active Trip on Driver Phone
+      document.getElementById('driverRadarCard').style.display = 'none';
+      document.getElementById('driverActiveTripPanel').style.display = 'block';
+      document.getElementById('dActiveTripStatus').textContent = 'DRIVER_ASSIGNED';
+      document.getElementById('btnDriverArrive').style.display = 'block';
+
+      // Update Passenger Phone to matched state
+      document.getElementById('pTripStatusBadge').textContent = 'DRIVER MATCHED';
+      document.getElementById('pTripStatusBadge').style.color = 'var(--green)';
+      document.getElementById('pDriverInfoBlock').style.display = 'block';
+
+      playTone([523.25, 659.25, 783.99, 1046.5]);
+      log(`✅ Driver ACCEPTED ride offer ${currentRideId}! En route to Kenyatta Ave.`, 'DRIVER');
+      log(`📱 Passenger updated: Driver Test Driver (KDH 452X) assigned!`, 'PASSENGER');
+
+      updateStepIndicator(4);
+    }
+
+    // Driver Declines Offer
+    function driverDeclineRideOffer() {
+      clearInterval(offerInterval);
+      document.getElementById('driverOfferPopup').style.display = 'none';
+      log(`⚠️ Driver declined ride offer ${currentRideId}.`, 'DRIVER');
+      document.getElementById('pTripStatusBadge').textContent = 'RE-SCANNING...';
+    }
+
+    // Step 4: Driver Marks Arrived at Pickup
+    function driverMarkArrived() {
+      document.getElementById('btnDriverArrive').style.display = 'none';
+      document.getElementById('btnDriverStart').style.display = 'block';
+      document.getElementById('dActiveTripStatus').textContent = 'ARRIVED_AT_PICKUP';
+
+      document.getElementById('pTripStatusBadge').textContent = 'DRIVER ARRIVED!';
+      document.getElementById('pDriverEta').textContent = 'At Pickup (GPO)';
+      document.getElementById('pDriverEta').style.color = 'var(--green)';
+
+      playTone([659.25, 783.99]);
+      log(`📍 Driver arrived at Kenyatta Avenue. Passenger notified via push notification.`, 'DRIVER');
+      log(`📱 Passenger received alert: "Your Cabi Driver has arrived outside GPO!"`, 'PASSENGER');
+
+      updateStepIndicator(5);
+    }
+
+    // Step 5: Passenger Boards — Start Trip
+    function driverStartTrip() {
+      document.getElementById('btnDriverStart').style.display = 'none';
+      document.getElementById('btnDriverComplete').style.display = 'block';
+      document.getElementById('dActiveTripStatus').textContent = 'IN_PROGRESS';
+
+      document.getElementById('pTripStatusBadge').textContent = 'IN PROGRESS (EXPRESSWAY)';
+      document.getElementById('pExpresswayTrack').style.display = 'block';
+      document.getElementById('dExpresswaySimulation').style.display = 'block';
+
+      playTone([523.25, 783.99]);
+      log(`🚗 Passenger boarded. Trip started towards JKIA Terminal 1A. Entering Expressway!`, 'DRIVER');
+
+      // Animate progress along Expressway
+      let progress = 0;
+      const checkpoints = [
+        'Entering Expressway at Museum Hill',
+        'Passing Nyayo National Stadium',
+        'Passing Capital Centre / South B',
+        'Cruising past Cabanas Interchange',
+        'Exiting at JKIA Toll Plaza',
+        'Arrived at JKIA Terminal 1A'
+      ];
+
+      clearInterval(tripSimulationInterval);
+      tripSimulationInterval = setInterval(() => {
+        progress += 20;
+        const pFill = document.getElementById('pProgressBar');
+        const dFill = document.getElementById('dProgressBar');
+        pFill.style.width = `${progress}%`;
+        dFill.style.width = `${progress}%`;
+
+        const cpIdx = Math.min(Math.floor((progress / 100) * (checkpoints.length - 1)), checkpoints.length - 1);
+        document.getElementById('pExpresswayCheckpoint').textContent = checkpoints[cpIdx];
+        document.getElementById('dExpresswayCheckpoint').textContent = checkpoints[cpIdx];
+
+        log(`🛣️ Expressway Telemetry: ${checkpoints[cpIdx]} (${progress}%)`, 'DISPATCH');
+
+        if (progress >= 100) {
+          clearInterval(tripSimulationInterval);
+          log(`🏁 Driver reached JKIA Terminal 1A International Departures.`, 'DRIVER');
+          updateStepIndicator(6);
+        }
+      }, 1500);
+    }
+
+    // Step 6: Complete Trip at JKIA
+    function driverCompleteTrip() {
+      clearInterval(tripSimulationInterval);
+      document.getElementById('btnDriverComplete').style.display = 'none';
+      document.getElementById('btnDriverConfirmCash').style.display = 'block';
+      document.getElementById('dActiveTripStatus').textContent = 'COMPLETED';
+
+      document.getElementById('pTripStatusBadge').textContent = 'ARRIVED AT DESTINATION';
+      document.getElementById('btnCancelRide').style.display = 'none';
+      document.getElementById('pRatingBlock').style.display = 'block';
+
+      playTone([783.99, 1046.5]);
+      log(`🏁 Trip completed! Final calculated fare: KES ${selectedFare.toLocaleString()}. Please collect cash.`, 'DRIVER');
+      log(`📱 Passenger arrived at JKIA. Waybill & settlement receipt displayed.`, 'PASSENGER');
+
+      updateStepIndicator(7);
+    }
+
+    // Step 7: Driver Confirms Cash Payment
+    function driverConfirmCashPayment() {
+      const btn = document.getElementById('btnDriverConfirmCash');
+      btn.disabled = true;
+      btn.className = 'btn-action-primary';
+      btn.innerHTML = '<span>✅</span> Cash Payment Confirmed!';
+
+      playTone([523.25, 659.25, 783.99, 1046.5]);
+      log(`💵 Driver confirmed receipt of KES ${selectedFare.toLocaleString()} cash from Brian K.`, 'DRIVER');
+      log(`📊 Financial Transaction Settled in Cabi General Ledger. Driver net earnings updated!`, 'SYSTEM');
+    }
+
+    // Star Rating on Passenger Phone
+    function setStarRating(stars) {
+      const allStars = document.querySelectorAll('#pStarRating .star');
+      allStars.forEach((s, idx) => {
+        if (idx < stars) s.classList.add('active');
+        else s.classList.remove('active');
+      });
+      playTone([659.25 + stars * 50]);
+    }
+
+    function submitRiderRating() {
+      document.getElementById('pRatingBlock').innerHTML = `
+        <div style="text-align: center; padding: 12px; color: var(--green); font-weight: 700; font-size: 0.85rem;">
+          🎉 Thank you! Rating of 5★ submitted.<br>
+          <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500;">
+            Occurrence Book Entry #OB-${Math.floor(100000 + Math.random() * 900000)} created.
+          </span>
+        </div>
+      `;
+      playTone([523.25, 659.25, 783.99, 1046.5]);
+      log(`⭐ Passenger Brian K. rated driver Test Driver 5 Stars. End-to-end trip simulation complete!`, 'PASSENGER');
+    }
+
+    // Retry Driver Search
+    function passengerRetrySearch() {
+      playTone([523.25, 659.25]);
+      log('🔄 Passenger tapped Retry. Restarting wave search for nearby drivers...', 'PASSENGER');
+      const b = document.getElementById('pCountdownBadge');
+      if (b) b.textContent = '00:30';
+    }
+
+    // Cancel Ride
+    function passengerCancelRide() {
+      document.getElementById('btnRequestRide').style.display = 'block';
+      document.getElementById('btnRequestRide').disabled = false;
+      document.getElementById('btnRetryRide').style.display = 'none';
+      document.getElementById('btnCancelRide').style.display = 'none';
+      document.getElementById('pTripStatusCard').style.display = 'none';
+      document.getElementById('pDriverInfoBlock').style.display = 'none';
+      document.getElementById('driverOfferPopup').style.display = 'none';
+
+      playTone([400, 300, 200]);
+      log(`🛑 Passenger cancelled ride request ${currentRideId}.`, 'PASSENGER');
+      updateStepIndicator(2);
+    }
+
+    // 1-Click Automated Trip Demo
+    let isAutoDemoRunning = false;
+    async function runAutomatedTripDemo() {
+      if (isAutoDemoRunning) return;
+      isAutoDemoRunning = true;
+      const btn = document.getElementById('btnRunFullDemo');
+      btn.innerHTML = '<span>⏳</span> Simulating Trip...';
+      btn.disabled = true;
+
+      log('🚀 Starting 1-Click Automated Trip Simulation: Kenyatta Ave ➔ JKIA', 'SYSTEM');
+
+      // 1. Driver Online
+      if (!isDriverOnline) toggleDriverOnline();
+      await new Promise(r => setTimeout(r, 1200));
+
+      // 2. Passenger Requests Ride
+      await passengerRequestRide();
+      await new Promise(r => setTimeout(r, 1600));
+
+      // 3. Driver Accepts
+      driverAcceptRideOffer();
+      await new Promise(r => setTimeout(r, 1600));
+
+      // 4. Driver Arrived
+      driverMarkArrived();
+      await new Promise(r => setTimeout(r, 1600));
+
+      // 5. Start Trip
+      driverStartTrip();
+      // Wait for expressway animation to complete
+      await new Promise(r => setTimeout(r, 9500));
+
+      // 6. Complete Trip
+      driverCompleteTrip();
+      await new Promise(r => setTimeout(r, 1600));
+
+      // 7. Confirm Cash & Rate
+      driverConfirmCashPayment();
+      await new Promise(r => setTimeout(r, 800));
+      submitRiderRating();
+
+      btn.innerHTML = '<span>✔</span> Demo Complete!';
+      setTimeout(() => {
+        btn.innerHTML = '<span>▶</span> 1-Click Auto Demo';
+        btn.disabled = false;
+        isAutoDemoRunning = false;
+      }, 4000);
+
+      log('🎉 100% SUCCESS: Full end-to-end trip simulation completed across both phones!', 'SYSTEM');
+    }
+
+    // Reset Studio State
+    function resetStudioState() {
+      clearInterval(offerInterval);
+      clearInterval(tripSimulationInterval);
+
+      isDriverOnline = false;
+      toggleDriverOnline();
+
+      document.getElementById('btnRequestRide').style.display = 'block';
+      document.getElementById('btnRequestRide').disabled = false;
+      document.getElementById('btnRetryRide').style.display = 'none';
+      document.getElementById('btnCancelRide').style.display = 'none';
+      document.getElementById('pTripStatusCard').style.display = 'none';
+      document.getElementById('pDriverInfoBlock').style.display = 'none';
+      document.getElementById('pExpresswayTrack').style.display = 'none';
+      document.getElementById('pRatingBlock').style.display = 'none';
+
+      document.getElementById('driverOfferPopup').style.display = 'none';
+      document.getElementById('driverActiveTripPanel').style.display = 'none';
+      document.getElementById('driverRadarCard').style.display = 'block';
+      document.getElementById('dExpresswaySimulation').style.display = 'none';
+
+      document.getElementById('btnDriverArrive').style.display = 'block';
+      document.getElementById('btnDriverStart').style.display = 'none';
+      document.getElementById('btnDriverComplete').style.display = 'none';
+      document.getElementById('btnDriverConfirmCash').style.display = 'none';
+      document.getElementById('btnDriverConfirmCash').disabled = false;
+
+      updateStepIndicator(1);
+      log('🔄 Studio state reset to initial readiness.', 'SYSTEM');
+    }
+
+    function jumpToStep(num) {
+      if (num === 1 && !isDriverOnline) toggleDriverOnline();
+      else if (num === 2) passengerRequestRide();
+      else if (num === 3) driverAcceptRideOffer();
+      else if (num === 4) driverMarkArrived();
+      else if (num === 5) driverStartTrip();
+      else if (num === 6) driverCompleteTrip();
+      else if (num === 7) { driverConfirmCashPayment(); submitRiderRating(); }
+    }
+  </script>
+</body>
+</html>

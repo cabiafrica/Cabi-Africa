@@ -1,0 +1,32 @@
+{
+  "projectId": "5681992570744779348",
+  "projectResourceName": "projects/5681992570744779348",
+  "projectTitle": "Cabi Africa",
+  "projectType": "TEXT_TO_UI_PRO",
+  "origin": "STITCH",
+  "defaultDeviceType": "MOBILE",
+  "mcpServer": "StitchMCP",
+  "designSystem": {
+    "assetId": "3d296146259f4230861733a932d7472e",
+    "screenInstanceId": "6916060633502316208",
+    "status": "ACTIVE_SYNCHRONIZED",
+    "updatedAt": "2026-10-10T02:43:03Z"
+  },
+  "theme": {
+    "colorMode": "DARK",
+    "font": "INTER",
+    "customColor": "#067ff9",
+    "saturation": 3
+  },
+  "targets": {
+    "mobile": {
+      "passenger": "mobile/passenger_app",
+      "driver": "mobile/driver_app"
+    },
+    "web": {
+      "admin": "web/admin_panel",
+      "sacco": "web/sacco_portal",
+      "driverPortal": "web/driver_portal"
+    }
+  }
+}

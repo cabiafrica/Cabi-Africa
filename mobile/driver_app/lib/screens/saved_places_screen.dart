@@ -89,7 +89,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
     final iconOptions = [
       (Icons.home_outlined, Colors.green, 'Home'),
       (Icons.work_outline, Colors.blue, 'Work'),
-      (Icons.school_outlined, Colors.purple, 'School'),
+      (Icons.school_outlined, const Color(0xFFD4AF37), 'School'),
       (Icons.local_hospital_outlined, Colors.red, 'Hospital'),
       (Icons.shopping_cart_outlined, Colors.orange, 'Market'),
       (Icons.location_on_outlined, Colors.teal, 'Other'),

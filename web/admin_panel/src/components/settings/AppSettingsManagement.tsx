@@ -34,11 +34,52 @@ export function AppSettingsManagement() {
     tours_url: '',
     RIDE_VERIFICATION_ENABLED: 'false',
   });
+
+  // Wait Time Fee configuration
+  const [waitConfig, setWaitConfig] = useState({ feePerMinute: 10, gracePeriodMinutes: 3 });
+  const [savedWaitConfig, setSavedWaitConfig] = useState({ feePerMinute: 10, gracePeriodMinutes: 3 });
+  const [waitConfigLoading, setWaitConfigLoading] = useState(true);
+  const [waitConfigSaving, setWaitConfigSaving] = useState(false);
+  const [waitConfigMsg, setWaitConfigMsg] = useState<string | null>(null);
   
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  const loadWaitConfig = useCallback(async () => {
+    setWaitConfigLoading(true);
+    try {
+      const res = await fetch(`${DISPATCH_API_BASE}/rides/admin/wait-time-config`);
+      if (res.ok) {
+        const data = await res.json();
+        setWaitConfig({ feePerMinute: data.feePerMinute ?? 10, gracePeriodMinutes: data.gracePeriodMinutes ?? 3 });
+        setSavedWaitConfig({ feePerMinute: data.feePerMinute ?? 10, gracePeriodMinutes: data.gracePeriodMinutes ?? 3 });
+      }
+    } catch { /* silent */ } finally {
+      setWaitConfigLoading(false);
+    }
+  }, []);
+
+  const handleSaveWaitConfig = async () => {
+    setWaitConfigSaving(true);
+    setWaitConfigMsg(null);
+    try {
+      const res = await fetch(`${DISPATCH_API_BASE}/rides/admin/wait-time-config`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(waitConfig),
+      });
+      if (!res.ok) throw new Error(`Failed: ${res.status}`);
+      setSavedWaitConfig(waitConfig);
+      setWaitConfigMsg('✅ Wait fee config saved!');
+      setTimeout(() => setWaitConfigMsg(null), 4000);
+    } catch (err: any) {
+      setWaitConfigMsg(`⚠️ ${err.message}`);
+    } finally {
+      setWaitConfigSaving(false);
+    }
+  };
 
   const loadSettings = useCallback(async () => {
     setIsLoading(true);
@@ -63,7 +104,8 @@ export function AppSettingsManagement() {
 
   useEffect(() => {
     loadSettings();
-  }, [loadSettings]);
+    loadWaitConfig();
+  }, [loadSettings, loadWaitConfig]);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -85,6 +127,10 @@ export function AppSettingsManagement() {
       setIsSaving(false);
     }
   };
+
+  const isWaitDirty =
+    waitConfig.feePerMinute !== savedWaitConfig.feePerMinute ||
+    waitConfig.gracePeriodMinutes !== savedWaitConfig.gracePeriodMinutes;
 
   const isDirty = 
     settings.tours_url !== savedSettings.tours_url || 
@@ -193,6 +239,79 @@ export function AppSettingsManagement() {
                     </a>
                   </div>
                 )}
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Wait Time Fee Configuration Card */}
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
+            <span className="text-2xl">⏱️</span>
+            <div>
+              <h3 className="font-semibold text-slate-900 dark:text-white">Wait Time Fee</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Configure the grace period and fee charged to passengers who keep the driver waiting.
+              </p>
+            </div>
+          </div>
+          <div className="px-6 py-6 space-y-5">
+            {waitConfigLoading ? (
+              <div className="flex items-center justify-center py-6">
+                <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Grace Period (minutes)
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      step={1}
+                      value={waitConfig.gracePeriodMinutes}
+                      onChange={(e) => setWaitConfig({ ...waitConfig, gracePeriodMinutes: Number(e.target.value) })}
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
+                    />
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Free waiting before fee applies</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Fee per Minute (KES)
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      step={0.5}
+                      value={waitConfig.feePerMinute}
+                      onChange={(e) => setWaitConfig({ ...waitConfig, feePerMinute: Number(e.target.value) })}
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
+                    />
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Charged after grace period ends</p>
+                  </div>
+                </div>
+                <div className="px-4 py-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-sm text-amber-700 dark:text-amber-300">
+                  📋 Policy: Passengers get <strong>{waitConfig.gracePeriodMinutes} min</strong> free wait. After that, <strong>KES {waitConfig.feePerMinute}/min</strong> is added as a pending fee on their next ride. Drivers are compensated from the system wallet.
+                </div>
+                {waitConfigMsg && (
+                  <div className={`text-sm ${waitConfigMsg.startsWith('✅') ? 'text-green-600' : 'text-red-600'}`}>{waitConfigMsg}</div>
+                )}
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleSaveWaitConfig}
+                    disabled={waitConfigSaving || !isWaitDirty}
+                    className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                      isWaitDirty && !waitConfigSaving
+                        ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-sm hover:shadow-md'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                    }`}
+                  >
+                    {waitConfigSaving && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+                    {waitConfigSaving ? 'Saving…' : 'Save Wait Fee Config'}
+                  </button>
+                </div>
               </>
             )}
           </div>

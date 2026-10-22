@@ -137,8 +137,11 @@ export class RideController {
   }
 
   @Post(':id/complete')
-  completeRide(@Param('id') id: string) {
-    return this.rideService.completeRide(id);
+  completeRide(
+    @Param('id') id: string,
+    @Body() body?: { distanceKm?: number; durationMinutes?: number }
+  ) {
+    return this.rideService.completeRide(id, body);
   }
 
   @Post(':id/receipt')
@@ -250,5 +253,20 @@ export class RideController {
     @Query('endDate') endDate?: string
   ) {
     return this.rideService.getRideStatistics(startDate, endDate);
+  }
+
+  // Admin endpoint to get wait time fee configuration
+  @Get('/admin/wait-time-config')
+  getWaitTimeConfig() {
+    return this.rideService.getWaitTimeConfig();
+  }
+
+  // Admin endpoint to update wait time fee configuration
+  @Put('/admin/wait-time-config')
+  updateWaitTimeConfig(
+    @Body('feePerMinute') feePerMinute: number,
+    @Body('gracePeriodMinutes') gracePeriodMinutes: number
+  ) {
+    return this.rideService.updateWaitTimeConfig(feePerMinute, gracePeriodMinutes);
   }
 }

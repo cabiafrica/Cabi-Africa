@@ -115,7 +115,7 @@ class _SafetyCheckupScreenState extends State<SafetyCheckupScreen> {
                       if (!isEnabled)
                           ElevatedButton(
                               onPressed: onAction, 
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple, foregroundColor: Colors.white),
+                              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), foregroundColor: Colors.white),
                               child: Text(actionLabel)
                           )
                       else

@@ -8,6 +8,7 @@ import { CommissionService } from '../commission/commission.service';
 // import { UserService } from '@cabi/backend/user-service';
 import { SettingsService } from '@cabi/backend/settings';
 import { NotificationService } from '@cabi/backend/notification-service';
+import { PricingService } from '../pricing/pricing.service';
 
 class PaymentService {
   private readonly logger = new Logger(PaymentService.name);
@@ -46,8 +47,8 @@ interface PaginationParams {
   limit: number;
 }
 
-const WAIT_TIME_GRACE_PERIOD_MINUTES = 2;
-const WAIT_TIME_FEE_PER_MINUTE = 0.50;
+const WAIT_TIME_GRACE_PERIOD_MINUTES = 3;
+const WAIT_TIME_FEE_PER_MINUTE = 10.0;
 
 // In-memory passenger trip tracking (would use database in production)
 const passengerTripCounts: Map<string, number> = new Map();
@@ -63,15 +64,19 @@ export class RideService implements OnModuleInit {
   private readonly notificationService: NotificationService;
   private readonly driverMissedQualifyingMap: Map<string, number> = new Map();
 
+  private readonly pricingService: PricingService;
+
   constructor(
     private prisma: PrismaService,
     public matchingService: MatchingService,
     private badgeService: BadgeService,
     private commissionService: CommissionService,
     private settingsService: SettingsService,
-    notificationService?: NotificationService
+    notificationService?: NotificationService,
+    pricingService?: PricingService
   ) {
     this.notificationService = notificationService || new NotificationService();
+    this.pricingService = pricingService || new PricingService(this.settingsService);
   }
 
   onModuleInit() {
@@ -83,6 +88,31 @@ export class RideService implements OnModuleInit {
         this.logger.error(`Error in assignment expiration check: ${err.message}`);
       }
     }, 3000);
+  }
+
+  async getWaitTimeConfig(): Promise<{ feePerMinute: number; gracePeriodMinutes: number }> {
+    try {
+      const feeSetting = await this.settingsService.getSystemSetting('WAIT_TIME_FEE_PER_MINUTE');
+      const graceSetting = await this.settingsService.getSystemSetting('WAIT_TIME_GRACE_PERIOD_MINUTES');
+
+      const feePerMinute = (feeSetting !== null && feeSetting !== undefined && !isNaN(Number(feeSetting)))
+        ? Number(feeSetting)
+        : WAIT_TIME_FEE_PER_MINUTE;
+      const gracePeriodMinutes = (graceSetting !== null && graceSetting !== undefined && !isNaN(Number(graceSetting)))
+        ? Number(graceSetting)
+        : WAIT_TIME_GRACE_PERIOD_MINUTES;
+
+      return { feePerMinute, gracePeriodMinutes };
+    } catch {
+      return { feePerMinute: WAIT_TIME_FEE_PER_MINUTE, gracePeriodMinutes: WAIT_TIME_GRACE_PERIOD_MINUTES };
+    }
+  }
+
+  async updateWaitTimeConfig(feePerMinute: number, gracePeriodMinutes: number) {
+    await this.settingsService.updateSystemSetting('WAIT_TIME_FEE_PER_MINUTE', feePerMinute);
+    await this.settingsService.updateSystemSetting('WAIT_TIME_GRACE_PERIOD_MINUTES', gracePeriodMinutes);
+    this.logger.log(`Wait time configuration updated: KES ${feePerMinute}/min, grace ${gracePeriodMinutes} mins`);
+    return { success: true, feePerMinute, gracePeriodMinutes };
   }
 
   async checkExpiringAssignments(): Promise<void> {
@@ -97,8 +127,9 @@ export class RideService implements OnModuleInit {
 
     for (const ride of expiredRides) {
       if (ride.driverId) {
-        this.logger.warn(`Ride ${ride.id} assignment timed out after 20s for driver ${ride.driverId}. Escalating to next driver.`);
-        await this.passRide(ride.id, ride.driverId, '20-second acceptance timeout');
+        const configuredTimeout = process.env.DISPATCH_TIMEOUT_SECONDS || '120';
+        this.logger.warn(`Ride ${ride.id} assignment timed out after ${configuredTimeout}s for driver ${ride.driverId}. Escalating to next driver.`);
+        await this.passRide(ride.id, ride.driverId, `${configuredTimeout}-second acceptance timeout`);
       }
     }
   }
@@ -204,6 +235,29 @@ export class RideService implements OnModuleInit {
     const tripCodeNum = Math.floor(1000 + Math.random() * 9000);
     const tripCode = `CB-${tripCodeNum}`;
 
+    // Check for pending wait fee from previous cancelled ride
+    const pendingKey = `PENDING_WAIT_FEE_${passengerId}`;
+    let finalFare = Number(fare);
+    try {
+      const pendingData = await this.settingsService.getSystemSetting(pendingKey);
+      if (pendingData && pendingData.amount && Number(pendingData.amount) > 0) {
+        const pendingAmount = Number(pendingData.amount);
+        finalFare = Number((finalFare + pendingAmount).toFixed(2));
+        this.logger.log(`Applied pending wait fee of KES ${pendingAmount} to ride fare for passenger ${passengerId}. New total fare: ${finalFare}`);
+
+        // Clear pending fee once attached to this new ride
+        await this.settingsService.updateSystemSetting(pendingKey, null);
+
+        this.notificationService.sendNotification({
+          userId: passengerId,
+          title: 'Pending Wait Fee Added',
+          body: `Your ride includes KES ${pendingAmount} from a previous wait time charge.`
+        });
+      }
+    } catch (e: any) {
+      this.logger.warn(`Could not check pending wait fee for passenger ${passengerId}: ${e.message}`);
+    }
+
     const ride = await (this.prisma.ride.create as any)({
       data: {
         passengerId,
@@ -212,7 +266,7 @@ export class RideService implements OnModuleInit {
         status: 'REQUESTED',
         requestedVehicleType: resolvedVehicleType as any,
         matchingStartedAt,
-        fare: fare,
+        fare: finalFare,
         distance: 0,
         duration: 0,
         tripCode,
@@ -322,8 +376,11 @@ export class RideService implements OnModuleInit {
 
     // Add passenger verification status if driver is viewing
     if (ride && role === 'DRIVER') {
-      const tripCount = passengerTripCounts.get(ride.passengerId) || 0;
-      const isVerified = tripCount === 0 && passengerTripCounts.has(ride.passengerId);
+      const isVerified = (ride as any).isVerifiedPassenger ||
+                         (ride.passenger as any)?.isVerifiedPassenger ||
+                         (ride.passenger as any)?.isIdentityVerified ||
+                         ((ride.passenger as any)?.passengerTripCount ?? 0) === 0 ||
+                         passengerTripCounts.get(ride.passengerId) === 1;
 
       return {
         ...ride,
@@ -465,6 +522,12 @@ export class RideService implements OnModuleInit {
     const resolvedDriverId = driver ? driver.id : driverId;
     const ride = await this.prisma.ride.findUnique({ where: { id: rideId } });
     if (!ride) throw new NotFoundException('Ride not found');
+
+    // Prevent race condition: if ride is already active or finished, ignore delayed pass
+    if (['DRIVER_ARRIVED', 'IN_PROGRESS', 'COMPLETED'].includes(ride.status)) {
+      this.logger.warn(`Ignoring passRide for ride ${rideId} because ride is already ${ride.status}`);
+      return ride;
+    }
 
     const currentPassed: string[] = (ride as any).passedDriverIds || [];
     const updatedPassed = Array.from(new Set([...currentPassed, resolvedDriverId, driverId]));
@@ -636,13 +699,42 @@ export class RideService implements OnModuleInit {
     };
   }
 
+  async arriveDriver(rideId: string) {
+    const ride = await this.prisma.ride.findUnique({ where: { id: rideId } });
+    if (!ride) throw new NotFoundException('Ride not found');
+
+    if (!['DRIVER_ASSIGNED', 'ACCEPTED', 'MATCHING'].includes(ride.status)) {
+      throw new BadRequestException(`Cannot mark arrived for ride in status: ${ride.status}`);
+    }
+
+    const arrivedAt = new Date();
+    const updatedRide = await this.prisma.ride.update({
+      where: { id: rideId },
+      data: {
+        status: 'DRIVER_ARRIVED',
+        driverArrivedAt: arrivedAt,
+      } as any
+    });
+
+    const activeTripCode = (ride as any).tripCode || 'CB-RIDE';
+    this.logger.log(`Driver arrived at pickup for ride ${rideId} [${activeTripCode}] at ${arrivedAt.toISOString()}`);
+
+    this.notificationService.sendNotification({
+      userId: ride.passengerId,
+      title: `Driver Arrived [${activeTripCode}]`,
+      body: `Your driver has arrived at the pickup location. You have 3 minutes before wait fees apply.`
+    });
+
+    return updatedRide;
+  }
+
   async startRide(rideId: string, tripCode?: string) {
     const ride = await this.prisma.ride.findUnique({ where: { id: rideId } });
     if (!ride) throw new NotFoundException('Ride not found');
 
     // Guard: only allow starting a ride that has been assigned or driver has arrived
-    if (!['DRIVER_ASSIGNED', 'DRIVER_ARRIVED'].includes(ride.status)) {
-      throw new Error(`Cannot start ride in status: ${ride.status}. Must be DRIVER_ASSIGNED or DRIVER_ARRIVED.`);
+    if (!['DRIVER_ASSIGNED', 'DRIVER_ARRIVED', 'ACCEPTED'].includes(ride.status)) {
+      throw new BadRequestException(`Cannot start ride in status: ${ride.status}. Must be DRIVER_ASSIGNED or DRIVER_ARRIVED.`);
     }
 
     // Optional verification of tripCode (case-insensitive & whitespace-insensitive)
@@ -674,7 +766,10 @@ export class RideService implements OnModuleInit {
     return updatedRide;
   }
 
-  async completeRide(rideId: string) {
+  async completeRide(
+    rideId: string,
+    telemetry?: { distanceKm?: number; durationMinutes?: number }
+  ) {
     const ride = await this.prisma.ride.findUnique({ where: { id: rideId } });
     if (!ride) {
       throw new NotFoundException('Ride not found');
@@ -682,14 +777,16 @@ export class RideService implements OnModuleInit {
 
     // Guard: only allow completing a ride that is IN_PROGRESS
     if (ride.status !== 'IN_PROGRESS') {
-      throw new Error(`Cannot complete ride in status: ${ride.status}. Must be IN_PROGRESS.`);
+      throw new BadRequestException(`Cannot complete ride in status: ${ride.status}. Must be IN_PROGRESS.`);
     }
 
-    // Estimate distance from pickup→dropoff using Haversine (real GPS logs would replace this)
+    // Estimate distance: prioritize telemetry reported by driver meter if positive, else Haversine
     const pickup = ride.pickupLocation as any;
     const dropoff = ride.dropoffLocation as any;
-    let estimatedDistanceKm = 0;
-    if (pickup?.lat && pickup?.lng && dropoff?.lat && dropoff?.lng) {
+    let finalDistanceKm = 0;
+    if (telemetry?.distanceKm && telemetry.distanceKm > 0) {
+      finalDistanceKm = Number(telemetry.distanceKm);
+    } else if (pickup?.lat && pickup?.lng && dropoff?.lat && dropoff?.lng) {
       const R = 6371; // Earth radius in km
       const dLat = ((dropoff.lat - pickup.lat) * Math.PI) / 180;
       const dLon = ((dropoff.lng - pickup.lng) * Math.PI) / 180;
@@ -698,32 +795,54 @@ export class RideService implements OnModuleInit {
         Math.cos((pickup.lat * Math.PI) / 180) *
           Math.cos((dropoff.lat * Math.PI) / 180) *
           Math.sin(dLon / 2) ** 2;
-      estimatedDistanceKm = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      finalDistanceKm = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    } else if (ride.distance && ride.distance > 0) {
+      finalDistanceKm = Number(ride.distance);
     }
 
-    const baseFare = Number(ride.fare) || 350.0;
-    // We would need to store `totalWaitTimeFee` somewhere. 
-    // The previous mock had it on the object. The schema has `fare` but maybe we need more fields.
-    // I'll assume `fare` is the total.
+    // Estimate duration: prioritize driver meter duration in minutes, else elapsed time
+    let finalDurationMinutes = 1.0;
+    if (telemetry?.durationMinutes && telemetry.durationMinutes > 0) {
+      finalDurationMinutes = Number(telemetry.durationMinutes);
+    } else if (ride.updatedAt) {
+      const elapsedMs = Date.now() - new Date(ride.updatedAt).getTime();
+      finalDurationMinutes = Math.max(1.0, elapsedMs / 60000);
+    }
+
+    // Determine category and compute metered fare with category rounding
+    const category = (ride.requestedVehicleType as string) || 'STANDARD';
+    let finalFare = Number(ride.fare) || 150.0;
+    let fareCalc: any = null;
+
+    try {
+      fareCalc = await this.pricingService.calculateFare({
+        category,
+        distanceKm: finalDistanceKm,
+        durationMinutes: finalDurationMinutes,
+        surgeMultiplier: ride.surgeMultiplier || 1.0,
+      });
+      finalFare = fareCalc.finalFare;
+      this.logger.log(
+        `Metered fare computed for Ride ${rideId}: KES ${finalFare} (Pre-round: ${fareCalc.surgedPreRoundFare}, Rounding step: ${fareCalc.roundingStep}, Distance: ${finalDistanceKm.toFixed(2)}km, Duration: ${finalDurationMinutes.toFixed(1)}min)`
+      );
+    } catch (err: any) {
+      this.logger.warn(`Could not compute dynamic fare: ${err.message}. Defaulting to existing fare.`);
+    }
 
     // Trigger payment processing
-    const finalFare = baseFare; // simplify for now
-
     const chargeResult = await this.paymentService.createCharge(ride.passengerId, finalFare);
 
-    const status: 'COMPLETED' | 'CANCELLED' = 'COMPLETED'; // using Enum strings from schema but simplistic
-    // Schema Enum: REQUESTED, MATCHING, DRIVER_ASSIGNED, DRIVER_ARRIVED, IN_PROGRESS, COMPLETED, CANCELLED
+    const status: 'COMPLETED' | 'CANCELLED' = 'COMPLETED';
 
     if (chargeResult.success) {
       this.logger.log(`Ride ${rideId} completed and paid.`);
       this.notificationService.sendNotification({
         userId: ride.passengerId,
         title: `Trip Completed [${(ride as any).tripCode || 'CB-RIDE'}]`,
-        body: `Your trip is completed. Total fare: KES ${finalFare}. Thank you for riding with CABI!`,
+        body: `Your trip is completed. Total fare: KES ${finalFare} (${finalDistanceKm.toFixed(2)} km, ${finalDurationMinutes.toFixed(1)} mins). Thank you for riding with CABI!`,
       });
     } else {
       this.logger.error(`Ride ${rideId} payment failed.`);
-      // Maybe keep it COMPLETED but mark as unpaid? Schema doesn't have 'PAYMENT_FAILED'.
     }
 
     const updatedRide = await this.prisma.ride.update({
@@ -731,7 +850,8 @@ export class RideService implements OnModuleInit {
       data: {
         status: 'COMPLETED',
         fare: finalFare,
-        distance: estimatedDistanceKm > 0 ? estimatedDistanceKm : undefined,
+        distance: finalDistanceKm > 0 ? Number(finalDistanceKm.toFixed(2)) : undefined,
+        duration: Math.round(finalDurationMinutes * 60),
       }
     });
 
@@ -1096,7 +1216,61 @@ export class RideService implements OnModuleInit {
 
     this.logger.log(`Ride ${rideId} cancelled. Reason: ${reason}`);
 
-    // Notify parties
+    // --- Wait Fee Logic ---
+    const driverArrivedAt = (ride as any).driverArrivedAt as Date | null;
+    if (driverArrivedAt && ride.driverId) {
+      const { feePerMinute, gracePeriodMinutes } = await this.getWaitTimeConfig();
+      const now = new Date();
+      const waitMinutes = (now.getTime() - new Date(driverArrivedAt).getTime()) / 60000;
+
+      if (waitMinutes > gracePeriodMinutes) {
+        const chargeableMinutes = waitMinutes - gracePeriodMinutes;
+        const waitFee = Number((chargeableMinutes * feePerMinute).toFixed(2));
+
+        this.logger.log(
+          `Wait fee applied: KES ${waitFee} (${chargeableMinutes.toFixed(1)} mins charged @ KES ${feePerMinute}/min) for passenger ${ride.passengerId}`
+        );
+
+        // Store as pending fee to be charged on the passenger's next ride
+        const pendingKey = `PENDING_WAIT_FEE_${ride.passengerId}`;
+        const existing = await this.settingsService.getSystemSetting(pendingKey);
+        const existingAmount = existing?.amount ? Number(existing.amount) : 0;
+        await this.settingsService.updateSystemSetting(pendingKey, {
+          amount: existingAmount + waitFee,
+          rideId,
+          chargedAt: now.toISOString(),
+          minutesCharged: Number(chargeableMinutes.toFixed(1)),
+        });
+
+        // Notify passenger of the pending fee
+        this.notificationService.sendNotification({
+          userId: ride.passengerId,
+          title: 'Wait Fee Applied',
+          body: `KES ${waitFee} will be added to your next ride for driver wait time (${chargeableMinutes.toFixed(0)} mins @ KES ${feePerMinute}/min).`
+        });
+
+        // Credit driver's system wallet
+        const driverWalletKey = `SYSTEM_WALLET_${ride.driverId}`;
+        const driverWallet = await this.settingsService.getSystemSetting(driverWalletKey);
+        const currentBalance = driverWallet?.balance ? Number(driverWallet.balance) : 0;
+        await this.settingsService.updateSystemSetting(driverWalletKey, {
+          balance: Number((currentBalance + waitFee).toFixed(2)),
+          lastCreditedAt: now.toISOString(),
+          lastCreditReason: `Wait fee compensation for ride ${rideId}`,
+        });
+
+        // Notify driver of wait compensation
+        this.notificationService.sendNotification({
+          userId: ride.driverId,
+          title: 'Wait Fee Compensation',
+          body: `KES ${waitFee} has been credited to your wallet for waiting (${chargeableMinutes.toFixed(0)} mins).`
+        });
+      } else {
+        this.logger.log(`Ride ${rideId} cancelled within grace period (${waitMinutes.toFixed(1)} mins). No wait fee.`);
+      }
+    }
+
+    // Notify driver of cancellation
     if (ride.driverId) {
       this.notificationService.sendNotification({
         userId: ride.driverId,

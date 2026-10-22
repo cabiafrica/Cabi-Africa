@@ -154,7 +154,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             secondary: const Icon(Icons.queue_play_next_rounded, color: AppTheme.primaryColor),
             title: const Text('Back-to-Back Trip Requests'),
             subtitle: const Text('Receive upcoming ride offers before finishing your active trip'),
-            activeColor: AppTheme.primaryColor,
+            activeThumbColor: AppTheme.primaryColor,
             value: _allowBackToBack,
             onChanged: (bool val) => _setB2B(val),
           ),
@@ -270,7 +270,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               ),
                               Switch(
                                 value: isEnabled,
-                                activeColor: AppTheme.primaryColor,
+                                activeThumbColor: AppTheme.primaryColor,
                                 onChanged: (val) async {
                                   await service.setEventEnabled(ev.key, val);
                                   setModalState(() {});

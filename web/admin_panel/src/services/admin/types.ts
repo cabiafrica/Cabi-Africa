@@ -353,3 +353,16 @@ export interface ExpiringDocumentResult {
     docType: string;
     expiryDate: string;
 }
+
+export interface CategoryPricingConfig {
+    category: string;
+    displayName: string;
+    baseFare: number;
+    perKmRate: number;
+    perMinuteRate: number;
+    minimumFare: number;
+    roundingStep: number;
+    description?: string;
+    isActive: boolean;
+}
+

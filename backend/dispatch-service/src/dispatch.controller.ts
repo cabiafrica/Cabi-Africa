@@ -1,5 +1,22 @@
 import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import { IsBoolean, IsNumber, IsNotEmpty } from 'class-validator';
 import { DispatchService } from './dispatch.service';
+
+export class ToggleDriverStatusDto {
+    @IsBoolean()
+    @IsNotEmpty()
+    isOnline: boolean;
+}
+
+export class UpdateDriverLocationDto {
+    @IsNumber()
+    @IsNotEmpty()
+    lat: number;
+
+    @IsNumber()
+    @IsNotEmpty()
+    lng: number;
+}
 
 @Controller('dispatch')
 export class DispatchController {
@@ -41,15 +58,15 @@ export class DispatchController {
     @Post('drivers/:driverId/toggle-status')
     async toggleDriverStatus(
         @Param('driverId') driverId: string,
-        @Body('isOnline') isOnline: boolean,
+        @Body() body: ToggleDriverStatusDto,
     ) {
-        return this.dispatchService.updateDriverStatus(driverId, isOnline);
+        return this.dispatchService.updateDriverStatus(driverId, body.isOnline);
     }
 
     @Post('drivers/:driverId/location')
     async updateDriverLocation(
         @Param('driverId') driverId: string,
-        @Body() location: { lat: number; lng: number },
+        @Body() location: UpdateDriverLocationDto,
     ) {
         return this.dispatchService.updateDriverLocation(driverId, location);
     }

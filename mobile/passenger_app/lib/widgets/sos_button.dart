@@ -112,9 +112,9 @@ class _SOSButtonState extends State<SOSButton>
               ),
             ),
             const SizedBox(height: 14),
-            const Text(
+            Text(
               'PASSENGER EMERGENCY SOS',
-              style: TextStyle(
+              style: AppTheme.montserrat(
                 color: Colors.white,
                 fontWeight: FontWeight.w900,
                 fontSize: 18,
@@ -125,7 +125,7 @@ class _SOSButtonState extends State<SOSButton>
             Text(
               'Are you feeling unsafe or in danger? Cabi Africa 24/7 Safety Command Center will track your real-time ride coordinates.',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: AppTheme.plusJakartaSans(
                 color: Colors.grey.shade400,
                 fontSize: 13,
                 height: 1.4,
@@ -160,11 +160,11 @@ class _SOSButtonState extends State<SOSButton>
                   }
                 },
                 icon: const Icon(Icons.shield_rounded, color: Colors.white, size: 20),
-                label: const Text(
+                label: Text(
                   'ALERT CABI SAFETY TEAM',
-                  style: TextStyle(
+                  style: AppTheme.montserrat(
                     fontWeight: FontWeight.w900,
-                    letterSpacing: 1.0,
+                    letterSpacing: 0.8,
                     fontSize: 14,
                     color: Colors.white,
                   ),
@@ -181,6 +181,38 @@ class _SOSButtonState extends State<SOSButton>
               ),
             ),
             const SizedBox(height: 12),
+            // Share Trip with Trusted Contacts (Stitch Safety Center)
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('📍 Live GPS tracking link generated & shared with emergency contacts.'),
+                      backgroundColor: AppTheme.surfaceContainerHighest,
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.share_location_rounded, color: AppTheme.electricBlue, size: 18),
+                label: Text(
+                  'SHARE LIVE TRIP WITH CONTACTS',
+                  style: AppTheme.inter(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.electricBlue,
+                    fontSize: 12.5,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: AppTheme.electricBlue, width: 1.2),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
             // Call Police Button
             SizedBox(
               width: double.infinity,
@@ -193,12 +225,12 @@ class _SOSButtonState extends State<SOSButton>
                   }
                 },
                 icon: const Icon(Icons.phone_in_talk_rounded, color: Colors.white, size: 18),
-                label: const Text(
+                label: Text(
                   'CALL POLICE (999 / 112)',
-                  style: TextStyle(
+                  style: AppTheme.inter(
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    fontSize: 13.5,
+                    fontSize: 13,
                   ),
                 ),
                 style: OutlinedButton.styleFrom(
@@ -215,7 +247,7 @@ class _SOSButtonState extends State<SOSButton>
               onPressed: () => Navigator.pop(ctx),
               child: Text(
                 'Cancel / False Alarm',
-                style: TextStyle(
+                style: AppTheme.plusJakartaSans(
                   color: Colors.grey.shade400,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,

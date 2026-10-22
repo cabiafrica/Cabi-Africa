@@ -361,6 +361,15 @@ extension _HomeScreenLogic on _HomeScreenState {
     });
   }
 
+  void _retrySearchWave() {
+    _updateState(() {
+      _searchCountdownSeconds = 30;
+    });
+    _startSearchCountdown();
+    AudioNotificationService.instance.play('passenger_ready');
+    debugPrint('[SEARCH] Passenger manually tapped Retry to restart search wave.');
+  }
+
   void _resetToIdle() {
     _searchCountdownTimer?.cancel();
     _rideUpdateTimer?.cancel();

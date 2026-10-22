@@ -29,8 +29,8 @@ class _ForumsScreenState extends State<ForumsScreen> {
             margin: const EdgeInsets.only(bottom: 12),
             child: ListTile(
               leading: CircleAvatar(
-                backgroundColor: Colors.deepPurple.shade100,
-                child: const Icon(Icons.forum, color: Colors.deepPurple),
+                backgroundColor: const Color(0xFF1A1510),
+                child: const Icon(Icons.forum, color: const Color(0xFFD4AF37)),
               ),
               title: Text(channel['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
               subtitle: Text(channel['desc']),
@@ -135,7 +135,7 @@ class _ChannelDetailScreenState extends State<ChannelDetailScreen> {
                                 controller: _controller,
                                 decoration: const InputDecoration(hintText: 'Start a discussion...'),
                             )),
-                            IconButton(icon: const Icon(Icons.send, color: Colors.deepPurple), onPressed: _addPost),
+                            IconButton(icon: const Icon(Icons.send, color: const Color(0xFFD4AF37)), onPressed: _addPost),
                         ],
                     ),
                 )

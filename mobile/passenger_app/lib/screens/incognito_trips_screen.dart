@@ -117,7 +117,7 @@ class _IncognitoTripsScreenState extends State<IncognitoTripsScreen> {
             ElevatedButton(
               onPressed: _attemptUnlock,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: const Color(0xFF0F2B27),
                 foregroundColor: Colors.white,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
@@ -201,7 +201,7 @@ class _IncognitoTripsScreenState extends State<IncognitoTripsScreen> {
                 margin: const EdgeInsets.only(bottom: 12),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.deepPurple.shade900,
+                    backgroundColor: const Color(0xFF0A0A0B),
                     child: const Icon(Icons.visibility_off,
                         color: Colors.white, size: 20),
                   ),

@@ -83,7 +83,7 @@ class _FAQScreenState extends State<FAQScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('FAQ'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: const Color(0xFFD4AF37),
         foregroundColor: Colors.white,
       ),
       body: Column(
@@ -111,7 +111,7 @@ class _FAQScreenState extends State<FAQScreen> {
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.deepPurple : Colors.grey.shade200,
+                      color: isSelected ? const Color(0xFFD4AF37) : Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
@@ -182,7 +182,7 @@ class _FAQScreenState extends State<FAQScreen> {
                                       isExpanded
                                           ? Icons.expand_less
                                           : Icons.expand_more,
-                                      color: Colors.deepPurple,
+                                      color: const Color(0xFFD4AF37),
                                     ),
                                   ],
                                 ),

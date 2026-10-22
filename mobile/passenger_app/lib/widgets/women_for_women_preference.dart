@@ -22,11 +22,11 @@ class _WomenForWomenPreferenceState extends State<WomenForWomenPreference> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Row(
+        title: const Row(
           children: [
-            Icon(Icons.shield, color: Colors.purple.shade700),
-            const SizedBox(width: 8),
-            const Text('Women for Women'),
+            Icon(Icons.shield, color: Color(0xFFE11D48)),
+            SizedBox(width: 8),
+            Text('Women for Women'),
           ],
         ),
         content: SingleChildScrollView(
@@ -61,20 +61,20 @@ class _WomenForWomenPreferenceState extends State<WomenForWomenPreference> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.purple.shade50,
+                  color: const Color(0xFFE11D48).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
                     Icon(Icons.privacy_tip,
-                        color: Colors.purple.shade700, size: 20),
-                    const SizedBox(width: 8),
+                        color: Color(0xFFE11D48), size: 20),
+                    SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Your gender information is kept private and secure',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.purple.shade900,
+                          color: Color(0xFFBE123C),
                         ),
                       ),
                     ),
@@ -100,7 +100,7 @@ class _WomenForWomenPreferenceState extends State<WomenForWomenPreference> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.check_circle, size: 18, color: Colors.purple.shade700),
+          const Icon(Icons.check_circle, size: 18, color: Color(0xFFE11D48)),
           const SizedBox(width: 8),
           Expanded(
             child: Text(text, style: const TextStyle(fontSize: 13)),
@@ -123,14 +123,14 @@ class _WomenForWomenPreferenceState extends State<WomenForWomenPreference> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: widget.isEnabled
-                    ? Colors.purple.shade100
+                    ? const Color(0xFFE11D48).withValues(alpha: 0.15)
                     : Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 Icons.shield,
                 color: widget.isEnabled
-                    ? Colors.purple.shade700
+                    ? const Color(0xFFE11D48)
                     : Colors.grey.shade600,
               ),
             ),
@@ -144,7 +144,7 @@ class _WomenForWomenPreferenceState extends State<WomenForWomenPreference> {
                   : 'Only match with female drivers',
               style: const TextStyle(fontSize: 12),
             ),
-            activeTrackColor: Colors.purple,
+            activeColor: const Color(0xFFE11D48),
           ),
           if (widget.isEnabled) ...[
             const Divider(height: 1),
@@ -189,17 +189,17 @@ class WomenForWomenBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.purple.shade400, Colors.purple.shade600],
+        gradient: const LinearGradient(
+          colors: [Color(0xFFE11D48), Color(0xFFBE123C)],
         ),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(
+      child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.shield, color: Colors.white, size: 16),
-          const SizedBox(width: 6),
-          const Text(
+          Icon(Icons.shield, color: Colors.white, size: 16),
+          SizedBox(width: 6),
+          Text(
             'Women for Women',
             style: TextStyle(
               color: Colors.white,

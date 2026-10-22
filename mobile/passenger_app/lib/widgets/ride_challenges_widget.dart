@@ -14,7 +14,7 @@ class RideChallengesWidget extends StatelessWidget {
         'target': 3,
         'reward': '25% off next ride',
         'expiresIn': 'Expires in 2 days',
-        'color': Colors.purple,
+        'color': const Color(0xFFD4AF37),
       },
       {
         'id': '2',

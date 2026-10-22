@@ -46,7 +46,7 @@ class AccountActivityLogScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Account Activity'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: const Color(0xFFD4AF37),
         foregroundColor: Colors.white,
       ),
       body: ListView(

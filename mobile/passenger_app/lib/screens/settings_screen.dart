@@ -352,7 +352,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                               Switch(
                                 value: isEnabled,
-                                activeColor: AppTheme.primaryColor,
+                                activeThumbColor: AppTheme.primaryColor,
                                 onChanged: (val) async {
                                   await service.setEventEnabled(ev.key, val);
                                   setModalState(() {});

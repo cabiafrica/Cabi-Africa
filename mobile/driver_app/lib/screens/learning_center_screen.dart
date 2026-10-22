@@ -174,8 +174,8 @@ Crucial Guidelines:
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             leading: CircleAvatar(
-              backgroundColor: Colors.deepPurple.withValues(alpha: 0.1),
-              child: const Icon(Icons.article_rounded, color: Colors.deepPurple),
+              backgroundColor: const Color(0xFFD4AF37).withValues(alpha: 0.1),
+              child: const Icon(Icons.article_rounded, color: const Color(0xFFD4AF37)),
             ),
             title: Text(
               article['title']!,
@@ -227,13 +227,13 @@ Crucial Guidelines:
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.deepPurple.withValues(alpha: 0.1),
+                  color: const Color(0xFFD4AF37).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   article['category'] ?? 'Article',
                   style: const TextStyle(
-                    color: Colors.deepPurple,
+                    color: const Color(0xFFD4AF37),
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -260,7 +260,7 @@ Crucial Guidelines:
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(ctx),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
+                    backgroundColor: const Color(0xFFD4AF37),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(

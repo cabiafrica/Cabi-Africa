@@ -20,16 +20,20 @@ class ConsecutiveTripProgressWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.deepPurple.shade700, Colors.deepPurple.shade500],
+        gradient: const LinearGradient(
+          colors: [Color(0xFF0F1A12), Color(0xFF0F1510)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFF10B981).withValues(alpha: 0.3),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.deepPurple.withValues(alpha: 0.3),
-            blurRadius: 8,
+            color: const Color(0xFF10B981).withValues(alpha: 0.15),
+            blurRadius: 14,
             offset: const Offset(0, 4),
           ),
         ],
@@ -63,7 +67,7 @@ class ConsecutiveTripProgressWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  '+\$${bonusAmount.toStringAsFixed(0)} Bonus',
+                  'KES ${bonusAmount.toStringAsFixed(0)} Bonus',
                   style: const TextStyle(
                     color: Colors.amber,
                     fontWeight: FontWeight.bold,

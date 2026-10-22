@@ -30,15 +30,23 @@ extension _HomeScreenPanels on _HomeScreenState {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Driver found!",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Colors.greenAccent)),
+                    Text(
+                      _currentRideData?['status'] == 'DRIVER_ARRIVED'
+                          ? "Driver has arrived!"
+                          : "Driver found!",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.greenAccent),
+                    ),
                     const SizedBox(height: 4),
-                    Text("Arriving in $_arrivalDurationMinutes mins",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 14, color: Colors.white)),
+                    Text(
+                      _currentRideData?['status'] == 'DRIVER_ARRIVED'
+                          ? "Waiting at pickup • 3m free grace period"
+                          : "Arriving in $_arrivalDurationMinutes mins",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 14, color: Colors.white),
+                    ),
                   ],
                 ),
                 Container(
@@ -48,13 +56,40 @@ extension _HomeScreenPanels on _HomeScreenState {
                     color: Colors.black,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Text("$_arrivalDurationMinutes:00",
-                      style: const TextStyle(
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.bold)),
+                  child: Text(
+                    _currentRideData?['status'] == 'DRIVER_ARRIVED'
+                        ? "ARRIVED"
+                        : "$_arrivalDurationMinutes:00",
+                    style: const TextStyle(
+                        color: AppTheme.primaryColor,
+                        fontWeight: FontWeight.bold),
+                  ),
                 )
               ],
             ),
+            if (_currentRideData?['status'] == 'DRIVER_ARRIVED') ...[
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.amber.withValues(alpha: 0.5)),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.timer_outlined, color: Colors.amber, size: 18),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        "Driver is at pickup point. Free cancellation within 3 mins. Wait fee applies thereafter and is charged on your next ride.",
+                        style: TextStyle(color: Colors.amber, fontSize: 11.5, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             if (_currentRideData?['tripCode'] != null) ...[
               const SizedBox(height: 12),
               Container(
@@ -254,18 +289,27 @@ extension _HomeScreenPanels on _HomeScreenState {
             // Cancel Button
             SizedBox(
               width: double.infinity,
+              height: 48,
               child: OutlinedButton(
-                onPressed: () {
-                  _updateState(() {
-                    _tripStatus = TripStatus.idle;
-                  });
-                },
+                onPressed: _isCancelling ? null : _cancelRideSearch,
                 style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.red,
-                    side: const BorderSide(color: Colors.red),
+                    foregroundColor: Colors.redAccent,
+                    side: const BorderSide(color: Colors.redAccent, width: 1.2),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10))),
-                child: const Text("Cancel Ride"),
+                        borderRadius: BorderRadius.circular(12))),
+                child: _isCancelling
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.redAccent),
+                        ),
+                      )
+                    : const Text(
+                        "Cancel Ride",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
               ),
             )
           ],
@@ -498,12 +542,13 @@ extension _HomeScreenPanels on _HomeScreenState {
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
-            color: surfaceColor.withValues(alpha: 0.98),
+            color: isDark ? AppTheme.surfaceContainer : surfaceColor.withValues(alpha: 0.98),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            border: Border.all(color: isDark ? AppTheme.outlineGold : dividerColor, width: 1.0),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.1),
-                blurRadius: 24,
+                color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.1),
+                blurRadius: 28,
                 offset: const Offset(0, -4),
               )
             ],
@@ -519,9 +564,9 @@ extension _HomeScreenPanels on _HomeScreenState {
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 16),
                     width: 48,
-                    height: 6,
+                    height: 5,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.grey[700] : Colors.grey[300],
+                      color: isDark ? AppTheme.outlineBorder : Colors.grey[300],
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -536,10 +581,10 @@ extension _HomeScreenPanels on _HomeScreenState {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                          color: isDark ? AppTheme.surfaceDim : Colors.white,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: isDark ? const Color(0xFF444444) : dividerColor,
+                            color: isDark ? AppTheme.outlineBorder : dividerColor,
                             width: 1.2,
                           ),
                           boxShadow: [
@@ -562,7 +607,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                     height: 12,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      border: Border.all(color: Colors.blue, width: 2.5),
+                                      border: Border.all(color: AppTheme.electricBlue, width: 2.5),
                                     ),
                                   ),
                                   const SizedBox(width: 16),
@@ -624,10 +669,10 @@ extension _HomeScreenPanels on _HomeScreenState {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                                 decoration: BoxDecoration(
-                                  color: isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF2F4F7),
+                                  color: isDark ? AppTheme.surfaceContainerHigh : const Color(0xFFF2F4F7),
                                   borderRadius: BorderRadius.circular(14),
                                   border: Border.all(
-                                    color: isDark ? const Color(0xFF555555) : const Color(0xFFD0D5DD),
+                                    color: isDark ? AppTheme.outlineGold : const Color(0xFFD0D5DD),
                                     width: 1.2,
                                   ),
                                 ),
@@ -1058,46 +1103,55 @@ extension _HomeScreenPanels on _HomeScreenState {
   Widget _buildSearchingPanel(Color primaryColor) {
     final vehicleName = _selectedVehicleType ?? 'Standard Ride';
 
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
-        decoration: BoxDecoration(
-          color: AppTheme.darkSurface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          border: Border.all(
-              color: AppTheme.primaryColor.withValues(alpha: 0.15), width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
-              blurRadius: 24,
-              spreadRadius: 6,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Top Drag Handle
-            Container(
-              width: 36,
-              height: 4,
+    return DraggableScrollableSheet(
+      initialChildSize: 0.30,
+      minChildSize: 0.12,
+      maxChildSize: 0.40,
+      snap: true,
+      snapSizes: const [0.12, 0.30],
+      builder: (context, scrollController) {
+        return ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 18.0, sigmaY: 18.0),
+            child: Container(
               decoration: BoxDecoration(
-                color: Colors.white24,
-                borderRadius: BorderRadius.circular(2),
+                // 20% transparent background (80% opacity)
+                color: const Color(0xFF0F172A).withValues(alpha: 0.80),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(28)),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.35),
+                    blurRadius: 24,
+                    spreadRadius: 4,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 18),
-
-            // Animated Radar Pulse
-            SearchingRadarPulse(
-              color: primaryColor,
-              size: 80,
-            ),
-            const SizedBox(height: 16),
+              child: SingleChildScrollView(
+                controller: scrollController,
+                physics: const ClampingScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Top Drag Handle (Allows swiping downwards to peek map or upwards)
+                    Center(
+                      child: Container(
+                        width: 44,
+                        height: 5,
+                        margin: const EdgeInsets.only(bottom: 14),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.35),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                    ),
 
             const Text(
               "Finding your driver...",
@@ -1108,111 +1162,121 @@ extension _HomeScreenPanels on _HomeScreenState {
                 letterSpacing: 0.3,
               ),
             ),
-            const SizedBox(height: 6),
-            Text(
-              "Scanning nearby drivers for $vehicleName",
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.white70,
-              ),
-            ),
-            const SizedBox(height: 14),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Scanning nearby drivers for $vehicleName",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white.withValues(alpha: 0.70),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
 
             // Wave Countdown Badge (Auto-restarts when it hits 00:00)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppTheme.primaryColor.withValues(alpha: 0.35),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.timer_outlined, size: 16, color: AppTheme.primaryColor),
-                  const SizedBox(width: 6),
-                  Text(
-                    "00:${_searchCountdownSeconds.toString().padLeft(2, '0')}",
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryColor,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    "• Auto-restarting wave",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white.withValues(alpha: 0.75),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
+
+
 
             // Cancel Search & Change Service Button
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: OutlinedButton(
-                onPressed: _isCancelling ? null : _cancelRideSearch,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.amberAccent,
-                  side: BorderSide(
-                    color: Colors.amberAccent.withValues(alpha: 0.8),
-                    width: 1.5,
-                  ),
-                  backgroundColor: Colors.amber.withValues(alpha: 0.08),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: _isCancelling
-                    ? const SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.amberAccent),
-                        ),
-                      )
-                    : const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.swap_horiz_rounded, size: 22),
-                          SizedBox(width: 8),
-                          Text(
-                            "Cancel & Choose Another Service",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.3,
-                            ),
+                    // Action Button: 'Cancel Ride' with Integrated Wave Countdown
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: _isCancelling ? null : _cancelRideSearch,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFEF4444),
+                          foregroundColor: Colors.white,
+                          elevation: 3,
+                          shadowColor: const Color(0xFFEF4444).withValues(alpha: 0.35),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
                           ),
-                        ],
+                        ),
+                        child: _isCancelling
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.close_rounded,
+                                      size: 20, color: Colors.white),
+                                  const SizedBox(width: 8),
+                                  const Text(
+                                    "Cancel Ride",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
+                                      letterSpacing: 0.4,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 9, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withValues(alpha: 0.25),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      "00:${_searchCountdownSeconds.toString().padLeft(2, '0')}",
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                       ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Information Note: Free Cancellation Policy
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.info_outline_rounded,
+                          size: 14,
+                          color: Colors.white.withValues(alpha: 0.65),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          "Free cancellation within 3 mins of driver arrival",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withValues(alpha: 0.65),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+
+                    Text(
+                      "Need a faster pickup? Tap above to switch vehicle tier",
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.white.withValues(alpha: 0.45),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              "Need a faster pickup? Tap above to switch vehicle tier",
-              style: TextStyle(
-                fontSize: 11,
-                color: Colors.white.withValues(alpha: 0.5),
-              ),
-            ),
-            const SizedBox(height: 6),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -1295,7 +1359,7 @@ extension _HomeScreenPanels on _HomeScreenState {
     );
   }
 
-  // ── Service Selection Panel ──────────────────────────────────────────────
+  // ── Service Selection Panel (Stitch efbb07f42c3449fe9b5631158cb011bf) ──────
   Widget _buildServiceSelectionPanel(Color primaryColor) {
     // Pricing tables
     const Map<String, Map<String, double>> pricing = {
@@ -1315,128 +1379,182 @@ extension _HomeScreenPanels on _HomeScreenState {
       return 'KES $low – $high';
     }
 
+    // Vehicle feature subtitles matching Stitch design
+    final Map<String, String> vehicleFeatures = {
+      'boda': 'Fast urban bypass • Helmet provided',
+      'lite': 'Daily commute • Economical',
+      'standard': 'Comfort • A/C • Top Rated Chauffeur',
+      'xl': 'Spacious 7 Pax • Extra Luggage capacity',
+    };
+
     return Positioned(
       bottom: 0,
       left: 0,
       right: 0,
       child: Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFF0F0F0F),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        decoration: BoxDecoration(
+          color: AppTheme.surfaceContainer,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          border: Border.all(color: AppTheme.outlineGold, width: 1.0),
           boxShadow: [
-            BoxShadow(color: Colors.black54, blurRadius: 30, spreadRadius: 5)
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.6),
+              blurRadius: 32,
+              spreadRadius: 8,
+              offset: const Offset(0, -4),
+            )
           ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Handle
+            // Centered Drag Handle
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 14),
-              width: 44,
-              height: 5,
+              margin: const EdgeInsets.only(top: 12, bottom: 8),
+              width: 48,
+              height: 4,
               decoration: BoxDecoration(
                 color: Colors.white24,
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
 
-            // Header
+            // Route Header Summary Banner
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: Row(
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Choose a Service',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
+                        Row(
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: AppTheme.successGreen,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _distanceKm > 0
+                                  ? '${(_distanceKm * 2.5).round()} min • Expressway'
+                                  : '26 min • Expressway',
+                              style: AppTheme.plusJakartaSans(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 3),
                         Text(
                           'To: $_destination',
-                          style: const TextStyle(
-                              color: Colors.white54, fontSize: 13),
+                          style: AppTheme.plusJakartaSans(
+                            color: Colors.white60,
+                            fontSize: 12,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
-                  // Back to search
+                  // Traffic status chip (Stitch pattern)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppTheme.electricBlueContainer,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppTheme.outlineGold, width: 0.8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.speed_rounded, color: AppTheme.electricBlue, size: 13),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Traffic Clear',
+                          style: AppTheme.inter(
+                            color: AppTheme.electricBlue,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Close / back to search
                   GestureDetector(
-                    onTap: () =>
-                        _updateState(() => _tripStatus = TripStatus.idle),
+                    onTap: () => _updateState(() => _tripStatus = TripStatus.idle),
                     child: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(7),
                       decoration: BoxDecoration(
-                        color: Colors.white12,
-                        borderRadius: BorderRadius.circular(12),
+                        color: AppTheme.surfaceBright,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: AppTheme.outlineBorder),
                       ),
-                      child: const Icon(Icons.close,
-                          color: Colors.white70, size: 20),
+                      child: const Icon(Icons.close, color: Colors.white70, size: 18),
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 16),
+            const Divider(color: AppTheme.outlineBorder, height: 1),
+            const SizedBox(height: 8),
 
-            // Service List
-            ..._vehicleTypes.map((v) {
-              final id = v['id'] as String;
-              final isSelected = id == (_selectedVehicleId ?? 'standard');
-              return GestureDetector(
-                onTap: () {
-                  _updateState(() {
-                    _selectedVehicleId = id;
-                    switch (id) {
-                      case 'lite':
-                        _selectedVehicleType = 'LITE';
-                        break;
-                      case 'standard':
-                        _selectedVehicleType = 'STANDARD';
-                        break;
-                      case 'xl':
-                        _selectedVehicleType = 'XL';
-                        break;
-                      case 'boda':
-                        _selectedVehicleType = 'BODA';
-                        break;
-                      default:
-                        _selectedVehicleType = 'STANDARD';
-                    }
-                  });
-                },
-                child: Builder(
-                  builder: (context) {
-                    const goldColor = Color(0xFFFFD700); // Cabi Signature Gold
-
-                    return AnimatedContainer(
+            // Service List (Bento Stack)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: _vehicleTypes.map((v) {
+                  final id = v['id'] as String;
+                  final isSelected = id == (_selectedVehicleId ?? 'standard');
+                  return GestureDetector(
+                    onTap: () {
+                      _updateState(() {
+                        _selectedVehicleId = id;
+                        switch (id) {
+                          case 'lite':
+                            _selectedVehicleType = 'LITE';
+                            break;
+                          case 'standard':
+                            _selectedVehicleType = 'STANDARD';
+                            break;
+                          case 'xl':
+                            _selectedVehicleType = 'XL';
+                            break;
+                          case 'boda':
+                            _selectedVehicleType = 'BODA';
+                            break;
+                          default:
+                            _selectedVehicleType = 'STANDARD';
+                        }
+                      });
+                    },
+                    child: AnimatedContainer(
                       duration: const Duration(milliseconds: 180),
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 6),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? goldColor.withValues(alpha: 0.12)
-                            : const Color(0xFF161616),
+                            ? AppTheme.primaryContainer
+                            : AppTheme.surfaceDim,
                         border: Border.all(
-                          color: isSelected ? goldColor : Colors.white12,
-                          width: isSelected ? 2.0 : 1.0,
+                          color: isSelected ? AppTheme.primaryColor : AppTheme.outlineBorder,
+                          width: isSelected ? 1.8 : 1.0,
                         ),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: goldColor.withValues(alpha: 0.25),
+                                  color: AppTheme.primaryColor.withValues(alpha: 0.22),
                                   blurRadius: 14,
                                   spreadRadius: 1,
                                 ),
@@ -1445,146 +1563,279 @@ extension _HomeScreenPanels on _HomeScreenState {
                       ),
                       child: Row(
                         children: [
-                          // Icon
+                          // Vehicle Silhouette / Icon Container
                           Container(
-                            width: 52,
-                            height: 52,
+                            width: 50,
+                            height: 50,
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? goldColor.withValues(alpha: 0.20)
-                                  : Colors.white10,
+                                  ? AppTheme.primaryColor.withValues(alpha: 0.18)
+                                  : AppTheme.surfaceBright,
                               borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppTheme.primaryColor.withValues(alpha: 0.4)
+                                    : AppTheme.outlineBorder,
+                              ),
                             ),
                             child: Image.asset(
                               v['image'] as String,
                               fit: BoxFit.contain,
                               errorBuilder: (_, __, ___) => Icon(
                                 v['icon'] as IconData,
-                                color:
-                                    isSelected ? goldColor : Colors.white54,
-                                size: 28,
+                                color: isSelected ? AppTheme.primaryColor : Colors.white60,
+                                size: 26,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 16),
-                          // Name + capacity + ETA
+                          const SizedBox(width: 14),
+
+                          // Name + Feature description + ETA
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      v['name'] as String,
+                                      style: AppTheme.montserrat(
+                                        color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.88),
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.surfaceBright,
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(Icons.people_outline, size: 11, color: Colors.white60),
+                                          const SizedBox(width: 3),
+                                          Text(
+                                            v['capacity'] as String,
+                                            style: AppTheme.inter(
+                                              color: Colors.white70,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 3),
                                 Text(
-                                  v['name'] as String,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : Colors.white70,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
+                                  vehicleFeatures[id] ?? 'Reliable mobility',
+                                  style: AppTheme.plusJakartaSans(
+                                    color: isSelected ? Colors.white70 : Colors.white38,
+                                    fontSize: 11.5,
                                   ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 3),
                                 Row(
                                   children: [
-                                    const Icon(Icons.people_outline,
-                                        size: 13, color: Colors.white38),
+                                    const Icon(Icons.timer_outlined, size: 12, color: AppTheme.successGreen),
                                     const SizedBox(width: 4),
-                                    Text(v['capacity'] as String,
-                                        style: const TextStyle(
-                                            color: Colors.white38,
-                                            fontSize: 12)),
-                                    const SizedBox(width: 12),
-                                    Icon(Icons.access_time,
-                                        size: 13, color: Colors.green.shade400),
-                                    const SizedBox(width: 4),
-                                    Text(v['time'] as String,
-                                        style: TextStyle(
-                                            color: Colors.green.shade400,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600)),
+                                    Text(
+                                      v['time'] as String,
+                                      style: AppTheme.inter(
+                                        color: AppTheme.successGreen,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],
                             ),
                           ),
-                          // Price
+
+                          // Price & Status Badge
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
                                 calcPrice(id),
-                                style: TextStyle(
-                                  color: isSelected
-                                      ? goldColor
-                                      : Colors.white54,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                                style: AppTheme.montserrat(
+                                  color: isSelected ? AppTheme.primaryColor : Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14.5,
                                 ),
                               ),
+                              const SizedBox(height: 4),
                               if (isSelected)
                                 Container(
-                                  margin: const EdgeInsets.only(top: 4),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 3),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                                   decoration: BoxDecoration(
-                                    color: goldColor,
+                                    gradient: AppTheme.goldGradient,
                                     borderRadius: BorderRadius.circular(6),
                                   ),
-                                  child: const Text(
-                                    'SELECTED',
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w900,
-                                        letterSpacing: 0.5),
+                                  child: Text(
+                                    id == 'standard' ? 'BEST VALUE' : 'SELECTED',
+                                    style: AppTheme.inter(
+                                      fontSize: 9,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                )
+                              else if (id == 'standard')
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.surfaceBright,
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(color: AppTheme.outlineBorder),
+                                  ),
+                                  child: Text(
+                                    'POPULAR',
+                                    style: AppTheme.inter(
+                                      fontSize: 9,
+                                      color: Colors.white60,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                             ],
                           ),
                         ],
                       ),
-                    );
-                  },
-                ),
-              );
-            }),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
 
-            // Book Button with Golden Look
+            // M-Pesa & SACCO Verification Strip (Stitch Obsidian Gold)
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
-                width: double.infinity,
-                height: 56,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFFFFD700).withValues(alpha: 0.45),
-                      blurRadius: 18,
-                      offset: const Offset(0, 4),
+                  color: AppTheme.surfaceBright,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppTheme.outlineBorder),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: AppTheme.successGreen,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'M-Pesa Express (••• 456)',
+                      style: AppTheme.plusJakartaSans(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppTheme.electricBlueContainer,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppTheme.electricBlue.withValues(alpha: 0.3)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.verified_user_rounded, color: AppTheme.electricBlue, size: 12),
+                          const SizedBox(width: 4),
+                          Text(
+                            'SACCO Verified',
+                            style: AppTheme.inter(
+                              color: AppTheme.electricBlue,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                child: ElevatedButton(
-                  onPressed: _startSearchSimulation,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFD700),
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    elevation: 0,
+              ),
+            ),
+
+            const SizedBox(height: 14),
+
+            // Book Button with Metallic Gold Gradient
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(28),
+                      gradient: AppTheme.goldGradient,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primaryColor.withValues(alpha: 0.35),
+                          blurRadius: 18,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton(
+                      onPressed: _startSearchSimulation,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                        elevation: 0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Confirm ${_vehicleTypes.firstWhere((v) => v['id'] == (_selectedVehicleId ?? 'standard'), orElse: () => _vehicleTypes[1])['name']} • ${calcPrice(_selectedVehicleId ?? 'standard').split('–').first.trim()}',
+                            style: AppTheme.montserrat(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.3,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.arrow_forward_rounded, color: Colors.black, size: 20),
+                        ],
+                      ),
+                    ),
                   ),
-                  child: Text(
-                    'Book ${_vehicleTypes.firstWhere((v) => v['id'] == (_selectedVehicleId ?? 'standard'), orElse: () => _vehicleTypes[1])['name']}',
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                        color: Colors.black),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Guaranteed upfront fare • Free cancellation within 3 mins',
+                    style: AppTheme.plusJakartaSans(
+                      color: Colors.white38,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ],

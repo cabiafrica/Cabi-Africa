@@ -33,12 +33,12 @@ class _MindfulnessContentScreenState extends State<MindfulnessContentScreen> {
         {
           'title': 'Morning Focus',
           'duration': '5:00',
-          'color': Colors.purple.shade100
+          'color': const Color(0xFF0D9488).withValues(alpha: 0.2),
         },
         {
           'title': 'Mid-Shift Reset',
           'duration': '3:30',
-          'color': Colors.purple.shade100
+          'color': const Color(0xFF0D9488).withValues(alpha: 0.2),
         },
       ]
     },

@@ -88,7 +88,7 @@ class HelpCenterScreen extends StatelessWidget {
               icon: Icons.chat_bubble_outline,
               title: "Live Chat",
               subtitle: "Chat with our virtual assistant",
-              iconColor: Colors.purple,
+              iconColor: const Color(0xFFD4AF37),
               onTap: () {
                 // Navigate to Chat Screen
                 // Navigator.push(context, MaterialPageRoute(builder: (_) => ChatScreen()));

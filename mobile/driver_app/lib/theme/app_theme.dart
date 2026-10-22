@@ -24,6 +24,20 @@ class AppTheme {
     end: Alignment.bottomCenter,
   );
 
+  // Stitch Design System Tokens (Project 5681992570744779348)
+  static const Color obsidianCanvas = Color(0xFF121212);
+  static const Color surfaceDim = Color(0xFF0A0A0A);
+  static const Color surfaceBright = Color(0xFF1E1E1E);
+  static const Color surfaceContainer = Color(0xFF1A1A1A);
+  static const Color surfaceContainerHigh = Color(0xFF242424);
+  static const Color surfaceContainerHighest = Color(0xFF2E2E2E);
+  static const Color outlineBorder = Color(0xFF27272A);
+  static const Color outlineGold = Color(0x4DD4AF37); // rgba(212, 175, 55, 0.3)
+  static const Color primaryContainer = Color(0x26D4AF37); // rgba(212, 175, 55, 0.15)
+  static const Color electricBlue = Color(0xFF067FF9);
+  static const Color electricBlueContainer = Color(0x26067FF9); // rgba(6, 127, 249, 0.15)
+  static const Color accentYellow = Color(0xFFF9F906);
+
   // Light Mode Colors
   static const Color lightBackground = Color(0xFFF3F4F6);
   static const Color lightSurface = Colors.white;
@@ -31,12 +45,12 @@ class AppTheme {
   static const Color lightTextSecondary = Color(0xFF6B7280);
   static const Color lightDivider = Color(0xFFE5E7EB);
 
-  // Dark Mode Colors ("New Dawn" Luxury)
-  static const Color darkBackground = Color(0xFF0A0A0A); // Deep Prestige Black
-  static const Color darkSurface = Color(0xFF141414); // Elevated Black Surface
+  // Dark Mode Colors ("New Dawn" Luxury / Stitch Obsidian)
+  static const Color darkBackground = Color(0xFF121212); // Deep Obsidian Canvas
+  static const Color darkSurface = Color(0xFF1A1A1A); // Surface Container
   static const Color darkTextPrimary = Color(0xFFF9FAFB);
   static const Color darkTextSecondary = Color(0xFF9CA3AF);
-  static const Color darkDivider = Color(0xFF1F1F1F);
+  static const Color darkDivider = Color(0xFF27272A);
 
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
@@ -274,6 +288,94 @@ class AppTheme {
     double? decorationThickness,
   }) {
     return GoogleFonts.inter(
+      textStyle: textStyle,
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+    );
+  }
+
+  static TextStyle montserrat({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<Shadow>? shadows,
+    List<FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    return GoogleFonts.montserrat(
+      textStyle: textStyle,
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+    );
+  }
+
+  static TextStyle plusJakartaSans({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<Shadow>? shadows,
+    List<FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    return GoogleFonts.plusJakartaSans(
       textStyle: textStyle,
       color: color,
       backgroundColor: backgroundColor,

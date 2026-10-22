@@ -25,15 +25,21 @@ class RideService {
     return false;
   }
 
-  Future<void> toggleOnlineStatus(String driverId, bool isOnline) async {
+  Future<bool> toggleOnlineStatus(String driverId, bool isOnline) async {
     try {
-      await _client.post(
+      final response = await _client.post(
         Uri.parse('$_dispatchBaseUrl/dispatch/drivers/$driverId/toggle-status'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'isOnline': isOnline}),
       );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      debugPrint('Failed to toggle driver status: ${response.statusCode} - ${response.body}');
+      return false;
     } catch (e) {
       debugPrint('Error toggling driver status: $e');
+      return false;
     }
   }
 
@@ -56,18 +62,27 @@ class RideService {
     return null;
   }
 
-  // Complete a trip
-  Future<double> completeTrip(String tripId) async {
+  // Complete a trip with metered telemetry
+  Future<double> completeTrip(String tripId, {double? distanceKm, double? durationMinutes}) async {
     try {
+      final Map<String, dynamic> body = {};
+      if (distanceKm != null && distanceKm > 0) {
+        body['distanceKm'] = distanceKm;
+      }
+      if (durationMinutes != null && durationMinutes > 0) {
+        body['durationMinutes'] = durationMinutes;
+      }
+
       final response = await _client.post(
         Uri.parse('$_dispatchBaseUrl/rides/$tripId/complete'),
         headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.body.isNotEmpty && response.body.trim() != 'null') {
           final data = jsonDecode(response.body);
-          debugPrint('Trip $tripId completed via backend.');
+          debugPrint('Trip $tripId completed via backend with metered fare.');
           
           if (data['fare'] != null) {
             return (data['fare'] as num).toDouble();
@@ -84,6 +99,68 @@ class RideService {
       debugPrint('Error completing trip: $e');
     }
     return 0.0;
+  }
+
+  // Fetch category pricing and rounding rules from backend
+  Future<List<Map<String, dynamic>>> getPricingCategories() async {
+    try {
+      final response = await _client.get(
+        Uri.parse('$_dispatchBaseUrl/pricing/categories'),
+      );
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        final List<dynamic> list = jsonDecode(response.body);
+        return list.map((e) => Map<String, dynamic>.from(e)).toList();
+      }
+    } catch (e) {
+      debugPrint('Error fetching pricing categories: $e');
+    }
+    return [
+      {
+        'category': 'BODA',
+        'displayName': 'Boda Boda',
+        'baseFare': 50.0,
+        'perKmRate': 25.0,
+        'perMinuteRate': 2.0,
+        'minimumFare': 50.0,
+        'roundingStep': 10,
+      },
+      {
+        'category': 'BASIC',
+        'displayName': 'Cabi Basic',
+        'baseFare': 100.0,
+        'perKmRate': 35.0,
+        'perMinuteRate': 3.0,
+        'minimumFare': 100.0,
+        'roundingStep': 25,
+      },
+      {
+        'category': 'STANDARD',
+        'displayName': 'Cabi Standard',
+        'baseFare': 150.0,
+        'perKmRate': 45.0,
+        'perMinuteRate': 5.0,
+        'minimumFare': 150.0,
+        'roundingStep': 50,
+      },
+      {
+        'category': 'XL',
+        'displayName': 'Cabi XL',
+        'baseFare': 250.0,
+        'perKmRate': 65.0,
+        'perMinuteRate': 7.0,
+        'minimumFare': 250.0,
+        'roundingStep': 50,
+      },
+      {
+        'category': 'PREMIUM',
+        'displayName': 'Cabi Premium',
+        'baseFare': 300.0,
+        'perKmRate': 85.0,
+        'perMinuteRate': 10.0,
+        'minimumFare': 300.0,
+        'roundingStep': 50,
+      },
+    ];
   }
 
   Future<void> acceptRide(String rideId, String driverId) async {
@@ -150,7 +227,11 @@ class RideService {
       await _client.post(
         Uri.parse('$_dispatchBaseUrl/rides/$tripId/rate'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'rating': rating.round(), 'comment': comment}),
+        body: jsonEncode({
+          'rating': rating.round(),
+          'comment': comment,
+          'role': 'DRIVER',
+        }),
       );
       debugPrint('Ride $tripId rated $rating stars.');
     } catch (e) {

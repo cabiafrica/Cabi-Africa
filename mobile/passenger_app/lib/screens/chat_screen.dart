@@ -1,130 +1,680 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+import '../theme/app_theme.dart';
 
-// Mock Service for Driver App (Self-contained for MVP)
-class DriverChatService {
-  final StreamController<List<Map<String, dynamic>>> _controller =
-      StreamController.broadcast();
-  final List<Map<String, dynamic>> _messages = [
-    {'text': 'Where exactly are you standing?', 'isMe': true},
-    {'text': 'I am near the main gate.', 'isMe': false},
-  ];
+class ChatMessageItem {
+  final String id;
+  final String text;
+  final bool isMe;
+  final String timestamp;
+  final String? senderName;
+  final String? role;
+  final bool isDelivered;
+  final String? imageUrl;
+  final String? locationTag;
 
-  Stream<List<Map<String, dynamic>>> get messages => _controller.stream;
-
-  void loadMessages(String rideId) {
-    _controller.add(List.from(_messages));
-  }
-
-  void sendMessage(String text) {
-    _messages.add({'text': text, 'isMe': true});
-    _controller.add(List.from(_messages));
-  }
-
-  void dispose() {
-    _controller.close();
-  }
+  const ChatMessageItem({
+    required this.id,
+    required this.text,
+    required this.isMe,
+    required this.timestamp,
+    this.senderName,
+    this.role,
+    this.isDelivered = true,
+    this.imageUrl,
+    this.locationTag,
+  });
 }
 
 class ChatScreen extends StatefulWidget {
   final String rideId;
+  final String? driverName;
+  final String? vehicleInfo;
+  final String? driverRating;
+  final String? driverPhone;
 
-  const ChatScreen({super.key, required this.rideId});
+  const ChatScreen({
+    super.key,
+    required this.rideId,
+    this.driverName,
+    this.vehicleInfo,
+    this.driverRating,
+    this.driverPhone,
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final DriverChatService _chatService = DriverChatService();
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+
+  late List<ChatMessageItem> _messages;
+
+  final List<String> _quickPresets = [
+    'I am at Gate 2 lobby',
+    'Waiting at main reception',
+    'Please turn on AC',
+    'I have 2 large luggage bags',
+    'Heading down in elevator',
+  ];
 
   @override
   void initState() {
     super.initState();
-    _chatService.loadMessages(widget.rideId);
+    final driver = widget.driverName ?? 'Samuel Mwangi';
+    _messages = [
+      ChatMessageItem(
+        id: '1',
+        senderName: driver,
+        role: 'Chauffeur',
+        text: 'Good afternoon. I have arrived at the executive drop-off bay. Vehicle hazard lights are on.',
+        isMe: false,
+        timestamp: '14:32',
+      ),
+      const ChatMessageItem(
+        id: '2',
+        text: 'Thank you! Taking the elevator down now. See you in 2 minutes.',
+        isMe: true,
+        timestamp: '14:33',
+        isDelivered: true,
+      ),
+      ChatMessageItem(
+        id: '3',
+        senderName: driver,
+        role: 'Chauffeur',
+        text: 'Understood! Climate control is chilled to 21°C as per your VIP preference. Doors are unlocked.',
+        isMe: false,
+        timestamp: '14:34',
+      ),
+      ChatMessageItem(
+        id: '4',
+        senderName: driver,
+        role: 'Chauffeur',
+        text: 'Vehicle spotted & parked ready in VIP Bay #4.',
+        isMe: false,
+        timestamp: '14:35',
+        locationTag: 'Bay 4 • Executive Terminal',
+      ),
+    ];
   }
 
   @override
   void dispose() {
-    _chatService.dispose();
     _textController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
-  void _handleSend() {
-    if (_textController.text.trim().isEmpty) return;
-    _chatService.sendMessage(_textController.text);
-    _textController.clear();
-    // Scroll logic omitted for brevity in driver mock
+  void _handleSend([String? presetText]) {
+    final text = presetText ?? _textController.text.trim();
+    if (text.isEmpty) return;
+
+    final now = DateTime.now();
+    final timeStr = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+
+    setState(() {
+      _messages.add(
+        ChatMessageItem(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          text: text,
+          isMe: true,
+          timestamp: timeStr,
+          isDelivered: true,
+        ),
+      );
+    });
+
+    if (presetText == null) {
+      _textController.clear();
+    }
+
+    _scrollToBottom();
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  void _makePhoneCall() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: const Color(0xFF1E1E24),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: AppTheme.outlineGold),
+        ),
+        content: Row(
+          children: [
+            const Icon(Icons.phone_in_talk_rounded, color: AppTheme.primaryColor),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'Connecting encrypted call to ${widget.driverName ?? "Chauffeur"}...',
+                style: AppTheme.outfit(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final driver = widget.driverName ?? 'Samuel Mwangi';
+    final vehicle = widget.vehicleInfo ?? 'Mercedes E200 · KDA 482B';
+    final rating = widget.driverRating ?? '4.98';
+
     return Scaffold(
+      backgroundColor: const Color(0xFF0D0D0E),
       appBar: AppBar(
-        title: const Text('Chat with Passenger'),
-        backgroundColor: Colors.black87,
+        backgroundColor: const Color(0xFF121215),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'In Ride Live Chat',
+          style: AppTheme.outfit(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryColor.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppTheme.outlineGold),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.security_rounded, color: AppTheme.primaryColor, size: 14),
+                const SizedBox(width: 4),
+                Text(
+                  'VIP Safe',
+                  style: AppTheme.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.primaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 14),
+        ],
       ),
       body: Column(
         children: [
-          Expanded(
-            child: StreamBuilder<List<Map<String, dynamic>>>(
-              stream: _chatService.messages,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final messages = snapshot.data!;
-
-                return ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(16.0),
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final msg = messages[index];
-                    final isMe = msg['isMe'] as bool;
-                    return Align(
-                      alignment: isMe
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 4.0),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 10.0,
+          // Chauffeur Card & Live ETA Sub-Banner
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: const Color(0xFF141418),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: AppTheme.outlineGold),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x18000000),
+                  blurRadius: 12,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Stack(
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppTheme.primaryColor, width: 2),
+                            color: const Color(0xFF222228),
+                          ),
+                          child: const Icon(Icons.person_rounded, color: AppTheme.primaryColor, size: 28),
                         ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: AppTheme.successGreen,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: const Color(0xFF141418), width: 2),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                driver,
+                                style: AppTheme.outfit(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              const Icon(Icons.verified_rounded, color: AppTheme.primaryColor, size: 16),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Text(
+                                '★ $rating',
+                                style: AppTheme.inter(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppTheme.primaryColor,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                '•',
+                                style: TextStyle(color: Colors.white38, fontSize: 12),
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  vehicle,
+                                  style: AppTheme.inter(
+                                    fontSize: 12,
+                                    color: Colors.white60,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                      onTap: _makePhoneCall,
+                      borderRadius: BorderRadius.circular(22),
+                      child: Container(
+                        width: 44,
+                        height: 44,
                         decoration: BoxDecoration(
-                          color: isMe ? Colors.green[700] : Colors.grey[300],
-                          borderRadius: BorderRadius.circular(20),
+                          gradient: AppTheme.goldGradient,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.primaryColor.withOpacity(0.3),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: const Icon(Icons.call_rounded, color: Colors.black, size: 20),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // ETA Status Bar
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1B1B22),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.white10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.near_me_rounded, color: AppTheme.primaryColor, size: 15),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Arrived at Pickup • Gate 2',
+                            style: AppTheme.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryColor.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: AppTheme.outlineGold),
                         ),
                         child: Text(
-                          msg['text'],
-                          style: TextStyle(
-                            color: isMe ? Colors.white : Colors.black87,
+                          'VIP TIER',
+                          style: AppTheme.inter(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            color: AppTheme.primaryColor,
                           ),
                         ),
                       ),
-                    );
-                  },
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Quick Action Presets Horizontal Scroll
+          SizedBox(
+            height: 38,
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              scrollDirection: Axis.horizontal,
+              itemCount: _quickPresets.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                final preset = _quickPresets[index];
+                return ActionChip(
+                  label: Text(
+                    preset,
+                    style: AppTheme.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  backgroundColor: const Color(0xFF16161A),
+                  side: const BorderSide(color: Colors.white12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  onPressed: () => _handleSend(preset),
                 );
               },
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _textController,
-              decoration: const InputDecoration(
-                hintText: 'Message passenger...',
-                suffixIcon: Icon(Icons.send),
+          const SizedBox(height: 10),
+
+          // Waiting telemetry pill
+          Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFF16161C),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppTheme.outlineGold),
               ),
-              onSubmitted: (_) => _handleSend(),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.timer_rounded, color: AppTheme.primaryColor, size: 13),
+                  const SizedBox(width: 6),
+                  Text(
+                    'VIP Bay #4 • Free waiting: 4m rem.',
+                    style: AppTheme.inter(fontSize: 11, color: Colors.white70),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          // Messages List
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final msg = _messages[index];
+                return _buildMessageBubble(msg);
+              },
+            ),
+          ),
+
+          // Message Input Bar
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+            decoration: const BoxDecoration(
+              color: Color(0xFF121215),
+              border: Border(top: BorderSide(color: Colors.white12)),
+            ),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.camera_alt_outlined, color: AppTheme.primaryColor, size: 22),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Camera opened for gate verification photo')),
+                    );
+                  },
+                ),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1C1C22),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: Colors.white12),
+                    ),
+                    child: TextField(
+                      controller: _textController,
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      decoration: const InputDecoration(
+                        hintText: 'Message your executive chauffeur...',
+                        hintStyle: TextStyle(color: Colors.white30, fontSize: 12),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      ),
+                      onSubmitted: (_) => _handleSend(),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                InkWell(
+                  onTap: () => _handleSend(),
+                  borderRadius: BorderRadius.circular(22),
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      gradient: AppTheme.goldGradient,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.send_rounded, color: Colors.black, size: 20),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMessageBubble(ChatMessageItem msg) {
+    if (msg.isMe) {
+      return Align(
+        alignment: Alignment.centerRight,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12, left: 60),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFD4AF37), Color(0xFFB8860B)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(4),
+              bottomLeft: Radius.circular(16),
+              bottomRight: Radius.circular(16),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primaryColor.withOpacity(0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                msg.text,
+                style: AppTheme.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    msg.timestamp,
+                    style: AppTheme.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.done_all_rounded, size: 14, color: Colors.black87),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12, right: 60),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF16161B),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(4),
+            topRight: Radius.circular(16),
+            bottomLeft: Radius.circular(16),
+            bottomRight: Radius.circular(16),
+          ),
+          border: const Border(
+            left: BorderSide(color: AppTheme.primaryColor, width: 3),
+            top: BorderSide(color: Colors.white10),
+            right: BorderSide(color: Colors.white10),
+            bottom: BorderSide(color: Colors.white10),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  msg.senderName ?? 'Samuel Mwangi',
+                  style: AppTheme.outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '•',
+                  style: TextStyle(color: Colors.white38, fontSize: 10),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  msg.role ?? 'Chauffeur',
+                  style: AppTheme.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.primaryColor,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              msg.text,
+              style: AppTheme.inter(
+                fontSize: 13,
+                color: Colors.white,
+                height: 1.3,
+              ),
+            ),
+            if (msg.locationTag != null) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF222228),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppTheme.outlineGold),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.local_parking_rounded, color: AppTheme.primaryColor, size: 14),
+                    const SizedBox(width: 6),
+                    Text(
+                      msg.locationTag!,
+                      style: AppTheme.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            const SizedBox(height: 4),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                msg.timestamp,
+                style: AppTheme.inter(fontSize: 10, color: Colors.white38),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

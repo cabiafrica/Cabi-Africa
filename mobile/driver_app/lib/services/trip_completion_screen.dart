@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/ride_service.dart';
+import '../screens/rate_passenger_screen.dart';
 
 class TripCompletionScreen extends StatefulWidget {
   final String tripId;
@@ -45,14 +46,26 @@ class _TripCompletionScreenState extends State<TripCompletionScreen> {
           _isPaymentConfirmed = true;
           _isLoading = false;
         });
-        // Navigate to rating or home screen
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Trip finalized!')));
+        ).showSnackBar(const SnackBar(content: Text('Payment confirmed! Please rate your passenger.')));
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => RatePassengerScreen(
+              rideId: widget.tripId,
+              passengerName: 'Passenger',
+              finalFare: _finalFare ?? 0.0,
+              isCashConfirmed: true,
+            ),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error confirming cash: $e')),
+        );
       }
     }
   }

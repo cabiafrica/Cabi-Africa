@@ -188,7 +188,7 @@ class FeedbackStatusScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Feedback'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: const Color(0xFFD4AF37),
         foregroundColor: Colors.white,
       ),
       body: ListView.builder(
@@ -293,7 +293,7 @@ class FeedbackStatusScreen extends StatelessWidget {
         return {
           'label': 'Planned',
           'icon': Icons.schedule,
-          'color': Colors.purple,
+          'color': const Color(0xFFD4AF37),
         };
       case 'UNDER_REVIEW':
         return {

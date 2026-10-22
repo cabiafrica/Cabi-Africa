@@ -127,6 +127,8 @@ class AdminService {
   updatePost = this.systemService.updatePost.bind(this.systemService);
   deletePost = this.systemService.deletePost.bind(this.systemService);
   getCMSContent = this.systemService.getCMSContent.bind(this.systemService);
+  getPricingCategories = this.systemService.getPricingCategories.bind(this.systemService);
+  updatePricingCategories = this.systemService.updatePricingCategories.bind(this.systemService);
 }
 
 export const adminService = new AdminService();

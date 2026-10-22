@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
-import { HiMoon, HiSun } from 'react-icons/hi';
+import { Sun, Moon } from 'lucide-react';
 
 export const ThemeToggle: React.FC = () => {
     const { theme, toggleTheme } = useTheme();
@@ -13,18 +13,19 @@ export const ThemeToggle: React.FC = () => {
     return (
         <button
             onClick={toggleTheme}
-            className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-300 focus:outline-none"
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-300 focus:outline-none"
             title="Toggle theme"
             aria-label="Toggle theme"
+            type="button"
         >
             {mounted ? (
                 theme === 'light' ? (
-                    <HiMoon className="w-5 h-5" />
+                    <Moon className="w-4 h-4 text-slate-700" />
                 ) : (
-                    <HiSun className="w-5 h-5" />
+                    <Sun className="w-4 h-4 text-amber-400" />
                 )
             ) : (
-                <HiSun className="w-5 h-5" />
+                <span className="w-4 h-4 block" />
             )}
         </button>
     );

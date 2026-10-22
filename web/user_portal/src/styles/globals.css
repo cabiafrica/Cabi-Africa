@@ -11,7 +11,8 @@
     }
 
     body {
-        @apply bg-slate-50 text-slate-900 dark:bg-brand-black dark:text-white antialiased selection:bg-brand-yellow/30 selection:text-white transition-colors duration-500 overflow-x-hidden overflow-y-scroll;
+        @apply bg-slate-50 text-slate-900 dark:text-white antialiased selection:bg-brand-yellow/30 selection:text-white transition-colors duration-500 overflow-x-hidden overflow-y-scroll;
+        background-color: #0A0A0B;
         font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     }
 
@@ -21,7 +22,7 @@
     }
 
     ::-webkit-scrollbar-track {
-        @apply bg-brand-black;
+        background-color: #0A0A0B;
     }
 
     ::-webkit-scrollbar-thumb {

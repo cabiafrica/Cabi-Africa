@@ -74,6 +74,7 @@ class RideRequestModal extends StatelessWidget {
                 isExtendedPickup: requestData['isExtendedPickup'] == true,
                 subsidyAmount:
                     (requestData['extendedPickupSubsidy'] as num?)?.toDouble(),
+                serviceCategory: (requestData['vehicleType'] ?? requestData['serviceCategory'] ?? 'STANDARD').toString(),
               ),
             ),
           );
@@ -318,62 +319,74 @@ class RideRequestModal extends StatelessWidget {
                         color: const Color(0xFFD4AF37).withOpacity(0.4),
                       ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              'AMOUNT TO BE PAID',
-                              style: TextStyle(
-                                color: Colors.white60,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'NET DRIVER EARNINGS',
+                                  style: TextStyle(
+                                    color: Color(0xFFD4AF37),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 1.1,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  fare > 0
+                                      ? 'KES ${(fare * 0.85).toStringAsFixed(0)}'
+                                      : 'KES 520',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              fare > 0
-                                  ? 'KES ${fare.toStringAsFixed(2)}'
-                                  : 'KES 450.00 (Est.)',
-                              style: const TextStyle(
-                                color: Color(0xFFD4AF37),
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.4)),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.bolt_rounded,
+                                    color: Color(0xFF10B981),
+                                    size: 14,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    paymentMethod.contains('CASH') ? 'CASH' : 'M-PESA INSTANT',
+                                    style: const TextStyle(
+                                      color: Color(0xFF10B981),
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.black54,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.white24),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                paymentMethod.contains('CASH')
-                                    ? Icons.payments_outlined
-                                    : Icons.credit_card_rounded,
-                                color: Colors.white70,
-                                size: 14,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                paymentMethod,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                        const SizedBox(height: 6),
+                        Text(
+                          'Total Fare: KES ${fare > 0 ? fare.toStringAsFixed(0) : "650"} • SACCO Welfare: -KES 30 • Platform: 15%',
+                          style: const TextStyle(
+                            color: Colors.white54,
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
@@ -513,65 +526,94 @@ class RideRequestModal extends StatelessWidget {
                   ],
                   const SizedBox(height: 16),
 
-                  // ── 4. COUNTDOWN CIRCLE ──
+                  // ── 4. RADIAL COUNTDOWN RING ──
                   Center(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                          height: 56,
-                          width: 56,
-                          child: CircularProgressIndicator(
-                            value:
-                                (rideProvider.countdown / 20.0).clamp(0.0, 1.0),
-                            strokeWidth: 4.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              rideProvider.countdown <= 5
-                                  ? Colors.redAccent
-                                  : (rideProvider.countdown <= 10
-                                      ? Colors.orangeAccent
-                                      : const Color(0xFF10B981)),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: (rideProvider.countdown <= 5
+                                    ? Colors.redAccent
+                                    : const Color(0xFFD4AF37))
+                                .withValues(alpha: 0.25),
+                            blurRadius: 18,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          SizedBox(
+                            height: 70,
+                            width: 70,
+                            child: CircularProgressIndicator(
+                              value: (rideProvider.countdown / 15.0).clamp(0.0, 1.0),
+                              strokeWidth: 5.5,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                rideProvider.countdown <= 5
+                                    ? const Color(0xFFEF4444)
+                                    : (rideProvider.countdown <= 8
+                                        ? const Color(0xFFF59E0B)
+                                        : const Color(0xFFD4AF37)),
+                              ),
+                              backgroundColor: Colors.white10,
                             ),
-                            backgroundColor: Colors.white12,
                           ),
-                        ),
-                        Text(
-                          '${rideProvider.countdown}s',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: rideProvider.countdown <= 5
-                                ? Colors.redAccent
-                                : Colors.white,
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '${rideProvider.countdown}s',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: -0.5,
+                                  color: rideProvider.countdown <= 5
+                                      ? const Color(0xFFEF4444)
+                                      : Colors.white,
+                                ),
+                              ),
+                              Text(
+                                'REMAINING',
+                                style: TextStyle(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.8,
+                                  color: Colors.white.withValues(alpha: 0.4),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 20),
 
                   // ── 5. ACTION BUTTONS (PASS & ACCEPT) ──
                   Row(
                     children: [
                       Expanded(
-                        child: OutlinedButton.icon(
+                        child: OutlinedButton(
                           onPressed: showPassDialog,
-                          icon: const Icon(Icons.close_rounded,
-                              color: Colors.redAccent, size: 18),
-                          label: const Text(
-                            'Pass',
-                            style: TextStyle(
-                              color: Colors.redAccent,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(
-                                color: Colors.redAccent, width: 1.2),
-                            padding: const EdgeInsets.symmetric(vertical: 13),
+                                color: Color(0xFFEF4444), width: 1.4),
+                            backgroundColor: const Color(0xFFEF4444).withValues(alpha: 0.08),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: const Text(
+                            'Decline',
+                            style: TextStyle(
+                              color: Color(0xFFEF4444),
+                              fontWeight: FontWeight.w800,
+                              fontSize: 14,
                             ),
                           ),
                         ),
@@ -579,25 +621,48 @@ class RideRequestModal extends StatelessWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         flex: 2,
-                        child: ElevatedButton.icon(
-                          onPressed: handleAccept,
-                          icon: const Icon(Icons.check_circle_rounded,
-                              color: Colors.black, size: 20),
-                          label: const Text(
-                            'Accept Ride',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFD4AF37), Color(0xFFFFDF00)],
                             ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFD4AF37).withValues(alpha: 0.45),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFD4AF37),
-                            foregroundColor: Colors.black,
-                            padding: const EdgeInsets.symmetric(vertical: 13),
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                          child: ElevatedButton(
+                            onPressed: handleAccept,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              foregroundColor: Colors.black,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.bolt_rounded,
+                                    color: Colors.black, size: 20),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'ACCEPT • KES ${fare > 0 ? (fare * 0.85).toStringAsFixed(0) : "520"}',
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 15,
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),

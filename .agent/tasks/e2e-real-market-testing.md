@@ -61,19 +61,20 @@ Before modifying `ride.service.ts` or `ride.controller.ts`:
 ---
 
 ## 4. Step-by-Step Implementation Flow
-1. **GitNexus Impact Analysis** on target backend symbols.
-2. **Backend Dispatch Updates**:
-   - Implement `submitRating` with Occurrence Book creation in `ride.service.ts`.
-   - Update `ride.controller.ts`.
-   - Adjust `assignmentExpiresAt` to 120s in `ride.service.ts`.
-3. **Passenger App Updates**:
-   - Implement rating submission in `rate_driver_screen.dart` and `ride_service.dart`.
-   - Trigger rating screen on trip completion in `home_screen_logic.dart`.
-4. **Driver App Updates**:
-   - Connect `TripCompletionScreen` payment confirmation to `RatingScreen`.
-5. **Network / Host Configuration Verification**:
-   - Ensure local IP `192.168.100.35` is ready and accessible.
-6. **Obsidian Vault Sync**:
-   - Document new Occurrence booking registration and E2E testing architecture in `D:\IBN\iBN-Cabi Vault`.
-7. **End-to-End Test Execution**:
-   - Walk through the full market test on the Android device.
+1. ✅ **GitNexus Impact Analysis** on target backend symbols (`submitRating`, `confirmCashPayment`, `startMatching`). Verified LOW risk.
+2. ✅ **Backend Dispatch Updates**:
+   - `submitRating` with Occurrence Book creation in [ride.service.ts](file:///d:/IBN/PROJECTS/Cabi%20Africa%20Final/backend/dispatch-service/src/ride/ride.service.ts).
+   - Rating endpoint `@Post(':id/rate')` in [ride.controller.ts](file:///d:/IBN/PROJECTS/Cabi%20Africa%20Final/backend/dispatch-service/src/ride/ride.controller.ts).
+   - Configurable 120s dispatch acceptance timeout (`DISPATCH_TIMEOUT_SECONDS || 120`).
+3. ✅ **Passenger App Updates**:
+   - Implemented `rateDriver` and `submitRating` in [ride_service.dart](file:///d:/IBN/PROJECTS/Cabi%20Africa%20Final/mobile/passenger_app/lib/services/ride_service.dart).
+   - Navigates to `RateDriverScreen` on trip completion in [home_screen_logic.dart](file:///d:/IBN/PROJECTS/Cabi%20Africa%20Final/mobile/passenger_app/lib/screens/home_screen_logic.dart).
+4. ✅ **Driver App Updates**:
+   - Connected `TripCompletionScreen` cash payment confirmation to `RatePassengerScreen` with `isCashConfirmed: true` in [trip_completion_screen.dart](file:///d:/IBN/PROJECTS/Cabi%20Africa%20Final/mobile/driver_app/lib/services/trip_completion_screen.dart).
+   - Added `role: 'DRIVER'` in [ride_service.dart](file:///d:/IBN/PROJECTS/Cabi%20Africa%20Final/mobile/driver_app/lib/services/ride_service.dart).
+5. ✅ **Network / Host Configuration**:
+   - `AppConfig` in both mobile apps verified with default local host `192.168.100.35`.
+6. ✅ **Documentation Updated**:
+   - Synced mutual rating Occurrence Book registration in [docs/OCCURRENCE_BOOK_SYSTEM.md](file:///d:/IBN/PROJECTS/Cabi%20Africa%20Final/docs/OCCURRENCE_BOOK_SYSTEM.md).
+7. ⏳ **End-to-End Test Execution**:
+   - Ready to execute live real-market testing across physical devices on `192.168.100.35`.

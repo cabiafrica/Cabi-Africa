@@ -20,7 +20,7 @@ class _OnboardingTutorialOverlayState extends State<OnboardingTutorialOverlay> {
       'description':
           'Your partner in earning. Let\'s get you set up to hit the road.',
       'icon': Icons.local_taxi,
-      'color': Colors.deepPurple,
+      'color': const Color(0xFFD4AF37),
     },
     {
       'title': 'Go Online',
@@ -41,7 +41,7 @@ class _OnboardingTutorialOverlayState extends State<OnboardingTutorialOverlay> {
       'description':
           'Access safety tools, your profile, and app settings from the menu in the top left.',
       'icon': Icons.menu,
-      'color': Colors.blue,
+      'color': const Color(0xFF3B82F6),
     },
   ];
 
@@ -114,7 +114,7 @@ class _OnboardingTutorialOverlayState extends State<OnboardingTutorialOverlay> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: _currentPage == index
-                            ? Colors.deepPurple
+                            ? const Color(0xFFD4AF37)
                             : Colors.white24,
                       ),
                     );
@@ -136,8 +136,8 @@ class _OnboardingTutorialOverlayState extends State<OnboardingTutorialOverlay> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.deepPurple,
+                      backgroundColor: const Color(0xFFD4AF37),
+                      foregroundColor: Colors.black,
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25)),

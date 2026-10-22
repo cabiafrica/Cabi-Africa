@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cabi Africa — Driver Market Test Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070a12;
+      --card-bg: #0f1626;
+      --card-card2: #141f36;
+      --card-border: #1e2c4d;
+      --gold: #f59e0b;
+      --gold-dark: #b8860b;
+      --green: #10b981;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --purple: #8b5cf6;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 16px 40px;
+    }
+
+    /* Top Navigation Header */
+    .header {
+      width: 100%;
+      max-width: 1180px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: 0.5px;
+    }
+    .logo-badge {
+      background: linear-gradient(135deg, var(--gold), #d97706);
+      color: #000;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--green);
+      font-weight: 600;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    /* Nav bar & Passenger console switcher */
+    .console-nav-bar {
+      width: 100%;
+      max-width: 1180px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 10px 16px;
+    }
+    .console-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .console-tab-btn:hover { color: var(--gold); }
+    .console-tab-btn.active {
+      color: var(--gold);
+      background: rgba(245, 158, 11, 0.12);
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    /* Main Container Grid */
+    .container {
+      width: 100%;
+      max-width: 1180px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 860px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #1e293b;
+      color: var(--text-muted);
+    }
+    .badge-gold { background: rgba(245, 158, 11, 0.2); color: var(--gold); border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-green { background: rgba(16, 185, 129, 0.2); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-red { background: rgba(239, 68, 68, 0.2); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    .field-group { margin-bottom: 14px; }
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      background: #080c16;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .btn {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: linear-gradient(135deg, var(--gold), #d97706); color: #000; }
+    .btn-primary:hover { background: linear-gradient(135deg, #fbbf24, var(--gold)); }
+    .btn-secondary { background: #1f2d4d; color: #fff; border: 1px solid var(--card-border); }
+    .btn-secondary:hover { background: #283a63; }
+    .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: #000; font-weight: 800; }
+    .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.4); }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.25); }
+
+    /* Online Switch Toggle */
+    .switch-card {
+      background: #080c16;
+      border: 1.5px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .switch-btn {
+      padding: 10px 24px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.88rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .switch-offline {
+      background: #1e293b;
+      color: var(--text-muted);
+      border: 1px solid var(--card-border);
+    }
+    .switch-online {
+      background: linear-gradient(135deg, var(--green), #059669);
+      color: #000;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Biometric Camera Oval Frame */
+    .camera-frame {
+      width: 100%;
+      height: 220px;
+      background: #050811;
+      border-radius: 12px;
+      border: 1px dashed var(--card-border);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .camera-oval {
+      width: 140px;
+      height: 180px;
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
+      position: absolute;
+      pointer-events: none;
+    }
+    .scan-laser {
+      width: 100%;
+      height: 2px;
+      background: var(--gold);
+      position: absolute;
+      top: 0;
+      box-shadow: 0 0 10px var(--gold);
+      display: none;
+    }
+    @keyframes laserSweep {
+      0% { top: 5%; opacity: 0.2; }
+      50% { top: 90%; opacity: 1; }
+      100% { top: 5%; opacity: 0.2; }
+    }
+
+    /* Incoming Offer Card */
+    .incoming-offer-card {
+      background: linear-gradient(135deg, #131c33, #0f1626);
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.2);
+      animation: pulseOffer 2s infinite ease-in-out;
+    }
+    @keyframes pulseOffer {
+      0%, 100% { border-color: var(--gold); }
+      50% { border-color: #fbbf24; box-shadow: 0 0 40px rgba(245, 158, 11, 0.35); }
+    }
+
+    /* Progress bar for 20s countdown */
+    .timer-bar-container {
+      width: 100%;
+      height: 6px;
+      background: #1e293b;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .timer-bar {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--green), var(--gold), var(--red));
+      transition: width 1s linear;
+    }
+
+    /* Running Fare HUD */
+    .fare-banner {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.08));
+      border: 1px solid var(--gold);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 12px 0;
+    }
+    .fare-val {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--gold);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Waybill summary table */
+    .waybill-table {
+      width: 100%;
+      margin: 12px 0;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .waybill-table td {
+      padding: 8px 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .waybill-table tr:last-child td {
+      border-bottom: none;
+      font-weight: 800;
+      color: var(--gold);
+      font-size: 1rem;
+    }
+
+    /* Terminal logs */
+    .logs-panel {
+      grid-column: 1 / -1;
+      background: #050811;
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--green);
+      max-height: 260px;
+      overflow-y: auto;
+    }
+    .log-line {
+      margin-bottom: 5px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      padding-bottom: 3px;
+    }
+    .log-time { color: var(--text-dim); flex-shrink: 0; }
+    .log-tag {
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      flex-shrink: 0;
+    }
+    .tag-DRIVER { background: rgba(139, 92, 246, 0.2); color: var(--purple); }
+    .tag-DISPATCH { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
+    .tag-VERIFY { background: rgba(16, 185, 129, 0.2); color: var(--green); }
+    .tag-LOCKOUT { background: rgba(239, 68, 68, 0.2); color: var(--red); }
+
+    .stars { display: flex; gap: 8px; font-size: 1.8rem; cursor: pointer; user-select: none; margin: 10px 0; }
+    .star { color: #374151; transition: color 0.2s; }
+    .star.active { color: #f59e0b; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="header">
+    <div class="logo">
+      <span>🚕 Cabi Africa</span>
+      <span class="logo-badge">Driver Command Center</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="status-pill" id="backendPill">
+        <div class="status-dot"></div>
+        <span id="backendStatus">Connecting...</span>
+      </div>
+      <button class="btn btn-secondary" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="checkBackendHealth()">🔄 Ping :3334</button>
+    </div>
+  </header>
+
+  <!-- Navigation Switcher Bar -->
+  <div class="console-nav-bar">
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700; margin-right: 6px;">Consoles:</span>
+      <a href="passenger_test_console.html" class="console-tab-btn">👤 Passenger / 4-in-1 Console</a>
+      <span class="console-tab-btn active">🚗 Dedicated Driver Console</span>
+    </div>
+    <div style="font-size: 0.78rem; color: var(--text-muted);">
+      Assigned Vehicle: <strong style="color: var(--gold);">KDA 123A</strong> (Silver Toyota Axio)
+    </div>
+  </div>
+
+  <main class="container">
+
+    <!-- Card 1: Driver Profile & Shift Status -->
+    <div class="card" id="cardDriverProfile">
+      <div class="card-title">
+        <span>🚗 1. Driver Profile & Shift Status</span>
+        <span class="badge badge-gold" id="drvLiveStatusBadge">OFFLINE</span>
+      </div>
+
+      <!-- Online / Offline Switcher Banner -->
+      <div class="switch-card">
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">DISPATCH AVAILABILITY</div>
+          <div id="shiftStatusText" style="font-size: 1.1rem; font-weight: 800; color: #fff; margin-top: 2px;">
+            Driver is OFFLINE
+          </div>
+          <div style="font-size: 0.72rem; color: var(--text-dim); margin-top: 2px;">
+            Requires biometric face check to go Online.
+          </div>
+        </div>
+        <button id="toggleShiftBtn" class="switch-btn switch-offline" onclick="toggleDriverOnline()">
+          <span>🔴 GO ONLINE</span>
+        </button>
+      </div>
+
+      <!-- Driver Official Specs Grid -->
+      <div class="grid-2" style="margin-bottom: 12px;">
+        <div class="field-group">
+          <label>Driver Legal Name</label>
+          <input type="text" id="driverName" value="John Kamau Mwangi" readonly style="color: #fff; font-weight: 700;">
+        </div>
+        <div class="field-group">
+          <label>Driver Phone Number</label>
+          <input type="text" id="driverPhone" value="+254 722 001122" readonly>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom: 12px;">
+        <div class="field-group">
+          <label>Driver Profile ID</label>
+          <input type="text" id="driverProfileId" value="drv_profile_john_kamau_01" style="font-family: monospace; font-size: 0.8rem;">
+        </div>
+        <div class="field-group">
+          <label>SACCO Affiliation</label>
+          <input type="text" id="driverSacco" value="2NK SACCO Nairobi Central" readonly style="color: var(--gold);">
+        </div>
+      </div>
+
+      <!-- Baseline Passport Photo Reference Card -->
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 48px; height: 48px; border-radius: 8px; border: 1.5px solid var(--gold); background: #080c16; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--gold);">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <div style="position: absolute; bottom: 0; right: 0; background: var(--green); width: 10px; height: 10px; border-radius: 50%; border: 2px solid #000;"></div>
+          </div>
+          <div>
+            <div style="font-size: 0.72rem; color: var(--gold); font-weight: 700; text-transform: uppercase;">Official Driver Passport Photo</div>
+            <div style="font-size: 0.9rem; font-weight: 700; color: #fff;">John Kamau Mwangi</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">PSV / Driver Doc ID: KE-PSV-449102</div>
+          </div>
+        </div>
+        <span class="badge badge-green" style="font-size: 0.7rem;">VERIFIED BASELINE</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Driver Biometric Security & Shift Gate -->
+    <div class="card" id="cardDriverBiometric">
+      <div class="card-title">
+        <span>🛡️ 2. Biometric Face Scan & Liveness Check</span>
+        <span id="drvBiometricBadge" class="badge badge-gold">CHECK REQUIRED</span>
+      </div>
+
+      <!-- Attempt Counter Banner -->
+      <div id="drvAttemptBanner" style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 6px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem;">
+        <span style="color: var(--text-muted);">Biometric Verification Attempts: <strong id="drvAttemptsLeft" style="color: var(--gold);">3 of 3 remaining</strong></span>
+        <span style="color: var(--text-dim); font-size: 0.7rem;">3 fails locks driver shift</span>
+      </div>
+
+      <!-- Driver Deactivated / Lockout Box -->
+      <div id="drvDeactivatedBox" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1.5px solid var(--red); border-radius: 12px; padding: 14px; margin-bottom: 14px;">
+        <div style="display: flex; align-items: flex-start; gap: 10px;">
+          <div style="font-size: 1.8rem; line-height: 1;">🚨</div>
+          <div style="flex: 1;">
+            <div style="font-size: 0.92rem; font-weight: 800; color: var(--red); text-transform: uppercase;">
+              Driver Account Temporarily Locked
+            </div>
+            <div style="font-size: 0.78rem; color: #fca5a5; margin-top: 3px; line-height: 1.35;">
+              Face scan failed 3 consecutive times against registered driver passport photo. Online shift access is blocked to prevent unauthorized proxy driving.
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(239, 68, 68, 0.25);">
+          <div style="font-size: 0.74rem; font-weight: 700; color: #fff; margin-bottom: 8px; text-transform: uppercase;">
+            Unlock Shift Access:
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-secondary" style="flex: 1; min-width: 140px; font-size: 0.78rem;" onclick="unlockDriverAccount('SMS OTP')">
+              💬 Unlock via Driver SMS OTP (123456)
+            </button>
+            <button class="btn btn-secondary" style="flex: 1; min-width: 140px; font-size: 0.78rem;" onclick="unlockDriverAccount('SACCO_MARSHALL')">
+              👮 SACCO Marshall Override
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-top: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem;">
+          <span style="color: var(--text-muted);">Driver Support & SACCO Desk:</span>
+          <div style="display: flex; gap: 8px;">
+            <a href="tel:+254700222423" style="color: var(--gold); text-decoration: none; font-weight: 700;">📞 0700 222 423</a>
+            <span style="color: var(--text-dim);">|</span>
+            <a href="https://wa.me/254700222423" target="_blank" style="color: var(--green); text-decoration: none; font-weight: 700;">💬 Driver WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Passive Scanner Frame -->
+      <div class="camera-frame">
+        <video id="drvWebcamVideo" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; display: none;"></video>
+        <div class="camera-oval" id="drvOvalReticle">
+          <div class="scan-laser" id="drvLaserScan"></div>
+        </div>
+        <div id="drvCameraPlaceholder" style="text-align: center; color: var(--text-dim); padding: 10px;">
+          <div style="font-size: 2.2rem; margin-bottom: 4px;">👤</div>
+          <div style="font-size: 0.85rem; font-weight: 600; color: #fff;">Driver Biometric Face Reticle</div>
+          <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
+            Live scan compared against registered driver passport photo • Zero photos saved
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Match Status Score -->
+      <div id="drvScanScoreBox" style="background: #080c16; border: 1px solid var(--card-border); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;">
+        <span id="drvScanStatusText" style="color: var(--text-muted);">
+          Ready to verify identity before shift begins
+        </span>
+        <span id="drvMatchScoreBadge" class="badge badge-gold">UNVERIFIED</span>
+      </div>
+
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn btn-secondary" style="flex: 1; min-width: 120px; font-size: 0.8rem;" onclick="startDriverWebcam()">
+          📹 Open Camera
+        </button>
+        <button class="btn btn-primary" id="btnDrvScanPass" style="flex: 1; min-width: 150px; font-size: 0.8rem;" onclick="performDriverFaceScan(false)">
+          ⚡ Scan & Match Passport
+        </button>
+        <button class="btn btn-danger" id="btnDrvScanFail" style="width: auto; padding: 0 12px; font-size: 0.8rem;" onclick="performDriverFaceScan(true)" title="Simulate failed face match">
+          ❌ Fail Attempt
+        </button>
+      </div>
+    </div>
+
+    <!-- Card 3: Incoming Ride Request Radar & Acceptance -->
+    <div class="card" id="cardIncomingOffer" style="grid-column: 1 / -1;">
+      <div class="card-title">
+        <span>📡 3. Live Dispatch Radar & Incoming Trip Offers</span>
+        <span id="offerStatusBadge" class="badge">RADAR SCANNING...</span>
+      </div>
+
+      <div class="incoming-offer-card" id="offerContainer" style="display: none;">
+        <!-- Timer Bar -->
+        <div class="timer-bar-container">
+          <div class="timer-bar" id="offerTimerBar"></div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+          <div>
+            <div style="font-size: 0.75rem; color: var(--gold); font-weight: 700; text-transform: uppercase;">NEW RIDE OFFER ARRIVED</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-top: 2px;" id="incomingTripCode">TRIP-KB921</div>
+          </div>
+          <div class="badge badge-green" style="font-size: 0.82rem; padding: 4px 10px;">
+            🛡️ VERIFIED PASSENGER
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 80px 1fr 1fr; gap: 14px; align-items: center; margin-bottom: 14px;">
+          <!-- Passenger Avatar -->
+          <div style="width: 72px; height: 72px; border-radius: 50%; border: 2px solid var(--gold); background: #080c16; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            <span style="font-size: 1.4rem; font-weight: 800; color: var(--gold);">BK</span>
+          </div>
+
+          <!-- Passenger Details -->
+          <div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">PASSENGER PUBLIC NAME</div>
+            <div id="incomingPaxName" style="font-size: 1.15rem; font-weight: 800; color: #fff;">Brian K.</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">⭐ 4.9 Rating • 24 Trips</div>
+          </div>
+
+          <!-- Destination & Pickup -->
+          <div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">DESTINATION</div>
+            <div id="incomingDestination" style="font-size: 0.95rem; font-weight: 700; color: #fff;">Thika Road Mall, Nairobi</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Pickup: <span id="incomingPickup">Epitome Lane 25</span></div>
+          </div>
+        </div>
+
+        <!-- High-Visibility Gold Fare Banner -->
+        <div class="fare-banner">
+          <div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">TOTAL ESTIMATED FARE</div>
+            <div class="fare-val" id="incomingFareVal">KES 350.00</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.72rem; color: var(--text-muted);">PAYMENT MODE</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff;">CASH / M-PESA</div>
+          </div>
+        </div>
+
+        <!-- Accept & Pass Buttons -->
+        <div style="display: flex; gap: 12px; margin-top: 14px;">
+          <button class="btn btn-success" style="flex: 2; font-size: 1.05rem;" onclick="driverAcceptOffer()">
+            ✅ ACCEPT TRIP OFFER (<span id="countdownSeconds">20</span>s)
+          </button>
+          <button class="btn btn-danger" style="flex: 1;" onclick="driverPassOffer()">
+            ❌ PASS TRIP
+          </button>
+        </div>
+      </div>
+
+      <!-- No active offer placeholder -->
+      <div id="noOfferPlaceholder" style="text-align: center; padding: 24px; color: var(--text-muted);">
+        <div style="font-size: 2.2rem; margin-bottom: 6px;">📡</div>
+        <div style="font-size: 0.95rem; font-weight: 700; color: #fff;">Radar Active & Polling for Requests</div>
+        <div style="font-size: 0.8rem; color: var(--text-dim); margin-top: 4px;">
+          Once a passenger requests a ride in Nairobi, the offer will ring here automatically.
+        </div>
+        <button class="btn btn-secondary" style="width: auto; margin: 14px auto 0; font-size: 0.8rem; padding: 6px 16px;" onclick="simulateIncomingRide()">
+          ⚡ Trigger Demo Ride Request Offer
+        </button>
+      </div>
+    </div>
+
+    <!-- Card 4: Trip in Progress, Telemetry & Waybill Settlement -->
+    <div class="card" id="cardTripInProgress" style="grid-column: 1 / -1; display: none;">
+      <div class="card-title">
+        <span>🏁 4. Active Trip In-Progress Telemetry</span>
+        <span id="tripProgressBadge" class="status-badge badge-ACCEPTED">DRIVER_ASSIGNED</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px;">
+        <div style="background: #080c16; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border);">
+          <div style="font-size: 0.72rem; color: var(--text-muted);">ACTIVE TRIP CODE</div>
+          <div id="activeTripCode" style="font-size: 1.3rem; font-weight: 800; color: var(--gold); font-family: monospace;">-</div>
+        </div>
+        <div style="background: #080c16; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border);">
+          <div style="font-size: 0.72rem; color: var(--text-muted);">PASSENGER NAME</div>
+          <div id="activePaxName" style="font-size: 0.95rem; font-weight: 700; color: #fff;">Brian K.</div>
+        </div>
+        <div style="background: #080c16; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border);">
+          <div style="font-size: 0.72rem; color: var(--text-muted);">ELAPSED TIME</div>
+          <div id="tripTimerVal" style="font-size: 1.25rem; font-weight: 800; font-family: monospace; color: var(--green);">00:00</div>
+        </div>
+        <div style="background: #080c16; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border);">
+          <div style="font-size: 0.72rem; color: var(--text-muted);">RUNNING METER</div>
+          <div id="runningMeterVal" style="font-size: 1.25rem; font-weight: 800; font-family: monospace; color: var(--gold);">KES 350.00</div>
+        </div>
+      </div>
+
+      <!-- Action Stepper Buttons -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">
+        <button class="btn btn-secondary" id="btnStepArrive" onclick="driverActionStep('ARRIVE')">
+          📍 1. Arrived at Pickup
+        </button>
+        <button class="btn btn-secondary" id="btnStepStart" onclick="driverActionStep('START')" disabled>
+          🚗 2. Passenger Boarded (Start Trip)
+        </button>
+        <button class="btn btn-primary" id="btnStepComplete" onclick="driverActionStep('COMPLETE')" disabled>
+          🏁 3. Arrived at Destination (Complete Trip)
+        </button>
+      </div>
+
+      <!-- Waybill & Payment Settlement Section -->
+      <div id="waybillSettlementBox" style="display: none; background: #131c31; border: 1.5px solid var(--gold); border-radius: 14px; padding: 18px; margin-top: 14px;">
+        <h4 style="color: var(--gold); margin-bottom: 6px;">📋 Official Trip Waybill & Cash Settlement</h4>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Review final charges, collect payment, and submit passenger feedback.</p>
+
+        <table class="waybill-table">
+          <tr><td>Base Fare (Nairobi Zone)</td><td style="text-align: right;">KES 100.00</td></tr>
+          <tr><td>Distance Traveled (6.2 km @ KES 30/km)</td><td style="text-align: right;">KES 186.00</td></tr>
+          <tr><td>Duration (12.8 min @ KES 5/min)</td><td style="text-align: right;">KES 64.00</td></tr>
+          <tr><td>TOTAL FARE COLLECTED</td><td style="text-align: right;" id="waybillTotalFare">KES 350.00</td></tr>
+        </table>
+
+        <!-- Mark as Paid -->
+        <button class="btn btn-success" id="btnMarkPaid" onclick="confirmCashPayment()" style="margin-bottom: 14px;">
+          💵 Confirm Cash Payment Collected (KES 350.00)
+        </button>
+
+        <!-- Rate Passenger -->
+        <div style="background: rgba(0,0,0,0.25); border-radius: 10px; padding: 12px; margin-top: 10px;">
+          <div style="font-size: 0.78rem; font-weight: 700; color: #fff; text-transform: uppercase;">Rate Passenger & Record in Occurrence Book</div>
+          <div class="stars" id="driverStarContainer">
+            <span class="star active" data-rating="1">★</span>
+            <span class="star active" data-rating="2">★</span>
+            <span class="star active" data-rating="3">★</span>
+            <span class="star active" data-rating="4">★</span>
+            <span class="star active" data-rating="5">★</span>
+          </div>
+          <div class="field-group" style="margin-bottom: 10px;">
+            <input type="text" id="driverComment" value="Punctual passenger, respectful, exact change paid.">
+          </div>
+          <button class="btn btn-secondary" id="btnSubmitFeedback" onclick="submitPassengerRating()">
+            📝 Submit Feedback & Finish Shift
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dispatcher Terminal Event Stream -->
+    <div class="logs-panel" id="logsPanel">
+      <div class="log-line">
+        <span class="log-time">[Init]</span>
+        <span class="log-tag tag-DRIVER">READY</span>
+        <span>Cabi Africa Driver Command Console initialized for John Kamau (KDA 123A).</span>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    let isDriverOnline = false;
+    let isDriverVerified = false;
+    let drvFailedAttempts = 0;
+    const maxDrvAttempts = 3;
+    let isDrvLockedOut = false;
+
+    let currentRideId = null;
+    let currentTripCode = 'TRIP-KB921';
+    let offerTimer = null;
+    let offerSecondsLeft = 20;
+    let tripInterval = null;
+    let tripSeconds = 0;
+    let selectedRating = 5;
+
+    // Audio synthesizer
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioClass();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playChime(freqs) {
+      try {
+        const ctx = getAudioContext();
+        let time = ctx.currentTime;
+        freqs.forEach(freq => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, time);
+          gain.gain.setValueAtTime(0.3, time);
+          gain.gain.exponentialRampToValueAtTime(0.001, time + 0.35);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(time);
+          osc.stop(time + 0.35);
+          time += 0.12;
+        });
+      } catch (e) {}
+    }
+
+    function log(msg, tag = 'DRIVER') {
+      const panel = document.getElementById('logsPanel');
+      const time = new Date().toLocaleTimeString();
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      line.innerHTML = `
+        <span class="log-time">[${time}]</span>
+        <span class="log-tag tag-${tag}">${tag}</span>
+        <span>${msg}</span>
+      `;
+      panel.appendChild(line);
+      panel.scrollTop = panel.scrollHeight;
+    }
+
+    // Backend Ping
+    async function checkBackendHealth() {
+      const pill = document.getElementById('backendPill');
+      const statusSpan = document.getElementById('backendStatus');
+      statusSpan.textContent = 'Pinging...';
+      try {
+        const res = await fetch('http://localhost:3334/api/health').catch(() => null);
+        if (res && res.ok) {
+          statusSpan.textContent = 'Connected (:3334)';
+          pill.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+          pill.style.color = 'var(--green)';
+          log('Connected to Dispatch Service on port 3334.', 'DISPATCH');
+        } else {
+          throw new Error('Offline');
+        }
+      } catch (e) {
+        statusSpan.textContent = 'Offline (Start :3334)';
+        pill.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+        pill.style.color = 'var(--red)';
+        log('Dispatch service not reached on :3334. Running console in offline simulation mode.', 'DISPATCH');
+      }
+    }
+
+    // Toggle Online / Offline
+    function toggleDriverOnline() {
+      if (isDrvLockedOut) {
+        alert('Driver account is locked due to 3 face mismatches. Please unlock via SMS OTP or contact Customer Care.');
+        log('⛔ Attempt to go online blocked: Account is temporarily locked.', 'LOCKOUT');
+        return;
+      }
+      if (!isDriverVerified) {
+        alert('Biometric Security Check Required: Please verify your face against your registered passport photo before going Online.');
+        log('⚠️ Must complete passport photo biometric match before going online.', 'VERIFY');
+        return;
+      }
+
+      isDriverOnline = !isDriverOnline;
+      const btn = document.getElementById('toggleShiftBtn');
+      const text = document.getElementById('shiftStatusText');
+      const badge = document.getElementById('drvLiveStatusBadge');
+
+      if (isDriverOnline) {
+        btn.className = 'switch-btn switch-online';
+        btn.innerHTML = '<span>🟢 ONLINE (LIVE)</span>';
+        text.textContent = 'Driver is ONLINE & Receiving Trips';
+        badge.textContent = 'ONLINE';
+        badge.className = 'badge badge-green';
+        log('🟢 Driver John Kamau went ONLINE. Dispatch radar active.', 'DRIVER');
+        playChime([523.25, 659.25, 783.99]);
+      } else {
+        btn.className = 'switch-btn switch-offline';
+        btn.innerHTML = '<span>🔴 GO ONLINE</span>';
+        text.textContent = 'Driver is OFFLINE';
+        badge.textContent = 'OFFLINE';
+        badge.className = 'badge badge-gold';
+        log('🔴 Driver John Kamau went OFFLINE.', 'DRIVER');
+      }
+    }
+
+    // Biometric Face Scan vs Passport Photo
+    let webcamStream = null;
+    async function startDriverWebcam() {
+      try {
+        const video = document.getElementById('drvWebcamVideo');
+        const placeholder = document.getElementById('drvCameraPlaceholder');
+        webcamStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
+        });
+        video.srcObject = webcamStream;
+        video.style.display = 'block';
+        placeholder.style.display = 'none';
+        log('📹 Front camera active for driver passive face verification (no photos saved).', 'VERIFY');
+      } catch (e) {
+        log(`Camera stream: ${e.message}. Using simulated sensor.`, 'VERIFY');
+      }
+    }
+
+    async function performDriverFaceScan(simulateMismatch = false) {
+      if (isDrvLockedOut) {
+        log('⛔ Driver account is temporarily locked. Please unlock via OTP or SACCO desk.', 'LOCKOUT');
+        return;
+      }
+
+      log('👤 Scanning driver facial geometry (passive in-memory comparison)...', 'VERIFY');
+
+      const laser = document.getElementById('drvLaserScan');
+      if (laser) {
+        laser.style.display = 'block';
+        laser.style.animation = 'laserSweep 1.2s infinite ease-in-out';
+      }
+
+      const statusEl = document.getElementById('drvScanStatusText');
+      const badgeEl = document.getElementById('drvMatchScoreBadge');
+      statusEl.textContent = '🔍 Scanning facial landmarks & comparing against official driver passport photo...';
+      statusEl.style.color = 'var(--gold)';
+      badgeEl.textContent = 'SCANNING...';
+      badgeEl.className = 'badge badge-gold';
+
+      await new Promise(r => setTimeout(r, 1200));
+
+      if (simulateMismatch) {
+        drvFailedAttempts++;
+        const remaining = Math.max(0, maxDrvAttempts - drvFailedAttempts);
+        document.getElementById('drvAttemptsLeft').textContent = `${remaining} of ${maxDrvAttempts} remaining`;
+
+        if (drvFailedAttempts >= maxDrvAttempts) {
+          isDrvLockedOut = true;
+          isDriverVerified = false;
+          isDriverOnline = false;
+          document.getElementById('drvDeactivatedBox').style.display = 'block';
+          document.getElementById('drvBiometricBadge').textContent = '🚨 LOCKED (3 FAILS)';
+          document.getElementById('drvBiometricBadge').className = 'badge badge-red';
+          document.getElementById('drvLiveStatusBadge').textContent = 'LOCKED';
+          document.getElementById('drvLiveStatusBadge').className = 'badge badge-red';
+
+          statusEl.textContent = '❌ Face mismatch: Driver account temporarily locked after 3 failed attempts.';
+          statusEl.style.color = 'var(--red)';
+          badgeEl.textContent = 'ACCESS DENIED';
+          badgeEl.className = 'badge badge-red';
+
+          log('🚨 CRITICAL: Driver account locked out after 3 failed biometric face matches vs passport photo.', 'LOCKOUT');
+          playChime([350, 300, 250]);
+        } else {
+          statusEl.textContent = `⚠️ Face mismatch! Attempt ${drvFailedAttempts} of ${maxDrvAttempts}. Please ensure good lighting.`;
+          statusEl.style.color = 'var(--gold)';
+          badgeEl.textContent = 'MISMATCH (63%)';
+          badgeEl.className = 'badge badge-gold';
+          log(`⚠️ Driver face mismatch detected (Attempt ${drvFailedAttempts}/${maxDrvAttempts}).`, 'VERIFY');
+        }
+      } else {
+        // MATCH SUCCESS
+        drvFailedAttempts = 0;
+        isDrvLockedOut = false;
+        isDriverVerified = true;
+        document.getElementById('drvDeactivatedBox').style.display = 'none';
+        document.getElementById('drvAttemptsLeft').textContent = '3 of 3 remaining';
+
+        statusEl.textContent = '✅ Driver identity verified with official passport photo (98.6%) — Access Granted';
+        statusEl.style.color = 'var(--green)';
+        badgeEl.textContent = '98.6% MATCH';
+        badgeEl.className = 'badge badge-green';
+
+        document.getElementById('drvBiometricBadge').textContent = 'VERIFIED';
+        document.getElementById('drvBiometricBadge').className = 'badge badge-green';
+
+        log('✅ Driver John Kamau face matched registered passport photo (98.6%). Shift unlocked!', 'VERIFY');
+        playChime([523.25, 659.25, 783.99]);
+      }
+    }
+
+    function unlockDriverAccount(method) {
+      drvFailedAttempts = 0;
+      isDrvLockedOut = false;
+      isDriverVerified = true;
+      document.getElementById('drvDeactivatedBox').style.display = 'none';
+      document.getElementById('drvAttemptsLeft').textContent = '3 of 3 remaining';
+
+      const statusEl = document.getElementById('drvScanStatusText');
+      const badgeEl = document.getElementById('drvMatchScoreBadge');
+      statusEl.textContent = `✅ Driver account successfully unlocked via ${method}. Shift unlocked.`;
+      statusEl.style.color = 'var(--green)';
+      badgeEl.textContent = 'UNLOCKED';
+      badgeEl.className = 'badge badge-green';
+
+      document.getElementById('drvBiometricBadge').textContent = 'VERIFIED';
+      document.getElementById('drvBiometricBadge').className = 'badge badge-green';
+
+      log(`🔑 Driver account unlocked via ${method}. Ready to go online!`, 'VERIFY');
+      playChime([523.25, 659.25, 783.99]);
+    }
+
+    // Simulate Incoming Ride Request Offer
+    function simulateIncomingRide() {
+      if (!isDriverOnline) {
+        toggleDriverOnline();
+      }
+      document.getElementById('offerContainer').style.display = 'block';
+      document.getElementById('noOfferPlaceholder').style.display = 'none';
+      document.getElementById('offerStatusBadge').textContent = 'INCOMING OFFER';
+      document.getElementById('offerStatusBadge').className = 'badge badge-gold';
+
+      currentTripCode = 'TRIP-' + Math.floor(1000 + Math.random() * 9000);
+      document.getElementById('incomingTripCode').textContent = currentTripCode;
+
+      offerSecondsLeft = 20;
+      clearInterval(offerTimer);
+      playChime([659.25, 783.99, 1046.5]);
+
+      offerTimer = setInterval(() => {
+        offerSecondsLeft--;
+        document.getElementById('countdownSeconds').textContent = offerSecondsLeft;
+        const pct = (offerSecondsLeft / 20) * 100;
+        document.getElementById('offerTimerBar').style.width = pct + '%';
+
+        if (offerSecondsLeft <= 0) {
+          clearInterval(offerTimer);
+          driverPassOffer();
+        }
+      }, 1000);
+
+      log(`📡 Incoming Ride Offer dispatched: ${currentTripCode} for Brian K. (Fare: KES 350.00)`, 'DISPATCH');
+    }
+
+    function driverAcceptOffer() {
+      clearInterval(offerTimer);
+      document.getElementById('offerContainer').style.display = 'none';
+      document.getElementById('cardTripInProgress').style.display = 'block';
+      document.getElementById('activeTripCode').textContent = currentTripCode;
+      document.getElementById('tripProgressBadge').textContent = 'DRIVER_ASSIGNED';
+      document.getElementById('tripProgressBadge').className = 'status-badge badge-ACCEPTED';
+
+      log(`✅ Driver John Kamau ACCEPTED trip ${currentTripCode}. Navigating to pickup...`, 'DRIVER');
+      playChime([523.25, 659.25, 783.99, 1046.5]);
+    }
+
+    function driverPassOffer() {
+      clearInterval(offerTimer);
+      document.getElementById('offerContainer').style.display = 'none';
+      document.getElementById('noOfferPlaceholder').style.display = 'block';
+      document.getElementById('offerStatusBadge').textContent = 'RADAR SCANNING...';
+      document.getElementById('offerStatusBadge').className = 'badge';
+      log(`⚠️ Driver John Kamau passed trip ${currentTripCode}. Escalating to next nearby driver.`, 'DISPATCH');
+    }
+
+    function driverActionStep(step) {
+      if (step === 'ARRIVE') {
+        document.getElementById('tripProgressBadge').textContent = 'ARRIVED_AT_PICKUP';
+        document.getElementById('tripProgressBadge').className = 'status-badge badge-ARRIVED';
+        document.getElementById('btnStepArrive').disabled = true;
+        document.getElementById('btnStepStart').disabled = false;
+        log(`📍 Driver Arrived at Epitome Lane 25. Passenger notified.`, 'DRIVER');
+        playChime([659.25, 783.99]);
+      } else if (step === 'START') {
+        document.getElementById('tripProgressBadge').textContent = 'TRIP_IN_PROGRESS';
+        document.getElementById('tripProgressBadge').className = 'status-badge badge-IN_PROGRESS';
+        document.getElementById('btnStepStart').disabled = true;
+        document.getElementById('btnStepComplete').disabled = false;
+
+        tripSeconds = 0;
+        clearInterval(tripInterval);
+        tripInterval = setInterval(() => {
+          tripSeconds++;
+          const mins = String(Math.floor(tripSeconds / 60)).padStart(2, '0');
+          const secs = String(tripSeconds % 60).padStart(2, '0');
+          document.getElementById('tripTimerVal').textContent = `${mins}:${secs}`;
+        }, 1000);
+
+        log(`🚗 Passenger boarded. Trip started towards Thika Road Mall. Fare meter running.`, 'DRIVER');
+        playChime([523.25, 783.99]);
+      } else if (step === 'COMPLETE') {
+        clearInterval(tripInterval);
+        document.getElementById('tripProgressBadge').textContent = 'COMPLETED';
+        document.getElementById('tripProgressBadge').className = 'status-badge badge-COMPLETED';
+        document.getElementById('btnStepComplete').disabled = true;
+        document.getElementById('waybillSettlementBox').style.display = 'block';
+        log(`🏁 Arrived at Destination. Final Fare: KES 350.00. Showing Waybill.`, 'DRIVER');
+        playChime([783.99, 1046.5]);
+      }
+    }
+
+    function confirmCashPayment() {
+      const btn = document.getElementById('btnMarkPaid');
+      btn.disabled = true;
+      btn.textContent = '✅ Cash Payment Confirmed (KES 350.00)';
+      btn.className = 'btn btn-secondary';
+      log(`💵 Driver confirmed cash payment received for ${currentTripCode}. Registered in financial ledger.`, 'DRIVER');
+    }
+
+    // Star Rating
+    document.querySelectorAll('#driverStarContainer .star').forEach(star => {
+      star.addEventListener('click', (e) => {
+        selectedRating = parseInt(e.target.dataset.rating);
+        document.querySelectorAll('#driverStarContainer .star').forEach(s => {
+          s.classList.toggle('active', parseInt(s.dataset.rating) <= selectedRating);
+        });
+      });
+    });
+
+    function submitPassengerRating() {
+      const comment = document.getElementById('driverComment').value;
+      const obNumber = 'OB-RIDE-' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('waybillSettlementBox').innerHTML = `
+        <div style="color: var(--green); font-weight: 700; text-align: center; padding: 20px;">
+          🎉 Rating & Feedback registered in Occurrence Book (${obNumber})!<br>
+          Trip flow 100% complete! Driver ready for next dispatch wave.
+        </div>
+      `;
+      log(`📝 Occurrence Book entry created: ${obNumber} (Rating: ${selectedRating}/5 stars). Trip successfully settled!`, 'DISPATCH');
+      playChime([523.25, 659.25, 783.99, 1046.5]);
+    }
+
+    window.onload = () => {
+      checkBackendHealth();
+      // Default verified for convenience
+      performDriverFaceScan(false);
+    };
+  </script>
+</body>
+</html>

@@ -54,7 +54,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
       Widget nextScreen = const LoginScreen();
       if (authState is Authenticated) {
-        nextScreen = const MainShell();
+        final driverProfile = authState.user?['driverProfile'];
+        if (driverProfile != null) {
+          nextScreen = const MainShell();
+        } else {
+          // No driver profile found -> route to login page
+          nextScreen = const LoginScreen();
+        }
       }
 
       Navigator.pushReplacement(

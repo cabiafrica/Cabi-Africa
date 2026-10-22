@@ -224,22 +224,6 @@ class RideService {
     }
   }
 
-  // Rate a driver after a ride
-  Future<void> rateDriver(String rideId, int rating, String comment) async {
-    try {
-      final response = await _client.post(
-        Uri.parse('$_dispatchBaseUrl/rides/$rideId/rate'),
-        headers: _headers,
-        body: jsonEncode({'rating': rating, 'comment': comment, 'role': 'PASSENGER'}),
-      );
-      if (response.statusCode != 200 && response.statusCode != 201) {
-        debugPrint('rateDriver failed: ${response.statusCode} ${response.body}');
-      }
-    } catch (e) {
-      debugPrint('Error rating driver: $e');
-    }
-  }
-
   // Start the trip (driver begins journey)
   Future<void> startTrip(String rideId) async {
     try {
@@ -565,7 +549,38 @@ class RideService {
     return true;
   }
 
-  Future<void> submitRating(String rideId, int rating) async {
-    await ratePassenger(rideId, rating, "");
+  Future<void> rateDriver(String rideId, int rating, [String? comment]) async {
+    return submitRating(
+      rideId: rideId,
+      rating: rating.toDouble(),
+      comment: comment,
+      role: 'PASSENGER',
+    );
+  }
+
+  Future<void> submitRating({
+    required String rideId,
+    required double rating,
+    String? comment,
+    String role = 'PASSENGER',
+  }) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/rate'),
+        headers: _headers,
+        body: jsonEncode({
+          'rating': rating.round(),
+          'comment': comment,
+          'role': role,
+        }),
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        debugPrint('submitRating failed: ${response.statusCode} ${response.body}');
+        throw Exception('Failed to submit rating: ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error rating ride: $e');
+      rethrow;
+    }
   }
 }

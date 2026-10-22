@@ -4,8 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:core_ui/core_ui.dart';
 
 class LanguageNotifier extends StateNotifier<Locale> {
-  LanguageNotifier([Locale initialLocale = const Locale('en')])
-      : super(initialLocale);
+  LanguageNotifier([super.initialLocale = const Locale('en')]);
 
   static const String languageKey = 'cabi_preferred_language';
 
