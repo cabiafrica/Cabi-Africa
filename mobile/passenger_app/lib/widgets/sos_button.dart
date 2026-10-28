@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:passenger_app/theme/app_theme.dart';
 import 'package:passenger_app/services/safety_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../screens/safety_center_screen.dart';
 
 class SOSButton extends StatefulWidget {
   final VoidCallback? onTriggered;
@@ -235,6 +236,36 @@ class _SOSButtonState extends State<SOSButton>
                 ),
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Open Safety Center Command (Stitch Safety Center)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SafetyCenterScreen()),
+                  );
+                },
+                icon: const Icon(Icons.security_rounded, color: Colors.black, size: 18),
+                label: Text(
+                  'OPEN SAFETY COMMAND CENTER',
+                  style: AppTheme.montserrat(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 12.5,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryColor,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),

@@ -7,6 +7,7 @@ import '../providers/auth_provider.dart';
 import 'support_screen.dart';
 import 'finance_screen.dart';
 import 'my_organization_screen.dart';
+import 'wealth_creation_screen.dart';
 import '../theme/app_theme.dart';
 
 class MenuScreen extends ConsumerWidget {
@@ -132,6 +133,15 @@ class MenuScreen extends ConsumerWidget {
             _buildGridSection(
               context,
               [
+                _MenuGridItem(
+                    icon: Icons.auto_awesome_rounded,
+                    label: 'WEALTH & SACCO',
+                    color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                    iconColor: AppTheme.primaryColor,
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const WealthCreationScreen()))),
                 _MenuGridItem(
                     icon: Icons.account_balance_wallet_outlined,
                     label: 'WALLET',

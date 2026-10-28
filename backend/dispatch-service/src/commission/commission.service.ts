@@ -22,6 +22,7 @@ export interface TripPayoutResult {
     housingDeduction: number;
     totalWelfareDeductions: number;
     driverShare: number;
+    wealthProgramDeductions?: number;
     driverNetTakeHome: number;
     totalSaccoDeposit: number;
     commissionRebate: number;
@@ -167,6 +168,28 @@ export class CommissionService {
 
         const totalWelfareDeductions = pensionDeduction.plus(housingDeduction);
 
+        // ─── Voluntary Wealth Program Deductions (SACCO, Insurance, MMF, Pension) ───
+        let wealthProgramDeductions = new Decimal(0);
+        try {
+            const consents = await (this.prisma as any).driverFinancialConsent?.findMany({
+                where: {
+                    driverProfileId,
+                    status: 'ACTIVE',
+                    isConsented: true,
+                }
+            }) ?? [];
+
+            if (consents.length > 0) {
+                // Sum active rates, capped at 30%
+                const totalConsentPct = consents.reduce((sum: number, c: any) => sum + Number(c.deductionPct || 0), 0);
+                const effectivePct = Math.min(totalConsentPct, 0.30);
+                wealthProgramDeductions = driverShare.times(effectivePct);
+                driverNetTakeHome = driverNetTakeHome.minus(wealthProgramDeductions);
+            }
+        } catch (consentErr: any) {
+            this.logger.warn(`Could not compute voluntary wealth deductions: ${consentErr?.message}`);
+        }
+
         const totalDeductionRate = platformCommissionRate
             + (personalSavingRate / 100)
             + totalWelfareDeductions.dividedBy(fare).toNumber();
@@ -190,6 +213,7 @@ export class CommissionService {
             housingDeduction: housingDeduction.toNumber(),
             totalWelfareDeductions: totalWelfareDeductions.toNumber(),
             driverShare: driverShare.toNumber(),
+            wealthProgramDeductions: wealthProgramDeductions.toNumber(),
             driverNetTakeHome: driverNetTakeHome.toNumber(),
             totalSaccoDeposit: totalSaccoDeposit.toNumber(),
             commissionRebate: commissionRebate.toNumber(),

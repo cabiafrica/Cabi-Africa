@@ -1,21 +1,23 @@
 ---
-page: trip-receipt
-device: mobile
-project: projects/5681992570744779348
+page: passenger_home_light_variant
+project: 11467400866482705558
+assetId: 3b628ef1a02a46759c0a689ae79c2951
+target: mobile/passenger_app
 ---
-
-A mobile screen showing the completed ride trip summary and M-Pesa payment receipt for Cabi Africa passengers.
+Cabi Africa Passenger App — Daytime Porcelain Light Mode Variant of Ride Tier HUD.
 
 **DESIGN SYSTEM (REQUIRED):**
-- Target Project: Cabi Africa (projects/5681992570744779348)
-- Theme: Dark Mode Luxury Mobility (#121212 obsidian background)
-- Colors: Primary Metallic Gold (#D4AF37 to #FFDF00), Electric Blue (#067ff9), Neon Yellow (#f9f906), Emerald Success (#10b981)
-- Typography: Montserrat for headings, Plus Jakarta Sans for UI body, Inter for telemetry numbers and currency
-- Style: Glassmorphic frosted cards, 1px subtle gold hairline borders, pill-shaped action buttons, floating HUD elements
+Target Project: Cabi Africa Ecosystem (projects/11467400866482705558)
+Design Archetype: Ultra-Premium Mobility Dual-Theme (Porcelain Light Mode Active)
+Canvas: Clean Porcelain #f8fafc, Surface cards #ffffff, Clean hairline border #cbd5e1
+Typography Colors: High-contrast Slate-900 #0f172a for headlines, Slate-600 #475569 for secondary text
+Accent Colors: Rich Aurum Bronze #8C6D1F for brand highlights, Deep Electric Blue #0260c4 for GPS routes
+Interactive Pill: Active Sun icon highlighted in Day/Night switch pill
+CTA Button: Warm Gold / Bronze gradient with high-contrast text and crisp luxury finish
 
 **Page Structure:**
-1. Top bar with "Trip Completed" status pill and share receipt icon.
-2. Route overview card with pickup (Westlands) and drop-off (CBD) time stamps, distance, and duration.
-3. Fare breakdown card (Base fare, distance rate, SACCO welfare fee, M-Pesa confirmation code `QWE789XY`, total in `KES 650`).
-4. Driver rating module with 5-star selector and tip quick-add pills (`+50`, `+100`, `+200`).
-5. Dual action buttons: Primary Gold pill "Book Next Ride" and Secondary frosted glass "Save Receipt".
+1. Top bar with active Daytime Theme Toggle pill (Sun highlighted), Cabi Africa gold crest, SOS badge
+2. Light-mode clean metropolitan transit vector map with high-visibility royal blue route line
+3. Bottom Sheet with crisp white surface, gold-accented search bar, quick destination chips
+4. 4 Ride Tier cards with high-contrast text and KES fares
+5. M-Pesa 1-tap checkout bar and Gold CTA button

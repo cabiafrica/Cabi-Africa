@@ -1,196 +1,23 @@
 {
-  "projectId": "5681992570744779348",
-  "projectTitle": "Cabi Africa",
+  "projectId": "11467400866482705558",
+  "projectTitle": "Cabi Africa Ecosystem",
   "screens": [
     {
-      "id": "efbb07f42c3449fe9b5631158cb011bf",
-      "resourceName": "projects/5681992570744779348/screens/efbb07f42c3449fe9b5631158cb011bf",
-      "title": "Cabi Africa - Ride Tier Selection",
+      "id": "c63e91ea417245ba9eacff30578f6240",
+      "resourceName": "projects/11467400866482705558/screens/c63e91ea417245ba9eacff30578f6240",
+      "title": "Cabi Africa - Ride Tier HUD",
       "deviceType": "MOBILE",
       "dimensions": { "width": 780, "height": 1768 },
       "targetWorkspace": "mobile/passenger_app",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WZb9TwWITOhz7KSVxROpnOZGBxnABAhZ75dIdA15-BqbHoDsnqpC9tv2NZ4wfx_jG0Y1T3-vrpEhqoXzymzna0DMqrxgnbgGaFdkIwdCog2sXIOZXr8pXene_nkf3RzeThhhjKVlKzNo2Q8oU1a8g4Kqaj4OU5FKjJBBz-XsIEhwC88njJdsR_wxsdy1CPGUY0v4H_Y0X1MI_6rnRXzsuEl5yklf2iSKxJx3weoaXe37TKqwSGicCj3NA",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzhlZjE3MWUxY2NjNTQ1MjQ4ZGY3NzY0OGQwNjJmNGM5EgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "285b31b494ec4981bdff1e9539d034b6",
-      "resourceName": "projects/5681992570744779348/screens/285b31b494ec4981bdff1e9539d034b6",
-      "title": "Driver App - Incoming Ride Offer",
-      "deviceType": "MOBILE",
-      "dimensions": { "width": 780, "height": 1768 },
-      "targetWorkspace": "mobile/driver_app",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1U7r6GVBOTP1jU6B-5J-0suWD2p-IL_txRtoSfs1-_G7ixX-grPN8IgYDZzfv2OddGZijrqM16-XMZQqPCpwDr78AD_x5IW0zQP3ODUV0x6xttCGZ89qORfd3raeAGnlq5mctvS0HpIzMdBCbSXB3iXBKyWW20Me5C3rlmheT8m3AfDawRzMyGUIsjiSi6ICW5uKy1lwv9nE7jTkZW8Um_wjHklsB1lltg0Qy_2QVlTTM7R1WFzC6VJxvQ",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2FlMzA3ZmIxNjIzZDQ3MjliYTM5ZWYyODBjYTRhYzZlEgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "78d227683ecb4f07a04fa88fe66e020c",
-      "resourceName": "projects/5681992570744779348/screens/78d227683ecb4f07a04fa88fe66e020c",
-      "title": "Cabi Africa Ultra-Premium Landing Page",
-      "deviceType": "DESKTOP",
-      "dimensions": { "width": 2560, "height": 5878 },
-      "targetWorkspace": "web/landing_page",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WoolZ4UiJ33zRsQjrucjBoPycRQ5FIQb4Ui3L86rpUXk0ro0QiulEJGjfyvLWc1WNlpFdzvTDbQ5PbsKgvBVnqBRldSghPw7QiqeXygL5MzljgnM1ulndXlgmU8fuFZZnf9ASju0v_S9N1qQb11Oz6NlL3-oZ0TxfIVVc_42M-vOl_kwjzQj0KgMpne56ZTBq--YQ-gehM3D4HSjn6Eyum540qMR54JDkez8-AFk_hoBi0NxQkQ7ldRkE",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzJiNzhjNzY4OThmNTQ4MjViNzNlZGVhM2I1NzRlYTM0EgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "d8f6586273a44790b610435cfadbd61f",
-      "resourceName": "projects/5681992570744779348/screens/d8f6586273a44790b610435cfadbd61f",
-      "title": "Cabi Africa Futuristic Landing Page",
-      "deviceType": "DESKTOP",
-      "dimensions": { "width": 2560, "height": 5768 },
-      "targetWorkspace": "web/landing_page",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1UhJ_9DypjKK06IYm5mBPAZM0ZOb9yeSzfshA0kc1cvYP-oBB8viTj4jGvNPq9TgfsBtenCSXLVC-mu1RhuPfTH7_FPHRj89_oPcKBFJRNVMsF64SDYQC77cspHy80gSO5mnRh3WfWEqvlXpYuBksXY4zG_jkS2Thg_jtwKkgi3mR_O3Zp3CBilbGaYWfKKl99Ed4frXmGQBtu7uzVvSy2aLkFnyHA6Y1a-W-GFMZ_27kPqv0IFJU9Wgw",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzQ1ZWZhZjhjNzJiZjRiNTdiNTY5MjAzNWUwODgzMzA0EgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "c39c49c257104c26a9f177f7f25153eb",
-      "resourceName": "projects/5681992570744779348/screens/c39c49c257104c26a9f177f7f25153eb",
-      "title": "Ride with Cabi - Ultra-Premium Passenger Landing Page",
-      "deviceType": "DESKTOP",
-      "dimensions": { "width": 2560, "height": 5652 },
-      "targetWorkspace": "web/landing_passenger",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XLbOZf3rKXH7s5c6mtYbTIW_g9F4tQdP15_KqmluSrFbRknoGYhmZYvnjg_mKyBze9X2fsSk29pDrnaxHPzLUgrXgFc0x8a87CCMjkPg3BgXpwkJrYdmB8yQkDbCZzalma65FMRArY1VA2gw3rHTRrVPh6e_6AeqGUYnHNcVsIwRyWANHBZ7ykwXdEmhDVFdvM-2MeKeWyt43NUVV2pP1gGfRqpLApROLeTf3KSMQpUaXRRFlcONq0zp4",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzNmNWY3YmUxODhmNjQ2OWE5YmFmZGUwZWFiM2ZjZmYwEgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "7c397a7fd6254d9f8ff23f3e81b5d32c",
-      "resourceName": "projects/5681992570744779348/screens/7c397a7fd6254d9f8ff23f3e81b5d32c",
-      "title": "Driver App Login (Red Accent Variant)",
-      "deviceType": "MOBILE",
-      "dimensions": { "width": 780, "height": 1768 },
-      "targetWorkspace": "mobile/driver_app",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1VvqDZknVeeQ89rNsWu1KBCiZoAIWeoBOeXMCYTqW7GHrMTDq6DaajQXi1QPgMh90M-3kI3nv6-O-NLqT9lEx74AP0AkJJImGpl8Emrmud5Ydt-lDnAII2bgI3kauECxdP4LnFD98ATwCOG0Kx1M_Qu7yCaXgZ5B666t6X4KjSt0rsK6U5lai9L_zNusAgUl_LWkhvWbsvvqd8fTBZfhIAZ-tXpKDJDJhKnc5maJ7XflA8lnyiYt5itzvg",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2NjYmZmN2YyY2E3MzQ5NzY5OTE5N2YzYTE1Yzc3MGIwEgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=89354086"
-    },
-    {
-      "id": "7a798f84d7ef45d5b3700e3cc09b64f5",
-      "resourceName": "projects/5681992570744779348/screens/7a798f84d7ef45d5b3700e3cc09b64f5",
-      "title": "Passenger Landing Page - Ride with Cabi",
-      "deviceType": "DESKTOP",
-      "dimensions": { "width": 2560, "height": 9632 },
-      "targetWorkspace": "web/landing_passenger",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XqJsNdzSLXaVtlH7mvCrwQZ5NwV-5mYfSkhAuRCpwjd69w0NiYFoC76HmwPed2XojYShLBL-IbkakZJdsK_wfgoP_CCsQ1ubo--c3vJNpdjVTsEt6hIpkcED5nT9oY9vG0tdx-o2kX1QWQD7EF8kbrtItqhmbJI7QSauRVIyAUuO-gGdnc5ymNjiq80ov3JRfiGtKuDWSYXfKxQTBRLsF1ZR_RxEg_59N1qQAGq22nrdVBbpLMAi8pdqU",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzQ4ZjRjM2M0M2Y2MjRkZjlhZTc1NjM1YzJjZTJiZGI4EgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "c4861c2b6ad749bb8e1cdf95b2053755",
-      "resourceName": "projects/5681992570744779348/screens/c4861c2b6ad749bb8e1cdf95b2053755",
-      "title": "Drive with Cabi - Driver Landing Page",
-      "deviceType": "DESKTOP",
-      "dimensions": { "width": 2560, "height": 6358 },
-      "targetWorkspace": "web/landing_driver",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XeT7byi-JHlrpScSQC8cOkMAoNZZ5eYw4rC8ZUgAXc9H6vaEvJ9B3o_6fuz5gV9G1K2cZ_jq4gLS9U-eg_LiVgyHd0hPs6yh30JbNhEUGT2e0cZmoMcpPtq9-9rm-25tFsM314WJY8_oTa4TeR7d63GOGm4LiU9kalrpauUu-X8Lp8GdgHxXxA-X72cco0JpLd025tMCZQ_OlCNOxn44Tk5nwxTYJ68dOev2-8lrVKxY3yoa-hKu_r8-M",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzEyNWFiYmJmOGQ0ODQ5MDM5MDIwYWFmOWVjOWNjNjZlEgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "301afa881b5c41f9ba4b25669aaf3adf",
-      "resourceName": "projects/5681992570744779348/screens/301afa881b5c41f9ba4b25669aaf3adf",
-      "title": "Driver App Login",
-      "deviceType": "MOBILE",
-      "dimensions": { "width": 780, "height": 1918 },
-      "targetWorkspace": "mobile/driver_app",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XCUt0o8WgO-zKmceHaVoF8SzjKYmLoLHjBKkjG-fJCeeSES21aU7FpcOsbtp0ExwE0xMf1CwB-_VR4PGXsFHaOrqSvNPTSDUuA-x03Tb5Fn1HCuzrxd1ku3nhD_FlWRU9h56Mg5IGuXSge_QQ_ne24FV-B7cK4cDWWA2P5X3Epnq1NbI1NPnb_HXtSutAnBKTAZ7WfvuOHit36Jd4kApwiyfLHaTMBqmXAcFjAw8pZch6IqmU20EmbnsQ",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzBkODkyNmU5YTEzMzQwNDhhN2M5ZWQxYzhmYjExNjQwEgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=89354086"
-    },
-    {
-      "id": "c716262e2d2b4123b97394f25222c452",
-      "resourceName": "projects/5681992570744779348/screens/c716262e2d2b4123b97394f25222c452",
-      "title": "Cabi Africa Driver Dashboard - Futuristic UI",
-      "deviceType": "DESKTOP",
-      "dimensions": { "width": 2560, "height": 2198 },
-      "targetWorkspace": "web/driver_portal",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WwnJ6RKOYlgknEj9l2KUHqAJwi7-AYvzmB2ah_FVvHudTeHVM5hO9lkhxc-iYEYDBk8rWVyhH-3eNrHfkfqjwiVvhp5dCmNcYWTUy9qRpObF2Nh-zTAS2zpmRS5hsNQJfk-Lx8wwXvkQnqzklc8w37z5n53JU-kflb8ztaxNOubzxD0wn_6zUWPPa_nF9H1ftH_QNVpz_LI93fIztS2OfDNlINSMTecUs2WbcWfnEI7hhMxdxKiUsMgIg",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzZiN2NjM2Q1MmVkZjQ5MGZhMTY2ZGE0OWI2Zjc3OGNhEgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "fde839015bdc4d27bab31604ec4f9ba5",
-      "resourceName": "projects/5681992570744779348/screens/fde839015bdc4d27bab31604ec4f9ba5",
-      "title": "Futuristic Driver Dashboard - Cabi Africa",
-      "deviceType": "DESKTOP",
-      "dimensions": { "width": 2560, "height": 2080 },
-      "targetWorkspace": "web/driver_portal",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XU795CFtNz-ZSxBzUyq0uoUPuYNUesKjhVwGzYXyX1uRG5QD-6mGoBKXPxaOb-vc40LT15xdMCmwlyFnirNr20wW_r_XyFIr3rW9flEiwoacPRJ7TC68-82a7ZsjYzkZo-Qpytik0TZlwjhgFoms1qBSOx5QkCTdDJb9XSaZNuvlmm_8uGtSa4vnoda_hMMmmfXYW-XsHTsF4gJ8wcRSZcyUcu6CJRptC5z_4kcGDCbGFb53Roqd4wRuk",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzc2YWUyOGNlMTBjZjQzZjFiMDdiMDk0YjJjZWYwOTY2EgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "85aae5f5fcf04d64ab19c36db7bdd25b",
-      "resourceName": "projects/5681992570744779348/screens/85aae5f5fcf04d64ab19c36db7bdd25b",
-      "title": "Passenger App Homepage v1",
-      "deviceType": "MOBILE",
-      "dimensions": { "width": 780, "height": 1768 },
-      "targetWorkspace": "mobile/passenger_app",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1Un23nhSvxz6k39MRVgg3Cy67Tr7MzG-9RkcpcZq0TrW7r60NRMG4oMbx-z_cRQBXqaooP1a3G6c1QEIZQ6muAqE1M5_0yBr8BUybu5XCa3ZZfahSbCOXW05KpFWewZLfWXTgGt_PtxazTt1ID9WVOeaKEgxvm4w_mV9kfr27CWai4dkjN5XEvQIo4d5MJhGWrYlDmu0kyAlpsBMJmf1dZjFEx0C-C1NaqRaSTSjxLHyB6TX9a389H-2Po",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzQzZWE5OTJmZmYxNzRkYjA5OWRhOGM2ODdlNjQ2ZjBkEgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=89354086"
-    },
-    {
-      "id": "eda438756ef847b7b1fcc227ea722adc",
-      "resourceName": "projects/5681992570744779348/screens/eda438756ef847b7b1fcc227ea722adc",
-      "title": "Futuristic User Portal Login",
-      "deviceType": "DESKTOP",
-      "dimensions": { "width": 2816, "height": 2252 },
-      "targetWorkspace": "web/sacco_portal",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1Xem64Qf8Kotdn5w-1vy8ytdoK4kaOHWYOtYNxWfydsr-Ur9TeG1TjYjLGDtwofGojVB0Ic0UMIU6bV0rZsC-G4--ihRg1SkzRTnSuTgnrSqOry7SjHnCdpxfnvfw9Vphul6c0aEx5oAigrc4Gdu5DOC4Kpg-_f3wZhgjNlefqK4t0EKpm99tVEzjoPpkf1TNlxDn8-v8uvbh8txzvnRZ89xBGnVA5hdwY2UH8KlC-YrfeZOO7oDTKy7Q",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzBhZjc3M2UyYWZlNDQ1ZmU4YjUzODU5ZWJkNmQ0ZWY3EgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "936db57f11524b0db64f768a5c362c13",
-      "resourceName": "projects/5681992570744779348/screens/936db57f11524b0db64f768a5c362c13",
-      "title": "Sacco Login/Sign-up Page",
-      "deviceType": "MOBILE",
-      "dimensions": { "width": 780, "height": 1768 },
-      "targetWorkspace": "web/sacco_portal",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XSXDKo5hZXqfROpJMnbhMQZqQUoAf2t3kcVTA8Rj-a-jc4mjrJFRN3hqRWgqYoS5jUydOGSHAZix2_b0zriCJkMpQqTbsMl8-ZX3VOrXCNzJ-oDnXPgN1vySZlaUGZcZyAF8dqSY9fXABDALsPmvBdZY08A9WqT34RpV0ml5zfft2w6DWn19XPjO2rRyEEfy1ywpyF8EByZ4TINt-QtcPNBTVamUp0T0dKI4kNXb1z8IYh-mckoEppagQ",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzg1ZGY5MWMwNGQ1YTQ4MmJiZGQ3OWEwOTM5ZmYzOGUzEgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "137dccdb3d924673b8d0cf56967aa05f",
-      "resourceName": "projects/5681992570744779348/screens/137dccdb3d924673b8d0cf56967aa05f",
-      "title": "Passenger App Homepage v2",
-      "deviceType": "MOBILE",
-      "dimensions": { "width": 780, "height": 1768 },
-      "targetWorkspace": "mobile/passenger_app",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1UHuNKFOgYsa4C7jihn7xh2NZ5Yo8GLNyqhQ-P_TTe2C5xaFf80lEsWOTWaAJTQp-8IDrcICJbgHCVtt0-Re1ep_y1zwTIvPsKkFT9I0IsuSBxfuNiQ2gOqsLUrS_RdgmVkurbz7RgWOedVcewciIFNwVwHqBekOjxNmWwgwLgaF47Wp5cXGmk7R5Fnp6YEKSX57ComzhRLBm1rBzrfD4uurGyH0JvKPKD6hpUPhkDu4Rxb4cFs1CPOR9E",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2Q0NTA2Yzg1MmQ2MDRjNzI5MWQ4YTVkMmRjNzhlNjI0EgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=89354086"
-    },
-    {
-      "id": "50bfebbeb7dc4f2abcff108423dc9e7a",
-      "resourceName": "projects/5681992570744779348/screens/50bfebbeb7dc4f2abcff108423dc9e7a",
-      "title": "Drive with Cabi Landing Page",
-      "deviceType": "DESKTOP",
-      "dimensions": { "width": 2560, "height": 9330 },
-      "targetWorkspace": "web/landing_driver",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1XJSzbuLlY8T4rXYVhVDRnkEKBGqE_FyzFismHM_ZXGTDc5mdJF2zuuJyhUWAUn1cznh7Sb7BRc_wA2V9ZtH-XzsJx0hdaVKXPn6zy6Jq1UGFzaXlO06CQOY9tjFPqzHpfT1FHmtvSfjqSEQeuncB3vV0TA7ggiqFIFtUtIZN7IxRtrR2ro8iGJit1oI6MmgwSGxdvQbakDDCHhuKoigymErQpaFMjEh4Qqh8E0_0uJqGqQkoodm0ID-9o",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2IzNGJkZWY0ZTk3NzQyNTVhOTQ5NDQwOWY5YzBmYjU0EgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "3c8b9033616f44388f932c0bf428f58b",
-      "resourceName": "projects/5681992570744779348/screens/3c8b9033616f44388f932c0bf428f58b",
-      "title": "Drive with Cabi - Ultra-Premium Driver Landing Page",
-      "deviceType": "DESKTOP",
-      "dimensions": { "width": 2560, "height": 6110 },
-      "targetWorkspace": "web/landing_driver",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WtQfYo7I-8tzJcZdj8zKt6o0fNPmqxfqRPt7NbwUMRxDNO67i6SSmH8FG5MrfFUkT0-2vvyqectzDpglYAEC1x9oSulYCQm9IbzOdvfgC8DIPSgvID5BQQbPrpKywtckPUOZm3cNRSWRx24DYr45J_t17QbEuwzX0VHyEAYkQ1kzGR9MkbLbpt2joTWPhMFP6V4lNfLyJ5MkhXMlAy2GnILn-0Hat6FX5VywLQaO8nKcMZIUN52N2bGZU",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sX2M4N2MzY2Y3ZmVhNjRjZDZhYjdiY2M5YzQxNTYzNjQyEgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "563c9145b4184630a07f7687c1cbfa82",
-      "resourceName": "projects/5681992570744779348/screens/563c9145b4184630a07f7687c1cbfa82",
-      "title": "Driver Registration Portal - Cabi Africa",
-      "deviceType": "DESKTOP",
-      "dimensions": { "width": 2560, "height": 2720 },
-      "targetWorkspace": "web/driver_registration",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1Ubdlv2_wbIWe9wpq2IoLZBUdnIM6izaWoWDlYXVruNh1fXIDYZvU7Y9RLXG2tIoaFnmUu325YFuMR_0CdigN5zwN42zAKBZf-9L71gY7vDCWao5U5pEpzxJlXbNV7L1i2AWOvhP-HjgD4hUi9jltyOBK2k6CRsahfUkeTJB7r_iSIZTfHuZsWI6M_qKKXXkmFhXjic6x6R1aocrpldhzwlN434mNMSECXEIE77iHqE11DQs4s3EPvCkPI",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzg3YmJkYzFjY2ZjYTQ5NTM5NWYwNjEyYjZiMWM5YmM2EgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
-    },
-    {
-      "id": "ce3b75e1de53494797ea537897a3dab6",
-      "resourceName": "projects/5681992570744779348/screens/ce3b75e1de53494797ea537897a3dab6",
-      "title": "Cabi Africa - Ultra-Premium Driver Dashboard",
-      "deviceType": "DESKTOP",
-      "dimensions": { "width": 2560, "height": 2726 },
-      "targetWorkspace": "web/driver_portal",
-      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WhhsQ_VeK_OcnmHjL4SuTfRHScXoW4Go8gYW4n67ZxTIVQfhOBb2tf3P8ENWNDt-kVW02RtQZNvdCHZQuTeMVWJ6BFKJpJSSySMeSiKx7ToDbY4uU_PcEXUdP11LSLu13kuGr6JuOMc_--gtHxbVpR7SuIGEJxQydEUYQq5Cdh93Ds-YIELQ-6pN_VcR2rLy0iBSAFCH_SYeacDHj3GBLIoJhE1FJ8k76GWrqFYJKwlI36bmFSKhwLaQ",
-      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ7Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpaCiVodG1sXzQwMTVhODUxMzdkNDQwY2U4ZTEyMzYzYjkwYTEzY2M4EgsSBxDW48rc6RMYAZIBIwoKcHJvamVjdF9pZBIVQhM1NjgxOTkyNTcwNzQ0Nzc5MzQ4&filename=&opi=96797242"
+      "screenshotUrl": "https://lh3.googleusercontent.com/aida/AEtjO1UIli7u8QphLQ0_uNEz49Af6QQakSQHHw5zyAK2K9Dlk4MS0N_b6dotFU5dbHmG65aPiVL9hPe0ZCy33fCNbbYKtG_D6wlP0NU0K3d_zYaHkIw9ohCyKPz1-D76jimr4rL2pVfN3mKDgsS9iP7DlMx_khwrVWz6a2sMh414oF3tLISxOxPa3Iz1Ip21a4JI0Xqw61aDeLxrrX1WGeyHOG628tlzbZjnAwo86pHRMhdmen2OFP2rsh_iY4q9",
+      "htmlUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzM2ZDczMzdlNWIwZTRmOWQ5ZGVmZjEyYjVkNzBjNTFiEgsSBxDW48rc6RMYAZIBJAoKcHJvamVjdF9pZBIWQhQxMTQ2NzQwMDg2NjQ4MjcwNTU1OA&filename=&opi=96797242",
+      "features": [
+        "Day/Night Theme Switcher Pill in Top Bar",
+        "Interactive Metropolitan Vector Transit Map with glowing blue route",
+        "4 Ride Tiers: Cabi Boda (KES 180), Cabi Comfort (KES 520, Selected), Cabi Exec (KES 1,400), Cabi XL (KES 850)",
+        "M-Pesa Express 1-Tap Payment Selector",
+        "Full-width Gold Gradient Confirm CTA with Embossed Sheen"
+      ]
     }
   ]
 }

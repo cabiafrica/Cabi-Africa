@@ -38,32 +38,32 @@ class AppTheme {
     return fontFunc(fontSize: fontSize, fontWeight: fontWeight, color: color)!;
   }
 
-  static TextStyle outfit({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle, double? height}) {
+  static TextStyle outfit({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle, double? height, TextDecoration? decoration, Color? decorationColor}) {
     if (!useGoogleFonts) {
-      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height);
+      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
     }
-    return GoogleFonts.outfit(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height);
+    return GoogleFonts.outfit(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
   }
 
-  static TextStyle inter({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle, double? height}) {
+  static TextStyle inter({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle, double? height, TextDecoration? decoration, Color? decorationColor}) {
     if (!useGoogleFonts) {
-      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height);
+      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
     }
-    return GoogleFonts.inter(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height);
+    return GoogleFonts.inter(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
   }
 
-  static TextStyle montserrat({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle, double? height}) {
+  static TextStyle montserrat({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle, double? height, TextDecoration? decoration, Color? decorationColor}) {
     if (!useGoogleFonts) {
-      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height);
+      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
     }
-    return GoogleFonts.montserrat(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height);
+    return GoogleFonts.montserrat(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
   }
 
-  static TextStyle plusJakartaSans({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle, double? height}) {
+  static TextStyle plusJakartaSans({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle, double? height, TextDecoration? decoration, Color? decorationColor}) {
     if (!useGoogleFonts) {
-      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height);
+      return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
     }
-    return GoogleFonts.plusJakartaSans(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height);
+    return GoogleFonts.plusJakartaSans(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
   }
 
   // Premium Color Palette - Luxury Metallic Gold
@@ -82,6 +82,8 @@ class AppTheme {
   static const Color surfaceContainer = Color(0xFF1A1A1A);
   static const Color surfaceContainerHigh = Color(0xFF242424);
   static const Color surfaceContainerHighest = Color(0xFF2E2E2E);
+  static const Color surfaceContainerLow = Color(0xFF1F1B13);
+  static const Color surfaceContainerLowest = Color(0xFF110E07);
   static const Color outlineBorder = Color(0xFF27272A);
   static const Color outlineGold = Color(0x4DD4AF37); // rgba(212, 175, 55, 0.3)
   static const Color primaryContainer = Color(0x26D4AF37); // rgba(212, 175, 55, 0.15)
@@ -196,19 +198,19 @@ class AppTheme {
 
   static ThemeData get darkTheme => ThemeData(
     useMaterial3: true,
-    fontFamily: useGoogleFonts ? GoogleFonts.outfit().fontFamily : null,
+    fontFamily: useGoogleFonts ? GoogleFonts.plusJakartaSans().fontFamily : null,
     colorScheme: const ColorScheme.dark(
       primary: primaryColor,
       secondary: secondaryAmber,
-      surface: darkSurface,
+      surface: surfaceContainer,
       error: errorRed,
-      onPrimary: Colors.white,
+      onPrimary: Color(0xFF241A00), // Dark text on Gold
       onSecondary: Colors.black,
       onSurface: darkTextPrimary,
     ),
-    scaffoldBackgroundColor: darkBackground,
+    scaffoldBackgroundColor: obsidianCanvas,
     appBarTheme: const AppBarTheme(
-      backgroundColor: darkSurface,
+      backgroundColor: surfaceContainer,
       foregroundColor: darkTextPrimary,
       elevation: 0,
       centerTitle: true,
@@ -216,66 +218,66 @@ class AppTheme {
       iconTheme: IconThemeData(color: darkTextPrimary),
     ),
     cardTheme: CardThemeData(
-      color: darkSurface,
+      color: surfaceContainer,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: darkDivider, width: 1),
+        side: const BorderSide(color: outlineGold, width: 1),
       ),
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: primaryColor,
-        foregroundColor: Colors.black,
+        foregroundColor: const Color(0xFF241A00),
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        textStyle: _getStyle(GoogleFonts.outfit, fontWeight: FontWeight.w600, fontSize: 16),
+        textStyle: _getStyle(GoogleFonts.montserrat, fontWeight: FontWeight.w700, fontSize: 16),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: Colors.white,
-        side: const BorderSide(color: Colors.white, width: 1.5),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        foregroundColor: primaryColor,
+        side: const BorderSide(color: primaryColor, width: 1.5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        textStyle: _getStyle(GoogleFonts.outfit, fontWeight: FontWeight.w600, fontSize: 16),
+        textStyle: _getStyle(GoogleFonts.montserrat, fontWeight: FontWeight.w600, fontSize: 16),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: const Color(0xFF273546), // Slightly lighter than surface
+      fillColor: surfaceContainerHigh,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: darkDivider),
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: outlineBorder),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: darkDivider),
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: outlineBorder),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: primaryColor, width: 2),
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: primaryColor, width: 1.8),
       ),
       hintStyle: const TextStyle(color: darkTextSecondary),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     ),
     dividerTheme: const DividerThemeData(
-      color: darkDivider,
+      color: outlineBorder,
       thickness: 1,
     ),
     textTheme: TextTheme(
-      headlineLarge: _getStyle(GoogleFonts.outfit,
-          fontSize: 32, fontWeight: FontWeight.bold, color: darkTextPrimary),
-      headlineMedium: _getStyle(GoogleFonts.outfit,
-          fontSize: 24, fontWeight: FontWeight.bold, color: darkTextPrimary),
-      headlineSmall: _getStyle(GoogleFonts.outfit,
+      headlineLarge: _getStyle(GoogleFonts.montserrat,
+          fontSize: 32, fontWeight: FontWeight.w800, color: darkTextPrimary),
+      headlineMedium: _getStyle(GoogleFonts.montserrat,
+          fontSize: 24, fontWeight: FontWeight.w700, color: darkTextPrimary),
+      headlineSmall: _getStyle(GoogleFonts.montserrat,
           fontSize: 20, fontWeight: FontWeight.w600, color: darkTextPrimary),
-      titleLarge: _getStyle(GoogleFonts.outfit,
+      titleLarge: _getStyle(GoogleFonts.plusJakartaSans,
           fontSize: 18, fontWeight: FontWeight.w600, color: darkTextPrimary),
-      bodyLarge: _getStyle(GoogleFonts.outfit, fontSize: 16, color: darkTextPrimary),
-      bodyMedium: _getStyle(GoogleFonts.outfit, fontSize: 14, color: darkTextSecondary),
+      bodyLarge: _getStyle(GoogleFonts.plusJakartaSans, fontSize: 16, color: darkTextPrimary),
+      bodyMedium: _getStyle(GoogleFonts.plusJakartaSans, fontSize: 14, color: darkTextSecondary),
     ),
   );
 }

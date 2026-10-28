@@ -1,22 +1,31 @@
 {
-  "projectId": "5681992570744779348",
-  "projectResourceName": "projects/5681992570744779348",
-  "projectTitle": "Cabi Africa",
-  "projectType": "TEXT_TO_UI_PRO",
+  "projectId": "11467400866482705558",
+  "projectResourceName": "projects/11467400866482705558",
+  "projectTitle": "Cabi Africa Ecosystem",
+  "projectType": "PROJECT_DESIGN",
   "origin": "STITCH",
   "defaultDeviceType": "MOBILE",
   "mcpServer": "StitchMCP",
   "designSystem": {
-    "assetId": "3d296146259f4230861733a932d7472e",
-    "screenInstanceId": "6916060633502316208",
+    "assetId": "3b628ef1a02a46759c0a689ae79c2951",
+    "screenInstanceId": "14560758469641413583",
     "status": "ACTIVE_SYNCHRONIZED",
-    "updatedAt": "2026-10-10T02:43:03Z"
+    "updatedAt": "2026-10-22T15:55:40Z"
   },
   "theme": {
-    "colorMode": "DARK",
-    "font": "INTER",
-    "customColor": "#067ff9",
-    "saturation": 3
+    "colorMode": "DUAL_THEME",
+    "dark": {
+      "canvas": "#121212",
+      "primary": "#D4AF37",
+      "secondary": "#067ff9"
+    },
+    "light": {
+      "canvas": "#f8fafc",
+      "primary": "#8C6D1F",
+      "secondary": "#0260c4"
+    },
+    "font": "MONTSERRAT",
+    "roundness": "ROUND_EIGHT"
   },
   "targets": {
     "mobile": {
@@ -25,8 +34,8 @@
     },
     "web": {
       "admin": "web/admin_panel",
-      "sacco": "web/sacco_portal",
-      "driverPortal": "web/driver_portal"
+      "dispatch": "web/dispatch_panel",
+      "userPortal": "web/user_portal"
     }
   }
 }

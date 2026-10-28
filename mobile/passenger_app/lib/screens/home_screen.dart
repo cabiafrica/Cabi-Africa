@@ -19,6 +19,7 @@ import 'search_screen.dart';
 import 'food_checkout_screen.dart';
 import 'delivery_screen.dart';
 import 'user_dashboard_screen.dart';
+import 'scheduled_rides_screen.dart';
 import 'package:passenger_app/screens/menu_screen.dart';
 import 'package:passenger_app/widgets/promotional_carousel.dart';
 import 'package:passenger_app/widgets/profile_avatar_with_qr.dart';
@@ -81,6 +82,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Timer? _rideUpdateTimer;
   bool _isCancelling = false;
   bool _isFullScreenMap = false;
+  bool _isForSomeone = false;
 
   void _exitFullScreenMap() {
     setState(() {
@@ -237,7 +239,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
 
-          // 2. Top Left Menu (Replicating Driver App)
+          // 2. Top Left Menu
           Positioned(
             top: MediaQuery.of(context).padding.top + 10,
             left: 16,
@@ -254,11 +256,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   );
                 }
               },
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: Theme.of(context).brightness == Brightness.dark
+                  ? AppTheme.surfaceContainerHigh
+                  : Colors.white,
+              foregroundColor: Theme.of(context).brightness == Brightness.dark
+                  ? AppTheme.primaryColor
+                  : Colors.black,
               elevation: 4,
-              child: Icon(_isPickingFromMap ? Icons.arrow_back : Icons.menu,
-                  color: Colors.black),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppTheme.outlineGold
+                      : const Color(0xFFE5E7EB),
+                ),
+              ),
+              child: Icon(_isPickingFromMap ? Icons.arrow_back : Icons.menu),
             ),
           ),
 

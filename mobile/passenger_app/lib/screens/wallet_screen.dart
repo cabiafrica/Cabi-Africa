@@ -18,6 +18,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   late Future<Map<String, dynamic>> _walletFuture;
   double _referralEarned = 0.0;
   bool _isLoadingReferral = true;
+  bool _autoReloadActive = true;
   final PassengerReferralService _referralService = PassengerReferralService();
 
   @override
@@ -63,22 +64,42 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return AlertDialog(
-          title: const Text('Confirm Payout'),
+          backgroundColor: isDark ? AppTheme.surfaceContainer : Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text(
+            'Confirm Payout',
+            style: AppTheme.montserrat(
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+          ),
           content: Text(
-            'Are you sure you want to cash out KES ${balance.toStringAsFixed(2)}?',
+            'Are you sure you want to cash out KES ${balance.toStringAsFixed(2)} to your registered payout account?',
+            style: AppTheme.plusJakartaSans(
+              color: isDark ? Colors.white70 : Colors.black87,
+            ),
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: Text('Cancel', style: TextStyle(color: isDark ? Colors.white54 : Colors.grey)),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            TextButton(
-              child: const Text('Confirm'),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryColor,
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text('Confirm', style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Payout initiated!')),
+                  const SnackBar(
+                    content: Text('Payout initiated to your M-Pesa account!'),
+                    backgroundColor: AppTheme.surfaceContainerHighest,
+                  ),
                 );
               },
             ),
@@ -88,190 +109,470 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     );
   }
 
-  Future<void> _showTopUpDialog([int presetAmount = 1000]) async {
+  Future<void> _showTopUpDialog([int presetAmount = 2500]) async {
     final controller = TextEditingController(text: presetAmount.toString());
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    int selectedAmount = presetAmount;
 
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext ctx) {
-        return Container(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
-          ),
-          decoration: BoxDecoration(
-            color: isDark ? AppTheme.surfaceContainer : Colors.white,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.lightDivider),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 44,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final formattedAmt = controller.text.isNotEmpty ? controller.text : '0';
+
+            return Container(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 18,
+                bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
               ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppTheme.successGreen.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.phone_android_rounded, color: AppTheme.successGreen, size: 22),
-                  ),
-                  const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Top Up with M-Pesa',
-                        style: AppTheme.montserrat(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                      ),
-                      Text(
-                        'Instant STK push notification',
-                        style: AppTheme.plusJakartaSans(
-                          fontSize: 12,
-                          color: isDark ? Colors.white60 : Colors.black54,
-                        ),
-                      ),
-                    ],
+              decoration: BoxDecoration(
+                color: isDark ? AppTheme.surfaceContainer : Colors.white,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.lightDivider),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    blurRadius: 25,
+                    offset: const Offset(0, -5),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              Text(
-                'ENTER AMOUNT (KES)',
-                style: AppTheme.inter(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0,
-                  color: isDark ? Colors.white54 : Colors.black54,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: controller,
-                keyboardType: TextInputType.number,
-                style: AppTheme.montserrat(fontSize: 22, fontWeight: FontWeight.bold, color: isDark ? AppTheme.primaryColor : Colors.black),
-                decoration: InputDecoration(
-                  prefixText: 'KES ',
-                  prefixStyle: AppTheme.montserrat(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.primaryColor),
-                  filled: true,
-                  fillColor: isDark ? AppTheme.surfaceDim : const Color(0xFFF3F4F6),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(color: isDark ? AppTheme.outlineBorder : AppTheme.lightDivider),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(color: isDark ? AppTheme.outlineBorder : AppTheme.lightDivider),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: const BorderSide(color: AppTheme.primaryColor, width: 1.8),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 14),
-              // Preset quick chips
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [500, 1000, 2500, 5000].map((amt) {
-                  return InkWell(
-                    onTap: () => controller.text = amt.toString(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      width: 44,
+                      height: 4.5,
                       decoration: BoxDecoration(
-                        color: isDark ? AppTheme.surfaceBright : const Color(0xFFF0F2F5),
+                        color: isDark ? Colors.white24 : Colors.black12,
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: isDark ? AppTheme.outlineBorder : Colors.transparent),
-                      ),
-                      child: Text(
-                        '+$amt',
-                        style: AppTheme.inter(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? AppTheme.primaryColor : Colors.black87,
-                        ),
                       ),
                     ),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: double.infinity,
-                height: 52,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(26),
-                  gradient: AppTheme.goldGradient,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.primaryColor.withValues(alpha: 0.35),
-                      blurRadius: 14,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: ElevatedButton(
-                  onPressed: () {
-                    final amount = controller.text;
-                    Navigator.of(ctx).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('M-Pesa STK push for KES $amount sent! Enter PIN on your phone.'),
-                        backgroundColor: AppTheme.surfaceContainerHighest,
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
-                    elevation: 0,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  const SizedBox(height: 16),
+
+                  // Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(Icons.bolt_rounded, color: Colors.black, size: 20),
-                      const SizedBox(width: 6),
-                      Text(
-                        'SEND M-PESA PROMPT',
-                        style: AppTheme.montserrat(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          letterSpacing: 0.5,
-                          color: Colors.black,
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppTheme.successGreen.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppTheme.successGreen.withValues(alpha: 0.3)),
+                            ),
+                            child: const Icon(Icons.phone_android_rounded, color: AppTheme.successGreen, size: 22),
+                          ),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Wallet M-Pesa Top Up',
+                                style: AppTheme.montserrat(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? Colors.white : Colors.black87,
+                                ),
+                              ),
+                              Text(
+                                'Instant STK Push to Phone',
+                                style: AppTheme.plusJakartaSans(
+                                  fontSize: 12,
+                                  color: isDark ? Colors.white60 : Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryContainer.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppTheme.outlineGold),
+                        ),
+                        child: Text(
+                          '0% Fee',
+                          style: AppTheme.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primaryColor,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
+
+                  const SizedBox(height: 20),
+
+                  // Reload Tier Bento Grid (Stitch Spec)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'SELECT AMOUNT',
+                        style: AppTheme.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.1,
+                          color: isDark ? Colors.white54 : Colors.black54,
+                        ),
+                      ),
+                      Text(
+                        'KES',
+                        style: AppTheme.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? AppTheme.primaryColor : Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    childAspectRatio: 2.3,
+                    children: [
+                      _buildBentoAmountCard(
+                        amount: 500,
+                        tag: 'Standard',
+                        bonus: null,
+                        isSelected: selectedAmount == 500,
+                        isDark: isDark,
+                        onTap: () {
+                          setModalState(() {
+                            selectedAmount = 500;
+                            controller.text = '500';
+                          });
+                        },
+                      ),
+                      _buildBentoAmountCard(
+                        amount: 1000,
+                        tag: null,
+                        bonus: '+50 bonus',
+                        isSelected: selectedAmount == 1000,
+                        isDark: isDark,
+                        onTap: () {
+                          setModalState(() {
+                            selectedAmount = 1000;
+                            controller.text = '1000';
+                          });
+                        },
+                      ),
+                      _buildBentoAmountCard(
+                        amount: 2500,
+                        tag: 'VIP',
+                        bonus: '+125 Gold',
+                        isSelected: selectedAmount == 2500,
+                        isDark: isDark,
+                        onTap: () {
+                          setModalState(() {
+                            selectedAmount = 2500;
+                            controller.text = '2500';
+                          });
+                        },
+                      ),
+                      _buildBentoAmountCard(
+                        amount: 5000,
+                        tag: 'Elite',
+                        bonus: '+500 VIP',
+                        isSelected: selectedAmount == 5000,
+                        isDark: isDark,
+                        onTap: () {
+                          setModalState(() {
+                            selectedAmount = 5000;
+                            controller.text = '5000';
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  // Custom Amount Field
+                  Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? AppTheme.surfaceDim : const Color(0xFFF3F4F6),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isDark ? AppTheme.outlineBorder : AppTheme.lightDivider,
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.tune_rounded, size: 20, color: AppTheme.primaryColor),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            controller: controller,
+                            keyboardType: TextInputType.number,
+                            onChanged: (val) {
+                              setModalState(() {
+                                selectedAmount = int.tryParse(val) ?? 0;
+                              });
+                            },
+                            style: AppTheme.montserrat(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
+                            decoration: const InputDecoration(
+                              hintText: 'Custom Amount',
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          'KES',
+                          style: AppTheme.inter(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Channel Selector
+                  Text(
+                    'PAYMENT CHANNEL',
+                    style: AppTheme.inter(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.1,
+                      color: isDark ? Colors.white54 : Colors.black54,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppTheme.surfaceBright : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: AppTheme.outlineGold.withValues(alpha: 0.6), width: 1.4),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            color: AppTheme.successGreen.withValues(alpha: 0.15),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.phone_iphone_rounded, color: AppTheme.successGreen, size: 18),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'M-Pesa Express STK',
+                                    style: AppTheme.montserrat(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13.5,
+                                      color: isDark ? Colors.white : Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.successGreen.withValues(alpha: 0.2),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      'Fastest',
+                                      style: AppTheme.inter(fontSize: 9.5, fontWeight: FontWeight.bold, color: AppTheme.successGreen),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                '+254 712 ••• 456 Prompt',
+                                style: AppTheme.inter(fontSize: 11.5, color: isDark ? Colors.white54 : Colors.grey[600]),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.check_circle_rounded, color: AppTheme.primaryColor, size: 20),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Submit STK Push CTA
+                  Container(
+                    width: double.infinity,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(26),
+                      gradient: AppTheme.goldGradient,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primaryColor.withValues(alpha: 0.35),
+                          blurRadius: 14,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                const Icon(Icons.bolt_rounded, color: AppTheme.primaryColor),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text('M-Pesa STK push for KES $formattedAmt initiated! Check your handset.'),
+                                ),
+                              ],
+                            ),
+                            backgroundColor: AppTheme.surfaceContainerHighest,
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+                        elevation: 0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.bolt_rounded, color: Colors.black, size: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            'TOP UP KES $formattedAmt • STK PUSH',
+                            style: AppTheme.montserrat(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13.5,
+                              letterSpacing: 0.5,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
+    );
+  }
+
+  Widget _buildBentoAmountCard({
+    required int amount,
+    required String? tag,
+    required String? bonus,
+    required bool isSelected,
+    required bool isDark,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark ? AppTheme.surfaceBright : const Color(0xFFFDF8E8))
+              : (isDark ? AppTheme.surfaceContainer : Colors.white),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected
+                ? AppTheme.primaryColor
+                : (isDark ? AppTheme.outlineBorder : AppTheme.lightDivider),
+            width: isSelected ? 1.8 : 1.0,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '$amount/-',
+                  style: AppTheme.montserrat(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isSelected
+                        ? AppTheme.primaryColor
+                        : (isDark ? Colors.white : Colors.black87),
+                  ),
+                ),
+                if (bonus != null)
+                  Text(
+                    bonus,
+                    style: AppTheme.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.successGreen,
+                    ),
+                  )
+                else if (tag != null)
+                  Text(
+                    tag,
+                    style: AppTheme.inter(
+                      fontSize: 10,
+                      color: isDark ? Colors.white54 : Colors.grey[600],
+                    ),
+                  ),
+              ],
+            ),
+            Icon(
+              isSelected ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+              color: isSelected ? AppTheme.primaryColor : (isDark ? Colors.white24 : Colors.grey[400]),
+              size: 18,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -284,12 +585,44 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
       appBar: AppBar(
         title: Text(
           'My Wallet',
-          style: AppTheme.montserrat(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
+          style: AppTheme.montserrat(
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
+            fontSize: 18,
+          ),
         ),
         elevation: 0,
         backgroundColor: isDark ? AppTheme.surfaceDim : Colors.white,
         foregroundColor: isDark ? Colors.white : Colors.black87,
         iconTheme: IconThemeData(color: isDark ? AppTheme.primaryColor : Colors.black87),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: isDark ? AppTheme.surfaceBright : const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDark ? AppTheme.outlineGold.withValues(alpha: 0.3) : AppTheme.lightDivider,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.verified_user_rounded, color: AppTheme.successGreen, size: 14),
+                const SizedBox(width: 5),
+                Text(
+                  'VIP Safe',
+                  style: AppTheme.inter(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? AppTheme.primaryLight : Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _walletFuture,
@@ -299,12 +632,16 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: isDark ? Colors.white70 : Colors.black87)));
+            return Center(
+              child: Text('Error: ${snapshot.error}', style: TextStyle(color: isDark ? Colors.white70 : Colors.black87)),
+            );
           }
 
           final walletData = snapshot.data;
           if (walletData == null) {
-            return Center(child: Text('Could not load wallet details.', style: TextStyle(color: isDark ? Colors.white70 : Colors.black87)));
+            return Center(
+              child: Text('Could not load wallet details.', style: TextStyle(color: isDark ? Colors.white70 : Colors.black87)),
+            );
           }
 
           final balance = ((walletData['balance'] ?? 0) as num).toDouble();
@@ -320,9 +657,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             child: ListView(
               padding: const EdgeInsets.all(20.0),
               children: [
-                // Premium Balance Card (Stitch Obsidian Gold)
+                // Premium Executive Balance Card (Stitch Obsidian Gold)
                 Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(22),
                   decoration: BoxDecoration(
                     color: isDark ? AppTheme.surfaceContainer : Colors.black,
                     borderRadius: BorderRadius.circular(24),
@@ -332,21 +669,55 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                         color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.2),
                         blurRadius: 20,
                         offset: const Offset(0, 6),
-                      )
+                      ),
                     ],
                   ),
                   child: Column(
                     children: [
-                      Text(
-                        'AVAILABLE BALANCE',
-                        style: AppTheme.inter(
-                          color: isDark ? AppTheme.primaryLight.withValues(alpha: 0.7) : Colors.white54,
-                          letterSpacing: 1.5,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.account_balance_wallet_rounded, color: AppTheme.primaryColor, size: 18),
+                              const SizedBox(width: 6),
+                              Text(
+                                'AVAILABLE BALANCE',
+                                style: AppTheme.inter(
+                                  color: isDark ? AppTheme.primaryLight.withValues(alpha: 0.7) : Colors.white54,
+                                  letterSpacing: 1.5,
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryContainer.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: AppTheme.outlineGold.withValues(alpha: 0.5)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.verified_rounded, color: AppTheme.primaryColor, size: 12),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Executive Tier',
+                                  style: AppTheme.inter(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.primaryLight,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
                       Text(
                         'KES ${balance.toStringAsFixed(2)}',
                         style: AppTheme.montserrat(
@@ -355,36 +726,82 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                           fontWeight: FontWeight.w900,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      // Quick top up preset chips
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [500, 1000, 2500].map((amt) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: InkWell(
-                              onTap: () => _showTopUpDialog(amt),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                decoration: BoxDecoration(
-                                  color: AppTheme.surfaceBright,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: AppTheme.outlineBorder),
-                                ),
-                                child: Text(
-                                  '+KES $amt',
+                      const SizedBox(height: 14),
+
+                      // Connected Phone & Status Chip
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isDark ? AppTheme.surfaceBright : Colors.white10,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: isDark ? AppTheme.outlineBorder : Colors.white12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.sim_card_rounded, color: AppTheme.primaryColor, size: 16),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '+254 712 ••• 456',
                                   style: AppTheme.inter(
-                                    fontSize: 10.5,
-                                    color: AppTheme.primaryColor,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w600,
+                                    color: isDark ? Colors.white : Colors.white,
                                   ),
                                 ),
-                              ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '• M-Pesa Verified',
+                                  style: AppTheme.inter(
+                                    fontSize: 11,
+                                    color: AppTheme.successGreen,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
-                          );
-                        }).toList(),
+                            const Icon(Icons.verified_user_rounded, color: AppTheme.successGreen, size: 16),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 20),
+
+                      const SizedBox(height: 16),
+
+                      // Auto-reload toggle strip
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.sync_rounded, color: isDark ? Colors.white54 : Colors.white60, size: 16),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Auto-reload when < KES 1,000',
+                                style: AppTheme.plusJakartaSans(
+                                  fontSize: 12,
+                                  color: isDark ? Colors.white60 : Colors.white70,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Switch.adaptive(
+                            value: _autoReloadActive,
+                            activeThumbColor: AppTheme.primaryColor,
+                            activeTrackColor: AppTheme.primaryContainer,
+                            onChanged: (val) {
+                              setState(() {
+                                _autoReloadActive = val;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Action Buttons
                       Row(
                         children: [
                           Expanded(
@@ -395,7 +812,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                                 gradient: AppTheme.goldGradient,
                               ),
                               child: ElevatedButton(
-                                onPressed: () => _showTopUpDialog(1000),
+                                onPressed: () => _showTopUpDialog(2500),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.transparent,
                                   shadowColor: Colors.transparent,
@@ -417,7 +834,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                               child: OutlinedButton(
                                 onPressed: () => _showCashOutDialog(balance),
                                 style: OutlinedButton.styleFrom(
-                                  foregroundColor: isDark ? Colors.white : Colors.white,
+                                  foregroundColor: Colors.white,
                                   side: BorderSide(color: isDark ? AppTheme.outlineBorder : Colors.white24),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
@@ -429,14 +846,14 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                             ),
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
 
                 const SizedBox(height: 20),
 
-                // Referral Card (Replaced purple with Obsidian & Metallic Gold)
+                // Referral Card (Obsidian & Metallic Gold)
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(
@@ -523,7 +940,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                         );
                       },
                       child: Text('Manage', style: AppTheme.inter(fontSize: 12, color: AppTheme.primaryColor, fontWeight: FontWeight.bold)),
-                    )
+                    ),
                   ],
                 ),
                 Container(
@@ -659,4 +1076,3 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     );
   }
 }
-

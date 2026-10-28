@@ -38,7 +38,7 @@ export class FinancialConsentService {
     private readonly pendingOtps = new Map<string, PendingOtpRecord>();
 
     // Safety ceiling: Maximum total voluntary deductions allowed
-    private readonly MAX_VOLUNTARY_CAP = 0.15; // 15%
+    private readonly MAX_VOLUNTARY_CAP = 0.30; // 30% cap per specification
 
     constructor(private readonly prisma: PrismaService) {}
 
@@ -108,7 +108,7 @@ export class FinancialConsentService {
 
         if (projectedTotal > this.MAX_VOLUNTARY_CAP) {
             throw new HttpException(
-                `Deduction of ${(dto.deductionPct * 100).toFixed(1)}% exceeds the 15% maximum voluntary cap. ` +
+                `Deduction of ${(dto.deductionPct * 100).toFixed(1)}% exceeds the 30% maximum voluntary cap. ` +
                 `Currently committed: ${(currentCommittedPct * 100).toFixed(1)}%. Available: ${((this.MAX_VOLUNTARY_CAP - currentCommittedPct) * 100).toFixed(1)}%`,
                 HttpStatus.BAD_REQUEST
             );

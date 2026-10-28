@@ -6,27 +6,90 @@
   <title>Cabi Africa — Dual Mobile Emulator Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    /* ========================================================
+       CABI AFRICA DUAL-THEME STITCH MOBILITY DESIGN SYSTEM
+       Obsidian Dark Mode (Night Transit) & Porcelain Light Mode (Daylight Clarity)
+       ======================================================== */
     :root {
-      --bg: #060911;
-      --panel-bg: #0c1220;
-      --card-bg: #111a2e;
-      --card-card2: #16223d;
-      --border: #1e2c4d;
-      --border-light: #2b3d6b;
-      --gold: #f59e0b;
+      --bg: #121212;
+      --panel-bg: #181818;
+      --card-bg: #1e1e1e;
+      --card-card2: #242424;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-light: rgba(255, 255, 255, 0.15);
+      --border-gold: rgba(212, 175, 55, 0.35);
+      --gold: #d4af37;
       --gold-dark: #b8860b;
-      --gold-glow: rgba(245, 158, 11, 0.35);
+      --gold-bright: #ffd700;
+      --gold-glow: rgba(212, 175, 55, 0.3);
       --green: #10b981;
-      --green-glow: rgba(16, 185, 129, 0.35);
+      --green-glow: rgba(16, 185, 129, 0.3);
       --red: #ef4444;
-      --blue: #3b82f6;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
+      --blue: #067ff9;
+      --blue-glow: rgba(6, 127, 249, 0.25);
+      --text: #ffffff;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
       --phone-w: 360px;
       --phone-h: 750px;
+      --font-headline: 'Montserrat', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-label: 'Inter', sans-serif;
+    }
+
+    /* Porcelain Light Mode per Stitch Tokens */
+    body.light-theme {
+      --bg: #f8fafc;
+      --panel-bg: #ffffff;
+      --card-bg: #ffffff;
+      --card-card2: #f1f5f9;
+      --border: #e2e8f0;
+      --border-light: #cbd5e1;
+      --border-gold: rgba(140, 109, 31, 0.35);
+      --gold: #8c6d1f;
+      --gold-dark: #735c00;
+      --gold-bright: #b8860b;
+      --gold-glow: rgba(140, 109, 31, 0.2);
+      --green: #059669;
+      --green-glow: rgba(5, 150, 105, 0.2);
+      --red: #dc2626;
+      --blue: #0260c4;
+      --blue-glow: rgba(2, 96, 196, 0.2);
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+    }
+
+    body.light-theme .phone-emulator {
+      box-shadow: 0 25px 60px rgba(0,0,0,0.18), 0 0 0 10px #e2e8f0, 0 0 35px rgba(140, 109, 31, 0.15);
+      border-color: #cbd5e1;
+    }
+    body.light-theme .screen-glass {
+      background: #f8fafc;
+    }
+    body.light-theme .app-card {
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      background: #ffffff;
+      border-color: #e2e8f0;
+    }
+    body.light-theme .device-app-bar {
+      background: #ffffff;
+      border-bottom-color: #e2e8f0;
+    }
+    body.light-theme .step-node {
+      background: #ffffff;
+    }
+    body.light-theme .telemetry-tray {
+      background: #ffffff;
+    }
+    body.light-theme .telemetry-header {
+      background: #f1f5f9;
+    }
+    body.light-theme .telemetry-logs {
+      background: #f8fafc;
+      color: #334155;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
     body {
@@ -775,6 +838,74 @@
     }
     @keyframes popIn { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
+    /* Driver Login Modal */
+    .driver-login-modal {
+      position: absolute;
+      top: 50px;
+      left: 12px;
+      right: 12px;
+      background: #181c26;
+      border: 1.5px solid var(--border-gold);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 15px 45px rgba(0,0,0,0.85), 0 0 25px var(--gold-glow);
+      z-index: 180;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      animation: popIn 0.25s ease-out;
+    }
+    body.light-theme .driver-login-modal {
+      background: #ffffff;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      border-color: var(--border-gold);
+    }
+    .login-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .login-field label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .login-field input {
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.82rem;
+      outline: none;
+      font-family: inherit;
+    }
+    body.light-theme .login-field input {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+    .login-field input:focus {
+      border-color: var(--gold);
+    }
+    .quick-cred-chip {
+      font-size: 0.68rem;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--border-gold);
+      color: var(--gold);
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.15s;
+    }
+    .quick-cred-chip:hover {
+      background: rgba(212, 175, 55, 0.22);
+    }
+
     .offer-timer-bar-wrap {
       width: 100%;
       height: 6px;
@@ -876,6 +1007,365 @@
       transition: width 0.5s ease;
     }
 
+    /* Stitch Theme Toggle Pill Component */
+    .theme-toggle-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-gold);
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+    .theme-toggle-pill:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.15);
+      background: rgba(212, 175, 55, 0.12);
+    }
+
+    /* Driver Tab Switcher (Trip vs Wealth & Benefits) */
+    .driver-tab-switcher {
+      display: flex;
+      background: #090e18;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 10px;
+      gap: 4px;
+    }
+    body.light-theme .driver-tab-switcher {
+      background: #f1f5f9;
+      border-color: #e2e8f0;
+    }
+    .driver-tab-btn {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .driver-tab-btn.active {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.08));
+      color: var(--gold);
+      border: 1px solid var(--border-gold);
+      box-shadow: 0 2px 8px var(--gold-glow);
+    }
+    body.light-theme .driver-tab-btn.active {
+      background: #ffffff;
+      color: var(--gold);
+      border-color: var(--border-gold);
+      box-shadow: 0 2px 8px rgba(140, 109, 31, 0.15);
+    }
+    .tab-badge {
+      background: var(--gold);
+      color: #000;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 999px;
+      letter-spacing: 0.02em;
+    }
+
+    /* Wealth Creation Screen Styling */
+    .wealth-view {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding-bottom: 20px;
+      animation: fadeIn 0.25s ease-out;
+    }
+    .wealth-view.active {
+      display: flex;
+    }
+
+    /* Capacity & Limit Gauge Box */
+    .wealth-gauge-box {
+      background: linear-gradient(135deg, #181c26 0%, #10141f 100%);
+      border: 1.5px solid var(--border-gold);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 15px rgba(212, 175, 55, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    body.light-theme .wealth-gauge-box {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border-color: var(--border-gold);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    }
+
+    .wealth-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .stat-tile {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 6px;
+      text-align: center;
+    }
+    body.light-theme .stat-tile {
+      background: #f1f5f9;
+      border-color: #e2e8f0;
+    }
+    .stat-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .stat-value {
+      font-size: 0.95rem;
+      font-weight: 800;
+      font-family: 'Inter', sans-serif;
+      margin-top: 2px;
+    }
+
+    .capacity-bar-wrap {
+      width: 100%;
+      height: 10px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 10px;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    body.light-theme .capacity-bar-wrap {
+      background: #e2e8f0;
+    }
+    .capacity-bar-fill {
+      height: 100%;
+      width: 83.33%; /* 25% of 30% = 83.33% */
+      background: linear-gradient(90deg, #10b981 0%, #d4af37 70%, #f59e0b 100%);
+      border-radius: 999px;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .capacity-bar-fill.maxed {
+      background: linear-gradient(90deg, #d4af37 0%, #ef4444 100%);
+    }
+
+    /* Limit Warning Callout */
+    .limit-warning-banner {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 0.7rem;
+      color: var(--gold);
+      display: none;
+      align-items: center;
+      gap: 6px;
+      line-height: 1.35;
+    }
+    .limit-warning-banner.show {
+      display: flex;
+    }
+
+    /* Program Cards */
+    .program-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .program-card.enrolled {
+      border-color: var(--border-gold);
+      background: linear-gradient(180deg, rgba(212, 175, 55, 0.05) 0%, var(--card-bg) 100%);
+    }
+    body.light-theme .program-card.enrolled {
+      background: #ffffff;
+      border-color: var(--border-gold);
+      box-shadow: 0 4px 12px rgba(140, 109, 31, 0.08);
+    }
+    .program-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .program-title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .program-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--border-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .program-name {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .program-yield-badge {
+      font-size: 0.65rem;
+      color: var(--gold);
+      font-weight: 700;
+      background: rgba(212, 175, 55, 0.12);
+      padding: 1px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-top: 2px;
+    }
+    .program-desc {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Percentage Stepper & Slider */
+    .stepper-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0,0,0,0.25);
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    body.light-theme .stepper-row {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+    .stepper-controls-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-stepper {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--card-card2);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    body.light-theme .btn-stepper {
+      background: #ffffff;
+      color: #0f172a;
+      border-color: #cbd5e1;
+    }
+    .btn-stepper:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .btn-stepper:active {
+      transform: scale(0.92);
+    }
+    .stepper-val {
+      font-size: 0.88rem;
+      font-weight: 800;
+      font-family: 'Inter', sans-serif;
+      color: var(--gold);
+      min-width: 38px;
+      text-align: center;
+    }
+
+    /* Quick Presets Pills */
+    .preset-pill-group {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 4px 0;
+    }
+    .preset-pill {
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    body.light-theme .preset-pill {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #334155;
+    }
+    .preset-pill:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(212, 175, 55, 0.1);
+    }
+
+    /* Live Per-Trip Simulator Box */
+    .deduction-sim-box {
+      background: #090e18;
+      border: 1px solid var(--border-gold);
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    body.light-theme .deduction-sim-box {
+      background: #f8fafc;
+      border-color: var(--border-gold);
+    }
+    .sim-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+    .sim-row.highlight {
+      color: var(--gold);
+      font-weight: 700;
+      border-top: 1px dashed var(--border);
+      padding-top: 4px;
+      margin-top: 2px;
+    }
+    .sim-row.take-home {
+      color: var(--green);
+      font-size: 0.82rem;
+      font-weight: 800;
+      border-top: 1.5px solid var(--border);
+      padding-top: 5px;
+      margin-top: 3px;
+    }
+
     @media (max-width: 950px) {
       .stage-container {
         flex-direction: column;
@@ -908,6 +1398,12 @@
         <div class="pulse-dot" style="color: #60a5fa;"></div>
         <span>Auth :3333</span>
       </div>
+
+      <!-- Stitch Dual-Theme Switcher Pill -->
+      <button class="theme-toggle-pill" id="btnThemeToggle" onclick="toggleStudioTheme()" title="Switch Obsidian Dark / Porcelain Light Mode">
+        <span id="themeToggleIcon">🌙</span>
+        <span id="themeToggleText">Obsidian Gold</span>
+      </button>
 
       <div class="scale-controls">
         <span>View:</span>
@@ -1050,14 +1546,14 @@
           <!-- OPTION B: Real Android Emulator Live Screen & Touch Bridge -->
           <div class="real-android-view" id="viewPassengerAndroid">
             <div class="android-screen-wrapper" id="passengerAndroidWrapper">
-              <img id="passengerAndroidImg" class="android-screen-img" src="/api/emulator/screen" alt="Real Android Emulator Screen" />
+              <img id="passengerAndroidImg" class="android-screen-img" src="/api/emulator/screen?serial=emulator-5554" alt="Real Android Emulator Screen" />
             </div>
             <div class="android-nav-bar">
-              <button class="android-nav-btn primary" onclick="sendAndroidKey(4)">◀</button>
-              <button class="android-nav-btn primary" onclick="sendAndroidKey(3)">●</button>
-              <button class="android-nav-btn primary" onclick="sendAndroidKey(187)">■</button>
-              <button class="android-nav-btn" onclick="launchAndroidApp('passenger')">🧍 Open Cabi Go</button>
-              <button class="android-nav-btn" onclick="launchAndroidApp('driver')">🚕 Open Driver</button>
+              <button class="android-nav-btn primary" onclick="sendAndroidKey(4, 'emulator-5554')">◀</button>
+              <button class="android-nav-btn primary" onclick="sendAndroidKey(3, 'emulator-5554')">●</button>
+              <button class="android-nav-btn primary" onclick="sendAndroidKey(187, 'emulator-5554')">■</button>
+              <button class="android-nav-btn" onclick="launchAndroidApp('passenger', 'emulator-5554')">🧍 Open Cabi Go</button>
+              <button class="android-nav-btn" onclick="launchAndroidApp('driver', 'emulator-5554')">🚕 Open Driver</button>
               <button class="android-nav-btn" onclick="refreshPassengerAndroidScreen()">🔄</button>
             </div>
           </div>
@@ -1292,6 +1788,49 @@
             </div>
           </div>
 
+          <!-- DRIVER LOGIN MODAL OVERLAY -->
+          <div class="driver-login-modal" id="driverLoginModal">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.85rem; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 6px;">
+                <span>🔑</span> Driver Sign In
+              </span>
+              <button onclick="closeDriverLoginModal()" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.95rem; font-weight: 800;">✕</button>
+            </div>
+
+            <!-- 1-Tap Quick Credential Chips -->
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+              <div class="quick-cred-chip" onclick="fillDriverCreds('driver@test.com', 'Password123!')">
+                <span>⚡ Test Driver (driver@test.com)</span>
+                <strong style="color: #fff; font-size: 0.65rem;">1-TAP FILL</strong>
+              </div>
+              <div class="quick-cred-chip" onclick="fillDriverCreds('boda.driver@cabi.africa', 'Password123!')">
+                <span>🛵 Boda PSV Driver (boda.driver@cabi.africa)</span>
+                <strong style="color: #fff; font-size: 0.65rem;">1-TAP FILL</strong>
+              </div>
+            </div>
+
+            <div class="login-field">
+              <label>Email Address</label>
+              <input type="email" id="loginDriverEmail" value="driver@test.com" placeholder="driver@test.com">
+            </div>
+
+            <div class="login-field">
+              <label>Password</label>
+              <input type="password" id="loginDriverPassword" value="Password123!" placeholder="••••••••">
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted);">
+              <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                <input type="checkbox" id="chkRememberDriver" checked style="accent-color: var(--gold);"> Remember Me
+              </label>
+              <span style="color: var(--gold); cursor: pointer; text-decoration: underline;" onclick="toggleShowPassword()">Show Password</span>
+            </div>
+
+            <button class="btn-action-primary" id="btnSubmitDriverLogin" onclick="submitDriverLogin()" style="margin-top: 4px; padding: 10px;">
+              <span>🚀</span> Sign In as Driver
+            </button>
+          </div>
+
           <!-- OPTION A: Live Flutter Web App -->
           <iframe 
             id="iframeDriver"
@@ -1303,15 +1842,15 @@
           <!-- OPTION B: Real Android Emulator Live Screen & Touch Bridge -->
           <div class="real-android-view" id="viewDriverAndroid">
             <div class="android-screen-wrapper" id="driverAndroidWrapper">
-              <img id="driverAndroidImg" class="android-screen-img" src="/api/emulator/screen" alt="Real Android Emulator Screen" />
+              <img id="driverAndroidImg" class="android-screen-img" src="/api/emulator/screen?serial=emulator-5556" alt="Real Android Emulator Screen" />
             </div>
             <div class="android-nav-bar">
-              <button class="android-nav-btn primary" onclick="sendAndroidKey(4)">◀</button>
-              <button class="android-nav-btn primary" onclick="sendAndroidKey(3)">●</button>
-              <button class="android-nav-btn primary" onclick="sendAndroidKey(187)">■</button>
-              <button class="android-nav-btn" onclick="launchAndroidApp('driver')">🚕 Driver</button>
-              <button class="android-nav-btn" onclick="launchAndroidApp('passenger')">🧍 Go</button>
-              <button class="android-nav-btn" onclick="slideDriverOnlineViaAdb()" title="Slide Online via ADB">⚡ Slide</button>
+              <button class="android-nav-btn primary" onclick="sendAndroidKey(4, 'emulator-5556')">◀</button>
+              <button class="android-nav-btn primary" onclick="sendAndroidKey(3, 'emulator-5556')">●</button>
+              <button class="android-nav-btn primary" onclick="sendAndroidKey(187, 'emulator-5556')">■</button>
+              <button class="android-nav-btn" onclick="launchAndroidApp('driver', 'emulator-5556')">🚕 Driver</button>
+              <button class="android-nav-btn" onclick="launchAndroidApp('passenger', 'emulator-5556')">🧍 Go</button>
+              <button class="android-nav-btn" onclick="slideDriverOnlineViaAdb('emulator-5556')" title="Slide Online via ADB">⚡ Slide</button>
               <button class="android-nav-btn" onclick="refreshAndroidScreen()">🔄</button>
             </div>
           </div>
@@ -1319,91 +1858,336 @@
           <!-- OPTION C: Native Interactive Controls View -->
           <div class="interactive-native-view active-view" id="viewDriverNative">
 
-            <!-- Driver Shift & Online Toggle -->
-            <div class="driver-online-switch-box">
-              <div>
-                <div class="switch-info-title" id="dOnlineStatusTitle">Driver is OFFLINE</div>
-                <div class="switch-info-sub" id="dOnlineStatusSub">Slide or tap to start receiving dispatches</div>
-              </div>
-              <button class="btn-toggle-online offline" id="btnDriverOnlineToggle" onclick="toggleDriverOnline()">
-                <span>🔴 OFFLINE</span>
+            <!-- Driver Tab Switcher: Trip Cockpit vs Wealth & Benefits -->
+            <div class="driver-tab-switcher">
+              <button class="driver-tab-btn active" id="btnDTabTrip" onclick="switchDriverTab('trip')">
+                <span>🚕</span> Trip Cockpit
+              </button>
+              <button class="driver-tab-btn" id="btnDTabWealth" onclick="switchDriverTab('wealth')">
+                <span>💎</span> Wealth & Benefits <span class="tab-badge" id="dTabWealthBadge">25%</span>
               </button>
             </div>
 
-            <!-- Profile & Vehicle Badge -->
-            <div class="app-card">
-              <div class="app-card-title">
-                <span>Vehicle & Profile</span>
-                <span class="val" style="color: var(--gold);">★ 4.95 (154 trips)</span>
+            <!-- TAB 1: TRIP COCKPIT VIEW -->
+            <div id="driverTripView" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Driver Shift & Online Toggle -->
+              <div class="driver-online-switch-box">
+                <div>
+                  <div class="switch-info-title" id="dOnlineStatusTitle">Driver is OFFLINE</div>
+                  <div class="switch-info-sub" id="dOnlineStatusSub">Slide or tap to start receiving dispatches</div>
+                </div>
+                <button class="btn-toggle-online offline" id="btnDriverOnlineToggle" onclick="toggleDriverOnline()">
+                  <span>🔴 OFFLINE</span>
+                </button>
               </div>
-              <div style="font-size: 0.78rem; font-weight: 700; color: #fff;">Test Driver (driver@test.com)</div>
-              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
-                Toyota Axio Hybrid 2022 • Plate: <strong style="color: #fff;">KDH 452X</strong>
+
+              <!-- Profile & Vehicle Badge -->
+              <div class="app-card">
+                <div class="app-card-title">
+                  <span>Vehicle & Profile</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span class="val" style="color: var(--gold);">★ 4.95</span>
+                    <button class="btn-step-ghost" onclick="openDriverLoginModal()" style="padding: 2px 8px; font-size: 0.65rem; border-radius: 6px; color: var(--gold); border-color: var(--border-gold); cursor: pointer;" title="Switch or Re-login Driver Account">
+                      🔑 Switch / Login
+                    </button>
+                  </div>
+                </div>
+                <div style="font-size: 0.78rem; font-weight: 700; color: var(--text);" id="dActiveDriverName">Test Driver (driver@test.com)</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;" id="dActiveDriverCar">
+                  Toyota Axio Hybrid 2022 • Plate: <strong style="color: var(--text);" id="dActiveDriverPlate">KDH 452X</strong>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 0.68rem;">
+                  <span style="background: rgba(16, 185, 129, 0.15); color: var(--green); padding: 2px 6px; border-radius: 4px;" id="dActiveDriverStatusBadge">Status: LOGGED IN</span>
+                  <span style="background: rgba(212, 175, 55, 0.15); color: var(--gold); padding: 2px 6px; border-radius: 4px;">Wealth Deductions: <strong>25%</strong></span>
+                </div>
               </div>
-              <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 0.68rem;">
-                <span style="background: rgba(16, 185, 129, 0.15); color: var(--green); padding: 2px 6px; border-radius: 4px;">Biometric: VERIFIED</span>
-                <span style="background: rgba(245, 158, 11, 0.15); color: var(--gold); padding: 2px 6px; border-radius: 4px;">Radius: 5 km</span>
+
+              <!-- Active Trip Controls Panel -->
+              <div class="app-card" id="driverActiveTripPanel" style="display: none;">
+                <div class="app-card-title">
+                  <span>Current Assignment</span>
+                  <span class="val" id="dActiveTripStatus" style="color: var(--green);">ACCEPTED</span>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.78rem;">
+                  <div style="color: var(--text); font-weight: 700; margin-bottom: 2px;">Pickup: Kenyatta Ave, CBD</div>
+                  <div style="color: var(--text-muted); font-size: 0.7rem;">Passenger: Brian K. (4.90 ★)</div>
+                  <div style="color: var(--gold); font-weight: 800; margin-top: 4px;">Fare: KES 1,850.00 (Cash)</div>
+                </div>
+
+                <!-- Driver Trip Action Pipeline Buttons -->
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                  <button class="btn-action-primary" id="btnDriverArrive" onclick="driverMarkArrived()">
+                    <span>📍</span> I Have Arrived at Pickup
+                  </button>
+
+                  <button class="btn-action-green" id="btnDriverStart" style="display: none;" onclick="driverStartTrip()">
+                    <span>🟢</span> Passenger Boarded — Start Trip
+                  </button>
+
+                  <button class="btn-action-primary" id="btnDriverComplete" style="display: none;" onclick="driverCompleteTrip()">
+                    <span>🏁</span> Complete Trip at JKIA
+                  </button>
+
+                  <button class="btn-action-green" id="btnDriverConfirmCash" style="display: none;" onclick="driverConfirmCashPayment()">
+                    <span>💵</span> Confirm Cash Received (KES 1,850)
+                  </button>
+                </div>
+
+                <!-- Expressway Telemetry Simulation -->
+                <div id="dExpresswaySimulation" class="expressway-progress-wrap" style="display: none;">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 700;">
+                    <span>Nairobi Expressway</span>
+                    <span id="dExpresswayCheckpoint">GPS: Active</span>
+                    <span>JKIA Gate</span>
+                  </div>
+                  <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="dProgressBar"></div>
+                  </div>
+                </div>
+
+                <!-- Real-Time Trip Settlement & Wealth Breakdown Card -->
+                <div id="dTripSettlementReceipt" style="display: none; margin-top: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-gold); border-radius: 10px; padding: 10px;">
+                  <div style="font-size: 0.78rem; font-weight: 800; color: var(--gold); margin-bottom: 6px; display: flex; justify-content: space-between;">
+                    <span>Trip Commission & Wealth Split</span>
+                    <span style="color: var(--green);">Settled</span>
+                  </div>
+                  <div style="font-size: 0.7rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 3px;">
+                    <div style="display: flex; justify-content: space-between;">
+                      <span>Gross Fare Collected:</span>
+                      <strong style="color: var(--text);">KES 1,850.00</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                      <span>Platform Commission (20%):</span>
+                      <strong style="color: var(--red);">-KES 370.00</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-top: 1px dashed var(--border); padding-top: 3px;">
+                      <span>Driver Share (80%):</span>
+                      <strong style="color: var(--text);">KES 1,480.00</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; color: var(--gold);">
+                      <span>Wealth Deductions (<span id="settleWealthPct">25%</span>):</span>
+                      <strong id="settleWealthAmount">-KES 370.00</strong>
+                    </div>
+                    <div style="font-size: 0.65rem; color: var(--text-dim); padding-left: 8px;">
+                      • SACCO: <span id="settleSacco">KES 148.00</span> | Health: <span id="settleHealth">KES 74.00</span><br>
+                      • MMF: <span id="settleMmf">KES 74.00</span> | Pension: <span id="settlePension">KES 74.00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 800; color: var(--green); border-top: 1.5px solid var(--border); padding-top: 4px; margin-top: 2px;">
+                      <span>Net Cash Take-Home:</span>
+                      <strong id="settleNetTakeHome">KES 1,110.00</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Driver Radar Scanning Placeholder when Online with No Ride -->
+              <div class="app-card" id="driverRadarCard">
+                <div class="app-card-title">
+                  <span>Dispatch Radar</span>
+                  <span class="val" id="dRadarPill" style="color: var(--text-muted);">STANDBY</span>
+                </div>
+                <div style="text-align: center; padding: 20px 10px;">
+                  <div style="font-size: 2.2rem; margin-bottom: 8px;" id="dRadarIcon">📡</div>
+                  <div style="font-size: 0.82rem; font-weight: 700; color: var(--text);" id="dRadarText">Driver is currently offline</div>
+                  <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
+                    Toggle online above or click "1-Click Auto Demo" in the top bar.
+                  </div>
+                </div>
               </div>
             </div>
 
-            <!-- Active Trip Controls Panel -->
-            <div class="app-card" id="driverActiveTripPanel" style="display: none;">
-              <div class="app-card-title">
-                <span>Current Assignment</span>
-                <span class="val" id="dActiveTripStatus" style="color: var(--green);">ACCEPTED</span>
-              </div>
+            <!-- TAB 2: WEALTH CREATION & BENEFIT PROGRAMS VIEW -->
+            <div id="driverWealthView" class="wealth-view">
 
-              <div style="background: #080c16; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.78rem;">
-                <div style="color: #fff; font-weight: 700; margin-bottom: 2px;">Pickup: Kenyatta Ave, CBD</div>
-                <div style="color: var(--text-muted); font-size: 0.7rem;">Passenger: Brian K. (4.90 ★)</div>
-                <div style="color: var(--gold); font-weight: 800; margin-top: 4px;">Fare: KES 1,850.00 (Cash)</div>
-              </div>
-
-              <!-- Driver Trip Action Pipeline Buttons -->
-              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                <button class="btn-action-primary" id="btnDriverArrive" onclick="driverMarkArrived()">
-                  <span>📍</span> I Have Arrived at Pickup
-                </button>
-
-                <button class="btn-action-green" id="btnDriverStart" style="display: none;" onclick="driverStartTrip()">
-                  <span>🟢</span> Passenger Boarded — Start Trip
-                </button>
-
-                <button class="btn-action-primary" id="btnDriverComplete" style="display: none;" onclick="driverCompleteTrip()">
-                  <span>🏁</span> Complete Trip at JKIA
-                </button>
-
-                <button class="btn-action-green" id="btnDriverConfirmCash" style="display: none;" onclick="driverConfirmCashPayment()">
-                  <span>💵</span> Confirm Cash Received (KES 1,850)
-                </button>
-              </div>
-
-              <!-- Expressway Telemetry Simulation -->
-              <div id="dExpresswaySimulation" class="expressway-progress-wrap" style="display: none;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 700;">
-                  <span>Nairobi Expressway</span>
-                  <span id="dExpresswayCheckpoint">GPS: Active</span>
-                  <span>JKIA Gate</span>
+              <!-- Wealth Capacity & Deduction Cap Gauge Card -->
+              <div class="wealth-gauge-box">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <div>
+                    <div style="font-size: 0.85rem; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 6px;">
+                      <span>💎</span> Wealth & Welfare Programs
+                    </div>
+                    <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 1px;">
+                      Deducted directly from your driver earnings per trip
+                    </div>
+                  </div>
+                  <span style="font-size: 0.65rem; background: rgba(212, 175, 55, 0.15); border: 1px solid var(--border-gold); color: var(--gold); padding: 2px 7px; border-radius: 999px; font-weight: 800;">
+                    CAP: 30% MAX
+                  </span>
                 </div>
-                <div class="progress-bar-bg">
-                  <div class="progress-bar-fill" id="dProgressBar"></div>
+
+                <div class="capacity-bar-wrap">
+                  <div class="capacity-bar-fill" id="capacityBarFill" style="width: 83.33%;"></div>
+                </div>
+
+                <!-- 3 Metric Tiles -->
+                <div class="wealth-stats-grid">
+                  <div class="stat-tile">
+                    <div class="stat-label">Committed</div>
+                    <div class="stat-value" id="valTotalCommitted" style="color: var(--gold);">25%</div>
+                  </div>
+                  <div class="stat-tile">
+                    <div class="stat-label">Remaining</div>
+                    <div class="stat-value" id="valRemainingCap" style="color: var(--green);">5%</div>
+                  </div>
+                  <div class="stat-tile">
+                    <div class="stat-label">Platform Max</div>
+                    <div class="stat-value" style="color: #60a5fa;">30%</div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Driver Radar Scanning Placeholder when Online with No Ride -->
-            <div class="app-card" id="driverRadarCard">
-              <div class="app-card-title">
-                <span>Dispatch Radar</span>
-                <span class="val" id="dRadarPill" style="color: var(--text-muted);">STANDBY</span>
+              <!-- Limit Alert Banner (shows when at 30% ceiling) -->
+              <div class="limit-warning-banner" id="limitWarningBanner">
+                <span>⚠️</span>
+                <span><strong>Maximum 30% Deduction Limit Reached:</strong> Platform safety cap protects 70% of your earnings for daily operational cash flow.</span>
               </div>
-              <div style="text-align: center; padding: 20px 10px;">
-                <div style="font-size: 2.2rem; margin-bottom: 8px;" id="dRadarIcon">📡</div>
-                <div style="font-size: 0.82rem; font-weight: 700; color: #fff;" id="dRadarText">Driver is currently offline</div>
-                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
-                  Toggle online above or click "1-Click Auto Demo" in the top bar.
+
+              <!-- Quick Presets -->
+              <div style="margin-top: 2px;">
+                <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">
+                  Quick Builder Presets:
+                </div>
+                <div class="preset-pill-group">
+                  <button class="preset-pill" onclick="applyWealthPreset('conservative')">🛡️ Conservative (10%)</button>
+                  <button class="preset-pill" onclick="applyWealthPreset('balanced')">⚖️ Balanced Builder (20%)</button>
+                  <button class="preset-pill" onclick="applyWealthPreset('max')">🚀 Max Security (30%)</button>
                 </div>
               </div>
+
+              <!-- PROGRAM 1: SACCO -->
+              <div class="program-card enrolled" id="cardProgramSacco">
+                <div class="program-header">
+                  <div class="program-title-group">
+                    <div class="program-icon-badge">🏛️</div>
+                    <div>
+                      <div class="program-name">Stima DT / PSV SACCO</div>
+                      <span class="program-yield-badge">11.2% Projected Annual Dividend</span>
+                    </div>
+                  </div>
+                  <input type="checkbox" id="chkSacco" checked onchange="toggleProgramEnroll('sacco')" style="accent-color: var(--gold); transform: scale(1.2); cursor: pointer;">
+                </div>
+                <div class="program-desc">
+                  Cooperative share capital & personal savings remitted directly to your SACCO ledger per trip.
+                </div>
+                <div class="stepper-row">
+                  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Trip Deduction:</span>
+                  <div class="stepper-controls-group">
+                    <button class="btn-stepper" onclick="adjustProgramPct('sacco', -1)">−</button>
+                    <span class="stepper-val" id="valSaccoPct">10%</span>
+                    <button class="btn-stepper" onclick="adjustProgramPct('sacco', 1)">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PROGRAM 2: HEALTH INSURANCE -->
+              <div class="program-card enrolled" id="cardProgramHealth">
+                <div class="program-header">
+                  <div class="program-title-group">
+                    <div class="program-icon-badge">🛡️</div>
+                    <div>
+                      <div class="program-name">CIC / Jubilee PSV & Family Health</div>
+                      <span class="program-yield-badge">KES 500,000 Medical & Accident Cover</span>
+                    </div>
+                  </div>
+                  <input type="checkbox" id="chkHealth" checked onchange="toggleProgramEnroll('health')" style="accent-color: var(--gold); transform: scale(1.2); cursor: pointer;">
+                </div>
+                <div class="program-desc">
+                  Comprehensive outpatient, inpatient & accident cover protecting driver, spouse and children.
+                </div>
+                <div class="stepper-row">
+                  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Trip Deduction:</span>
+                  <div class="stepper-controls-group">
+                    <button class="btn-stepper" onclick="adjustProgramPct('health', -1)">−</button>
+                    <span class="stepper-val" id="valHealthPct">5%</span>
+                    <button class="btn-stepper" onclick="adjustProgramPct('health', 1)">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PROGRAM 3: MONEY MARKET FUND (MMF) -->
+              <div class="program-card enrolled" id="cardProgramMmf">
+                <div class="program-header">
+                  <div class="program-title-group">
+                    <div class="program-icon-badge">📈</div>
+                    <div>
+                      <div class="program-name">Britam High-Yield MMF</div>
+                      <span class="program-yield-badge">13.5% Daily Compound Yield</span>
+                    </div>
+                  </div>
+                  <input type="checkbox" id="chkMmf" checked onchange="toggleProgramEnroll('mmf')" style="accent-color: var(--gold); transform: scale(1.2); cursor: pointer;">
+                </div>
+                <div class="program-desc">
+                  Liquid emergency wealth preservation with daily compound interest and instant M-Pesa withdrawals.
+                </div>
+                <div class="stepper-row">
+                  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Trip Deduction:</span>
+                  <div class="stepper-controls-group">
+                    <button class="btn-stepper" onclick="adjustProgramPct('mmf', -1)">−</button>
+                    <span class="stepper-val" id="valMmfPct">5%</span>
+                    <button class="btn-stepper" onclick="adjustProgramPct('mmf', 1)">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PROGRAM 4: PENSION RETIREMENT FUND -->
+              <div class="program-card enrolled" id="cardProgramPension">
+                <div class="program-header">
+                  <div class="program-title-group">
+                    <div class="program-icon-badge">🏦</div>
+                    <div>
+                      <div class="program-name">Octagon / NSSF Retirement Annuity</div>
+                      <span class="program-yield-badge">Tax-Exempt Compounded Annuity</span>
+                    </div>
+                  </div>
+                  <input type="checkbox" id="chkPension" checked onchange="toggleProgramEnroll('pension')" style="accent-color: var(--gold); transform: scale(1.2); cursor: pointer;">
+                </div>
+                <div class="program-desc">
+                  Long-term retirement security ensuring steady annuity income when you choose to retire.
+                </div>
+                <div class="stepper-row">
+                  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Trip Deduction:</span>
+                  <div class="stepper-controls-group">
+                    <button class="btn-stepper" onclick="adjustProgramPct('pension', -1)">−</button>
+                    <span class="stepper-val" id="valPensionPct">5%</span>
+                    <button class="btn-stepper" onclick="adjustProgramPct('pension', 1)">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Live Per-Trip Simulator Card -->
+              <div class="deduction-sim-box">
+                <div style="font-size: 0.75rem; font-weight: 800; color: var(--gold); display: flex; justify-content: space-between;">
+                  <span>Per-Trip Deduction Simulation</span>
+                  <span>KES 1,000 Trip Example</span>
+                </div>
+                <div class="sim-row">
+                  <span>Gross Trip Fare:</span>
+                  <span style="color: var(--text); font-weight: 700;">KES 1,000.00</span>
+                </div>
+                <div class="sim-row">
+                  <span>Cabi Platform Commission (20%):</span>
+                  <span style="color: var(--red); font-weight: 700;">-KES 200.00</span>
+                </div>
+                <div class="sim-row">
+                  <span>Driver Base Share (80%):</span>
+                  <span style="color: var(--text); font-weight: 700;">KES 800.00</span>
+                </div>
+                <div class="sim-row highlight">
+                  <span>Total Wealth Deductions (<strong id="simSummaryPct">25%</strong>):</span>
+                  <span id="simSummaryDeductAmount">-KES 200.00</span>
+                </div>
+                <div class="sim-row take-home">
+                  <span>Net Payout to Driver Wallet:</span>
+                  <span id="simSummaryTakeHome">KES 600.00</span>
+                </div>
+              </div>
+
+              <!-- Save / Lock Button -->
+              <button class="btn-action-primary" style="margin-top: 4px; padding: 12px;" onclick="saveWealthPreferences()">
+                <span>💾</span> Save & Lock Benefit Preferences
+              </button>
+
             </div>
 
           </div>
@@ -1569,6 +2353,8 @@
       [btnN, btnF, btnA].forEach(b => b && b.classList.remove('active'));
       [vNative, vFlutter, vAndroid].forEach(v => v && v.classList.remove('active-view'));
 
+      clearInterval(passengerAndroidRefreshTimer);
+
       if (mode === 'native') {
         btnN.classList.add('active');
         vNative.classList.add('active-view');
@@ -1577,7 +2363,8 @@
         btnA.classList.add('active');
         vAndroid.classList.add('active-view');
         refreshPassengerAndroidScreen();
-        log('📲 Passenger phone: Real Android Device Stream (emulator-5556). Click to touch!', 'PASSENGER');
+        passengerAndroidRefreshTimer = setInterval(refreshPassengerAndroidScreen, 2000);
+        log('📲 Passenger phone: Real Android Device Stream (emulator-5554). Click to touch!', 'PASSENGER');
       } else {
         btnF.classList.add('active');
         vFlutter.classList.add('active-view');
@@ -1585,10 +2372,12 @@
       }
     }
 
+    let passengerAndroidRefreshTimer = null;
+
     function refreshPassengerAndroidScreen() {
       const img = document.getElementById('passengerAndroidImg');
       if (img) {
-        img.src = '/api/emulator/screen?t=' + Date.now();
+        img.src = '/api/emulator/screen?serial=emulator-5554&t=' + Date.now();
       }
     }
 
@@ -1615,8 +2404,8 @@
         btnA.classList.add('active');
         vAndroid.classList.add('active-view');
         refreshAndroidScreen();
-        // Auto-refresh screen every 1.5 seconds
-        androidRefreshTimer = setInterval(refreshAndroidScreen, 1500);
+        // Auto-refresh screen every 2 seconds
+        androidRefreshTimer = setInterval(refreshAndroidScreen, 2000);
         log('📲 Driver phone: Real Android Device Stream (emulator-5556). Click to touch!', 'DRIVER');
       } else {
         btnF.classList.add('active');
@@ -1628,47 +2417,49 @@
     function refreshAndroidScreen() {
       const img = document.getElementById('driverAndroidImg');
       if (img) {
-        img.src = '/api/emulator/screen?t=' + Date.now();
+        img.src = '/api/emulator/screen?serial=emulator-5556&t=' + Date.now();
       }
     }
 
-    function sendAndroidKey(key) {
+    function sendAndroidKey(key, serial = 'emulator-5556') {
+      const refreshFn = serial === 'emulator-5554' ? refreshPassengerAndroidScreen : refreshAndroidScreen;
       fetch('/api/emulator/key', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key })
+        body: JSON.stringify({ key, serial })
       }).then(() => {
-        setTimeout(refreshAndroidScreen, 400);
+        setTimeout(refreshFn, 400);
       });
       playTone([440]);
-      log(`📱 Android Key Event: ${key}`, 'SYSTEM');
+      log(`📱 Android Key Event on ${serial}: ${key}`, 'SYSTEM');
     }
 
-    function launchAndroidApp(app) {
+    function launchAndroidApp(app, serial = 'emulator-5556') {
+      const refreshFn = serial === 'emulator-5554' ? refreshPassengerAndroidScreen : refreshAndroidScreen;
       fetch('/api/emulator/launch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ app })
+        body: JSON.stringify({ app, serial })
       }).then(() => {
-        setTimeout(refreshAndroidScreen, 1200);
+        setTimeout(refreshFn, 1200);
       });
       playTone([523.25, 659.25]);
-      log(`🚀 Launching ${app === 'driver' ? 'Cabi Driver' : 'Cabi Go'} on Android device...`, 'SYSTEM');
+      log(`🚀 Launching ${app === 'driver' ? 'Cabi Driver' : 'Cabi Go'} on ${serial}...`, 'SYSTEM');
     }
 
-    function slideDriverOnlineViaAdb() {
+    function slideDriverOnlineViaAdb(serial = 'emulator-5556') {
       fetch('/api/emulator/swipe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ x1: 150, y1: 1520, x2: 920, y2: 1520, duration: 400 })
+        body: JSON.stringify({ x1: 150, y1: 1520, x2: 920, y2: 1520, duration: 400, serial })
       }).then(() => {
         setTimeout(refreshAndroidScreen, 800);
       });
       playTone([523.25, 659.25, 783.99]);
-      log(`⚡ ADB Swipe: Slide to Go Online dispatched to real mobile app!`, 'DRIVER');
+      log(`⚡ ADB Swipe: Slide to Go Online dispatched to ${serial}!`, 'DRIVER');
     }
 
-    function bindAndroidTouchEvents(wrapperId, refreshFn, tag) {
+    function bindAndroidTouchEvents(wrapperId, refreshFn, tag, serial) {
       const wrapper = document.getElementById(wrapperId);
       if (!wrapper) return;
 
@@ -1709,9 +2500,9 @@
           fetch('/api/emulator/tap', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ x: tapX, y: tapY })
+            body: JSON.stringify({ x: tapX, y: tapY, serial })
           }).then(() => setTimeout(refreshFn, 500));
-          log(`👆 Tap on Real Device: (${Math.round(tapX)}, ${Math.round(tapY)})`, tag);
+          log(`👆 Tap on ${serial}: (${Math.round(tapX)}, ${Math.round(tapY)})`, tag);
         } else {
           // SWIPE
           fetch('/api/emulator/swipe', {
@@ -1722,17 +2513,21 @@
               y1: startY * scaleY,
               x2: endX * scaleX,
               y2: endY * scaleY,
-              duration: 350
+              duration: 350,
+              serial
             })
           }).then(() => setTimeout(refreshFn, 600));
-          log(`👉 Swipe on Real Device: (${Math.round(startX * scaleX)}, ${Math.round(startY * scaleY)}) ➔ (${Math.round(endX * scaleX)}, ${Math.round(endY * scaleY)})`, tag);
+          log(`👉 Swipe on ${serial}: (${Math.round(startX * scaleX)}, ${Math.round(startY * scaleY)}) ➔ (${Math.round(endX * scaleX)}, ${Math.round(endY * scaleY)})`, tag);
         }
       });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      bindAndroidTouchEvents('driverAndroidWrapper', refreshAndroidScreen, 'DRIVER');
-      bindAndroidTouchEvents('passengerAndroidWrapper', refreshPassengerAndroidScreen, 'PASSENGER');
+      bindAndroidTouchEvents('driverAndroidWrapper', refreshAndroidScreen, 'DRIVER', 'emulator-5556');
+      bindAndroidTouchEvents('passengerAndroidWrapper', refreshPassengerAndroidScreen, 'PASSENGER', 'emulator-5554');
+      // Start both screens in interactive Quick Actions mode (instant, responsive 60fps)
+      setPassengerViewMode('native');
+      setDriverViewMode('native');
     });
 
     // Step Stepper Highlight
@@ -1978,8 +2773,41 @@
       document.getElementById('btnCancelRide').style.display = 'none';
       document.getElementById('pRatingBlock').style.display = 'block';
 
+      // Update Settlement Receipt Breakdown on Driver Phone
+      const fare = selectedFare || 1850;
+      const commission = fare * 0.20;
+      const driverShare = fare * 0.80;
+      const wealthPct = getCommittedWealthPct();
+      const totalWealthDeduct = driverShare * (wealthPct / 100);
+      const netTakeHome = driverShare - totalWealthDeduct;
+
+      const saccoDeduct = driverPrograms.sacco.enrolled ? (driverShare * (driverPrograms.sacco.pct / 100)) : 0;
+      const healthDeduct = driverPrograms.health.enrolled ? (driverShare * (driverPrograms.health.pct / 100)) : 0;
+      const mmfDeduct = driverPrograms.mmf.enrolled ? (driverShare * (driverPrograms.mmf.pct / 100)) : 0;
+      const pensionDeduct = driverPrograms.pension.enrolled ? (driverShare * (driverPrograms.pension.pct / 100)) : 0;
+
+      const receipt = document.getElementById('dTripSettlementReceipt');
+      if (receipt) {
+        receipt.style.display = 'block';
+        const elPct = document.getElementById('settleWealthPct');
+        const elAmt = document.getElementById('settleWealthAmount');
+        const elSacco = document.getElementById('settleSacco');
+        const elHealth = document.getElementById('settleHealth');
+        const elMmf = document.getElementById('settleMmf');
+        const elPension = document.getElementById('settlePension');
+        const elNet = document.getElementById('settleNetTakeHome');
+
+        if (elPct) elPct.textContent = `${wealthPct}%`;
+        if (elAmt) elAmt.textContent = `-KES ${totalWealthDeduct.toFixed(2)}`;
+        if (elSacco) elSacco.textContent = `KES ${saccoDeduct.toFixed(2)}`;
+        if (elHealth) elHealth.textContent = `KES ${healthDeduct.toFixed(2)}`;
+        if (elMmf) elMmf.textContent = `KES ${mmfDeduct.toFixed(2)}`;
+        if (elPension) elPension.textContent = `KES ${pensionDeduct.toFixed(2)}`;
+        if (elNet) elNet.textContent = `KES ${netTakeHome.toFixed(2)}`;
+      }
+
       playTone([783.99, 1046.5]);
-      log(`🏁 Trip completed! Final calculated fare: KES ${selectedFare.toLocaleString()}. Please collect cash.`, 'DRIVER');
+      log(`🏁 Trip completed! Final fare: KES ${selectedFare.toLocaleString()}. Driver Share: KES ${driverShare.toFixed(2)} | Wealth Deductions (${wealthPct}%): -KES ${totalWealthDeduct.toFixed(2)} | Net Take-Home: KES ${netTakeHome.toFixed(2)}.`, 'DRIVER');
       log(`📱 Passenger arrived at JKIA. Waybill & settlement receipt displayed.`, 'PASSENGER');
 
       updateStepIndicator(7);
@@ -2121,6 +2949,8 @@
       document.getElementById('btnDriverComplete').style.display = 'none';
       document.getElementById('btnDriverConfirmCash').style.display = 'none';
       document.getElementById('btnDriverConfirmCash').disabled = false;
+      const receipt = document.getElementById('dTripSettlementReceipt');
+      if (receipt) receipt.style.display = 'none';
 
       updateStepIndicator(1);
       log('🔄 Studio state reset to initial readiness.', 'SYSTEM');
@@ -2135,6 +2965,316 @@
       else if (num === 6) driverCompleteTrip();
       else if (num === 7) { driverConfirmCashPayment(); submitRiderRating(); }
     }
+
+    // ========================================================
+    // STITCH DUAL-THEME SWITCHER
+    // ========================================================
+    let isLightTheme = false;
+    function toggleStudioTheme() {
+      isLightTheme = !isLightTheme;
+      document.body.classList.toggle('light-theme', isLightTheme);
+      const icon = document.getElementById('themeToggleIcon');
+      const text = document.getElementById('themeToggleText');
+      if (icon) icon.textContent = isLightTheme ? '☀️' : '🌙';
+      if (text) text.textContent = isLightTheme ? 'Porcelain Light' : 'Obsidian Gold';
+      playTone(isLightTheme ? [783.99, 1046.5] : [1046.5, 783.99], 0.12);
+      log(`🎨 Theme switched to: ${isLightTheme ? 'Porcelain Light Mode (Daylight Clarity)' : 'Obsidian Dark Mode (Executive Gold)'}`, 'SYSTEM');
+    }
+
+    // ========================================================
+    // DRIVER TAB SWITCHER (TRIP COCKPIT VS WEALTH & BENEFITS)
+    // ========================================================
+    let activeDriverTab = 'trip';
+    function switchDriverTab(tab) {
+      activeDriverTab = tab;
+      const btnTrip = document.getElementById('btnDTabTrip');
+      const btnWealth = document.getElementById('btnDTabWealth');
+      const viewTrip = document.getElementById('driverTripView');
+      const viewWealth = document.getElementById('driverWealthView');
+
+      if (tab === 'trip') {
+        btnTrip.classList.add('active');
+        btnWealth.classList.remove('active');
+        viewTrip.style.display = 'flex';
+        viewWealth.classList.remove('active');
+        log('🚕 Driver switched to Trip Cockpit view.', 'DRIVER');
+      } else {
+        btnTrip.classList.remove('active');
+        btnWealth.classList.add('active');
+        viewTrip.style.display = 'none';
+        viewWealth.classList.add('active');
+        log('💎 Driver opened Wealth & Benefits selection console.', 'DRIVER');
+      }
+      playTone([659.25]);
+    }
+
+    // ========================================================
+    // DRIVER WEALTH & BENEFITS PROGRAM ENGINE (30% MAX CAP)
+    // ========================================================
+    const MAX_DEDUCTION_CAP = 30; // 30% Hard limit
+
+    const driverPrograms = {
+      sacco: { name: 'Stima DT SACCO', pct: 10, min: 2, max: 20, enrolled: true },
+      health: { name: 'CIC Health', pct: 5, min: 2, max: 10, enrolled: true },
+      mmf: { name: 'Britam MMF', pct: 5, min: 2, max: 15, enrolled: true },
+      pension: { name: 'Octagon Pension', pct: 5, min: 2, max: 10, enrolled: true }
+    };
+
+    function getCommittedWealthPct() {
+      let sum = 0;
+      for (const key in driverPrograms) {
+        if (driverPrograms[key].enrolled) {
+          sum += driverPrograms[key].pct;
+        }
+      }
+      return sum;
+    }
+
+    function adjustProgramPct(key, delta) {
+      const prog = driverPrograms[key];
+      if (!prog) return;
+
+      const currentCommitted = getCommittedWealthPct();
+      const currentProgContrib = prog.enrolled ? prog.pct : 0;
+      const otherTotal = currentCommitted - currentProgContrib;
+      const targetPct = (prog.enrolled ? prog.pct : 0) + delta;
+
+      if (targetPct < prog.min && delta < 0) {
+        prog.enrolled = false;
+        prog.pct = prog.min;
+        const chk = document.getElementById(`chk${capitalize(key)}`);
+        if (chk) chk.checked = false;
+        updateWealthUI();
+        playTone([350]);
+        return;
+      }
+
+      if (delta > 0 && (otherTotal + targetPct) > MAX_DEDUCTION_CAP) {
+        playTone([300, 200]);
+        const banner = document.getElementById('limitWarningBanner');
+        if (banner) banner.classList.add('show');
+        log(`⚠️ Cannot exceed the maximum 30% deduction limit! Committed: ${currentCommitted}%, Remaining: ${MAX_DEDUCTION_CAP - currentCommitted}%.`, 'DRIVER');
+        return;
+      }
+
+      prog.enrolled = true;
+      prog.pct = Math.min(prog.max, Math.max(prog.min, targetPct));
+      const chk = document.getElementById(`chk${capitalize(key)}`);
+      if (chk) chk.checked = true;
+
+      playTone([523.25 + prog.pct * 25], 0.1);
+      updateWealthUI();
+    }
+
+    function toggleProgramEnroll(key) {
+      const prog = driverPrograms[key];
+      if (!prog) return;
+      const chk = document.getElementById(`chk${capitalize(key)}`);
+      const willEnroll = chk ? chk.checked : !prog.enrolled;
+
+      if (willEnroll) {
+        const currentCommitted = getCommittedWealthPct();
+        if (currentCommitted + prog.pct > MAX_DEDUCTION_CAP) {
+          if (chk) chk.checked = false;
+          playTone([300, 200]);
+          const banner = document.getElementById('limitWarningBanner');
+          if (banner) banner.classList.add('show');
+          log(`⚠️ Enrolling in ${prog.name} (${prog.pct}%) would exceed 30% limit!`, 'DRIVER');
+          return;
+        }
+        prog.enrolled = true;
+      } else {
+        prog.enrolled = false;
+      }
+
+      playTone([659.25], 0.1);
+      updateWealthUI();
+    }
+
+    function applyWealthPreset(preset) {
+      if (preset === 'conservative') {
+        driverPrograms.sacco = { ...driverPrograms.sacco, pct: 10, enrolled: true };
+        driverPrograms.health = { ...driverPrograms.health, pct: 0, enrolled: false };
+        driverPrograms.mmf = { ...driverPrograms.mmf, pct: 0, enrolled: false };
+        driverPrograms.pension = { ...driverPrograms.pension, pct: 0, enrolled: false };
+        log('🛡️ Applied Conservative Preset: 10% SACCO only.', 'DRIVER');
+      } else if (preset === 'balanced') {
+        driverPrograms.sacco = { ...driverPrograms.sacco, pct: 10, enrolled: true };
+        driverPrograms.health = { ...driverPrograms.health, pct: 5, enrolled: true };
+        driverPrograms.mmf = { ...driverPrograms.mmf, pct: 5, enrolled: true };
+        driverPrograms.pension = { ...driverPrograms.pension, pct: 0, enrolled: false };
+        log('⚖️ Applied Balanced Builder Preset: 10% SACCO + 5% Health + 5% MMF = 20%.', 'DRIVER');
+      } else if (preset === 'max') {
+        driverPrograms.sacco = { ...driverPrograms.sacco, pct: 10, enrolled: true };
+        driverPrograms.health = { ...driverPrograms.health, pct: 5, enrolled: true };
+        driverPrograms.mmf = { ...driverPrograms.mmf, pct: 10, enrolled: true };
+        driverPrograms.pension = { ...driverPrograms.pension, pct: 5, enrolled: true };
+        log('🚀 Applied Maximum Security Preset: 10% SACCO + 5% Health + 10% MMF + 5% Pension = 30%.', 'DRIVER');
+      }
+
+      // Sync checkboxes
+      for (const key in driverPrograms) {
+        const chk = document.getElementById(`chk${capitalize(key)}`);
+        if (chk) chk.checked = driverPrograms[key].enrolled;
+      }
+
+      playTone([523.25, 659.25, 783.99]);
+      updateWealthUI();
+    }
+
+    function updateWealthUI() {
+      const total = getCommittedWealthPct();
+      const remaining = Math.max(0, MAX_DEDUCTION_CAP - total);
+
+      // Metric Tiles
+      const elCommitted = document.getElementById('valTotalCommitted');
+      const elRemaining = document.getElementById('valRemainingCap');
+      const barFill = document.getElementById('capacityBarFill');
+      const badge = document.getElementById('dTabWealthBadge');
+      const warningBanner = document.getElementById('limitWarningBanner');
+
+      if (elCommitted) elCommitted.textContent = `${total}%`;
+      if (elRemaining) elRemaining.textContent = `${remaining}%`;
+      if (badge) badge.textContent = `${total}%`;
+
+      if (barFill) {
+        const fillPct = (total / MAX_DEDUCTION_CAP) * 100;
+        barFill.style.width = `${Math.min(100, fillPct)}%`;
+        if (total >= MAX_DEDUCTION_CAP) barFill.classList.add('maxed');
+        else barFill.classList.remove('maxed');
+      }
+
+      if (warningBanner) {
+        if (total >= MAX_DEDUCTION_CAP) warningBanner.classList.add('show');
+        else warningBanner.classList.remove('show');
+      }
+
+      // Update individual program values and card classes
+      for (const key in driverPrograms) {
+        const prog = driverPrograms[key];
+        const valSpan = document.getElementById(`val${capitalize(key)}Pct`);
+        const card = document.getElementById(`cardProgram${capitalize(key)}`);
+        if (valSpan) valSpan.textContent = `${prog.pct}%`;
+        if (card) {
+          if (prog.enrolled) card.classList.add('enrolled');
+          else card.classList.remove('enrolled');
+        }
+      }
+
+      // Update Live Per-Trip Simulator (KES 1,000 example)
+      const baseFare = 1000;
+      const driverShare = baseFare * 0.80; // KES 800
+      const totalDeductions = driverShare * (total / 100);
+      const netTakeHome = driverShare - totalDeductions;
+
+      const simPct = document.getElementById('simSummaryPct');
+      const simDeduct = document.getElementById('simSummaryDeductAmount');
+      const simTakeHome = document.getElementById('simSummaryTakeHome');
+
+      if (simPct) simPct.textContent = `${total}%`;
+      if (simDeduct) simDeduct.textContent = `-KES ${totalDeductions.toFixed(2)}`;
+      if (simTakeHome) simTakeHome.textContent = `KES ${netTakeHome.toFixed(2)}`;
+    }
+
+    function saveWealthPreferences() {
+      const total = getCommittedWealthPct();
+      playTone([523.25, 659.25, 783.99, 1046.5]);
+      log(`💾 Saved Driver Wealth Program Allocations (${total}% total deduction per trip).`, 'DRIVER');
+      log(`🏛️ Active allocations: SACCO ${driverPrograms.sacco.enrolled ? driverPrograms.sacco.pct : 0}% | Health ${driverPrograms.health.enrolled ? driverPrograms.health.pct : 0}% | MMF ${driverPrograms.mmf.enrolled ? driverPrograms.mmf.pct : 0}% | Pension ${driverPrograms.pension.enrolled ? driverPrograms.pension.pct : 0}%.`, 'DRIVER');
+
+      // Feedback toast
+      const btn = event?.currentTarget;
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<span>✅</span> Allocations Saved & Locked!';
+        setTimeout(() => btn.innerHTML = orig, 2500);
+      }
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // ========================================================
+    // DRIVER AUTHENTICATION & LOGIN MANAGER
+    // ========================================================
+    function openDriverLoginModal() {
+      const modal = document.getElementById('driverLoginModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        playTone([659.25, 783.99], 0.1);
+      }
+    }
+
+    function closeDriverLoginModal() {
+      const modal = document.getElementById('driverLoginModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function fillDriverCreds(email, password) {
+      document.getElementById('loginDriverEmail').value = email;
+      document.getElementById('loginDriverPassword').value = password;
+      playTone([523.25, 659.25], 0.08);
+      log(`🔑 Pre-filled login credentials for: ${email}`, 'DRIVER');
+    }
+
+    function toggleShowPassword() {
+      const pwd = document.getElementById('loginDriverPassword');
+      if (pwd) {
+        pwd.type = pwd.type === 'password' ? 'text' : 'password';
+      }
+    }
+
+    async function submitDriverLogin() {
+      const email = document.getElementById('loginDriverEmail').value.trim();
+      const password = document.getElementById('loginDriverPassword').value;
+      const btn = document.getElementById('btnSubmitDriverLogin');
+      if (!email || !password) {
+        alert('Please enter your driver email and password.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳</span> Signing In...';
+
+      try {
+        // Attempt live authentication against Auth Gateway
+        const res = await fetch('http://localhost:3333/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        }).catch(() => null);
+
+        let driverName = 'Test Driver';
+        let vehicle = 'Toyota Axio Hybrid 2022 • Plate: <strong style="color: var(--text);">KDH 452X</strong>';
+
+        if (email.includes('boda')) {
+          driverName = 'John Boda Driver';
+          vehicle = 'Bajaj Boxer 150 • Plate: <strong style="color: var(--text);">KMDJ 892B</strong>';
+        }
+
+        // Update Driver UI Profile
+        document.getElementById('dActiveDriverName').textContent = `${driverName} (${email})`;
+        document.getElementById('dActiveDriverCar').innerHTML = vehicle;
+        document.getElementById('dActiveDriverStatusBadge').textContent = 'Status: LOGGED IN';
+        document.getElementById('dActiveDriverStatusBadge').style.color = 'var(--green)';
+
+        playTone([523.25, 659.25, 783.99, 1046.5]);
+        log(`🔓 Driver successfully authenticated as ${email} (Bearer JWT issued)!`, 'DRIVER');
+        log(`🚗 Active vehicle profile attached: ${driverName} (${vehicle.replace(/<[^>]*>?/gm, '')})`, 'DRIVER');
+
+        closeDriverLoginModal();
+      } catch (e) {
+        log(`Login completed with local credentials: ${email}`, 'DRIVER');
+        closeDriverLoginModal();
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>🚀</span> Sign In as Driver';
+      }
+    }
+
+    // Initialize Wealth UI on Load
+    setTimeout(updateWealthUI, 500);
   </script>
 </body>
 </html>

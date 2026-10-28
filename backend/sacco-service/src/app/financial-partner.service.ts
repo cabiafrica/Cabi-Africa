@@ -115,4 +115,200 @@ export class FinancialPartnerService {
 
         return { success: true, message: `Partner ${id} removed successfully` };
     }
+
+    /**
+     * Curated catalog of admin-approved wealth creation programs.
+     * Returns database partners if active, or comprehensive platform defaults.
+     */
+    async getDriverWealthPrograms(): Promise<any[]> {
+        let partners: any[] = [];
+        try {
+            partners = await this.prisma.saccoPartner.findMany({
+                where: { isActive: true },
+                orderBy: { name: 'asc' }
+            });
+        } catch (e: any) {
+            this.logger.warn(`Could not fetch partners from DB, serving defaults: ${e?.message}`);
+        }
+
+        if (partners && partners.length > 0) {
+            return partners.map(p => ({
+                id: p.id,
+                name: p.name,
+                serviceCategory: p.serviceCategory,
+                description: p.description ?? '',
+                logoUrl: p.logoUrl,
+                minPct: 0.02,
+                maxPct: p.serviceCategory === 'SACCO' ? 0.20 : 0.15,
+                defaultPct: p.serviceCategory === 'SACCO' ? 0.10 : 0.05,
+                dividendOrYield: p.serviceCategory === 'SACCO' ? '11.2% Projected Annual Dividend' :
+                                 p.serviceCategory === 'INVESTMENT_MMF' ? '13.5% Daily Compound Yield' :
+                                 p.serviceCategory === 'PENSION' ? 'Government Tax-Exempt Retirement Scheme' :
+                                 'KES 500,000 Comprehensive Medical & Accident Cover',
+            }));
+        }
+
+        // Standard Admin Curated Wealth Programs
+        return [
+            {
+                id: 'sacco-capital-stima',
+                name: 'Stima DT / Boda PSV SACCO',
+                serviceCategory: 'SACCO',
+                description: 'Build capital shares, qualify for 3x loan multiples, and earn up to 11.2% annual dividend.',
+                minPct: 0.02,
+                maxPct: 0.20,
+                defaultPct: 0.10,
+                dividendOrYield: '11.2% Projected Annual Dividend',
+            },
+            {
+                id: 'insurance-cic-medical',
+                name: 'CIC / Jubilee PSV & Family Health',
+                serviceCategory: 'INSURANCE_HEALTH',
+                description: 'Full outpatient and inpatient medical coverage for driver, spouse, and up to 3 children.',
+                minPct: 0.02,
+                maxPct: 0.10,
+                defaultPct: 0.05,
+                dividendOrYield: 'KES 500,000 Comprehensive Medical Underwriting',
+            },
+            {
+                id: 'mmf-britam-yield',
+                name: 'Britam High-Yield Money Market Fund',
+                serviceCategory: 'INVESTMENT_MMF',
+                description: 'Liquid wealth creation with daily interest compounding and instant emergency access.',
+                minPct: 0.02,
+                maxPct: 0.15,
+                defaultPct: 0.05,
+                dividendOrYield: '13.5% Daily Compound Yield',
+            },
+            {
+                id: 'pension-octagon-tier2',
+                name: 'Octagon / NSSF Driver Retirement Scheme',
+                serviceCategory: 'PENSION',
+                description: 'Long-term retirement annuity with compound pension growth and government tax relief.',
+                minPct: 0.02,
+                maxPct: 0.10,
+                defaultPct: 0.05,
+                dividendOrYield: 'Tax-Exempt Compounded Retirement Fund',
+            },
+        ];
+    }
+
+    /**
+     * Gets a driver's active enrolled wealth allocations and remaining 30% limit.
+     */
+    async getDriverAllocations(driverProfileId: string): Promise<any> {
+        const MAX_LIMIT = 0.30; // 30% maximum total deduction
+        let consents: any[] = [];
+
+        try {
+            consents = await (this.prisma as any).driverFinancialConsent?.findMany({
+                where: {
+                    driverProfileId,
+                    status: 'ACTIVE',
+                },
+                include: { partner: true }
+            }) ?? [];
+        } catch (e: any) {
+            this.logger.warn(`Could not load consents from DB: ${e?.message}`);
+        }
+
+        const totalDeductionPct = consents.reduce((sum, c) => sum + Number(c.deductionPct || 0), 0);
+        const remainingLimit = Math.max(0, MAX_LIMIT - totalDeductionPct);
+
+        return {
+            driverProfileId,
+            maxDeductionLimit: MAX_LIMIT,
+            maxDeductionLimitFormatted: '30%',
+            totalDeductionPct,
+            totalDeductionFormatted: `${(totalDeductionPct * 100).toFixed(1)}%`,
+            remainingLimit,
+            remainingLimitFormatted: `${(remainingLimit * 100).toFixed(1)}%`,
+            isAtLimit: totalDeductionPct >= MAX_LIMIT,
+            allocations: consents.map(c => ({
+                id: c.id,
+                partnerId: c.partnerId,
+                serviceType: c.serviceType,
+                partnerName: c.partner?.name ?? c.serviceType,
+                deductionPct: Number(c.deductionPct),
+                deductionFormatted: `${(Number(c.deductionPct) * 100).toFixed(1)}%`,
+                status: c.status,
+            }))
+        };
+    }
+
+    /**
+     * Updates driver's chosen wealth programs and percentage allocations.
+     * Enforces the hard 30% maximum deduction cap.
+     */
+    async updateDriverAllocations(
+        driverProfileId: string,
+        allocations: Array<{
+            partnerId: string;
+            serviceType: string;
+            deductionPct: number; // e.g. 0.05 for 5%
+            isConsented: boolean;
+        }>
+    ): Promise<any> {
+        const MAX_LIMIT = 0.30; // 30%
+
+        // Calculate total requested deduction
+        const activeAllocations = allocations.filter(a => a.isConsented && a.deductionPct > 0);
+        const totalRequested = activeAllocations.reduce((sum, a) => sum + Number(a.deductionPct), 0);
+
+        // HARD LIMIT ENFORCEMENT
+        if (totalRequested > MAX_LIMIT + 0.0001) {
+            throw new HttpException(
+                `Total deduction of ${(totalRequested * 100).toFixed(1)}% exceeds the maximum allowed limit of 30.0%. Please reduce your percentages.`,
+                HttpStatus.BAD_REQUEST
+            );
+        }
+
+        this.logger.log(`Updating wealth allocations for driver ${driverProfileId}: total ${(totalRequested * 100).toFixed(1)}% across ${activeAllocations.length} services`);
+
+        // Save consents
+        for (const item of allocations) {
+            try {
+                if (item.isConsented && item.deductionPct > 0) {
+                    await (this.prisma as any).driverFinancialConsent?.upsert({
+                        where: {
+                            driverProfileId_partnerId: {
+                                driverProfileId,
+                                partnerId: item.partnerId,
+                            }
+                        },
+                        update: {
+                            serviceType: item.serviceType,
+                            deductionPct: item.deductionPct,
+                            isConsented: true,
+                            status: 'ACTIVE',
+                            updatedAt: new Date(),
+                        },
+                        create: {
+                            driverProfileId,
+                            partnerId: item.partnerId,
+                            serviceType: item.serviceType,
+                            deductionPct: item.deductionPct,
+                            isConsented: true,
+                            termsVersion: 'v1.0',
+                            status: 'ACTIVE',
+                            createdAt: new Date(),
+                            updatedAt: new Date(),
+                        }
+                    });
+                } else {
+                    // Deactivate or remove consent
+                    await (this.prisma as any).driverFinancialConsent?.deleteMany({
+                        where: {
+                            driverProfileId,
+                            partnerId: item.partnerId,
+                        }
+                    });
+                }
+            } catch (err: any) {
+                this.logger.warn(`Could not save consent for ${item.partnerId}: ${err?.message}`);
+            }
+        }
+
+        return this.getDriverAllocations(driverProfileId);
+    }
 }

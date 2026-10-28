@@ -97,6 +97,49 @@ export class SaccoController {
         return this.saccoService.getActivePartner();
     }
 
+    // ─── Driver Wealth Programs & Allocations (30% Max Limit) ──────────────────
+
+    /** List all active admin-provided wealth programs (SACCO, Insurance, MMF, Pension) */
+    @Get('wealth-programs')
+    async getWealthPrograms() {
+        return this.financialPartnerService.getDriverWealthPrograms();
+    }
+
+    /** Get a driver's active enrolled wealth allocations & remaining capacity */
+    @Get('wealth-programs/my-allocations')
+    async getDriverAllocations(@Query('driverProfileId') driverProfileId: string) {
+        if (!driverProfileId) {
+            throw new HttpException('driverProfileId is required', HttpStatus.BAD_REQUEST);
+        }
+        return this.financialPartnerService.getDriverAllocations(driverProfileId);
+    }
+
+    /** Update driver's selected wealth programs & percentage contributions (30% cap) */
+    @Post('wealth-programs/update-allocations')
+    async updateDriverAllocations(
+        @Body() body: {
+            driverProfileId: string;
+            allocations: Array<{
+                partnerId: string;
+                serviceType: string;
+                deductionPct: number;
+                isConsented: boolean;
+            }>;
+        }
+    ) {
+        if (!body.driverProfileId || !Array.isArray(body.allocations)) {
+            throw new HttpException('driverProfileId and allocations array are required', HttpStatus.BAD_REQUEST);
+        }
+        try {
+            return await this.financialPartnerService.updateDriverAllocations(
+                body.driverProfileId,
+                body.allocations
+            );
+        } catch (error: any) {
+            throw new HttpException(error.message, error.getStatus ? error.getStatus() : HttpStatus.BAD_REQUEST);
+        }
+    }
+
     // ─── Admin: Financial Configuration ───────────────────────────────────────
 
     /** Retrieve current financial split configuration */
