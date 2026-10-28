@@ -65,11 +65,11 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: isDark
-                  ? AppTheme.primaryColor.withOpacity(0.08)
-                  : AppTheme.primaryColor.withOpacity(0.05),
+                  ? AppTheme.primaryColor.withValues(alpha: 0.08)
+                  : AppTheme.primaryColor.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppTheme.primaryColor.withOpacity(0.2),
+                color: AppTheme.primaryColor.withValues(alpha: 0.2),
               ),
             ),
             child: Row(
@@ -77,7 +77,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withOpacity(0.15),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -135,7 +135,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     : null,
                 filled: true,
                 fillColor: isDark
-                    ? Colors.white.withOpacity(0.05)
+                    ? Colors.white.withValues(alpha: 0.05)
                     : Colors.grey.shade100,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 border: OutlineInputBorder(
@@ -197,7 +197,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                         horizontal: 16, vertical: 14),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? AppTheme.primaryColor.withOpacity(0.12)
+                          ? AppTheme.primaryColor.withValues(alpha: 0.12)
                           : cardColor,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
@@ -216,7 +216,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: isDark
-                                ? Colors.white.withOpacity(0.06)
+                                ? Colors.white.withValues(alpha: 0.06)
                                 : Colors.grey.shade100,
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -253,7 +253,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 6, vertical: 2),
                                       decoration: BoxDecoration(
-                                        color: Colors.blue.withOpacity(0.15),
+                                        color: Colors.blue.withValues(alpha: 0.15),
                                         borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: const Text(

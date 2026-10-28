@@ -165,7 +165,7 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
             margin: const EdgeInsets.symmetric(vertical: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.12),
+              color: AppTheme.primaryColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppTheme.outlineGold),
             ),
@@ -316,12 +316,12 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: ride.status == 'CHAUFFEUR ASSIGNED'
-                      ? AppTheme.successGreen.withOpacity(0.15)
-                      : Colors.white.withOpacity(0.08),
+                      ? AppTheme.successGreen.withValues(alpha: 0.15)
+                      : Colors.white.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: ride.status == 'CHAUFFEUR ASSIGNED'
-                        ? AppTheme.successGreen.withOpacity(0.4)
+                        ? AppTheme.successGreen.withValues(alpha: 0.4)
                         : Colors.white12,
                   ),
                 ),

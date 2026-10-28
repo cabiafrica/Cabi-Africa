@@ -172,7 +172,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryColor.withOpacity(0.15),
+                          color: AppTheme.primaryColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: AppTheme.outlineGold),
                         ),
@@ -343,7 +343,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             margin: const EdgeInsets.symmetric(vertical: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.12),
+              color: AppTheme.primaryColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppTheme.outlineGold),
             ),
@@ -373,7 +373,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryColor.withOpacity(0.3),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.3),
                   blurRadius: 8,
                 ),
               ],
@@ -609,9 +609,9 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppTheme.successGreen.withOpacity(0.15),
+                      color: AppTheme.successGreen.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppTheme.successGreen.withOpacity(0.4)),
+                      border: Border.all(color: AppTheme.successGreen.withValues(alpha: 0.4)),
                     ),
                     child: Text(
                       'LIVE RADAR',
@@ -682,7 +682,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                     width: 42,
                     height: 42,
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withOpacity(0.12),
+                      color: AppTheme.primaryColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: AppTheme.outlineGold),
                     ),
@@ -740,8 +740,8 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                   ),
                   Switch.adaptive(
                     value: _morningCommuteEnabled,
-                    activeColor: AppTheme.primaryColor,
-                    activeTrackColor: AppTheme.primaryColor.withOpacity(0.3),
+                    activeThumbColor: AppTheme.primaryColor,
+                    activeTrackColor: AppTheme.primaryColor.withValues(alpha: 0.3),
                     inactiveTrackColor: Colors.white12,
                     onChanged: (val) {
                       setState(() => _morningCommuteEnabled = val);
@@ -761,7 +761,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                   color: const Color(0xFF111114),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppTheme.primaryColor.withOpacity(0.3),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.3),
                     style: BorderStyle.solid,
                   ),
                 ),
@@ -771,7 +771,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                       width: 38,
                       height: 38,
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryColor.withOpacity(0.12),
+                        color: AppTheme.primaryColor.withValues(alpha: 0.12),
                         shape: BoxShape.circle,
                         border: Border.all(color: AppTheme.outlineGold),
                       ),
@@ -876,7 +876,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withOpacity(0.12),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppTheme.outlineGold),
                 ),
@@ -885,7 +885,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.06),
+                  color: Colors.white.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.white12),
                 ),
@@ -972,7 +972,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.06),
+              color: Colors.white.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.white12),
             ),
@@ -1001,7 +1001,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.06),
+                        color: Colors.white.withValues(alpha: 0.06),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(

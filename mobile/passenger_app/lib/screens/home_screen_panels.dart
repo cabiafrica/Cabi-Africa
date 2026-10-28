@@ -229,10 +229,10 @@ extension _HomeScreenPanels on _HomeScreenState {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFD4AF37).withOpacity(0.2),
+                                color: const Color(0xFFD4AF37).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
-                                  color: const Color(0xFFD4AF37).withOpacity(0.5),
+                                  color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
                                   width: 0.8,
                                 ),
                               ),
@@ -577,6 +577,100 @@ extension _HomeScreenPanels on _HomeScreenState {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // 0. Stitch Top Controls: For Me / For Someone & Leave Now
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              color: isDark ? AppTheme.surfaceDim : const Color(0xFFF0EDEC),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: isDark ? AppTheme.outlineBorder : dividerColor),
+                            ),
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () => _updateState(() => _isForSomeone = false),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: !_isForSomeone
+                                          ? AppTheme.primaryColor
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      "For Me",
+                                      style: AppTheme.inter(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: !_isForSomeone ? const Color(0xFF241A00) : (isDark ? Colors.white60 : Colors.black54),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () => _updateState(() => _isForSomeone = true),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: _isForSomeone
+                                          ? AppTheme.primaryColor
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      "For Someone",
+                                      style: AppTheme.inter(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: _isForSomeone ? const Color(0xFF241A00) : (isDark ? Colors.white60 : Colors.black54),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const ScheduledRidesScreen()),
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                              decoration: BoxDecoration(
+                                color: isDark ? AppTheme.surfaceDim : const Color(0xFFF0EDEC),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: isDark ? AppTheme.outlineBorder : dividerColor),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.schedule_rounded, size: 14, color: AppTheme.primaryColor),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    "Leave now",
+                                    style: AppTheme.plusJakartaSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark ? Colors.white : Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 2),
+                                  const Icon(Icons.expand_more_rounded, size: 15, color: Colors.white60),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+
                       // 1. Location Pickers (Pickup & Destination)
                       Container(
                         padding: const EdgeInsets.all(16),
@@ -617,8 +711,8 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       children: [
                                         Text(
                                           _pickupAddress,
-                                          style: AppTheme.outfit(
-                                              fontSize: 16,
+                                          style: AppTheme.plusJakartaSans(
+                                              fontSize: 15,
                                               fontWeight: FontWeight.w500,
                                               color: isDark ? Colors.white70 : Colors.black87),
                                           maxLines: 1,
@@ -627,7 +721,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                         if (_isLoadingLocation)
                                           Text(
                                             "Detecting location...",
-                                            style: AppTheme.outfit(
+                                            style: AppTheme.inter(
                                               fontSize: 11,
                                               color: AppTheme.primaryColor,
                                               fontWeight: FontWeight.w500,
@@ -690,8 +784,8 @@ extension _HomeScreenPanels on _HomeScreenState {
                                     Expanded(
                                       child: Text(
                                         _destination,
-                                        style: AppTheme.outfit(
-                                            fontSize: 16,
+                                        style: AppTheme.montserrat(
+                                            fontSize: 15,
                                             fontWeight: FontWeight.bold,
                                             color: isDark ? Colors.white : Colors.black87),
                                         maxLines: 1,
@@ -706,6 +800,48 @@ extension _HomeScreenPanels on _HomeScreenState {
                                   ],
                                 ),
                               ),
+                            ),
+                            const SizedBox(height: 12),
+
+                            // Quick Location Shortcuts
+                            Row(
+                              children: [
+                                _buildLocationShortcut(
+                                  icon: Icons.home_rounded,
+                                  label: "Home",
+                                  isDark: isDark,
+                                  onTap: () {
+                                    _updateState(() {
+                                      _destination = "Home • Westlands";
+                                    });
+                                    _navigateToSearch(isPickup: false);
+                                  },
+                                ),
+                                const SizedBox(width: 8),
+                                _buildLocationShortcut(
+                                  icon: Icons.business_rounded,
+                                  label: "Office",
+                                  isDark: isDark,
+                                  onTap: () {
+                                    _updateState(() {
+                                      _destination = "Office • Delta Corner";
+                                    });
+                                    _navigateToSearch(isPickup: false);
+                                  },
+                                ),
+                                const SizedBox(width: 8),
+                                _buildLocationShortcut(
+                                  icon: Icons.flight_rounded,
+                                  label: "JKIA Airport",
+                                  isDark: isDark,
+                                  onTap: () {
+                                    _updateState(() {
+                                      _destination = "JKIA Terminal 1A";
+                                    });
+                                    _navigateToSearch(isPickup: false);
+                                  },
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -1541,172 +1677,204 @@ extension _HomeScreenPanels on _HomeScreenState {
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 180),
                       margin: const EdgeInsets.symmetric(vertical: 4),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? AppTheme.primaryContainer
-                            : AppTheme.surfaceDim,
+                            ? AppTheme.surfaceContainerHigh
+                            : AppTheme.surfaceContainerLow,
                         border: Border.all(
                           color: isSelected ? AppTheme.primaryColor : AppTheme.outlineBorder,
-                          width: isSelected ? 1.8 : 1.0,
+                          width: isSelected ? 1.6 : 1.0,
                         ),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: AppTheme.primaryColor.withValues(alpha: 0.22),
-                                  blurRadius: 14,
+                                  color: AppTheme.primaryColor.withValues(alpha: 0.18),
+                                  blurRadius: 18,
                                   spreadRadius: 1,
                                 ),
                               ]
                             : null,
                       ),
-                      child: Row(
+                      child: Stack(
+                        clipBehavior: Clip.none,
                         children: [
-                          // Vehicle Silhouette / Icon Container
-                          Container(
-                            width: 50,
-                            height: 50,
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppTheme.primaryColor.withValues(alpha: 0.18)
-                                  : AppTheme.surfaceBright,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: isSelected
-                                    ? AppTheme.primaryColor.withValues(alpha: 0.4)
-                                    : AppTheme.outlineBorder,
-                              ),
-                            ),
-                            child: Image.asset(
-                              v['image'] as String,
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => Icon(
-                                v['icon'] as IconData,
-                                color: isSelected ? AppTheme.primaryColor : Colors.white60,
-                                size: 26,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 14),
-
-                          // Name + Feature description + ETA
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
+                          // Floating Best Value Badge for standard/comfort when selected
+                          if (isSelected && (id == 'standard' || id == 'lite'))
+                            Positioned(
+                              top: -18,
+                              right: 4,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  gradient: AppTheme.goldGradient,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.4),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 1),
+                                    )
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
+                                    const Icon(Icons.auto_awesome, size: 10, color: Color(0xFF241A00)),
+                                    const SizedBox(width: 3),
                                     Text(
-                                      v['name'] as String,
-                                      style: AppTheme.montserrat(
-                                        color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.88),
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 15,
+                                      'BEST VALUE',
+                                      style: AppTheme.inter(
+                                        fontSize: 8.5,
+                                        color: const Color(0xFF241A00),
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 0.5,
                                       ),
                                     ),
-                                    const SizedBox(width: 8),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.surfaceBright,
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(Icons.people_outline, size: 11, color: Colors.white60),
-                                          const SizedBox(width: 3),
-                                          Text(
-                                            v['capacity'] as String,
+                                  ],
+                                ),
+                              ),
+                            ),
+                          Row(
+                            children: [
+                              // Vehicle Silhouette / Icon Container
+                              Container(
+                                width: 48,
+                                height: 48,
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? AppTheme.primaryColor.withValues(alpha: 0.15)
+                                      : AppTheme.surfaceBright,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? AppTheme.primaryColor.withValues(alpha: 0.35)
+                                        : AppTheme.outlineBorder,
+                                  ),
+                                ),
+                                child: Image.asset(
+                                  v['image'] as String,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (_, __, ___) => Icon(
+                                    v['icon'] as IconData,
+                                    color: isSelected ? AppTheme.primaryColor : Colors.white60,
+                                    size: 24,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 14),
+
+                              // Name + Feature description + ETA
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          v['name'] as String,
+                                          style: AppTheme.montserrat(
+                                            color: isSelected ? AppTheme.primaryColor : Colors.white,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                                          decoration: BoxDecoration(
+                                            color: AppTheme.surfaceContainerLowest,
+                                            borderRadius: BorderRadius.circular(6),
+                                            border: Border.all(color: AppTheme.outlineBorder, width: 0.8),
+                                          ),
+                                          child: Text(
+                                            id == 'boda' ? 'Solo' : (v['capacity'] as String),
                                             style: AppTheme.inter(
                                               color: Colors.white70,
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w500,
+                                              fontSize: 9.5,
+                                              fontWeight: FontWeight.w600,
                                             ),
                                           ),
+                                        ),
+                                        if (id == 'xl') ...[
+                                          const SizedBox(width: 5),
+                                          const Icon(Icons.workspace_premium_rounded, size: 13, color: AppTheme.primaryColor),
                                         ],
-                                      ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 3),
-                                Text(
-                                  vehicleFeatures[id] ?? 'Reliable mobility',
-                                  style: AppTheme.plusJakartaSans(
-                                    color: isSelected ? Colors.white70 : Colors.white38,
-                                    fontSize: 11.5,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 3),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.timer_outlined, size: 12, color: AppTheme.successGreen),
-                                    const SizedBox(width: 4),
+                                    const SizedBox(height: 3),
                                     Text(
-                                      v['time'] as String,
-                                      style: AppTheme.inter(
-                                        color: AppTheme.successGreen,
+                                      vehicleFeatures[id] ?? 'Reliable mobility',
+                                      style: AppTheme.plusJakartaSans(
+                                        color: isSelected ? Colors.white70 : Colors.white38,
                                         fontSize: 11,
-                                        fontWeight: FontWeight.w600,
                                       ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.timer_outlined, size: 11.5, color: AppTheme.successGreen),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          '${v['time']} away',
+                                          style: AppTheme.inter(
+                                            color: AppTheme.successGreen,
+                                            fontSize: 10.5,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // Price & Status Badge
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                calcPrice(id),
-                                style: AppTheme.montserrat(
-                                  color: isSelected ? AppTheme.primaryColor : Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14.5,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              if (isSelected)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
-                                  decoration: BoxDecoration(
-                                    gradient: AppTheme.goldGradient,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    id == 'standard' ? 'BEST VALUE' : 'SELECTED',
-                                    style: AppTheme.inter(
-                                      fontSize: 9,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: 0.5,
+
+                              // Price & Status Badge
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    calcPrice(id),
+                                    style: AppTheme.montserrat(
+                                      color: isSelected ? AppTheme.primaryColor : Colors.white,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 14.5,
                                     ),
                                   ),
-                                )
-                              else if (id == 'standard')
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.surfaceBright,
-                                    borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(color: AppTheme.outlineBorder),
-                                  ),
-                                  child: Text(
-                                    'POPULAR',
-                                    style: AppTheme.inter(
-                                      fontSize: 9,
-                                      color: Colors.white60,
-                                      fontWeight: FontWeight.w600,
+                                  const SizedBox(height: 3),
+                                  if (id == 'boda')
+                                    Text(
+                                      'KES 220',
+                                      style: AppTheme.inter(
+                                        fontSize: 10,
+                                        color: Colors.white38,
+                                        decoration: TextDecoration.lineThrough,
+                                      ),
+                                    )
+                                  else if (isSelected)
+                                    Text(
+                                      'Upfront Fare',
+                                      style: AppTheme.inter(
+                                        fontSize: 9.5,
+                                        color: AppTheme.successGreen,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )
+                                  else
+                                    Text(
+                                      id == 'xl' ? 'Chauffeur' : 'Best Value',
+                                      style: AppTheme.inter(
+                                        fontSize: 9.5,
+                                        color: Colors.white38,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                ),
+                                ],
+                              ),
                             ],
                           ),
                         ],
@@ -1719,52 +1887,95 @@ extension _HomeScreenPanels on _HomeScreenState {
 
             const SizedBox(height: 10),
 
-            // M-Pesa & SACCO Verification Strip (Stitch Obsidian Gold)
+            // M-Pesa & SACCO & Promo Strip (Stitch Obsidian Gold)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppTheme.surfaceBright,
+                  color: AppTheme.surfaceContainerLowest,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppTheme.outlineBorder),
+                  border: Border.all(color: AppTheme.outlineGold),
                 ),
                 child: Row(
                   children: [
+                    // M-Pesa Express Option
                     Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: AppTheme.successGreen,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'M-Pesa Express (••• 456)',
-                      style: AppTheme.plusJakartaSans(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                       decoration: BoxDecoration(
-                        color: AppTheme.electricBlueContainer,
+                        color: AppTheme.surfaceContainerHigh,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: AppTheme.electricBlue.withValues(alpha: 0.3)),
+                        border: Border.all(color: AppTheme.outlineBorder),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.verified_user_rounded, color: AppTheme.electricBlue, size: 12),
+                          Container(
+                            width: 7,
+                            height: 7,
+                            decoration: const BoxDecoration(
+                              color: AppTheme.successGreen,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'M-Pesa (••• 456)',
+                            style: AppTheme.plusJakartaSans(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.expand_more_rounded, size: 14, color: Colors.white60),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // SACCO Partner Regulatory Badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceContainer,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppTheme.outlineBorder),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.verified_user_rounded, color: AppTheme.primaryColor, size: 11),
                           const SizedBox(width: 4),
                           Text(
                             'SACCO Verified',
                             style: AppTheme.inter(
-                              color: AppTheme.electricBlue,
+                              color: AppTheme.darkTextSecondary,
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
+                    // Promo Code Chip
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppTheme.outlineGold),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.local_activity_rounded, color: AppTheme.primaryColor, size: 11),
+                          const SizedBox(width: 3),
+                          Text(
+                            '-KES 50',
+                            style: AppTheme.inter(
+                              color: AppTheme.primaryColor,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1804,7 +2015,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent,
-                        foregroundColor: Colors.black,
+                        foregroundColor: const Color(0xFF241A00),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
                         elevation: 0,
                       ),
@@ -1814,14 +2025,14 @@ extension _HomeScreenPanels on _HomeScreenState {
                           Text(
                             'Confirm ${_vehicleTypes.firstWhere((v) => v['id'] == (_selectedVehicleId ?? 'standard'), orElse: () => _vehicleTypes[1])['name']} • ${calcPrice(_selectedVehicleId ?? 'standard').split('–').first.trim()}',
                             style: AppTheme.montserrat(
-                              fontSize: 16,
+                              fontSize: 15.5,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.3,
-                              color: Colors.black,
+                              color: const Color(0xFF241A00),
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Icon(Icons.arrow_forward_rounded, color: Colors.black, size: 20),
+                          const Icon(Icons.arrow_forward_rounded, color: Color(0xFF241A00), size: 20),
                         ],
                       ),
                     ),
@@ -1953,6 +2164,47 @@ extension _HomeScreenPanels on _HomeScreenState {
                       ),
                     ),
                   ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocationShortcut({
+    required IconData icon,
+    required String label,
+    required bool isDark,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+          decoration: BoxDecoration(
+            color: isDark ? AppTheme.surfaceContainerHigh : const Color(0xFFF2F4F7),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: isDark ? AppTheme.outlineBorder : const Color(0xFFE5E7EB)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 13, color: AppTheme.primaryColor),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  label,
+                  style: AppTheme.plusJakartaSans(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

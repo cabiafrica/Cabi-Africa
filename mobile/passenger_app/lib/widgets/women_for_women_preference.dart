@@ -144,7 +144,7 @@ class _WomenForWomenPreferenceState extends State<WomenForWomenPreference> {
                   : 'Only match with female drivers',
               style: const TextStyle(fontSize: 12),
             ),
-            activeColor: const Color(0xFFE11D48),
+            activeThumbColor: const Color(0xFFE11D48),
           ),
           if (widget.isEnabled) ...[
             const Divider(height: 1),

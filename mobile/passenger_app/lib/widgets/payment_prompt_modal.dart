@@ -98,7 +98,11 @@ class _PaymentPromptModalState extends State<PaymentPromptModal> {
     try {
       await paymentFuture;
       // If payment is successful, submit the rating
-      await _service.submitRating(widget.tripData['rideId'], _rating);
+      await _service.submitRating(
+        rideId: widget.tripData['rideId'] as String,
+        rating: (_rating as num).toDouble(),
+        role: 'PASSENGER',
+      );
 
       if (!mounted) return;
 

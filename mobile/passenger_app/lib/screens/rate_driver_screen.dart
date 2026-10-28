@@ -139,7 +139,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
             margin: const EdgeInsets.symmetric(vertical: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.12),
+              color: AppTheme.primaryColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppTheme.outlineGold),
             ),
@@ -182,7 +182,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                           border: Border.all(color: AppTheme.outlineGold, width: 1.5),
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.primaryColor.withOpacity(0.2),
+                              color: AppTheme.primaryColor.withValues(alpha: 0.2),
                               blurRadius: 16,
                             ),
                           ],
@@ -292,7 +292,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: AppTheme.primaryColor.withOpacity(0.12),
+                              color: AppTheme.primaryColor.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(color: AppTheme.outlineGold),
                             ),
@@ -351,7 +351,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                           Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: AppTheme.primaryColor.withOpacity(0.15),
+                              color: AppTheme.primaryColor.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: const Icon(
@@ -379,7 +379,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.primaryColor.withOpacity(0.6),
+                              color: AppTheme.primaryColor.withValues(alpha: 0.6),
                               blurRadius: 6,
                             ),
                           ],

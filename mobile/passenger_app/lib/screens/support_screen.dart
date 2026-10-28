@@ -64,9 +64,9 @@ class _SupportScreenState extends State<SupportScreen> {
             margin: const EdgeInsets.symmetric(vertical: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppTheme.successGreen.withOpacity(0.12),
+              color: AppTheme.successGreen.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.successGreen.withOpacity(0.4)),
+              border: Border.all(color: AppTheme.successGreen.withValues(alpha: 0.4)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -194,7 +194,7 @@ class _SupportScreenState extends State<SupportScreen> {
                         width: 44,
                         height: 44,
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryColor.withOpacity(0.12),
+                          color: AppTheme.primaryColor.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: AppTheme.outlineGold),
                         ),
@@ -364,7 +364,7 @@ class _SupportScreenState extends State<SupportScreen> {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.06),
+                color: Colors.white.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.white10),
               ),
@@ -393,9 +393,9 @@ class _SupportScreenState extends State<SupportScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: badgeColor.withOpacity(0.12),
+                          color: badgeColor.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: badgeColor.withOpacity(0.4)),
+                          border: Border.all(color: badgeColor.withValues(alpha: 0.4)),
                         ),
                         child: Text(
                           badge,

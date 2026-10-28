@@ -5,6 +5,7 @@ import '../providers/language_provider.dart';
 import 'language_selection_screen.dart';
 import 'privacy_settings_screen.dart';
 import 'trusted_contacts_screen.dart';
+import 'safety_center_screen.dart';
 import 'qr_test_screen.dart';
 import 'package:passenger_app/theme/app_theme.dart';
 import 'package:core_ui/core_ui.dart';
@@ -129,6 +130,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 32),
           _buildSettingsSection('SAFETY'),
           const SizedBox(height: 12),
+          _buildNavigationTile(
+            context: context,
+            title: 'Safety Command Center',
+            subtitle: '24/7 patrol, 3s tactical SOS & in-transit telemetry',
+            icon: Icons.shield_rounded,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const SafetyCenterScreen()),
+            ),
+          ),
+          const SizedBox(height: 8),
           _buildNavigationTile(
             context: context,
             title: 'Trusted Contacts',
@@ -519,12 +532,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final isSelected = _activeMethod == methodKey;
     return InkWell(
       onTap: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final nav = Navigator.of(modalContext);
         await PassengerBiometricService.saveSettings(method: methodKey, isConfigured: true);
         await _loadBiometricSettings();
         setSheetState(() {});
         if (!mounted) return;
-        Navigator.pop(modalContext);
-        ScaffoldMessenger.of(context).showSnackBar(
+        nav.pop();
+        messenger.showSnackBar(
           SnackBar(
             content: Text('Preferred verification set to $title'),
             backgroundColor: const Color(0xFF1E1E1E),

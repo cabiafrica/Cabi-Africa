@@ -361,6 +361,7 @@ extension _HomeScreenLogic on _HomeScreenState {
     });
   }
 
+  // ignore: unused_element — wired to retry button in search panel
   void _retrySearchWave() {
     _updateState(() {
       _searchCountdownSeconds = 30;

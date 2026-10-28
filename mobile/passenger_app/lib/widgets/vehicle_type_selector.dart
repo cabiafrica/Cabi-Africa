@@ -1,3 +1,4 @@
+// ignore_for_file: unused_element
 import 'package:flutter/material.dart';
 
 // Obsidian Gold palette (matches Stitch design system)

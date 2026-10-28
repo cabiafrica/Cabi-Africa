@@ -289,7 +289,7 @@ class _BookingScreenState extends State<BookingScreen> {
             margin: const EdgeInsets.symmetric(vertical: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.12),
+              color: AppTheme.primaryColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppTheme.outlineGold),
             ),
@@ -586,7 +586,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.06),
+                              color: Colors.white.withValues(alpha: 0.06),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
@@ -640,8 +640,8 @@ class _BookingScreenState extends State<BookingScreen> {
                         height: 44,
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? AppTheme.primaryColor.withOpacity(0.15)
-                              : Colors.white.withOpacity(0.06),
+                              ? AppTheme.primaryColor.withValues(alpha: 0.15)
+                              : Colors.white.withValues(alpha: 0.06),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: isSelected ? AppTheme.outlineGold : Colors.white10,

@@ -60,7 +60,7 @@ class IncognitoModeWidget extends StatelessWidget {
                   value: isIncognito,
                   onChanged: onChanged,
                   activeTrackColor: const Color(0xFF1A3A3A),
-                  activeColor: const Color(0xFF0F9B8E),
+                  activeThumbColor: const Color(0xFF0F9B8E),
                 ),
               ],
             ),
