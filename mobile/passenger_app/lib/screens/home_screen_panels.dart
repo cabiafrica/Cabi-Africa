@@ -2,6 +2,15 @@ part of 'home_screen.dart';
 
 extension _HomeScreenPanels on _HomeScreenState {
   Widget _buildDriverArrivingPanel(Color primaryColor) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final panelBg = isDark ? AppTheme.darkSurface : Colors.white;
+    final panelBorder = isDark ? AppTheme.primaryColor.withValues(alpha: 0.1) : AppTheme.porcelainOutline;
+    final headlineColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final subColor = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+    final goldAccent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final timePillBg = isDark ? Colors.black : AppTheme.porcelainSurfaceContainer;
+    final successGreen = isDark ? Colors.greenAccent : const Color(0xFF059669);
+
     return Positioned(
       bottom: 0,
       left: 0,
@@ -9,12 +18,12 @@ extension _HomeScreenPanels on _HomeScreenState {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: AppTheme.darkSurface,
+          color: panelBg,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.1), width: 1),
+          border: Border.all(color: panelBorder, width: 1),
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
                 blurRadius: 20,
                 spreadRadius: 5),
           ],
@@ -34,18 +43,18 @@ extension _HomeScreenPanels on _HomeScreenState {
                       _currentRideData?['status'] == 'DRIVER_ARRIVED'
                           ? "Driver has arrived!"
                           : "Driver found!",
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
-                          color: Colors.greenAccent),
+                          color: successGreen),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       _currentRideData?['status'] == 'DRIVER_ARRIVED'
                           ? "Waiting at pickup • 3m free grace period"
                           : "Arriving in $_arrivalDurationMinutes mins",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 14, color: Colors.white),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 14, color: headlineColor),
                     ),
                   ],
                 ),
@@ -53,15 +62,16 @@ extension _HomeScreenPanels on _HomeScreenState {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.black,
+                    color: timePillBg,
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: panelBorder, width: 0.8),
                   ),
                   child: Text(
                     _currentRideData?['status'] == 'DRIVER_ARRIVED'
                         ? "ARRIVED"
                         : "$_arrivalDurationMinutes:00",
-                    style: const TextStyle(
-                        color: AppTheme.primaryColor,
+                    style: TextStyle(
+                        color: goldAccent,
                         fontWeight: FontWeight.bold),
                   ),
                 )
@@ -95,21 +105,21 @@ extension _HomeScreenPanels on _HomeScreenState {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                  color: goldAccent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFD4AF37), width: 1.2),
+                  border: Border.all(color: goldAccent, width: 1.2),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.qr_code_2_rounded, color: Color(0xFFD4AF37), size: 20),
+                        Icon(Icons.qr_code_2_rounded, color: goldAccent, size: 20),
                         const SizedBox(width: 8),
                         Text(
                           "TRIP CODE: ${_currentRideData!['tripCode']}",
-                          style: const TextStyle(
-                            color: Color(0xFFD4AF37),
+                          style: TextStyle(
+                            color: goldAccent,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.5,
                             fontSize: 14,
@@ -120,12 +130,12 @@ extension _HomeScreenPanels on _HomeScreenState {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: Colors.black45,
+                        color: isDark ? Colors.black45 : AppTheme.porcelainSurfaceHigh,
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: const Text(
+                      child: Text(
                         "SHARE PIN",
-                        style: TextStyle(color: Colors.white70, fontSize: 9, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: subColor, fontSize: 9, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -137,19 +147,19 @@ extension _HomeScreenPanels on _HomeScreenState {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD4AF37).withValues(alpha: 0.12),
+                  color: goldAccent.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.35)),
+                  border: Border.all(color: goldAccent.withValues(alpha: 0.35)),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.info_outline_rounded, color: Color(0xFFD4AF37), size: 18),
-                    SizedBox(width: 8),
+                    Icon(Icons.info_outline_rounded, color: goldAccent, size: 18),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Driver is traveling from outside their zone. Standard fare applies (0 extra fees). Please stay in contact.',
                         style: TextStyle(
-                          color: Color(0xFFD4AF37),
+                          color: goldAccent,
                           fontSize: 11.5,
                           fontWeight: FontWeight.w500,
                         ),
@@ -159,7 +169,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                 ),
               ),
             ],
-            const Divider(height: 24),
+            Divider(height: 24, color: isDark ? Colors.white24 : AppTheme.porcelainOutline),
 
             // Driver Info
             () {
@@ -203,10 +213,10 @@ extension _HomeScreenPanels on _HomeScreenState {
                                 driverPreferredName,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
-                                  color: Colors.white,
+                                  color: headlineColor,
                                 ),
                               ),
                             ),
@@ -214,8 +224,8 @@ extension _HomeScreenPanels on _HomeScreenState {
                             const Icon(Icons.star, color: Colors.amber, size: 14),
                             Text(
                               " ${_currentRideData?['driver']?['rating'] ?? '4.9'}",
-                              style: const TextStyle(
-                                color: Colors.white70,
+                              style: TextStyle(
+                                color: subColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 12,
                               ),
@@ -229,17 +239,17 @@ extension _HomeScreenPanels on _HomeScreenState {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFD4AF37).withValues(alpha: 0.2),
+                                color: goldAccent.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
-                                  color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
+                                  color: goldAccent.withValues(alpha: 0.5),
                                   width: 0.8,
                                 ),
                               ),
                               child: Text(
                                 vehiclePlate,
-                                style: const TextStyle(
-                                  color: Color(0xFFD4AF37),
+                                style: TextStyle(
+                                  color: goldAccent,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 11,
                                   letterSpacing: 0.5,
@@ -252,8 +262,8 @@ extension _HomeScreenPanels on _HomeScreenState {
                                 "$vehicleColor • $vehicleModel",
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Colors.white70,
+                                style: TextStyle(
+                                  color: subColor,
                                   fontSize: 12,
                                 ),
                               ),
@@ -267,17 +277,17 @@ extension _HomeScreenPanels on _HomeScreenState {
                   // Call / Message Actions
                   Container(
                     decoration: BoxDecoration(
-                        color: Colors.grey[900], shape: BoxShape.circle),
+                        color: isDark ? Colors.grey[900] : AppTheme.porcelainSurfaceContainer, shape: BoxShape.circle),
                     child: IconButton(
-                        icon: const Icon(Icons.phone, color: Colors.greenAccent, size: 18),
+                        icon: Icon(Icons.phone, color: successGreen, size: 18),
                         onPressed: () {}),
                   ),
                   const SizedBox(width: 6),
                   Container(
                     decoration: BoxDecoration(
-                        color: Colors.grey[900], shape: BoxShape.circle),
+                        color: isDark ? Colors.grey[900] : AppTheme.porcelainSurfaceContainer, shape: BoxShape.circle),
                     child: IconButton(
-                        icon: const Icon(Icons.message, color: Colors.blueAccent, size: 18),
+                        icon: Icon(Icons.message, color: isDark ? Colors.blueAccent : const Color(0xFF0260C4), size: 18),
                         onPressed: () {}),
                   ),
                 ],
@@ -319,6 +329,15 @@ extension _HomeScreenPanels on _HomeScreenState {
   }
 
   Widget _buildTripInProgressPanel(Color primaryColor) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final panelBg = isDark ? const Color(0xFF212121) : Colors.white;
+    final panelBorder = isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline;
+    final headlineColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final subColor = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+    final goldAccent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final successGreen = isDark ? Colors.greenAccent : const Color(0xFF059669);
+    final timePillBg = isDark ? const Color.fromARGB(255, 66, 66, 66) : AppTheme.porcelainSurfaceContainer;
+
     String formattedTime =
         "${(_tripDurationSeconds ~/ 60).toString().padLeft(2, '0')}:${(_tripDurationSeconds % 60).toString().padLeft(2, '0')}";
 
@@ -330,11 +349,12 @@ extension _HomeScreenPanels on _HomeScreenState {
         margin: const EdgeInsets.all(16),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFF212121), // Dark Premium Background
+          color: panelBg,
           borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: panelBorder),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
               blurRadius: 20,
               offset: const Offset(0, 10),
             )
@@ -385,8 +405,8 @@ extension _HomeScreenPanels on _HomeScreenState {
                                 : 'On Trip with $driverPreferredName',
                             style: TextStyle(
                                 color: _tripStatus == TripStatus.arrived
-                                    ? Colors.greenAccent
-                                    : Colors.white,
+                                    ? successGreen
+                                    : headlineColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16),
                           ),
@@ -394,8 +414,8 @@ extension _HomeScreenPanels on _HomeScreenState {
                             '$vehiclePlate ($vehicleColor $vehicleModel) • To: $_destination',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                color: Colors.white70, fontSize: 12),
+                            style: TextStyle(
+                                color: subColor, fontSize: 12),
                           ),
                         ],
                       ),
@@ -404,13 +424,13 @@ extension _HomeScreenPanels on _HomeScreenState {
                       padding:
                           const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 66, 66, 66),
+                        color: timePillBg,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         formattedTime,
-                        style: const TextStyle(
-                            color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: goldAccent, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -422,21 +442,21 @@ extension _HomeScreenPanels on _HomeScreenState {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                  color: goldAccent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFD4AF37), width: 1.2),
+                  border: Border.all(color: goldAccent, width: 1.2),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.qr_code_2_rounded, color: Color(0xFFD4AF37), size: 20),
+                        Icon(Icons.qr_code_2_rounded, color: goldAccent, size: 20),
                         const SizedBox(width: 8),
                         Text(
                           "TRIP CODE: ${_currentRideData!['tripCode']}",
-                          style: const TextStyle(
-                            color: Color(0xFFD4AF37),
+                          style: TextStyle(
+                            color: goldAccent,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.5,
                             fontSize: 14,
@@ -447,19 +467,19 @@ extension _HomeScreenPanels on _HomeScreenState {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: Colors.black45,
+                        color: isDark ? Colors.black45 : AppTheme.porcelainSurfaceHigh,
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: const Text(
+                      child: Text(
                         "ACTIVE TRIP PIN",
-                        style: TextStyle(color: Colors.white70, fontSize: 9, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: subColor, fontSize: 9, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
                 ),
               ),
             ],
-            const Divider(color: Colors.white24, height: 24),
+            Divider(color: isDark ? Colors.white24 : AppTheme.porcelainOutline, height: 24),
 
             // Live Fare Display
             Row(
@@ -467,14 +487,14 @@ extension _HomeScreenPanels on _HomeScreenState {
               textBaseline: TextBaseline.alphabetic,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Current Fare',
-                  style: TextStyle(color: Colors.white54, fontSize: 14),
+                  style: TextStyle(color: subColor, fontSize: 14),
                 ),
                 Text(
                   'KES ${_currentFare.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    color: AppTheme.primaryColor, // Taxi Gold
+                  style: TextStyle(
+                    color: goldAccent,
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                   ),
@@ -494,8 +514,8 @@ extension _HomeScreenPanels on _HomeScreenState {
                       );
                     },
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      side: const BorderSide(color: Colors.white30),
+                      foregroundColor: headlineColor,
+                      side: BorderSide(color: isDark ? Colors.white30 : AppTheme.porcelainOutline),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
@@ -511,7 +531,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                       // Share trip logic
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryColor,
+                      backgroundColor: goldAccent,
                       foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -662,7 +682,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                     ),
                                   ),
                                   const SizedBox(width: 2),
-                                  const Icon(Icons.expand_more_rounded, size: 15, color: Colors.white60),
+                                  Icon(Icons.expand_more_rounded, size: 15, color: isDark ? Colors.white60 : Colors.black54),
                                 ],
                               ),
                             ),
@@ -1237,7 +1257,13 @@ extension _HomeScreenPanels on _HomeScreenState {
   }
 
   Widget _buildSearchingPanel(Color primaryColor) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final vehicleName = _selectedVehicleType ?? 'Standard Ride';
+    final panelBg = (isDark ? const Color(0xFF0F172A) : Colors.white).withValues(alpha: 0.92);
+    final panelBorder = isDark ? Colors.white.withValues(alpha: 0.12) : AppTheme.porcelainOutline;
+    final handleColor = isDark ? Colors.white.withValues(alpha: 0.35) : AppTheme.porcelainOutline;
+    final headlineColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final subColor = isDark ? Colors.white.withValues(alpha: 0.70) : AppTheme.porcelainTextSecondary;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.30,
@@ -1252,17 +1278,16 @@ extension _HomeScreenPanels on _HomeScreenState {
             filter: ImageFilter.blur(sigmaX: 18.0, sigmaY: 18.0),
             child: Container(
               decoration: BoxDecoration(
-                // 20% transparent background (80% opacity)
-                color: const Color(0xFF0F172A).withValues(alpha: 0.80),
+                color: panelBg,
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(28)),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.12),
+                  color: panelBorder,
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.35),
+                    color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
                     blurRadius: 24,
                     spreadRadius: 4,
                     offset: const Offset(0, -4),
@@ -1283,18 +1308,18 @@ extension _HomeScreenPanels on _HomeScreenState {
                         height: 5,
                         margin: const EdgeInsets.only(bottom: 14),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.35),
+                          color: handleColor,
                           borderRadius: BorderRadius.circular(3),
                         ),
                       ),
                     ),
 
-            const Text(
+            Text(
               "Finding your driver...",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: headlineColor,
                 letterSpacing: 0.3,
               ),
             ),
@@ -1304,7 +1329,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 13,
-                        color: Colors.white.withValues(alpha: 0.70),
+                        color: subColor,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -1384,14 +1409,14 @@ extension _HomeScreenPanels on _HomeScreenState {
                         Icon(
                           Icons.info_outline_rounded,
                           size: 14,
-                          color: Colors.white.withValues(alpha: 0.65),
+                          color: subColor,
                         ),
                         const SizedBox(width: 6),
                         Text(
                           "Free cancellation within 3 mins of driver arrival",
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withValues(alpha: 0.65),
+                            color: subColor,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -1403,7 +1428,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                       "Need a faster pickup? Tap above to switch vehicle tier",
                       style: TextStyle(
                         fontSize: 11,
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: subColor.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
