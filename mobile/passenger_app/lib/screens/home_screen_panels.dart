@@ -1453,6 +1453,7 @@ extension _HomeScreenPanels on _HomeScreenState {
       userEmail = authState.user?['email'] ?? "";
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -1479,7 +1480,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                 ],
               ),
               child: CircleAvatar(
-                backgroundColor: const Color(0xFF1E1E1E),
+                backgroundColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF1F5F9),
                 backgroundImage: () {
                   final authState = ref.watch(passengerAuthProvider);
                   if (authState is Authenticated) {
@@ -2130,12 +2131,20 @@ extension _HomeScreenPanels on _HomeScreenState {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
           decoration: BoxDecoration(
-            color: AppTheme.darkSurface.withValues(alpha: 0.95),
+            color: (Theme.of(context).brightness == Brightness.dark
+                ? AppTheme.darkSurface
+                : AppTheme.porcelainSurface)
+                .withValues(alpha: 0.97),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: primaryColor.withValues(alpha: 0.4), width: 1.5),
+            border: Border.all(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? primaryColor.withValues(alpha: 0.4)
+                    : AppTheme.porcelainOutline,
+                width: 1.5),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.5),
+                color: Colors.black.withValues(
+                    alpha: Theme.of(context).brightness == Brightness.dark ? 0.5 : 0.12),
                 blurRadius: 18,
                 offset: const Offset(0, 4),
               ),
@@ -2163,10 +2172,12 @@ extension _HomeScreenPanels on _HomeScreenState {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'FULL SCREEN MAP',
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey
+                            : AppTheme.porcelainTextSecondary,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.1,
@@ -2175,8 +2186,10 @@ extension _HomeScreenPanels on _HomeScreenState {
                     const SizedBox(height: 2),
                     Text(
                       statusText,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : AppTheme.porcelainTextPrimary,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
