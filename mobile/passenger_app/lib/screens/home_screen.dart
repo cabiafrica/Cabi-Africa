@@ -33,6 +33,8 @@ import '../widgets/security_verification_modal.dart';
 import '../widgets/sos_button.dart';
 import '../services/audio_notification_service.dart';
 import '../services/passenger_biometric_service.dart';
+import 'package:provider/provider.dart' as legacy_provider;
+import '../providers/theme_provider.dart';
 part 'home_screen_panels.dart';
 part 'home_screen_logic.dart';
 
@@ -239,39 +241,118 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
 
-          // 2. Top Left Menu
+          // 2. Top Left Header: Menu Button + Stitch Day/Night Dual-Theme Toggle Pill
           Positioned(
             top: MediaQuery.of(context).padding.top + 10,
             left: 16,
-            child: FloatingActionButton.small(
-              heroTag: 'menu_btn',
-              onPressed: () {
-                if (_isPickingFromMap) {
-                  setState(() => _isPickingFromMap = false);
-                  _navigateToSearch();
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MenuScreen()),
-                  );
-                }
-              },
-              backgroundColor: Theme.of(context).brightness == Brightness.dark
-                  ? AppTheme.surfaceContainerHigh
-                  : Colors.white,
-              foregroundColor: Theme.of(context).brightness == Brightness.dark
-                  ? AppTheme.primaryColor
-                  : Colors.black,
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: BorderSide(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? AppTheme.outlineGold
-                      : const Color(0xFFE5E7EB),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton.small(
+                  heroTag: 'menu_btn',
+                  onPressed: () {
+                    if (_isPickingFromMap) {
+                      setState(() => _isPickingFromMap = false);
+                      _navigateToSearch();
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MenuScreen()),
+                      );
+                    }
+                  },
+                  backgroundColor: Theme.of(context).brightness == Brightness.dark
+                      ? AppTheme.surfaceContainerHigh
+                      : Colors.white,
+                  foregroundColor: Theme.of(context).brightness == Brightness.dark
+                      ? AppTheme.primaryColor
+                      : Colors.black,
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppTheme.outlineGold
+                          : AppTheme.porcelainOutline,
+                    ),
+                  ),
+                  child: Icon(_isPickingFromMap ? Icons.arrow_back : Icons.menu),
                 ),
-              ),
-              child: Icon(_isPickingFromMap ? Icons.arrow_back : Icons.menu),
+                if (!_isPickingFromMap) ...[
+                  const SizedBox(width: 8),
+                  // Stitch Day/Night Toggle Pill
+                  () {
+                    final themeProvider = legacy_provider.Provider.of<ThemeProvider>(context);
+                    final isDark = Theme.of(context).brightness == Brightness.dark;
+                    return Container(
+                      height: 40,
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppTheme.surfaceContainerHigh : Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline,
+                          width: 1.0,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          )
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Daytime (Porcelain) Sun Toggle
+                          InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () {
+                              if (isDark) themeProvider.toggleTheme(false);
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: !isDark ? AppTheme.primaryColor : Colors.transparent,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.wb_sunny_rounded,
+                                size: 16,
+                                color: !isDark ? const Color(0xFF241A00) : Colors.white54,
+                              ),
+                            ),
+                          ),
+                          // Night (Obsidian) Moon Toggle
+                          InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () {
+                              if (!isDark) themeProvider.toggleTheme(true);
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: isDark ? AppTheme.primaryColor : Colors.transparent,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.dark_mode_rounded,
+                                size: 16,
+                                color: isDark ? const Color(0xFF241A00) : Colors.black45,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }(),
+                ],
+              ],
             ),
           ),
 

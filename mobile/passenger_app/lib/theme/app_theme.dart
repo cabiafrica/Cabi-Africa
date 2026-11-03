@@ -98,12 +98,22 @@ class AppTheme {
     end: Alignment.bottomRight,
   );
 
-  // Light Mode Colors
-  static const Color lightBackground = Color(0xFFF3F4F6);
+  // Light Mode Colors (Daytime Porcelain / Stitch Dual-Theme)
+  static const Color porcelainCanvas = Color(0xFFF8FAFC);
+  static const Color porcelainSurface = Colors.white;
+  static const Color porcelainSurfaceContainer = Color(0xFFF1F5F9);
+  static const Color porcelainSurfaceHigh = Color(0xFFE2E8F0);
+  static const Color porcelainOutline = Color(0xFFCBD5E1);
+  static const Color porcelainTextPrimary = Color(0xFF0F172A); // Slate 900
+  static const Color porcelainTextSecondary = Color(0xFF475569); // Slate 600
+  static const Color aurumBronze = Color(0xFF8C6D1F); // Rich Aurum for high-sun legibility
+  static const Color royalBlue = Color(0xFF0260C4); // GPS route in light mode
+
+  static const Color lightBackground = Color(0xFFF8FAFC);
   static const Color lightSurface = Colors.white;
-  static const Color lightTextPrimary = Color(0xFF111827);
-  static const Color lightTextSecondary = Color(0xFF6B7280);
-  static const Color lightDivider = Color(0xFFE5E7EB);
+  static const Color lightTextPrimary = Color(0xFF0F172A);
+  static const Color lightTextSecondary = Color(0xFF475569);
+  static const Color lightDivider = Color(0xFFCBD5E1);
 
   // Dark Mode Colors ("New Dawn" Luxury / Stitch Obsidian)
   static const Color darkBackground = Color(0xFF121212); // Deep Obsidian Canvas

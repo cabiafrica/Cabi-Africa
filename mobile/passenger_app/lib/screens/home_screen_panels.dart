@@ -1497,6 +1497,15 @@ extension _HomeScreenPanels on _HomeScreenState {
 
   // ── Service Selection Panel (Stitch efbb07f42c3449fe9b5631158cb011bf) ──────
   Widget _buildServiceSelectionPanel(Color primaryColor) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final containerColor = isDark ? AppTheme.surfaceContainer : Colors.white;
+    final outlineColor = isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline;
+    final textHeadlineColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSubColor = isDark ? Colors.white60 : AppTheme.porcelainTextSecondary;
+    final cardBgSelected = isDark ? AppTheme.surfaceContainerHigh : const Color(0xFFF8FAFC);
+    final cardBgUnselected = isDark ? AppTheme.surfaceContainerLow : Colors.white;
+    final cardBorderUnselected = isDark ? AppTheme.outlineBorder : AppTheme.porcelainOutline;
+
     // Pricing tables
     const Map<String, Map<String, double>> pricing = {
       'boda': {'base': 50, 'perKm': 20},
@@ -1529,14 +1538,14 @@ extension _HomeScreenPanels on _HomeScreenState {
       right: 0,
       child: Container(
         decoration: BoxDecoration(
-          color: AppTheme.surfaceContainer,
+          color: containerColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-          border: Border.all(color: AppTheme.outlineGold, width: 1.0),
+          border: Border.all(color: outlineColor, width: 1.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.6),
+              color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.08),
               blurRadius: 32,
-              spreadRadius: 8,
+              spreadRadius: isDark ? 8 : 2,
               offset: const Offset(0, -4),
             )
           ],
@@ -1550,7 +1559,7 @@ extension _HomeScreenPanels on _HomeScreenState {
               width: 48,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white24,
+                color: isDark ? Colors.white24 : Colors.black12,
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -1580,7 +1589,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                   ? '${(_distanceKm * 2.5).round()} min • Expressway'
                                   : '26 min • Expressway',
                               style: AppTheme.plusJakartaSans(
-                                color: Colors.white,
+                                color: textHeadlineColor,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -1591,7 +1600,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                         Text(
                           'To: $_destination',
                           style: AppTheme.plusJakartaSans(
-                            color: Colors.white60,
+                            color: textSubColor,
                             fontSize: 12,
                           ),
                           maxLines: 1,
@@ -1604,19 +1613,19 @@ extension _HomeScreenPanels on _HomeScreenState {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppTheme.electricBlueContainer,
+                      color: isDark ? AppTheme.electricBlueContainer : const Color(0x180260C4),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppTheme.outlineGold, width: 0.8),
+                      border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline, width: 0.8),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.speed_rounded, color: AppTheme.electricBlue, size: 13),
+                        Icon(Icons.speed_rounded, color: isDark ? AppTheme.electricBlue : AppTheme.royalBlue, size: 13),
                         const SizedBox(width: 4),
                         Text(
                           'Traffic Clear',
                           style: AppTheme.inter(
-                            color: AppTheme.electricBlue,
+                            color: isDark ? AppTheme.electricBlue : AppTheme.royalBlue,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1631,18 +1640,18 @@ extension _HomeScreenPanels on _HomeScreenState {
                     child: Container(
                       padding: const EdgeInsets.all(7),
                       decoration: BoxDecoration(
-                        color: AppTheme.surfaceBright,
+                        color: isDark ? AppTheme.surfaceBright : const Color(0xFFF1F5F9),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppTheme.outlineBorder),
+                        border: Border.all(color: isDark ? AppTheme.outlineBorder : AppTheme.porcelainOutline),
                       ),
-                      child: const Icon(Icons.close, color: Colors.white70, size: 18),
+                      child: Icon(Icons.close, color: isDark ? Colors.white70 : Colors.black87, size: 18),
                     ),
                   ),
                 ],
               ),
             ),
 
-            const Divider(color: AppTheme.outlineBorder, height: 1),
+            Divider(color: isDark ? AppTheme.outlineBorder : AppTheme.porcelainOutline, height: 1),
             const SizedBox(height: 8),
 
             // Service List (Bento Stack)
@@ -1680,22 +1689,29 @@ extension _HomeScreenPanels on _HomeScreenState {
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? AppTheme.surfaceContainerHigh
-                            : AppTheme.surfaceContainerLow,
+                            ? cardBgSelected
+                            : cardBgUnselected,
                         border: Border.all(
-                          color: isSelected ? AppTheme.primaryColor : AppTheme.outlineBorder,
+                          color: isSelected ? AppTheme.primaryColor : cardBorderUnselected,
                           width: isSelected ? 1.6 : 1.0,
                         ),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: AppTheme.primaryColor.withValues(alpha: 0.18),
+                                  color: AppTheme.primaryColor.withValues(alpha: isDark ? 0.18 : 0.14),
                                   blurRadius: 18,
                                   spreadRadius: 1,
                                 ),
                               ]
-                            : null,
+                            : [
+                                if (!isDark)
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.03),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  ),
+                              ],
                       ),
                       child: Stack(
                         clipBehavior: Clip.none,
@@ -1808,7 +1824,9 @@ extension _HomeScreenPanels on _HomeScreenState {
                                     Text(
                                       vehicleFeatures[id] ?? 'Reliable mobility',
                                       style: AppTheme.plusJakartaSans(
-                                        color: isSelected ? Colors.white70 : Colors.white38,
+                                        color: isSelected
+                                            ? (isDark ? Colors.white70 : AppTheme.porcelainTextPrimary)
+                                            : (isDark ? Colors.white38 : AppTheme.porcelainTextSecondary),
                                         fontSize: 11,
                                       ),
                                       maxLines: 1,
@@ -1840,7 +1858,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                   Text(
                                     calcPrice(id),
                                     style: AppTheme.montserrat(
-                                      color: isSelected ? AppTheme.primaryColor : Colors.white,
+                                      color: isSelected ? (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze) : textHeadlineColor,
                                       fontWeight: FontWeight.w800,
                                       fontSize: 14.5,
                                     ),
@@ -1851,7 +1869,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       'KES 220',
                                       style: AppTheme.inter(
                                         fontSize: 10,
-                                        color: Colors.white38,
+                                        color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary,
                                         decoration: TextDecoration.lineThrough,
                                       ),
                                     )
@@ -1869,7 +1887,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       id == 'xl' ? 'Chauffeur' : 'Best Value',
                                       style: AppTheme.inter(
                                         fontSize: 9.5,
-                                        color: Colors.white38,
+                                        color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -1887,15 +1905,15 @@ extension _HomeScreenPanels on _HomeScreenState {
 
             const SizedBox(height: 10),
 
-            // M-Pesa & SACCO & Promo Strip (Stitch Obsidian Gold)
+            // M-Pesa & SACCO & Promo Strip (Stitch Dual-Theme Spec)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppTheme.surfaceContainerLowest,
+                  color: isDark ? AppTheme.surfaceContainerLowest : const Color(0xFFF1F5F9),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppTheme.outlineGold),
+                  border: Border.all(color: outlineColor),
                 ),
                 child: Row(
                   children: [
@@ -1903,9 +1921,9 @@ extension _HomeScreenPanels on _HomeScreenState {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                       decoration: BoxDecoration(
-                        color: AppTheme.surfaceContainerHigh,
+                        color: isDark ? AppTheme.surfaceContainerHigh : Colors.white,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: AppTheme.outlineBorder),
+                        border: Border.all(color: isDark ? AppTheme.outlineBorder : AppTheme.porcelainOutline),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -1922,13 +1940,13 @@ extension _HomeScreenPanels on _HomeScreenState {
                           Text(
                             'M-Pesa (••• 456)',
                             style: AppTheme.plusJakartaSans(
-                              color: Colors.white,
+                              color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(width: 4),
-                          const Icon(Icons.expand_more_rounded, size: 14, color: Colors.white60),
+                          Icon(Icons.expand_more_rounded, size: 14, color: isDark ? Colors.white60 : Colors.black45),
                         ],
                       ),
                     ),
@@ -1937,19 +1955,19 @@ extension _HomeScreenPanels on _HomeScreenState {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
                       decoration: BoxDecoration(
-                        color: AppTheme.surfaceContainer,
+                        color: isDark ? AppTheme.surfaceContainer : Colors.white,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: AppTheme.outlineBorder),
+                        border: Border.all(color: isDark ? AppTheme.outlineBorder : AppTheme.porcelainOutline),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.verified_user_rounded, color: AppTheme.primaryColor, size: 11),
+                          Icon(Icons.verified_user_rounded, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 11),
                           const SizedBox(width: 4),
                           Text(
                             'SACCO Verified',
                             style: AppTheme.inter(
-                              color: AppTheme.darkTextSecondary,
+                              color: isDark ? AppTheme.darkTextSecondary : AppTheme.porcelainTextSecondary,
                               fontSize: 9.5,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.2,
@@ -1963,19 +1981,19 @@ extension _HomeScreenPanels on _HomeScreenState {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryContainer,
+                        color: isDark ? AppTheme.primaryContainer : const Color(0x28D4AF37),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: AppTheme.outlineGold),
+                        border: Border.all(color: outlineColor),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.local_activity_rounded, color: AppTheme.primaryColor, size: 11),
+                          Icon(Icons.local_activity_rounded, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 11),
                           const SizedBox(width: 3),
                           Text(
                             '-KES 50',
                             style: AppTheme.inter(
-                              color: AppTheme.primaryColor,
+                              color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -2041,7 +2059,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                   Text(
                     'Guaranteed upfront fare • Free cancellation within 3 mins',
                     style: AppTheme.plusJakartaSans(
-                      color: Colors.white38,
+                      color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary,
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                     ),
