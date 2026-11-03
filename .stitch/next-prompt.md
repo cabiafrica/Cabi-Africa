@@ -1,23 +1,20 @@
 ---
-page: passenger_home_light_variant
+page: passenger_trip_completion_rating
 project: 11467400866482705558
-assetId: 3b628ef1a02a46759c0a689ae79c2951
-target: mobile/passenger_app
+assetId: 53f584b2fcaf4e61bcb729ddafa8f27e
+target: mobile/passenger_app/lib/screens/rate_driver_screen.dart
 ---
-Cabi Africa Passenger App — Daytime Porcelain Light Mode Variant of Ride Tier HUD.
+Cabi Africa Passenger App — Trip Completion & Rating Screen (Obsidian Gold & Porcelain Dual-Theme).
 
 **DESIGN SYSTEM (REQUIRED):**
 Target Project: Cabi Africa Ecosystem (projects/11467400866482705558)
-Design Archetype: Ultra-Premium Mobility Dual-Theme (Porcelain Light Mode Active)
-Canvas: Clean Porcelain #f8fafc, Surface cards #ffffff, Clean hairline border #cbd5e1
-Typography Colors: High-contrast Slate-900 #0f172a for headlines, Slate-600 #475569 for secondary text
-Accent Colors: Rich Aurum Bronze #8C6D1F for brand highlights, Deep Electric Blue #0260c4 for GPS routes
-Interactive Pill: Active Sun icon highlighted in Day/Night switch pill
-CTA Button: Warm Gold / Bronze gradient with high-contrast text and crisp luxury finish
+Design Archetype: Ultra-Premium Mobility Dual-Theme
+Dark Canvas: Obsidian #121212 / Card #1A1A1A / Gold #D4AF37 / Electric Blue #067FF9
+Light Canvas: Clean Porcelain #F8FAFC / Surface #FFFFFF / Aurum Bronze #8C6D1F / Slate-900 #0F172A
 
-**Page Structure:**
-1. Top bar with active Daytime Theme Toggle pill (Sun highlighted), Cabi Africa gold crest, SOS badge
-2. Light-mode clean metropolitan transit vector map with high-visibility royal blue route line
-3. Bottom Sheet with crisp white surface, gold-accented search bar, quick destination chips
-4. 4 Ride Tier cards with high-contrast text and KES fares
-5. M-Pesa 1-tap checkout bar and Gold CTA button
+**Key Deliverables:**
+1. Journey Complete header with destination badge and official tax waybill download CTA.
+2. Itemized trip receipt card (Base fare, distance rate, time, surge discount, subtotal) with M-Pesa transaction reference.
+3. Chauffeur Rating & Compliments bento card with gold star selector and SACCO recognition badges.
+4. Tip selector chips (KES 50, KES 100, KES 200, KES 500, Custom) with instant STK push settlement.
+5. Occurrence Book automatic logging for feedback (< 3 stars triggers automatic policy occurrence).

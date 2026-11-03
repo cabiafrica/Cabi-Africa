@@ -117,13 +117,31 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
     final destinationDisplay = widget.destination ?? 'Delta Towers, Westlands';
     final vehicleDisplay = widget.vehicleInfo ?? 'Black Mercedes-Benz E-Class';
 
+    // ── Dual-theme tokens ──────────────────────────────────────────────────────
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scaffoldBg    = isDark ? const Color(0xFF0D0D0E) : AppTheme.porcelainCanvas;
+    final appBarBg      = isDark ? const Color(0xFF121215) : Colors.white;
+    final cardBg        = isDark ? const Color(0xFF141418) : Colors.white;
+    final cardBorder    = isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline;
+    final innerBg       = isDark ? const Color(0xFF1B1B22) : AppTheme.porcelainSurfaceContainer;
+    final innerBorder   = isDark ? Colors.white10 : AppTheme.porcelainSurfaceHigh;
+    final chipBg        = isDark ? const Color(0xFF1B1B20) : AppTheme.porcelainSurfaceContainer;
+    final chipBorder    = isDark ? Colors.white12 : AppTheme.porcelainOutline;
+    final avatarBg      = isDark ? const Color(0xFF222228) : AppTheme.porcelainSurfaceContainer;
+    final headlineColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final subColor      = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+    final dimColor      = isDark ? Colors.white38 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.55);
+    final goldAccent    = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final journeyBadgeBg = isDark ? const Color(0xFF1A1A20) : AppTheme.porcelainSurfaceContainer;
+    // ────────────────────────────────────────────────────────────────────
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0E),
+      backgroundColor: scaffoldBg,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121215),
+        backgroundColor: appBarBg,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: headlineColor, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -131,7 +149,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
           style: AppTheme.outfit(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Colors.white,
+            color: headlineColor,
           ),
         ),
         actions: [
@@ -178,11 +196,11 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                         height: 64,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: const Color(0xFF1A1A20),
-                          border: Border.all(color: AppTheme.outlineGold, width: 1.5),
+                          color: journeyBadgeBg,
+                          border: Border.all(color: goldAccent, width: 1.5),
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                              color: goldAccent.withValues(alpha: 0.2),
                               blurRadius: 16,
                             ),
                           ],
@@ -218,7 +236,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                     style: AppTheme.outfit(
                       fontSize: 19,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: headlineColor,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -232,7 +250,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                         destinationDisplay,
                         style: AppTheme.inter(
                           fontSize: 13,
-                          color: Colors.white70,
+                          color: subColor,
                         ),
                       ),
                     ],
@@ -246,9 +264,9 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: const Color(0xFF141418),
+                color: cardBg,
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppTheme.outlineGold),
+                border: Border.all(color: cardBorder),
                 boxShadow: const [
                   BoxShadow(
                     color: Color(0x18000000),
@@ -281,7 +299,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                             style: AppTheme.montserrat(
                               fontSize: 28,
                               fontWeight: FontWeight.w800,
-                              color: Colors.white,
+                              color: headlineColor,
                             ),
                           ),
                         ],
@@ -310,7 +328,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                             'Ref: #${widget.rideId.substring(0, widget.rideId.length.clamp(0, 8)).toUpperCase()}',
                             style: AppTheme.inter(
                               fontSize: 11,
-                              color: Colors.white38,
+                              color: dimColor,
                             ),
                           ),
                         ],
@@ -323,9 +341,9 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1B1B22),
+                      color: innerBg,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white10),
+                      border: Border.all(color: innerBorder),
                     ),
                     child: Column(
                       children: [
@@ -336,7 +354,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                         _buildFareRow('Time (18 mins)', 'KES 72'),
                         const SizedBox(height: 8),
                         _buildFareRow('Surge Discount', '-KES 6', isDiscount: true),
-                        const Divider(color: Colors.white12, height: 16),
+                        Divider(color: chipBorder, height: 16),
                         _buildFareRow('Subtotal', 'KES $fareDisplay', isBold: true),
                       ],
                     ),
@@ -365,7 +383,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                             'Settled via M-Pesa Express',
                             style: AppTheme.inter(
                               fontSize: 12,
-                              color: Colors.white70,
+                              color: subColor,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -396,8 +414,8 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                       );
                     },
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      side: const BorderSide(color: Colors.white24),
+                      foregroundColor: headlineColor,
+                      side: BorderSide(color: chipBorder),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -418,9 +436,9 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: const Color(0xFF141418),
+                color: cardBg,
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: Colors.white12),
+                border: Border.all(color: chipBorder),
               ),
               child: Column(
                 children: [
@@ -432,7 +450,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(color: AppTheme.primaryColor, width: 2),
-                          color: const Color(0xFF222228),
+                          color: avatarBg,
                         ),
                         child: const Icon(
                           Icons.person_rounded,
@@ -452,7 +470,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                                   style: AppTheme.outfit(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
-                                    color: Colors.white,
+                                    color: headlineColor,
                                   ),
                                 ),
                                 const SizedBox(width: 8),
@@ -478,7 +496,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                               vehicleDisplay,
                               style: AppTheme.inter(
                                 fontSize: 12,
-                                color: Colors.white60,
+                                color: subColor,
                               ),
                             ),
                           ],
@@ -493,7 +511,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                     style: AppTheme.outfit(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: headlineColor,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -512,7 +530,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 6),
                           child: Icon(
                             starValue <= _rating ? Icons.star_rounded : Icons.star_outline_rounded,
-                            color: AppTheme.primaryColor,
+                            color: goldAccent,
                             size: 38,
                           ),
                         ),
@@ -527,7 +545,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                     style: AppTheme.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
-                      color: AppTheme.primaryColor,
+                      color: goldAccent,
                       letterSpacing: 1.1,
                     ),
                   ),
@@ -554,11 +572,11 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? AppTheme.primaryColor
-                                : const Color(0xFF1B1B20),
+                                ? goldAccent
+                                : chipBg,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: isSelected ? AppTheme.primaryColor : Colors.white12,
+                              color: isSelected ? goldAccent : chipBorder,
                             ),
                           ),
                           child: Text(
@@ -566,7 +584,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                             style: AppTheme.inter(
                               fontSize: 12,
                               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                              color: isSelected ? Colors.black : Colors.white70,
+                              color: isSelected ? Colors.black : subColor,
                             ),
                           ),
                         ),
@@ -584,7 +602,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                         style: AppTheme.outfit(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: headlineColor,
                         ),
                       ),
                       Text(
@@ -592,7 +610,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                         style: AppTheme.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.primaryColor,
+                          color: goldAccent,
                         ),
                       ),
                     ],
@@ -614,15 +632,15 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: isSelected
-                                    ? AppTheme.primaryColor
-                                    : const Color(0xFF1B1B22),
-                                foregroundColor: isSelected ? Colors.black : Colors.white,
+                                    ? goldAccent
+                                    : chipBg,
+                                foregroundColor: isSelected ? Colors.black : headlineColor,
                                 elevation: 0,
                                 padding: const EdgeInsets.symmetric(vertical: 10),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   side: BorderSide(
-                                    color: isSelected ? AppTheme.primaryColor : Colors.white12,
+                                    color: isSelected ? goldAccent : chipBorder,
                                   ),
                                 ),
                               ),
@@ -645,9 +663,9 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                               _showCustomTipDialog();
                             },
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.white70,
+                              foregroundColor: subColor,
                               padding: const EdgeInsets.symmetric(vertical: 10),
-                              side: const BorderSide(color: Colors.white12),
+                              side: BorderSide(color: chipBorder),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -671,7 +689,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'Disbursed directly via M-Pesa immediately',
-                      style: AppTheme.inter(fontSize: 10, color: Colors.white38),
+                      style: AppTheme.inter(fontSize: 10, color: dimColor),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -679,24 +697,24 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                   // Optional Comment Text Field
                   TextField(
                     controller: _commentController,
-                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                    style: TextStyle(color: headlineColor, fontSize: 13),
                     maxLines: 2,
                     decoration: InputDecoration(
                       hintText: 'Add an executive note for the trip occurrence book...',
-                      hintStyle: const TextStyle(color: Colors.white30, fontSize: 12),
+                      hintStyle: TextStyle(color: dimColor, fontSize: 12),
                       filled: true,
-                      fillColor: const Color(0xFF1B1B22),
+                      fillColor: innerBg,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white12),
+                        borderSide: BorderSide(color: chipBorder),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white12),
+                        borderSide: BorderSide(color: chipBorder),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppTheme.primaryColor),
+                        borderSide: BorderSide(color: goldAccent),
                       ),
                     ),
                   ),
@@ -754,7 +772,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                 style: AppTheme.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white70,
+                  color: subColor,
                 ),
               ),
             ),
@@ -765,33 +783,42 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
   }
 
   void _showCustomTipDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final dialogBg = isDark ? const Color(0xFF1A1A20) : Colors.white;
+    final titleColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final inputColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final hintColor = isDark ? Colors.white38 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.55);
+    final cancelColor = isDark ? Colors.white60 : AppTheme.porcelainTextSecondary;
+    final goldAccent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final dialogBorder = isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A20),
+        backgroundColor: dialogBg,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppTheme.outlineGold),
+          side: BorderSide(color: dialogBorder),
         ),
         title: Text(
           'Enter Custom Tip (KES)',
-          style: AppTheme.outfit(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+          style: AppTheme.outfit(color: titleColor, fontSize: 16, fontWeight: FontWeight.w700),
         ),
         content: TextField(
           controller: _customTipController,
           keyboardType: TextInputType.number,
-          style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
+          style: TextStyle(color: inputColor),
+          decoration: InputDecoration(
             hintText: 'e.g. 350',
-            hintStyle: TextStyle(color: Colors.white38),
+            hintStyle: TextStyle(color: hintColor),
             prefixText: 'KES ',
-            prefixStyle: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
+            prefixStyle: TextStyle(color: goldAccent, fontWeight: FontWeight.bold),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: Colors.white60)),
+            child: Text('Cancel', style: TextStyle(color: cancelColor)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -801,7 +828,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
               }
               Navigator.pop(ctx);
             },
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor),
+            style: ElevatedButton.styleFrom(backgroundColor: goldAccent),
             child: const Text('Apply Tip', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           ),
         ],
@@ -810,6 +837,11 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
   }
 
   Widget _buildFareRow(String label, String value, {bool isDiscount = false, bool isBold = false}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final headlineColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final subColor = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+    final goldAccent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -819,8 +851,8 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
             fontSize: 13,
             fontWeight: isBold ? FontWeight.w700 : FontWeight.w400,
             color: isDiscount
-                ? AppTheme.primaryColor
-                : (isBold ? Colors.white : Colors.white70),
+                ? goldAccent
+                : (isBold ? headlineColor : subColor),
           ),
         ),
         Text(
@@ -829,8 +861,8 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
             fontSize: isBold ? 15 : 13,
             fontWeight: isBold ? FontWeight.w800 : FontWeight.w600,
             color: isDiscount
-                ? AppTheme.primaryColor
-                : (isBold ? AppTheme.primaryColor : Colors.white),
+                ? goldAccent
+                : (isBold ? goldAccent : headlineColor),
           ),
         ),
       ],
