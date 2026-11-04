@@ -101,27 +101,33 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
     return '${months[dt.month - 1]} ${dt.day}, $hour:$minuteStr $ampm';
   }
 
-  void _cancelRide(PassengerScheduledRide ride) {
+  void _cancelRide(PassengerScheduledRide ride, {required bool isDark}) {
+    final surfaceColor = isDark ? const Color(0xFF18181E) : AppTheme.porcelainSurface;
+    final borderColor = isDark ? AppTheme.outlineGold : AppTheme.aurumBronze;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+    final keepBtnColor = isDark ? Colors.white60 : AppTheme.porcelainTextSecondary;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF18181E),
+        backgroundColor: surfaceColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppTheme.outlineGold),
+          side: BorderSide(color: borderColor),
         ),
         title: Text(
           'Cancel Scheduled Ride?',
-          style: AppTheme.outfit(color: Colors.white, fontWeight: FontWeight.w700),
+          style: AppTheme.outfit(color: textPrimary, fontWeight: FontWeight.w700),
         ),
         content: Text(
           'Are you sure you want to cancel ride #${ride.id} to ${ride.destination}? No cancellation fee applies 2+ hours prior.',
-          style: AppTheme.inter(color: Colors.white70, fontSize: 13),
+          style: AppTheme.inter(color: textSecondary, fontSize: 13),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Keep Ride', style: TextStyle(color: Colors.white60)),
+            child: Text('Keep Ride', style: TextStyle(color: keepBtnColor)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -143,13 +149,21 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final gold = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final canvasColor = isDark ? const Color(0xFF0D0D0E) : AppTheme.porcelainCanvas;
+    final appBarColor = isDark ? const Color(0xFF121215) : AppTheme.porcelainSurface;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final bottomSheetColor = isDark ? const Color(0xFF121216) : AppTheme.porcelainSurface;
+    final bottomBorderColor = isDark ? Colors.white12 : AppTheme.porcelainOutline;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0E),
+      backgroundColor: canvasColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121215),
+        backgroundColor: appBarColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: textPrimary, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -157,7 +171,7 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
           style: AppTheme.outfit(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Colors.white,
+            color: textPrimary,
           ),
         ),
         actions: [
@@ -165,21 +179,21 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
             margin: const EdgeInsets.symmetric(vertical: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.12),
+              color: gold.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.outlineGold),
+              border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.aurumBronze),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.verified_user_rounded, color: AppTheme.primaryColor, size: 14),
+                Icon(Icons.verified_user_rounded, color: gold, size: 14),
                 const SizedBox(width: 4),
                 Text(
                   'Guaranteed Lock',
                   style: AppTheme.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.primaryColor,
+                    color: gold,
                   ),
                 ),
               ],
@@ -189,9 +203,9 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
         ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: AppTheme.primaryColor,
-          labelColor: AppTheme.primaryColor,
-          unselectedLabelColor: Colors.white54,
+          indicatorColor: gold,
+          labelColor: gold,
+          unselectedLabelColor: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary,
           labelStyle: AppTheme.inter(fontSize: 13, fontWeight: FontWeight.w700),
           tabs: [
             Tab(text: 'Upcoming (${_upcomingRides.length})'),
@@ -202,15 +216,15 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildRidesList(_upcomingRides, isUpcoming: true),
-          _buildRidesList(_historyRides, isUpcoming: false),
+          _buildRidesList(_upcomingRides, isUpcoming: true, isDark: isDark),
+          _buildRidesList(_historyRides, isUpcoming: false, isDark: isDark),
         ],
       ),
       bottomSheet: Container(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-        decoration: const BoxDecoration(
-          color: Color(0xFF121216),
-          border: Border(top: BorderSide(color: Colors.white12)),
+        decoration: BoxDecoration(
+          color: bottomSheetColor,
+          border: Border(top: BorderSide(color: bottomBorderColor)),
         ),
         child: SizedBox(
           width: double.infinity,
@@ -220,7 +234,7 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
               Navigator.pop(context); // Go to main booking
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryColor,
+              backgroundColor: gold,
               foregroundColor: Colors.black,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
@@ -242,22 +256,25 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
     );
   }
 
-  Widget _buildRidesList(List<PassengerScheduledRide> rides, {required bool isUpcoming}) {
+  Widget _buildRidesList(List<PassengerScheduledRide> rides, {required bool isUpcoming, required bool isDark}) {
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final gold = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+
     if (rides.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.calendar_today_rounded, size: 64, color: Colors.white24),
+            Icon(Icons.calendar_today_rounded, size: 64, color: isDark ? Colors.white24 : AppTheme.porcelainOutline),
             const SizedBox(height: 16),
             Text(
               isUpcoming ? 'No upcoming scheduled rides' : 'No past scheduled rides',
-              style: AppTheme.outfit(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white70),
+              style: AppTheme.outfit(fontSize: 16, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary),
             ),
             const SizedBox(height: 6),
             Text(
               'Reserve an executive chauffeur in advance',
-              style: AppTheme.inter(fontSize: 12, color: Colors.white38),
+              style: AppTheme.inter(fontSize: 12, color: isDark ? Colors.white38 : AppTheme.porcelainOutline),
             ),
           ],
         ),
@@ -269,19 +286,44 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
       itemCount: rides.length,
       itemBuilder: (context, index) {
         final ride = rides[index];
-        return _buildRideCard(ride, isUpcoming: isUpcoming);
+        return _buildRideCard(ride, isUpcoming: isUpcoming, isDark: isDark, gold: gold, textPrimary: textPrimary);
       },
     );
   }
 
-  Widget _buildRideCard(PassengerScheduledRide ride, {required bool isUpcoming}) {
+  Widget _buildRideCard(PassengerScheduledRide ride, {
+    required bool isUpcoming,
+    required bool isDark,
+    required Color gold,
+    required Color textPrimary,
+  }) {
+    final cardColor = isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface;
+    final cardBorderColor = isDark ? AppTheme.outlineGold : AppTheme.aurumBronze;
+    final textSecondary = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+    final dividerColor = isDark ? Colors.white24 : AppTheme.porcelainOutline;
+    final chauffeurCardColor = isDark ? const Color(0xFF1B1B22) : AppTheme.porcelainSurfaceContainer;
+    final chauffeurBorderColor = isDark ? Colors.white10 : AppTheme.porcelainOutline;
+    final chauffeurAvatarBg = isDark ? const Color(0xFF26262E) : AppTheme.porcelainSurfaceContainer;
+    final fareLabel = isDark ? Colors.white38 : AppTheme.porcelainTextSecondary;
+    final calendarBg = isDark ? const Color(0xFF22222A) : AppTheme.porcelainSurfaceContainer;
+    final calendarBorder = isDark ? AppTheme.outlineGold : AppTheme.aurumBronze;
+    final statusAssignedBg = ride.status == 'CHAUFFEUR ASSIGNED'
+        ? AppTheme.successGreen.withValues(alpha: 0.15)
+        : (isDark ? Colors.white.withValues(alpha: 0.08) : AppTheme.porcelainSurfaceContainer);
+    final statusAssignedBorder = ride.status == 'CHAUFFEUR ASSIGNED'
+        ? AppTheme.successGreen.withValues(alpha: 0.4)
+        : (isDark ? Colors.white12 : AppTheme.porcelainOutline);
+    final statusAssignedText = ride.status == 'CHAUFFEUR ASSIGNED'
+        ? AppTheme.successGreen
+        : (isDark ? Colors.white70 : AppTheme.porcelainTextSecondary);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF141418),
+        color: cardColor,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppTheme.outlineGold),
+        border: Border.all(color: cardBorderColor),
         boxShadow: const [
           BoxShadow(
             color: Color(0x14000000),
@@ -315,24 +357,16 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: ride.status == 'CHAUFFEUR ASSIGNED'
-                      ? AppTheme.successGreen.withValues(alpha: 0.15)
-                      : Colors.white.withValues(alpha: 0.08),
+                  color: statusAssignedBg,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: ride.status == 'CHAUFFEUR ASSIGNED'
-                        ? AppTheme.successGreen.withValues(alpha: 0.4)
-                        : Colors.white12,
-                  ),
+                  border: Border.all(color: statusAssignedBorder),
                 ),
                 child: Text(
                   ride.status,
                   style: AppTheme.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
-                    color: ride.status == 'CHAUFFEUR ASSIGNED'
-                        ? AppTheme.successGreen
-                        : Colors.white70,
+                    color: statusAssignedText,
                   ),
                 ),
               ),
@@ -343,14 +377,14 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
           // Date & Time Banner
           Row(
             children: [
-              const Icon(Icons.schedule_rounded, color: AppTheme.primaryColor, size: 18),
+              Icon(Icons.schedule_rounded, color: gold, size: 18),
               const SizedBox(width: 8),
               Text(
                 _formatDateTime(ride.scheduledTime),
                 style: AppTheme.outfit(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: textPrimary,
                 ),
               ),
             ],
@@ -366,12 +400,12 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
                   Container(
                     width: 8,
                     height: 8,
-                    decoration: const BoxDecoration(
-                      color: AppTheme.primaryColor,
+                    decoration: BoxDecoration(
+                      color: gold,
                       shape: BoxShape.circle,
                     ),
                   ),
-                  Container(width: 2, height: 26, color: Colors.white24),
+                  Container(width: 2, height: 26, color: dividerColor),
                   Container(
                     width: 8,
                     height: 8,
@@ -391,7 +425,7 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
                       ride.pickupLocation,
                       style: AppTheme.inter(
                         fontSize: 12,
-                        color: Colors.white70,
+                        color: textSecondary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -402,7 +436,7 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
                       style: AppTheme.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: textPrimary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -419,9 +453,9 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFF1B1B22),
+                color: chauffeurCardColor,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white10),
+                border: Border.all(color: chauffeurBorderColor),
               ),
               child: Row(
                 children: [
@@ -430,10 +464,10 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
                     height: 36,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppTheme.primaryColor),
-                      color: const Color(0xFF26262E),
+                      border: Border.all(color: gold),
+                      color: chauffeurAvatarBg,
                     ),
-                    child: const Icon(Icons.person_rounded, color: AppTheme.primaryColor, size: 20),
+                    child: Icon(Icons.person_rounded, color: gold, size: 20),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
@@ -445,13 +479,13 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
                           style: AppTheme.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: textPrimary,
                           ),
                         ),
                         if (ride.vehicleInfo != null)
                           Text(
                             ride.vehicleInfo!,
-                            style: AppTheme.inter(fontSize: 11, color: Colors.white60),
+                            style: AppTheme.inter(fontSize: 11, color: textSecondary),
                           ),
                       ],
                     ),
@@ -459,14 +493,14 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
                   if (ride.rating != null)
                     Row(
                       children: [
-                        const Icon(Icons.star_rounded, color: AppTheme.primaryColor, size: 14),
+                        Icon(Icons.star_rounded, color: gold, size: 14),
                         const SizedBox(width: 2),
                         Text(
                           ride.rating!.toStringAsFixed(2),
                           style: AppTheme.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
-                            color: AppTheme.primaryColor,
+                            color: gold,
                           ),
                         ),
                       ],
@@ -489,7 +523,7 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
                     style: AppTheme.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white38,
+                      color: fareLabel,
                     ),
                   ),
                   Text(
@@ -497,7 +531,7 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
                     style: AppTheme.montserrat(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      color: AppTheme.primaryColor,
+                      color: gold,
                     ),
                   ),
                 ],
@@ -506,7 +540,7 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
                 Row(
                   children: [
                     OutlinedButton(
-                      onPressed: () => _cancelRide(ride),
+                      onPressed: () => _cancelRide(ride, isDark: isDark),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppTheme.errorRed,
                         side: const BorderSide(color: Color(0x66EF4444)),
@@ -524,13 +558,13 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF22222A),
-                        foregroundColor: AppTheme.primaryColor,
+                        backgroundColor: calendarBg,
+                        foregroundColor: gold,
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         minimumSize: Size.zero,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
-                          side: const BorderSide(color: AppTheme.outlineGold),
+                          side: BorderSide(color: calendarBorder),
                         ),
                       ),
                       icon: const Icon(Icons.event_available_rounded, size: 14),
