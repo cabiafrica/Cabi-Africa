@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 
@@ -19,19 +20,21 @@ class DigitalWalletSelector extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             'Digital Wallets',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Colors.grey,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white70
+                  : AppTheme.porcelainTextSecondary,
             ),
           ),
         ),
-        if (isAppleDevice) _buildApplePay(),
-        if (isAndroidDevice) _buildGooglePay(),
+        if (isAppleDevice) _buildApplePay(context),
+        if (isAndroidDevice) _buildGooglePay(context),
         if (!isAppleDevice && !isAndroidDevice)
           const Padding(
             padding: EdgeInsets.all(16),
@@ -44,21 +47,34 @@ class DigitalWalletSelector extends StatelessWidget {
     );
   }
 
-  Widget _buildApplePay() {
+  Widget _buildApplePay(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = selectedWallet == 'APPLE_PAY';
-    
+    final cardBg = isSelected
+        ? (isDark ? const Color(0xFF24242A) : Colors.black)
+        : (isDark ? const Color(0xFF16161A) : AppTheme.porcelainSurface);
+    final borderColor = isSelected
+        ? (isDark ? AppTheme.primaryColor : Colors.black)
+        : (isDark ? Colors.white12 : AppTheme.porcelainOutline);
+    final textPrimary = isSelected
+        ? Colors.white
+        : (isDark ? Colors.white : AppTheme.porcelainTextPrimary);
+    final textSecondary = isSelected
+        ? Colors.white70
+        : (isDark ? Colors.white60 : AppTheme.porcelainTextSecondary);
+
     return GestureDetector(
       onTap: () => onWalletSelected('APPLE_PAY'),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.black : Colors.white,
+          color: cardBg,
           border: Border.all(
-            color: isSelected ? Colors.black : Colors.grey.shade300,
+            color: borderColor,
             width: isSelected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
           children: [
@@ -66,7 +82,7 @@ class DigitalWalletSelector extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white : Colors.black,
+                color: isSelected ? Colors.white : (isDark ? Colors.white12 : Colors.black),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Center(
@@ -87,42 +103,59 @@ class DigitalWalletSelector extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : Colors.black,
+                      color: textPrimary,
                     ),
                   ),
                   Text(
                     'Fast & secure checkout',
                     style: TextStyle(
                       fontSize: 12,
-                      color: isSelected ? Colors.white70 : Colors.grey.shade600,
+                      color: textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle, color: Colors.white),
+              Icon(
+                Icons.check_circle,
+                color: isDark ? AppTheme.primaryColor : Colors.white,
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildGooglePay() {
+  Widget _buildGooglePay(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = selectedWallet == 'GOOGLE_PAY';
-    
+    const gBlue = Color(0xFF1A73E8);
+    final cardBg = isSelected
+        ? (isDark ? const Color(0xFF1A2A44) : const Color(0xFFE8F0FE))
+        : (isDark ? const Color(0xFF16161A) : AppTheme.porcelainSurface);
+    final borderColor = isSelected
+        ? gBlue
+        : (isDark ? Colors.white12 : AppTheme.porcelainOutline);
+    final textPrimary = isSelected
+        ? (isDark ? Colors.white : const Color(0xFF1A73E8))
+        : (isDark ? Colors.white : AppTheme.porcelainTextPrimary);
+    final textSecondary = isSelected
+        ? (isDark ? Colors.white70 : const Color(0xFF174EA6))
+        : (isDark ? Colors.white60 : AppTheme.porcelainTextSecondary);
+
     return GestureDetector(
       onTap: () => onWalletSelected('GOOGLE_PAY'),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue.shade700 : Colors.white,
+          color: cardBg,
           border: Border.all(
-            color: isSelected ? Colors.blue.shade700 : Colors.grey.shade300,
+            color: borderColor,
             width: isSelected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
           children: [
@@ -132,14 +165,15 @@ class DigitalWalletSelector extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.black12),
               ),
-              child: Center(
+              child: const Center(
                 child: Text(
                   'G',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue.shade700,
+                    color: Color(0xFF1A73E8),
                   ),
                 ),
               ),
@@ -154,21 +188,21 @@ class DigitalWalletSelector extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : Colors.black,
+                      color: textPrimary,
                     ),
                   ),
                   Text(
                     'Pay with your Google account',
                     style: TextStyle(
                       fontSize: 12,
-                      color: isSelected ? Colors.white70 : Colors.grey.shade600,
+                      color: textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle, color: Colors.white),
+              const Icon(Icons.check_circle, color: Color(0xFF1A73E8)),
           ],
         ),
       ),
