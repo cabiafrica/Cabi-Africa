@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:driver_app/services/ride_service.dart';
 import 'package:driver_app/providers/ride_request_provider.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,13 @@ class RideRequestModal extends StatelessWidget {
   Widget build(BuildContext context) {
     final rideProvider = Provider.of<RideRequestProvider>(context);
     final service = rideService ?? RideService();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze;
+    final cardSurface = isDark ? const Color(0xFF1E1E1E) : AppTheme.porcelainSurface;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? const Color(0xFFCCCCCC) : AppTheme.porcelainTextSecondary;
+    final routeBoxBg = isDark ? Colors.white.withValues(alpha: 0.04) : AppTheme.porcelainSurfaceContainer;
+    final routeBoxBorder = isDark ? Colors.white12 : AppTheme.porcelainOutline;
 
     final passengerName = (requestData['passengerName'] ??
             requestData['passenger']?['nickname'] ??
@@ -145,7 +153,7 @@ class RideRequestModal extends StatelessWidget {
     }
 
     return Container(
-      color: Colors.black.withOpacity(0.65),
+      color: isDark ? Colors.black.withValues(alpha: 0.65) : Colors.black.withValues(alpha: 0.45),
       child: Center(
         child: SingleChildScrollView(
           child: Card(
@@ -155,7 +163,7 @@ class RideRequestModal extends StatelessWidget {
               side: const BorderSide(color: Color(0xFFD4AF37), width: 1.2),
             ),
             elevation: 16,
-            color: const Color(0xFF1E1E1E),
+            color: cardSurface,
             child: Padding(
               padding: const EdgeInsets.all(22.0),
               child: Column(
@@ -171,7 +179,7 @@ class RideRequestModal extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFD4AF37).withOpacity(0.2),
+                              color: const Color(0xFFD4AF37).withValues(alpha: 0.2),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -197,10 +205,10 @@ class RideRequestModal extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.black,
+                            color: isDark ? Colors.black : AppTheme.porcelainSurfaceHigh,
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                                color: const Color(0xFFD4AF37).withOpacity(0.5)),
+                                color: accent.withValues(alpha: 0.5)),
                           ),
                           child: Text(
                             'PIN: ${requestData['tripCode']}',
@@ -213,7 +221,7 @@ class RideRequestModal extends StatelessWidget {
                         ),
                     ],
                   ),
-                  const Divider(color: Colors.white12, height: 24),
+                  Divider(color: isDark ? Colors.white12 : AppTheme.porcelainOutline, height: 24),
 
                   // ── 1. PASSENGER IDENTITY & PHOTO ──
                   Row(
@@ -231,8 +239,8 @@ class RideRequestModal extends StatelessWidget {
                           children: [
                             Text(
                               passengerName,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: textPrimary,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -245,8 +253,8 @@ class RideRequestModal extends StatelessWidget {
                                 const SizedBox(width: 3),
                                 Text(
                                   '${requestData['passengerRating'] ?? '4.9'}',
-                                  style: const TextStyle(
-                                    color: Colors.white70,
+                                  style: TextStyle(
+                                    color: textSecondary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -257,7 +265,7 @@ class RideRequestModal extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 6, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: Colors.green.withOpacity(0.2),
+                                      color: Colors.green.withValues(alpha: 0.2),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: const Row(
@@ -282,7 +290,7 @@ class RideRequestModal extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 6, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: Colors.orange.withOpacity(0.2),
+                                      color: Colors.orange.withValues(alpha: 0.2),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: const Text(
@@ -310,13 +318,13 @@ class RideRequestModal extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFFD4AF37).withOpacity(0.18),
-                          const Color(0xFFB8860B).withOpacity(0.08),
+                          const Color(0xFFD4AF37).withValues(alpha: 0.18),
+                          const Color(0xFFB8860B).withValues(alpha: 0.08),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: const Color(0xFFD4AF37).withOpacity(0.4),
+                        color: const Color(0xFFD4AF37).withValues(alpha: 0.4),
                       ),
                     ),
                     child: Column(
@@ -342,8 +350,8 @@ class RideRequestModal extends StatelessWidget {
                                   fare > 0
                                       ? 'KES ${(fare * 0.85).toStringAsFixed(0)}'
                                       : 'KES 520',
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: textPrimary,
                                     fontSize: 26,
                                     fontWeight: FontWeight.w900,
                                   ),
@@ -383,8 +391,8 @@ class RideRequestModal extends StatelessWidget {
                         const SizedBox(height: 6),
                         Text(
                           'Total Fare: KES ${fare > 0 ? fare.toStringAsFixed(0) : "650"} • SACCO Welfare: -KES 30 • Platform: 15%',
-                          style: const TextStyle(
-                            color: Colors.white54,
+                          style: TextStyle(
+                            color: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary,
                             fontSize: 10.5,
                             fontWeight: FontWeight.w500,
                           ),
@@ -398,9 +406,9 @@ class RideRequestModal extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.04),
+                      color: routeBoxBg,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white12),
+                      border: Border.all(color: routeBoxBorder),
                     ),
                     child: Column(
                       children: [
@@ -421,8 +429,8 @@ class RideRequestModal extends StatelessWidget {
                                 pickup,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Colors.white70,
+                                style: TextStyle(
+                                  color: textSecondary,
                                   fontSize: 13,
                                 ),
                               ),
@@ -436,7 +444,7 @@ class RideRequestModal extends StatelessWidget {
                             child: Container(
                               width: 1,
                               height: 14,
-                              color: Colors.white24,
+                              color: isDark ? Colors.white24 : AppTheme.porcelainOutline,
                             ),
                           ),
                         ),
@@ -466,8 +474,8 @@ class RideRequestModal extends StatelessWidget {
                                     destination,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    style: TextStyle(
+                                      color: textPrimary,
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -490,10 +498,10 @@ class RideRequestModal extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFD4AF37).withOpacity(0.12),
+                        color: const Color(0xFFD4AF37).withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                            color: const Color(0xFFD4AF37).withOpacity(0.4)),
+                            color: const Color(0xFFD4AF37).withValues(alpha: 0.4)),
                       ),
                       child: Row(
                         children: [
@@ -559,7 +567,7 @@ class RideRequestModal extends StatelessWidget {
                                         ? const Color(0xFFF59E0B)
                                         : const Color(0xFFD4AF37)),
                               ),
-                              backgroundColor: Colors.white10,
+                              backgroundColor: isDark ? Colors.white10 : AppTheme.porcelainSurfaceHigh,
                             ),
                           ),
                           Column(
@@ -573,7 +581,7 @@ class RideRequestModal extends StatelessWidget {
                                   letterSpacing: -0.5,
                                   color: rideProvider.countdown <= 5
                                       ? const Color(0xFFEF4444)
-                                      : Colors.white,
+                                      : textPrimary,
                                 ),
                               ),
                               Text(
@@ -582,7 +590,7 @@ class RideRequestModal extends StatelessWidget {
                                   fontSize: 8,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.8,
-                                  color: Colors.white.withValues(alpha: 0.4),
+                                  color: textSecondary.withValues(alpha: 0.6),
                                 ),
                               ),
                             ],
