@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class TipSelectionWidget extends StatefulWidget {
@@ -27,14 +28,25 @@ class _TipSelectionWidgetState extends State<TipSelectionWidget> {
   }
 
   void _showCustomTipDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final dialogBg = isDark ? const Color(0xFF1E1E24) : Colors.white;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
     final controller = TextEditingController();
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Enter Custom Tip'),
+        backgroundColor: dialogBg,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Enter Custom Tip',
+          style: TextStyle(fontWeight: FontWeight.bold, color: textPrimary),
+        ),
         content: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
+          style: TextStyle(color: textPrimary),
           decoration: const InputDecoration(
             prefixText: 'KES ',
             labelText: 'Tip Amount',
@@ -43,7 +55,12 @@ class _TipSelectionWidgetState extends State<TipSelectionWidget> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('CANCEL'),
+            child: Text(
+              'CANCEL',
+              style: TextStyle(
+                color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary,
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -51,6 +68,10 @@ class _TipSelectionWidgetState extends State<TipSelectionWidget> {
               Navigator.pop(ctx);
               _selectTip('custom', amount);
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: accent,
+              foregroundColor: isDark ? Colors.black : Colors.white,
+            ),
             child: const Text('CONFIRM'),
           ),
         ],
@@ -60,6 +81,13 @@ class _TipSelectionWidgetState extends State<TipSelectionWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final cardBg = isDark ? const Color(0xFF16161A) : AppTheme.porcelainSurfaceContainer;
+    final outline = isDark ? Colors.white12 : AppTheme.porcelainOutline;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+
     final tip10 = widget.fareAmount * 0.10;
     final tip15 = widget.fareAmount * 0.15;
     final tip20 = widget.fareAmount * 0.20;
@@ -67,18 +95,21 @@ class _TipSelectionWidgetState extends State<TipSelectionWidget> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
+        color: cardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: outline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.favorite, color: Colors.pink, size: 20),
-              SizedBox(width: 8),
-              Text('Add a tip for your driver',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              const Icon(Icons.favorite, color: Colors.pinkAccent, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Add a tip for your driver',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: textPrimary),
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -119,12 +150,14 @@ class _TipSelectionWidgetState extends State<TipSelectionWidget> {
                 child: OutlinedButton(
                   onPressed: _showCustomTipDialog,
                   style: OutlinedButton.styleFrom(
+                    foregroundColor: _selectedOption == 'custom' ? accent : textSecondary,
                     side: BorderSide(
                       color: _selectedOption == 'custom'
-                          ? Colors.blue
-                          : Colors.grey,
+                          ? accent
+                          : outline,
                       width: _selectedOption == 'custom' ? 2 : 1,
                     ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                   child: Text(
                     _selectedOption == 'custom'
@@ -138,11 +171,12 @@ class _TipSelectionWidgetState extends State<TipSelectionWidget> {
                 child: OutlinedButton(
                   onPressed: () => _selectTip('none', 0.0),
                   style: OutlinedButton.styleFrom(
+                    foregroundColor: _selectedOption == 'none' ? accent : textSecondary,
                     side: BorderSide(
-                      color:
-                          _selectedOption == 'none' ? Colors.blue : Colors.grey,
+                      color: _selectedOption == 'none' ? accent : outline,
                       width: _selectedOption == 'none' ? 2 : 1,
                     ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                   child: const Text('No Tip'),
                 ),
@@ -153,7 +187,7 @@ class _TipSelectionWidgetState extends State<TipSelectionWidget> {
             const SizedBox(height: 8),
             Text(
               'Total: KES ${(widget.fareAmount + _selectedTip).toStringAsFixed(2)}',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: textPrimary),
             ),
           ],
         ],
@@ -177,15 +211,31 @@ class _TipButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final btnBg = isSelected
+        ? accent
+        : (isDark ? const Color(0xFF222228) : Colors.white);
+    final border = isSelected
+        ? accent
+        : (isDark ? Colors.white12 : AppTheme.porcelainOutline);
+    final titleColor = isSelected
+        ? (isDark ? Colors.black : Colors.white)
+        : (isDark ? Colors.white : AppTheme.porcelainTextPrimary);
+    final amountColor = isSelected
+        ? (isDark ? Colors.black87 : Colors.white70)
+        : (isDark ? Colors.white70 : AppTheme.porcelainTextSecondary);
+
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue : Colors.white,
-          borderRadius: BorderRadius.circular(8),
+          color: btnBg,
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey[300]!,
+            color: border,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -195,7 +245,7 @@ class _TipButton extends StatelessWidget {
               label,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: isSelected ? Colors.white : Colors.black87,
+                color: titleColor,
               ),
             ),
             const SizedBox(height: 4),
@@ -203,7 +253,7 @@ class _TipButton extends StatelessWidget {
               'KES ${amount.toStringAsFixed(2)}',
               style: TextStyle(
                 fontSize: 12,
-                color: isSelected ? Colors.white70 : Colors.grey[600],
+                color: amountColor,
               ),
             ),
           ],
