@@ -147,13 +147,18 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final canvasBg = isDark ? AppTheme.obsidianCanvas : AppTheme.porcelainCanvas;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+
     return Scaffold(
-      backgroundColor: AppTheme.obsidianCanvas,
+      backgroundColor: canvasBg,
       appBar: AppBar(
-        backgroundColor: AppTheme.obsidianCanvas,
+        backgroundColor: canvasBg,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close_rounded, color: AppTheme.primaryColor),
+          icon: Icon(Icons.close_rounded, color: accent),
           onPressed: () =>
               Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
         ),
@@ -162,7 +167,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
           style: AppTheme.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: textPrimary,
           ),
         ),
         centerTitle: true,
@@ -235,15 +240,23 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
 
   // --- 1. Trip Summary Card ---
   Widget _buildTripSummaryCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? AppTheme.surfaceContainer : AppTheme.porcelainSurface;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final outline = isDark ? AppTheme.outlineGold.withValues(alpha: 0.35) : AppTheme.porcelainOutline;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textDim = isDark ? Colors.white54 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.7);
+    final dividerColor = isDark ? Colors.white10 : AppTheme.porcelainOutline;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.surfaceContainer,
+        color: cardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.outlineGold.withValues(alpha: 0.35)),
+        border: Border.all(color: outline),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
+            color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.06),
             blurRadius: 14,
             offset: const Offset(0, 4),
           ),
@@ -276,14 +289,14 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                         style: AppTheme.montserrat(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: textPrimary,
                         ),
                       ),
                       Text(
                         'Westlands Mall Gate B',
                         style: AppTheme.plusJakartaSans(
                           fontSize: 11,
-                          color: Colors.white54,
+                          color: textDim,
                         ),
                       ),
                     ],
@@ -298,19 +311,19 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                     style: AppTheme.montserrat(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
-                      color: AppTheme.primaryColor,
+                      color: accent,
                     ),
                   ),
                   Text(
                     'Credited',
-                    style: AppTheme.inter(fontSize: 10, color: Colors.white54),
+                    style: AppTheme.inter(fontSize: 10, color: textDim),
                   ),
                 ],
               ),
             ],
           ),
           const SizedBox(height: 12),
-          const Divider(color: Colors.white10, height: 1),
+          Divider(color: dividerColor, height: 1),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -327,7 +340,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                     Expanded(
                       child: Text(
                         'Auto-settled • Ref: CP-${widget.rideId.length > 5 ? widget.rideId.substring(widget.rideId.length - 5) : widget.rideId}',
-                        style: AppTheme.inter(fontSize: 10, color: Colors.white54),
+                        style: AppTheme.inter(fontSize: 10, color: textDim),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -342,17 +355,21 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
   }
 
   Widget _buildTripMeta(IconData icon, String label) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: AppTheme.primaryColor, size: 14),
+        Icon(icon, color: accent, size: 14),
         const SizedBox(width: 4),
         Text(
           label,
           style: AppTheme.inter(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            color: textPrimary,
           ),
         ),
       ],
@@ -361,14 +378,24 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
 
   // --- 2. Passenger Centerpiece + Rating ---
   Widget _buildPassengerRatingCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final innerCardBg = isDark ? const Color(0xFF121316) : AppTheme.porcelainSurface;
+    final subCardBg = isDark ? const Color(0xFF1b1b1f) : AppTheme.porcelainSurfaceContainer;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final outline = isDark ? AppTheme.outlineGold.withValues(alpha: 0.3) : AppTheme.porcelainOutline;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+    final textDim = isDark ? Colors.white54 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.7);
+    final dividerColor = isDark ? Colors.white10 : AppTheme.porcelainOutline;
+
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF121316),
+        color: innerCardBg,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.outlineGold.withValues(alpha: 0.3)),
+        border: Border.all(color: outline),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.6),
+            color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.08),
             blurRadius: 20,
             offset: const Offset(0, 6),
           ),
@@ -379,25 +406,31 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
           // Passenger hero banner
           Container(
             height: 180,
-            decoration: const BoxDecoration(
-              color: Color(0xFF0D0E11),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF0D0E11) : AppTheme.porcelainSurfaceContainer,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Stack(
               fit: StackFit.expand,
               children: [
                 // Gradient over banner
                 Container(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0x00121316),
-                        Color(0xCC121316),
-                        Color(0xFF121316),
-                      ],
+                      colors: isDark
+                          ? const [
+                              Color(0x00121316),
+                              Color(0xCC121316),
+                              Color(0xFF121316),
+                            ]
+                          : [
+                              Colors.transparent,
+                              AppTheme.porcelainSurface.withValues(alpha: 0.7),
+                              AppTheme.porcelainSurface,
+                            ],
                     ),
                   ),
                 ),
@@ -438,19 +471,19 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                                 style: AppTheme.montserrat(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: textPrimary,
                                 ),
                               ),
                               const SizedBox(width: 6),
-                              const Icon(Icons.verified_rounded,
-                                  color: AppTheme.primaryColor, size: 20),
+                              Icon(Icons.verified_rounded,
+                                  color: accent, size: 20),
                             ],
                           ),
                           Text(
                             'Cabi VIP Rider',
                             style: AppTheme.plusJakartaSans(
                               fontSize: 11,
-                              color: Colors.white54,
+                              color: textDim,
                             ),
                           ),
                         ],
@@ -458,23 +491,23 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0x99121316),
+                          color: isDark ? const Color(0x99121316) : AppTheme.porcelainSurface,
                           borderRadius: BorderRadius.circular(24),
                           border:
-                              Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.6)),
+                              Border.all(color: accent.withValues(alpha: 0.6)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.star_rounded,
-                                color: AppTheme.primaryColor, size: 16),
+                            Icon(Icons.star_rounded,
+                                color: accent, size: 16),
                             const SizedBox(width: 4),
                             Text(
                               '4.98',
                               style: AppTheme.montserrat(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+                                  color: textPrimary),
                             ),
                           ],
                         ),
@@ -489,15 +522,15 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1b1b1f),
+                      color: subCardBg,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.5)),
+                      border: Border.all(color: accent.withValues(alpha: 0.5)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.workspace_premium_rounded,
-                            color: AppTheme.primaryColor, size: 12),
+                        Icon(Icons.workspace_premium_rounded,
+                            color: accent, size: 12),
                         const SizedBox(width: 5),
                         Text(
                           'VIP CORPORATE',
@@ -505,7 +538,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,
-                            color: AppTheme.primaryColor,
+                            color: accent,
                           ),
                         ),
                       ],
@@ -528,7 +561,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.0,
-                    color: Colors.white54,
+                    color: textDim,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -544,7 +577,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                         padding: const EdgeInsets.symmetric(horizontal: 6),
                         child: Icon(
                           filled ? Icons.star_rounded : Icons.star_outline_rounded,
-                          color: filled ? AppTheme.primaryColor : Colors.white24,
+                          color: filled ? accent : (isDark ? Colors.white24 : AppTheme.porcelainOutline),
                           size: 44,
                         ),
                       ),
@@ -560,12 +593,12 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                     style: AppTheme.montserrat(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryColor,
+                      color: accent,
                     ),
                   ),
 
                 const SizedBox(height: 16),
-                const Divider(color: Colors.white10, height: 1),
+                Divider(color: dividerColor, height: 1),
                 const SizedBox(height: 14),
 
                 // Compliment pills
@@ -575,7 +608,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                     'Leave compliments for ${widget.passengerName.split(' ').first}:',
                     style: AppTheme.plusJakartaSans(
                       fontSize: 11,
-                      color: Colors.white60,
+                      color: textSecondary,
                     ),
                   ),
                 ),
@@ -598,13 +631,13 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
                         decoration: BoxDecoration(
                           color: selected
-                              ? AppTheme.primaryColor.withValues(alpha: 0.18)
-                              : const Color(0xFF1b1b1f),
+                              ? accent.withValues(alpha: isDark ? 0.18 : 0.12)
+                              : subCardBg,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: selected
-                                ? AppTheme.primaryColor.withValues(alpha: 0.8)
-                                : Colors.white12,
+                                ? accent.withValues(alpha: 0.8)
+                                : dividerColor,
                             width: selected ? 1.5 : 1.0,
                           ),
                         ),
@@ -613,7 +646,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                           style: AppTheme.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: selected ? AppTheme.primaryColor : Colors.white60,
+                            color: selected ? accent : textSecondary,
                           ),
                         ),
                       ),
@@ -626,27 +659,26 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                 // Private memo
                 TextField(
                   controller: _commentController,
-                  style: AppTheme.plusJakartaSans(fontSize: 13, color: Colors.white),
+                  style: AppTheme.plusJakartaSans(fontSize: 13, color: textPrimary),
                   decoration: InputDecoration(
                     hintText: 'Add driver private memo (optional)...',
                     hintStyle: AppTheme.plusJakartaSans(
                       fontSize: 12,
-                      color: Colors.white38,
+                      color: textDim,
                     ),
                     filled: true,
-                    fillColor: const Color(0xFF121316),
+                    fillColor: subCardBg,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.white12),
+                      borderSide: BorderSide(color: dividerColor),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide:
-                          BorderSide(color: AppTheme.outlineGold.withValues(alpha: 0.25)),
+                      borderSide: BorderSide(color: isDark ? AppTheme.outlineGold.withValues(alpha: 0.25) : AppTheme.porcelainOutline),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: AppTheme.primaryColor, width: 1.5),
+                      borderSide: BorderSide(color: accent, width: 1.5),
                     ),
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -663,15 +695,25 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
 
   // --- 3. Fare & Earnings Reconciliation ---
   Widget _buildFareReconciliationCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final innerCardBg = isDark ? const Color(0xFF121316) : AppTheme.porcelainSurface;
+    final subCardBg = isDark ? const Color(0xFF1b1b1f) : AppTheme.porcelainSurfaceContainer;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final outline = isDark ? AppTheme.outlineGold.withValues(alpha: 0.3) : AppTheme.porcelainOutline;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+    final textDim = isDark ? Colors.white54 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.7);
+    final dividerColor = isDark ? Colors.white10 : AppTheme.porcelainOutline;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF121316),
+        color: innerCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.outlineGold.withValues(alpha: 0.3)),
+        border: Border.all(color: outline),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
+            color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.06),
             blurRadius: 14,
             offset: const Offset(0, 4),
           ),
@@ -686,13 +728,12 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                 width: 34,
                 height: 34,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1b1b1f),
+                  color: subCardBg,
                   borderRadius: BorderRadius.circular(9),
-                  border:
-                      Border.all(color: AppTheme.outlineGold.withValues(alpha: 0.3)),
+                  border: Border.all(color: outline),
                 ),
-                child: const Icon(Icons.account_balance_wallet_rounded,
-                    color: AppTheme.primaryColor, size: 18),
+                child: Icon(Icons.account_balance_wallet_rounded,
+                    color: accent, size: 18),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -704,13 +745,13 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                       style: AppTheme.montserrat(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: textPrimary,
                       ),
                     ),
                     Text(
                       'Transparent driver take-home breakdown',
                       style: AppTheme.plusJakartaSans(
-                          fontSize: 10, color: Colors.white54),
+                          fontSize: 10, color: textDim),
                     ),
                   ],
                 ),
@@ -751,30 +792,30 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
             ],
           ),
           const SizedBox(height: 14),
-          const Divider(color: Colors.white10, height: 1),
+          Divider(color: dividerColor, height: 1),
           const SizedBox(height: 12),
 
           // Breakdown rows
           _buildFareRow('Total Customer Fare Paid',
-              'KES ${widget.finalFare.toStringAsFixed(0)}/-', Colors.white, true),
+              'KES ${widget.finalFare.toStringAsFixed(0)}/-', textPrimary, true),
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.only(left: 14),
             child: Column(
               children: [
-                _buildFareRow('Base Fare', 'KES 250/-', Colors.white70, false),
-                _buildFareRow('Distance & Time', 'KES ${(widget.finalFare - 250 - _platformCommission - _saccoLevy).toStringAsFixed(0)}/-', Colors.white70, false),
+                _buildFareRow('Base Fare', 'KES 250/-', textSecondary, false),
+                _buildFareRow('Distance & Time', 'KES ${(widget.finalFare - 250 - _platformCommission - _saccoLevy).toStringAsFixed(0)}/-', textSecondary, false),
                 _buildFareRow(
                   'Kilimani Surge (1.3x)',
                   '+KES ${(widget.finalFare * 0.138).toStringAsFixed(0)}/-',
-                  AppTheme.primaryColor,
+                  accent,
                   false,
                 ),
               ],
             ),
           ),
           const SizedBox(height: 8),
-          const Divider(color: Colors.white10, height: 1),
+          Divider(color: dividerColor, height: 1),
           const SizedBox(height: 8),
           _buildFareRow(
             'Cabi Platform Commission (15%)',
@@ -794,13 +835,13 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             decoration: BoxDecoration(
-              color: const Color(0xFF1b1b1f),
+              color: subCardBg,
               borderRadius: BorderRadius.circular(14),
               border:
-                  Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.4)),
+                  Border.all(color: accent.withValues(alpha: 0.4)),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryColor.withValues(alpha: 0.08),
+                  color: accent.withValues(alpha: 0.08),
                   blurRadius: 12,
                   spreadRadius: 2,
                 ),
@@ -819,7 +860,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                           style: AppTheme.montserrat(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: textPrimary,
                           ),
                         ),
                         const SizedBox(width: 5),
@@ -830,7 +871,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                     Text(
                       'Transferred to M-Pesa Wallet',
                       style:
-                          AppTheme.plusJakartaSans(fontSize: 10, color: Colors.white54),
+                          AppTheme.plusJakartaSans(fontSize: 10, color: textDim),
                     ),
                   ],
                 ),
@@ -842,7 +883,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                       style: AppTheme.montserrat(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
-                        color: AppTheme.primaryColor,
+                        color: accent,
                       ),
                     ),
                     Text(
@@ -864,6 +905,10 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
   }
 
   Widget _buildFareRow(String label, String value, Color valueColor, bool bold) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white60 : AppTheme.porcelainTextSecondary;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
@@ -874,7 +919,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
             style: AppTheme.plusJakartaSans(
               fontSize: 12,
               fontWeight: bold ? FontWeight.w600 : FontWeight.w400,
-              color: bold ? Colors.white : Colors.white60,
+              color: bold ? textPrimary : textSecondary,
             ),
           ),
           Text(
@@ -892,27 +937,32 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
 
   // --- 4. Cash Payment Confirm (if needed) ---
   Widget _buildCashConfirmCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final innerCardBg = isDark ? const Color(0xFF121316) : AppTheme.porcelainSurface;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF121316),
+        color: innerCardBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.5)),
+        border: Border.all(color: accent.withValues(alpha: 0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.payments_outlined,
-                  color: AppTheme.primaryColor, size: 22),
+              Icon(Icons.payments_outlined,
+                  color: accent, size: 22),
               const SizedBox(width: 10),
               Text(
                 'Confirm Cash Payment',
                 style: AppTheme.montserrat(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                    color: textPrimary),
               ),
             ],
           ),
@@ -922,7 +972,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
             style: AppTheme.montserrat(
               fontSize: 28,
               fontWeight: FontWeight.w900,
-              color: AppTheme.primaryColor,
+              color: accent,
             ),
           ),
           const SizedBox(height: 12),
@@ -948,7 +998,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
+                backgroundColor: accent,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
@@ -963,6 +1013,11 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
 
   // --- 5. Action Bar ---
   Widget _buildActionBar() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final textSecondary = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+    final outline = isDark ? AppTheme.outlineGold.withValues(alpha: 0.4) : AppTheme.porcelainOutline;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -970,11 +1025,17 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
         Container(
           height: 56,
           decoration: BoxDecoration(
-            gradient: AppTheme.goldGradient,
+            gradient: isDark
+                ? AppTheme.goldGradient
+                : const LinearGradient(
+                    colors: [Color(0xFF8C6D1F), Color(0xFFA17D24)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primaryColor.withValues(alpha: 0.35),
+                color: accent.withValues(alpha: 0.35),
                 blurRadius: 18,
                 offset: const Offset(0, 4),
               ),
@@ -1005,12 +1066,12 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                           fontSize: 13,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 0.7,
-                          color: const Color(0xFF241a00),
+                          color: isDark ? const Color(0xFF241a00) : Colors.white,
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const Icon(Icons.arrow_forward_rounded,
-                          color: Color(0xFF241a00), size: 18),
+                      Icon(Icons.arrow_forward_rounded,
+                          color: isDark ? const Color(0xFF241a00) : Colors.white, size: 18),
                     ],
                   ),
           ),
@@ -1029,12 +1090,11 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                   style: AppTheme.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white70),
+                      color: textSecondary),
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  side: BorderSide(
-                      color: AppTheme.outlineGold.withValues(alpha: 0.4)),
+                  side: BorderSide(color: outline),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24)),
                 ),
@@ -1045,19 +1105,19 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
               child: OutlinedButton.icon(
                 onPressed: () => Navigator.of(context)
                     .pushNamedAndRemoveUntil('/home', (route) => false),
-                icon: const Icon(Icons.power_settings_new_rounded,
-                    color: Colors.white60, size: 16),
+                icon: Icon(Icons.power_settings_new_rounded,
+                    color: textSecondary, size: 16),
                 label: Text(
                   'Go Offline',
                   style: AppTheme.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white60),
+                      color: textSecondary),
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   side: BorderSide(
-                      color: AppTheme.outlineBorder.withValues(alpha: 0.4)),
+                      color: isDark ? AppTheme.outlineBorder.withValues(alpha: 0.4) : AppTheme.porcelainOutline),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24)),
                 ),
@@ -1071,7 +1131,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
               Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false),
           child: Text(
             'Skip Rating',
-            style: AppTheme.inter(fontSize: 12, color: Colors.white38),
+            style: AppTheme.inter(fontSize: 12, color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.6)),
           ),
         ),
       ],
