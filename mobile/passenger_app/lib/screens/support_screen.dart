@@ -42,13 +42,21 @@ class _SupportScreenState extends State<SupportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final gold = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final canvasColor = isDark ? const Color(0xFF0D0D0E) : AppTheme.porcelainCanvas;
+    final appBarColor = isDark ? const Color(0xFF121215) : AppTheme.porcelainSurface;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white60 : AppTheme.porcelainTextSecondary;
+    final sectionLabelColor = isDark ? Colors.white54 : AppTheme.porcelainTextSecondary;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0E),
+      backgroundColor: canvasColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121215),
+        backgroundColor: appBarColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: textPrimary, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -56,7 +64,7 @@ class _SupportScreenState extends State<SupportScreen> {
           style: AppTheme.outfit(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Colors.white,
+            color: textPrimary,
           ),
         ),
         actions: [
@@ -103,13 +111,19 @@ class _SupportScreenState extends State<SupportScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1A1A22), Color(0xFF121216)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: isDark
+                    ? const LinearGradient(
+                        colors: [Color(0xFF1A1A22), Color(0xFF121216)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : LinearGradient(
+                        colors: [AppTheme.porcelainSurfaceContainer, AppTheme.porcelainSurface],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppTheme.outlineGold),
+                border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.aurumBronze),
                 boxShadow: const [
                   BoxShadow(
                     color: Color(0x18000000),
@@ -140,7 +154,7 @@ class _SupportScreenState extends State<SupportScreen> {
                           ),
                         ),
                       ),
-                      const Icon(Icons.stars_rounded, color: AppTheme.primaryColor, size: 22),
+                      Icon(Icons.stars_rounded, color: gold, size: 22),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -149,7 +163,7 @@ class _SupportScreenState extends State<SupportScreen> {
                     style: AppTheme.outfit(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -157,7 +171,7 @@ class _SupportScreenState extends State<SupportScreen> {
                     'Dedicated SACCO-backed support for prompt recoveries, dispatch coordination, and executive inquiries.',
                     style: AppTheme.inter(
                       fontSize: 13,
-                      color: Colors.white60,
+                      color: textSecondary,
                       height: 1.4,
                     ),
                   ),
@@ -172,96 +186,13 @@ class _SupportScreenState extends State<SupportScreen> {
               style: AppTheme.inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
-                color: AppTheme.primaryColor,
+                color: gold,
                 letterSpacing: 1.1,
               ),
             ),
             const SizedBox(height: 12),
 
-            Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: const Color(0xFF141418),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryColor.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppTheme.outlineGold),
-                        ),
-                        child: const Icon(Icons.find_in_page_rounded, color: AppTheme.primaryColor, size: 24),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Left an item in a vehicle?',
-                              style: AppTheme.outfit(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Immediate alert sent to driver occurrence book',
-                              style: AppTheme.inter(fontSize: 12, color: Colors.white60),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 44,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ReportLostItemScreen(
-                              rideId: 'TRIP-LATEST',
-                              driverId: 'CHAUFFEUR-01',
-                            ),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1E1E26),
-                        foregroundColor: AppTheme.primaryColor,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: const BorderSide(color: AppTheme.outlineGold),
-                        ),
-                      ),
-                      icon: const Icon(Icons.report_problem_rounded, size: 18),
-                      label: Text(
-                        'FILE RECOVERY REPORT',
-                        style: AppTheme.inter(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.8,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _buildLostFoundCard(isDark: isDark, gold: gold, textPrimary: textPrimary, textSecondary: textSecondary),
             const SizedBox(height: 24),
 
             // Section: Direct Contact Options
@@ -270,33 +201,39 @@ class _SupportScreenState extends State<SupportScreen> {
               style: AppTheme.inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
-                color: Colors.white54,
+                color: sectionLabelColor,
                 letterSpacing: 1.1,
               ),
             ),
             const SizedBox(height: 12),
 
             _buildContactCard(
+              isDark: isDark,
+              gold: gold,
               icon: Icons.phone_in_talk_rounded,
               title: 'Chauffeur VIP Hotline',
               subtitle: 'Speak directly with senior dispatch (+254 700 000 000)',
               badge: 'PRIORITY',
-              badgeColor: AppTheme.primaryColor,
+              badgeColor: gold,
               onTap: () => _makePhoneCall('+254700000000'),
             ),
             const SizedBox(height: 10),
 
             _buildContactCard(
+              isDark: isDark,
+              gold: gold,
               icon: Icons.email_outlined,
               title: 'Executive Desk Email',
               subtitle: 'concierge@cabi.africa • 15 min response time',
               badge: 'OFFICIAL',
-              badgeColor: Colors.white60,
+              badgeColor: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary,
               onTap: () => _sendEmail('concierge@cabi.africa'),
             ),
             const SizedBox(height: 10),
 
             _buildContactCard(
+              isDark: isDark,
+              gold: gold,
               icon: Icons.shield_rounded,
               title: 'SACCO Safety & Compliance',
               subtitle: 'Independent occurrence book log & vehicle audit',
@@ -316,21 +253,30 @@ class _SupportScreenState extends State<SupportScreen> {
               style: AppTheme.inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
-                color: Colors.white54,
+                color: sectionLabelColor,
                 letterSpacing: 1.1,
               ),
             ),
             const SizedBox(height: 12),
 
             _buildFaqTile(
+              isDark: isDark,
+              gold: gold,
+              textPrimary: textPrimary,
               question: 'How do M-Pesa automatic receipts work?',
               answer: 'Every trip fare is itemized and immediately matched against Safaricom M-Pesa STK push. Official tax-compliant waybills are downloadable under Trip Receipt Details.',
             ),
             _buildFaqTile(
+              isDark: isDark,
+              gold: gold,
+              textPrimary: textPrimary,
               question: 'What is the Cabi Guaranteed Lock?',
               answer: 'When scheduling rides 2+ hours ahead, your vehicle tier and fare are guaranteed. No surge pricing is ever applied to pre-reserved executive trips.',
             ),
             _buildFaqTile(
+              isDark: isDark,
+              gold: gold,
+              textPrimary: textPrimary,
               question: 'How are Cabi Chauffeurs vetted?',
               answer: 'All drivers undergo formal SACCO accreditation, biometric verification, comprehensive background checks, and advanced defensive driving certification.',
             ),
@@ -340,7 +286,108 @@ class _SupportScreenState extends State<SupportScreen> {
     );
   }
 
+  Widget _buildLostFoundCard({
+    required bool isDark,
+    required Color gold,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
+    final cardColor = isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface;
+    final cardBorder = isDark ? Colors.white12 : AppTheme.porcelainOutline;
+    final iconBg = isDark ? AppTheme.primaryColor.withValues(alpha: 0.12) : gold.withValues(alpha: 0.1);
+    final iconBorder = isDark ? AppTheme.outlineGold : AppTheme.aurumBronze;
+    final btnBg = isDark ? const Color(0xFF1E1E26) : AppTheme.porcelainSurfaceContainer;
+    final btnBorder = isDark ? AppTheme.outlineGold : AppTheme.aurumBronze;
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: cardBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: iconBorder),
+                ),
+                child: Icon(Icons.find_in_page_rounded, color: gold, size: 24),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Left an item in a vehicle?',
+                      style: AppTheme.outfit(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Immediate alert sent to driver occurrence book',
+                      style: AppTheme.inter(fontSize: 12, color: textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 44,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ReportLostItemScreen(
+                      rideId: 'TRIP-LATEST',
+                      driverId: 'CHAUFFEUR-01',
+                    ),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: btnBg,
+                foregroundColor: gold,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(color: btnBorder),
+                ),
+              ),
+              icon: const Icon(Icons.report_problem_rounded, size: 18),
+              label: Text(
+                'FILE RECOVERY REPORT',
+                style: AppTheme.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildContactCard({
+    required bool isDark,
+    required Color gold,
     required IconData icon,
     required String title,
     required String subtitle,
@@ -348,15 +395,23 @@ class _SupportScreenState extends State<SupportScreen> {
     required Color badgeColor,
     required VoidCallback onTap,
   }) {
+    final cardColor = isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface;
+    final cardBorder = isDark ? Colors.white12 : AppTheme.porcelainOutline;
+    final iconBg = isDark ? Colors.white.withValues(alpha: 0.06) : AppTheme.porcelainSurfaceContainer;
+    final iconBorderColor = isDark ? Colors.white10 : AppTheme.porcelainOutline;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white60 : AppTheme.porcelainTextSecondary;
+    final arrowColor = isDark ? Colors.white30 : AppTheme.porcelainTextSecondary;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF141418),
+          color: cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white12),
+          border: Border.all(color: cardBorder),
         ),
         child: Row(
           children: [
@@ -364,11 +419,11 @@ class _SupportScreenState extends State<SupportScreen> {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.06),
+                color: iconBg,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white10),
+                border: Border.all(color: iconBorderColor),
               ),
-              child: Icon(icon, color: AppTheme.primaryColor, size: 22),
+              child: Icon(icon, color: gold, size: 22),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -383,7 +438,7 @@ class _SupportScreenState extends State<SupportScreen> {
                           style: AppTheme.outfit(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: textPrimary,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -411,43 +466,54 @@ class _SupportScreenState extends State<SupportScreen> {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: AppTheme.inter(fontSize: 12, color: Colors.white60),
+                    style: AppTheme.inter(fontSize: 12, color: textSecondary),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white30, size: 14),
+            Icon(Icons.arrow_forward_ios_rounded, color: arrowColor, size: 14),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildFaqTile({required String question, required String answer}) {
+  Widget _buildFaqTile({
+    required bool isDark,
+    required Color gold,
+    required Color textPrimary,
+    required String question,
+    required String answer,
+  }) {
+    final cardColor = isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface;
+    final cardBorder = isDark ? Colors.white10 : AppTheme.porcelainOutline;
+    final answerColor = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+    final collapsedIconColor = isDark ? Colors.white38 : AppTheme.porcelainTextSecondary;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF141418),
+        color: cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: cardBorder),
       ),
       child: Theme(
         data: ThemeData(dividerColor: Colors.transparent),
         child: ExpansionTile(
-          iconColor: AppTheme.primaryColor,
-          collapsedIconColor: Colors.white38,
+          iconColor: gold,
+          collapsedIconColor: collapsedIconColor,
           title: Text(
             question,
-            style: AppTheme.outfit(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white),
+            style: AppTheme.outfit(fontSize: 14, fontWeight: FontWeight.w600, color: textPrimary),
           ),
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Text(
                 answer,
-                style: AppTheme.inter(fontSize: 12, color: Colors.white70, height: 1.4),
+                style: AppTheme.inter(fontSize: 12, color: answerColor, height: 1.4),
               ),
             ),
           ],
