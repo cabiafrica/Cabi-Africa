@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import '../config/app_config.dart';
+import '../theme/app_theme.dart';
 
 class VehicleIncentive {
   final String id;
@@ -317,11 +318,20 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
     final voucherCode =
         'CABI-${inc.category}-${(widget.vehicleData['licensePlate'] ?? 'CAR').toString().replaceAll(' ', '')}';
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final gold = isDark ? const Color(0xFFFFBE0B) : AppTheme.aurumBronze;
+    final surfaceColor = isDark ? const Color(0xFF1E1E1E) : AppTheme.porcelainSurface;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.grey[300]! : AppTheme.porcelainTextSecondary;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E1E),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
+        ),
         title: Row(
           children: [
             Text(inc.badgeEmoji, style: const TextStyle(fontSize: 28)),
@@ -330,7 +340,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
               child: Text(
                 'Incentive Voucher',
                 style: GoogleFonts.outfit(
-                  color: Colors.white,
+                  color: textPrimary,
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
@@ -345,7 +355,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
             Text(
               inc.title,
               style: GoogleFonts.outfit(
-                color: const Color(0xFFFFBE0B),
+                color: gold,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -353,22 +363,22 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
             const SizedBox(height: 8),
             Text(
               inc.description,
-              style: GoogleFonts.outfit(color: Colors.grey[300], fontSize: 13),
+              style: GoogleFonts.outfit(color: textSecondary, fontSize: 13),
             ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: isDark ? Colors.black : AppTheme.porcelainSurfaceContainer,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFFFBE0B), width: 1.5),
+                border: Border.all(color: gold, width: 1.5),
               ),
               child: Column(
                 children: [
-                  const Text(
+                  Text(
                     'OFFICIAL REDEMPTION CODE',
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: isDark ? Colors.grey : AppTheme.porcelainTextSecondary,
                       fontSize: 10,
                       letterSpacing: 1.5,
                       fontWeight: FontWeight.bold,
@@ -378,7 +388,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                   SelectableText(
                     voucherCode,
                     style: GoogleFonts.spaceMono(
-                      color: const Color(0xFFFFBE0B),
+                      color: gold,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
@@ -387,7 +397,10 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                   const SizedBox(height: 8),
                   Text(
                     'Valid until: 31 Dec 2026 • Present at counter',
-                    style: TextStyle(color: Colors.grey[400], fontSize: 11),
+                    style: TextStyle(
+                      color: isDark ? Colors.grey[400] : AppTheme.porcelainTextSecondary,
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ),
@@ -417,7 +430,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('DISMISS', style: TextStyle(color: Colors.grey)),
+            child: Text('DISMISS', style: TextStyle(color: isDark ? Colors.grey : AppTheme.porcelainTextSecondary)),
           ),
           ElevatedButton.icon(
             onPressed: () {
@@ -432,12 +445,12 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                 ),
               );
             },
-            icon: const Icon(Icons.download_done, color: Colors.black),
-            label: const Text('SAVE VOUCHER',
+            icon: Icon(Icons.download_done, color: isDark ? Colors.black : Colors.white),
+            label: Text('SAVE VOUCHER',
                 style: TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.bold)),
+                    color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.bold)),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFBE0B),
+              backgroundColor: gold,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
             ),
@@ -451,20 +464,28 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
     final titleController = TextEditingController();
     final costController = TextEditingController();
     final garageController = TextEditingController();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final gold = isDark ? const Color(0xFFFFBE0B) : AppTheme.aurumBronze;
+    final surfaceColor = isDark ? const Color(0xFF1E1E1E) : AppTheme.porcelainSurface;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.grey : AppTheme.porcelainTextSecondary;
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E1E),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
+        ),
         title: Row(
           children: [
-            const Icon(Icons.build_circle, color: Color(0xFFFFBE0B), size: 26),
+            Icon(Icons.build_circle, color: gold, size: 26),
             const SizedBox(width: 10),
             Text(
               'Log Maintenance',
               style: GoogleFonts.outfit(
-                color: Colors.white,
+                color: textPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -476,47 +497,47 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
             children: [
               TextField(
                 controller: titleController,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
+                style: TextStyle(color: textPrimary),
+                decoration: InputDecoration(
                   labelText: 'Service Type / Action',
-                  labelStyle: TextStyle(color: Colors.grey),
+                  labelStyle: TextStyle(color: textSecondary),
                   hintText: 'e.g. Oil Change, New Tires',
-                  hintStyle: TextStyle(color: Colors.white30),
+                  hintStyle: TextStyle(color: isDark ? Colors.white30 : AppTheme.porcelainOutline),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
+                      borderSide: BorderSide(color: isDark ? Colors.grey : AppTheme.porcelainOutline)),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFFFBE0B))),
+                      borderSide: BorderSide(color: gold)),
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: costController,
                 keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
+                style: TextStyle(color: textPrimary),
+                decoration: InputDecoration(
                   labelText: 'Cost (KES)',
-                  labelStyle: TextStyle(color: Colors.grey),
+                  labelStyle: TextStyle(color: textSecondary),
                   hintText: 'e.g. 7500',
-                  hintStyle: TextStyle(color: Colors.white30),
+                  hintStyle: TextStyle(color: isDark ? Colors.white30 : AppTheme.porcelainOutline),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
+                      borderSide: BorderSide(color: isDark ? Colors.grey : AppTheme.porcelainOutline)),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFFFBE0B))),
+                      borderSide: BorderSide(color: gold)),
                 ),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: garageController,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
+                style: TextStyle(color: textPrimary),
+                decoration: InputDecoration(
                   labelText: 'Garage / Service Provider',
-                  labelStyle: TextStyle(color: Colors.grey),
+                  labelStyle: TextStyle(color: textSecondary),
                   hintText: 'e.g. AutoXpress Mombasa Rd',
-                  hintStyle: TextStyle(color: Colors.white30),
+                  hintStyle: TextStyle(color: isDark ? Colors.white30 : AppTheme.porcelainOutline),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
+                      borderSide: BorderSide(color: isDark ? Colors.grey : AppTheme.porcelainOutline)),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFFFBE0B))),
+                      borderSide: BorderSide(color: gold)),
                 ),
               ),
             ],
@@ -525,7 +546,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('CANCEL', style: TextStyle(color: Colors.grey)),
+            child: Text('CANCEL', style: TextStyle(color: textSecondary)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -555,8 +576,8 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFBE0B),
-              foregroundColor: Colors.black,
+              backgroundColor: gold,
+              foregroundColor: isDark ? Colors.black : Colors.white,
             ),
             child: const Text('SUBMIT RECORD',
                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -568,6 +589,14 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final gold = isDark ? const Color(0xFFFFBE0B) : AppTheme.aurumBronze;
+    final canvasColor = isDark ? const Color(0xFF121212) : AppTheme.porcelainCanvas;
+    final surfaceColor = isDark ? const Color(0xFF1E1E1E) : AppTheme.porcelainSurface;
+    final outlineColor = isDark ? Colors.white12 : AppTheme.porcelainOutline;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.grey[400]! : AppTheme.porcelainTextSecondary;
+
     final make = widget.vehicleData['make'] ?? 'Toyota';
     final model = widget.vehicleData['model'] ?? 'Corolla Fielder';
     final year = widget.vehicleData['year'] ?? 2022;
@@ -575,36 +604,36 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
     final plate = widget.vehicleData['licensePlate'] ??
         widget.vehicleData['plateNumber'] ??
         'KDA 811A';
-    final type = widget.vehicleData['type'] ?? 'STANDARD';
+    final type = widget.vehicleData['type'] ?? 'Comfort Sedan';
     final isActive = widget.vehicleData['isActive'] ?? true;
 
     final qualifiedCount = _incentives.where((i) => i.isQualified).length;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: canvasColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1A1A),
-        foregroundColor: Colors.white,
+        backgroundColor: isDark ? const Color(0xFF1A1A1A) : AppTheme.porcelainSurface,
+        foregroundColor: textPrimary,
         title: Text(
           'Vehicle Account',
           style: GoogleFonts.outfit(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: textPrimary,
             fontSize: 20,
           ),
         ),
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh, color: textPrimary),
             tooltip: 'Refresh Stats',
             onPressed: _fetchLiveVehicleAccount,
           ),
         ],
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFFFBE0B)))
+          ? Center(
+              child: CircularProgressIndicator(color: gold))
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -619,22 +648,49 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                     plate: plate,
                     type: type,
                     isActive: isActive,
+                    isDark: isDark,
+                    gold: gold,
+                    outlineColor: outlineColor,
+                    textPrimary: textPrimary,
+                    textSecondary: textSecondary,
                   ),
 
                   const SizedBox(height: 16),
 
                   // --- METRICS / KPI GRID ---
-                  _buildMetricsRow(),
+                  _buildMetricsRow(
+                    isDark: isDark,
+                    surfaceColor: surfaceColor,
+                    outlineColor: outlineColor,
+                    textPrimary: textPrimary,
+                    textSecondary: textSecondary,
+                    gold: gold,
+                  ),
 
                   const SizedBox(height: 20),
 
                   // --- INCENTIVE QUALIFICATION BANNER & CARDS ---
-                  _buildIncentiveSection(qualifiedCount),
+                  _buildIncentiveSection(
+                    qualifiedCount: qualifiedCount,
+                    isDark: isDark,
+                    gold: gold,
+                    surfaceColor: surfaceColor,
+                    outlineColor: outlineColor,
+                    textPrimary: textPrimary,
+                    textSecondary: textSecondary,
+                  ),
 
                   const SizedBox(height: 24),
 
                   // --- TABS SECTION (TRIP HISTORY, MAINTENANCE, COMPLIANCE) ---
-                  _buildHistoryTabs(),
+                  _buildHistoryTabs(
+                    isDark: isDark,
+                    gold: gold,
+                    surfaceColor: surfaceColor,
+                    outlineColor: outlineColor,
+                    textPrimary: textPrimary,
+                    textSecondary: textSecondary,
+                  ),
                 ],
               ),
             ),
@@ -649,20 +705,27 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
     required String plate,
     required String type,
     required bool isActive,
+    required bool isDark,
+    required Color gold,
+    required Color outlineColor,
+    required Color textPrimary,
+    required Color textSecondary,
   }) {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF242424), Color(0xFF181818)],
+        gradient: LinearGradient(
+          colors: isDark
+              ? const [Color(0xFF242424), Color(0xFF181818)]
+              : const [Color(0xFFFFFFFF), Color(0xFFF1F5F9)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: outlineColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
+            color: isDark ? Colors.black.withValues(alpha: 0.4) : Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -678,13 +741,13 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFBE0B).withValues(alpha: 0.15),
+                  color: gold.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFFFFBE0B), width: 1.5),
+                  border: Border.all(color: gold, width: 1.5),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.directions_car_filled,
-                  color: Color(0xFFFFBE0B),
+                  color: gold,
                   size: 34,
                 ),
               ),
@@ -696,7 +759,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                     Text(
                       '$make $model',
                       style: GoogleFonts.outfit(
-                        color: Colors.white,
+                        color: textPrimary,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -705,7 +768,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                     Text(
                       '$year • $color • $type',
                       style: GoogleFonts.outfit(
-                        color: Colors.grey[400],
+                        color: textSecondary,
                         fontSize: 13,
                       ),
                     ),
@@ -715,9 +778,9 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.black,
+                        color: isDark ? Colors.black : const Color(0xFF0F172A),
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: Colors.white24),
+                        border: Border.all(color: isDark ? Colors.white24 : AppTheme.porcelainOutline),
                       ),
                       child: Text(
                         plate,
@@ -773,13 +836,13 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFBE0B).withValues(alpha: 0.15),
+                      color: gold.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       '⭐ $_rating',
-                      style: const TextStyle(
-                        color: Color(0xFFFFBE0B),
+                      style: TextStyle(
+                        color: gold,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -789,14 +852,14 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
               ),
             ],
           ),
-          const Divider(height: 24, color: Colors.white12),
+          Divider(height: 24, color: outlineColor),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildFeatureItem(Icons.verified_user, 'PSV Insured', Colors.teal),
-              _buildFeatureItem(Icons.document_scanner, 'Logbook OK', Colors.blue),
-              _buildFeatureItem(Icons.speed, 'GPS Tracking', Colors.amber),
-              _buildFeatureItem(Icons.shield_outlined, 'Passed Audit', Colors.green),
+              _buildFeatureItem(Icons.verified_user, 'PSV Insured', Colors.teal, textSecondary),
+              _buildFeatureItem(Icons.document_scanner, 'Logbook OK', Colors.blue, textSecondary),
+              _buildFeatureItem(Icons.speed, 'GPS Tracking', Colors.amber, textSecondary),
+              _buildFeatureItem(Icons.shield_outlined, 'Passed Audit', Colors.green, textSecondary),
             ],
           ),
         ],
@@ -804,7 +867,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
     );
   }
 
-  Widget _buildFeatureItem(IconData icon, String label, Color color) {
+  Widget _buildFeatureItem(IconData icon, String label, Color color, Color textSecondary) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -813,7 +876,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
         Text(
           label,
           style: GoogleFonts.outfit(
-            color: Colors.grey[300],
+            color: textSecondary,
             fontSize: 11,
             fontWeight: FontWeight.w500,
           ),
@@ -822,7 +885,14 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
     );
   }
 
-  Widget _buildMetricsRow() {
+  Widget _buildMetricsRow({
+    required bool isDark,
+    required Color surfaceColor,
+    required Color outlineColor,
+    required Color textPrimary,
+    required Color textSecondary,
+    required Color gold,
+  }) {
     return Row(
       children: [
         Expanded(
@@ -831,7 +901,12 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
             value: '$_totalTrips',
             sub: 'Completed',
             icon: Icons.local_taxi,
-            color: const Color(0xFFFFBE0B),
+            color: gold,
+            surfaceColor: surfaceColor,
+            outlineColor: outlineColor,
+            textPrimary: textPrimary,
+            textSecondary: textSecondary,
+            isDark: isDark,
           ),
         ),
         const SizedBox(width: 10),
@@ -842,6 +917,11 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
             sub: 'Total Odo',
             icon: Icons.route,
             color: Colors.cyan,
+            surfaceColor: surfaceColor,
+            outlineColor: outlineColor,
+            textPrimary: textPrimary,
+            textSecondary: textSecondary,
+            isDark: isDark,
           ),
         ),
         const SizedBox(width: 10),
@@ -852,6 +932,11 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
             sub: 'Gross Earned',
             icon: Icons.payments,
             color: Colors.greenAccent,
+            surfaceColor: surfaceColor,
+            outlineColor: outlineColor,
+            textPrimary: textPrimary,
+            textSecondary: textSecondary,
+            isDark: isDark,
           ),
         ),
       ],
@@ -864,13 +949,18 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
     required String sub,
     required IconData icon,
     required Color color,
+    required Color surfaceColor,
+    required Color outlineColor,
+    required Color textPrimary,
+    required Color textSecondary,
+    required bool isDark,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
+        color: surfaceColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: outlineColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -881,7 +971,10 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
               Icon(icon, size: 18, color: color),
               Text(
                 sub,
-                style: const TextStyle(color: Colors.white38, fontSize: 10),
+                style: TextStyle(
+                  color: isDark ? Colors.white38 : textSecondary.withValues(alpha: 0.7),
+                  fontSize: 10,
+                ),
               ),
             ],
           ),
@@ -889,7 +982,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           Text(
             value,
             style: GoogleFonts.outfit(
-              color: Colors.white,
+              color: textPrimary,
               fontSize: 17,
               fontWeight: FontWeight.bold,
             ),
@@ -898,7 +991,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           Text(
             label,
             style: GoogleFonts.outfit(
-              color: Colors.grey[400],
+              color: textSecondary,
               fontSize: 11,
             ),
           ),
@@ -907,7 +1000,15 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
     );
   }
 
-  Widget _buildIncentiveSection(int qualifiedCount) {
+  Widget _buildIncentiveSection({
+    required int qualifiedCount,
+    required bool isDark,
+    required Color gold,
+    required Color surfaceColor,
+    required Color outlineColor,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -916,12 +1017,12 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           children: [
             Row(
               children: [
-                const Icon(Icons.stars, color: Color(0xFFFFBE0B), size: 22),
+                Icon(Icons.stars, color: gold, size: 22),
                 const SizedBox(width: 8),
                 Text(
                   'Incentive Qualification',
                   style: GoogleFonts.outfit(
-                    color: Colors.white,
+                    color: textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -949,28 +1050,44 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
         const SizedBox(height: 8),
         Text(
           'This vehicle qualifies for benefits based on completed trips and verified vehicle inspections.',
-          style: GoogleFonts.outfit(color: Colors.grey[400], fontSize: 13),
+          style: GoogleFonts.outfit(color: textSecondary, fontSize: 13),
         ),
         const SizedBox(height: 12),
         // Incentive Cards list
-        ..._incentives.map((inc) => _buildIncentiveCard(inc)),
+        ..._incentives.map((inc) => _buildIncentiveCard(
+          inc: inc,
+          isDark: isDark,
+          gold: gold,
+          surfaceColor: surfaceColor,
+          outlineColor: outlineColor,
+          textPrimary: textPrimary,
+          textSecondary: textSecondary,
+        )),
       ],
     );
   }
 
-  Widget _buildIncentiveCard(VehicleIncentive inc) {
+  Widget _buildIncentiveCard({
+    required VehicleIncentive inc,
+    required bool isDark,
+    required Color gold,
+    required Color surfaceColor,
+    required Color outlineColor,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
     final isClaimed = _claimedIncentives.contains(inc.id);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
+        color: surfaceColor,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: inc.isQualified
-              ? const Color(0xFFFFBE0B).withValues(alpha: 0.5)
-              : Colors.white12,
+              ? gold.withValues(alpha: 0.5)
+              : outlineColor,
           width: inc.isQualified ? 1.5 : 1,
         ),
       ),
@@ -982,7 +1099,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.black38,
+                  color: isDark ? Colors.black38 : AppTheme.porcelainSurfaceContainer,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(inc.badgeEmoji, style: const TextStyle(fontSize: 22)),
@@ -995,7 +1112,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                     Text(
                       inc.title,
                       style: GoogleFonts.outfit(
-                        color: Colors.white,
+                        color: textPrimary,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1003,7 +1120,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                     Text(
                       inc.reward,
                       style: GoogleFonts.outfit(
-                        color: const Color(0xFFFFBE0B),
+                        color: gold,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1019,10 +1136,10 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                     color: Colors.grey.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
+                  child: Text(
                     'CLAIMED',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
                       fontWeight: FontWeight.bold,
                       fontSize: 11,
                     ),
@@ -1032,8 +1149,8 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                 ElevatedButton(
                   onPressed: () => _claimIncentive(inc),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFBE0B),
-                    foregroundColor: Colors.black,
+                    backgroundColor: gold,
+                    foregroundColor: isDark ? Colors.black : Colors.white,
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     visualDensity: VisualDensity.compact,
@@ -1067,7 +1184,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           const SizedBox(height: 10),
           Text(
             inc.description,
-            style: GoogleFonts.outfit(color: Colors.grey[400], fontSize: 12),
+            style: GoogleFonts.outfit(color: textSecondary, fontSize: 12),
           ),
           const SizedBox(height: 12),
           // Progress bar
@@ -1079,15 +1196,17 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                 children: [
                   Text(
                     'Progress: ${inc.currentTrips}/${inc.requiredTrips} trips',
-                    style:
-                        const TextStyle(color: Colors.white54, fontSize: 11),
+                    style: TextStyle(
+                      color: isDark ? Colors.white54 : textSecondary,
+                      fontSize: 11,
+                    ),
                   ),
                   Text(
                     '${inc.progressPct}%',
                     style: TextStyle(
                       color: inc.isQualified
                           ? Colors.greenAccent
-                          : Colors.amberAccent,
+                          : (isDark ? Colors.amberAccent : gold),
                       fontWeight: FontWeight.bold,
                       fontSize: 11,
                     ),
@@ -1100,9 +1219,9 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                 child: LinearProgressIndicator(
                   value: (inc.progressPct / 100).clamp(0.0, 1.0),
                   minHeight: 6,
-                  backgroundColor: Colors.white12,
+                  backgroundColor: isDark ? Colors.white12 : outlineColor,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    inc.isQualified ? Colors.green : const Color(0xFFFFBE0B),
+                    inc.isQualified ? Colors.green : gold,
                   ),
                 ),
               ),
@@ -1113,19 +1232,27 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
     );
   }
 
-  Widget _buildHistoryTabs() {
+  Widget _buildHistoryTabs({
+    required bool isDark,
+    required Color gold,
+    required Color surfaceColor,
+    required Color outlineColor,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
     return Column(
       children: [
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF1E1E1E),
+            color: surfaceColor,
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: outlineColor),
           ),
           child: TabBar(
             controller: _tabController,
-            indicatorColor: const Color(0xFFFFBE0B),
-            labelColor: const Color(0xFFFFBE0B),
-            unselectedLabelColor: Colors.grey,
+            indicatorColor: gold,
+            labelColor: gold,
+            unselectedLabelColor: isDark ? Colors.grey : textSecondary,
             labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.bold),
             tabs: const [
               Tab(text: 'Trip History'),
@@ -1141,13 +1268,34 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
             controller: _tabController,
             children: [
               // --- TAB 1: TRIP HISTORY ---
-              _buildTripHistoryTab(),
+              _buildTripHistoryTab(
+                isDark: isDark,
+                gold: gold,
+                surfaceColor: surfaceColor,
+                outlineColor: outlineColor,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+              ),
 
               // --- TAB 2: MAINTENANCE HISTORY ---
-              _buildMaintenanceTab(),
+              _buildMaintenanceTab(
+                isDark: isDark,
+                gold: gold,
+                surfaceColor: surfaceColor,
+                outlineColor: outlineColor,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+              ),
 
               // --- TAB 3: DOCUMENTS & COMPLIANCE ---
-              _buildDocumentsTab(),
+              _buildDocumentsTab(
+                isDark: isDark,
+                gold: gold,
+                surfaceColor: surfaceColor,
+                outlineColor: outlineColor,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+              ),
             ],
           ),
         ),
@@ -1155,7 +1303,14 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
     );
   }
 
-  Widget _buildTripHistoryTab() {
+  Widget _buildTripHistoryTab({
+    required bool isDark,
+    required Color gold,
+    required Color surfaceColor,
+    required Color outlineColor,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
     return ListView.builder(
       itemCount: _trips.length,
       itemBuilder: (ctx, idx) {
@@ -1164,19 +1319,19 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           margin: const EdgeInsets.only(bottom: 10),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFF1E1E1E),
+            color: surfaceColor,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white10),
+            border: Border.all(color: outlineColor),
           ),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.black45,
+                  color: isDark ? Colors.black45 : AppTheme.porcelainSurfaceContainer,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.history, color: Color(0xFFFFBE0B), size: 20),
+                child: Icon(Icons.history, color: gold, size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -1189,7 +1344,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                         Text(
                           trip.id,
                           style: GoogleFonts.spaceMono(
-                            color: Colors.white,
+                            color: textPrimary,
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
@@ -1197,7 +1352,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                         Text(
                           'KES ${trip.fare.toStringAsFixed(0)}',
                           style: GoogleFonts.outfit(
-                            color: const Color(0xFFFFBE0B),
+                            color: gold,
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -1210,7 +1365,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.outfit(
-                        color: Colors.grey[300],
+                        color: textSecondary,
                         fontSize: 12,
                       ),
                     ),
@@ -1220,13 +1375,13 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                       children: [
                         Text(
                           trip.date,
-                          style: const TextStyle(
-                              color: Colors.white38, fontSize: 10),
+                          style: TextStyle(
+                              color: isDark ? Colors.white38 : textSecondary, fontSize: 10),
                         ),
                         Text(
                           '${trip.distanceKm} km',
-                          style: const TextStyle(
-                              color: Colors.white38, fontSize: 10),
+                          style: TextStyle(
+                              color: isDark ? Colors.white38 : textSecondary, fontSize: 10),
                         ),
                       ],
                     ),
@@ -1240,7 +1395,14 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
     );
   }
 
-  Widget _buildMaintenanceTab() {
+  Widget _buildMaintenanceTab({
+    required bool isDark,
+    required Color gold,
+    required Color surfaceColor,
+    required Color outlineColor,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
     return Column(
       children: [
         Row(
@@ -1249,13 +1411,13 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
             Text(
               'Maintenance Records (${_maintenance.length})',
               style: GoogleFonts.outfit(
-                  color: Colors.white, fontWeight: FontWeight.bold),
+                  color: textPrimary, fontWeight: FontWeight.bold),
             ),
             TextButton.icon(
               onPressed: _showReportMaintenanceDialog,
-              icon: const Icon(Icons.add, size: 16, color: Color(0xFFFFBE0B)),
-              label: const Text('Log Service',
-                  style: TextStyle(color: Color(0xFFFFBE0B))),
+              icon: Icon(Icons.add, size: 16, color: gold),
+              label: Text('Log Service',
+                  style: TextStyle(color: gold)),
             ),
           ],
         ),
@@ -1270,9 +1432,9 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E1E1E),
+                  color: surfaceColor,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white10),
+                  border: Border.all(color: outlineColor),
                 ),
                 child: Row(
                   children: [
@@ -1302,7 +1464,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                                 child: Text(
                                   m.title,
                                   style: GoogleFonts.outfit(
-                                    color: Colors.white,
+                                    color: textPrimary,
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -1311,7 +1473,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                               Text(
                                 m.cost,
                                 style: GoogleFonts.outfit(
-                                  color: const Color(0xFFFFBE0B),
+                                  color: gold,
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -1322,15 +1484,15 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                           Text(
                             m.garage,
                             style: GoogleFonts.outfit(
-                              color: Colors.grey[400],
+                              color: textSecondary,
                               fontSize: 11,
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             m.date,
-                            style: const TextStyle(
-                                color: Colors.white38, fontSize: 10),
+                            style: TextStyle(
+                                color: isDark ? Colors.white38 : textSecondary, fontSize: 10),
                           ),
                         ],
                       ),
@@ -1345,7 +1507,14 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
     );
   }
 
-  Widget _buildDocumentsTab() {
+  Widget _buildDocumentsTab({
+    required bool isDark,
+    required Color gold,
+    required Color surfaceColor,
+    required Color outlineColor,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
     final plate = widget.vehicleData['licensePlate'] ??
         widget.vehicleData['plateNumber'] ??
         'KDA 811A';
@@ -1359,6 +1528,12 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           expiry: 'Valid until 14 Nov 2026 (180 days left)',
           status: 'VALID',
           icon: Icons.security,
+          isDark: isDark,
+          gold: gold,
+          surfaceColor: surfaceColor,
+          outlineColor: outlineColor,
+          textPrimary: textPrimary,
+          textSecondary: textSecondary,
         ),
         _buildDocumentItem(
           title: 'NTSA Logbook & Registration',
@@ -1367,6 +1542,12 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           expiry: 'Official Registered Owner',
           status: 'VERIFIED',
           icon: Icons.menu_book,
+          isDark: isDark,
+          gold: gold,
+          surfaceColor: surfaceColor,
+          outlineColor: outlineColor,
+          textPrimary: textPrimary,
+          textSecondary: textSecondary,
         ),
         _buildDocumentItem(
           title: 'Annual PSV Motor Inspection',
@@ -1375,6 +1556,12 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           expiry: 'Expires 14 May 2027',
           status: 'ACTIVE',
           icon: Icons.health_and_safety,
+          isDark: isDark,
+          gold: gold,
+          surfaceColor: surfaceColor,
+          outlineColor: outlineColor,
+          textPrimary: textPrimary,
+          textSecondary: textSecondary,
         ),
         _buildDocumentItem(
           title: 'Speed Governor Calibration',
@@ -1383,6 +1570,12 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           expiry: 'Compliant with 80 km/h Limiter',
           status: 'ACTIVE',
           icon: Icons.speed,
+          isDark: isDark,
+          gold: gold,
+          surfaceColor: surfaceColor,
+          outlineColor: outlineColor,
+          textPrimary: textPrimary,
+          textSecondary: textSecondary,
         ),
       ],
     );
@@ -1395,14 +1588,20 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
     required String expiry,
     required String status,
     required IconData icon,
+    required bool isDark,
+    required Color gold,
+    required Color surfaceColor,
+    required Color outlineColor,
+    required Color textPrimary,
+    required Color textSecondary,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
+        color: surfaceColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: outlineColor),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1410,10 +1609,10 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.black45,
+              color: isDark ? Colors.black45 : AppTheme.porcelainSurfaceContainer,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: const Color(0xFFFFBE0B), size: 22),
+            child: Icon(icon, color: gold, size: 22),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -1427,7 +1626,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                       child: Text(
                         title,
                         style: GoogleFonts.outfit(
-                          color: Colors.white,
+                          color: textPrimary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
@@ -1454,18 +1653,18 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                 const SizedBox(height: 4),
                 Text(
                   issuer,
-                  style: GoogleFonts.outfit(color: Colors.grey[400], fontSize: 12),
+                  style: GoogleFonts.outfit(color: textSecondary, fontSize: 12),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   docNumber,
                   style: GoogleFonts.spaceMono(
-                      color: const Color(0xFFFFBE0B), fontSize: 11),
+                      color: gold, fontSize: 11),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   expiry,
-                  style: const TextStyle(color: Colors.white38, fontSize: 10),
+                  style: TextStyle(color: isDark ? Colors.white38 : textSecondary, fontSize: 10),
                 ),
               ],
             ),
