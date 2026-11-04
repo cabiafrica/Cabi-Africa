@@ -51,18 +51,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   // ──────────────────── Floating HUD Overlay ────────────────────
   OverlayEntry? _hudOverlay;
   // Draggable position (right edge, vertical fraction)
-  final double _hudTopFraction = 0.45;
-  final bool _hudMinimised = false;
 
   void showAutoOfflineNotice() {
     if (!mounted) return;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1B15),
+        backgroundColor: isDark ? const Color(0xFF1E1B15) : AppTheme.porcelainSurface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: AppTheme.primaryColor, width: 0.8),
+          side: BorderSide(color: isDark ? AppTheme.primaryColor : AppTheme.porcelainOutline, width: 0.8),
         ),
         title: Row(
           children: [
@@ -70,19 +69,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             const SizedBox(width: 10),
             Text(
               'Switched Offline',
-              style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
+              style: GoogleFonts.outfit(color: isDark ? Colors.white : AppTheme.porcelainTextPrimary, fontWeight: FontWeight.bold),
             ),
           ],
         ),
         content: Text(
           'You were automatically set offline after missing 3 consecutive qualifying trip requests in your pickup zone.\n\nNon-qualifying trips (outside radius or unaligned destinations) did not count against your record.\n\nSwipe online whenever you are ready to receive passenger trips.',
-          style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.4),
+          style: GoogleFonts.outfit(color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary, fontSize: 13, height: 1.4),
         ),
         actions: [
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryColor,
-              foregroundColor: Colors.black,
+              backgroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+              foregroundColor: isDark ? Colors.black : Colors.white,
             ),
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text('Understood', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
@@ -343,12 +342,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       debugPrint('[B2B] Error saving back-to-back preference: $e');
     }
     if (mounted) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: const Duration(seconds: 3),
-          backgroundColor: const Color(0xFF1E1E1E),
+          backgroundColor: isDark ? const Color(0xFF1E1E1E) : AppTheme.porcelainSurfaceHigh,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: isDark ? Colors.transparent : AppTheme.porcelainOutline, width: 0.8),
+          ),
           content: Row(
             children: [
               Icon(
@@ -362,7 +365,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   nextState
                       ? 'Back-to-Back Requests ON: You can receive incoming trips before completing current ride'
                       : 'Back-to-Back Requests OFF: No incoming trip offers until you finish your ride',
-                  style: const TextStyle(color: Colors.white, fontSize: 13),
+                  style: TextStyle(color: isDark ? Colors.white : AppTheme.porcelainTextPrimary, fontSize: 13),
                 ),
               ),
             ],
@@ -636,93 +639,98 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setModal) => Container(
-          padding: EdgeInsets.only(
-            left: 20, right: 20, top: 20,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 28,
-          ),
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 38, height: 4,
-                  margin: const EdgeInsets.only(bottom: 14),
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              Text(
-                existing == null ? 'Add Favourite Place' : 'Edit Favourite Place',
-                style: GoogleFonts.outfit(
-                  fontSize: 18, fontWeight: FontWeight.bold,
-                  color: Theme.of(context).textTheme.titleLarge?.color,
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Icon picker
-              Wrap(
-                spacing: 10,
-                children: iconOptions.map((opt) {
-                  final (key, icon, _) = opt;
-                  final isSel = selectedIcon == key;
-                  return GestureDetector(
-                    onTap: () => setModal(() => selectedIcon = key),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: isSel
-                            ? AppTheme.primaryColor.withValues(alpha: 0.15)
-                            : Colors.white.withValues(alpha: 0.06),
-                        shape: BoxShape.circle,
-                        border: isSel
-                            ? Border.all(color: AppTheme.primaryColor, width: 2)
-                            : null,
-                      ),
-                      child: Icon(icon,
-                          color: isSel ? AppTheme.primaryColor : Colors.white54,
-                          size: 22),
+      builder: (ctx) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return StatefulBuilder(
+          builder: (ctx, setModal) => Container(
+            padding: EdgeInsets.only(
+              left: 20, right: 20, top: 20,
+              bottom: MediaQuery.of(ctx).viewInsets.bottom + 28,
+            ),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              border: Border.all(color: isDark ? Colors.transparent : AppTheme.porcelainOutline, width: 0.8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 38, height: 4,
+                    margin: const EdgeInsets.only(bottom: 14),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white24 : AppTheme.porcelainOutline,
+                      borderRadius: BorderRadius.circular(2),
                     ),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 14),
-              TextField(
-                controller: labelCtrl,
-                decoration: InputDecoration(
-                  labelText: 'Place Name (e.g. Home)',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: addrCtrl,
-                decoration: InputDecoration(
-                  labelText: 'Address',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                maxLines: 2,
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.black,
-                    minimumSize: const Size.fromHeight(48),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
                   ),
+                ),
+                Text(
+                  existing == null ? 'Add Favourite Place' : 'Edit Favourite Place',
+                  style: GoogleFonts.outfit(
+                    fontSize: 18, fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.titleLarge?.color,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Icon picker
+                Wrap(
+                  spacing: 10,
+                  children: iconOptions.map((opt) {
+                    final (key, icon, _) = opt;
+                    final isSel = selectedIcon == key;
+                    return GestureDetector(
+                      onTap: () => setModal(() => selectedIcon = key),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: isSel
+                              ? (isDark ? AppTheme.primaryColor.withValues(alpha: 0.15) : AppTheme.aurumBronze.withValues(alpha: 0.15))
+                              : (isDark ? Colors.white.withValues(alpha: 0.06) : AppTheme.porcelainSurfaceContainer),
+                          shape: BoxShape.circle,
+                          border: isSel
+                              ? Border.all(color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, width: 2)
+                              : Border.all(color: isDark ? Colors.transparent : AppTheme.porcelainOutline, width: 1),
+                        ),
+                        child: Icon(icon,
+                            color: isSel
+                                ? (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze)
+                                : (isDark ? Colors.white54 : AppTheme.porcelainTextSecondary),
+                            size: 22),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 14),
+                TextField(
+                  controller: labelCtrl,
+                  decoration: InputDecoration(
+                    labelText: 'Place Name (e.g. Home)',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: addrCtrl,
+                  decoration: InputDecoration(
+                    labelText: 'Address',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+                      foregroundColor: isDark ? Colors.black : Colors.white,
+                      minimumSize: const Size.fromHeight(48),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
                   onPressed: () {
                     final label = labelCtrl.text.trim();
                     final addr = addrCtrl.text.trim();
@@ -756,7 +764,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ],
           ),
         ),
-      ),
+        );
+      },
     );
   }
 
@@ -782,9 +791,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   // ──────────────────── Floating HUD Overlay ────────────────────
-  void _insertHudOverlay() {
-    // Disabled in-app: native overlay displays over other apps when minimized
-  }
 
   void _refreshHud() {
     // Kept for backward compatibility
@@ -869,7 +875,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 const SizedBox(width: 8),
                 _MapButton(
                   icon: Icons.local_fire_department,
-                  iconColor: _showDemandHotspots ? const Color(0xFFFF5722) : Colors.white54,
+                  iconColor: _showDemandHotspots ? const Color(0xFFFF5722) : (isDark ? Colors.white54 : AppTheme.porcelainTextSecondary),
                   tooltip: _showDemandHotspots ? 'Demand Hotspots Active' : 'Demand Hotspots Off',
                   onTap: () {
                     setState(() {
@@ -888,7 +894,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 const SizedBox(width: 8),
                 _MapButton(
                   icon: Icons.queue_play_next_rounded,
-                  iconColor: _allowBackToBack ? const Color(0xFF10B981) : Colors.white54,
+                  iconColor: _allowBackToBack ? const Color(0xFF10B981) : (isDark ? Colors.white54 : AppTheme.porcelainTextSecondary),
                   tooltip: _allowBackToBack ? 'Back-to-Back Trips: ON' : 'Back-to-Back Trips: OFF',
                   onTap: _toggleBackToBack,
                 ),
@@ -896,15 +902,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 _MapButton(
                   icon: Icons.alt_route_rounded,
                   iconColor: (_isDestinationModeActive || _excludedZones.isNotEmpty)
-                      ? const Color(0xFFD4AF37)
-                      : Colors.white54,
+                      ? (isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze)
+                      : (isDark ? Colors.white54 : AppTheme.porcelainTextSecondary),
                   tooltip: 'Route Preferences (Destination & Avoid Zones)',
                   onTap: () => _showRoutePreferencesSheet(context),
                 ),
                 const SizedBox(width: 8),
                 _MapButton(
                   icon: _isFullScreenMap ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
-                  iconColor: _isFullScreenMap ? AppTheme.primaryColor : Colors.white54,
+                  iconColor: _isFullScreenMap ? (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze) : (isDark ? Colors.white54 : AppTheme.porcelainTextSecondary),
                   tooltip: _isFullScreenMap ? 'Exit Full Screen' : 'Full Screen Map',
                   onTap: () {
                     setState(() {
@@ -934,12 +940,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E1B18),
+                  color: isDark ? const Color(0xFF1E1B18) : AppTheme.porcelainSurface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFFD4AF37), width: 1.2),
+                  border: Border.all(color: isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze, width: 1.2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.4),
+                      color: isDark ? Colors.black.withValues(alpha: 0.4) : Colors.black.withValues(alpha: 0.08),
                       blurRadius: 8,
                     ),
                   ],
@@ -947,11 +953,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.navigation_rounded, color: Color(0xFFD4AF37), size: 14),
+                    Icon(Icons.navigation_rounded, color: isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze, size: 14),
                     const SizedBox(width: 6),
                     Text(
                       'Heading: $_preferredDestinationName',
-                      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: isDark ? Colors.white : AppTheme.porcelainTextPrimary, fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(width: 6),
                     GestureDetector(
@@ -959,7 +965,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         setState(() => _isDestinationModeActive = false);
                         _saveDriverPreferences();
                       },
-                      child: const Icon(Icons.close, color: Colors.white70, size: 14),
+                      child: Icon(Icons.close, color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary, size: 14),
                     ),
                   ],
                 ),
@@ -1002,7 +1008,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: isDark ? Colors.white.withValues(alpha: 0.1) : AppTheme.porcelainOutline,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -1132,10 +1138,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         margin: const EdgeInsets.only(bottom: 16),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF1A1916) : Colors.black.withValues(alpha: 0.04),
+                          color: isDark ? const Color(0xFF1A1916) : AppTheme.porcelainSurfaceContainer,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.25) : Colors.black12,
+                            color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.25) : AppTheme.porcelainOutline,
                           ),
                         ),
                         child: Column(
@@ -1230,10 +1236,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       margin: const EdgeInsets.only(bottom: 16),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1A1916) : Colors.black.withValues(alpha: 0.04),
+                        color: isDark ? const Color(0xFF1A1916) : AppTheme.porcelainSurfaceContainer,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.2) : Colors.black12,
+                          color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.2) : AppTheme.porcelainOutline,
                         ),
                       ),
                       child: Column(
@@ -1347,9 +1353,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           decoration: BoxDecoration(
             color: theme.scaffoldBackgroundColor,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            border: Border.all(color: isDark ? Colors.transparent : AppTheme.porcelainOutline, width: 0.8),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.5),
+                color: isDark ? Colors.black.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.08),
                 blurRadius: 20,
                 offset: const Offset(0, -4),
               ),
@@ -1366,7 +1373,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.white24,
+                      color: isDark ? Colors.white24 : AppTheme.porcelainOutline,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -1547,12 +1554,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           color: isDark ? const Color(0xFF141311).withValues(alpha: 0.94) : Colors.white.withValues(alpha: 0.96),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: _isOnline ? const Color(0xFF10B981) : Colors.white24,
+            color: _isOnline ? const Color(0xFF10B981) : (isDark ? Colors.white24 : AppTheme.porcelainOutline),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.5),
+              color: isDark ? Colors.black.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.08),
               blurRadius: 18,
               offset: const Offset(0, 4),
             ),
@@ -1612,8 +1619,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               icon: const Icon(Icons.fullscreen_exit_rounded, size: 16),
               label: const Text('Exit', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.black,
+                backgroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+                foregroundColor: isDark ? Colors.black : Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
@@ -1635,63 +1642,67 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.5),
-              blurRadius: 20,
-            ),
-          ],
-        ),
-        child: SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.local_fire_department, color: Color(0xFFFF5722), size: 24),
-                      const SizedBox(width: 8),
-                      Text(
-                        name,
-                        style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold),
+      builder: (ctx) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            border: Border.all(color: isDark ? Colors.transparent : AppTheme.porcelainOutline, width: 0.8),
+            boxShadow: [
+              BoxShadow(
+                color: isDark ? Colors.black.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.08),
+                blurRadius: 20,
+              ),
+            ],
+          ),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.local_fire_department, color: Color(0xFFFF5722), size: 24),
+                        const SizedBox(width: 8),
+                        Text(
+                          name,
+                          style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFF5722).withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFFFF5722)),
                       ),
-                    ],
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF5722).withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFFF5722)),
+                      child: Text(
+                        '${multiplier.toStringAsFixed(1)}x Surge',
+                        style: const TextStyle(color: Color(0xFFFF5722), fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    child: Text(
-                      '${multiplier.toStringAsFixed(1)}x Surge',
-                      style: const TextStyle(color: Color(0xFFFF5722), fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'High passenger activity detected ($requests live requests)',
-                style: const TextStyle(color: Colors.grey, fontSize: 13),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(14),
+                  ],
                 ),
+                const SizedBox(height: 12),
+                Text(
+                  'High passenger activity detected ($requests live requests)',
+                  style: const TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white.withValues(alpha: 0.05) : AppTheme.porcelainSurfaceContainer,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: isDark ? Colors.transparent : AppTheme.porcelainOutline, width: 0.8),
+                  ),
                 child: Column(
                   children: [
                     Row(
@@ -1733,8 +1744,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   icon: const Icon(Icons.navigation_rounded),
                   label: const Text('Focus Map on Zone'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.black,
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+                    foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),
@@ -1743,7 +1754,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ],
           ),
         ),
-      ),
+        );
+      },
     );
   }
 
@@ -1776,15 +1788,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         return StatefulBuilder(
           builder: (context, setModalState) {
             final theme = Theme.of(context);
+            final isDark = theme.brightness == Brightness.dark;
             return Container(
               height: MediaQuery.of(context).size.height * 0.75,
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
               decoration: BoxDecoration(
                 color: theme.scaffoldBackgroundColor,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                border: Border.all(color: isDark ? Colors.transparent : AppTheme.porcelainOutline, width: 0.8),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.6),
+                    color: isDark ? Colors.black.withValues(alpha: 0.6) : Colors.black.withValues(alpha: 0.08),
                     blurRadius: 24,
                   ),
                 ],
@@ -1798,7 +1812,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Colors.white24,
+                          color: isDark ? Colors.white24 : AppTheme.porcelainOutline,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -1806,7 +1820,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        const Icon(Icons.alt_route_rounded, color: Color(0xFFD4AF37), size: 24),
+                        Icon(Icons.alt_route_rounded, color: isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze, size: 24),
                         const SizedBox(width: 10),
                         Text(
                           'DRIVER ROUTE PREFERENCES',
@@ -1827,10 +1841,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           Container(
                             padding: const EdgeInsets.all(14),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.04),
+                              color: isDark ? Colors.white.withValues(alpha: 0.04) : AppTheme.porcelainSurfaceContainer,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: _isDestinationModeActive ? const Color(0xFFD4AF37) : Colors.white12,
+                                color: _isDestinationModeActive
+                                    ? (isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze)
+                                    : (isDark ? Colors.white12 : AppTheme.porcelainOutline),
                               ),
                             ),
                             child: Column(
@@ -1839,11 +1855,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    const Row(
+                                    Row(
                                       children: [
-                                        Icon(Icons.home_rounded, color: Color(0xFFD4AF37), size: 18),
-                                        SizedBox(width: 8),
-                                        Text(
+                                        Icon(Icons.home_rounded, color: isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze, size: 18),
+                                        const SizedBox(width: 8),
+                                        const Text(
                                           'Destination Mode ("Heading Home")',
                                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                                         ),
@@ -1851,7 +1867,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                     ),
                                     Switch(
                                       value: _isDestinationModeActive,
-                                      activeThumbColor: const Color(0xFFD4AF37),
+                                      activeThumbColor: isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze,
                                       onChanged: (val) {
                                         setModalState(() {
                                           _isDestinationModeActive = val;
@@ -1877,9 +1893,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                     return ChoiceChip(
                                       label: Text(name),
                                       selected: isSelected,
-                                      selectedColor: const Color(0xFFD4AF37),
+                                      selectedColor: isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze,
                                       labelStyle: TextStyle(
-                                        color: isSelected ? Colors.black : Colors.white,
+                                        color: isSelected ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white : AppTheme.porcelainTextPrimary),
                                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                         fontSize: 12,
                                       ),
@@ -1911,10 +1927,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           Container(
                             padding: const EdgeInsets.all(14),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.04),
+                              color: isDark ? Colors.white.withValues(alpha: 0.04) : AppTheme.porcelainSurfaceContainer,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: _excludedZones.isNotEmpty ? Colors.redAccent.withValues(alpha: 0.5) : Colors.white12,
+                                color: _excludedZones.isNotEmpty
+                                    ? Colors.redAccent.withValues(alpha: 0.5)
+                                    : (isDark ? Colors.white12 : AppTheme.porcelainOutline),
                               ),
                             ),
                             child: Column(
@@ -1947,7 +1965,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                       selectedColor: Colors.redAccent.withValues(alpha: 0.8),
                                       checkmarkColor: Colors.white,
                                       labelStyle: TextStyle(
-                                        color: isExcluded ? Colors.white : Colors.white70,
+                                        color: isExcluded ? Colors.white : (isDark ? Colors.white70 : AppTheme.porcelainTextPrimary),
                                         fontWeight: isExcluded ? FontWeight.bold : FontWeight.normal,
                                         fontSize: 12,
                                       ),
@@ -1979,8 +1997,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           _saveDriverPreferences();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryColor,
-                          foregroundColor: Colors.black,
+                          backgroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+                          foregroundColor: isDark ? Colors.black : Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         ),
@@ -2013,26 +2031,29 @@ class _MapButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     Widget btn = GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.8),
+          color: isDark ? Colors.black.withValues(alpha: 0.8) : AppTheme.porcelainSurface.withValues(alpha: 0.95),
           shape: BoxShape.circle,
           border: Border.all(
             color: iconColor != null
                 ? iconColor!.withValues(alpha: 0.5)
-                : Colors.white.withValues(alpha: 0.1),
+                : (isDark ? Colors.white.withValues(alpha: 0.1) : AppTheme.porcelainOutline),
           ),
           boxShadow: [
             BoxShadow(
-              color: (iconColor ?? Colors.black).withValues(alpha: 0.35),
+              color: isDark
+                  ? (iconColor ?? Colors.black).withValues(alpha: 0.35)
+                  : Colors.black.withValues(alpha: 0.08),
               blurRadius: 8,
             ),
           ],
         ),
-        child: Icon(icon, color: iconColor ?? Colors.white70, size: 20),
+        child: Icon(icon, color: iconColor ?? (isDark ? Colors.white70 : AppTheme.porcelainTextSecondary), size: 20),
       ),
     );
 
@@ -2255,17 +2276,17 @@ extension _FavouritePlacesUI on _HomeScreenState {
                             horizontal: 10, vertical: 8),
                         decoration: BoxDecoration(
                           color: isActive
-                              ? AppTheme.primaryColor.withValues(alpha: 0.18)
+                              ? (isDark ? AppTheme.primaryColor.withValues(alpha: 0.18) : AppTheme.aurumBronze.withValues(alpha: 0.18))
                               : (isDark
                                   ? Colors.white.withValues(alpha: 0.05)
-                                  : Colors.black.withValues(alpha: 0.04)),
+                                  : AppTheme.porcelainSurfaceContainer),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: isActive
-                                ? AppTheme.primaryColor
+                                ? (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze)
                                 : (isDark
                                     ? Colors.white12
-                                    : Colors.black12),
+                                    : AppTheme.porcelainOutline),
                             width: isActive ? 1.5 : 1.0,
                           ),
                         ),
@@ -2275,17 +2296,17 @@ extension _FavouritePlacesUI on _HomeScreenState {
                           children: [
                             Icon(_iconDataForKey(iconKey),
                                 color: isActive
-                                    ? AppTheme.primaryColor
+                                    ? (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze)
                                     : (isDark
                                         ? Colors.white60
-                                        : Colors.black54),
+                                        : AppTheme.porcelainTextPrimary),
                                 size: 18),
                             const SizedBox(height: 4),
                             Text(
                               label,
                               style: GoogleFonts.outfit(
                                 color: isActive
-                                    ? AppTheme.primaryColor
+                                    ? (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze)
                                     : theme.textTheme.bodyLarge?.color,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
@@ -2298,7 +2319,7 @@ extension _FavouritePlacesUI on _HomeScreenState {
                               style: GoogleFonts.outfit(
                                 color: isDark
                                     ? Colors.white38
-                                    : Colors.black38,
+                                    : AppTheme.porcelainTextSecondary,
                                 fontSize: 10,
                               ),
                               maxLines: 1,
@@ -2384,9 +2405,10 @@ class _HudWidgetState extends State<_HudWidget>
           builder: (ctx, _) {
             final glowOpacity =
                 widget.isOnline ? 0.3 + _pulse.value * 0.4 : 0.15;
+            final isDark = Theme.of(context).brightness == Brightness.dark;
             return Container(
               decoration: BoxDecoration(
-                color: const Color(0xFF0F0E0C),
+                color: isDark ? const Color(0xFF0F0E0C) : AppTheme.porcelainSurface,
                 borderRadius: const BorderRadius.horizontal(
                     left: Radius.circular(18)),
                 border: Border.all(
@@ -2492,7 +2514,7 @@ class _ExpandedHud extends StatelessWidget {
               height: 3,
               margin: const EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
-                color: Colors.white24,
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.white24 : AppTheme.porcelainOutline,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
