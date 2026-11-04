@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import '../services/ride_service.dart';
+import '../theme/app_theme.dart';
 import 'search_screen.dart';
 
 class PackageRequestScreen extends StatefulWidget {
@@ -120,15 +121,27 @@ class _PackageRequestScreenState extends State<PackageRequestScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final gold = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final canvasColor = isDark ? const Color(0xFF121212) : AppTheme.porcelainCanvas;
+    final surfaceColor = isDark ? const Color(0xFF1E1E1E) : AppTheme.porcelainSurface;
+    final borderColor = isDark ? const Color(0xFF2C2C2C) : AppTheme.porcelainOutline;
+    final inputBorderColor = isDark ? const Color(0xFF333333) : AppTheme.porcelainOutline;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white54 : AppTheme.porcelainTextSecondary;
+    final trailingIconColor = isDark ? Colors.white38 : AppTheme.porcelainTextSecondary;
+    final disabledBg = isDark ? const Color(0xFF333333) : AppTheme.porcelainSurfaceContainer;
+    final disabledFg = isDark ? Colors.white30 : AppTheme.porcelainTextSecondary;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: canvasColor,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
+        backgroundColor: isDark ? Colors.black : AppTheme.porcelainSurface,
+        foregroundColor: textPrimary,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Send a Package',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: textPrimary),
         ),
       ),
       body: Form(
@@ -141,9 +154,9 @@ class _PackageRequestScreenState extends State<PackageRequestScreen> {
               // Location Selection Card
               Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E1E1E),
+                  color: surfaceColor,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFF2C2C2C)),
+                  border: Border.all(color: borderColor),
                 ),
                 child: Column(
                   children: [
@@ -151,41 +164,41 @@ class _PackageRequestScreenState extends State<PackageRequestScreen> {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                          color: gold.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.my_location_rounded, color: Color(0xFFF59E0B), size: 20),
+                        child: Icon(Icons.my_location_rounded, color: gold, size: 20),
                       ),
                       title: Text(
                         _pickupAddress ?? 'Select Pickup Location',
                         style: TextStyle(
-                          color: _pickupAddress != null ? Colors.white : Colors.white54,
+                          color: _pickupAddress != null ? textPrimary : textSecondary,
                           fontWeight: _pickupAddress != null ? FontWeight.bold : FontWeight.normal,
                           fontSize: 14,
                         ),
                       ),
-                      trailing: const Icon(Icons.chevron_right_rounded, color: Colors.white38),
+                      trailing: Icon(Icons.chevron_right_rounded, color: trailingIconColor),
                       onTap: () => _selectLocation(true),
                     ),
-                    const Divider(height: 1, color: Color(0xFF2C2C2C)),
+                    Divider(height: 1, color: borderColor),
                     ListTile(
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                          color: gold.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.location_on_rounded, color: Color(0xFFF59E0B), size: 20),
+                        child: Icon(Icons.location_on_rounded, color: gold, size: 20),
                       ),
                       title: Text(
                         _dropoffAddress ?? 'Select Drop-off Location',
                         style: TextStyle(
-                          color: _dropoffAddress != null ? Colors.white : Colors.white54,
+                          color: _dropoffAddress != null ? textPrimary : textSecondary,
                           fontWeight: _dropoffAddress != null ? FontWeight.bold : FontWeight.normal,
                           fontSize: 14,
                         ),
                       ),
-                      trailing: const Icon(Icons.chevron_right_rounded, color: Colors.white38),
+                      trailing: Icon(Icons.chevron_right_rounded, color: trailingIconColor),
                       onTap: () => _selectLocation(false),
                     ),
                   ],
@@ -197,27 +210,27 @@ class _PackageRequestScreenState extends State<PackageRequestScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E1E1E),
+                  color: surfaceColor,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFF2C2C2C)),
+                  border: Border.all(color: borderColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
                       controller: _pickupContactController,
-                      style: const TextStyle(color: Colors.white),
+                      style: TextStyle(color: textPrimary),
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.person_pin_circle_rounded, color: Color(0xFFF59E0B), size: 22),
+                        prefixIcon: Icon(Icons.person_pin_circle_rounded, color: gold, size: 22),
                         labelText: 'Pickup Contact Name/Phone',
-                        labelStyle: const TextStyle(color: Colors.white54),
+                        labelStyle: TextStyle(color: textSecondary),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFF333333)),
+                          borderSide: BorderSide(color: inputBorderColor),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFFF59E0B)),
+                          borderSide: BorderSide(color: gold),
                         ),
                       ),
                       validator: (v) => v!.isEmpty ? 'Required' : null,
@@ -225,18 +238,18 @@ class _PackageRequestScreenState extends State<PackageRequestScreen> {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _dropoffContactController,
-                      style: const TextStyle(color: Colors.white),
+                      style: TextStyle(color: textPrimary),
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.person_pin_rounded, color: Color(0xFFF59E0B), size: 22),
+                        prefixIcon: Icon(Icons.person_pin_rounded, color: gold, size: 22),
                         labelText: 'Drop-off Contact Name/Phone',
-                        labelStyle: const TextStyle(color: Colors.white54),
+                        labelStyle: TextStyle(color: textSecondary),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFF333333)),
+                          borderSide: BorderSide(color: inputBorderColor),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFFF59E0B)),
+                          borderSide: BorderSide(color: gold),
                         ),
                       ),
                       validator: (v) => v!.isEmpty ? 'Required' : null,
@@ -250,20 +263,20 @@ class _PackageRequestScreenState extends State<PackageRequestScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E1E1E),
+                  color: surfaceColor,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFF2C2C2C)),
+                  border: Border.all(color: borderColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
+                    Row(
                       children: [
-                        Icon(Icons.inventory_2_rounded, color: Color(0xFFF59E0B), size: 18),
-                        SizedBox(width: 8),
+                        Icon(Icons.inventory_2_rounded, color: gold, size: 18),
+                        const SizedBox(width: 8),
                         Text(
                           'Package Size',
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14),
+                          style: TextStyle(fontWeight: FontWeight.bold, color: textPrimary, fontSize: 14),
                         ),
                       ],
                     ),
@@ -271,17 +284,17 @@ class _PackageRequestScreenState extends State<PackageRequestScreen> {
                     DropdownButtonFormField<String>(
                       initialValue: _packageSize,
                       isExpanded: true,
-                      dropdownColor: const Color(0xFF1E1E1E),
-                      style: const TextStyle(color: Colors.white),
+                      dropdownColor: surfaceColor,
+                      style: TextStyle(color: textPrimary),
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFF333333)),
+                          borderSide: BorderSide(color: inputBorderColor),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFFF59E0B)),
+                          borderSide: BorderSide(color: gold),
                         ),
                       ),
                       items: ['Small', 'Medium', 'Large'].map((String value) {
@@ -300,18 +313,18 @@ class _PackageRequestScreenState extends State<PackageRequestScreen> {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _packageDescriptionController,
-                      style: const TextStyle(color: Colors.white),
+                      style: TextStyle(color: textPrimary),
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.description_rounded, color: Color(0xFFF59E0B), size: 20),
+                        prefixIcon: Icon(Icons.description_rounded, color: gold, size: 20),
                         labelText: 'Package Description',
-                        labelStyle: const TextStyle(color: Colors.white54),
+                        labelStyle: TextStyle(color: textSecondary),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFF333333)),
+                          borderSide: BorderSide(color: inputBorderColor),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFFF59E0B)),
+                          borderSide: BorderSide(color: gold),
                         ),
                       ),
                       validator: (v) => v!.isEmpty ? 'Required' : null,
@@ -321,8 +334,8 @@ class _PackageRequestScreenState extends State<PackageRequestScreen> {
                       icon: const Icon(Icons.add_a_photo_rounded, size: 20),
                       label: Text(_imageFile == null ? 'Add Package Photo' : 'Photo Attached'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFFF59E0B),
-                        side: const BorderSide(color: Color(0xFF333333)),
+                        foregroundColor: gold,
+                        side: BorderSide(color: inputBorderColor),
                         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
@@ -347,24 +360,24 @@ class _PackageRequestScreenState extends State<PackageRequestScreen> {
                   margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E1E1E),
+                    color: surfaceColor,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFFF59E0B), width: 1.5),
+                    border: Border.all(color: gold, width: 1.5),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Estimated Fare', style: TextStyle(color: Colors.white54, fontSize: 12)),
-                          Text('CABI Package Express', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          Text('Estimated Fare', style: TextStyle(color: textSecondary, fontSize: 12)),
+                          Text('CABI Package Express', style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold)),
                         ],
                       ),
                       Text(
                         'KES ${_estimatedFare!.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                          color: Color(0xFFF59E0B),
+                        style: TextStyle(
+                          color: gold,
                           fontWeight: FontWeight.w900,
                           fontSize: 22,
                         ),
@@ -374,18 +387,18 @@ class _PackageRequestScreenState extends State<PackageRequestScreen> {
                 ),
 
               _isLoading
-                  ? const Center(
+                  ? Center(
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFF59E0B)),
+                        valueColor: AlwaysStoppedAnimation<Color>(gold),
                       ),
                     )
                   : ElevatedButton(
                       onPressed: _estimatedFare == null ? null : _submitRequest,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF59E0B),
-                        foregroundColor: Colors.black,
-                        disabledBackgroundColor: const Color(0xFF333333),
-                        disabledForegroundColor: Colors.white30,
+                        backgroundColor: gold,
+                        foregroundColor: isDark ? Colors.black : Colors.white,
+                        disabledBackgroundColor: disabledBg,
+                        disabledForegroundColor: disabledFg,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         elevation: 0,
