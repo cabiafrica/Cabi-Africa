@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class RideChallengesWidget extends StatelessWidget {
@@ -5,6 +6,10 @@ class RideChallengesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+
     final challenges = [
       {
         'id': '1',
@@ -14,7 +19,7 @@ class RideChallengesWidget extends StatelessWidget {
         'target': 3,
         'reward': '25% off next ride',
         'expiresIn': 'Expires in 2 days',
-        'color': const Color(0xFFD4AF37),
+        'color': isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze,
       },
       {
         'id': '2',
@@ -24,7 +29,7 @@ class RideChallengesWidget extends StatelessWidget {
         'target': 1,
         'reward': 'KES 100 credit',
         'expiresIn': 'Expires tomorrow',
-        'color': Colors.orange,
+        'color': const Color(0xFFF59E0B),
       },
       {
         'id': '3',
@@ -34,7 +39,7 @@ class RideChallengesWidget extends StatelessWidget {
         'target': 10,
         'reward': 'Free ride (up to KES 500)',
         'expiresIn': 'Expires in 12 days',
-        'color': Colors.blue,
+        'color': isDark ? const Color(0xFF0284C7) : AppTheme.royalBlue,
       },
     ];
 
@@ -46,14 +51,19 @@ class RideChallengesWidget extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Active Challenges',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: textPrimary,
+                ),
               ),
               TextButton(
                 onPressed: () {
                   // Navigate to all challenges
                 },
+                style: TextButton.styleFrom(foregroundColor: accent),
                 child: const Text('View All'),
               ),
             ],
