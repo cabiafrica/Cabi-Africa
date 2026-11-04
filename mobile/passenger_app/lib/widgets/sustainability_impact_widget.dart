@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class SustainabilityImpactWidget extends StatelessWidget {
@@ -16,6 +17,14 @@ class SustainabilityImpactWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final innerCardBg = isDark ? const Color(0xFF141F1A) : Colors.white;
+    final innerCardBorder = isDark
+        ? Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.2), width: 1)
+        : null;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+
     final greenPercentage =
         totalRides > 0 ? (greenRidesCount / totalRides * 100).round() : 0;
     final sharedPercentage =
@@ -24,15 +33,20 @@ class SustainabilityImpactWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF10B981), Color(0xFF059669)],
+        gradient: LinearGradient(
+          colors: isDark
+              ? const [Color(0xFF064E3B), Color(0xFF022C22)]
+              : const [Color(0xFF10B981), Color(0xFF059669)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
+        border: isDark
+            ? Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3), width: 1.2)
+            : null,
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF10B981).withValues(alpha: 0.3),
+            color: const Color(0xFF10B981).withValues(alpha: isDark ? 0.2 : 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -94,8 +108,9 @@ class SustainabilityImpactWidget extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: innerCardBg,
                     borderRadius: BorderRadius.circular(16),
+                    border: innerCardBorder,
                   ),
                   child: Column(
                     children: [
@@ -126,12 +141,12 @@ class SustainabilityImpactWidget extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         'CO₂ Emissions Offset',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: textPrimary,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -178,8 +193,9 @@ class SustainabilityImpactWidget extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: innerCardBg,
                           borderRadius: BorderRadius.circular(16),
+                          border: innerCardBorder,
                         ),
                         child: Column(
                           children: [
@@ -199,19 +215,19 @@ class SustainabilityImpactWidget extends StatelessWidget {
                             const SizedBox(height: 12),
                             Text(
                               '$greenRidesCount',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: textPrimary,
                               ),
                             ),
                             const SizedBox(height: 4),
-                            const Text(
+                            Text(
                               'Green Rides',
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black54,
+                                color: textSecondary,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -247,8 +263,9 @@ class SustainabilityImpactWidget extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: innerCardBg,
                           borderRadius: BorderRadius.circular(16),
+                          border: innerCardBorder,
                         ),
                         child: Column(
                           children: [
@@ -268,19 +285,19 @@ class SustainabilityImpactWidget extends StatelessWidget {
                             const SizedBox(height: 12),
                             Text(
                               '$sharedRidesCount',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: textPrimary,
                               ),
                             ),
                             const SizedBox(height: 4),
-                            const Text(
+                            Text(
                               'Shared Rides',
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black54,
+                                color: textSecondary,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -317,8 +334,9 @@ class SustainabilityImpactWidget extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: innerCardBg,
                     borderRadius: BorderRadius.circular(16),
+                    border: innerCardBorder,
                   ),
                   child: Row(
                     children: [
@@ -343,12 +361,12 @@ class SustainabilityImpactWidget extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Eco Warrior',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: textPrimary,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -356,16 +374,16 @@ class SustainabilityImpactWidget extends StatelessWidget {
                               'Keep making green choices!',
                               style: TextStyle(
                                 fontSize: 13,
-                                color: Colors.grey[600],
+                                color: textSecondary,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const Icon(
+                      Icon(
                         Icons.arrow_forward_ios,
                         size: 16,
-                        color: Colors.grey,
+                        color: textSecondary.withValues(alpha: 0.5),
                       ),
                     ],
                   ),
