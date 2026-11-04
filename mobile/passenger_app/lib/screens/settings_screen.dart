@@ -60,19 +60,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
         elevation: 0,
         title: Text(
           l10n.settings.toUpperCase(),
-          style: const TextStyle(
-            color: AppTheme.primaryColor,
+          style: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? AppTheme.primaryColor
+                : AppTheme.aurumBronze,
             fontWeight: FontWeight.bold,
             letterSpacing: 2,
             fontSize: 14,
           ),
         ),
-        iconTheme: const IconThemeData(color: AppTheme.primaryColor),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? AppTheme.primaryColor
+              : AppTheme.aurumBronze,
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          _buildSettingsSection(l10n.appearance.toUpperCase()),
+          _buildSettingsSection(l10n.appearance.toUpperCase(), isDark: theme.brightness == Brightness.dark),
           const SizedBox(height: 12),
           _buildNavigationTile(
             context: context,
@@ -96,7 +102,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onChanged: (isDark) => themeProvider.toggleTheme(isDark),
           ),
           const SizedBox(height: 32),
-          _buildSettingsSection('NOTIFICATION SOUNDS & CHIMES'),
+          _buildSettingsSection('NOTIFICATION SOUNDS & CHIMES', isDark: theme.brightness == Brightness.dark),
           const SizedBox(height: 12),
           _buildNavigationTile(
             context: context,
@@ -106,7 +112,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: () => _showAudioSettingsModal(context),
           ),
           const SizedBox(height: 32),
-          _buildSettingsSection('PRIVACY & SECURITY'),
+          _buildSettingsSection('PRIVACY & SECURITY', isDark: theme.brightness == Brightness.dark),
           const SizedBox(height: 12),
           _buildNavigationTile(
             context: context,
@@ -128,7 +134,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 32),
-          _buildSettingsSection('SAFETY'),
+          _buildSettingsSection('SAFETY', isDark: theme.brightness == Brightness.dark),
           const SizedBox(height: 12),
           _buildNavigationTile(
             context: context,
@@ -154,7 +160,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 32),
-          _buildSettingsSection('DIAGNOSTICS'),
+          _buildSettingsSection('DIAGNOSTICS', isDark: theme.brightness == Brightness.dark),
           const SizedBox(height: 12),
           _buildNavigationTile(
             context: context,
@@ -185,13 +191,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildSettingsSection(String label) {
+  Widget _buildSettingsSection(String label, {bool isDark = true}) {
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         label,
         style: TextStyle(
-          color: AppTheme.primaryColor,
+          color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
           fontSize: 10,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.5,
@@ -208,11 +214,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    final theme = Theme.of(context);
-    final surfaceColor = theme.cardTheme.color ?? theme.colorScheme.surface;
-    final textColor = theme.textTheme.bodyLarge?.color ?? Colors.white;
-    final subtitleColor = theme.textTheme.bodyMedium?.color ?? Colors.white38;
-    final borderColor = theme.dividerColor;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final surfaceColor = isDark
+        ? (Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface)
+        : AppTheme.porcelainSurface;
+    final textColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final subtitleColor = isDark ? Colors.white38 : AppTheme.porcelainTextSecondary;
+    final borderColor = isDark ? Theme.of(context).dividerColor : AppTheme.porcelainOutline;
 
     return Container(
       decoration: BoxDecoration(
@@ -223,10 +232,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: SwitchListTile(
         value: value,
         onChanged: onChanged,
-        activeThumbColor: AppTheme.primaryColor,
-        activeTrackColor: AppTheme.primaryColor.withValues(alpha: 0.2),
-        inactiveTrackColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-        secondary: Icon(icon, color: AppTheme.primaryColor, size: 20),
+        activeThumbColor: accent,
+        activeTrackColor: accent.withValues(alpha: 0.2),
+        inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+        secondary: Icon(icon, color: accent, size: 20),
         title: Text(title,
             style: TextStyle(
                 color: textColor,
@@ -245,11 +254,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    final theme = Theme.of(context);
-    final surfaceColor = theme.cardTheme.color ?? theme.colorScheme.surface;
-    final textColor = theme.textTheme.bodyLarge?.color ?? Colors.white;
-    final subtitleColor = theme.textTheme.bodyMedium?.color ?? Colors.white38;
-    final borderColor = theme.dividerColor;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final surfaceColor = isDark
+        ? (Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface)
+        : AppTheme.porcelainSurface;
+    final textColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final subtitleColor = isDark ? Colors.white38 : AppTheme.porcelainTextSecondary;
+    final borderColor = isDark ? Theme.of(context).dividerColor : AppTheme.porcelainOutline;
 
     return Container(
       decoration: BoxDecoration(
@@ -259,7 +271,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       child: ListTile(
         onTap: onTap,
-        leading: Icon(icon, color: AppTheme.primaryColor, size: 20),
+        leading: Icon(icon, color: accent, size: 20),
         title: Text(title,
             style: TextStyle(
                 color: textColor,
@@ -274,10 +286,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showAudioSettingsModal(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final surfaceColor = isDark ? const Color(0xFF1E1E1E) : AppTheme.porcelainSurface;
+    final textColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final subColor = isDark ? Colors.white54 : AppTheme.porcelainTextSecondary;
+    final outlineColor = isDark ? Colors.white12 : AppTheme.porcelainOutline;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: surfaceColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -294,40 +313,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Trip Notification Audio & Chimes',
                         style: TextStyle(
-                          color: AppTheme.primaryColor,
+                          color: accent,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white70),
+                        icon: Icon(Icons.close, color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary),
                         onPressed: () => Navigator.pop(modalContext),
                       ),
                     ],
                   ),
-                  const Text(
+                  Text(
                     'Customize individual trip sounds and test audio triggers.',
-                    style: TextStyle(color: Colors.white54, fontSize: 12),
+                    style: TextStyle(color: subColor, fontSize: 12),
                   ),
                   const SizedBox(height: 12),
                   // Preset selector
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.black26,
+                      color: isDark ? Colors.black26 : AppTheme.porcelainSurfaceContainer,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white12),
+                      border: Border.all(color: outlineColor),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Tone Preset', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                        Text('Tone Preset', style: TextStyle(color: subColor, fontSize: 13)),
                         DropdownButton<String>(
                           value: service.preset,
-                          dropdownColor: const Color(0xFF2A2A2A),
+                          dropdownColor: isDark ? const Color(0xFF2A2A2A) : AppTheme.porcelainSurface,
                           underline: const SizedBox(),
                           onChanged: (String? newPreset) {
                             if (newPreset != null) {
@@ -335,10 +354,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               setModalState(() {});
                             }
                           },
-                          items: const [
-                            DropdownMenuItem(value: 'modern', child: Text('Modern Chime', style: TextStyle(color: Colors.white))),
-                            DropdownMenuItem(value: 'bell', child: Text('Soft Bell', style: TextStyle(color: Colors.white))),
-                            DropdownMenuItem(value: 'digital', child: Text('Digital Pulse', style: TextStyle(color: Colors.white))),
+                          items: [
+                            DropdownMenuItem(value: 'modern', child: Text('Modern Chime', style: TextStyle(color: textColor))),
+                            DropdownMenuItem(value: 'bell', child: Text('Soft Bell', style: TextStyle(color: textColor))),
+                            DropdownMenuItem(value: 'digital', child: Text('Digital Pulse', style: TextStyle(color: textColor))),
                           ],
                         ),
                       ],
@@ -348,24 +367,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Expanded(
                     child: ListView.separated(
                       itemCount: NotificationEvent.values.length,
-                      separatorBuilder: (_, __) => const Divider(color: Colors.white12, height: 1),
+                      separatorBuilder: (_, __) => Divider(color: outlineColor, height: 1),
                       itemBuilder: (context, index) {
                         final ev = NotificationEvent.values[index];
                         final isEnabled = service.isEventEnabled(ev.key);
                         return ListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: Text(ev.title, style: const TextStyle(color: Colors.white, fontSize: 14)),
-                          subtitle: Text(ev.description, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+                          title: Text(ev.title, style: TextStyle(color: textColor, fontSize: 14)),
+                          subtitle: Text(ev.description, style: TextStyle(color: subColor, fontSize: 11)),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.volume_up, color: AppTheme.primaryColor, size: 20),
+                                icon: Icon(Icons.volume_up, color: accent, size: 20),
                                 onPressed: () => service.play(ev.key),
                               ),
                               Switch(
                                 value: isEnabled,
-                                activeThumbColor: AppTheme.primaryColor,
+                                activeThumbColor: accent,
                                 onChanged: (val) async {
                                   await service.setEventEnabled(ev.key, val);
                                   setModalState(() {});
@@ -387,6 +406,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showBiometricSettingsModal(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze;
+    final surfaceColor = isDark ? const Color(0xFF1E1E1E) : AppTheme.porcelainSurface;
+    final subColor = isDark ? Colors.white60 : AppTheme.porcelainTextSecondary;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -396,11 +420,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           builder: (ctx, setSheetState) {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              decoration: const BoxDecoration(
-                color: Color(0xFF1E1E1E),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
                 border: Border(
-                  top: BorderSide(color: Color(0xFFD4AF37), width: 1.2),
+                  top: BorderSide(color: accent, width: 1.2),
                 ),
               ),
               child: SafeArea(
@@ -416,16 +440,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                                color: accent.withValues(alpha: 0.15),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.fingerprint_rounded, color: Color(0xFFD4AF37), size: 22),
+                              child: Icon(Icons.fingerprint_rounded, color: accent, size: 22),
                             ),
                             const SizedBox(width: 12),
-                            const Text(
+                            Text(
                               'Biometric & Verification',
                               style: TextStyle(
-                                color: Color(0xFFD4AF37),
+                                color: accent,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
@@ -433,15 +457,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ],
                         ),
                         IconButton(
-                          icon: const Icon(Icons.close, color: Colors.white70),
+                          icon: Icon(Icons.close, color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary),
                           onPressed: () => Navigator.pop(modalContext),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Choose your default identity verification method for Cabi ride requests.',
-                      style: TextStyle(color: Colors.white60, fontSize: 12),
+                      style: TextStyle(color: subColor, fontSize: 12),
                     ),
                     const SizedBox(height: 20),
                     _buildMethodChoiceTile(
@@ -451,6 +475,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       methodKey: 'FACE_RECOGNITION',
                       setSheetState: setSheetState,
                       modalContext: modalContext,
+                      isDark: isDark,
+                      accent: accent,
                     ),
                     const SizedBox(height: 10),
                     _buildMethodChoiceTile(
@@ -460,6 +486,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       methodKey: 'FINGERPRINT',
                       setSheetState: setSheetState,
                       modalContext: modalContext,
+                      isDark: isDark,
+                      accent: accent,
                     ),
                     const SizedBox(height: 10),
                     _buildMethodChoiceTile(
@@ -469,23 +497,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       methodKey: 'OTP',
                       setSheetState: setSheetState,
                       modalContext: modalContext,
+                      isDark: isDark,
+                      accent: accent,
                     ),
                     const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
-                        icon: const Icon(Icons.face_retouching_natural_rounded, color: Color(0xFFD4AF37), size: 18),
-                        label: const Text(
+                        icon: Icon(Icons.face_retouching_natural_rounded, color: accent, size: 18),
+                        label: Text(
                           'RUN PASSIVE FACE SCAN NOW',
                           style: TextStyle(
-                            color: Color(0xFFD4AF37),
+                            color: accent,
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
                             letterSpacing: 1,
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Color(0xFFD4AF37)),
+                          side: BorderSide(color: accent),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
@@ -528,8 +558,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required String methodKey,
     required StateSetter setSheetState,
     required BuildContext modalContext,
+    required bool isDark,
+    required Color accent,
   }) {
     final isSelected = _activeMethod == methodKey;
+    final textColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final subColor = isDark ? Colors.white38 : AppTheme.porcelainTextSecondary;
+
     return InkWell(
       onTap: () async {
         final messenger = ScaffoldMessenger.of(context);
@@ -541,8 +576,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         nav.pop();
         messenger.showSnackBar(
           SnackBar(
-            content: Text('Preferred verification set to $title'),
-            backgroundColor: const Color(0xFF1E1E1E),
+            content: Text(
+              'Preferred verification set to $title',
+              style: TextStyle(color: isDark ? Colors.white : AppTheme.porcelainTextPrimary),
+            ),
+            backgroundColor: isDark ? const Color(0xFF1E1E1E) : AppTheme.porcelainSurface,
             duration: const Duration(seconds: 2),
           ),
         );
@@ -552,13 +590,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFFD4AF37).withValues(alpha: 0.12)
-              : Colors.white.withValues(alpha: 0.04),
+              ? accent.withValues(alpha: 0.12)
+              : (isDark
+                  ? Colors.white.withValues(alpha: 0.04)
+                  : AppTheme.porcelainSurfaceContainer),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected
-                ? const Color(0xFFD4AF37)
-                : Colors.white.withValues(alpha: 0.08),
+                ? accent
+                : (isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : AppTheme.porcelainOutline),
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -566,7 +608,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             Icon(
               icon,
-              color: isSelected ? const Color(0xFFD4AF37) : Colors.white60,
+              color: isSelected
+                  ? accent
+                  : (isDark ? Colors.white60 : AppTheme.porcelainTextSecondary),
               size: 24,
             ),
             const SizedBox(width: 14),
@@ -577,7 +621,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Text(
                     title,
                     style: TextStyle(
-                      color: isSelected ? const Color(0xFFD4AF37) : Colors.white,
+                      color: isSelected ? accent : textColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -586,7 +630,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Text(
                     subtitle,
                     style: TextStyle(
-                      color: isSelected ? Colors.white70 : Colors.white38,
+                      color: isSelected
+                          ? (isDark ? Colors.white70 : AppTheme.porcelainTextSecondary)
+                          : subColor,
                       fontSize: 11,
                     ),
                   ),
@@ -594,9 +640,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             if (isSelected)
-              const Icon(
+              Icon(
                 Icons.check_circle_rounded,
-                color: Color(0xFFD4AF37),
+                color: accent,
                 size: 20,
               ),
           ],
