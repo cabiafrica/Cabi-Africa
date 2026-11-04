@@ -88,8 +88,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.black,
+                backgroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+                foregroundColor: isDark ? Colors.black : Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               child: const Text('Confirm', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -137,7 +137,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.lightDivider),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.5),
+                    color: isDark ? Colors.black.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.08),
                     blurRadius: 25,
                     offset: const Offset(0, -5),
                   ),
