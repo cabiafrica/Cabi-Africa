@@ -118,10 +118,17 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
   }
 
   void _unlockViaOtp() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? primaryGold : AppTheme.aurumBronze;
+    final sheetBg = isDark ? AppTheme.darkBackground : AppTheme.porcelainSurface;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white60 : AppTheme.porcelainTextSecondary;
+    final outline = isDark ? Colors.white12 : AppTheme.porcelainOutline;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppTheme.darkBackground,
+      backgroundColor: sheetBg,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -136,17 +143,17 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.sms_rounded, color: primaryGold, size: 36),
+              Icon(Icons.sms_rounded, color: accent, size: 36),
               const SizedBox(height: 12),
               Text(
                 'Driver Security SMS OTP',
-                style: GoogleFonts.outfit(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                style: GoogleFonts.outfit(color: textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 6),
-              const Text(
+              Text(
                 'Enter the 6-digit security PIN sent to your registered phone number to reactivate your account.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white60, fontSize: 12),
+                style: TextStyle(color: textSecondary, fontSize: 12),
               ),
               const SizedBox(height: 16),
               TextField(
@@ -154,13 +161,16 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
                 keyboardType: TextInputType.number,
                 maxLength: 6,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 22, color: Colors.white, letterSpacing: 8, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 22, color: textPrimary, letterSpacing: 8, fontWeight: FontWeight.bold),
                 decoration: InputDecoration(
                   hintText: '123456',
-                  hintStyle: const TextStyle(color: Colors.white24),
+                  hintStyle: TextStyle(color: isDark ? Colors.white24 : AppTheme.porcelainOutline),
                   filled: true,
-                  fillColor: AppTheme.darkSurface,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  fillColor: isDark ? AppTheme.darkSurface : AppTheme.porcelainSurfaceContainer,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: outline),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -181,7 +191,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
                   });
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryGold,
+                  backgroundColor: accent,
                   foregroundColor: Colors.black,
                   minimumSize: const Size(double.infinity, 48),
                 ),
@@ -196,11 +206,19 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? primaryGold : AppTheme.aurumBronze;
+    final sheetBg = isDark ? AppTheme.darkBackground : AppTheme.porcelainSurface;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+    final textDim = isDark ? Colors.white54 : AppTheme.porcelainTextSecondary;
+    final outline = isDark ? Colors.white12 : AppTheme.porcelainOutline;
+
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        color: AppTheme.darkBackground,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      decoration: BoxDecoration(
+        color: sheetBg,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -209,7 +227,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.white12,
+              color: outline,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -239,10 +257,10 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Face verification failed 3 consecutive times against your official driver passport photo. Your online status has been blocked for safety.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.35),
+              style: TextStyle(color: textSecondary, fontSize: 13, height: 1.35),
             ),
             const SizedBox(height: 24),
 
@@ -252,7 +270,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
               icon: const Icon(Icons.key_rounded, color: Colors.black),
               label: const Text('Unlock via SMS OTP (Phone PIN)', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryGold,
+                backgroundColor: accent,
                 minimumSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
@@ -263,16 +281,16 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.05),
+                color: isDark ? Colors.white.withValues(alpha: 0.05) : AppTheme.porcelainSurfaceContainer,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white12),
+                border: Border.all(color: outline),
               ),
               child: Column(
                 children: [
-                  const Text(
+                  Text(
                     'Need Help? Contact Cabi Driver Support & SACCO Marshall Desk',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: textPrimary, fontSize: 12, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -284,9 +302,9 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
                               const SnackBar(content: Text('Calling Driver Support: +254 700 CABI (222423)')),
                             );
                           },
-                          icon: const Icon(Icons.phone, size: 14, color: primaryGold),
-                          label: const Text('0700 222 423', style: TextStyle(color: primaryGold, fontSize: 11)),
-                          style: OutlinedButton.styleFrom(side: const BorderSide(color: primaryGold)),
+                          icon: Icon(Icons.phone, size: 14, color: accent),
+                          label: Text('0700 222 423', style: TextStyle(color: accent, fontSize: 11)),
+                          style: OutlinedButton.styleFrom(side: BorderSide(color: accent)),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -312,16 +330,16 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
             Text(
               'Driver Identity Security Check',
               style: GoogleFonts.outfit(
-                color: Colors.white,
+                color: textPrimary,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
+            Text(
               'Passive scan compared against your official registered passport photo. No photo is saved.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white54, fontSize: 12),
+              style: TextStyle(color: textDim, fontSize: 12),
             ),
             const SizedBox(height: 24),
             
@@ -337,7 +355,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
                     border: Border.all(
                       color: _isSuccess 
                           ? Colors.greenAccent 
-                          : (_isScanning ? primaryGold : Colors.white24),
+                          : (_isScanning ? accent : outline),
                       width: 4,
                     ),
                   ),
@@ -347,15 +365,15 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
                         : (_isScanning 
                             ? Stack(
                                 children: [
-                                  const Center(child: Icon(Icons.face, size: 90, color: Colors.white12)),
+                                  Center(child: Icon(Icons.face, size: 90, color: outline)),
                                   CircularProgressIndicator(
                                     value: _progress,
                                     strokeWidth: 4,
-                                    color: primaryGold,
+                                    color: accent,
                                   ),
                                 ],
                               )
-                            : const Icon(Icons.face, size: 90, color: Colors.white24)
+                            : Icon(Icons.face, size: 90, color: outline)
                         ),
                   ),
                 ),
@@ -371,7 +389,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: primaryGold.withValues(alpha: 1.0 - value),
+                            color: accent.withValues(alpha: 1.0 - value),
                             width: 2,
                           ),
                         ),
@@ -389,16 +407,16 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
               decoration: BoxDecoration(
                 color: _failedAttempts >= 2
                     ? Colors.redAccent.withValues(alpha: 0.15)
-                    : Colors.white.withValues(alpha: 0.06),
+                    : (isDark ? Colors.white.withValues(alpha: 0.06) : AppTheme.porcelainSurfaceContainer),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: _failedAttempts >= 2 ? Colors.redAccent : Colors.white12,
+                  color: _failedAttempts >= 2 ? Colors.redAccent : outline,
                 ),
               ),
               child: Text(
                 'Attempts remaining: ${maxAttempts - _failedAttempts} of $maxAttempts (Lockout at 3 fails)',
                 style: TextStyle(
-                  color: _failedAttempts >= 2 ? Colors.redAccent : primaryGold,
+                  color: _failedAttempts >= 2 ? Colors.redAccent : accent,
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                 ),
@@ -410,7 +428,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
               _statusText,
               textAlign: TextAlign.center,
               style: GoogleFonts.outfit(
-                color: _isSuccess ? Colors.greenAccent : (_failedAttempts > 0 ? Colors.orangeAccent : Colors.white),
+                color: _isSuccess ? Colors.greenAccent : (_failedAttempts > 0 ? Colors.orangeAccent : textPrimary),
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -426,7 +444,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
                       child: ElevatedButton(
                         onPressed: () => _startScan(simulateFail: false),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryGold,
+                          backgroundColor: accent,
                           foregroundColor: Colors.black,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                         ),
