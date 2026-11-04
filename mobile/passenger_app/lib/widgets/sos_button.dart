@@ -58,6 +58,12 @@ class _SOSButtonState extends State<SOSButton>
   }
 
   void _showEmergencySafetyModal(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = isDark ? const Color(0xFF161616) : AppTheme.porcelainSurface;
+    final textHeadline = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSub = isDark ? Colors.grey.shade400 : AppTheme.porcelainTextSecondary;
+    final dragColor = isDark ? Colors.white24 : Colors.black12;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -70,7 +76,7 @@ class _SOSButtonState extends State<SOSButton>
           MediaQuery.of(ctx).padding.bottom + 20,
         ),
         decoration: BoxDecoration(
-          color: const Color(0xFF161616),
+          color: surfaceColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           border: Border.all(
             color: AppTheme.errorRed.withValues(alpha: 0.4),
@@ -91,7 +97,7 @@ class _SOSButtonState extends State<SOSButton>
               width: 44,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white24,
+                color: dragColor,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -116,7 +122,7 @@ class _SOSButtonState extends State<SOSButton>
             Text(
               'PASSENGER EMERGENCY SOS',
               style: AppTheme.montserrat(
-                color: Colors.white,
+                color: textHeadline,
                 fontWeight: FontWeight.w900,
                 fontSize: 18,
                 letterSpacing: 1.2,
@@ -127,7 +133,7 @@ class _SOSButtonState extends State<SOSButton>
               'Are you feeling unsafe or in danger? Cabi Africa 24/7 Safety Command Center will track your real-time ride coordinates.',
               textAlign: TextAlign.center,
               style: AppTheme.plusJakartaSans(
-                color: Colors.grey.shade400,
+                color: textSub,
                 fontSize: 13,
                 height: 1.4,
               ),
@@ -225,17 +231,23 @@ class _SOSButtonState extends State<SOSButton>
                     await launchUrl(phoneUri);
                   }
                 },
-                icon: const Icon(Icons.phone_in_talk_rounded, color: Colors.white, size: 18),
+                icon: Icon(Icons.phone_in_talk_rounded,
+                    color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
+                    size: 18),
                 label: Text(
                   'CALL POLICE (999 / 112)',
                   style: AppTheme.inter(
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                     fontSize: 13,
                   ),
                 ),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+                  side: BorderSide(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.3)
+                        : AppTheme.porcelainOutline,
+                  ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
@@ -255,17 +267,18 @@ class _SOSButtonState extends State<SOSButton>
                     MaterialPageRoute(builder: (_) => const SafetyCenterScreen()),
                   );
                 },
-                icon: const Icon(Icons.security_rounded, color: Colors.black, size: 18),
+                icon: Icon(Icons.security_rounded,
+                    color: isDark ? Colors.black : Colors.white, size: 18),
                 label: Text(
                   'OPEN SAFETY COMMAND CENTER',
                   style: AppTheme.montserrat(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: isDark ? Colors.black : Colors.white,
                     fontSize: 12.5,
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
+                  backgroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
@@ -279,7 +292,7 @@ class _SOSButtonState extends State<SOSButton>
               child: Text(
                 'Cancel / False Alarm',
                 style: AppTheme.plusJakartaSans(
-                  color: Colors.grey.shade400,
+                  color: isDark ? Colors.grey.shade400 : AppTheme.porcelainTextSecondary,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
                 ),
