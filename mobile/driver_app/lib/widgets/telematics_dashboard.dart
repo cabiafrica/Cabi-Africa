@@ -5,7 +5,6 @@ const _kCanvas = Color(0xFF0A0A0B);
 const _kSurface = Color(0xFF1A1A1D);
 const _kCard = Color(0xFF1E1E22);
 const _kGold = Color(0xFFD4AF37);
-const _kGoldDeep = Color(0xFFB8860B);
 const _kEmerald = Color(0xFF10B981);
 const _kAmber = Color(0xFFF59E0B);
 const _kRed = Color(0xFFEF4444);
