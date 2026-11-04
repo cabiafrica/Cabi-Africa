@@ -52,6 +52,17 @@ class AppTheme {
   static const Color darkTextSecondary = Color(0xFF9CA3AF);
   static const Color darkDivider = Color(0xFF27272A);
 
+  // Light Mode Colors (Daytime Porcelain / Stitch Dual-Theme)
+  static const Color porcelainCanvas = Color(0xFFF8FAFC);
+  static const Color porcelainSurface = Colors.white;
+  static const Color porcelainSurfaceContainer = Color(0xFFF1F5F9);
+  static const Color porcelainSurfaceHigh = Color(0xFFE2E8F0);
+  static const Color porcelainOutline = Color(0xFFCBD5E1);
+  static const Color porcelainTextPrimary = Color(0xFF0F172A);
+  static const Color porcelainTextSecondary = Color(0xFF475569);
+  static const Color aurumBronze = Color(0xFF8C6D1F);
+  static const Color royalBlue = Color(0xFF0260C4);
+
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     fontFamily: GoogleFonts.outfit().fontFamily,
