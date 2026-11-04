@@ -157,20 +157,21 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
   bool get _isAllPassed => _passedItems == _totalItems;
 
   void _submitInspection() async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     setState(() => _isSubmitting = true);
     await Future.delayed(const Duration(milliseconds: 600));
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFF1E1E24),
+          backgroundColor: isDark ? const Color(0xFF1E1E24) : AppTheme.porcelainSurface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: const BorderSide(color: AppTheme.outlineGold),
+            side: BorderSide(color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline),
           ),
           content: Row(
             children: [
-              const Icon(Icons.verified_rounded, color: AppTheme.primaryColor),
+              Icon(Icons.verified_rounded, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -178,7 +179,7 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
                   style: AppTheme.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                   ),
                 ),
               ),
@@ -192,15 +193,17 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final goldAccent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
     final vehicle = widget.vehicleInfo ?? 'Mercedes-Benz E200 · KDA 482B';
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0E),
+      backgroundColor: isDark ? const Color(0xFF0D0D0E) : AppTheme.porcelainCanvas,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF141416),
+        backgroundColor: isDark ? const Color(0xFF141416) : AppTheme.porcelainSurface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: isDark ? Colors.white : AppTheme.porcelainTextPrimary, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -208,7 +211,7 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
           style: AppTheme.outfit(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Colors.white,
+            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
           ),
         ),
         actions: [
@@ -216,21 +219,21 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
             margin: const EdgeInsets.symmetric(vertical: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.12),
+              color: goldAccent.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.outlineGold),
+              border: Border.all(color: isDark ? AppTheme.outlineGold : goldAccent.withValues(alpha: 0.3)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.verified_rounded, color: AppTheme.primaryColor, size: 14),
+                Icon(Icons.verified_rounded, color: goldAccent, size: 14),
                 const SizedBox(width: 4),
                 Text(
                   'SACCO Standard',
                   style: AppTheme.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.primaryColor,
+                    color: goldAccent,
                   ),
                 ),
               ],
@@ -248,14 +251,14 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: const Color(0xFF141418),
+                color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppTheme.outlineGold),
-                boxShadow: const [
+                border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline),
+                boxShadow: [
                   BoxShadow(
-                    color: Color(0x18000000),
+                    color: isDark ? const Color(0x18000000) : const Color(0x0A000000),
                     blurRadius: 14,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
@@ -270,10 +273,10 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                              color: goldAccent.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Icon(Icons.directions_car_rounded, color: AppTheme.primaryColor, size: 20),
+                            child: Icon(Icons.directions_car_rounded, color: goldAccent, size: 20),
                           ),
                           const SizedBox(width: 10),
                           Column(
@@ -284,12 +287,15 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
                                 style: AppTheme.outfit(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,
-                                  color: Colors.white,
+                                  color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                                 ),
                               ),
                               Text(
                                 'Executive Chauffeur Fleet',
-                                style: AppTheme.inter(fontSize: 11, color: Colors.white60),
+                                style: AppTheme.inter(
+                                  fontSize: 11,
+                                  color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary,
+                                ),
                               ),
                             ],
                           ),
@@ -324,9 +330,9 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: _totalItems > 0 ? _passedItems / _totalItems : 1.0,
-                      backgroundColor: Colors.white12,
+                      backgroundColor: isDark ? Colors.white12 : AppTheme.porcelainOutline.withValues(alpha: 0.5),
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        _isAllPassed ? AppTheme.successGreen : AppTheme.primaryColor,
+                        _isAllPassed ? AppTheme.successGreen : goldAccent,
                       ),
                       minHeight: 6,
                     ),
@@ -337,15 +343,15 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
             const SizedBox(height: 20),
 
             // Inspection Checklist Blocks
-            ..._categories.map((cat) => _buildCategoryBlock(cat)),
+            ..._categories.map((cat) => _buildCategoryBlock(cat, isDark, goldAccent)),
           ],
         ),
       ),
       bottomSheet: Container(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-        decoration: const BoxDecoration(
-          color: Color(0xFF141418),
-          border: Border(top: BorderSide(color: Colors.white12)),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
+          border: Border(top: BorderSide(color: isDark ? Colors.white12 : AppTheme.porcelainOutline)),
         ),
         child: SizedBox(
           width: double.infinity,
@@ -353,23 +359,32 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
           child: ElevatedButton(
             onPressed: _isSubmitting ? null : _submitInspection,
             style: ElevatedButton.styleFrom(
-              backgroundColor: _isAllPassed ? AppTheme.primaryColor : const Color(0xFF2C2C34),
-              foregroundColor: _isAllPassed ? Colors.black : Colors.white60,
+              backgroundColor: _isAllPassed
+                  ? goldAccent
+                  : (isDark ? const Color(0xFF2C2C34) : AppTheme.porcelainSurfaceContainer),
+              foregroundColor: _isAllPassed
+                  ? (isDark ? Colors.black : Colors.white)
+                  : (isDark ? Colors.white60 : AppTheme.porcelainTextSecondary),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               elevation: _isAllPassed ? 4 : 0,
             ),
             child: _isSubmitting
-                ? const SizedBox(
+                ? SizedBox(
                     width: 22,
                     height: 22,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: isDark ? Colors.black : Colors.white,
+                    ),
                   )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
                         Icons.verified_rounded,
-                        color: _isAllPassed ? Colors.black : Colors.white60,
+                        color: _isAllPassed
+                            ? (isDark ? Colors.black : Colors.white)
+                            : (isDark ? Colors.white60 : AppTheme.porcelainTextSecondary),
                         size: 20,
                       ),
                       const SizedBox(width: 8),
@@ -378,7 +393,9 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
                         style: AppTheme.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
-                          color: _isAllPassed ? Colors.black : Colors.white60,
+                          color: _isAllPassed
+                              ? (isDark ? Colors.black : Colors.white)
+                              : (isDark ? Colors.white60 : AppTheme.porcelainTextSecondary),
                         ),
                       ),
                     ],
@@ -389,14 +406,14 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
     );
   }
 
-  Widget _buildCategoryBlock(InspectionCategory category) {
+  Widget _buildCategoryBlock(InspectionCategory category, bool isDark, Color goldAccent) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF141418),
+        color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -406,14 +423,14 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
             children: [
               Row(
                 children: [
-                  Icon(category.categoryIcon, color: AppTheme.primaryColor, size: 18),
+                  Icon(category.categoryIcon, color: goldAccent, size: 18),
                   const SizedBox(width: 8),
                   Text(
                     category.name.toUpperCase(),
                     style: AppTheme.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                       letterSpacing: 0.8,
                     ),
                   ),
@@ -422,18 +439,22 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.06),
+                  color: isDark ? Colors.white.withValues(alpha: 0.06) : AppTheme.porcelainSurfaceContainer,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   '${category.items.where((i) => i.isPassed).length}/${category.items.length} Items',
-                  style: AppTheme.inter(fontSize: 10, color: Colors.white70),
+                  style: AppTheme.inter(
+                    fontSize: 10,
+                    color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
           ...category.items.map((item) {
+            final activeColor = item.isPassed ? goldAccent : (isDark ? Colors.white38 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.5));
             return InkWell(
               onTap: () {
                 setState(() => item.isPassed = !item.isPassed);
@@ -443,17 +464,19 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
                 margin: const EdgeInsets.only(bottom: 6),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1B1B22),
+                  color: isDark ? const Color(0xFF1B1B22) : AppTheme.porcelainSurfaceContainer,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: item.isPassed ? AppTheme.outlineGold.withValues(alpha: 0.4) : Colors.white10,
+                    color: item.isPassed
+                        ? (isDark ? AppTheme.outlineGold.withValues(alpha: 0.4) : goldAccent.withValues(alpha: 0.4))
+                        : (isDark ? Colors.white10 : AppTheme.porcelainOutline.withValues(alpha: 0.5)),
                   ),
                 ),
                 child: Row(
                   children: [
                     Icon(
                       item.icon,
-                      color: item.isPassed ? AppTheme.primaryColor : Colors.white38,
+                      color: activeColor,
                       size: 18,
                     ),
                     const SizedBox(width: 12),
@@ -463,13 +486,15 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
                         style: AppTheme.inter(
                           fontSize: 13,
                           fontWeight: item.isPassed ? FontWeight.w600 : FontWeight.w400,
-                          color: item.isPassed ? Colors.white : Colors.white54,
+                          color: item.isPassed
+                              ? (isDark ? Colors.white : AppTheme.porcelainTextPrimary)
+                              : (isDark ? Colors.white54 : AppTheme.porcelainTextSecondary),
                         ),
                       ),
                     ),
                     Icon(
                       item.isPassed ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
-                      color: item.isPassed ? AppTheme.primaryColor : Colors.white30,
+                      color: item.isPassed ? goldAccent : (isDark ? Colors.white30 : AppTheme.porcelainOutline),
                       size: 20,
                     ),
                   ],
