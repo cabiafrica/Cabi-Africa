@@ -217,17 +217,22 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
     });
 
     final phone = widget.userPhone ?? '+254 7XX XXX 123';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFF1E1E1E),
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : AppTheme.porcelainSurface,
         content: Row(
           children: [
-            const Icon(Icons.mark_email_read_rounded, color: AppTheme.primaryColor),
+            Icon(Icons.mark_email_read_rounded,
+                color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
                 'SMS OTP Sent to $phone (Test PIN: $_generatedOtp)',
-                style: const TextStyle(color: Colors.white, fontSize: 13),
+                style: TextStyle(
+                  color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
+                  fontSize: 13,
+                ),
               ),
             ),
           ],
@@ -290,13 +295,20 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze;
+    final surfaceColor = isDark ? AppTheme.darkBackground : AppTheme.porcelainSurface;
+    final textHeadline = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSub = isDark ? Colors.white.withValues(alpha: 0.65) : AppTheme.porcelainTextSecondary;
+    final dragColor = isDark ? Colors.white.withValues(alpha: 0.15) : Colors.black12;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-      decoration: const BoxDecoration(
-        color: AppTheme.darkBackground,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         border: Border(
-          top: BorderSide(color: Color(0xFFD4AF37), width: 1.2),
+          top: BorderSide(color: accent, width: 1.2),
         ),
       ),
       child: SafeArea(
@@ -309,7 +321,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                 width: 44,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
+                  color: dragColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -322,12 +334,12 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                      color: accent.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.security_rounded,
-                      color: Color(0xFFD4AF37),
+                      color: accent,
                       size: 20,
                     ),
                   ),
@@ -340,7 +352,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.5,
-                      color: const Color(0xFFD4AF37),
+                      color: accent,
                     ),
                   ),
                 ],
@@ -353,24 +365,24 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(
                   fontSize: 13,
-                  color: Colors.white.withValues(alpha: 0.65),
+                  color: textSub,
                   height: 1.35,
                 ),
               ),
               const SizedBox(height: 24),
 
               if (_isSuccess)
-                _buildSuccessState()
+                _buildSuccessState(isDark: isDark, accent: accent, textHeadline: textHeadline, textSub: textSub)
               else if (_isDeactivated)
-                _buildDeactivatedState()
+                _buildDeactivatedState(isDark: isDark, accent: accent, textHeadline: textHeadline, textSub: textSub)
               else if (_selectedMethod == null)
-                _buildMethodSelection()
+                _buildMethodSelection(isDark: isDark, accent: accent, textHeadline: textHeadline, textSub: textSub)
               else if (_selectedMethod == VerificationMethod.face)
-                _buildFaceVerificationView()
+                _buildFaceVerificationView(isDark: isDark, accent: accent, textHeadline: textHeadline, textSub: textSub)
               else if (_selectedMethod == VerificationMethod.fingerprint)
-                _buildFingerprintVerificationView()
+                _buildFingerprintVerificationView(isDark: isDark, accent: accent, textHeadline: textHeadline, textSub: textSub)
               else if (_selectedMethod == VerificationMethod.otp)
-                _buildOtpVerificationView(),
+                _buildOtpVerificationView(isDark: isDark, accent: accent, textHeadline: textHeadline, textSub: textSub),
 
               const SizedBox(height: 20),
 
@@ -384,11 +396,11 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                       _selfieFile = null;
                     });
                   },
-                  icon: const Icon(Icons.arrow_back_rounded, size: 16, color: Color(0xFFD4AF37)),
+                  icon: Icon(Icons.arrow_back_rounded, size: 16, color: accent),
                   label: Text(
                     'Choose Another Verification Method',
                     style: GoogleFonts.outfit(
-                      color: const Color(0xFFD4AF37),
+                      color: accent,
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
                     ),
@@ -404,7 +416,12 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
   // ─────────────────────────────────────────────────────────────
   // TEMPORARY DEACTIVATION / LOCKOUT VIEW
   // ─────────────────────────────────────────────────────────────
-  Widget _buildDeactivatedState() {
+  Widget _buildDeactivatedState({
+    required bool isDark,
+    required Color accent,
+    required Color textHeadline,
+    required Color textSub,
+  }) {
     return Column(
       children: [
         Container(
@@ -445,7 +462,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           textAlign: TextAlign.center,
           style: GoogleFonts.outfit(
             fontSize: 13,
-            color: Colors.white70,
+            color: textSub,
             height: 1.4,
           ),
         ),
@@ -455,10 +472,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppTheme.darkSurface,
+            color: isDark ? AppTheme.darkSurface : AppTheme.porcelainSurfaceContainer,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
+              color: accent.withValues(alpha: 0.3),
             ),
           ),
           child: Column(
@@ -466,12 +483,12 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
             children: [
               Row(
                 children: [
-                  const Icon(Icons.key_rounded, color: Color(0xFFD4AF37), size: 18),
+                  Icon(Icons.key_rounded, color: accent, size: 18),
                   const SizedBox(width: 8),
                   Text(
                     'UNLOCK WITH ALTERNATIVE METHOD',
                     style: GoogleFonts.outfit(
-                      color: const Color(0xFFD4AF37),
+                      color: accent,
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
@@ -487,13 +504,16 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                   });
                   _startOtpVerification();
                 },
-                icon: const Icon(Icons.sms_rounded, size: 18, color: Colors.black),
-                label: const Text(
+                icon: Icon(Icons.sms_rounded, size: 18, color: isDark ? Colors.black : Colors.white),
+                label: Text(
                   'Unlock via SMS OTP (Phone PIN)',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.black : Colors.white,
+                  ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFD4AF37),
+                  backgroundColor: accent,
                   minimumSize: const Size(double.infinity, 44),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
@@ -506,13 +526,15 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                   });
                   _startFingerprintVerification();
                 },
-                icon: const Icon(Icons.fingerprint_rounded, size: 18, color: Colors.white),
-                label: const Text(
+                icon: Icon(Icons.fingerprint_rounded, size: 18, color: textHeadline),
+                label: Text(
                   'Unlock via Enrolled Fingerprint',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: textHeadline),
                 ),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+                  side: BorderSide(
+                    color: isDark ? Colors.white.withValues(alpha: 0.2) : AppTheme.porcelainOutline,
+                  ),
                   minimumSize: const Size(double.infinity, 44),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
@@ -527,21 +549,23 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.04),
+            color: isDark ? Colors.white.withValues(alpha: 0.04) : AppTheme.porcelainSurfaceContainer,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white12),
+            border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
           ),
           child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.support_agent_rounded, color: Colors.white70, size: 20),
+                  Icon(Icons.support_agent_rounded,
+                      color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
+                      size: 20),
                   const SizedBox(width: 8),
                   Text(
                     'Need Help? Contact Customer Care',
                     style: GoogleFonts.outfit(
-                      color: Colors.white,
+                      color: textHeadline,
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
                     ),
@@ -549,10 +573,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                 ],
               ),
               const SizedBox(height: 6),
-              const Text(
+              Text(
                 'Our support desk is available 24/7 to verify your documents and reactivate your account.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white54, fontSize: 11),
+                style: TextStyle(color: textSub, fontSize: 11),
               ),
               const SizedBox(height: 10),
               Row(
@@ -561,19 +585,22 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                     child: OutlinedButton.icon(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            backgroundColor: AppTheme.darkSurface,
-                            content: Text('Calling Cabi Customer Care: +254 700 CABI (222423)'),
+                          SnackBar(
+                            backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.porcelainSurface,
+                            content: Text(
+                              'Calling Cabi Customer Care: +254 700 CABI (222423)',
+                              style: TextStyle(color: textHeadline),
+                            ),
                           ),
                         );
                       },
-                      icon: const Icon(Icons.phone_in_talk_rounded, size: 14, color: Color(0xFFD4AF37)),
-                      label: const Text(
+                      icon: Icon(Icons.phone_in_talk_rounded, size: 14, color: accent),
+                      label: Text(
                         '0700 222 423',
-                        style: TextStyle(color: Color(0xFFD4AF37), fontSize: 11, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: accent, fontSize: 11, fontWeight: FontWeight.bold),
                       ),
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFFD4AF37)),
+                        side: BorderSide(color: accent),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
                     ),
@@ -612,7 +639,12 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
   // ─────────────────────────────────────────────────────────────
   // METHOD SELECTION MENU
   // ─────────────────────────────────────────────────────────────
-  Widget _buildMethodSelection() {
+  Widget _buildMethodSelection({
+    required bool isDark,
+    required Color accent,
+    required Color textHeadline,
+    required Color textSub,
+  }) {
     return Column(
       children: [
         _buildMethodCard(
@@ -622,6 +654,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           title: 'Face Recognition Scan',
           subtitle: 'Instant contactless scan • No photo taken or stored',
           onTap: _startFaceRecognition,
+          isDark: isDark,
+          accent: accent,
+          textHeadline: textHeadline,
+          textSub: textSub,
         ),
         const SizedBox(height: 14),
         _buildMethodCard(
@@ -631,6 +667,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           title: 'Fingerprint Scan',
           subtitle: 'Use your phone touch sensor / Touch ID',
           onTap: _startFingerprintVerification,
+          isDark: isDark,
+          accent: accent,
+          textHeadline: textHeadline,
+          textSub: textSub,
         ),
         const SizedBox(height: 14),
         _buildMethodCard(
@@ -640,6 +680,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           title: 'Phone OTP Verification',
           subtitle: 'Receive a 6-digit passcode on your mobile',
           onTap: _startOtpVerification,
+          isDark: isDark,
+          accent: accent,
+          textHeadline: textHeadline,
+          textSub: textSub,
         ),
       ],
     );
@@ -652,6 +696,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
     required String subtitle,
     required String badge,
     required VoidCallback onTap,
+    required bool isDark,
+    required Color accent,
+    required Color textHeadline,
+    required Color textSub,
   }) {
     return InkWell(
       onTap: onTap,
@@ -659,10 +707,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppTheme.darkSurface,
+          color: isDark ? AppTheme.darkSurface : AppTheme.porcelainSurfaceContainer,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.08),
+            color: isDark ? Colors.white.withValues(alpha: 0.08) : AppTheme.porcelainOutline,
             width: 1,
           ),
         ),
@@ -671,14 +719,14 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFD4AF37).withValues(alpha: 0.12),
+                color: accent.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
+                  color: accent.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
-              child: Icon(icon, color: const Color(0xFFD4AF37), size: 26),
+              child: Icon(icon, color: accent, size: 26),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -692,20 +740,20 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: textHeadline,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                          color: accent.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           badge,
-                          style: const TextStyle(
-                            color: Color(0xFFD4AF37),
+                          style: TextStyle(
+                            color: accent,
                             fontWeight: FontWeight.bold,
                             fontSize: 9,
                             letterSpacing: 0.5,
@@ -719,13 +767,15 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                     subtitle,
                     style: GoogleFonts.outfit(
                       fontSize: 12,
-                      color: Colors.white54,
+                      color: textSub,
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white24, size: 14),
+            Icon(Icons.arrow_forward_ios_rounded,
+                color: isDark ? Colors.white24 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.5),
+                size: 14),
           ],
         ),
       ),
@@ -735,7 +785,12 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
   // ─────────────────────────────────────────────────────────────
   // FACE SELFIE & SCANNING VIEW (PASSIVE SCAN - NO PHOTO SAVED)
   // ─────────────────────────────────────────────────────────────
-  Widget _buildFaceVerificationView() {
+  Widget _buildFaceVerificationView({
+    required bool isDark,
+    required Color accent,
+    required Color textHeadline,
+    required Color textSub,
+  }) {
     return Column(
       children: [
         // Biometric Face Frame with Laser Scanning Line
@@ -747,15 +802,15 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               width: 190,
               height: 230,
               decoration: BoxDecoration(
-                color: const Color(0xFF0D0D0D),
+                color: isDark ? const Color(0xFF0D0D0D) : AppTheme.porcelainSurfaceContainer,
                 borderRadius: BorderRadius.circular(95),
                 border: Border.all(
-                  color: const Color(0xFFD4AF37),
+                  color: accent,
                   width: 2.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFD4AF37).withValues(alpha: 0.25),
+                    color: accent.withValues(alpha: isDark ? 0.25 : 0.12),
                     blurRadius: 24,
                     spreadRadius: 2,
                   ),
@@ -768,7 +823,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                   children: [
                     CustomPaint(
                       size: const Size(190, 230),
-                      painter: _BiometricReticlePainter(),
+                      painter: _BiometricReticlePainter(reticleColor: accent),
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -776,23 +831,23 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                         Icon(
                           Icons.face_retouching_natural_rounded,
                           size: 76,
-                          color: const Color(0xFFD4AF37).withValues(alpha: 0.7),
+                          color: accent.withValues(alpha: 0.7),
                         ),
                         const SizedBox(height: 10),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                            color: accent.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: const Color(0xFFD4AF37).withValues(alpha: 0.35),
+                              color: accent.withValues(alpha: 0.35),
                               width: 1,
                             ),
                           ),
-                          child: const Text(
+                          child: Text(
                             'PASSIVE SCAN • NO PHOTO',
                             style: TextStyle(
-                              color: Color(0xFFD4AF37),
+                              color: accent,
                               fontWeight: FontWeight.bold,
                               fontSize: 9,
                               letterSpacing: 0.8,
@@ -817,10 +872,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                       width: 170,
                       height: 2.5,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFD4AF37),
+                        color: accent,
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFD4AF37).withValues(alpha: 0.95),
+                            color: accent.withValues(alpha: isDark ? 0.95 : 0.6),
                             blurRadius: 12,
                             spreadRadius: 3,
                           ),
@@ -838,10 +893,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               child: Container(
                 width: 14,
                 height: 14,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   border: Border(
-                    top: BorderSide(color: Color(0xFFD4AF37), width: 2),
-                    left: BorderSide(color: Color(0xFFD4AF37), width: 2),
+                    top: BorderSide(color: accent, width: 2),
+                    left: BorderSide(color: accent, width: 2),
                   ),
                 ),
               ),
@@ -852,10 +907,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               child: Container(
                 width: 14,
                 height: 14,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   border: Border(
-                    top: BorderSide(color: Color(0xFFD4AF37), width: 2),
-                    right: BorderSide(color: Color(0xFFD4AF37), width: 2),
+                    top: BorderSide(color: accent, width: 2),
+                    right: BorderSide(color: accent, width: 2),
                   ),
                 ),
               ),
@@ -866,10 +921,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               child: Container(
                 width: 14,
                 height: 14,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   border: Border(
-                    bottom: BorderSide(color: Color(0xFFD4AF37), width: 2),
-                    left: BorderSide(color: Color(0xFFD4AF37), width: 2),
+                    bottom: BorderSide(color: accent, width: 2),
+                    left: BorderSide(color: accent, width: 2),
                   ),
                 ),
               ),
@@ -880,10 +935,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               child: Container(
                 width: 14,
                 height: 14,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   border: Border(
-                    bottom: BorderSide(color: Color(0xFFD4AF37), width: 2),
-                    right: BorderSide(color: Color(0xFFD4AF37), width: 2),
+                    bottom: BorderSide(color: accent, width: 2),
+                    right: BorderSide(color: accent, width: 2),
                   ),
                 ),
               ),
@@ -898,12 +953,12 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (_isVerifying) ...[
-              const SizedBox(
+              SizedBox(
                 width: 14,
                 height: 14,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)),
+                  valueColor: AlwaysStoppedAnimation<Color>(accent),
                 ),
               ),
               const SizedBox(width: 10),
@@ -913,7 +968,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                 _scanningStatusText,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(
-                  color: _failedAttempts > 0 ? Colors.orangeAccent : Colors.white,
+                  color: _failedAttempts > 0 ? Colors.orangeAccent : textHeadline,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
                 ),
@@ -927,18 +982,18 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: isDark ? Colors.white.withValues(alpha: 0.05) : AppTheme.porcelainSurfaceContainer,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.white12),
+            border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.verified_user_rounded, color: Color(0xFFD4AF37), size: 14),
+              Icon(Icons.verified_user_rounded, color: accent, size: 14),
               const SizedBox(width: 6),
               Text(
                 'Compared with Registered Passport Photo • Zero Image Stored',
-                style: GoogleFonts.outfit(color: Colors.white70, fontSize: 10),
+                style: GoogleFonts.outfit(color: textSub, fontSize: 10),
               ),
             ],
           ),
@@ -951,17 +1006,17 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           decoration: BoxDecoration(
             color: _failedAttempts >= 2
                 ? Colors.redAccent.withValues(alpha: 0.15)
-                : const Color(0xFFD4AF37).withValues(alpha: 0.12),
+                : accent.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: _failedAttempts >= 2 ? Colors.redAccent : const Color(0xFFD4AF37),
+              color: _failedAttempts >= 2 ? Colors.redAccent : accent,
               width: 1,
             ),
           ),
           child: Text(
             'Attempts remaining: ${maxFaceAttempts - _failedAttempts} of $maxFaceAttempts (Lockout at 3 fails)',
             style: TextStyle(
-              color: _failedAttempts >= 2 ? Colors.redAccent : const Color(0xFFD4AF37),
+              color: _failedAttempts >= 2 ? Colors.redAccent : accent,
               fontSize: 11,
               fontWeight: FontWeight.bold,
             ),
@@ -975,13 +1030,13 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           children: [
             OutlinedButton.icon(
               onPressed: _isVerifying ? null : () => _startFaceRecognition(simulateMismatch: false),
-              icon: const Icon(Icons.refresh_rounded, size: 15, color: Color(0xFFD4AF37)),
-              label: const Text(
+              icon: Icon(Icons.refresh_rounded, size: 15, color: accent),
+              label: Text(
                 'Scan Face (Match)',
-                style: TextStyle(color: Color(0xFFD4AF37), fontSize: 11, fontWeight: FontWeight.bold),
+                style: TextStyle(color: accent, fontSize: 11, fontWeight: FontWeight.bold),
               ),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: const Color(0xFFD4AF37).withValues(alpha: 0.4)),
+                side: BorderSide(color: accent.withValues(alpha: 0.4)),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
             ),
@@ -1007,7 +1062,12 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
   // ─────────────────────────────────────────────────────────────
   // FINGERPRINT VIEW
   // ─────────────────────────────────────────────────────────────
-  Widget _buildFingerprintVerificationView() {
+  Widget _buildFingerprintVerificationView({
+    required bool isDark,
+    required Color accent,
+    required Color textHeadline,
+    required Color textSub,
+  }) {
     return Column(
       children: [
         Stack(
@@ -1018,32 +1078,32 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               height: 120,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFD4AF37).withValues(alpha: 0.1),
+                color: accent.withValues(alpha: 0.1),
                 border: Border.all(
-                  color: const Color(0xFFD4AF37).withValues(alpha: 0.4),
+                  color: accent.withValues(alpha: 0.4),
                   width: 2,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFD4AF37).withValues(alpha: 0.2),
+                    color: accent.withValues(alpha: isDark ? 0.2 : 0.1),
                     blurRadius: 20,
                     spreadRadius: 2,
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.fingerprint_rounded,
                 size: 64,
-                color: Color(0xFFD4AF37),
+                color: accent,
               ),
             ),
             if (_isVerifying)
-              const SizedBox(
+              SizedBox(
                 width: 140,
                 height: 140,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)),
+                  valueColor: AlwaysStoppedAnimation<Color>(accent),
                 ),
               ),
           ],
@@ -1055,24 +1115,24 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           style: GoogleFonts.outfit(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            color: textHeadline,
           ),
         ),
         const SizedBox(height: 16),
         ElevatedButton.icon(
           onPressed: _startFingerprintVerification,
-          icon: const Icon(Icons.touch_app_rounded, color: Colors.black, size: 18),
-          label: const Text(
+          icon: Icon(Icons.touch_app_rounded, color: isDark ? Colors.black : Colors.white, size: 18),
+          label: Text(
             'TOUCH TO SCAN AGAIN',
             style: TextStyle(
-              color: Colors.black,
+              color: isDark ? Colors.black : Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 12,
               letterSpacing: 1,
             ),
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFD4AF37),
+            backgroundColor: accent,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
@@ -1084,14 +1144,19 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
   // ─────────────────────────────────────────────────────────────
   // OTP VIEW
   // ─────────────────────────────────────────────────────────────
-  Widget _buildOtpVerificationView() {
+  Widget _buildOtpVerificationView({
+    required bool isDark,
+    required Color accent,
+    required Color textHeadline,
+    required Color textSub,
+  }) {
     return Column(
       children: [
         Text(
           'Enter the 6-digit verification code sent to your phone number.',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.6),
+            color: textSub,
             fontSize: 13,
           ),
         ),
@@ -1102,10 +1167,10 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           width: 260,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: AppTheme.darkSurface,
+            color: isDark ? AppTheme.darkSurface : AppTheme.porcelainSurfaceContainer,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: const Color(0xFFD4AF37).withValues(alpha: 0.6),
+              color: accent.withValues(alpha: 0.6),
               width: 1.5,
             ),
           ),
@@ -1117,12 +1182,15 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
             style: GoogleFonts.outfit(
               fontSize: 26,
               letterSpacing: 8,
-              color: Colors.white,
+              color: textHeadline,
               fontWeight: FontWeight.bold,
             ),
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: '••••••',
-              hintStyle: TextStyle(color: Colors.white24, letterSpacing: 8),
+              hintStyle: TextStyle(
+                color: isDark ? Colors.white24 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.4),
+                letterSpacing: 8,
+              ),
               counterText: '',
               border: InputBorder.none,
             ),
@@ -1142,12 +1210,12 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           children: [
             ActionChip(
               avatar: const Icon(Icons.bolt_rounded, size: 14, color: Colors.amberAccent),
-              label: const Text(
+              label: Text(
                 'Auto-Fill Demo Code (123456)',
-                style: TextStyle(fontSize: 11, color: Colors.white),
+                style: TextStyle(fontSize: 11, color: textHeadline),
               ),
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              side: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
+              backgroundColor: isDark ? Colors.white.withValues(alpha: 0.08) : AppTheme.porcelainSurfaceContainer,
+              side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.15) : AppTheme.porcelainOutline),
               onPressed: _pasteDemoOtp,
             ),
           ],
@@ -1163,7 +1231,9 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                 ? 'Resend SMS in ${_resendCountdown}s'
                 : 'Resend Verification Code',
             style: TextStyle(
-              color: _resendCountdown == 0 ? const Color(0xFFD4AF37) : Colors.white30,
+              color: _resendCountdown == 0
+                  ? accent
+                  : (isDark ? Colors.white30 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.4)),
               fontSize: 12,
             ),
           ),
@@ -1177,8 +1247,8 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           child: ElevatedButton(
             onPressed: _verifyOtp,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFD4AF37),
-              foregroundColor: Colors.black,
+              backgroundColor: accent,
+              foregroundColor: isDark ? Colors.black : Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             ),
@@ -1199,7 +1269,12 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
   // ─────────────────────────────────────────────────────────────
   // SUCCESS STATE
   // ─────────────────────────────────────────────────────────────
-  Widget _buildSuccessState() {
+  Widget _buildSuccessState({
+    required bool isDark,
+    required Color accent,
+    required Color textHeadline,
+    required Color textSub,
+  }) {
     return Column(
       children: [
         Container(
@@ -1230,7 +1305,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
             fontSize: 18,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
-            color: Colors.white,
+            color: textHeadline,
           ),
         ),
         const SizedBox(height: 6),
@@ -1239,7 +1314,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
           textAlign: TextAlign.center,
           style: GoogleFonts.outfit(
             fontSize: 13,
-            color: Colors.white70,
+            color: textSub,
           ),
         ),
         const SizedBox(height: 16),
@@ -1249,10 +1324,14 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
 }
 
 class _BiometricReticlePainter extends CustomPainter {
+  final Color reticleColor;
+
+  _BiometricReticlePainter({this.reticleColor = const Color(0xFFD4AF37)});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFD4AF37).withValues(alpha: 0.12)
+      ..color = reticleColor.withValues(alpha: 0.12)
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 
@@ -1264,7 +1343,7 @@ class _BiometricReticlePainter extends CustomPainter {
 
     // Subtle horizontal and vertical guidelines
     final guidePaint = Paint()
-      ..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)
+      ..color = reticleColor.withValues(alpha: 0.18)
       ..strokeWidth = 1.0;
 
     canvas.drawLine(
