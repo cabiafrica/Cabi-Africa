@@ -10,13 +10,15 @@ class EarningsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0E),
+      backgroundColor: isDark ? const Color(0xFF0D0D0E) : AppTheme.porcelainCanvas,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF141416),
+        backgroundColor: isDark ? const Color(0xFF141416) : AppTheme.porcelainSurface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: isDark ? Colors.white : AppTheme.porcelainTextPrimary, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -24,7 +26,7 @@ class EarningsScreen extends StatelessWidget {
           style: AppTheme.outfit(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Colors.white,
+            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
           ),
         ),
         actions: [
@@ -32,21 +34,21 @@ class EarningsScreen extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.12),
+              color: (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.outlineGold),
+              border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.aurumBronze.withValues(alpha: 0.35)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.verified_user_rounded, color: AppTheme.primaryColor, size: 14),
+                Icon(Icons.verified_user_rounded, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 14),
                 const SizedBox(width: 4),
                 Text(
                   'M-Pesa Verified',
                   style: AppTheme.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.primaryColor,
+                    color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                   ),
                 ),
               ],
@@ -64,9 +66,9 @@ class EarningsScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFF141418),
+                color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppTheme.outlineGold),
+                border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline),
               ),
               child: Row(
                 children: [
@@ -77,10 +79,10 @@ class EarningsScreen extends StatelessWidget {
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                            color: (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.timer_rounded, color: AppTheme.primaryColor, size: 20),
+                          child: Icon(Icons.timer_rounded, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 20),
                         ),
                         const SizedBox(width: 10),
                         Column(
@@ -88,18 +90,18 @@ class EarningsScreen extends StatelessWidget {
                           children: [
                             Text(
                               'Online Span',
-                              style: AppTheme.inter(fontSize: 11, color: Colors.white60),
+                              style: AppTheme.inter(fontSize: 11, color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary),
                             ),
                             Text(
                               '8h 30m',
-                              style: AppTheme.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white),
+                              style: AppTheme.outfit(fontSize: 15, fontWeight: FontWeight.w700, color: isDark ? Colors.white : AppTheme.porcelainTextPrimary),
                             ),
                           ],
                         ),
                       ],
                     ),
                   ),
-                  Container(width: 1, height: 32, color: Colors.white12),
+                  Container(width: 1, height: 32, color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Row(
@@ -119,7 +121,7 @@ class EarningsScreen extends StatelessWidget {
                           children: [
                             Text(
                               'In-Ride (78%)',
-                              style: AppTheme.inter(fontSize: 11, color: Colors.white60),
+                              style: AppTheme.inter(fontSize: 11, color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary),
                             ),
                             Text(
                               '6h 40m',
@@ -143,18 +145,24 @@ class EarningsScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1E1E26), Color(0xFF131317)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: isDark
+                    ? const LinearGradient(
+                        colors: [Color(0xFF1E1E26), Color(0xFF131317)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : const LinearGradient(
+                        colors: [AppTheme.porcelainSurface, AppTheme.porcelainSurfaceContainer],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppTheme.outlineGold, width: 1.5),
-                boxShadow: const [
+                border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline, width: 1.5),
+                boxShadow: [
                   BoxShadow(
-                    color: Color(0x22000000),
+                    color: isDark ? const Color(0x22000000) : Colors.black.withValues(alpha: 0.05),
                     blurRadius: 16,
-                    offset: Offset(0, 6),
+                    offset: const Offset(0, 6),
                   ),
                 ],
               ),
@@ -169,7 +177,7 @@ class EarningsScreen extends StatelessWidget {
                         style: AppTheme.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
-                          color: AppTheme.primaryColor,
+                          color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                           letterSpacing: 1.1,
                         ),
                       ),
@@ -203,7 +211,7 @@ class EarningsScreen extends StatelessWidget {
                     style: AppTheme.montserrat(
                       fontSize: 32,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -212,18 +220,18 @@ class EarningsScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF17171D),
+                      color: isDark ? const Color(0xFF17171D) : AppTheme.porcelainSurface,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white10),
+                      border: Border.all(color: isDark ? Colors.white10 : AppTheme.porcelainOutline),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildStatChip('Trips', '12'),
-                        Container(width: 1, height: 24, color: Colors.white12),
-                        _buildStatChip('Hours', '6.5'),
-                        Container(width: 1, height: 24, color: Colors.white12),
-                        _buildStatChip('This Week', 'KES 9,240'),
+                        _buildStatChip('Trips', '12', isDark),
+                        Container(width: 1, height: 24, color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
+                        _buildStatChip('Hours', '6.5', isDark),
+                        Container(width: 1, height: 24, color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
+                        _buildStatChip('This Week', 'KES 9,240', isDark),
                       ],
                     ),
                   ),
@@ -241,7 +249,8 @@ class EarningsScreen extends StatelessWidget {
                     value: '6,050/-',
                     subtext: '14 Full Dispatches',
                     icon: Icons.receipt_long_rounded,
-                    accentColor: AppTheme.primaryColor,
+                    accentColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+                    isDark: isDark,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -251,7 +260,8 @@ class EarningsScreen extends StatelessWidget {
                     value: '118.4 km',
                     subtext: 'Nairobi Metro (11 Routes)',
                     icon: Icons.route_rounded,
-                    accentColor: Colors.white70,
+                    accentColor: isDark ? Colors.white70 : AppTheme.porcelainTextPrimary,
+                    isDark: isDark,
                   ),
                 ),
               ],
@@ -266,6 +276,7 @@ class EarningsScreen extends StatelessWidget {
                     subtext: 'Top Tier Efficiency',
                     icon: Icons.speed_rounded,
                     accentColor: AppTheme.successGreen,
+                    isDark: isDark,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -275,7 +286,8 @@ class EarningsScreen extends StatelessWidget {
                     value: '78.5%',
                     subtext: 'SACCO VIP Benchmark',
                     icon: Icons.thumb_up_rounded,
-                    accentColor: AppTheme.primaryColor,
+                    accentColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+                    isDark: isDark,
                   ),
                 ),
               ],
@@ -286,9 +298,9 @@ class EarningsScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFF141418),
+                color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.white12),
+                border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
               ),
               child: Row(
                 children: [
@@ -311,12 +323,12 @@ class EarningsScreen extends StatelessWidget {
                           style: AppTheme.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                           ),
                         ),
                         Text(
                           'Safcom Direct • Ref CP-99104-NAI',
-                          style: AppTheme.inter(fontSize: 11, color: Colors.white60),
+                          style: AppTheme.inter(fontSize: 11, color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary),
                         ),
                       ],
                     ),
@@ -347,7 +359,7 @@ class EarningsScreen extends StatelessWidget {
               style: AppTheme.inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
-                color: Colors.white54,
+                color: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary,
                 letterSpacing: 1.1,
               ),
             ),
@@ -358,6 +370,7 @@ class EarningsScreen extends StatelessWidget {
               title: 'My Earnings',
               subtitle: 'Comprehensive ledger & statements',
               icon: Icons.account_balance_wallet_rounded,
+              isDark: isDark,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const MyEarningsScreen()),
@@ -370,6 +383,7 @@ class EarningsScreen extends StatelessWidget {
               title: 'Trip History',
               subtitle: 'Detailed receipt breakdown per ride',
               icon: Icons.history_rounded,
+              isDark: isDark,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const EarningsHistoryScreen()),
@@ -382,6 +396,7 @@ class EarningsScreen extends StatelessWidget {
               title: 'Statements',
               subtitle: 'Weekly tax waybills & occurrence logs',
               icon: Icons.description_rounded,
+              isDark: isDark,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const EarningsStatementsScreen()),
@@ -394,6 +409,7 @@ class EarningsScreen extends StatelessWidget {
               title: 'Earnings Goal',
               subtitle: 'Set and track daily shift targets',
               icon: Icons.flag_rounded,
+              isDark: isDark,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const EarningsGoalScreen()),
@@ -405,13 +421,19 @@ class EarningsScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1E1A14), Color(0xFF14120E)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: isDark
+                    ? const LinearGradient(
+                        colors: [Color(0xFF1E1A14), Color(0xFF14120E)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : const LinearGradient(
+                        colors: [Color(0xFFFEF3C7), AppTheme.porcelainSurface],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppTheme.outlineGold),
+                border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.aurumBronze.withValues(alpha: 0.4)),
               ),
               child: Row(
                 children: [
@@ -419,11 +441,11 @@ class EarningsScreen extends StatelessWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                      color: (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppTheme.outlineGold),
+                      border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.aurumBronze.withValues(alpha: 0.4)),
                     ),
-                    child: const Icon(Icons.bolt_rounded, color: AppTheme.primaryColor, size: 24),
+                    child: Icon(Icons.bolt_rounded, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 24),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -435,13 +457,13 @@ class EarningsScreen extends StatelessWidget {
                           style: AppTheme.outfit(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           'Peak airport transfers in Westlands active between 17:00 - 20:00 (1.4x surge)',
-                          style: AppTheme.inter(fontSize: 11, color: Colors.white70),
+                          style: AppTheme.inter(fontSize: 11, color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary),
                         ),
                       ],
                     ),
@@ -454,9 +476,9 @@ class EarningsScreen extends StatelessWidget {
       ),
       bottomSheet: Container(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-        decoration: const BoxDecoration(
-          color: Color(0xFF141418),
-          border: Border(top: BorderSide(color: Colors.white12)),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
+          border: Border(top: BorderSide(color: isDark ? Colors.white12 : AppTheme.porcelainOutline)),
         ),
         child: SizedBox(
           width: double.infinity,
@@ -468,15 +490,15 @@ class EarningsScreen extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryColor,
-              foregroundColor: Colors.black,
+              backgroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+              foregroundColor: isDark ? Colors.black : Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               elevation: 4,
             ),
-            icon: const Icon(Icons.flash_on_rounded, color: Colors.black, size: 20),
+            icon: Icon(Icons.flash_on_rounded, color: isDark ? Colors.black : Colors.white, size: 20),
             label: Text(
               'Instant M-Pesa Cashout',
-              style: AppTheme.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.black),
+              style: AppTheme.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: isDark ? Colors.black : Colors.white),
             ),
           ),
         ),
@@ -484,7 +506,7 @@ class EarningsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatChip(String label, String value) {
+  Widget _buildStatChip(String label, String value, bool isDark) {
     return Column(
       children: [
         Text(
@@ -492,7 +514,7 @@ class EarningsScreen extends StatelessWidget {
           style: AppTheme.montserrat(
             fontSize: 16,
             fontWeight: FontWeight.w800,
-            color: Colors.white,
+            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
           ),
         ),
         const SizedBox(height: 2),
@@ -500,7 +522,7 @@ class EarningsScreen extends StatelessWidget {
           label,
           style: AppTheme.inter(
             fontSize: 11,
-            color: Colors.white54,
+            color: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary,
           ),
         ),
       ],
@@ -513,13 +535,14 @@ class EarningsScreen extends StatelessWidget {
     required String subtext,
     required IconData icon,
     required Color accentColor,
+    required bool isDark,
   }) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF141418),
+        color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -527,7 +550,7 @@ class EarningsScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title, style: AppTheme.inter(fontSize: 11, color: Colors.white54)),
+              Text(title, style: AppTheme.inter(fontSize: 11, color: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary)),
               Icon(icon, color: accentColor, size: 16),
             ],
           ),
@@ -543,7 +566,7 @@ class EarningsScreen extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             subtext,
-            style: AppTheme.inter(fontSize: 10, color: Colors.white38),
+            style: AppTheme.inter(fontSize: 10, color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.8)),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -558,6 +581,7 @@ class EarningsScreen extends StatelessWidget {
     required String subtitle,
     required IconData icon,
     required VoidCallback onTap,
+    required bool isDark,
   }) {
     return InkWell(
       onTap: onTap,
@@ -565,9 +589,9 @@ class EarningsScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: const Color(0xFF141418),
+          color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white12),
+          border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
         ),
         child: Row(
           children: [
@@ -575,11 +599,11 @@ class EarningsScreen extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.06),
+                color: isDark ? Colors.white.withValues(alpha: 0.06) : AppTheme.porcelainSurfaceContainer,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.white10),
+                border: Border.all(color: isDark ? Colors.white10 : AppTheme.porcelainOutline),
               ),
-              child: Icon(icon, color: AppTheme.primaryColor, size: 20),
+              child: Icon(icon, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 20),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -591,18 +615,18 @@ class EarningsScreen extends StatelessWidget {
                     style: AppTheme.outfit(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: AppTheme.inter(fontSize: 11, color: Colors.white60),
+                    style: AppTheme.inter(fontSize: 11, color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white30, size: 14),
+            Icon(Icons.arrow_forward_ios_rounded, color: isDark ? Colors.white30 : AppTheme.porcelainTextSecondary, size: 14),
           ],
         ),
       ),
