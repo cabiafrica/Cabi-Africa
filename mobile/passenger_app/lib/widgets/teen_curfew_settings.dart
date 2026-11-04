@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class TeenCurfewSettings extends StatefulWidget {
   final String teenName;
@@ -41,14 +42,22 @@ class _TeenCurfewSettingsState extends State<TeenCurfewSettings> {
       context: context,
       initialTime: isStart ? _startTime : _endTime,
       builder: (context, child) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFFFBBF24),
-              onPrimary: Colors.black,
-              surface: Colors.white,
-              onSurface: Colors.black,
-            ),
+          data: (isDark ? ThemeData.dark() : ThemeData.light()).copyWith(
+            colorScheme: isDark
+                ? const ColorScheme.dark(
+                    primary: Color(0xFFFBBF24),
+                    onPrimary: Colors.black,
+                    surface: Color(0xFF1E1E2E),
+                    onSurface: Colors.white,
+                  )
+                : const ColorScheme.light(
+                    primary: Color(0xFFFBBF24),
+                    onPrimary: Colors.black,
+                    surface: Colors.white,
+                    onSurface: Colors.black,
+                  ),
           ),
           child: child!,
         );
@@ -79,6 +88,7 @@ class _TeenCurfewSettingsState extends State<TeenCurfewSettings> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Column(
@@ -150,23 +160,27 @@ class _TeenCurfewSettingsState extends State<TeenCurfewSettings> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade50,
+                      color: isDark ? AppTheme.surfaceContainer : Colors.grey.shade50,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade200),
+                      border: Border.all(
+                          color: isDark ? AppTheme.outlineBorder : Colors.grey.shade200),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildTimeButton('Start', _startTime, true),
-                        const Icon(Icons.arrow_forward, color: Colors.grey),
-                        _buildTimeButton('End', _endTime, false),
+                        _buildTimeButton('Start', _startTime, true, isDark: isDark),
+                        Icon(Icons.arrow_forward,
+                            color: isDark ? Colors.white38 : Colors.grey),
+                        _buildTimeButton('End', _endTime, false, isDark: isDark),
                       ],
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Rides will be blocked between ${_startTime.format(context)} and ${_endTime.format(context)}.',
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                    style: TextStyle(
+                        color: isDark ? Colors.white54 : Colors.grey.shade600,
+                        fontSize: 12),
                   ),
                 ],
 
@@ -217,7 +231,9 @@ class _TeenCurfewSettingsState extends State<TeenCurfewSettings> {
                   ),
                   Text(
                     'Rides ending further than ${_maxDistanceMiles.round()} miles from your home address will be blocked.',
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                    style: TextStyle(
+                        color: isDark ? Colors.white54 : Colors.grey.shade600,
+                        fontSize: 12),
                   ),
                 ],
 
@@ -229,9 +245,11 @@ class _TeenCurfewSettingsState extends State<TeenCurfewSettings> {
                     Expanded(
                       child: TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text(
+                        child: Text(
                           'Cancel',
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(
+                              color:
+                                  isDark ? Colors.grey : AppTheme.porcelainTextSecondary),
                         ),
                       ),
                     ),
@@ -240,7 +258,7 @@ class _TeenCurfewSettingsState extends State<TeenCurfewSettings> {
                       child: ElevatedButton(
                         onPressed: _save,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
+                          backgroundColor: isDark ? Colors.black : AppTheme.porcelainTextPrimary,
                           foregroundColor: const Color(0xFFFBBF24),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
@@ -260,25 +278,27 @@ class _TeenCurfewSettingsState extends State<TeenCurfewSettings> {
     );
   }
 
-  Widget _buildTimeButton(String label, TimeOfDay time, bool isStart) {
+  Widget _buildTimeButton(String label, TimeOfDay time, bool isStart,
+      {bool isDark = false}) {
     return GestureDetector(
       onTap: () => _selectTime(isStart),
       child: Column(
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
-              color: Colors.grey,
+              color: isDark ? Colors.white54 : Colors.grey,
             ),
           ),
           const SizedBox(height: 4),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isDark ? AppTheme.surfaceContainerHigh : Colors.white,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(
+                  color: isDark ? AppTheme.outlineBorder : Colors.grey.shade300),
             ),
             child: Text(
               time.format(context),
