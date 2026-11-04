@@ -97,17 +97,18 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
   }
 
   void _triggerChauffeurBooking(String destination) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFF1E1E24),
+        backgroundColor: isDark ? const Color(0xFF1E1E24) : AppTheme.porcelainSurfaceHigh,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: AppTheme.outlineGold),
+          side: BorderSide(color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline),
         ),
         content: Row(
           children: [
-            const Icon(Icons.directions_car_rounded, color: AppTheme.primaryColor),
+            Icon(Icons.directions_car_rounded, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -115,7 +116,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                 style: AppTheme.outfit(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                 ),
               ),
             ),
@@ -129,6 +130,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
     final titleController = TextEditingController();
     final addressController = TextEditingController();
     String selectedTag = 'Sanctuary';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showModalBottomSheet(
       context: context,
@@ -142,11 +144,14 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             left: 20,
             right: 20,
           ),
-          decoration: const BoxDecoration(
-            color: Color(0xFF141416),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF141416) : AppTheme.porcelainSurface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             border: Border(
-              top: BorderSide(color: AppTheme.outlineGold, width: 1.5),
+              top: BorderSide(
+                color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline,
+                width: 1.5,
+              ),
             ),
           ),
           child: Column(
@@ -158,7 +163,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white24,
+                    color: isDark ? Colors.white24 : AppTheme.porcelainOutline,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -172,13 +177,13 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                          color: (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: AppTheme.outlineGold),
+                          border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.aurumBronze.withValues(alpha: 0.4)),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.add_location_alt_rounded,
-                          color: AppTheme.primaryColor,
+                          color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                           size: 22,
                         ),
                       ),
@@ -188,13 +193,13 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                         style: AppTheme.outfit(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                         ),
                       ),
                     ],
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close_rounded, color: Colors.white70),
+                    icon: Icon(Icons.close_rounded, color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary),
                     onPressed: () => Navigator.pop(ctx),
                   ),
                 ],
@@ -205,30 +210,30 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                 style: AppTheme.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: AppTheme.primaryColor,
+                  color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                   letterSpacing: 1.1,
                 ),
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: titleController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: isDark ? Colors.white : AppTheme.porcelainTextPrimary),
                 decoration: InputDecoration(
                   hintText: 'e.g. Golf Villa, Embassy, Private Hangar',
-                  hintStyle: const TextStyle(color: Colors.white38),
+                  hintStyle: TextStyle(color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary),
                   filled: true,
-                  fillColor: const Color(0xFF1F1F24),
+                  fillColor: isDark ? const Color(0xFF1F1F24) : AppTheme.porcelainSurfaceContainer,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.white12),
+                    borderSide: BorderSide(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.white12),
+                    borderSide: BorderSide(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppTheme.primaryColor),
+                    borderSide: BorderSide(color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze),
                   ),
                 ),
               ),
@@ -238,30 +243,30 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                 style: AppTheme.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: AppTheme.primaryColor,
+                  color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                   letterSpacing: 1.1,
                 ),
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: addressController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: isDark ? Colors.white : AppTheme.porcelainTextPrimary),
                 decoration: InputDecoration(
                   hintText: 'Enter street, building or coordinates',
-                  hintStyle: const TextStyle(color: Colors.white38),
+                  hintStyle: TextStyle(color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary),
                   filled: true,
-                  fillColor: const Color(0xFF1F1F24),
+                  fillColor: isDark ? const Color(0xFF1F1F24) : AppTheme.porcelainSurfaceContainer,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.white12),
+                    borderSide: BorderSide(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.white12),
+                    borderSide: BorderSide(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppTheme.primaryColor),
+                    borderSide: BorderSide(color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze),
                   ),
                 ),
               ),
@@ -295,8 +300,8 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.black,
+                    backgroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+                    foregroundColor: isDark ? Colors.black : Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -307,7 +312,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                     style: AppTheme.outfit(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
-                      color: Colors.black,
+                      color: isDark ? Colors.black : Colors.white,
                     ),
                   ),
                 ),
@@ -321,13 +326,15 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0E),
+      backgroundColor: isDark ? const Color(0xFF0D0D0E) : AppTheme.porcelainCanvas,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121215),
+        backgroundColor: isDark ? const Color(0xFF121215) : AppTheme.porcelainSurface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: isDark ? Colors.white : AppTheme.porcelainTextPrimary, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -335,7 +342,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
           style: AppTheme.outfit(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Colors.white,
+            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
           ),
         ),
         actions: [
@@ -343,21 +350,21 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             margin: const EdgeInsets.symmetric(vertical: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.12),
+              color: (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.outlineGold),
+              border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.aurumBronze.withValues(alpha: 0.35)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.security_rounded, color: AppTheme.primaryColor, size: 14),
+                Icon(Icons.security_rounded, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 14),
                 const SizedBox(width: 4),
                 Text(
                   'VIP Safe',
                   style: AppTheme.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.primaryColor,
+                    color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                   ),
                 ),
               ],
@@ -369,16 +376,18 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             width: 34,
             height: 34,
             decoration: BoxDecoration(
-              gradient: AppTheme.goldGradient,
+              gradient: isDark
+                  ? AppTheme.goldGradient
+                  : const LinearGradient(colors: [Color(0xFFE2B755), AppTheme.aurumBronze]),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryColor.withValues(alpha: 0.3),
+                  color: (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: 0.3),
                   blurRadius: 8,
                 ),
               ],
             ),
-            child: const Icon(Icons.person_rounded, color: Colors.black, size: 20),
+            child: Icon(Icons.person_rounded, color: isDark ? Colors.black : Colors.white, size: 20),
           ),
         ],
       ),
@@ -399,7 +408,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                       style: AppTheme.inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
-                        color: AppTheme.primaryColor,
+                        color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                         letterSpacing: 1.2,
                       ),
                     ),
@@ -409,7 +418,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                       style: AppTheme.outfit(
                         fontSize: 22,
                         fontWeight: FontWeight.w800,
-                        color: Colors.white,
+                        color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                       ),
                     ),
                   ],
@@ -417,21 +426,21 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1B1B20),
+                    color: isDark ? const Color(0xFF1B1B20) : AppTheme.porcelainSurfaceContainer,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white12),
+                    border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.stars_rounded, color: AppTheme.primaryColor, size: 16),
+                      Icon(Icons.stars_rounded, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 16),
                       const SizedBox(width: 6),
                       Text(
                         'VIP Tier',
                         style: AppTheme.outfit(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                         ),
                       ),
                     ],
@@ -445,7 +454,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
               style: AppTheme.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w400,
-                color: Colors.white60,
+                color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary,
               ),
             ),
             const SizedBox(height: 20),
@@ -453,23 +462,23 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             // Search Bar with Pin Drop Trigger
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFF151518),
+                color: isDark ? const Color(0xFF151518) : AppTheme.porcelainSurface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white12),
+                border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
               ),
               child: Row(
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14),
-                    child: Icon(Icons.search_rounded, color: AppTheme.primaryColor, size: 22),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    child: Icon(Icons.search_rounded, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 22),
                   ),
                   Expanded(
                     child: TextField(
                       controller: _searchController,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
-                      decoration: const InputDecoration(
+                      style: TextStyle(color: isDark ? Colors.white : AppTheme.porcelainTextPrimary, fontSize: 14),
+                      decoration: InputDecoration(
                         hintText: 'Search Nairobi address or drop pin...',
-                        hintStyle: TextStyle(color: Colors.white38, fontSize: 13),
+                        hintStyle: TextStyle(color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary, fontSize: 13),
                         border: InputBorder.none,
                       ),
                     ),
@@ -483,13 +492,13 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF222228),
-                        foregroundColor: AppTheme.primaryColor,
+                        backgroundColor: isDark ? const Color(0xFF222228) : AppTheme.porcelainSurfaceContainer,
+                        foregroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
-                          side: const BorderSide(color: AppTheme.outlineGold),
+                          side: BorderSide(color: isDark ? AppTheme.outlineGold : AppTheme.aurumBronze.withValues(alpha: 0.4)),
                         ),
                       ),
                       icon: const Icon(Icons.location_on_rounded, size: 16),
@@ -516,7 +525,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                   style: AppTheme.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white54,
+                    color: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary,
                     letterSpacing: 1.1,
                   ),
                 ),
@@ -529,11 +538,11 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                         style: AppTheme.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.primaryColor,
+                          color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                         ),
                       ),
                       const SizedBox(width: 4),
-                      const Icon(Icons.tune_rounded, color: AppTheme.primaryColor, size: 14),
+                      Icon(Icons.tune_rounded, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 14),
                     ],
                   ),
                 ),
@@ -542,7 +551,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             const SizedBox(height: 12),
 
             // Grid / Cards for Primary Sanctuaries
-            ..._primarySanctuaries.map((item) => _buildPrimaryCard(item)),
+            ..._primarySanctuaries.map((item) => _buildPrimaryCard(item, isDark)),
 
             const SizedBox(height: 20),
 
@@ -550,13 +559,19 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF141A1E), Color(0xFF10161C)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: isDark
+                    ? const LinearGradient(
+                        colors: [Color(0xFF141A1E), Color(0xFF10161C)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : const LinearGradient(
+                        colors: [Color(0xFFECFDF5), AppTheme.porcelainSurface],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0x3310B981)),
+                border: Border.all(color: isDark ? const Color(0x3310B981) : const Color(0x4D10B981)),
                 boxShadow: const [
                   BoxShadow(
                     color: Color(0x1A10B981),
@@ -592,7 +607,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                           style: AppTheme.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -600,7 +615,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                           'Average dispatch time: 3.2 minutes in Westlands',
                           style: AppTheme.inter(
                             fontSize: 11,
-                            color: Colors.white60,
+                            color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary,
                           ),
                         ),
                       ],
@@ -637,7 +652,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                   style: AppTheme.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white54,
+                    color: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary,
                     letterSpacing: 1.1,
                   ),
                 ),
@@ -645,14 +660,14 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                   '${_frequentEscapes.length} Active Routes',
                   style: AppTheme.inter(
                     fontSize: 11,
-                    color: Colors.white38,
+                    color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
 
-            ..._frequentEscapes.map((item) => _buildFrequentItem(item)),
+            ..._frequentEscapes.map((item) => _buildFrequentItem(item, isDark)),
 
             const SizedBox(height: 24),
 
@@ -662,7 +677,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
               style: AppTheme.inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
-                color: Colors.white54,
+                color: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary,
                 letterSpacing: 1.1,
               ),
             ),
@@ -672,9 +687,9 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF141418),
+                color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white12),
+                border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
               ),
               child: Row(
                 children: [
@@ -682,13 +697,13 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                     width: 42,
                     height: 42,
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withValues(alpha: 0.12),
+                      color: (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppTheme.outlineGold),
+                      border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.aurumBronze.withValues(alpha: 0.35)),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.alarm_on_rounded,
-                      color: AppTheme.primaryColor,
+                      color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                       size: 22,
                     ),
                   ),
@@ -704,7 +719,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                               style: AppTheme.outfit(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.white,
+                                color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                               ),
                             ),
                             const SizedBox(width: 6),
@@ -723,7 +738,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                           'Delta Towers Chiromo • Mon - Fri at 07:45 AM',
                           style: AppTheme.inter(
                             fontSize: 12,
-                            color: Colors.white60,
+                            color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -732,7 +747,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                           style: AppTheme.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: AppTheme.primaryColor,
+                            color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                           ),
                         ),
                       ],
@@ -740,9 +755,9 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                   ),
                   Switch.adaptive(
                     value: _morningCommuteEnabled,
-                    activeThumbColor: AppTheme.primaryColor,
-                    activeTrackColor: AppTheme.primaryColor.withValues(alpha: 0.3),
-                    inactiveTrackColor: Colors.white12,
+                    activeThumbColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+                    activeTrackColor: (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: 0.3),
+                    inactiveTrackColor: isDark ? Colors.white12 : Colors.black12,
                     onChanged: (val) {
                       setState(() => _morningCommuteEnabled = val);
                     },
@@ -758,10 +773,10 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF111114),
+                  color: isDark ? const Color(0xFF111114) : AppTheme.porcelainSurface,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppTheme.primaryColor.withValues(alpha: 0.3),
+                    color: (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: 0.3),
                     style: BorderStyle.solid,
                   ),
                 ),
@@ -771,13 +786,13 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                       width: 38,
                       height: 38,
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryColor.withValues(alpha: 0.12),
+                        color: (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: 0.12),
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppTheme.outlineGold),
+                        border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.aurumBronze.withValues(alpha: 0.35)),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.add_rounded,
-                        color: AppTheme.primaryColor,
+                        color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                         size: 22,
                       ),
                     ),
@@ -790,7 +805,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                           style: AppTheme.outfit(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -798,7 +813,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                           'Gym, Diplomatic Residences, Helipad',
                           style: AppTheme.inter(
                             fontSize: 12,
-                            color: Colors.white38,
+                            color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary,
                           ),
                         ),
                       ],
@@ -812,9 +827,9 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
       ),
       bottomSheet: Container(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-        decoration: const BoxDecoration(
-          color: Color(0xFF111114),
-          border: Border(top: BorderSide(color: Colors.white12)),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF111114) : AppTheme.porcelainSurface,
+          border: Border(top: BorderSide(color: isDark ? Colors.white12 : AppTheme.porcelainOutline)),
         ),
         child: SizedBox(
           width: double.infinity,
@@ -822,8 +837,8 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
           child: ElevatedButton(
             onPressed: _openAddPlaceModal,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryColor,
-              foregroundColor: Colors.black,
+              backgroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+              foregroundColor: isDark ? Colors.black : Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -832,14 +847,14 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.bookmark_add_rounded, color: Colors.black, size: 20),
+                Icon(Icons.bookmark_add_rounded, color: isDark ? Colors.black : Colors.white, size: 20),
                 const SizedBox(width: 8),
                 Text(
                   'Add New Saved Place',
                   style: AppTheme.outfit(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
-                    color: Colors.black,
+                    color: isDark ? Colors.black : Colors.white,
                   ),
                 ),
               ],
@@ -850,19 +865,19 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
     );
   }
 
-  Widget _buildPrimaryCard(SavedPlaceItem item) {
+  Widget _buildPrimaryCard(SavedPlaceItem item, bool isDark) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF141418),
+        color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.outlineGold),
-        boxShadow: const [
+        border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x14000000),
+            color: isDark ? const Color(0x14000000) : Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -876,25 +891,25 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withValues(alpha: 0.12),
+                  color: (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppTheme.outlineGold),
+                  border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.aurumBronze.withValues(alpha: 0.35)),
                 ),
-                child: Icon(item.icon, color: AppTheme.primaryColor, size: 22),
+                child: Icon(item.icon, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 22),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.06),
+                  color: isDark ? Colors.white.withValues(alpha: 0.06) : AppTheme.porcelainSurfaceContainer,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.white12),
+                  border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
                 ),
                 child: Text(
                   item.tag,
                   style: AppTheme.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white70,
+                    color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
                   ),
                 ),
               ),
@@ -906,7 +921,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             style: AppTheme.outfit(
               fontSize: 17,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
             ),
           ),
           const SizedBox(height: 2),
@@ -914,7 +929,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             item.address,
             style: AppTheme.inter(
               fontSize: 13,
-              color: Colors.white70,
+              color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -923,7 +938,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             item.subAddress,
             style: AppTheme.inter(
               fontSize: 11,
-              color: Colors.white38,
+              color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: 16),
@@ -933,12 +948,12 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             child: ElevatedButton.icon(
               onPressed: () => _triggerChauffeurBooking(item.title),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1F1F26),
-                foregroundColor: AppTheme.primaryColor,
+                backgroundColor: isDark ? const Color(0xFF1F1F26) : AppTheme.porcelainSurfaceContainer,
+                foregroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  side: const BorderSide(color: AppTheme.outlineGold),
+                  side: BorderSide(color: isDark ? AppTheme.outlineGold : AppTheme.aurumBronze.withValues(alpha: 0.4)),
                 ),
               ),
               icon: const Icon(Icons.directions_car_rounded, size: 18),
@@ -957,14 +972,14 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
     );
   }
 
-  Widget _buildFrequentItem(SavedPlaceItem item) {
+  Widget _buildFrequentItem(SavedPlaceItem item, bool isDark) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF141418),
+        color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
       ),
       child: Row(
         children: [
@@ -972,11 +987,11 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.06),
+              color: isDark ? Colors.white.withValues(alpha: 0.06) : AppTheme.porcelainSurfaceContainer,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white12),
+              border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
             ),
-            child: Icon(item.icon, color: AppTheme.primaryColor, size: 20),
+            child: Icon(item.icon, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -991,7 +1006,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                         style: AppTheme.outfit(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -1001,14 +1016,14 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.06),
+                        color: isDark ? Colors.white.withValues(alpha: 0.06) : AppTheme.porcelainSurfaceContainer,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         item.address,
                         style: AppTheme.inter(
                           fontSize: 10,
-                          color: Colors.white54,
+                          color: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary,
                         ),
                       ),
                     ),
@@ -1019,7 +1034,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                   item.subAddress,
                   style: AppTheme.inter(
                     fontSize: 12,
-                    color: Colors.white60,
+                    color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -1028,23 +1043,23 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                 Row(
                   children: [
                     if (item.lastVisited != null) ...[
-                      const Icon(Icons.history_rounded, size: 12, color: Colors.white38),
+                      Icon(Icons.history_rounded, size: 12, color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary),
                       const SizedBox(width: 4),
                       Text(
                         item.lastVisited!,
-                        style: AppTheme.inter(fontSize: 11, color: Colors.white38),
+                        style: AppTheme.inter(fontSize: 11, color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary),
                       ),
                       const SizedBox(width: 10),
                     ],
                     if (item.avgFare != null) ...[
-                      const Icon(Icons.payments_rounded, size: 12, color: AppTheme.primaryColor),
+                      Icon(Icons.payments_rounded, size: 12, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze),
                       const SizedBox(width: 4),
                       Text(
                         item.avgFare!,
                         style: AppTheme.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: AppTheme.primaryColor,
+                          color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                         ),
                       ),
                     ],
@@ -1057,8 +1072,8 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
           ElevatedButton(
             onPressed: () => _triggerChauffeurBooking(item.title),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryColor,
-              foregroundColor: Colors.black,
+              backgroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+              foregroundColor: isDark ? Colors.black : Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               minimumSize: Size.zero,
               shape: RoundedRectangleBorder(
@@ -1074,11 +1089,11 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                   style: AppTheme.outfit(
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
-                    color: Colors.black,
+                    color: isDark ? Colors.black : Colors.white,
                   ),
                 ),
                 const SizedBox(width: 2),
-                const Icon(Icons.arrow_forward_rounded, size: 14, color: Colors.black),
+                Icon(Icons.arrow_forward_rounded, size: 14, color: isDark ? Colors.black : Colors.white),
               ],
             ),
           ),
