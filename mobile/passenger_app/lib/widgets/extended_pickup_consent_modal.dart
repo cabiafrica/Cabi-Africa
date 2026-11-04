@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -20,14 +21,19 @@ class ExtendedPickupConsentModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const goldColor = Color(0xFFD4AF37);
-    const darkSurface = Color(0xFF181818);
-    const darkCard = Color(0xFF222222);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final goldColor = isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze;
+    final surfaceBg = isDark ? const Color(0xFF181818) : AppTheme.porcelainSurface;
+    final cardBg = isDark ? const Color(0xFF222222) : AppTheme.porcelainSurfaceContainer;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+    final textDim = isDark ? Colors.white54 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.7);
+    final outline = isDark ? Colors.white12 : AppTheme.porcelainOutline;
 
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: darkSurface,
+        color: surfaceBg,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         border: Border.all(
           color: goldColor.withValues(alpha: 0.3),
@@ -35,7 +41,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.6),
+            color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.08),
             blurRadius: 24,
             offset: const Offset(0, -6),
           ),
@@ -51,7 +57,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
             height: 4,
             margin: const EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(
-              color: Colors.white24,
+              color: outline,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -65,7 +71,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
               color: goldColor.withValues(alpha: 0.15),
               border: Border.all(color: goldColor, width: 1.5),
             ),
-            child: const Center(
+            child: Center(
               child: Icon(Icons.schedule_rounded, color: goldColor, size: 28),
             ),
           ),
@@ -74,7 +80,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
           Text(
             'Driver Coming From Afar',
             style: GoogleFonts.outfit(
-              color: Colors.white,
+              color: textPrimary,
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
@@ -84,7 +90,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
             'Your driver is traveling from outside their standard pickup area to reach you.',
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
-              color: Colors.white70,
+              color: textSecondary,
               fontSize: 13,
             ),
           ),
@@ -94,9 +100,9 @@ class ExtendedPickupConsentModal extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
             decoration: BoxDecoration(
-              color: darkCard,
+              color: cardBg,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white12),
+              border: Border.all(color: outline),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -113,24 +119,24 @@ class ExtendedPickupConsentModal extends StatelessWidget {
                     ),
                     Text(
                       'Pickup Distance',
-                      style: GoogleFonts.outfit(color: Colors.white54, fontSize: 11),
+                      style: GoogleFonts.outfit(color: textDim, fontSize: 11),
                     ),
                   ],
                 ),
-                Container(width: 1, height: 32, color: Colors.white12),
+                Container(width: 1, height: 32, color: outline),
                 Column(
                   children: [
                     Text(
                       '~$estimatedArrivalMinutes MINS',
                       style: GoogleFonts.outfit(
-                        color: Colors.white,
+                        color: textPrimary,
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
                     ),
                     Text(
                       'Expected Wait Time',
-                      style: GoogleFonts.outfit(color: Colors.white54, fontSize: 11),
+                      style: GoogleFonts.outfit(color: textDim, fontSize: 11),
                     ),
                   ],
                 ),
@@ -157,7 +163,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
                   child: Text(
                     'No Extra Fee: Standard fare applies. Cabi compensates the driver for the extra distance.',
                     style: GoogleFonts.outfit(
-                      color: const Color(0xFF6EE7B7),
+                      color: isDark ? const Color(0xFF6EE7B7) : const Color(0xFF065F46),
                       fontSize: 11.5,
                       fontWeight: FontWeight.w500,
                     ),
@@ -172,18 +178,18 @@ class ExtendedPickupConsentModal extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: darkCard,
+              color: cardBg,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                const Icon(Icons.forum_outlined, color: Colors.white60, size: 16),
+                Icon(Icons.forum_outlined, color: textSecondary, size: 16),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Communication is encouraged: call or message your driver to coordinate your pickup spot.',
                     style: GoogleFonts.outfit(
-                      color: Colors.white60,
+                      color: textSecondary,
                       fontSize: 11,
                     ),
                   ),
@@ -201,7 +207,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
               onPressed: onConsent,
               style: ElevatedButton.styleFrom(
                 backgroundColor: goldColor,
-                foregroundColor: Colors.black,
+                foregroundColor: isDark ? Colors.black : Colors.white,
                 elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -227,7 +233,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
               child: Text(
                 'Find Closer Driver / Cancel',
                 style: GoogleFonts.outfit(
-                  color: Colors.white54,
+                  color: textDim,
                   fontSize: 13,
                 ),
               ),
