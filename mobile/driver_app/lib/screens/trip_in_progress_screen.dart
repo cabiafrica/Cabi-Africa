@@ -10,6 +10,7 @@ import 'package:driver_app/widgets/swipeable_action_button.dart';
 import 'package:driver_app/services/ride_service.dart';
 import 'rate_passenger_screen.dart';
 import '../services/audio_notification_service.dart';
+import '../theme/app_theme.dart';
 
 class TripInProgressScreen extends StatefulWidget {
   final String? rideId;
@@ -367,8 +368,21 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze;
+    final overlayBg = isDark
+        ? const Color(0xFF141416).withValues(alpha: 0.94)
+        : AppTheme.porcelainSurface.withValues(alpha: 0.96);
+    final sheetBg = isDark
+        ? const Color(0xFF141416).withValues(alpha: 0.96)
+        : AppTheme.porcelainSurface.withValues(alpha: 0.98);
+    final outline = isDark ? Colors.white12 : AppTheme.porcelainOutline;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+    final textDim = isDark ? Colors.white54 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.7);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0E0E0F),
+      backgroundColor: isDark ? const Color(0xFF0E0E0F) : AppTheme.porcelainCanvas,
       body: Stack(
         children: [
           // ── 1. FULLSCREEN MAP BACKGROUND ──
@@ -409,12 +423,12 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF141416).withValues(alpha: 0.94),
+                        color: overlayBg,
                         borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.3)),
+                        border: Border.all(color: isDark ? const Color(0xFFD4AF37).withValues(alpha: 0.3) : outline),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.6),
+                            color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.08),
                             blurRadius: 16,
                             offset: const Offset(0, 4),
                           ),
@@ -427,10 +441,10 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                             width: 38,
                             height: 38,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFD4AF37),
+                              color: accent,
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Icon(Icons.turn_right_rounded, color: Colors.black, size: 24),
+                            child: Icon(Icons.turn_right_rounded, color: isDark ? Colors.black : Colors.white, size: 24),
                           ),
                           const SizedBox(width: 12),
                           // Next instruction
@@ -440,10 +454,10 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    const Text(
+                                    Text(
                                       '350m',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: textPrimary,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: -0.5,
@@ -453,7 +467,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                     Text(
                                       'TURN RIGHT',
                                       style: TextStyle(
-                                        color: const Color(0xFFD4AF37).withValues(alpha: 0.9),
+                                        color: accent,
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.8,
@@ -462,12 +476,12 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 2),
-                                const Text(
+                                Text(
                                   'Ring Road Kilimani • Heading to Destination',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    color: Colors.white70,
+                                    color: textSecondary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -481,17 +495,17 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.08),
+                                  color: isDark ? Colors.white.withValues(alpha: 0.08) : AppTheme.porcelainSurfaceContainer,
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.white12),
+                                  border: Border.all(color: outline),
                                 ),
-                                child: const Column(
+                                child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
                                       '48',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: textPrimary,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w900,
                                         height: 1,
@@ -500,7 +514,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                     Text(
                                       'KM/H',
                                       style: TextStyle(
-                                        color: Colors.white54,
+                                        color: textDim,
                                         fontSize: 7,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -551,12 +565,12 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF141416).withValues(alpha: 0.94),
+                        color: overlayBg,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white12),
+                        border: Border.all(color: outline),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.4),
+                            color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.06),
                             blurRadius: 12,
                             offset: const Offset(0, 3),
                           ),
@@ -577,10 +591,10 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                 ),
                               ),
                               const SizedBox(width: 6),
-                              const Text(
+                              Text(
                                 'LIVE METER',
                                 style: TextStyle(
-                                  color: Colors.white70,
+                                  color: textSecondary,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.8,
@@ -591,14 +605,14 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                                   decoration: BoxDecoration(
-                                    color: Colors.black54,
+                                    color: isDark ? Colors.black54 : AppTheme.porcelainSurfaceHigh,
                                     borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.4)),
+                                    border: Border.all(color: accent.withValues(alpha: 0.4)),
                                   ),
                                   child: Text(
                                     widget.tripCode!,
-                                    style: const TextStyle(
-                                      color: Color(0xFFD4AF37),
+                                    style: TextStyle(
+                                      color: accent,
                                       fontSize: 9,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -613,28 +627,28 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                             children: [
                               Text(
                                 '${_distanceKm.toStringAsFixed(2)} km',
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: textPrimary,
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'monospace',
                                 ),
                               ),
-                              const Text(' • ', style: TextStyle(color: Colors.white30, fontSize: 12)),
+                              Text(' • ', style: TextStyle(color: isDark ? Colors.white30 : AppTheme.porcelainOutline, fontSize: 12)),
                               Text(
                                 _formatDuration(_durationSeconds),
-                                style: const TextStyle(
-                                  color: Colors.white70,
+                                style: TextStyle(
+                                  color: textSecondary,
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'monospace',
                                 ),
                               ),
-                              const Text(' • ', style: TextStyle(color: Colors.white30, fontSize: 12)),
+                              Text(' • ', style: TextStyle(color: isDark ? Colors.white30 : AppTheme.porcelainOutline, fontSize: 12)),
                               Text(
                                 'KES ${_currentFare.toStringAsFixed(0)}',
-                                style: const TextStyle(
-                                  color: Color(0xFFD4AF37),
+                                style: TextStyle(
+                                  color: accent,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w900,
                                   fontFamily: 'monospace',
@@ -687,12 +701,12 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF141416).withValues(alpha: 0.92),
+                  color: overlayBg,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white12),
+                  border: Border.all(color: outline),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.5),
+                      color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.08),
                       blurRadius: 12,
                       offset: const Offset(0, 3),
                     ),
@@ -718,20 +732,20 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const Text(' • ', style: TextStyle(color: Colors.white30, fontSize: 11)),
+                    Text(' • ', style: TextStyle(color: isDark ? Colors.white30 : AppTheme.porcelainOutline, fontSize: 11)),
                     Text(
                       '${(8.0 - _distanceKm).clamp(0.2, 50.0).toStringAsFixed(1)} km',
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: textPrimary,
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const Text(' • ', style: TextStyle(color: Colors.white30, fontSize: 11)),
-                    const Text(
+                    Text(' • ', style: TextStyle(color: isDark ? Colors.white30 : AppTheme.porcelainOutline, fontSize: 11)),
+                    Text(
                       'On Optimal Route',
                       style: TextStyle(
-                        color: Colors.white54,
+                        color: textDim,
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
@@ -749,12 +763,12 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
               margin: const EdgeInsets.fromLTRB(14, 0, 14, 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF141416).withValues(alpha: 0.96),
+                color: sheetBg,
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.35), width: 1.2),
+                border: Border.all(color: isDark ? const Color(0xFFD4AF37).withValues(alpha: 0.35) : outline, width: 1.2),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.8),
+                    color: Colors.black.withValues(alpha: isDark ? 0.8 : 0.1),
                     blurRadius: 30,
                     offset: const Offset(0, 10),
                   ),
@@ -823,7 +837,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                             const SizedBox(width: 10),
                             Text(
                               widget.passengerName ?? 'Passenger',
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                              style: TextStyle(color: textPrimary, fontWeight: FontWeight.bold, fontSize: 14),
                             ),
                             const SizedBox(width: 8),
                             Container(
@@ -962,14 +976,14 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.04),
+                        color: isDark ? Colors.white.withValues(alpha: 0.04) : AppTheme.porcelainSurfaceContainer,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white12),
+                        border: Border.all(color: outline),
                       ),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.location_on_rounded, color: Color(0xFF10B981), size: 16),
-                          SizedBox(width: 8),
+                          const Icon(Icons.location_on_rounded, color: Color(0xFF10B981), size: 16),
+                          const SizedBox(width: 8),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -977,7 +991,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                 Text(
                                   'DROP-OFF LOCATION',
                                   style: TextStyle(
-                                    color: Colors.white38,
+                                    color: textDim,
                                     fontSize: 8.5,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 0.5,
@@ -988,7 +1002,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: textPrimary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -1086,9 +1100,9 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                         child: OutlinedButton(
                           onPressed: _showWaybill,
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            side: const BorderSide(color: Colors.white12),
-                            backgroundColor: Colors.white.withValues(alpha: 0.04),
+                            foregroundColor: textPrimary,
+                            side: BorderSide(color: outline),
+                            backgroundColor: isDark ? Colors.white.withValues(alpha: 0.04) : AppTheme.porcelainSurfaceHigh,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
@@ -1148,20 +1162,25 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
   }
 
   Widget _buildMapControlBtn({required IconData icon, required bool isActive, required VoidCallback onTap}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? const Color(0xFFD4AF37) : AppTheme.aurumBronze;
+    final btnBg = isDark ? const Color(0xFF141416).withValues(alpha: 0.92) : AppTheme.porcelainSurface;
+    final outline = isDark ? Colors.white12 : AppTheme.porcelainOutline;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          color: const Color(0xFF141416).withValues(alpha: 0.92),
+          color: btnBg,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isActive ? const Color(0xFFD4AF37).withValues(alpha: 0.4) : Colors.white12,
+            color: isActive ? accent.withValues(alpha: 0.4) : outline,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
+              color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -1169,7 +1188,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
         ),
         child: Icon(
           icon,
-          color: isActive ? const Color(0xFFD4AF37) : Colors.white60,
+          color: isActive ? accent : (isDark ? Colors.white60 : AppTheme.porcelainTextSecondary),
           size: 18,
         ),
       ),
@@ -1177,25 +1196,30 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
   }
 
   Widget _buildQuickActionBtn({required IconData icon, required String label, required VoidCallback onTap}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final btnBg = isDark ? Colors.white.withValues(alpha: 0.05) : AppTheme.porcelainSurfaceContainer;
+    final outline = isDark ? Colors.white10 : AppTheme.porcelainOutline;
+    final textSecondary = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: btnBg,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white10),
+            border: Border.all(color: outline),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: Colors.white70, size: 16),
+              Icon(icon, color: textSecondary, size: 16),
               const SizedBox(height: 3),
               Text(
                 label,
-                style: const TextStyle(
-                  color: Colors.white70,
+                style: TextStyle(
+                  color: textSecondary,
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                 ),
