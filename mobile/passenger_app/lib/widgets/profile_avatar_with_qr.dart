@@ -54,13 +54,20 @@ class ProfileAvatarWithQr extends StatelessWidget {
   });
 
   void _showQrDialog(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final surfaceColor = isDark ? AppTheme.darkSurface : AppTheme.porcelainSurface;
+    final outlineColor = isDark
+        ? AppTheme.primaryColor.withValues(alpha: 0.1)
+        : AppTheme.porcelainOutline;
+
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        backgroundColor: AppTheme.darkSurface,
+        backgroundColor: surfaceColor,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
-            side: BorderSide(color: AppTheme.primaryColor.withValues(alpha: 0.1))),
+            side: BorderSide(color: outlineColor)),
         child: Padding(
           padding: const EdgeInsets.all(32.0),
           child: Column(
@@ -69,7 +76,7 @@ class ProfileAvatarWithQr extends StatelessWidget {
               Text(
                 'PRESTIGE IDENTITY',
                 style: AppTheme.outfit(
-                  color: AppTheme.primaryColor,
+                  color: accent,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2,
                   fontSize: 16,
@@ -79,7 +86,7 @@ class ProfileAvatarWithQr extends StatelessWidget {
               Text(
                 'MY QR CODE',
                 style: AppTheme.inter(
-                  color: Colors.white38,
+                  color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary,
                   fontSize: 10,
                   letterSpacing: 1.5,
                   fontWeight: FontWeight.bold,
@@ -91,6 +98,7 @@ class ProfileAvatarWithQr extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
+                  border: isDark ? null : Border.all(color: AppTheme.porcelainOutline),
                 ),
                 child: QrImageView(
                   data: qrData,
@@ -110,7 +118,9 @@ class ProfileAvatarWithQr extends StatelessWidget {
               Text(
                 qrData,
                 style: AppTheme.inter(
-                  color: Colors.white24,
+                  color: isDark
+                      ? Colors.white24
+                      : AppTheme.porcelainTextSecondary.withValues(alpha: 0.6),
                   fontSize: 11,
                   letterSpacing: 1,
                 ),
@@ -120,19 +130,18 @@ class ProfileAvatarWithQr extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                  color: accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.verified_user,
-                        color: AppTheme.primaryColor, size: 14),
+                    Icon(Icons.verified_user, color: accent, size: 14),
                     const SizedBox(width: 8),
                     Text(
                       'SECURE VERIFICATION',
                       style: AppTheme.inter(
-                        color: AppTheme.primaryColor,
+                        color: accent,
                         fontSize: 9,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1,
@@ -163,16 +172,19 @@ class ProfileAvatarWithQr extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+
     return Stack(
       children: [
         Container(
           padding: const EdgeInsets.all(2.5),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: AppTheme.primaryColor, width: 2),
+            border: Border.all(color: accent, width: 2),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primaryColor.withValues(alpha: 0.35),
+                color: accent.withValues(alpha: isDark ? 0.35 : 0.15),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -180,7 +192,9 @@ class ProfileAvatarWithQr extends StatelessWidget {
           ),
           child: CircleAvatar(
             radius: radius,
-            backgroundColor: const Color(0xFF1E1E1E),
+            backgroundColor: isDark
+                ? const Color(0xFF1E1E1E)
+                : AppTheme.porcelainSurfaceContainer,
             backgroundImage: _resolveAvatar(),
           ),
         ),
@@ -193,21 +207,24 @@ class ProfileAvatarWithQr extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryColor,
+                  color: accent,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.black, width: 2),
+                  border: Border.all(
+                    color: isDark ? Colors.black : Colors.white,
+                    width: 2,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.4),
+                      color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.15),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     )
                   ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.qr_code_rounded,
                   size: 14,
-                  color: Colors.black,
+                  color: isDark ? Colors.black : Colors.white,
                 ),
               ),
             ),
