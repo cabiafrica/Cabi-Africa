@@ -133,31 +133,44 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   void _addWaypointDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final gold = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF18181E),
+        backgroundColor: isDark ? const Color(0xFF18181E) : AppTheme.porcelainSurface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppTheme.outlineGold),
+          side: BorderSide(color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline),
         ),
         title: Text(
           'Add Itinerary Stop',
-          style: AppTheme.outfit(color: Colors.white, fontWeight: FontWeight.w700),
+          style: AppTheme.outfit(
+            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         content: TextField(
           controller: _stopController,
-          style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
+          style: TextStyle(color: isDark ? Colors.white : AppTheme.porcelainTextPrimary),
+          decoration: InputDecoration(
             hintText: 'e.g. Gigiri Embassy compound or Nairobi Club',
-            hintStyle: TextStyle(color: Colors.white38, fontSize: 13),
-            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppTheme.primaryColor)),
+            hintStyle: TextStyle(
+              color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary,
+              fontSize: 13,
+            ),
+            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: gold)),
+            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: gold, width: 2)),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: Colors.white60)),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -169,8 +182,17 @@ class _BookingScreenState extends State<BookingScreen> {
                 Navigator.pop(ctx);
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor),
-            child: const Text('Add Stop', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: gold,
+              foregroundColor: isDark ? Colors.black : Colors.white,
+            ),
+            child: Text(
+              'Add Stop',
+              style: TextStyle(
+                color: isDark ? Colors.black : Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -180,16 +202,18 @@ class _BookingScreenState extends State<BookingScreen> {
   void _confirmBooking() {
     final duration = _durations[_selectedDurationIndex];
     final vehicle = _vehicleClasses[_selectedVehicleIndex];
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final gold = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
 
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (ctx) => Container(
         padding: const EdgeInsets.all(24),
-        decoration: const BoxDecoration(
-          color: Color(0xFF16161C),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          border: Border(top: BorderSide(color: AppTheme.outlineGold, width: 1.5)),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF16161C) : AppTheme.porcelainSurface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          border: Border(top: BorderSide(color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline, width: 1.5)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -197,14 +221,14 @@ class _BookingScreenState extends State<BookingScreen> {
           children: [
             Row(
               children: [
-                const Icon(Icons.stars_rounded, color: AppTheme.primaryColor, size: 24),
+                Icon(Icons.stars_rounded, color: gold, size: 24),
                 const SizedBox(width: 10),
                 Text(
                   'Reservation Confirmed',
                   style: AppTheme.outfit(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                    color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                   ),
                 ),
               ],
@@ -212,26 +236,36 @@ class _BookingScreenState extends State<BookingScreen> {
             const SizedBox(height: 14),
             Text(
               'Your dedicated ${vehicle.name} chauffeur has been locked for ${duration.durationStr} (${duration.includedKm} km included). SACCO VIP occurrence log initialized.',
-              style: AppTheme.inter(fontSize: 13, color: Colors.white70, height: 1.4),
+              style: AppTheme.inter(
+                fontSize: 13,
+                color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
+                height: 1.4,
+              ),
             ),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFF1E1E26),
+                color: isDark ? const Color(0xFF1E1E26) : AppTheme.porcelainSurfaceContainer,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white12),
+                border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Estimated Locked Total', style: AppTheme.inter(color: Colors.white70, fontSize: 13)),
+                  Text(
+                    'Estimated Locked Total',
+                    style: AppTheme.inter(
+                      color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
+                      fontSize: 13,
+                    ),
+                  ),
                   Text(
                     'KES ${_totalFare.toStringAsFixed(0)}',
                     style: AppTheme.montserrat(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      color: AppTheme.primaryColor,
+                      color: gold,
                     ),
                   ),
                 ],
@@ -250,12 +284,16 @@ class _BookingScreenState extends State<BookingScreen> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
+                  backgroundColor: gold,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
                 child: Text(
                   'Return to Cockpit',
-                  style: AppTheme.outfit(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.black),
+                  style: AppTheme.outfit(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? Colors.black : Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -267,13 +305,20 @@ class _BookingScreenState extends State<BookingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final gold = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0E),
+      backgroundColor: isDark ? const Color(0xFF0D0D0E) : AppTheme.porcelainCanvas,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121215),
+        backgroundColor: isDark ? const Color(0xFF121215) : AppTheme.porcelainSurface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
+            size: 20,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -281,7 +326,7 @@ class _BookingScreenState extends State<BookingScreen> {
           style: AppTheme.outfit(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: Colors.white,
+            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
           ),
         ),
         actions: [
@@ -289,21 +334,21 @@ class _BookingScreenState extends State<BookingScreen> {
             margin: const EdgeInsets.symmetric(vertical: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.12),
+              color: gold.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.outlineGold),
+              border: Border.all(color: isDark ? AppTheme.outlineGold : gold.withValues(alpha: 0.3)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.verified_user_rounded, color: AppTheme.primaryColor, size: 14),
+                Icon(Icons.verified_user_rounded, color: gold, size: 14),
                 const SizedBox(width: 4),
                 Text(
                   'VIP Safe',
                   style: AppTheme.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.primaryColor,
+                    color: gold,
                   ),
                 ),
               ],
@@ -321,14 +366,14 @@ class _BookingScreenState extends State<BookingScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFF141418),
+                color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppTheme.outlineGold),
-                boxShadow: const [
+                border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline),
+                boxShadow: [
                   BoxShadow(
-                    color: Color(0x18000000),
+                    color: isDark ? const Color(0x18000000) : const Color(0x0A000000),
                     blurRadius: 14,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
@@ -337,14 +382,14 @@ class _BookingScreenState extends State<BookingScreen> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.stars_rounded, color: AppTheme.primaryColor, size: 18),
+                      Icon(Icons.stars_rounded, color: gold, size: 18),
                       const SizedBox(width: 6),
                       Text(
                         'CABI BLACK LABEL',
                         style: AppTheme.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
-                          color: AppTheme.primaryColor,
+                          color: gold,
                           letterSpacing: 1.1,
                         ),
                       ),
@@ -356,7 +401,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     style: AppTheme.outfit(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -364,7 +409,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     'White-glove executive mobility for boardroom meetings, diplomatic visits & bespoke city tours.',
                     style: AppTheme.inter(
                       fontSize: 13,
-                      color: Colors.white60,
+                      color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary,
                       height: 1.4,
                     ),
                   ),
@@ -382,7 +427,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   style: AppTheme.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white54,
+                    color: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary,
                     letterSpacing: 1.1,
                   ),
                 ),
@@ -391,7 +436,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   style: AppTheme.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.primaryColor,
+                    color: gold,
                   ),
                 ),
               ],
@@ -416,11 +461,13 @@ class _BookingScreenState extends State<BookingScreen> {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? AppTheme.primaryColor
-                            : const Color(0xFF141418),
+                            ? gold
+                            : (isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: isSelected ? AppTheme.primaryColor : Colors.white12,
+                          color: isSelected
+                              ? gold
+                              : (isDark ? Colors.white12 : AppTheme.porcelainOutline),
                         ),
                       ),
                       child: Column(
@@ -435,14 +482,18 @@ class _BookingScreenState extends State<BookingScreen> {
                                 style: AppTheme.inter(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
-                                  color: isSelected ? Colors.black : Colors.white70,
+                                  color: isSelected
+                                      ? (isDark ? Colors.black : Colors.white)
+                                      : (isDark ? Colors.white70 : AppTheme.porcelainTextPrimary),
                                 ),
                               ),
                               if (dur.badge != null)
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                                   decoration: BoxDecoration(
-                                    color: isSelected ? Colors.black : AppTheme.primaryColor,
+                                    color: isSelected
+                                        ? (isDark ? Colors.black : Colors.white)
+                                        : gold,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
@@ -450,7 +501,9 @@ class _BookingScreenState extends State<BookingScreen> {
                                     style: AppTheme.inter(
                                       fontSize: 8,
                                       fontWeight: FontWeight.w900,
-                                      color: isSelected ? AppTheme.primaryColor : Colors.black,
+                                      color: isSelected
+                                          ? gold
+                                          : (isDark ? Colors.black : Colors.white),
                                     ),
                                   ),
                                 ),
@@ -461,7 +514,9 @@ class _BookingScreenState extends State<BookingScreen> {
                             style: AppTheme.montserrat(
                               fontSize: 14,
                               fontWeight: FontWeight.w800,
-                              color: isSelected ? Colors.black : Colors.white,
+                              color: isSelected
+                                  ? (isDark ? Colors.black : Colors.white)
+                                  : (isDark ? Colors.white : AppTheme.porcelainTextPrimary),
                             ),
                           ),
                         ],
@@ -482,13 +537,16 @@ class _BookingScreenState extends State<BookingScreen> {
                   style: AppTheme.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white54,
+                    color: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary,
                     letterSpacing: 1.1,
                   ),
                 ),
                 Text(
                   'Flexible sequencing',
-                  style: AppTheme.inter(fontSize: 11, color: Colors.white38),
+                  style: AppTheme.inter(
+                    fontSize: 11,
+                    color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.7),
+                  ),
                 ),
               ],
             ),
@@ -497,9 +555,9 @@ class _BookingScreenState extends State<BookingScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF141418),
+                color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white12),
+                border: Border.all(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
               ),
               child: Column(
                 children: [
@@ -517,7 +575,7 @@ class _BookingScreenState extends State<BookingScreen> {
                             width: 8,
                             height: 8,
                             decoration: BoxDecoration(
-                              color: isFirst ? AppTheme.primaryColor : AppTheme.successGreen,
+                              color: isFirst ? gold : AppTheme.successGreen,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -531,7 +589,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                   style: AppTheme.inter(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w800,
-                                    color: Colors.white38,
+                                    color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.7),
                                     letterSpacing: 0.8,
                                   ),
                                 ),
@@ -541,7 +599,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                   style: AppTheme.inter(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.white,
+                                    color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                                   ),
                                 ),
                               ],
@@ -549,7 +607,11 @@ class _BookingScreenState extends State<BookingScreen> {
                           ),
                           if (!isFirst)
                             IconButton(
-                              icon: const Icon(Icons.close_rounded, color: Colors.white30, size: 16),
+                              icon: Icon(
+                                Icons.close_rounded,
+                                color: isDark ? Colors.white30 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.5),
+                                size: 16,
+                              ),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                               onPressed: () {
@@ -560,7 +622,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       ),
                     );
                   }),
-                  const Divider(color: Colors.white10, height: 16),
+                  Divider(color: isDark ? Colors.white10 : AppTheme.porcelainOutline, height: 16),
                   InkWell(
                     onTap: _addWaypointDialog,
                     borderRadius: BorderRadius.circular(10),
@@ -571,14 +633,14 @@ class _BookingScreenState extends State<BookingScreen> {
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.add_circle_outline_rounded, color: AppTheme.primaryColor, size: 18),
+                              Icon(Icons.add_circle_outline_rounded, color: gold, size: 18),
                               const SizedBox(width: 8),
                               Text(
                                 'Add Destination Stop',
                                 style: AppTheme.outfit(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
-                                  color: AppTheme.primaryColor,
+                                  color: gold,
                                 ),
                               ),
                             ],
@@ -586,12 +648,15 @@ class _BookingScreenState extends State<BookingScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.06),
+                              color: isDark ? Colors.white.withValues(alpha: 0.06) : AppTheme.porcelainSurfaceContainer,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
                               'Included',
-                              style: AppTheme.inter(fontSize: 10, color: Colors.white54),
+                              style: AppTheme.inter(
+                                fontSize: 10,
+                                color: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary,
+                              ),
                             ),
                           ),
                         ],
@@ -609,7 +674,7 @@ class _BookingScreenState extends State<BookingScreen> {
               style: AppTheme.inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
-                color: Colors.white54,
+                color: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary,
                 letterSpacing: 1.1,
               ),
             ),
@@ -626,10 +691,10 @@ class _BookingScreenState extends State<BookingScreen> {
                   margin: const EdgeInsets.only(bottom: 10),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF141418),
+                    color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: isSelected ? AppTheme.primaryColor : Colors.white12,
+                      color: isSelected ? gold : (isDark ? Colors.white12 : AppTheme.porcelainOutline),
                       width: isSelected ? 1.5 : 1.0,
                     ),
                   ),
@@ -640,16 +705,20 @@ class _BookingScreenState extends State<BookingScreen> {
                         height: 44,
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? AppTheme.primaryColor.withValues(alpha: 0.15)
-                              : Colors.white.withValues(alpha: 0.06),
+                              ? gold.withValues(alpha: 0.15)
+                              : (isDark ? Colors.white.withValues(alpha: 0.06) : AppTheme.porcelainSurfaceContainer),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: isSelected ? AppTheme.outlineGold : Colors.white10,
+                            color: isSelected
+                                ? (isDark ? AppTheme.outlineGold : gold.withValues(alpha: 0.3))
+                                : (isDark ? Colors.white10 : AppTheme.porcelainOutline),
                           ),
                         ),
                         child: Icon(
                           vc.icon,
-                          color: isSelected ? AppTheme.primaryColor : Colors.white70,
+                          color: isSelected
+                              ? gold
+                              : (isDark ? Colors.white70 : AppTheme.porcelainTextSecondary),
                           size: 22,
                         ),
                       ),
@@ -663,7 +732,7 @@ class _BookingScreenState extends State<BookingScreen> {
                               style: AppTheme.outfit(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.white,
+                                color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                               ),
                             ),
                             const SizedBox(height: 2),
@@ -671,7 +740,7 @@ class _BookingScreenState extends State<BookingScreen> {
                               vc.models,
                               style: AppTheme.inter(
                                 fontSize: 12,
-                                color: Colors.white60,
+                                color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary,
                               ),
                             ),
                           ],
@@ -679,7 +748,9 @@ class _BookingScreenState extends State<BookingScreen> {
                       ),
                       Icon(
                         isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-                        color: isSelected ? AppTheme.primaryColor : Colors.white30,
+                        color: isSelected
+                            ? gold
+                            : (isDark ? Colors.white30 : AppTheme.porcelainOutline),
                         size: 20,
                       ),
                     ],
@@ -693,17 +764,17 @@ class _BookingScreenState extends State<BookingScreen> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFF1B1B22),
+                color: isDark ? const Color(0xFF1B1B22) : AppTheme.porcelainSurfaceContainer,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white10),
+                border: Border.all(color: isDark ? Colors.white10 : AppTheme.porcelainOutline),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildAmenity(Icons.local_drink_rounded, 'Mineral Water'),
-                  _buildAmenity(Icons.wifi_rounded, '5G Onboard'),
-                  _buildAmenity(Icons.battery_charging_full_rounded, 'USB Fast-Charge'),
-                  _buildAmenity(Icons.verified_rounded, 'SACCO Vetted'),
+                  _buildAmenity(Icons.local_drink_rounded, 'Mineral Water', gold, isDark),
+                  _buildAmenity(Icons.wifi_rounded, '5G Onboard', gold, isDark),
+                  _buildAmenity(Icons.battery_charging_full_rounded, 'USB Fast-Charge', gold, isDark),
+                  _buildAmenity(Icons.verified_rounded, 'SACCO Vetted', gold, isDark),
                 ],
               ),
             ),
@@ -712,9 +783,9 @@ class _BookingScreenState extends State<BookingScreen> {
       ),
       bottomSheet: Container(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-        decoration: const BoxDecoration(
-          color: Color(0xFF121216),
-          border: Border(top: BorderSide(color: Colors.white12)),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF121216) : AppTheme.porcelainSurface,
+          border: Border(top: BorderSide(color: isDark ? Colors.white12 : AppTheme.porcelainOutline)),
         ),
         child: Row(
           children: [
@@ -727,7 +798,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   style: AppTheme.inter(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white38,
+                    color: isDark ? Colors.white38 : AppTheme.porcelainTextSecondary,
                   ),
                 ),
                 Text(
@@ -735,7 +806,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   style: AppTheme.montserrat(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
-                    color: AppTheme.primaryColor,
+                    color: gold,
                   ),
                 ),
               ],
@@ -747,8 +818,8 @@ class _BookingScreenState extends State<BookingScreen> {
                 child: ElevatedButton(
                   onPressed: _confirmBooking,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.black,
+                    backgroundColor: gold,
+                    foregroundColor: isDark ? Colors.black : Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     elevation: 4,
                   ),
@@ -757,7 +828,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     style: AppTheme.outfit(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
-                      color: Colors.black,
+                      color: isDark ? Colors.black : Colors.white,
                     ),
                   ),
                 ),
@@ -769,15 +840,18 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget _buildAmenity(IconData icon, String label) {
+  Widget _buildAmenity(IconData icon, String label, Color gold, bool isDark) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: AppTheme.primaryColor, size: 18),
+        Icon(icon, color: gold, size: 18),
         const SizedBox(height: 4),
         Text(
           label,
-          style: AppTheme.inter(fontSize: 10, color: Colors.white70),
+          style: AppTheme.inter(
+            fontSize: 10,
+            color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
+          ),
         ),
       ],
     );
