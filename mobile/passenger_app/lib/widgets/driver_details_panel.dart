@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:core_ui/core_ui.dart';
@@ -62,6 +63,13 @@ class DriverDetailsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final surfaceBg = isDark ? const Color(0xFF16161A) : AppTheme.porcelainSurface;
+    final outline = isDark ? Colors.white12 : AppTheme.porcelainOutline;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
+
     final colorText = (vehicleColor != null && vehicleColor!.isNotEmpty)
         ? '$vehicleColor '
         : '';
@@ -69,15 +77,16 @@ class DriverDetailsPanel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: const [
+        color: surfaceBg,
+        border: Border(top: BorderSide(color: outline, width: 1)),
+        boxShadow: [
           BoxShadow(
-            color: Colors.black12,
+            color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
             blurRadius: 10,
-            offset: Offset(0, -2),
+            offset: const Offset(0, -2),
           ),
         ],
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -88,7 +97,7 @@ class DriverDetailsPanel extends StatelessWidget {
                 imageUrl: profilePictureUrl,
                 name: driverName,
                 radius: 24,
-                borderColor: const Color(0xFFD4AF37),
+                borderColor: accent,
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -97,9 +106,10 @@ class DriverDetailsPanel extends StatelessWidget {
                   children: [
                     Text(
                       driverName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
+                        color: textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -129,8 +139,8 @@ class DriverDetailsPanel extends StatelessWidget {
                             '$colorText• $carModel',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Colors.black54,
+                            style: TextStyle(
+                              color: textSecondary,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
@@ -146,13 +156,13 @@ class DriverDetailsPanel extends StatelessWidget {
                 children: [
                   Text(
                     eta,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue,
+                      color: accent,
                     ),
                   ),
-                  const Text('ETA', style: TextStyle(fontSize: 12)),
+                  Text('ETA', style: TextStyle(fontSize: 12, color: textSecondary)),
                 ],
               ),
             ],
@@ -163,8 +173,10 @@ class DriverDetailsPanel extends StatelessWidget {
             child: ElevatedButton.icon(
               onPressed: () => _handleSOS(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red.shade50,
-                foregroundColor: Colors.red,
+                backgroundColor: const Color(0xFFEF4444).withValues(alpha: isDark ? 0.15 : 0.08),
+                foregroundColor: const Color(0xFFEF4444),
+                side: BorderSide(color: const Color(0xFFEF4444).withValues(alpha: 0.3)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),
               icon: const Icon(Icons.warning_amber_rounded),
