@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class FavoriteDriversScreen extends StatefulWidget {
   const FavoriteDriversScreen({super.key});
@@ -28,15 +29,36 @@ class _FavoriteDriversScreenState extends State<FavoriteDriversScreen> {
   ];
 
   void _removeFavorite(String driverId) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Remove Favorite?'),
-        content: const Text('This driver will no longer be prioritized for your scheduled rides.'),
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : AppTheme.porcelainSurface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: isDark ? Colors.white12 : AppTheme.porcelainOutline),
+        ),
+        title: Text(
+          'Remove Favorite?',
+          style: TextStyle(
+            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          'This driver will no longer be prioritized for your scheduled rides.',
+          style: TextStyle(
+            color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('CANCEL'),
+            child: Text(
+              'CANCEL',
+              style: TextStyle(color: isDark ? Colors.grey : AppTheme.porcelainTextSecondary),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -49,7 +71,7 @@ class _FavoriteDriversScreenState extends State<FavoriteDriversScreen> {
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('REMOVE'),
+            child: const Text('REMOVE', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
