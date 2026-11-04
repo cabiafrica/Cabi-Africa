@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 // ignore_for_file: unused_element
 import 'package:flutter/material.dart';
 
@@ -53,6 +54,12 @@ class _VehicleTypeSelectorState extends State<VehicleTypeSelector>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceBg = isDark ? _kObsidian : AppTheme.porcelainSurface;
+    final goldColor = isDark ? _kGold : AppTheme.aurumBronze;
+    final textSecondary = isDark ? Colors.white.withValues(alpha: 0.55) : AppTheme.porcelainTextSecondary;
+    final outline = isDark ? _kGold.withValues(alpha: 0.25) : AppTheme.porcelainOutline;
+
     final vehicleTypes = [
       _VehicleOption(
         type: 'STANDARD',
@@ -94,14 +101,14 @@ class _VehicleTypeSelectorState extends State<VehicleTypeSelector>
 
     return Container(
       decoration: BoxDecoration(
-        color: _kObsidian,
+        color: surfaceBg,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border(
-          top: BorderSide(color: _kGold.withValues(alpha: 0.25), width: 1),
+          top: BorderSide(color: outline, width: 1),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.6),
+            color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.08),
             blurRadius: 24,
             offset: const Offset(0, -4),
           ),
@@ -118,7 +125,7 @@ class _VehicleTypeSelectorState extends State<VehicleTypeSelector>
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white24,
+                color: isDark ? Colors.white24 : AppTheme.porcelainOutline,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -135,10 +142,10 @@ class _VehicleTypeSelectorState extends State<VehicleTypeSelector>
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'CHOOSE RIDE TYPE',
                           style: TextStyle(
-                            color: _kGold,
+                            color: goldColor,
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.5,
@@ -148,7 +155,7 @@ class _VehicleTypeSelectorState extends State<VehicleTypeSelector>
                         Text(
                           'Select your preferred vehicle',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.55),
+                            color: textSecondary,
                             fontSize: 13,
                           ),
                         ),
@@ -251,6 +258,11 @@ class _VehicleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final goldColor = isDark ? _kGold : AppTheme.aurumBronze;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textSecondary = isDark ? Colors.white.withValues(alpha: 0.45) : AppTheme.porcelainTextSecondary;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -259,19 +271,19 @@ class _VehicleCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
           color: isSelected
-              ? _kGold.withValues(alpha: 0.06)
-              : _kObsidianCard,
+              ? goldColor.withValues(alpha: isDark ? 0.06 : 0.09)
+              : (isDark ? _kObsidianCard : AppTheme.porcelainSurfaceContainer),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
-                ? _kGold.withValues(alpha: 0.6)
-                : Colors.white.withValues(alpha: 0.07),
+                ? goldColor.withValues(alpha: 0.6)
+                : (isDark ? Colors.white.withValues(alpha: 0.07) : AppTheme.porcelainOutline),
             width: isSelected ? 1.5 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: _kGold.withValues(alpha: 0.15),
+                    color: goldColor.withValues(alpha: isDark ? 0.15 : 0.18),
                     blurRadius: 12,
                     offset: const Offset(0, 2),
                   )
@@ -288,18 +300,18 @@ class _VehicleCard extends StatelessWidget {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? _kGold.withValues(alpha: 0.15)
-                      : Colors.white.withValues(alpha: 0.05),
+                      ? goldColor.withValues(alpha: isDark ? 0.15 : 0.18)
+                      : (isDark ? Colors.white.withValues(alpha: 0.05) : AppTheme.porcelainSurfaceHigh),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
-                        ? _kGold.withValues(alpha: 0.4)
-                        : Colors.white.withValues(alpha: 0.08),
+                        ? goldColor.withValues(alpha: 0.4)
+                        : (isDark ? Colors.white.withValues(alpha: 0.08) : AppTheme.porcelainOutline),
                   ),
                 ),
                 child: Icon(
                   vehicle.icon,
-                  color: isSelected ? _kGold : Colors.white54,
+                  color: isSelected ? goldColor : (isDark ? Colors.white54 : AppTheme.porcelainTextSecondary),
                   size: 24,
                 ),
               ),
@@ -317,7 +329,7 @@ class _VehicleCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w800,
-                            color: isSelected ? _kGold : Colors.white,
+                            color: isSelected ? goldColor : textPrimary,
                           ),
                         ),
                         if (vehicle.badge != null) ...[
@@ -336,7 +348,7 @@ class _VehicleCard extends StatelessWidget {
                       vehicle.subtitle,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.white.withValues(alpha: 0.45),
+                        color: textSecondary,
                       ),
                     ),
                   ],
@@ -352,7 +364,7 @@ class _VehicleCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: isSelected ? _kGold : Colors.white70,
+                      color: isSelected ? goldColor : textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -362,14 +374,14 @@ class _VehicleCard extends StatelessWidget {
                       Icon(
                         Icons.schedule_rounded,
                         size: 11,
-                        color: Colors.white.withValues(alpha: 0.4),
+                        color: isDark ? Colors.white.withValues(alpha: 0.4) : AppTheme.porcelainTextSecondary.withValues(alpha: 0.7),
                       ),
                       const SizedBox(width: 3),
                       Text(
                         vehicle.eta,
                         style: TextStyle(
                           fontSize: 11,
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: isDark ? Colors.white.withValues(alpha: 0.4) : AppTheme.porcelainTextSecondary.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -380,15 +392,15 @@ class _VehicleCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: _kGold,
+                        color: goldColor,
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: const Text(
+                      child: Text(
                         '✓ SELECTED',
                         style: TextStyle(
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
-                          color: Colors.black,
+                          color: isDark ? Colors.black : Colors.white,
                           letterSpacing: 0.5,
                         ),
                       ),
