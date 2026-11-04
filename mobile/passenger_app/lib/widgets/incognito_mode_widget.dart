@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class IncognitoModeWidget extends StatelessWidget {
@@ -12,10 +13,31 @@ class IncognitoModeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isIncognito
+        ? (isDark ? const Color(0xFF141418) : const Color(0xFF0F172A))
+        : (isDark ? const Color(0xFF16161A) : AppTheme.porcelainSurface);
+    final borderColor = isIncognito
+        ? const Color(0xFF0F9B8E)
+        : (isDark ? Colors.white12 : AppTheme.porcelainOutline);
+    final titleColor = isIncognito
+        ? Colors.white
+        : (isDark ? Colors.white : AppTheme.porcelainTextPrimary);
+    final subtitleColor = isIncognito
+        ? Colors.white70
+        : (isDark ? Colors.white60 : AppTheme.porcelainTextSecondary);
+    final iconColor = isIncognito
+        ? const Color(0xFF0F9B8E)
+        : (isDark ? Colors.white60 : AppTheme.porcelainTextSecondary);
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: isIncognito ? 4 : 1,
-      color: isIncognito ? Colors.grey.shade900 : Colors.white,
+      elevation: isIncognito ? 4 : 0,
+      color: cardBg,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: borderColor, width: isIncognito ? 1.5 : 1),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -25,7 +47,7 @@ class IncognitoModeWidget extends StatelessWidget {
               children: [
                 Icon(
                   Icons.visibility_off,
-                  color: isIncognito ? Colors.white : Colors.grey.shade700,
+                  color: iconColor,
                   size: 28,
                 ),
                 const SizedBox(width: 12),
@@ -38,7 +60,7 @@ class IncognitoModeWidget extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: isIncognito ? Colors.white : Colors.black87,
+                          color: titleColor,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -48,9 +70,7 @@ class IncognitoModeWidget extends StatelessWidget {
                             : 'Take a private trip',
                         style: TextStyle(
                           fontSize: 13,
-                          color: isIncognito
-                              ? Colors.grey.shade400
-                              : Colors.grey.shade600,
+                          color: subtitleColor,
                         ),
                       ),
                     ],
@@ -69,21 +89,25 @@ class IncognitoModeWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade800,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade700),
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.white.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: isDark ? Colors.white12 : Colors.white24,
+                  ),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline,
-                        color: Colors.grey.shade400, size: 20),
+                    const Icon(Icons.info_outline,
+                        color: Color(0xFF0F9B8E), size: 20),
                     const SizedBox(width: 8),
-                    Expanded(
+                    const Expanded(
                       child: Text(
                         'Trip will be saved for billing & safety but hidden from your main history',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade300,
+                          color: Colors.white70,
                         ),
                       ),
                     ),
