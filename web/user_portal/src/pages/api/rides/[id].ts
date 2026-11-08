@@ -1,11 +1,32 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
+import * as jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
+
+function extractCallerUser(req: NextApiRequest): { sub?: string; id?: string; role?: string } | null {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return null;
+    }
+    const token = authHeader.substring(7);
+    const secret = process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'dev-only-jwt-secret-do-not-use-in-prod' : '');
+    if (!secret) return null;
+    try {
+        return jwt.verify(token, secret) as any;
+    } catch {
+        return null;
+    }
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Method not allowed' });
+    }
+
+    const caller = extractCallerUser(req);
+    if (!caller) {
+        return res.status(401).json({ message: 'Authentication required to view trip telemetry' });
     }
 
     const { id } = req.query;
@@ -43,6 +64,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (!ride) {
             return res.status(404).json({ message: 'Ride not found' });
+        }
+
+        const callerId = caller.sub || caller.id;
+        const isParticipant =
+            ride.passengerId === callerId ||
+            ride.driver?.userId === callerId ||
+            ride.driverId === callerId ||
+            caller.role === 'ADMIN' ||
+            caller.role === 'DISPATCHER';
+
+        if (!isParticipant) {
+            return res.status(403).json({ message: 'Not authorized to view this trip' });
         }
 
         // Transform data for frontend if necessary, or return as is

@@ -4,12 +4,14 @@ import {
   Get,
   Body,
   Param,
-  Query,
+  Req,
   Headers,
   HttpCode,
   HttpStatus,
   Logger,
   BadRequestException,
+  UnauthorizedException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { MpesaService } from './mpesa.service';
 import {
@@ -19,11 +21,62 @@ import {
   StkCallback,
 } from './mpesa.types';
 
+const SAFARICOM_ALLOWED_IPS = new Set([
+  '196.201.214.200',
+  '196.201.214.206',
+  '196.201.213.114',
+  '196.201.214.207',
+  '196.201.214.208',
+  '196.201.213.44',
+  '196.201.212.127',
+  '196.201.212.138',
+  '196.201.212.129',
+  '196.201.212.136',
+  '196.201.212.74',
+  '196.201.212.69',
+]);
+
 @Controller('mpesa')
 export class MpesaController {
   private readonly logger = new Logger(MpesaController.name);
 
   constructor(private readonly mpesaService: MpesaService) {}
+
+  private assertFinanceAdmin(req: any): void {
+    const user = req?.user;
+    if (!user) {
+      throw new UnauthorizedException('Authentication required.');
+    }
+    const perms: string[] = Array.isArray(user.permissions) ? user.permissions : [];
+    const isAdmin =
+      user.role === 'ADMIN' ||
+      perms.some((p) => p.startsWith('FINANCE_') || p === 'SUPER_ADMIN');
+    if (!isAdmin) {
+      throw new ForbiddenException('Finance or Admin privileges required for M-Pesa administrative operations.');
+    }
+  }
+
+  private verifyWebhookOrigin(req: any, headers: Record<string, string>): void {
+    const expectedSecret = process.env.MPESA_WEBHOOK_SECRET;
+    if (expectedSecret) {
+      const provided = headers?.['x-mpesa-webhook-secret'] || req?.query?.secret;
+      if (provided !== expectedSecret) {
+        this.logger.warn('Rejected M-Pesa callback with invalid webhook secret');
+        throw new UnauthorizedException('Invalid M-Pesa webhook signature');
+      }
+      return;
+    }
+
+    if (process.env.NODE_ENV === 'production' && process.env.MPESA_ENV === 'production') {
+      const forwardedFor = headers?.['x-forwarded-for']?.split(',')[0]?.trim();
+      const remoteIp = forwardedFor || req?.ip || req?.socket?.remoteAddress || '';
+      const normalizedIp = remoteIp.replace(/^::ffff:/, '');
+      if (!SAFARICOM_ALLOWED_IPS.has(normalizedIp)) {
+        this.logger.warn(`Rejected M-Pesa callback from untrusted IP: ${normalizedIp}`);
+        throw new ForbiddenException('Untrusted M-Pesa callback origin');
+      }
+    }
+  }
 
   @Post('stk-push')
   @HttpCode(HttpStatus.OK)
@@ -32,6 +85,9 @@ export class MpesaController {
 
     if (!request.phoneNumber || !request.amount || !request.accountReference) {
       throw new BadRequestException('Missing required fields: phoneNumber, amount, accountReference');
+    }
+    if (!Number.isFinite(Number(request.amount)) || Number(request.amount) <= 0) {
+      throw new BadRequestException('Amount must be a positive number');
     }
 
     const response = await this.mpesaService.initiateStkPush({
@@ -58,7 +114,12 @@ export class MpesaController {
 
   @Post('stk-callback')
   @HttpCode(HttpStatus.OK)
-  async handleStkCallback(@Body() callback: StkCallback) {
+  async handleStkCallback(
+    @Req() req: any,
+    @Headers() headers: Record<string, string>,
+    @Body() callback: StkCallback
+  ) {
+    this.verifyWebhookOrigin(req, headers);
     this.logger.log('STK Callback received');
 
     const transaction = this.mpesaService.handleStkCallback(callback);
@@ -74,7 +135,8 @@ export class MpesaController {
 
   @Post('c2b/register')
   @HttpCode(HttpStatus.OK)
-  async registerC2B(@Body() request: C2BRegisterRequest) {
+  async registerC2B(@Req() req: any, @Body() request: C2BRegisterRequest) {
+    this.assertFinanceAdmin(req);
     this.logger.log('C2B registration request');
 
     const response = await this.mpesaService.registerC2BUrls({
@@ -91,7 +153,12 @@ export class MpesaController {
 
   @Post('c2b/confirmation')
   @HttpCode(HttpStatus.OK)
-  async handleC2BConfirmation(@Body() callback: any) {
+  async handleC2BConfirmation(
+    @Req() req: any,
+    @Headers() headers: Record<string, string>,
+    @Body() callback: any
+  ) {
+    this.verifyWebhookOrigin(req, headers);
     this.logger.log('C2B Confirmation received');
 
     const transaction = this.mpesaService.handleC2BConfirmation(callback);
@@ -105,7 +172,12 @@ export class MpesaController {
 
   @Post('c2b/validation')
   @HttpCode(HttpStatus.OK)
-  async handleC2BValidation(@Body() callback: any) {
+  async handleC2BValidation(
+    @Req() req: any,
+    @Headers() headers: Record<string, string>,
+    @Body() callback: any
+  ) {
+    this.verifyWebhookOrigin(req, headers);
     this.logger.log('C2B Validation received');
 
     return {
@@ -116,11 +188,15 @@ export class MpesaController {
 
   @Post('b2c')
   @HttpCode(HttpStatus.OK)
-  async initiateB2C(@Body() request: B2CRequest) {
+  async initiateB2C(@Req() req: any, @Body() request: B2CRequest) {
+    this.assertFinanceAdmin(req);
     this.logger.log(`B2C request for ${request.phoneNumber}, Amount: ${request.amount}`);
 
     if (!request.phoneNumber || !request.amount || !request.occasion) {
       throw new BadRequestException('Missing required fields: phoneNumber, amount, occasion');
+    }
+    if (!Number.isFinite(Number(request.amount)) || Number(request.amount) <= 0) {
+      throw new BadRequestException('Amount must be a positive number');
     }
 
     const response = await this.mpesaService.initiateB2C(request);
@@ -134,7 +210,12 @@ export class MpesaController {
 
   @Post('b2c/callback')
   @HttpCode(HttpStatus.OK)
-  async handleB2CCallback(@Body() callback: any) {
+  async handleB2CCallback(
+    @Req() req: any,
+    @Headers() headers: Record<string, string>,
+    @Body() callback: any
+  ) {
+    this.verifyWebhookOrigin(req, headers);
     this.logger.log('B2C Callback received');
 
     const transaction = this.mpesaService.handleB2CCallback(callback);
@@ -151,6 +232,7 @@ export class MpesaController {
   @Post('reverse')
   @HttpCode(HttpStatus.OK)
   async reverseTransaction(
+    @Req() req: any,
     @Body()
     body: {
       transactionId: string;
@@ -159,6 +241,7 @@ export class MpesaController {
       remarks: string;
     }
   ) {
+    this.assertFinanceAdmin(req);
     const { transactionId, amount, receiverPhone, remarks } = body;
 
     if (!transactionId || !amount || !receiverPhone) {
@@ -183,7 +266,8 @@ export class MpesaController {
 
   @Get('balance')
   @HttpCode(HttpStatus.OK)
-  async getBalance() {
+  async getBalance(@Req() req: any) {
+    this.assertFinanceAdmin(req);
     const balance = await this.mpesaService.getBalance();
     return {
       success: true,
@@ -193,7 +277,8 @@ export class MpesaController {
 
   @Get('transactions/:id')
   @HttpCode(HttpStatus.OK)
-  async getTransaction(@Param('id') transactionId: string) {
+  async getTransaction(@Req() req: any, @Param('id') transactionId: string) {
+    this.assertFinanceAdmin(req);
     const transaction = this.mpesaService.getTransaction(transactionId);
 
     if (!transaction) {
@@ -208,7 +293,8 @@ export class MpesaController {
 
   @Get('transactions')
   @HttpCode(HttpStatus.OK)
-  async getAllTransactions() {
+  async getAllTransactions(@Req() req: any) {
+    this.assertFinanceAdmin(req);
     const transactions = this.mpesaService.getAllTransactions();
     return {
       success: true,

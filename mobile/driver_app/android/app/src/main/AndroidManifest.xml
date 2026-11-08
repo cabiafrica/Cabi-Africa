@@ -14,10 +14,10 @@
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:roundIcon="@mipmap/launcher_icon"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="false">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0"/>
+            android:value="${googleMapsApiKey}"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

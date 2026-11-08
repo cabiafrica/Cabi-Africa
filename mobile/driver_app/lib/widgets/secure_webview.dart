@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -20,6 +21,23 @@ class _SecureWebViewState extends State<SecureWebView> {
   WebViewController? _controller;
   bool _isLoading = true;
   final _storage = const FlutterSecureStorage();
+
+  bool _isTrustedOrigin(String rawUrl) {
+    final parsed = Uri.tryParse(rawUrl);
+    if (parsed == null) return false;
+    final host = parsed.host.toLowerCase();
+    if (host == 'cabi.africa' ||
+        host.endsWith('.cabi.africa') ||
+        host == 'cabi-africa.com' ||
+        host.endsWith('.cabi-africa.com')) {
+      return parsed.scheme == 'https';
+    }
+    if (kDebugMode &&
+        (host == 'localhost' || host == '127.0.0.1' || host == '10.0.2.2')) {
+      return true;
+    }
+    return false;
+  }
 
   @override
   void initState() {
@@ -45,13 +63,22 @@ class _SecureWebViewState extends State<SecureWebView> {
         ..setBackgroundColor(AppTheme.darkBackground)
         ..setNavigationDelegate(
           NavigationDelegate(
+            onNavigationRequest: (NavigationRequest request) {
+              if (_isTrustedOrigin(request.url)) {
+                return NavigationDecision.navigate;
+              }
+              return NavigationDecision.prevent;
+            },
             onPageStarted: (String url) {
               if (mounted) setState(() => _isLoading = true);
             },
             onPageFinished: (String url) async {
-              final token = await _storage.read(key: 'jwt_token');
-              if (token != null) {
-                await controller.runJavaScript("localStorage.setItem('token', '$token');");
+              if (_isTrustedOrigin(url)) {
+                final token = await _storage.read(key: 'jwt_token');
+                if (token != null) {
+                  final safeTokenLiteral = jsonEncode(token);
+                  await controller.runJavaScript("localStorage.setItem('token', $safeTokenLiteral);");
+                }
               }
               if (mounted) {
                 setState(() => _isLoading = false);

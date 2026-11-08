@@ -51,11 +51,11 @@ export class UserService {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Map frontend roles to Prisma roles
-    const prismaRole = role.toUpperCase() as LegacyRole;
+    // Map frontend roles to Prisma roles safely (never allow privilege escalation to ADMIN via registration)
+    const prismaRole = role === UserRole.DRIVER ? LegacyRole.DRIVER : LegacyRole.PASSENGER;
 
-    // Generate OTP
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate cryptographically secure OTP
+    const otpCode = crypto.randomInt(100000, 1000000).toString();
     const otpExpires = new Date();
     otpExpires.setMinutes(otpExpires.getMinutes() + 10); // 10 minutes expiry
 
@@ -222,7 +222,8 @@ export class UserService {
         }
       });
 
-      return user;
+      const { password: _pwd, phoneOtpCode: _otp, resetPasswordToken: _rst, ...safeUser } = user as any;
+      return safeUser;
     });
 
     // Notify driver via SMS
@@ -248,7 +249,9 @@ export class UserService {
           phone,
           password: hashedPassword,
           fullName: `${firstName} ${lastName}`,
-          role: LegacyRole.ADMIN,
+          role: LegacyRole.PASSENGER,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          status: 'PENDING' as any,
         }
       });
 
@@ -275,7 +278,8 @@ export class UserService {
         }
       });
 
-      return { user, org };
+      const { password: _pwd, phoneOtpCode: _otp, resetPasswordToken: _rst, ...safeUser } = user as any;
+      return { user: safeUser, org };
     });
 
     // Notify founder via SMS
@@ -391,7 +395,7 @@ export class UserService {
   }
 
   async getPendingDrivers() {
-    return this.prisma.user.findMany({
+    const drivers = await this.prisma.user.findMany({
       where: {
         role: LegacyRole.DRIVER,
         status: 'PENDING' as any
@@ -400,13 +404,16 @@ export class UserService {
         driverProfile: true
       }
     });
+    return drivers.map(({ password: _pwd, phoneOtpCode: _otp, resetPasswordToken: _rst, ...safe }: any) => safe);
   }
 
   async updateUserStatus(userId: string, status: string) {
-    return this.prisma.user.update({
+    const updated = await this.prisma.user.update({
       where: { id: userId },
       data: { status: status as any }
     });
+    const { password: _pwd, phoneOtpCode: _otp, resetPasswordToken: _rst, ...safe } = updated as any;
+    return safe;
   }
 
   async promoteToDriver(userId: string) {
@@ -484,7 +491,7 @@ export class UserService {
       throw new NotFoundException('If an account with those details exists, a reset link has been sent.');
     }
 
-    const token = Math.floor(100000 + Math.random() * 900000).toString();
+    const token = crypto.randomInt(100000, 1000000).toString();
     const expires = new Date(Date.now() + 3600000);
 
     await this.prisma.user.update({

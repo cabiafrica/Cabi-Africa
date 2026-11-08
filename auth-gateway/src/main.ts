@@ -43,17 +43,21 @@ async function bootstrap() {
         'https://cabi-africa.com',
         'https://www.cabi-africa.com',
         'https://cabi-admin-panel.vercel.app',
+        'https://cabi-user-portal.vercel.app',
+        'https://cabi-dispatch-panel.vercel.app',
       ];
 
-      // Regex patterns for subdomains and local dev
+      // Regex patterns for owned subdomains (and local dev only when not in production)
       const allowedPatterns = [
-        /^https?:\/\/([^/]+\.)?cabi\.africa$/,
-        /^https?:\/\/([^/]+\.)?cabi-africa\.com$/,
-        /^https?:\/\/localhost(:\d+)?$/,
-        /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
-        /^https?:\/\/(192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/,
-        /^https?:\/\/([^/]+\.)?run\.app$/,
-        /^https?:\/\/([^/]+\.)?vercel\.app$/,
+        /^https:\/\/([^/]+\.)?cabi\.africa$/,
+        /^https:\/\/([^/]+\.)?cabi-africa\.com$/,
+        ...(!isProd
+          ? [
+              /^https?:\/\/localhost(:\d+)?$/,
+              /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
+              /^https?:\/\/(192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/,
+            ]
+          : []),
       ];
 
       const isAllowed = allowedOrigins.includes(normalizedOrigin) || 
@@ -72,15 +76,17 @@ async function bootstrap() {
     exposedHeaders: 'Authorization',
   });
 
-  // API Documentation
-  const config = new DocumentBuilder()
-    .setTitle('CABI Africa - Auth Gateway')
-    .setDescription('Unified Security & Authentication Gateway')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  // API Documentation (Non-Production Only)
+  if (!isProd) {
+    const config = new DocumentBuilder()
+      .setTitle('CABI Africa - Auth Gateway')
+      .setDescription('Unified Security & Authentication Gateway')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
+  }
 
   const port = process.env.PORT || 3333;
   await app.listen(port, '0.0.0.0');

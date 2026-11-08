@@ -208,12 +208,18 @@ export class PaymentService {
     }
 
     async topUpWallet(userId: string, amount: number) {
+        if (!Number.isFinite(amount) || amount <= 0) {
+            throw new Error('Top-up amount must be a positive number');
+        }
         const wallet = await this.getWallet(userId);
         wallet.balance += amount;
         return wallet;
     }
 
     async processPayment(rideId: string, amount: number, method: 'CASH' | 'WALLET' | 'CARD', payerId: string, payeeId: string) {
+        if (!Number.isFinite(amount) || amount <= 0) {
+            throw new Error('Payment amount must be a positive number');
+        }
         console.log(`[PaymentService] Processing ${method} payment of $${amount} for ride ${rideId}`);
 
         if (method === 'WALLET') {
@@ -237,6 +243,9 @@ export class PaymentService {
     }
 
     async processTip(rideId: string, tipAmount: number, passengerId: string, driverId: string, method: 'CARD' | 'WALLET' = 'CARD') {
+        if (!Number.isFinite(tipAmount) || tipAmount <= 0) {
+            throw new Error('Tip amount must be a positive number');
+        }
         console.log(`[PaymentService] Processing tip of $${tipAmount} for ride ${rideId}`);
 
         if (method === 'WALLET') {

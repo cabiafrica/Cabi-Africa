@@ -28,9 +28,47 @@ export class SaccoIntegrationService {
     private readonly maxRetries = 3;
     private readonly retryDelayMs = 1000;
 
+    private validateSafePartnerUrl(baseUrl: string): string {
+        let parsed: URL;
+        try {
+            parsed = new URL(baseUrl);
+        } catch {
+            throw new HttpException('Invalid partner API base URL', HttpStatus.BAD_REQUEST);
+        }
+
+        if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+            throw new HttpException('Partner API URL must use HTTPS or HTTP', HttpStatus.BAD_REQUEST);
+        }
+        if (process.env.NODE_ENV === 'production' && parsed.protocol !== 'https:') {
+            throw new HttpException('Partner API URL must use HTTPS in production', HttpStatus.BAD_REQUEST);
+        }
+
+        const host = parsed.hostname.toLowerCase();
+        const blockedHostPatterns = [
+            /^localhost$/,
+            /^127\./,
+            /^0\./,
+            /^169\.254\./,
+            /^10\./,
+            /^192\.168\./,
+            /^172\.(1[6-9]|2\d|3[0-1])\./,
+            /^\[?::1\]?$/,
+            /metadata\.google\.internal$/,
+            /\.internal$/,
+        ];
+
+        if (blockedHostPatterns.some((pattern) => pattern.test(host))) {
+            throw new HttpException('Partner API URL points to a restricted internal or metadata address', HttpStatus.FORBIDDEN);
+        }
+
+        return parsed.origin;
+    }
+
     private buildClient(baseUrl: string, apiKey: string): AxiosInstance {
+        const safeBaseUrl = this.validateSafePartnerUrl(baseUrl);
         return axios.create({
-            baseURL: baseUrl,
+            baseURL: safeBaseUrl,
+            maxRedirects: 0,
             headers: {
                 'Authorization': `Bearer ${apiKey}`,
                 'Content-Type': 'application/json',

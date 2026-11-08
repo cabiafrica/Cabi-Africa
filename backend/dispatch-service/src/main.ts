@@ -21,10 +21,11 @@ async function bootstrap() {
   app.enableCors({
     origin: isProduction
       ? [
-          /https?:\/\/([^/]+\.)?cabi\.africa$/,
-          /https?:\/\/([^/]+\.)?cabi-africa\.com$/,
-          /https?:\/\/([^/]+\.)?run\.app$/,
-          /https?:\/\/([^/]+\.)?vercel\.app$/,
+          /^https:\/\/([^/]+\.)?cabi\.africa$/,
+          /^https:\/\/([^/]+\.)?cabi-africa\.com$/,
+          'https://cabi-admin-panel.vercel.app',
+          'https://cabi-user-portal.vercel.app',
+          'https://cabi-dispatch-panel.vercel.app',
         ]
       : true,
     credentials: true,
@@ -35,17 +36,19 @@ async function bootstrap() {
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
 
-  // Swagger Setup
-  const config = new DocumentBuilder()
-    .setTitle('CABI Africa Dispatch API')
-    .setDescription(
-      'API documentation for CABI Africa backend services including Dispatch, Driver Leads, and Settings.',
-    )
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  // Swagger Setup (Non-Production Only)
+  if (!isProduction) {
+    const config = new DocumentBuilder()
+      .setTitle('CABI Africa Dispatch API')
+      .setDescription(
+        'API documentation for CABI Africa backend services including Dispatch, Driver Leads, and Settings.',
+      )
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
+  }
 
   const port = process.env.PORT || 3334;
   await app.listen(port, '0.0.0.0');

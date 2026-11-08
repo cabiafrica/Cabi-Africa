@@ -30,7 +30,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         // Let's check dispatch.controller.ts
 
         proxy.web(req, res, {
-            target: AUTH_GATEWAY_URL,
+            target: DISPATCH_SERVICE_TARGET,
         }, (err) => {
             if (err) {
                 console.error('Proxy error:', err);

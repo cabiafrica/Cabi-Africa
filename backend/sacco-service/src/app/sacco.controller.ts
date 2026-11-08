@@ -4,12 +4,16 @@ import {
     Body,
     Get,
     Put,
+    Req,
     Logger,
     Query,
     HttpException,
     HttpStatus,
     Param,
+    UnauthorizedException,
+    ForbiddenException,
 } from '@nestjs/common';
+import * as jwt from 'jsonwebtoken';
 import {
     SaccoService,
     CreateSaccoPartnerDto,
@@ -32,6 +36,46 @@ export class SaccoController {
         private readonly financialPartnerService: FinancialPartnerService,
     ) {}
 
+    private assertSaccoAdmin(req: any): void {
+        const internalKey = process.env.INTERNAL_API_KEY;
+        if (internalKey && req?.headers?.['x-internal-api-key'] === internalKey) {
+            return;
+        }
+        let user = req?.user;
+        if (!user && req?.headers?.authorization?.startsWith('Bearer ')) {
+            const token = req.headers.authorization.substring(7);
+            const secret =
+                process.env.JWT_SECRET ||
+                (process.env.NODE_ENV !== 'production' ? 'dev-only-jwt-secret-do-not-use-in-prod' : '');
+            if (secret) {
+                try {
+                    user = jwt.verify(token, secret) as any;
+                } catch {
+                    user = null;
+                }
+            }
+        }
+        if (!user) {
+            throw new UnauthorizedException('Authentication required for administrative SACCO operations.');
+        }
+        const perms: string[] = Array.isArray(user.permissions) ? user.permissions : [];
+        const isAdmin =
+            user.role === 'ADMIN' ||
+            perms.some((p) => p.startsWith('SACCO_') || p.startsWith('FINANCE_') || p === 'SUPER_ADMIN');
+        if (!isAdmin) {
+            throw new ForbiddenException('Admin privileges required for this SACCO operation.');
+        }
+    }
+
+    private redactPartnerSecret(partner: any): any {
+        if (!partner || typeof partner !== 'object') return partner;
+        const { apiKey, ...rest } = partner;
+        return {
+            ...rest,
+            hasApiKey: Boolean(apiKey),
+        };
+    }
+
     // ─── Health ────────────────────────────────────────────────────────────────
 
     @Get('health')
@@ -43,15 +87,19 @@ export class SaccoController {
 
     /** List all configured financial partners, optionally filtered by category */
     @Get('admin/partners')
-    async listPartners(@Query('category') category?: string) {
-        return this.financialPartnerService.listPartners(category);
+    async listPartners(@Req() req: any, @Query('category') category?: string) {
+        this.assertSaccoAdmin(req);
+        const partners = await this.financialPartnerService.listPartners(category);
+        return Array.isArray(partners) ? partners.map((p) => this.redactPartnerSecret(p)) : partners;
     }
 
     /** Get a single partner by ID */
     @Get('admin/partners/:id')
-    async getPartner(@Param('id') id: string) {
+    async getPartner(@Req() req: any, @Param('id') id: string) {
+        this.assertSaccoAdmin(req);
         try {
-            return await this.financialPartnerService.getPartnerById(id);
+            const partner = await this.financialPartnerService.getPartnerById(id);
+            return this.redactPartnerSecret(partner);
         } catch (error: any) {
             throw new HttpException(error.message, HttpStatus.NOT_FOUND);
         }
@@ -59,9 +107,11 @@ export class SaccoController {
 
     /** Create / register a new external Sacco, Insurance, or Investment partner */
     @Post('admin/partners')
-    async createPartner(@Body() dto: CreatePartnerDto) {
+    async createPartner(@Req() req: any, @Body() dto: CreatePartnerDto) {
+        this.assertSaccoAdmin(req);
         try {
-            return await this.financialPartnerService.createPartner(dto);
+            const created = await this.financialPartnerService.createPartner(dto);
+            return this.redactPartnerSecret(created);
         } catch (error: any) {
             throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
         }
@@ -69,9 +119,11 @@ export class SaccoController {
 
     /** Update an existing partner */
     @Put('admin/partners/:id')
-    async updatePartner(@Param('id') id: string, @Body() dto: UpdatePartnerDto) {
+    async updatePartner(@Req() req: any, @Param('id') id: string, @Body() dto: UpdatePartnerDto) {
+        this.assertSaccoAdmin(req);
         try {
-            return await this.financialPartnerService.updatePartner(id, dto);
+            const updated = await this.financialPartnerService.updatePartner(id, dto);
+            return this.redactPartnerSecret(updated);
         } catch (error: any) {
             throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
         }
@@ -82,7 +134,8 @@ export class SaccoController {
      * Returns { ok, latencyMs, message }
      */
     @Post('admin/partners/:id/test-connection')
-    async testConnection(@Param('id') id: string) {
+    async testConnection(@Req() req: any, @Param('id') id: string) {
+        this.assertSaccoAdmin(req);
         try {
             const partner = await this.financialPartnerService.getPartnerById(id);
             return await this.saccoIntegrationService.testConnection(partner.apiBaseUrl, partner.apiKey);
@@ -94,7 +147,8 @@ export class SaccoController {
     /** Get the currently active Sacco partner */
     @Get('active-partner')
     async getActivePartner() {
-        return this.saccoService.getActivePartner();
+        const partner = await this.saccoService.getActivePartner();
+        return this.redactPartnerSecret(partner);
     }
 
     // ─── Driver Wealth Programs & Allocations (30% Max Limit) ──────────────────
@@ -150,7 +204,8 @@ export class SaccoController {
 
     /** Update financial split configuration (Super Admin only) */
     @Put('config')
-    async updateFinancialConfig(@Body() dto: SaccoFinancialConfigDto) {
+    async updateFinancialConfig(@Req() req: any, @Body() dto: SaccoFinancialConfigDto) {
+        this.assertSaccoAdmin(req);
         try {
             return await this.saccoService.updateFinancialConfig(dto);
         } catch (error: any) {
@@ -288,7 +343,8 @@ export class SaccoController {
 
     /** List all enrolled drivers (Admin) */
     @Get('enrolled-drivers')
-    async getEnrolledDrivers() {
+    async getEnrolledDrivers(@Req() req: any) {
+        this.assertSaccoAdmin(req);
         return this.saccoService.getEnrolledDrivers();
     }
 

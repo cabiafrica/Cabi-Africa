@@ -67,46 +67,45 @@ export class AuthController {
     return this.userService.resetPassword(resetPasswordDto);
   }
 
+  private extractAuthenticatedUserId(req: any, requestedUserId?: string): string {
+    const authUserId = req?.user?.sub || req?.user?.id || req?.user?.userId;
+    if (!authUserId) {
+      throw new UnauthorizedException('Could not extract user identity from token.');
+    }
+    if (requestedUserId && requestedUserId !== authUserId && req?.user?.role !== 'ADMIN') {
+      throw new UnauthorizedException('Cannot access or modify another user identity.');
+    }
+    return requestedUserId && req?.user?.role === 'ADMIN' ? requestedUserId : authUserId;
+  }
+
   @Post('me')
-  async getMe(@Body() body: { userId: string }) {
-    return this.userService.getMe(body.userId);
+  async getMe(@Req() req: any, @Body() body: { userId?: string }) {
+    const userId = this.extractAuthenticatedUserId(req, body?.userId);
+    return this.userService.getMe(userId);
   }
 
   @Get('me')
   async getMeFromToken(@Req() req: any) {
-    // Extract userId from the JWT payload (set by JwtAuthGuard)
-    const userId = req.user?.sub || req.user?.id || req.user?.userId;
-    if (!userId) {
-      throw new UnauthorizedException('Could not extract user identity from token.');
-    }
+    const userId = this.extractAuthenticatedUserId(req);
     return this.userService.getMe(userId);
   }
 
   @Put('profile')
   async updateMyProfile(@Req() req: any, @Body() body: any) {
-    const userId = req.user?.sub || req.user?.id || req.user?.userId || body.userId;
-    if (!userId) {
-      throw new UnauthorizedException('Could not extract user identity.');
-    }
+    const userId = this.extractAuthenticatedUserId(req, body?.userId);
     return this.userService.updateProfile(userId, body);
   }
 
   @Patch('profile')
   async patchMyProfile(@Req() req: any, @Body() body: any) {
-    const userId = req.user?.sub || req.user?.id || req.user?.userId || body.userId;
-    if (!userId) {
-      throw new UnauthorizedException('Could not extract user identity.');
-    }
+    const userId = this.extractAuthenticatedUserId(req, body?.userId);
     return this.userService.updateProfile(userId, body);
   }
 
   @Post('profile-picture')
   @UseInterceptors(FileInterceptor('photo'))
   async uploadMyProfilePicture(@Req() req: any, @UploadedFile() file: any, @Body() body: any) {
-    const userId = req.user?.sub || req.user?.id || req.user?.userId || body.userId;
-    if (!userId) {
-      throw new UnauthorizedException('Could not extract user identity.');
-    }
+    const userId = this.extractAuthenticatedUserId(req, body?.userId);
     const photoUrl = body?.photoUrl || body?.passportPhotoUrl || body?.profilePicture;
     return this.userService.uploadProfilePicture(userId, file, photoUrl);
   }
