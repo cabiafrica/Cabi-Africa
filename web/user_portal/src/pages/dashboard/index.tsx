@@ -153,10 +153,39 @@ export default function Dashboard() {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 p-6 md:p-10 overflow-y-auto relative">
+            <main className="flex-1 p-4 sm:p-6 md:p-10 overflow-y-auto relative min-w-0">
+                {/* Mobile Navigation Tabs (Visible below md) */}
+                <div className="md:hidden flex items-center gap-2 overflow-x-auto pb-4 mb-4 border-b border-slate-200 dark:border-white/10">
+                    {([
+                        { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+                        { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+                        { id: 'network', label: 'Network', icon: Users },
+                        { id: 'vehicles', label: 'Vehicles', icon: Car },
+                        { id: 'wallet', label: 'Wallet', icon: Wallet },
+                        { id: 'safety', label: 'Safety', icon: Shield },
+                    ] as const).map((tab) => {
+                        const Icon = tab.icon;
+                        const active = activeTab === tab.id;
+                        return (
+                            <button
+                                key={tab.id}
+                                type="button"
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                                    active
+                                        ? 'bg-brand-yellow text-black shadow-sm'
+                                        : 'bg-white dark:bg-white/5 text-slate-700 dark:text-gray-300 border border-slate-200 dark:border-white/10'
+                                }`}
+                            >
+                                <Icon className="w-3.5 h-3.5" />
+                                {tab.label}
+                            </button>
+                        );
+                    })}
+                </div>
                 {/* Modern subtle background glow */}
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-yellow/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-accent/5 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#D4AF37]/5 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
 
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
                     <div>
@@ -184,7 +213,7 @@ export default function Dashboard() {
                                 </div>
                                 <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mt-1">Diamond Member</div>
                             </div>
-                            <div className={`w-14 h-14 rounded-lg bg-gradient-to-tr from-brand-yellow to-brand-accent p-[2px] shadow-lg shadow-brand-yellow/10 group-hover:scale-105 transition-all ${showProfileMenu ? 'scale-105 rotate-3' : ''}`}>
+                            <div className={`w-14 h-14 rounded-lg bg-gradient-to-tr from-[#FACC15] to-[#D4AF37] p-[2px] shadow-lg shadow-[#D4AF37]/15 group-hover:scale-105 transition-all ${showProfileMenu ? 'scale-105 rotate-3' : ''}`}>
                                 <div className="w-full h-full rounded-lg bg-white dark:bg-brand-black flex items-center justify-center text-2xl border-2 border-white dark:border-brand-black overflow-hidden relative">
                                     {mounted && user?.profilePictureUrl ? (
                                         <img src={user.profilePictureUrl} alt="Avatar" className="w-full h-full object-cover" />
@@ -248,7 +277,7 @@ export default function Dashboard() {
                                     <div className="px-6 py-3 rounded-lg bg-white dark:bg-brand-black/40 border border-slate-200 dark:border-white/5 font-mono text-xl font-black text-brand-yellow tracking-[0.2em]">
                                         {referralCode}
                                     </div>
-                                    <button className="px-8 py-4 bg-slate-900 dark:bg-brand-yellow text-white dark:text-black font-black rounded-lg hover:scale-105 transition-all active:scale-95 shadow-xl shadow-brand-yellow/10 text-sm">
+                                    <button className="px-8 py-4 bg-gradient-to-r from-[#D4AF37] to-[#FACC15] text-black font-black rounded-lg hover:scale-105 transition-all active:scale-95 shadow-xl shadow-[#D4AF37]/20 text-sm">
                                         Copy Code
                                     </button>
                                 </div>
@@ -270,14 +299,14 @@ export default function Dashboard() {
                                     value: userRole === 'driver' ? '412' : '42',
                                     trend: '+3.2%',
                                     color: 'brand-accent',
-                                    icon: userRole === 'driver' ? <Car className="w-5 h-5 text-brand-accent" /> : <MapPin className="w-5 h-5 text-brand-accent" />
+                                    icon: userRole === 'driver' ? <Car className="w-5 h-5 text-[#FACC15]" /> : <MapPin className="w-5 h-5 text-[#FACC15]" />
                                 },
                                 {
                                     label: userRole === 'driver' ? 'Driver Rating' : 'Loyalty Points',
                                     value: userRole === 'driver' ? '4.95' : '850',
                                     trend: 'Top 1%',
                                     color: 'brand-purple',
-                                    icon: <Star className="w-5 h-5 text-brand-purple" />
+                                    icon: <Star className="w-5 h-5 text-[#ffe088]" />
                                 }
                             ].map((stat, idx) => (
                                 <div key={idx} className="glass p-8 rounded-2xl border border-slate-200 dark:border-white/5 hover:border-brand-yellow/30 transition-all duration-500 group relative overflow-hidden bg-white/40 dark:bg-white/5">
@@ -287,7 +316,7 @@ export default function Dashboard() {
                                     <h3 className="text-slate-500 dark:text-gray-500 text-[10px] uppercase font-black tracking-widest mb-4">{stat.label}</h3>
                                     <div className="flex items-end justify-between">
                                         <div className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{stat.value}</div>
-                                        <div className={`text-[10px] font-black px-2 py-1 rounded ${idx === 0 ? 'bg-green-500/10 text-green-500' : stat.trend.includes('%') ? 'bg-brand-yellow/10 text-brand-yellow' : 'bg-brand-accent/10 text-brand-accent'}`}>
+                                        <div className={`text-[10px] font-black px-2 py-1 rounded ${idx === 0 ? 'bg-green-500/10 text-green-500' : stat.trend.includes('%') ? 'bg-brand-yellow/10 text-brand-yellow' : 'bg-[#D4AF37]/15 text-[#FACC15]'}`}>
                                             {stat.trend}
                                         </div>
                                     </div>
@@ -326,8 +355,8 @@ export default function Dashboard() {
                                     </div>
 
                                     {/* Sacco/Org Status */}
-                                    <div className="relative overflow-hidden bg-gradient-to-br from-brand-purple/20 to-black/40 p-8 rounded-xl border border-brand-purple/30 group">
-                                        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-purple/10 rounded-full blur-[100px] group-hover:bg-brand-purple/20 transition-all duration-700"></div>
+                                    <div className="relative overflow-hidden bg-gradient-to-br from-[#D4AF37]/15 to-card-dark p-8 rounded-xl border border-[#D4AF37]/30 group">
+                                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37]/10 rounded-full blur-[100px] group-hover:bg-[#D4AF37]/20 transition-all duration-700"></div>
                                         <div className="relative z-10">
                                             <h2 className="text-xl font-bold mb-2">Nairobi Central Sacco</h2>
                                             <p className="text-slate-500 dark:text-gray-400 text-sm mb-6">Connected Partner Organization</p>
@@ -346,7 +375,7 @@ export default function Dashboard() {
                                             <button
                                                 onClick={connectSacco}
                                                 disabled={isConnectingSacco}
-                                                className="w-full py-4 bg-brand-purple text-white font-bold rounded-lg hover:bg-opacity-80 transition-all flex items-center justify-center gap-3 shadow-xl shadow-brand-purple/20"
+                                                className="w-full py-4 bg-gradient-to-r from-[#D4AF37] to-[#FACC15] text-black font-black rounded-lg hover:brightness-110 transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#D4AF37]/20"
                                             >
                                                 {isConnectingSacco ? (
                                                     <span className="animate-spin text-xl">◌</span>
@@ -364,7 +393,7 @@ export default function Dashboard() {
                                     {/* Passenger History */}
                                     <div className="glass p-8 rounded-xl border border-slate-200 dark:border-white/5">
                                         <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                                            <MapPin className="w-5 h-5 text-brand-accent" /> Frequent Places
+                                            <MapPin className="w-5 h-5 text-[#D4AF37]" /> Frequent Places
                                         </h2>                                        <div className="space-y-4">
                                             {([
                                                 { Icon: Home, name: 'Home', addr: 'Westlands, Woodvale Grove' },
@@ -385,8 +414,8 @@ export default function Dashboard() {
                                     </div>
 
                                     {/* Corporate Policy */}
-                                    <div className="relative overflow-hidden bg-gradient-to-br from-brand-accent/20 to-black/40 p-8 rounded-xl border border-brand-accent/30 group">
-                                        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-[100px] group-hover:bg-brand-accent/20 transition-all duration-700"></div>
+                                    <div className="relative overflow-hidden bg-gradient-to-br from-[#FACC15]/15 to-card-dark p-8 rounded-xl border border-[#D4AF37]/30 group">
+                                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#FACC15]/10 rounded-full blur-[100px] group-hover:bg-[#FACC15]/20 transition-all duration-700"></div>
                                         <div className="relative z-10">
                                             <div className="flex justify-between items-start mb-6">
                                                 <div>
@@ -424,7 +453,7 @@ export default function Dashboard() {
                                                 </ul>
                                             </div>
 
-                                            <Link href="#" className="w-full py-4 bg-brand-accent text-brand-black font-bold rounded-lg hover:opacity-80 transition-all flex items-center justify-center gap-3">
+                                            <Link href="#" className="w-full py-4 bg-gradient-to-r from-[#D4AF37] to-[#FACC15] text-black font-black rounded-lg hover:brightness-110 transition-all flex items-center justify-center gap-3">
                                                 <Building2 className="w-4 h-4" /> View Corporate Benefits
                                             </Link>
                                         </div>
@@ -571,7 +600,7 @@ export default function Dashboard() {
                                                 <span className="font-bold text-green-500 flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Passed</span>
                                             </div>
                                         </div>
-                                        <button className="w-full py-3 bg-slate-900 dark:bg-white text-white dark:text-black rounded-xl font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                                        <button className="w-full py-3 bg-surface-dark dark:bg-[#FACC15] text-white dark:text-black border border-[#D4AF37]/30 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                                             <Settings2 className="w-4 h-4" /> Manage Settings
                                         </button>
                                     </div>
@@ -605,7 +634,7 @@ export default function Dashboard() {
                                 <button
                                     onClick={connectSacco}
                                     disabled={isConnectingSacco}
-                                    className="px-6 py-3 bg-brand-purple text-white font-black rounded-lg text-sm shadow-xl shadow-brand-purple/20 flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50"
+                                    className="px-6 py-3 bg-card-dark border border-[#D4AF37]/40 text-[#FACC15] hover:bg-[#D4AF37]/10 font-black rounded-lg text-sm shadow-xl flex items-center gap-2 hover:scale-105 transition-all disabled:opacity-50"
                                 >
                                     {isConnectingSacco ? (
                                         <span className="animate-spin text-lg">◌</span>
@@ -615,14 +644,14 @@ export default function Dashboard() {
                                         </>
                                     )}
                                 </button>
-                                <button className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-black font-black rounded-lg text-sm shadow-xl">Top Up</button>
+                                <button className="px-6 py-3 bg-surface-dark dark:bg-card-dark border border-[#D4AF37]/30 text-white dark:text-[#ffe088] font-black rounded-lg text-sm shadow-xl">Top Up</button>
                                 <button className="px-6 py-3 bg-brand-yellow text-black font-black rounded-lg text-sm shadow-xl shadow-brand-yellow/20">Withdraw</button>
                             </div>
                         </div>
 
                         {/* Card Component */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="relative overflow-hidden bg-slate-900 rounded-[1.25rem] p-10 text-white min-h-[280px] shadow-2xl">
+                            <div className="relative overflow-hidden bg-gradient-to-br from-surface-dark via-card-dark to-black border border-[#D4AF37]/30 rounded-[1.25rem] p-10 text-white min-h-[280px] shadow-2xl">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-brand-yellow/10 rounded-full blur-3xl -translate-y-20 translate-x-20"></div>
                                 <div className="relative z-10 h-full flex flex-col justify-between">
                                     <div className="flex justify-between items-start">

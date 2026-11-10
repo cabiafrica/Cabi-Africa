@@ -119,7 +119,7 @@ export default function MyVehiclesPage() {
                             </div>
                             <Link
                                 href="/vehicles/register"
-                                className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-black hover:bg-slate-800 text-yellow-400 hover:text-white font-black text-sm uppercase tracking-widest shadow-xl transition-all duration-300 transform hover:scale-105"
+                                className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-surface-dark hover:bg-card-dark border border-[#D4AF37]/30 text-[#FACC15] hover:text-[#ffe088] font-black text-sm uppercase tracking-widest shadow-xl transition-all duration-300 transform hover:scale-105"
                             >
                                 <Plus className="w-5 h-5" /> Register New Vehicle
                             </Link>
@@ -144,11 +144,11 @@ export default function MyVehiclesPage() {
                     {loading ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {[1, 2, 3].map((n) => (
-                                <div key={n} className="bg-slate-800/50 rounded-3xl p-8 border border-white/5 animate-pulse h-80" />
+                                <div key={n} className="bg-card-dark rounded-3xl p-8 border border-[#D4AF37]/10 animate-pulse h-80" />
                             ))}
                         </div>
                     ) : vehicles.length === 0 ? (
-                        <div className="text-center py-20 bg-slate-800/40 rounded-3xl border border-white/5 backdrop-blur-xl p-12 shadow-2xl max-w-2xl mx-auto">
+                        <div className="text-center py-20 bg-card-dark/90 rounded-3xl border border-[#D4AF37]/20 backdrop-blur-xl p-12 shadow-2xl max-w-2xl mx-auto">
                             <Car className="w-20 h-20 text-yellow-500/50 mx-auto mb-6 animate-bounce" />
                             <h3 className="text-2xl font-black text-white mb-3">No Vehicles Registered</h3>
                             <p className="text-slate-400 mb-8 max-w-md mx-auto">
@@ -172,8 +172,8 @@ export default function MyVehiclesPage() {
                                         key={vehicle.id}
                                         className={`group relative rounded-3xl overflow-hidden border transition-all duration-500 flex flex-col justify-between ${
                                             hasActiveShift
-                                                ? 'bg-gradient-to-b from-slate-800/90 to-slate-900 border-yellow-500/50 shadow-[0_0_50px_rgba(234,179,8,0.15)]'
-                                                : 'bg-slate-800/40 hover:bg-slate-800/70 border-white/10 hover:border-white/20'
+                                                ? 'bg-gradient-to-b from-card-dark to-surface-dark border-[#D4AF37]/50 shadow-[0_0_50px_rgba(212,175,55,0.15)]'
+                                                : 'bg-card-dark/80 hover:bg-card-dark border-white/10 hover:border-[#D4AF37]/30'
                                         } backdrop-blur-xl p-8`}
                                     >
                                         <div>
@@ -272,7 +272,7 @@ export default function MyVehiclesPage() {
                 {/* Exclusivity Conflict Modal */}
                 {conflictModal.show && (
                     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fadeIn">
-                        <div className="bg-slate-900 border border-red-500/30 rounded-3xl max-w-xl w-full p-8 sm:p-12 shadow-2xl overflow-hidden relative">
+                        <div className="bg-surface-dark border border-red-500/30 rounded-3xl max-w-xl w-full p-8 sm:p-12 shadow-2xl overflow-hidden relative">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2" />
                             <div className="flex items-center gap-4 text-red-500 mb-6">
                                 <div className="p-4 bg-red-500/20 rounded-2xl border border-red-500/30">

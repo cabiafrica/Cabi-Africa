@@ -195,19 +195,16 @@ export default function DemandAnalysisPage() {
       </Head>
 
       {/* Navigation Header */}
-      <header className="bg-black/90 backdrop-blur-md border-b border-neutral-900 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex justify-between items-center">
-          <div className="flex items-center gap-6">
-            <Link href="/drivers/dashboard" className="flex items-center gap-2">
-              <span className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500">
-                Cabi
-              </span>
-              <span className="text-neutral-500 text-sm border-l pl-2 border-neutral-800 font-medium">
+      <header className="bg-black/90 backdrop-blur-md border-b border-neutral-900 sticky top-16 md:top-20 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center gap-3">
+          <div className="flex items-center gap-4 overflow-x-auto">
+            <Link href="/drivers/dashboard" className="flex items-center gap-2 flex-shrink-0">
+              <span className="text-neutral-400 text-xs font-bold uppercase tracking-wider">
                 Driver Portal
               </span>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-2">
+            <nav className="flex items-center gap-2">
               <Link
                 href="/drivers/dashboard"
                 className="px-3 py-1.5 rounded-lg text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all"
@@ -503,7 +500,7 @@ export default function DemandAnalysisPage() {
                   </p>
                 </div>
                 <div className="rounded-2xl bg-neutral-950/80 border border-neutral-800 p-4">
-                  <div className="flex items-center gap-2 text-purple-400 text-xs font-bold mb-1">
+                  <div className="flex items-center gap-2 text-[#ffe088] text-xs font-bold mb-1">
                     <Compass className="w-4 h-4" />
                     Airport Express (20:00 - 23:30)
                   </div>

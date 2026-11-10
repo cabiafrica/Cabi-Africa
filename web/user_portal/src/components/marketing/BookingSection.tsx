@@ -274,20 +274,24 @@ export default function BookingSection() {
     if (!mounted) return null;
 
     return (
-        <section id="booking-section" className="relative z-20 -mt-20 lg:-mt-32 px-4 lg:px-6 mb-24 pointer-events-none">
-            <div className="container mx-auto">
-                <div className="glass-premium rounded-[1rem] lg:rounded-[1.5rem] p-6 lg:p-12 pointer-events-auto transform transition-all duration-700 hover:shadow-[0_0_100px_rgba(250,204,21,0.1)] outline outline-1 outline-black/5 dark:outline-white/10">
+        <section id="booking-section" className="relative z-20 mt-4 lg:mt-8 px-4 lg:px-6 mb-16 sm:mb-24 pointer-events-none">
+            <div className="container mx-auto max-w-7xl">
+                <div className="glass-premium rounded-[1.25rem] lg:rounded-[1.5rem] p-5 sm:p-8 lg:p-12 pointer-events-auto transform transition-all duration-700 hover:shadow-[0_0_100px_rgba(250,204,21,0.1)] outline outline-1 outline-black/5 dark:outline-white/10">
 
                     {/* Header */}
                     {!expanded && !bookingConfirmed && (
-                        <div className="animate-float">
-                            <div className="flex items-center gap-4 mb-10 animate-reveal">
-                                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-brand-yellow/10 flex items-center justify-center border border-brand-yellow/20">
-                                    <FaSearch className="text-brand-yellow lg:text-xl" />
+                        <div className="mb-8 sm:mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-reveal">
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-executive-gold/15 flex items-center justify-center border border-executive-gold/30 shrink-0">
+                                    <FaSearch className="text-executive-gold lg:text-xl" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl lg:text-3xl font-black text-gray-900 dark:text-white tracking-tighter">Instant Logistics.</h2>
-                                    <p className="text-gray-500 dark:text-white/40 text-[10px] lg:text-sm font-bold uppercase tracking-[0.2em]">Neural Deployment Unit</p>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.25em] text-executive-gold mb-0.5">
+                                        Quick Booking
+                                    </p>
+                                    <h2 className="text-2xl lg:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+                                        Book Your Ride
+                                    </h2>
                                 </div>
                             </div>
                         </div>
@@ -299,7 +303,7 @@ export default function BookingSection() {
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-brand-yellow/10 blur-[80px] rounded-full" />
                             
                             {/* Status Icon */}
-                            <div className="w-24 h-24 bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto mb-8 relative border border-white/10 shadow-2xl">
+                            <div className="w-24 h-24 bg-slate-100 dark:bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto mb-8 relative border border-slate-200 dark:border-white/10 shadow-2xl">
                                 {tripStatus === 'CONFIRMED' && <span className="text-4xl animate-pulse">📡</span>}
                                 {tripStatus === 'DRIVER_ASSIGNED' && <span className="text-4xl animate-bounce-short">🚖</span>}
                                 {tripStatus === 'ARRIVED' && <span className="text-4xl">📍</span>}
@@ -310,20 +314,20 @@ export default function BookingSection() {
                                 <div className="absolute -inset-8 border border-brand-accent/10 rounded-full animate-ping-slow animation-delay-400" />
                             </div>
 
-                            <h3 className="text-3xl font-black text-white mb-3 tracking-tighter uppercase underline decoration-brand-yellow decoration-4 underline-offset-8">
-                                {tripStatus === 'CONFIRMED' && 'Detecting Units...'}
-                                {tripStatus === 'DRIVER_ASSIGNED' && 'Unit Deployed'}
-                                {tripStatus === 'ARRIVED' && 'Unit at Sector'}
-                                {tripStatus === 'IN_PROGRESS' && 'Transit Protocol'}
-                                {tripStatus === 'COMPLETED' && 'Mission Complete'}
+                            <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-3 tracking-tighter uppercase underline decoration-brand-yellow decoration-4 underline-offset-8">
+                                {tripStatus === 'CONFIRMED' && 'Finding Your Driver...'}
+                                {tripStatus === 'DRIVER_ASSIGNED' && 'Driver Assigned'}
+                                {tripStatus === 'ARRIVED' && 'Driver Arrived'}
+                                {tripStatus === 'IN_PROGRESS' && 'Trip in Progress'}
+                                {tripStatus === 'COMPLETED' && 'Trip Completed'}
                             </h3>
 
-                            <p className="text-white/60 text-lg max-w-md mx-auto mb-10 font-medium">
-                                {tripStatus === 'CONFIRMED' && 'Identifying the most efficient terminal for your trajectory.'}
-                                {tripStatus === 'DRIVER_ASSIGNED' && (driverInfo ? `Pilot ${driverInfo.name} (${driverInfo.plate}) is initiating intercept.` : 'Your pilot is initiating intercept.')}
-                                {tripStatus === 'ARRIVED' && 'Primary unit has reached the extraction point.'}
-                                {tripStatus === 'IN_PROGRESS' && `Stabilizing velocity toward ${destination}.`}
-                                {tripStatus === 'COMPLETED' && 'Successful extraction to target coordinates.'}
+                            <p className="text-slate-600 dark:text-white/60 text-lg max-w-md mx-auto mb-10 font-medium">
+                                {tripStatus === 'CONFIRMED' && 'Matching you with the closest available chauffeur.'}
+                                {tripStatus === 'DRIVER_ASSIGNED' && (driverInfo ? `${driverInfo.name} (${driverInfo.plate}) is on the way to your pickup point.` : 'Your driver is on the way.')}
+                                {tripStatus === 'ARRIVED' && 'Your driver has arrived at your pickup location.'}
+                                {tripStatus === 'IN_PROGRESS' && `En route to ${destination}.`}
+                                {tripStatus === 'COMPLETED' && 'You have arrived safely at your destination.'}
                             </p>
 
                             <div className="max-w-xl mx-auto">
@@ -333,7 +337,7 @@ export default function BookingSection() {
                             <div className="mt-12 flex flex-col sm:flex-row justify-center gap-4 lg:gap-6">
                                 {tripStatus !== 'COMPLETED' && (
                                     <button className="px-8 py-4 rounded-2xl bg-red-500/5 text-red-500 hover:bg-red-500/10 text-xs font-black uppercase tracking-widest border border-red-500/20 transition-all active:scale-95 shadow-lg">
-                                        Abort Mission
+                                        Cancel Ride
                                     </button>
                                 )}
                                 {tripStatus === 'COMPLETED' && (
@@ -341,12 +345,9 @@ export default function BookingSection() {
                                         onClick={() => window.location.reload()}
                                         className="px-10 py-4 rounded-2xl bg-brand-yellow text-black text-sm font-black uppercase tracking-widest hover:shadow-[0_0_30px_rgba(250,204,21,0.4)] transition-all active:scale-95"
                                     >
-                                        Initiate New Protocol
+                                        Book Another Ride
                                     </button>
                                 )}
-                                <button className="px-8 py-4 rounded-2xl bg-white/5 text-white/60 hover:text-white hover:bg-white/10 text-xs font-black uppercase tracking-widest border border-white/10 transition-all">
-                                    Admin Link
-                                </button>
                             </div>
                         </div>
                     ) : (
@@ -355,7 +356,7 @@ export default function BookingSection() {
                             <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2 group">
                                     <div className="flex justify-between items-center px-1">
-                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-700 dark:text-white/80">Extraction Source</label>
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-700 dark:text-white/80">Pickup Location</label>
                                         <button 
                                             onClick={getCurrentLocation}
                                             className="text-brand-yellow hover:text-brand-dark dark:hover:text-white transition-colors flex items-center gap-1 group/loc"
@@ -377,7 +378,7 @@ export default function BookingSection() {
                                 </div>
                                 <div className="space-y-2 group">
                                     <div className="flex justify-between items-center px-1">
-                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-700 dark:text-white/80">Target Coordinates</label>
+                                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-700 dark:text-white/80">Drop-off Destination</label>
                                         <FaMapMarkerAlt className="text-brand-accent text-xs animate-pulse" />
                                     </div>
                                     <div className="relative group">
@@ -407,10 +408,10 @@ export default function BookingSection() {
                                         {loading ? (
                                             <>
                                                 <div className={`w-4 h-4 border-2 border-t-transparent rounded-full animate-spin ${loading || !pickup || !destination ? 'border-gray-400 dark:border-white/20' : 'border-black/20 border-t-black'}`} />
-                                                Processing
+                                                Finding Fares
                                             </>
                                         ) : (
-                                            <>Compute Trajectory</>
+                                            <>Check Fares</>
                                         )}
                                     </span>
                                 </button>
@@ -421,10 +422,9 @@ export default function BookingSection() {
                     {/* Results Expansion */}
                     {expanded && !bookingConfirmed && vehicleOptions.length > 0 && (
                         <div className="mt-12 pt-12 border-t border-white/10 animate-reveal text-left">
-                            {/* ... (existing vehicle options code) */}
                             <h3 className="text-gray-900 dark:text-white text-xl font-black mb-8 tracking-tight uppercase flex items-center gap-3">
                                 <span className="w-8 h-px bg-brand-yellow"></span>
-                                Available Fleet Modules
+                                Select Your Vehicle
                             </h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-10">
                                 {vehicleOptions.map((v) => (
@@ -441,10 +441,10 @@ export default function BookingSection() {
                                             <span className="font-black text-lg block uppercase tracking-tighter">{v.name}</span>
                                             <div className="flex items-center gap-2 mt-2 opacity-60">
                                                 <span className="w-1.5 h-1.5 bg-current rounded-full animate-pulse"></span>
-                                                <span className="text-xs font-bold uppercase tracking-widest">{v.eta}m ETA</span>
+                                                <span className="text-xs font-bold uppercase tracking-widest">{v.eta}m away</span>
                                             </div>
                                             <div className="mt-6 pt-4 border-t border-current/10">
-                                                <span className="text-[10px] uppercase font-black opacity-60">Base Fare</span>
+                                                <span className="text-[10px] uppercase font-black opacity-60">Estimated Fare</span>
                                                 <span className="font-black text-2xl block tracking-tighter">KES {v.price.toFixed(0)}</span>
                                             </div>
                                         </div>
@@ -452,23 +452,23 @@ export default function BookingSection() {
                                 ))}
                             </div>
                             <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-                                <p className="text-gray-500 dark:text-white/40 text-[10px] lg:text-xs font-medium max-w-sm text-center lg:text-left">Prices are inclusive of neural network surge fees and system processing mandates.</p>
+                                <p className="text-gray-500 dark:text-white/40 text-[10px] lg:text-xs font-medium max-w-sm text-center lg:text-left">Transparent fixed pricing with cashless checkout or corporate billing support.</p>
                                 <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 w-full lg:w-auto">
                                     <button
                                         onClick={() => setExpanded(false)}
                                         className="px-8 py-4 text-gray-500 dark:text-white/40 hover:text-gray-900 dark:hover:text-white uppercase font-black tracking-widest text-xs transition-colors"
                                     >
-                                        Abort
+                                        Back
                                     </button>
                                     <button
                                         onClick={handleBookRide}
                                         disabled={!selectedVehicle}
                                         className={`px-12 py-5 lg:py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all duration-500 active:scale-95 ${selectedVehicle 
-                                            ? 'bg-brand-accent text-black shadow-[0_15px_30px_-10px_rgba(34,211,238,0.5)] hover:bg-cyan-300' 
+                                            ? 'bg-primary-container text-black shadow-[0_15px_30px_-10px_rgba(245,158,11,0.45)] hover:bg-primary-highlight' 
                                             : 'bg-gray-100 text-gray-400 border border-gray-200 dark:bg-white/5 dark:text-white/20 dark:border-white/5'
                                             }`}
                                     >
-                                        Confirm Protocol
+                                        Confirm Ride
                                     </button>
                                 </div>
                             </div>
@@ -490,8 +490,8 @@ export default function BookingSection() {
                                     <FaFingerprint className="text-4xl text-brand-yellow animate-pulse" />
                                 )}
                             </div>
-                            <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tighter">Identity Check</h3>
-                            <p className="text-white/40 mb-8 font-medium">
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tighter">Identity Check</h3>
+                            <p className="text-slate-600 dark:text-white/40 mb-8 font-medium">
                                 {verificationType === 'FACE' 
                                     ? "Please look at the camera for facial recognition protocol." 
                                     : "Please confirm your identity via secondary verification."}
@@ -514,7 +514,7 @@ export default function BookingSection() {
                                 </button>
                                 <button
                                     onClick={() => setShowVerification(false)}
-                                    className="w-full py-4 rounded-xl bg-white/5 text-white/40 font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+                                    className="w-full py-4 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-white/40 font-black uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-white/10 transition-all"
                                 >
                                     Cancel
                                 </button>

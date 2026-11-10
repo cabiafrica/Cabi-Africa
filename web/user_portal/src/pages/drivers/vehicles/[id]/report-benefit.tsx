@@ -116,7 +116,7 @@ export default function ReportBenefitPage() {
                             </p>
                         </div>
                     ) : (
-                        <form onSubmit={handleSubmit} className="bg-slate-800/40 rounded-3xl border border-white/10 p-8 sm:p-12 shadow-2xl backdrop-blur-xl space-y-8">
+                        <form onSubmit={handleSubmit} className="bg-card-dark/90 rounded-3xl border border-[#D4AF37]/20 p-8 sm:p-12 shadow-2xl backdrop-blur-xl space-y-8">
                             {error && (
                                 <div className="flex items-center gap-4 bg-red-500/20 border border-red-500 text-red-300 p-4 rounded-2xl animate-fadeIn">
                                     <AlertCircle className="w-6 h-6 flex-shrink-0" />
@@ -140,7 +140,7 @@ export default function ReportBenefitPage() {
                                     >
                                         <option value="" disabled className="text-slate-500">-- Choose Benefit Item --</option>
                                         {benefits.map((b) => (
-                                            <option key={b.id} value={b.id} className="bg-slate-900 text-white">
+                                            <option key={b.id} value={b.id} className="bg-surface-dark text-white">
                                                 {b.iconEmoji} {b.name} ({b.category})
                                             </option>
                                         ))}

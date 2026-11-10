@@ -60,7 +60,7 @@ export default function CorporateJoinPage() {
     };
 
     return (
-        <div className="min-h-screen bg-brand-black text-white selection:bg-brand-yellow selection:text-black">
+        <div className="min-h-screen bg-slate-50 dark:bg-brand-black text-slate-900 dark:text-white selection:bg-brand-yellow selection:text-black transition-colors duration-300">
             <Head>
                 <title>Join Corporate Travel | Cabi for Business</title>
                 <meta name="description" content="Accept your corporate travel invitation and link your Cabi Go passenger account to your company billing." />
@@ -69,7 +69,7 @@ export default function CorporateJoinPage() {
             <Header />
 
             <main className="pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center justify-center">
-                <div className="w-full max-w-lg bg-surface-dark/95 border border-white/15 rounded-3xl p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden text-center">
+                <div className="w-full max-w-lg bg-white dark:bg-surface-dark/95 border border-slate-200 dark:border-white/15 rounded-3xl p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden text-center">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
 
                     {isLoading ? (
@@ -82,7 +82,7 @@ export default function CorporateJoinPage() {
                             <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 mx-auto flex items-center justify-center">
                                 <AlertCircle className="w-7 h-7" />
                             </div>
-                            <h2 className="text-xl font-bold text-white">Invalid or Expired Invitation</h2>
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Invalid or Expired Invitation</h2>
                             <p className="text-xs text-gray-400 max-w-sm mx-auto">{errorMessage}</p>
                             <div className="pt-4">
                                 <Link 
@@ -130,14 +130,14 @@ export default function CorporateJoinPage() {
                             </div>
 
                             {/* Invitation Details Card */}
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-left space-y-2.5 text-xs text-gray-300">
+                            <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-4 text-left space-y-2.5 text-xs text-slate-700 dark:text-gray-300">
                                 <div className="flex justify-between py-1 border-b border-white/5">
                                     <span className="text-gray-500">Recipient Email:</span>
-                                    <strong className="text-white font-mono">{inviteData?.email}</strong>
+                                    <strong className="text-slate-900 dark:text-white font-mono">{inviteData?.email}</strong>
                                 </div>
                                 <div className="flex justify-between py-1 border-b border-white/5">
                                     <span className="text-gray-500">Department:</span>
-                                    <strong className="text-white">{inviteData?.department}</strong>
+                                    <strong className="text-slate-900 dark:text-white">{inviteData?.department}</strong>
                                 </div>
                                 <div className="flex justify-between py-1 border-b border-white/5">
                                     <span className="text-gray-500">Assigned Role:</span>
@@ -153,15 +153,15 @@ export default function CorporateJoinPage() {
 
                             {/* What you get */}
                             <div className="text-left space-y-2">
-                                <div className="flex items-center gap-2 text-xs text-gray-300">
+                                <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-gray-300">
                                     <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                                     <span>Hail business rides with zero out-of-pocket expense</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-gray-300">
+                                <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-gray-300">
                                     <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                                     <span>Automated digital ride receipts sent to your company</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-gray-300">
+                                <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-gray-300">
                                     <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                                     <span>Out-of-policy trips supported via Grace Business Justification</span>
                                 </div>

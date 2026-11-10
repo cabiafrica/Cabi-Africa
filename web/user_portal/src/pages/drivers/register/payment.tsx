@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { CheckoutForm } from '@/components/forms/CheckoutForm';
+import MainLayout from '@/components/layout/MainLayout';
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
@@ -48,5 +49,11 @@ function PaymentComponent() {
 }
 
 export default function PayPage() {
-  return <Suspense><PaymentComponent /></Suspense>;
+  return (
+    <MainLayout title="Complete Registration Payment | CABI">
+      <Suspense>
+        <PaymentComponent />
+      </Suspense>
+    </MainLayout>
+  );
 }

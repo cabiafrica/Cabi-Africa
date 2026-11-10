@@ -125,7 +125,7 @@ export default function BrowseGroupsPage() {
                                                     Private
                                                 </span>
                                             ) : (
-                                                <span className="text-[10px] bg-blue-500/10 text-blue-500 px-2 py-1 rounded-full border border-blue-500/20 font-bold uppercase">
+                                                <span className="text-[10px] bg-[#D4AF37]/15 text-[#D4AF37] px-2 py-1 rounded-full border border-[#D4AF37]/30 font-bold uppercase">
                                                     Public
                                                 </span>
                                             )}

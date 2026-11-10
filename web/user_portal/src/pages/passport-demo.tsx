@@ -24,7 +24,7 @@ export default function PassportDemoPage() {
                         <p className="text-gray-500 mt-2">Upload, crop, and compress your photo to meet professional standards.</p>
                     </div>
 
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl">
+                    <div className="bg-white dark:bg-card-dark border border-slate-200 dark:border-[#D4AF37]/20 p-6 rounded-2xl shadow-xl">
                         <PassportPhotoUploader
                             onFileSelect={handleFileSelect}
                             aspectRatio={1}
@@ -33,7 +33,7 @@ export default function PassportDemoPage() {
                     </div>
 
                     {file && previewUrl && (
-                        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl space-y-4 animate-fade-in">
+                        <div className="bg-white dark:bg-card-dark border border-slate-200 dark:border-[#D4AF37]/20 p-6 rounded-2xl shadow-xl space-y-4 animate-fade-in">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white border-b pb-2 dark:border-gray-700">Result</h2>
 
                             <div className="flex gap-6 items-start">

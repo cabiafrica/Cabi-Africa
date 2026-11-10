@@ -63,10 +63,10 @@ export default function FleetVehicleDetailPage() {
     if (loading) {
         return (
             <MainLayout title="Loading Vehicle Roster..." description="Fetching vehicle telemetry and authorized operators.">
-                <div className="min-h-screen bg-brand-black flex items-center justify-center p-8">
+                <div className="min-h-screen bg-surface-dark flex items-center justify-center p-8">
                     <div className="flex flex-col items-center gap-4">
-                        <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                        <span className="text-white font-black text-lg tracking-widest uppercase text-blue-400 animate-pulse">Loading Roster & Telemetry...</span>
+                        <div className="w-16 h-16 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
+                        <span className="font-black text-lg tracking-widest uppercase text-[#D4AF37] animate-pulse">Loading Roster &amp; Telemetry...</span>
                     </div>
                 </div>
             </MainLayout>
@@ -76,12 +76,12 @@ export default function FleetVehicleDetailPage() {
     if (error || !vehicle) {
         return (
             <MainLayout title="Vehicle Not Found" description="Could not load vehicle details.">
-                <div className="min-h-screen bg-brand-black py-20 px-4 text-center">
-                    <div className="max-w-md mx-auto bg-slate-800/40 p-12 rounded-3xl border border-white/5 shadow-2xl">
+                <div className="min-h-screen bg-surface-dark py-20 px-4 text-center">
+                    <div className="max-w-md mx-auto bg-card-dark p-12 rounded-3xl border border-white/10 shadow-2xl">
                         <AlertCircle className="w-20 h-20 text-red-500 mx-auto mb-6 animate-bounce" />
                         <h2 className="text-3xl font-black text-white mb-3 tracking-tight">Vehicle Not Found</h2>
-                        <p className="text-slate-400 mb-8 font-medium">{error || 'The requested vehicle could not be loaded.'}</p>
-                        <Link href="/fleet/dashboard" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-blue-500 text-white font-black uppercase text-sm tracking-widest hover:bg-blue-400 transition-all shadow-lg">
+                        <p className="text-neutral-400 mb-8 font-medium">{error || 'The requested vehicle could not be loaded.'}</p>
+                        <Link href="/fleet/dashboard" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-[#D4AF37] text-black font-black uppercase text-sm tracking-widest hover:bg-[#ffe088] transition-all shadow-lg">
                             <ArrowLeft className="w-5 h-5" /> Back to Fleet Command
                         </Link>
                     </div>
@@ -94,22 +94,22 @@ export default function FleetVehicleDetailPage() {
 
     return (
         <MainLayout title={`Fleet: ${vehicle.plateNumber} | Cabi`} description="Manage authorized driver roster and telemetry for this vehicle.">
-            <div className="min-h-screen bg-brand-black text-white py-12 px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-surface-dark text-white py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto space-y-12">
                     {/* Back navigation */}
                     <div>
-                        <Link href="/fleet/dashboard" className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-slate-400 hover:text-blue-400 transition-colors">
+                        <Link href="/fleet/dashboard" className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-neutral-400 hover:text-[#D4AF37] transition-colors">
                             <ArrowLeft className="w-4 h-4" /> Fleet Command Center
                         </Link>
                     </div>
 
                     {/* Header Banner */}
-                    <div className="relative rounded-3xl overflow-hidden bg-slate-800/60 border border-white/10 p-8 sm:p-12 shadow-2xl backdrop-blur-xl">
-                        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-blue-500/20 via-purple-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+                    <div className="relative rounded-3xl overflow-hidden bg-card-dark border border-[#D4AF37]/25 p-8 sm:p-12 shadow-2xl">
+                        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-[#D4AF37]/20 via-[#FACC15]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
                         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                             <div className="flex items-center gap-6">
-                                <div className="p-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl shadow-xl border border-blue-400/30">
-                                    <Car className="w-12 h-12 text-white" />
+                                <div className="p-6 bg-gradient-to-br from-[#ffe088] via-[#FACC15] to-[#D4AF37] rounded-3xl shadow-xl">
+                                    <Car className="w-12 h-12 text-black" />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-3 mb-2">
@@ -120,15 +120,15 @@ export default function FleetVehicleDetailPage() {
                                             </span>
                                         )}
                                     </div>
-                                    <p className="text-slate-400 font-bold text-lg">
-                                        {vehicle.year} {vehicle.make} {vehicle.model} • <span className="text-blue-400">{vehicle.usage}</span>
+                                    <p className="text-neutral-400 font-bold text-lg">
+                                        {vehicle.year} {vehicle.make} {vehicle.model} &bull; <span className="text-[#D4AF37]">{vehicle.usage}</span>
                                     </p>
                                 </div>
                             </div>
 
                             <Link
                                 href={`/fleet/vehicles/${vehicle.id}/assign-driver`}
-                                className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-blue-500 hover:bg-blue-400 text-white font-black text-sm uppercase tracking-widest shadow-xl transition-all transform hover:scale-105"
+                                className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-[#D4AF37] hover:bg-[#ffe088] text-black font-black text-sm uppercase tracking-widest shadow-xl transition-all transform hover:scale-105"
                             >
                                 <UserPlus className="w-5 h-5" /> Assign Authorized Driver
                             </Link>
@@ -139,18 +139,18 @@ export default function FleetVehicleDetailPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Left & Center: Driver Roster */}
                         <div className="lg:col-span-2 space-y-8">
-                            <div className="bg-slate-800/40 rounded-3xl border border-white/10 p-8 shadow-2xl backdrop-blur-xl">
+                            <div className="bg-card-dark rounded-3xl border border-white/10 p-8 shadow-2xl">
                                 <div className="flex items-center justify-between mb-8">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-3 bg-blue-500/20 rounded-2xl border border-blue-500/30">
-                                            <Users className="w-7 h-7 text-blue-400" />
+                                        <div className="p-3 bg-[#D4AF37]/15 rounded-2xl border border-[#D4AF37]/30">
+                                            <Users className="w-7 h-7 text-[#D4AF37]" />
                                         </div>
                                         <div>
                                             <h2 className="text-2xl font-black text-white tracking-tight">Authorized Operator Roster</h2>
-                                            <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Active assigned drivers allowed to start shifts on this vehicle</p>
+                                            <p className="text-neutral-400 text-xs font-bold uppercase tracking-widest">Active assigned drivers allowed to start shifts on this vehicle</p>
                                         </div>
                                     </div>
-                                    <span className="px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-black text-sm">
+                                    <span className="px-4 py-1.5 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30 font-black text-sm">
                                         {vehicle.vehicleDrivers?.length || 0} Assigned
                                     </span>
                                 </div>
@@ -164,9 +164,9 @@ export default function FleetVehicleDetailPage() {
                                             const isCurrentlyOnShift = activeShift?.driverProfileId === vd.driverProfileId;
 
                                             return (
-                                                <div key={vd.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-black/30 rounded-2xl border border-white/5 transition-all hover:border-white/10">
+                                                <div key={vd.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-black/40 rounded-2xl border border-white/10 transition-all hover:border-[#D4AF37]/35">
                                                     <div className="flex items-center gap-4">
-                                                        <div className="w-14 h-14 bg-gradient-to-tr from-blue-500 to-purple-600 rounded-full flex items-center justify-center font-black text-white shadow-xl text-xl flex-shrink-0">
+                                                        <div className="w-14 h-14 bg-gradient-to-tr from-[#D4AF37] to-[#FACC15] rounded-full flex items-center justify-center font-black text-black shadow-xl text-xl flex-shrink-0">
                                                             {driverName[0] || 'D'}
                                                         </div>
                                                         <div className="space-y-1">
@@ -209,7 +209,7 @@ export default function FleetVehicleDetailPage() {
                                         <div className="py-16 text-center bg-black/30 rounded-2xl border border-white/5 p-8">
                                             <Users className="w-12 h-12 text-slate-600 mx-auto mb-4" />
                                             <p className="text-slate-400 font-medium mb-4">No drivers currently assigned to this vehicle's operating roster.</p>
-                                            <Link href={`/fleet/vehicles/${vehicle.id}/assign-driver`} className="text-blue-400 hover:text-blue-300 font-black uppercase text-xs tracking-widest underline">
+                                            <Link href={`/fleet/vehicles/${vehicle.id}/assign-driver`} className="text-[#D4AF37] hover:text-[#ffe088] font-black uppercase text-xs tracking-widest underline">
                                                 Assign Driver Now →
                                             </Link>
                                         </div>
@@ -221,7 +221,7 @@ export default function FleetVehicleDetailPage() {
                         {/* Right: Telemetry & Claim History Sidebar */}
                         <div className="space-y-8">
                             {/* Live Telemetry Card */}
-                            <div className="bg-slate-800/40 rounded-3xl border border-white/10 p-8 shadow-2xl backdrop-blur-xl">
+                            <div className="bg-card-dark rounded-3xl border border-white/10 p-8 shadow-2xl">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="p-3 bg-emerald-500/20 rounded-2xl border border-emerald-500/30">
                                         <Activity className="w-7 h-7 text-emerald-400 animate-pulse" />
@@ -255,11 +255,11 @@ export default function FleetVehicleDetailPage() {
                             </div>
 
                             {/* Claims History */}
-                            <div className="bg-slate-800/40 rounded-3xl border border-white/10 p-8 shadow-2xl backdrop-blur-xl">
+                            <div className="bg-card-dark rounded-3xl border border-white/10 p-8 shadow-2xl">
                                 <div className="flex items-center justify-between mb-6">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-3 bg-purple-500/20 rounded-2xl border border-purple-500/30">
-                                            <FileText className="w-7 h-7 text-purple-400" />
+                                        <div className="p-3 bg-[#D4AF37]/15 rounded-2xl border border-[#D4AF37]/30">
+                                            <FileText className="w-7 h-7 text-[#D4AF37]" />
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-black text-white tracking-tight">Maintenance Logs</h3>

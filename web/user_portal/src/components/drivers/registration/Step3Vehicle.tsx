@@ -98,11 +98,11 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
     const canJoin = v.ownerAllowsCoDriver && !isFull;
 
     return (
-      <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
+      <div className="mt-6 bg-slate-50 dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-sm">
         <div className="p-6">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 text-indigo-600 rounded-full flex items-center justify-center text-xl">
+              <div className="w-12 h-12 bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#D4AF37] rounded-full flex items-center justify-center text-xl">
                 <Car className="w-6 h-6" />
               </div>
               <div>
@@ -152,18 +152,18 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
 
   const renderNewVehicleForm = () => {
     return (
-      <div className="mt-8 space-y-6 bg-gray-50 dark:bg-gray-800/30 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
-        <h4 className="text-lg font-bold text-gray-900 dark:text-white">Register New Vehicle</h4>
-        <p className="text-sm text-gray-500 mb-6">This vehicle was not found in our system. Please register it below.</p>
+      <div className="mt-8 space-y-6 bg-slate-50 dark:bg-surface-dark p-6 rounded-2xl border border-slate-200 dark:border-white/10">
+        <h4 className="text-lg font-bold text-slate-900 dark:text-white">Register New Vehicle</h4>
+        <p className="text-sm text-neutral-500 mb-6">This vehicle was not found in our system. Please register it below.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vehicle Type *</label>
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Vehicle Type *</label>
             <select
               name="vehicleType"
               value={data.vehicleType}
               onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white ${errors.vehicleType ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+              className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white dark:bg-card-dark dark:text-white ${errors.vehicleType ? 'border-red-500' : 'border-slate-300 dark:border-white/10'}`}
             >
               <option value="">Select Type</option>
               <option value="car">Car (Standard/Premium)</option>
@@ -173,93 +173,93 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">License Plate *</label>
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">License Plate *</label>
             <input
               type="text"
               name="licensePlate"
               value={data.licensePlate}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white"
+              className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white dark:bg-card-dark dark:text-white"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Make *</label>
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Make *</label>
             <input
               type="text"
               name="vehicleMake"
               value={data.vehicleMake}
               onChange={handleInputChange}
               placeholder="e.g. Toyota"
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white"
+              className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white dark:bg-card-dark dark:text-white"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Model *</label>
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Model *</label>
             <input
               type="text"
               name="vehicleModel"
               value={data.vehicleModel}
               onChange={handleInputChange}
               placeholder="e.g. Prius"
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white"
+              className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white dark:bg-card-dark dark:text-white"
             />
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Year *</label>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Year *</label>
               <input
                 type="number"
                 name="vehicleYear"
                 value={data.vehicleYear}
                 onChange={handleInputChange}
                 placeholder="2018"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-white"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white dark:bg-card-dark dark:text-white"
               />
             </div>
         </div>
 
-        <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
-           <h5 className="font-semibold text-gray-900 dark:text-white mb-4">Vehicle Documents</h5>
+        <div className="mt-8 border-t border-slate-200 dark:border-white/10 pt-6">
+           <h5 className="font-semibold text-slate-900 dark:text-white mb-4">Vehicle Documents</h5>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button type="button" className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                 <Upload className="mx-auto mb-2 text-indigo-500 w-6 h-6" />
-                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Vehicle Photos</span>
+              <button type="button" className="border-2 border-dashed border-slate-300 dark:border-white/15 rounded-xl p-4 hover:border-[#D4AF37]/60 transition">
+                 <Upload className="mx-auto mb-2 text-[#D4AF37] w-6 h-6" />
+                 <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Vehicle Photos</span>
               </button>
-              <button type="button" className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                 <Upload className="mx-auto mb-2 text-indigo-500 w-6 h-6" />
-                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Logbook</span>
+              <button type="button" className="border-2 border-dashed border-slate-300 dark:border-white/15 rounded-xl p-4 hover:border-[#D4AF37]/60 transition">
+                 <Upload className="mx-auto mb-2 text-[#D4AF37] w-6 h-6" />
+                 <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Logbook</span>
               </button>
-              <button type="button" className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                 <Upload className="mx-auto mb-2 text-indigo-500 w-6 h-6" />
-                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Insurance & Inspection</span>
+              <button type="button" className="border-2 border-dashed border-slate-300 dark:border-white/15 rounded-xl p-4 hover:border-[#D4AF37]/60 transition">
+                 <Upload className="mx-auto mb-2 text-[#D4AF37] w-6 h-6" />
+                 <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Insurance & Inspection</span>
               </button>
            </div>
         </div>
 
-        <div className="bg-indigo-50 dark:bg-indigo-900/10 p-5 rounded-lg border border-indigo-100 dark:border-indigo-800 mt-6">
+        <div className="bg-[#D4AF37]/10 p-5 rounded-xl border border-[#D4AF37]/30 mt-6">
           <label className="flex items-start gap-3 cursor-pointer">
             <input
               type="checkbox"
               name="allowCoDriver"
               checked={data.allowCoDriver}
               onChange={handleInputChange}
-              className="mt-1 h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              className="mt-1 h-5 w-5 text-[#D4AF37] accent-[#D4AF37] focus:ring-[#D4AF37] border-slate-300 rounded"
             />
             <div>
-              <span className="font-medium text-indigo-900 dark:text-indigo-100 block mb-1">Allow Co-Driver (Shift Sharing)</span>
-              <span className="text-sm text-indigo-700 dark:text-indigo-300 block">
+              <span className="font-bold text-slate-900 dark:text-[#ffe088] block mb-1">Allow Co-Driver (Shift Sharing)</span>
+              <span className="text-sm text-neutral-700 dark:text-neutral-300 block">
                 Opt-in to allow other drivers to request to link to this vehicle and take shifts sharing it. A maximum of 2 drivers can be linked.
               </span>
             </div>
           </label>
         </div>
         
-        <div className="text-sm text-gray-500 italic mt-4">
+        <div className="text-sm text-neutral-500 italic mt-4">
           Note: Final service category (Standard, PSV, Premium, Delivery) will strictly be determined by CABI Administration during review.
         </div>
       </div>
@@ -268,11 +268,11 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+      <div className="border-b border-slate-200 dark:border-white/10 pb-4">
+        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
           3. Vehicle Search & Connection
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
           Search for the Number Plate of the vehicle you intend to drive.
         </p>
       </div>
@@ -281,7 +281,7 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
         <div className="flex gap-3">
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search className="text-gray-400 w-5 h-5" />
+              <Search className="text-neutral-400 w-5 h-5" />
             </div>
             <input
               type="text"
@@ -289,14 +289,14 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
               value={data.searchQuery}
               onChange={handleInputChange}
               placeholder="Enter Number Plate (e.g. KDA 123A)"
-              className="w-full pl-11 pr-4 py-4 uppercase rounded-xl border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white text-lg tracking-wider font-semibold"
+              className="w-full pl-11 pr-4 py-4 uppercase rounded-xl border border-slate-300 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-slate-50 dark:bg-surface-dark dark:text-white text-lg tracking-wider font-semibold"
             />
           </div>
           <button
             type="button"
             onClick={handleSearch}
             disabled={isSearching || !data.searchQuery}
-            className="px-8 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold rounded-xl hover:bg-gray-800 dark:hover:bg-gray-100 disabled:opacity-50 transition-colors"
+            className="px-8 py-4 bg-[#D4AF37] hover:bg-[#ffe088] text-black font-extrabold rounded-xl disabled:opacity-50 transition-colors shadow-lg"
           >
             {isSearching ? <Loader2 className="animate-spin w-5 h-5 mx-auto" /> : 'Search'}
           </button>

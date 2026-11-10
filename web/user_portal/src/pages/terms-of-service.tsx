@@ -1,19 +1,15 @@
-import Head from 'next/head';
+import MainLayout from '@/components/layout/MainLayout';
 
 export default function TermsOfServicePage() {
   return (
-    <>
-      <Head>
-        <title>Terms of Service | CABI</title>
-        <meta
-          name="description"
-          content="Read the CABI Terms of Service to understand the rules for using our platform."
-        />
-      </Head>
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
-          <h1 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">
-            Terms of Service
+    <MainLayout
+      title="Terms of Service | CABI"
+      description="Read the CABI Terms of Service to understand the rules for using our platform."
+    >
+      <div className="bg-slate-50 dark:bg-surface-dark py-12 px-4">
+        <div className="max-w-4xl mx-auto bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 p-8 sm:p-10 rounded-3xl shadow-xl">
+          <h1 className="text-3xl sm:text-4xl font-black mb-4 text-slate-900 dark:text-white">
+            Terms of <span className="text-[#D4AF37]">Service</span>
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             Last updated: {new Date().toLocaleDateString()}
@@ -57,7 +53,7 @@ export default function TermsOfServicePage() {
             </section>
           </div>
         </div>
-      </main>
-    </>
+      </div>
+    </MainLayout>
   );
 }

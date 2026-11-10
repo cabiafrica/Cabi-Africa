@@ -1,4 +1,3 @@
-// apps/user-portal/src/components/PostSummaryCard.tsx
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,9 +12,13 @@ export default function PostSummaryCard({
     useEffect(() => {
         setMounted(true);
     }, []);
+
     return (
-        <Link href={`/blog/${post.id}`} className="group relative flex flex-col glass rounded-2xl overflow-hidden shadow-sm hover:shadow-brand-accent/20 transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 dark:border-white/5 bg-white/80 dark:bg-white/5 backdrop-blur-xl">
-            <div className="relative aspect-video w-full overflow-hidden bg-brand-dark">
+        <Link
+            href={`/blog/${post.id}`}
+            className="group relative flex flex-col rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200 dark:border-white/10 hover:border-[#D4AF37]/50 bg-white dark:bg-card-dark"
+        >
+            <div className="relative aspect-video w-full overflow-hidden bg-surface-dark">
                 <Image
                     src={post.imageUrl || `https://source.unsplash.com/random/800x600/?${post.category?.toLowerCase() || 'transport'}`}
                     alt={post.title}
@@ -25,25 +28,25 @@ export default function PostSummaryCard({
             </div>
 
             <div className="flex flex-col flex-1 p-6">
-                <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20">
-                        Article
+                <div className="flex items-center gap-2.5 mb-3">
+                    <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30">
+                        {post.category || 'Article'}
                     </span>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
                         {mounted && new Date(post.publishedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                     </span>
                 </div>
 
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-brand-yellow dark:group-hover:text-brand-yellow transition-colors">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 line-clamp-2 group-hover:text-[#D4AF37] transition-colors">
                     {post.title}
                 </h3>
 
-                <p className="text-base text-gray-600 dark:text-gray-400 line-clamp-3 mb-4 flex-1">
+                <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 line-clamp-3 mb-4 flex-1 leading-relaxed">
                     {post.summary}
                 </p>
 
-                <div className="flex items-center text-sm font-medium text-brand-accent group-hover:translate-x-1 transition-transform">
-                    Read article <span className="ml-1">→</span>
+                <div className="flex items-center text-sm font-bold text-[#D4AF37] group-hover:translate-x-1 transition-transform">
+                    Read article <span className="ml-1">&rarr;</span>
                 </div>
             </div>
         </Link>

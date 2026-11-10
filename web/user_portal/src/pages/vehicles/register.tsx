@@ -203,7 +203,7 @@ export default function VehicleRegistrationPage() {
                 {/* Background Ambience */}
                 <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
                     <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-yellow/5 rounded-full blur-[120px]" />
-                    <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-accent/5 rounded-full blur-[120px]" />
+                    <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#D4AF37]/5 rounded-full blur-[120px]" />
                 </div>
 
                 <div className="container mx-auto px-6 relative z-10">
@@ -380,7 +380,7 @@ export default function VehicleRegistrationPage() {
 
                                 {/* Registration Details */}
                                 <div className="glass p-8 rounded-3xl border border-white/5">
-                                    <div className="flex items-center gap-3 mb-6 text-brand-accent">
+                                    <div className="flex items-center gap-3 mb-6 text-[#FACC15]">
                                         <FaIdCard className="text-xl" />
                                         <h2 className="text-xl font-bold uppercase tracking-widest text-sm">Legal Registration & Ownership</h2>
                                     </div>
@@ -392,7 +392,7 @@ export default function VehicleRegistrationPage() {
                                                 name="licensePlate"
                                                 value={formData.licensePlate}
                                                 onChange={handleInputChange}
-                                                className={`w-full bg-brand-dark border ${errors.licensePlate ? 'border-red-500' : 'border-gray-800'} rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent transition-all font-mono`}
+                                                className={`w-full bg-brand-dark border ${errors.licensePlate ? 'border-red-500' : 'border-gray-800'} rounded-lg px-4 py-3 focus:outline-none focus:border-[#D4AF37] transition-all font-mono`}
                                                 placeholder="KAA 001A"
                                             />
                                             {errors.licensePlate && <p className="text-red-500 text-xs">{errors.licensePlate}</p>}
@@ -403,7 +403,7 @@ export default function VehicleRegistrationPage() {
                                                 name="logbookNumber"
                                                 value={formData.logbookNumber}
                                                 onChange={handleInputChange}
-                                                className={`w-full bg-brand-dark border ${errors.logbookNumber ? 'border-red-500' : 'border-gray-800'} rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent transition-all`}
+                                                className={`w-full bg-brand-dark border ${errors.logbookNumber ? 'border-red-500' : 'border-gray-800'} rounded-lg px-4 py-3 focus:outline-none focus:border-[#D4AF37] transition-all`}
                                                 placeholder="e.g. LOG1234567"
                                             />
                                             {errors.logbookNumber && <p className="text-red-500 text-xs">{errors.logbookNumber}</p>}
@@ -417,7 +417,7 @@ export default function VehicleRegistrationPage() {
                                                 name="ownerName"
                                                 value={formData.ownerName}
                                                 onChange={handleInputChange}
-                                                className={`w-full bg-brand-dark border ${errors.ownerName ? 'border-red-500' : 'border-gray-800'} rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent transition-all`}
+                                                className={`w-full bg-brand-dark border ${errors.ownerName ? 'border-red-500' : 'border-gray-800'} rounded-lg px-4 py-3 focus:outline-none focus:border-[#D4AF37] transition-all`}
                                                 placeholder="Full Name as on Logbook"
                                             />
                                             {errors.ownerName && <p className="text-red-500 text-xs">{errors.ownerName}</p>}
@@ -429,7 +429,7 @@ export default function VehicleRegistrationPage() {
                                                 type="tel"
                                                 value={formData.ownerPhone}
                                                 onChange={handleInputChange}
-                                                className={`w-full bg-brand-dark border ${errors.ownerPhone ? 'border-red-500' : 'border-gray-800'} rounded-lg px-4 py-3 focus:outline-none focus:border-brand-accent transition-all`}
+                                                className={`w-full bg-brand-dark border ${errors.ownerPhone ? 'border-red-500' : 'border-gray-800'} rounded-lg px-4 py-3 focus:outline-none focus:border-[#D4AF37] transition-all`}
                                                 placeholder="+254 7..."
                                             />
                                             {errors.ownerPhone && <p className="text-red-500 text-xs">{errors.ownerPhone}</p>}
@@ -508,7 +508,7 @@ export default function VehicleRegistrationPage() {
 
                                 {/* Vehicle Photos */}
                                 <div className="glass p-8 rounded-3xl border border-white/5">
-                                    <div className="flex items-center gap-3 mb-6 text-brand-purple">
+                                    <div className="flex items-center gap-3 mb-6 text-[#D4AF37]">
                                         <FaCamera className="text-xl" />
                                         <h2 className="text-xl font-bold uppercase tracking-widest text-sm">Vehicle Photos</h2>
                                     </div>

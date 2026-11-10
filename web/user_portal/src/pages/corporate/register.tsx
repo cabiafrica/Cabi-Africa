@@ -139,7 +139,7 @@ export default function CorporateRegisterPage() {
     };
 
     return (
-        <div className="min-h-screen bg-brand-black text-white selection:bg-brand-yellow selection:text-black">
+        <div className="min-h-screen bg-slate-50 dark:bg-brand-black text-slate-900 dark:text-white selection:bg-brand-yellow selection:text-black transition-colors duration-300">
             <Head>
                 <title>Register Corporate Account | Cabi for Business</title>
                 <meta name="description" content="Set up your enterprise corporate travel account on Cabi Africa. Manage employee rides, ride policies, and unified billing." />
@@ -157,7 +157,7 @@ export default function CorporateRegisterPage() {
                     <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight mb-4">
                         Corporate Travel & Team Management
                     </h1>
-                    <p className="text-gray-400 text-sm sm:text-base">
+                    <p className="text-slate-600 dark:text-gray-400 text-sm sm:text-base">
                         Empower your team with seamless business rides, centralized prepaid wallet, customizable ride policies with grace justifications, and unified monthly invoicing.
                     </p>
                 </div>
@@ -165,7 +165,7 @@ export default function CorporateRegisterPage() {
                 {/* Progress Indicator */}
                 <div className="max-w-2xl mx-auto mb-10">
                     <div className="flex items-center justify-between relative">
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-0.5 bg-white/10 z-0" />
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-0.5 bg-slate-200 dark:bg-white/10 z-0" />
                         <div 
                             className="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 bg-brand-yellow transition-all duration-500 z-0"
                             style={{ width: step === 1 ? '0%' : step === 2 ? '50%' : '100%' }}
@@ -174,7 +174,7 @@ export default function CorporateRegisterPage() {
                         {/* Step 1 Bubble */}
                         <div className="relative z-10 flex flex-col items-center">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
-                                step >= 1 ? 'bg-brand-yellow text-black shadow-[0_0_15px_rgba(245,158,11,0.5)]' : 'bg-white/10 text-gray-400'
+                                step >= 1 ? 'bg-brand-yellow text-black shadow-[0_0_15px_rgba(245,158,11,0.5)]' : 'bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-gray-400'
                             }`}>
                                 1
                             </div>
@@ -184,7 +184,7 @@ export default function CorporateRegisterPage() {
                         {/* Step 2 Bubble */}
                         <div className="relative z-10 flex flex-col items-center">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
-                                step >= 2 ? 'bg-brand-yellow text-black shadow-[0_0_15px_rgba(245,158,11,0.5)]' : 'bg-white/10 text-gray-400'
+                                step >= 2 ? 'bg-brand-yellow text-black shadow-[0_0_15px_rgba(245,158,11,0.5)]' : 'bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-gray-400'
                             }`}>
                                 2
                             </div>
@@ -194,7 +194,7 @@ export default function CorporateRegisterPage() {
                         {/* Step 3 Bubble */}
                         <div className="relative z-10 flex flex-col items-center">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
-                                step >= 3 ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-white/10 text-gray-400'
+                                step >= 3 ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-gray-400'
                             }`}>
                                 3
                             </div>
@@ -204,7 +204,7 @@ export default function CorporateRegisterPage() {
                 </div>
 
                 {/* Main Card */}
-                <div className="max-w-2xl mx-auto bg-surface-dark/90 border border-white/10 rounded-2xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+                <div className="max-w-2xl mx-auto bg-white dark:bg-surface-dark/90 border border-slate-200 dark:border-white/10 rounded-2xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl relative overflow-hidden">
                     {/* Ambient Glow */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-brand-yellow/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -217,7 +217,7 @@ export default function CorporateRegisterPage() {
 
                     {step === 1 && (
                         <form onSubmit={handleNext} className="space-y-6">
-                            <div className="border-b border-white/10 pb-4 mb-6">
+                            <div className="border-b border-slate-200 dark:border-white/10 pb-4 mb-6">
                                 <h2 className="text-xl font-bold flex items-center gap-2">
                                     <Building2 className="w-5 h-5 text-brand-yellow" />
                                     Company Details
@@ -228,7 +228,7 @@ export default function CorporateRegisterPage() {
                             </div>
 
                             <div>
-                                <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-2">
+                                <label className="block text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-gray-300 mb-2">
                                     Legal Company Name *
                                 </label>
                                 <input
@@ -238,13 +238,13 @@ export default function CorporateRegisterPage() {
                                     onChange={handleChange}
                                     placeholder="e.g. Acme Africa Ltd"
                                     required
-                                    className="w-full bg-brand-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                    className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
                                 />
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-2">
+                                    <label className="block text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-gray-300 mb-2">
                                         Company Work Email *
                                     </label>
                                     <div className="relative">
@@ -256,13 +256,13 @@ export default function CorporateRegisterPage() {
                                             onChange={handleChange}
                                             placeholder="corporate@company.com"
                                             required
-                                            className="w-full bg-brand-black/60 border border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                            className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
                                         />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-2">
+                                    <label className="block text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-gray-300 mb-2">
                                         Company Phone *
                                     </label>
                                     <div className="relative">
@@ -274,7 +274,7 @@ export default function CorporateRegisterPage() {
                                             onChange={handleChange}
                                             placeholder="+254712345678"
                                             required
-                                            className="w-full bg-brand-black/60 border border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                            className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
                                         />
                                     </div>
                                 </div>
@@ -282,7 +282,7 @@ export default function CorporateRegisterPage() {
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-2">
+                                    <label className="block text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-gray-300 mb-2">
                                         Business Reg. / Certificate No. *
                                     </label>
                                     <input
@@ -292,12 +292,12 @@ export default function CorporateRegisterPage() {
                                         onChange={handleChange}
                                         placeholder="e.g. CPR/2023/123456"
                                         required
-                                        className="w-full bg-brand-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                        className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-2">
+                                    <label className="block text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-gray-300 mb-2">
                                         KRA PIN / Tax ID (Optional)
                                     </label>
                                     <input
@@ -306,21 +306,21 @@ export default function CorporateRegisterPage() {
                                         value={formData.kraPin}
                                         onChange={handleChange}
                                         placeholder="e.g. P051234567Z"
-                                        className="w-full bg-brand-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                        className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
                                     />
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-2">
+                                    <label className="block text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-gray-300 mb-2">
                                         Industry
                                     </label>
                                     <select
                                         name="industry"
                                         value={formData.industry}
                                         onChange={handleChange}
-                                        className="w-full bg-brand-black/60 border border-white/15 rounded-xl px-3 py-3 text-sm text-white focus:outline-none focus:border-brand-yellow"
+                                        className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl px-3 py-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-brand-yellow"
                                     >
                                         <option value="Technology & Consulting">Technology</option>
                                         <option value="Financial & Banking">Financial Services</option>
@@ -333,7 +333,7 @@ export default function CorporateRegisterPage() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-2">
+                                    <label className="block text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-gray-300 mb-2">
                                         City
                                     </label>
                                     <input
@@ -341,12 +341,12 @@ export default function CorporateRegisterPage() {
                                         name="city"
                                         value={formData.city}
                                         onChange={handleChange}
-                                        className="w-full bg-brand-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-yellow"
+                                        className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-brand-yellow"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-2">
+                                    <label className="block text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-gray-300 mb-2">
                                         Country
                                     </label>
                                     <input
@@ -354,7 +354,7 @@ export default function CorporateRegisterPage() {
                                         name="country"
                                         value={formData.country}
                                         disabled
-                                        className="w-full bg-brand-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-400 cursor-not-allowed"
+                                        className="w-full bg-slate-100 dark:bg-brand-black/30 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-500 dark:text-gray-400 cursor-not-allowed"
                                     />
                                 </div>
                             </div>
@@ -362,7 +362,7 @@ export default function CorporateRegisterPage() {
                             <div className="flex justify-between items-center pt-4">
                                 <Link 
                                     href="/corporate/login" 
-                                    className="text-xs text-gray-400 hover:text-white transition-colors"
+                                    className="text-xs text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                                 >
                                     Already have a corporate account? <span className="text-brand-yellow font-medium">Log in</span>
                                 </Link>
@@ -380,7 +380,7 @@ export default function CorporateRegisterPage() {
 
                     {step === 2 && (
                         <form onSubmit={handleNext} className="space-y-6">
-                            <div className="border-b border-white/10 pb-4 mb-6">
+                            <div className="border-b border-slate-200 dark:border-white/10 pb-4 mb-6">
                                 <h2 className="text-xl font-bold flex items-center gap-2">
                                     <ShieldCheck className="w-5 h-5 text-brand-yellow" />
                                     Company Admin & Billing Lead
@@ -391,7 +391,7 @@ export default function CorporateRegisterPage() {
                             </div>
 
                             <div>
-                                <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-2">
+                                <label className="block text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-gray-300 mb-2">
                                     Admin Full Name *
                                 </label>
                                 <input
@@ -401,13 +401,13 @@ export default function CorporateRegisterPage() {
                                     onChange={handleChange}
                                     placeholder="e.g. David Kiprono"
                                     required
-                                    className="w-full bg-brand-black/60 border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                    className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
                                 />
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-2">
+                                    <label className="block text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-gray-300 mb-2">
                                         Password *
                                     </label>
                                     <div className="relative">
@@ -419,13 +419,13 @@ export default function CorporateRegisterPage() {
                                             onChange={handleChange}
                                             placeholder="••••••••"
                                             required
-                                            className="w-full bg-brand-black/60 border border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                            className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
                                         />
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-2">
+                                    <label className="block text-xs uppercase tracking-wider font-semibold text-slate-700 dark:text-gray-300 mb-2">
                                         Confirm Password *
                                     </label>
                                     <div className="relative">
@@ -437,26 +437,26 @@ export default function CorporateRegisterPage() {
                                             onChange={handleChange}
                                             placeholder="••••••••"
                                             required
-                                            className="w-full bg-brand-black/60 border border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                            className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
                                         />
                                     </div>
                                 </div>
                             </div>
 
                             {/* Included Highlights */}
-                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                            <div className="p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-2">
                                 <div className="text-xs font-bold uppercase tracking-wider text-brand-yellow mb-2">
                                     Default Corporate Package Included:
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-gray-300">
+                                <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-gray-300">
                                     <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                                     <span><strong>Grace with Justification:</strong> Out-of-policy trips allowed when employees provide business rationale.</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-gray-300">
+                                <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-gray-300">
                                     <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                                     <span><strong>Safety Overdraft Buffer:</strong> KES 25,000 emergency travel buffer to prevent team stranding.</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-gray-300">
+                                <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-gray-300">
                                     <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                                     <span><strong>Instant Team Invites:</strong> One-click Email and SMS invite links for all staff.</span>
                                 </div>
@@ -480,7 +480,7 @@ export default function CorporateRegisterPage() {
                                 <button
                                     type="button"
                                     onClick={() => setStep(1)}
-                                    className="px-4 py-2.5 rounded-xl border border-white/20 text-gray-300 hover:text-white hover:bg-white/5 text-xs font-semibold tracking-wide transition-all"
+                                    className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/20 text-slate-700 dark:text-gray-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 text-xs font-semibold tracking-wide transition-all"
                                 >
                                     Back
                                 </button>
@@ -513,7 +513,7 @@ export default function CorporateRegisterPage() {
                             </div>
                             <h2 className="text-2xl font-black">Welcome to Cabi for Business!</h2>
                             <p className="text-sm text-gray-400 max-w-md mx-auto">
-                                Your corporate travel account for <strong className="text-white">{formData.companyName}</strong> has been successfully initialized with KES 10,000 welcome credit and KES 25,000 Safety Overdraft Buffer.
+                                Your corporate travel account for <strong className="text-slate-900 dark:text-white">{formData.companyName}</strong> has been successfully initialized with KES 10,000 welcome credit and KES 25,000 Safety Overdraft Buffer.
                             </p>
                             <div className="text-xs text-brand-yellow font-medium animate-pulse pt-4">
                                 Redirecting you to the Corporate Dashboard...

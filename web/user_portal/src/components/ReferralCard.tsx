@@ -148,14 +148,14 @@ export default function ReferralCard({
                     </button>
                     <button
                         onClick={shareViaSMS}
-                        className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all font-medium"
+                        className="flex items-center justify-center gap-2 px-4 py-3 bg-[#D4AF37] hover:bg-[#ffe088] text-black font-bold rounded-lg transition-all"
                     >
                         <FaSms className="text-lg" />
                         SMS
                     </button>
                     <button
                         onClick={shareViaEmail}
-                        className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all font-medium"
+                        className="flex items-center justify-center gap-2 px-4 py-3 bg-surface-dark border border-[#D4AF37]/40 hover:border-[#D4AF37] text-[#ffe088] rounded-lg transition-all font-medium"
                     >
                         <FaEnvelope className="text-lg" />
                         Email

@@ -86,7 +86,7 @@ export function DriverRegistrationForm() {
             </div>
 
             <div className="flex items-center justify-between">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+                <button className="bg-[#D4AF37] hover:bg-[#ffe088] text-black font-extrabold py-2.5 px-4 rounded-xl focus:outline-none w-full transition-colors"
                     type="submit" disabled={status === 'submitting'}>
                     {status === 'submitting' ? 'Submitting...' : 'Register Now'}
                 </button>

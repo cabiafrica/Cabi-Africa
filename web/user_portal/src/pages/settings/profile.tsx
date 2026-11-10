@@ -53,7 +53,7 @@ export default function ProfileSettings() {
                 <div className="max-w-3xl mx-auto">
                     <div className="text-center mb-10">
                         <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center justify-center gap-3">
-                            <FaUserShield className="text-brand-purple" />
+                            <FaUserShield className="text-[#D4AF37]" />
                             Profile Privacy & Settings
                         </h1>
                         <p className="mt-2 text-gray-600 dark:text-gray-400">
@@ -63,7 +63,7 @@ export default function ProfileSettings() {
 
                     <form onSubmit={handleSubmit} className="space-y-8">
                         {/* Public Profile Section */}
-                        <div className="bg-white dark:bg-gray-800 shadow rounded-2xl p-6 md:p-8 animate-fade-in-up">
+                        <div className="bg-white dark:bg-card-dark border border-slate-200 dark:border-[#D4AF37]/20 shadow rounded-2xl p-6 md:p-8 animate-fade-in-up">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
                                 Public Identity
                             </h2>
@@ -80,7 +80,7 @@ export default function ProfileSettings() {
                                         value={profile.username}
                                         onChange={handleInputChange}
                                         placeholder="e.g. johndoe123"
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-brand-purple dark:bg-gray-700 dark:text-white"
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-white/10 focus:ring-2 focus:ring-[#FACC15] focus:border-[#D4AF37] dark:bg-surface-dark dark:text-white"
                                     />
                                 </div>
 
@@ -94,14 +94,14 @@ export default function ProfileSettings() {
                                         name="nickname"
                                         value={profile.nickname}
                                         onChange={handleInputChange}
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-brand-purple dark:bg-gray-700 dark:text-white"
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-white/10 focus:ring-2 focus:ring-[#FACC15] focus:border-[#D4AF37] dark:bg-surface-dark dark:text-white"
                                     />
                                 </div>
                             </div>
                         </div>
 
                         {/* Personal Verification Details */}
-                        <div className="bg-white dark:bg-gray-800 shadow rounded-2xl p-6 md:p-8 animate-fade-in-up delay-75">
+                        <div className="bg-white dark:bg-card-dark border border-slate-200 dark:border-[#D4AF37]/20 shadow rounded-2xl p-6 md:p-8 animate-fade-in-up delay-75">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
                                 Verification Details
                             </h2>
@@ -120,7 +120,7 @@ export default function ProfileSettings() {
                                         value={profile.gender || ''}
                                         // @ts-expect-error - bypass testing mock
                                         onChange={handleInputChange}
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-brand-purple dark:bg-gray-700 dark:text-white"
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-white/10 focus:ring-2 focus:ring-[#FACC15] focus:border-[#D4AF37] dark:bg-surface-dark dark:text-white"
                                     >
                                         <option value="">Select Gender</option>
                                         <option value="male">Male</option>
@@ -139,7 +139,7 @@ export default function ProfileSettings() {
                                         // @ts-expect-error - bypass testing mock
                                         value={profile.dob || ''}
                                         onChange={handleInputChange}
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-brand-purple dark:bg-gray-700 dark:text-white"
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-white/10 focus:ring-2 focus:ring-[#FACC15] focus:border-[#D4AF37] dark:bg-surface-dark dark:text-white"
                                     />
                                 </div>
 
@@ -154,14 +154,14 @@ export default function ProfileSettings() {
                                         value={profile.idNumber || ''}
                                         onChange={handleInputChange}
                                         placeholder="Enter ID Number"
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-brand-purple dark:bg-gray-700 dark:text-white"
+                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-white/10 focus:ring-2 focus:ring-[#FACC15] focus:border-[#D4AF37] dark:bg-surface-dark dark:text-white"
                                     />
                                 </div>
                             </div>
                         </div>
 
                         {/* Privacy Settings Section */}
-                        <div className="bg-white dark:bg-gray-800 shadow rounded-2xl p-6 md:p-8 animate-fade-in-up delay-100">
+                        <div className="bg-white dark:bg-card-dark border border-slate-200 dark:border-[#D4AF37]/20 shadow rounded-2xl p-6 md:p-8 animate-fade-in-up delay-100">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
                                 Data Privacy
                             </h2>
@@ -180,7 +180,7 @@ export default function ProfileSettings() {
                                         type="button"
                                         onClick={() => togglePrivacy('showRealName')}
                                         className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${profile.privacySettings.showRealName
-                                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                                            ? 'bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30'
                                             : 'bg-gray-200 text-gray-600 dark:bg-gray-600 dark:text-gray-300'
                                             }`}
                                     >
@@ -206,7 +206,7 @@ export default function ProfileSettings() {
                                         type="button"
                                         onClick={() => togglePrivacy('showEmail')}
                                         className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${profile.privacySettings.showEmail
-                                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                                            ? 'bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30'
                                             : 'bg-gray-200 text-gray-600 dark:bg-gray-600 dark:text-gray-300'
                                             }`}
                                     >
@@ -232,7 +232,7 @@ export default function ProfileSettings() {
                                         type="button"
                                         onClick={() => togglePrivacy('showPhone')}
                                         className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${profile.privacySettings.showPhone
-                                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                                            ? 'bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30'
                                             : 'bg-gray-200 text-gray-600 dark:bg-gray-600 dark:text-gray-300'
                                             }`}
                                     >
@@ -260,7 +260,7 @@ export default function ProfileSettings() {
                             <button
                                 type="submit"
                                 disabled={isSaving}
-                                className="flex items-center gap-2 px-8 py-3 bg-brand-purple hover:bg-brand-purple/90 text-white rounded-xl font-bold shadow-lg shadow-brand-purple/30 transition-all transform hover:-translate-y-1 disabled:opacity-50"
+                                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#D4AF37] to-[#FACC15] hover:brightness-110 text-black rounded-xl font-bold shadow-lg shadow-[#D4AF37]/25 transition-all transform hover:-translate-y-1 disabled:opacity-50"
                             >
                                 {isSaving ? (
                                     <span className="animate-pulse">Saving...</span>

@@ -19,7 +19,10 @@ export interface BlogPost extends BlogPostSummary {
 export async function getAllCategories(): Promise<string[]> {
   try {
     const res = await apiClient.get('/v1/cms/categories');
-    return res.data;
+    if (Array.isArray(res.data) && res.data.length > 0) {
+      return res.data;
+    }
+    return ['Technology', 'Lifestyle', 'Updates'];
   } catch (error) {
     return ['Technology', 'Lifestyle', 'Updates'];
   }
@@ -29,9 +32,9 @@ export async function getPostSummaries(): Promise<BlogPostSummary[]> {
   try {
     const res = await apiClient.get('/v1/blog/posts');
     const posts = res.data;
-    
-    if (!posts || posts.length === 0) return MOCK_POSTS;
-    
+
+    if (!Array.isArray(posts) || posts.length === 0) return MOCK_POSTS;
+
     return posts.map((post: any) => ({
       id: post.id,
       title: post.title,
@@ -42,7 +45,6 @@ export async function getPostSummaries(): Promise<BlogPostSummary[]> {
       slug: post.slug || post.id
     }));
   } catch (error) {
-    console.error('Failed to fetch posts, using mock data:', error);
     return MOCK_POSTS;
   }
 }
@@ -51,7 +53,10 @@ export async function getPostById(id: string): Promise<BlogPost | null> {
   try {
     const res = await apiClient.get(`/v1/blog/posts/${id}`);
     const post = res.data;
-    
+    if (!post || !post.id || !post.title) {
+      return MOCK_POSTS.find(p => p.id === id || p.slug === id) || null;
+    }
+
     return {
       id: post.id,
       title: post.title,
@@ -65,7 +70,6 @@ export async function getPostById(id: string): Promise<BlogPost | null> {
       readTime: post.readTime || '5 min read'
     };
   } catch (error) {
-    console.warn(`Post ${id} not found locally, checking mocks...`);
     return MOCK_POSTS.find(p => p.id === id || p.slug === id) || null;
   }
 }

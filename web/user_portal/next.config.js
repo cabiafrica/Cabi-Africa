@@ -74,6 +74,9 @@ const nextConfig = {
     ],
   },
 
+  // Ensure server SSR and client bundle resolve the exact same lucide-react version
+  transpilePackages: ['lucide-react'],
+
   // Experimental features for better performance
   experimental: {
     outputFileTracingRoot: require('path').join(__dirname, '../../'),
@@ -95,6 +98,15 @@ const nextConfig = {
 
   // Webpack optimizations
   webpack: (config, { dev, isServer }) => {
+    const path = require('path');
+    const localLucide = path.resolve(__dirname, 'node_modules/lucide-react');
+    const rootLucide = path.resolve(__dirname, '../../node_modules/lucide-react');
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      'lucide-react': localLucide,
+      [rootLucide]: localLucide,
+    };
     // Production optimizations
     if (!dev && !isServer) {
       config.optimization = {

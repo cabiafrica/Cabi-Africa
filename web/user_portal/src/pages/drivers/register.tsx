@@ -141,12 +141,12 @@ export default function DriverRegistrationPage() {
 
   const renderIntroStep = () => (
     <div className="space-y-8 animate-fade-in text-center">
-      <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Welcome to the Future of Driving</h2>
-      <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-        Complete our simple 3-step registration. Your documents will be instantly verified by AI.
+      <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Welcome to the Future of Driving</h2>
+      <p className="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
+        Complete our simple 3-step registration. Your documents will be verified securely.
       </p>
       <VideoEmbed videoId="dQw4w9WgXcQ" title="Cabi Driver Introduction" />
-      <button onClick={handleNext} className="w-full sm:w-auto mx-auto mt-6 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all hover:translate-y-[-2px]">
+      <button onClick={handleNext} className="w-full sm:w-auto mx-auto mt-6 px-8 py-4 bg-[#D4AF37] hover:bg-[#ffe088] text-black font-extrabold rounded-xl shadow-lg transition-all hover:translate-y-[-2px]">
         Start 3-Step Registration
       </button>
     </div>
@@ -155,23 +155,23 @@ export default function DriverRegistrationPage() {
   const renderPaymentStep = () => (
     <div className="space-y-6 max-w-lg mx-auto text-center animate-fade-in">
       <div className="mb-8">
-        <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 text-indigo-600">
+        <div className="w-20 h-20 bg-[#D4AF37]/15 border border-[#D4AF37]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-[#D4AF37]">
           <FaLock className="text-3xl" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Secure Sacco Registration</h2>
-        <p className="text-gray-500 mt-2">A one-time Sacco fee is required to activate your driver account.</p>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Secure Sacco Registration</h2>
+        <p className="text-neutral-500 mt-2">A one-time Sacco fee is required to activate your driver account.</p>
       </div>
-      <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 text-left">
-        <div className="flex justify-between items-center mb-4 border-b dark:border-slate-600 pb-4">
-          <span className="text-gray-600 dark:text-gray-300">Registration Fee</span>
-          <span className="font-bold text-gray-900 dark:text-white">KES {REGISTRATION_FEE.toLocaleString()}</span>
+      <div className="bg-slate-50 dark:bg-surface-dark p-6 rounded-2xl border border-slate-200 dark:border-white/10 text-left">
+        <div className="flex justify-between items-center mb-4 border-b border-slate-200 dark:border-white/10 pb-4">
+          <span className="text-neutral-600 dark:text-neutral-300">Registration Fee</span>
+          <span className="font-bold text-slate-900 dark:text-white">KES {REGISTRATION_FEE.toLocaleString()}</span>
         </div>
         <div className="flex justify-between items-center pt-4 mt-4">
-          <span className="text-lg font-bold text-gray-900 dark:text-white">Total</span>
-          <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">KES {REGISTRATION_FEE.toLocaleString()}</span>
+          <span className="text-lg font-bold text-slate-900 dark:text-white">Total</span>
+          <span className="text-2xl font-black text-[#D4AF37]">KES {REGISTRATION_FEE.toLocaleString()}</span>
         </div>
       </div>
-      <button onClick={handlePayment} disabled={paymentStatus === 'processing'} className="w-full py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed">
+      <button onClick={handlePayment} disabled={paymentStatus === 'processing'} className="w-full py-4 bg-[#D4AF37] hover:bg-[#ffe088] text-black font-extrabold rounded-xl shadow-lg flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed transition-colors">
         {paymentStatus === 'processing' ? 'Processing...' : <><FaCreditCard /> Pay KES {REGISTRATION_FEE.toLocaleString()} via M-Pesa</>}
       </button>
     </div>
@@ -179,15 +179,15 @@ export default function DriverRegistrationPage() {
 
   const renderReceiptStep = () => (
     <div className="space-y-6 animate-fade-in text-center">
-      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600 animate-bounce-short">
+      <div className="w-16 h-16 bg-emerald-500/15 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-500 animate-bounce-short">
         <FaCheckCircle className="text-3xl" />
       </div>
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Payment Successful!</h2>
-      <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mt-2">
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Payment Successful!</h2>
+      <p className="text-neutral-600 dark:text-neutral-400 max-w-md mx-auto mt-2">
         Your registration is complete and pending Admin review. We will notify you once approved.
       </p>
       <PaymentReceipt receiptNumber={receiptNumber} date={new Date().toLocaleDateString()} payerName={`${formData.firstName} ${formData.lastName}`} payerPhone={formData.phone} amount={REGISTRATION_FEE} paymentMethod="M-PESA" status="PAID" />
-      <button onClick={() => router.push('/drivers/dashboard?new_applicant=true')} className="text-indigo-600 hover:underline font-medium mt-6 block w-full">
+      <button onClick={() => router.push('/drivers/dashboard?new_applicant=true')} className="text-[#D4AF37] hover:text-[#ffe088] hover:underline font-semibold mt-6 block w-full">
         Continue to Dashboard &rarr;
       </button>
     </div>
@@ -195,23 +195,26 @@ export default function DriverRegistrationPage() {
 
   return (
     <MainLayout title="Driver Registration | CABI" description="Join CABI as a driver">
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-indigo-950 dark:to-purple-950 py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-slate-50 dark:bg-surface-dark py-12 relative overflow-hidden">
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[420px] rounded-full bg-[#D4AF37]/10 blur-[140px] pointer-events-none" />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Become a CABI Driver</h1>
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mb-2">
+              Become a <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffe088] via-[#FACC15] to-[#D4AF37]">CABI</span> Driver
+            </h1>
             {currentStep > 0 && currentStep < 4 && (
               <div className="flex items-center justify-center gap-2 mt-4">
-                <div className={`w-3 h-3 rounded-full ${currentStep >= 1 ? 'bg-indigo-600' : 'bg-gray-300'}`} />
-                <div className={`w-8 h-1 ${currentStep >= 2 ? 'bg-indigo-600' : 'bg-gray-300'}`} />
-                <div className={`w-3 h-3 rounded-full ${currentStep >= 2 ? 'bg-indigo-600' : 'bg-gray-300'}`} />
-                <div className={`w-8 h-1 ${currentStep >= 3 ? 'bg-indigo-600' : 'bg-gray-300'}`} />
-                <div className={`w-3 h-3 rounded-full ${currentStep >= 3 ? 'bg-indigo-600' : 'bg-gray-300'}`} />
+                <div className={`w-3 h-3 rounded-full ${currentStep >= 1 ? 'bg-[#D4AF37]' : 'bg-slate-300 dark:bg-white/20'}`} />
+                <div className={`w-8 h-1 rounded-full ${currentStep >= 2 ? 'bg-[#D4AF37]' : 'bg-slate-300 dark:bg-white/20'}`} />
+                <div className={`w-3 h-3 rounded-full ${currentStep >= 2 ? 'bg-[#D4AF37]' : 'bg-slate-300 dark:bg-white/20'}`} />
+                <div className={`w-8 h-1 rounded-full ${currentStep >= 3 ? 'bg-[#D4AF37]' : 'bg-slate-300 dark:bg-white/20'}`} />
+                <div className={`w-3 h-3 rounded-full ${currentStep >= 3 ? 'bg-[#D4AF37]' : 'bg-slate-300 dark:bg-white/20'}`} />
               </div>
             )}
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+          <div className="bg-white dark:bg-card-dark border border-slate-200 dark:border-[#D4AF37]/25 rounded-3xl shadow-2xl p-6 sm:p-8">
             {currentStep === 0 && renderIntroStep()}
             {currentStep === 1 && <Step1BasicDetails data={formData} onChange={handleInputChange} errors={errors} />}
             {currentStep === 2 && <Step2Documents data={formData} onChange={handleUpdates} errors={errors} />}
@@ -221,7 +224,7 @@ export default function DriverRegistrationPage() {
 
             <div className="mt-8 flex justify-between">
               {currentStep > 0 && currentStep < 4 && (
-                <button type="button" onClick={handlePrevious} className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                <button type="button" onClick={handlePrevious} className="px-6 py-3 border border-slate-300 dark:border-white/15 rounded-xl text-neutral-700 dark:text-neutral-300 hover:border-[#D4AF37]/50 font-semibold">
                   Previous
                 </button>
               )}
@@ -230,7 +233,7 @@ export default function DriverRegistrationPage() {
                   type="button" 
                   onClick={handleNext} 
                   disabled={isSubmitting}
-                  className="ml-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg disabled:opacity-50"
+                  className="ml-auto px-6 py-3 bg-[#D4AF37] hover:bg-[#ffe088] text-black font-extrabold rounded-xl disabled:opacity-50 shadow-lg"
                 >
                   {isSubmitting ? 'Processing...' : 'Next Step \u2192'}
                 </button>
@@ -240,7 +243,7 @@ export default function DriverRegistrationPage() {
                   type="button" 
                   onClick={handleNext} 
                   disabled={isSubmitting}
-                  className="ml-auto px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg disabled:opacity-50"
+                  className="ml-auto px-8 py-3 bg-[#D4AF37] hover:bg-[#ffe088] text-black font-extrabold rounded-xl disabled:opacity-50 shadow-lg"
                 >
                   {isSubmitting ? 'Processing...' : 'Proceed to Payment \u2192'}
                 </button>
@@ -249,11 +252,11 @@ export default function DriverRegistrationPage() {
           </div>
 
           <div className="mt-8 text-center space-y-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Already registered? <Link href="/login" className="text-indigo-600 dark:text-indigo-400 hover:underline">Sign in here</Link>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+              Already registered? <Link href="/login" className="text-[#D4AF37] hover:text-[#ffe088] hover:underline font-semibold">Sign in here</Link>
             </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center justify-center gap-2">
-              <FaBuilding /> Want to create an organization? <Link href="/organizations/register" className="text-indigo-600 dark:text-indigo-400 hover:underline">Register Organization</Link>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 flex items-center justify-center gap-2">
+              <FaBuilding className="text-[#D4AF37]" /> Want to create an organization? <Link href="/organizations/register" className="text-[#D4AF37] hover:text-[#ffe088] hover:underline font-semibold">Register Organization</Link>
             </p>
           </div>
 

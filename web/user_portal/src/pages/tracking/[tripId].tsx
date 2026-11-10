@@ -76,11 +76,11 @@ export default function TrackingPage() {
                 <title>Track Delivery #{tripId}</title>
             </Head>
 
-            {/* Header */}
-            <header className="bg-white/70 dark:bg-brand-black/70 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-                <div className="font-black text-2xl tracking-tighter flex items-center gap-2">
-                    <div className="w-8 h-8 bg-brand-yellow rounded-md flex items-center justify-center text-black text-xs font-black">C</div>
-                    <span>Cabi<span className="text-brand-yellow">.</span></span>
+            {/* Sub-Header */}
+            <header className="bg-white/70 dark:bg-brand-black/70 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-6 py-3 flex justify-between items-center sticky top-16 md:top-20 z-40">
+                <div className="font-black text-sm tracking-wider uppercase flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-brand-yellow animate-pulse" />
+                    <span>Live Telemetry Tracking</span>
                 </div>
                 <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">Trip #{tripId}</div>
             </header>
@@ -90,7 +90,7 @@ export default function TrackingPage() {
                 <div className="lg:col-span-1 space-y-6">
                     {/* Status Card */}
                     <div className="glass rounded-2xl overflow-hidden shadow-2xl animate-slide-in">
-                        <div className="bg-gradient-to-r from-brand-yellow to-brand-accent p-6 text-black">
+                        <div className="bg-gradient-to-r from-[#D4AF37] via-[#FACC15] to-[#ffe088] p-6 text-black">
                             <h1 className="text-3xl font-black tracking-tighter mb-1">Arriving in {trackingData.eta}</h1>
                             <p className="font-bold opacity-80 text-sm">Your package is on the way</p>
                         </div>
@@ -134,7 +134,7 @@ export default function TrackingPage() {
                         </div>
 
                         <div className="p-4 bg-slate-50 dark:bg-black/20 border-t border-slate-100 dark:border-white/5 flex gap-4">
-                            <button className="flex-1 py-3 bg-slate-900 dark:bg-white text-white dark:text-black font-black rounded-xl text-xs hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                            <button className="flex-1 py-3 bg-surface-dark dark:bg-[#FACC15] border border-[#D4AF37]/30 text-white dark:text-black font-black rounded-xl text-xs hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                                 <Phone className="w-4 h-4" /> Call Driver
                             </button>
                             <button className="flex-1 py-3 bg-white dark:bg-brand-black border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-black rounded-xl text-xs hover:bg-slate-50 dark:hover:bg-white/5 transition-all flex items-center justify-center gap-2">

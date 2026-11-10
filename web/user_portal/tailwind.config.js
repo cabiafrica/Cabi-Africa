@@ -33,17 +33,29 @@ module.exports = {
                     light: '#FFFFFF',
                     dark: '#121212',
                 },
-                // Maintaining brand alias for backward compatibility but mapping to new palette
+                // Maintaining brand alias for backward compatibility while adding Stitch CABI. tokens
                 brand: {
                     black: '#0a0a0a',
                     dark: '#121212',
                     gray: '#1E1E1E',
                     yellow: '#F59E0B',
                     yellowHover: '#D97706',
-                    accent: '#22D3EE', // Corrected to Cyan per globals.css and previous session audit
-                    indigo: '#6366F1', // Corrected to Indigo per globals.css
+                    accent: '#22D3EE',
+                    indigo: '#6366F1',
                     purple: '#F59E0B',
                 },
+                'executive-gold': '#D4AF37',
+                'surface-dark': '#0A0A0B',
+                'card-dark': '#141416',
+                'primary-container': '#f59e0b',
+                'primary-highlight': '#FACC15',
+                'telemetry-cyan': '#22D3EE',
+                'surface-container-low': '#221a12',
+                'surface-container': '#261e15',
+                'surface-container-high': '#31281f',
+                'on-surface': '#f0e0d1',
+                'on-surface-variant': '#d8c3ad',
+                'outline-variant': '#534434',
             },
             backgroundImage: {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

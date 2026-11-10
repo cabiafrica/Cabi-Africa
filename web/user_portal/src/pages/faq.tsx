@@ -190,14 +190,15 @@ export default function FaqPage() {
       title="Frequently Asked Questions | Cabi"
       description="Find answers to common questions about becoming a Cabi driver, earnings, referrals, and more."
     >
-      <div className="bg-white dark:bg-slate-900 min-h-screen">
+      <div className="bg-slate-50 dark:bg-surface-dark min-h-screen">
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
-          <div className="container mx-auto px-4">
-            <h1 className="text-4xl md:text-5xl font-bold text-center mb-4">
-              Frequently Asked Questions
+        <section className="relative bg-slate-50 dark:bg-surface-dark text-slate-900 dark:text-white py-16 border-b border-slate-200 dark:border-white/10 overflow-hidden">
+          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[380px] rounded-full bg-[#D4AF37]/10 blur-[130px] pointer-events-none" />
+          <div className="container mx-auto px-4 relative z-10">
+            <h1 className="text-4xl md:text-5xl font-black text-center mb-4">
+              Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffe088] via-[#FACC15] to-[#D4AF37]">Questions</span>
             </h1>
-            <p className="text-xl text-center text-blue-100 mb-8">
+            <p className="text-lg sm:text-xl text-center text-neutral-600 dark:text-neutral-300 mb-8">
               Everything you need to know about Cabi
             </p>
 
@@ -208,23 +209,23 @@ export default function FaqPage() {
                 placeholder="Search for answers..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-6 py-4 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="w-full px-6 py-4 rounded-2xl bg-white dark:bg-card-dark border border-slate-300 dark:border-white/15 text-slate-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] shadow-lg"
               />
             </div>
           </div>
         </section>
 
         {/* Category Filter */}
-        <section className="bg-gray-50 dark:bg-gray-800 py-6 border-b border-gray-200 dark:border-gray-700">
+        <section className="bg-white/70 dark:bg-brand-dark/50 py-6 border-b border-slate-200 dark:border-white/10">
           <div className="container mx-auto px-4">
             <div className="flex flex-wrap gap-2 justify-center">
               {categories.map(category => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-full font-medium transition-colors ${selectedCategory === category
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                  className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition-colors ${selectedCategory === category
+                    ? 'bg-[#D4AF37] text-black shadow-md'
+                    : 'bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 text-neutral-700 dark:text-neutral-300 hover:border-[#D4AF37]/50'
                     }`}
                 >
                   {category}
@@ -239,15 +240,15 @@ export default function FaqPage() {
           <div className="container mx-auto px-4 max-w-4xl">
             {filteredFAQs.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-gray-500 dark:text-gray-400 text-lg">
+                <p className="text-neutral-500 dark:text-neutral-400 text-lg">
                   No questions found matching "{searchQuery}". Try a different search term.
                 </p>
               </div>
             ) : (
               Object.entries(groupedFAQs).map(([category, items]) => (
                 <section key={category} className="mb-12">
-                  <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{category}</h2>
-                  <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                  <h2 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">{category}</h2>
+                  <div className="bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden">
                     {items.map((item, index) => (
                       <Accordion key={index} title={item.q}>{item.a}</Accordion>
                     ))}
@@ -259,22 +260,22 @@ export default function FaqPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="bg-blue-600 text-white py-16">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-4">Still have questions?</h2>
-            <p className="text-xl text-blue-100 mb-8">
+        <section className="pb-16 px-4">
+          <div className="max-w-5xl mx-auto rounded-3xl bg-slate-900 dark:bg-card-dark border border-[#D4AF37]/30 text-white py-14 px-6 text-center shadow-2xl">
+            <h2 className="text-3xl font-black mb-4">Still have questions?</h2>
+            <p className="text-lg text-neutral-300 mb-8">
               Our support team is here to help 24/7
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="mailto:support@cabi.com"
-                className="bg-white text-blue-600 font-bold py-3 px-8 rounded-lg hover:bg-blue-50 transition-colors"
+                className="bg-[#D4AF37] text-black font-extrabold py-3.5 px-8 rounded-xl hover:bg-[#ffe088] transition-colors"
               >
                 Email Support
               </a>
               <Link
                 href="/drivers/register"
-                className="bg-blue-800 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-900 transition-colors border-2 border-white"
+                className="bg-white/5 text-white font-bold py-3.5 px-8 rounded-xl hover:border-[#D4AF37]/60 border border-white/15 transition-colors"
               >
                 Start Driving Today
               </Link>

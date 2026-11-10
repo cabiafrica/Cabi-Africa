@@ -49,7 +49,7 @@ export default function VerificationDemo() {
             {/* Background */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
                 <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-yellow/10 rounded-full blur-[120px]" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-accent/10 rounded-full blur-[120px]" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#D4AF37]/10 rounded-full blur-[120px]" />
             </div>
 
             <div className="container mx-auto px-6 py-12 relative z-10">
@@ -128,7 +128,7 @@ export default function VerificationDemo() {
                             <h4 className="font-bold mb-4 text-gray-400">Additional Tests</h4>
                             <button
                                 onClick={() => setShowRandomCheck(true)}
-                                className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors flex items-center gap-2 mx-auto"
+                                className="px-6 py-3 bg-card-dark hover:bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-white font-bold rounded-lg transition-colors flex items-center gap-2 mx-auto"
                             >
                                 <FaShieldAlt className="text-brand-yellow" />
                                 Test Random Biometric Check
@@ -186,7 +186,7 @@ export default function VerificationDemo() {
                                         setVerificationComplete(false);
                                         setVerificationData(null);
                                     }}
-                                    className="flex-1 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors"
+                                    className="flex-1 px-6 py-3 bg-card-dark hover:bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-white font-bold rounded-lg transition-colors"
                                 >
                                     Test Again
                                 </button>
@@ -203,7 +203,7 @@ export default function VerificationDemo() {
                             <h4 className="font-bold mb-4 text-gray-400">Additional Tests</h4>
                             <button
                                 onClick={() => setShowRandomCheck(true)}
-                                className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors flex items-center gap-2 mx-auto"
+                                className="px-6 py-3 bg-card-dark hover:bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-white font-bold rounded-lg transition-colors flex items-center gap-2 mx-auto"
                             >
                                 <FaShieldAlt className="text-brand-yellow" />
                                 Test Random Biometric Check

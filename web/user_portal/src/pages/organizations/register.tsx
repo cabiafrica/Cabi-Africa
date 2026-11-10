@@ -32,7 +32,7 @@ const MemberRow = ({ index, register, setValue }: { index: number, register: any
     };
 
     return (
-        <div className="p-4 bg-white/5 rounded-xl border border-white/5 hover:border-brand-purple/30 transition-all relative">
+        <div className="p-4 bg-white/5 rounded-xl border border-white/5 hover:border-[#D4AF37]/40 transition-all relative">
             <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                     {selectedPhoto ? (
@@ -44,13 +44,13 @@ const MemberRow = ({ index, register, setValue }: { index: number, register: any
                     )}
                     <div>
                         <label className="text-xs uppercase tracking-wider text-gray-500 font-bold block mb-1">Member {index + 1}</label>
-                        <div className="text-[10px] text-brand-purple bg-brand-purple/10 px-2 py-0.5 rounded-full inline-block">Official Member</div>
+                        <div className="text-[10px] text-[#FACC15] bg-[#D4AF37]/15 border border-[#D4AF37]/25 px-2 py-0.5 rounded-full inline-block">Official Member</div>
                     </div>
                 </div>
 
                 {/* Driver Search Input */}
                 <div className="relative z-20">
-                    <div className="flex items-center bg-brand-black/50 border border-white/10 rounded-lg px-2 py-1 w-64 focus-within:border-brand-purple focus-within:ring-1 focus-within:ring-brand-purple transition-all">
+                    <div className="flex items-center bg-brand-black/50 border border-white/10 rounded-lg px-2 py-1 w-64 focus-within:border-[#D4AF37] focus-within:ring-1 focus-within:ring-[#D4AF37] transition-all">
                         <FaSearch className="text-gray-500 mr-2 text-xs" />
                         <input
                             type="text"
@@ -98,7 +98,7 @@ const MemberRow = ({ index, register, setValue }: { index: number, register: any
                     <label className="text-xs uppercase tracking-wider text-gray-500 font-bold hidden md:block">Name</label>
                     <input
                         {...register(`members.${index}.name` as const, { required: true })}
-                        className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-sm"
+                        className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all text-sm"
                         placeholder="Full Name"
                     />
                 </div>
@@ -106,7 +106,7 @@ const MemberRow = ({ index, register, setValue }: { index: number, register: any
                     <label className="text-xs uppercase tracking-wider text-gray-500 font-bold hidden md:block">Contact</label>
                     <input
                         {...register(`members.${index}.contact` as const, { required: true })}
-                        className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-sm"
+                        className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all text-sm"
                         placeholder="Phone or Email"
                     />
                 </div>
@@ -114,7 +114,7 @@ const MemberRow = ({ index, register, setValue }: { index: number, register: any
                     <label className="text-xs uppercase tracking-wider text-gray-500 font-bold hidden md:block">Position</label>
                     <input
                         {...register(`members.${index}.position` as const, { required: true })}
-                        className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-sm"
+                        className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all text-sm"
                         placeholder="e.g. Chairman, Secretary"
                     />
                 </div>
@@ -122,7 +122,7 @@ const MemberRow = ({ index, register, setValue }: { index: number, register: any
                     <input
                         type="checkbox"
                         {...register(`members.${index}.isDistressResponder` as const)}
-                        className="w-4 h-4 rounded border-white/10 bg-brand-black/50 text-brand-purple focus:ring-brand-purple"
+                        className="w-4 h-4 rounded border-white/10 bg-brand-black/50 text-[#FACC15] focus:ring-[#FACC15]"
                         id={`distress-${index}`}
                     />
                     <label htmlFor={`distress-${index}`} className="text-sm text-gray-300">
@@ -244,7 +244,7 @@ export default function RegisterOrganization() {
     };
 
     return (
-        <div className="min-h-screen bg-brand-black text-white font-sans selection:bg-brand-purple selection:text-white">
+        <div className="min-h-screen bg-brand-black text-white font-sans selection:bg-[#D4AF37] selection:text-black">
             <Head>
                 <title>Register Organization - Cabi</title>
             </Head>
@@ -257,7 +257,7 @@ export default function RegisterOrganization() {
                 <div className="max-w-3xl mx-auto">
                     <div className="text-center mb-12">
                         <div
-                            className="inline-flex items-center justify-center h-20 w-20 rounded-full bg-brand-purple/10 text-brand-purple text-4xl mb-6 border border-brand-purple/20 transition-all duration-500"
+                            className="inline-flex items-center justify-center h-20 w-20 rounded-full bg-[#D4AF37]/10 text-[#FACC15] text-4xl mb-6 border border-[#D4AF37]/25 transition-all duration-500"
                             style={brandColor ? {
                                 backgroundColor: `${brandColor}20`,
                                 color: brandColor,
@@ -283,8 +283,8 @@ export default function RegisterOrganization() {
                         style={brandColor ? { borderColor: `${brandColor}30` } : {}}
                     >
                         <div
-                            className="absolute top-0 w-full h-1 bg-gradient-to-r from-brand-purple to-blue-500 left-0 transition-all duration-500"
-                            style={brandColor ? { backgroundImage: `linear-gradient(to right, ${brandColor}, #3b82f6)` } : {}}
+                            className="absolute top-0 w-full h-1 bg-gradient-to-r from-[#D4AF37] via-[#FACC15] to-[#ffe088] left-0 transition-all duration-500"
+                            style={brandColor ? { backgroundImage: `linear-gradient(to right, ${brandColor}, #FACC15)` } : {}}
                         ></div>
 
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -307,7 +307,7 @@ export default function RegisterOrganization() {
                                                     }
                                                 }
                                             })}
-                                            className="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-brand-purple/20 file:text-brand-purple hover:file:bg-brand-purple/30"
+                                            className="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#D4AF37]/20 file:text-[#FACC15] hover:file:bg-[#D4AF37]/30"
                                             style={brandColor ? {
                                                 // We can't easily style the file input pseudo-element directly with inline styles, 
                                                 // so we'll leave it or user global CSS, but for now standard class is fine.
@@ -321,7 +321,7 @@ export default function RegisterOrganization() {
                                             type="file"
                                             accept="image/*"
                                             {...register('banner')}
-                                            className="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-brand-purple/20 file:text-brand-purple hover:file:bg-brand-purple/30"
+                                            className="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#D4AF37]/20 file:text-[#FACC15] hover:file:bg-[#D4AF37]/30"
                                         />
                                         <p className="text-[10px] text-gray-600">Wide image, min 1200x400px (PNG/JPG)</p>
                                     </div>
@@ -332,7 +332,7 @@ export default function RegisterOrganization() {
                                         <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Organization Name</label>
                                         <input
                                             {...register('orgName', { required: true })}
-                                            className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                            className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
                                             placeholder="Enter organization name"
                                         />
                                     </div>
@@ -341,7 +341,7 @@ export default function RegisterOrganization() {
                                         <input
                                             type="email"
                                             {...register('email', { required: true })}
-                                            className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                            className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
                                             placeholder="admin@organization.com"
                                         />
                                     </div>
@@ -351,7 +351,7 @@ export default function RegisterOrganization() {
                                     <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Purpose / Bio</label>
                                     <textarea
                                         {...register('bio', { required: true })}
-                                        className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all h-24"
+                                        className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all h-24"
                                         placeholder="Describe your organization's mission, goals, or services..."
                                     />
                                 </div>
@@ -366,7 +366,7 @@ export default function RegisterOrganization() {
                                             </label>
                                             <input
                                                 {...register('website')}
-                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
                                                 placeholder="https://www.yourorganization.com"
                                             />
                                         </div>
@@ -376,7 +376,7 @@ export default function RegisterOrganization() {
                                             </label>
                                             <input
                                                 {...register('twitter')}
-                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
                                                 placeholder="@handle"
                                             />
                                         </div>
@@ -386,7 +386,7 @@ export default function RegisterOrganization() {
                                             </label>
                                             <input
                                                 {...register('facebook')}
-                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
                                                 placeholder="Page URL or Name"
                                             />
                                         </div>
@@ -396,7 +396,7 @@ export default function RegisterOrganization() {
                                             </label>
                                             <input
                                                 {...register('instagram')}
-                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
                                                 placeholder="@handle"
                                             />
                                         </div>
@@ -406,7 +406,7 @@ export default function RegisterOrganization() {
                                             </label>
                                             <input
                                                 {...register('linkedin')}
-                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
                                                 placeholder="Profile URL"
                                             />
                                         </div>
@@ -427,15 +427,15 @@ export default function RegisterOrganization() {
                                           file:mr-4 file:py-2 file:px-4
                                           file:rounded-full file:border-0
                                           file:text-sm file:font-semibold
-                                          file:bg-brand-purple/20 file:text-brand-purple
-                                          hover:file:bg-brand-purple/30"
+                                          file:bg-[#D4AF37]/20 file:text-[#FACC15]
+                                          hover:file:bg-[#D4AF37]/30"
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Registration Number</label>
                                     <input
                                         {...register('regNumber', { required: true })}
-                                        className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all"
+                                        className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
                                         placeholder="REG-12345"
                                     />
                                 </div>
@@ -481,7 +481,7 @@ export default function RegisterOrganization() {
                                                         <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Subgroup Name</label>
                                                         <input
                                                             {...register(`subgroups.${index}.name` as const, { required: true })}
-                                                            className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-sm"
+                                                            className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all text-sm"
                                                             placeholder="e.g. Welfare Fund, Emergency Response"
                                                         />
                                                     </div>
@@ -493,7 +493,7 @@ export default function RegisterOrganization() {
                                                                 const vals = e.target.value.split(',').map(v => v.trim()).filter(Boolean);
                                                                 setValue(`subgroups.${index}.features`, vals);
                                                             }}
-                                                            className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-sm"
+                                                            className="w-full bg-brand-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all text-sm"
                                                             placeholder="WELFARE, INVESTMENT, ALERTS"
                                                         />
                                                     </div>
@@ -507,7 +507,7 @@ export default function RegisterOrganization() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full py-4 rounded-xl font-bold text-white text-lg bg-brand-purple hover:bg-brand-purple/80 transition-all shadow-lg hover:shadow-brand-purple/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full py-4 rounded-xl font-bold text-black text-lg bg-gradient-to-r from-[#D4AF37] to-[#FACC15] hover:brightness-110 transition-all shadow-lg hover:shadow-[#D4AF37]/25 disabled:opacity-50 disabled:cursor-not-allowed"
                                 style={brandColor ? {
                                     backgroundColor: brandColor,
                                     boxShadow: `0 10px 15px -3px ${brandColor}40`

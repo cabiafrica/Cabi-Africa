@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import MainLayout from '@/components/layout/MainLayout';
 import { Smartphone, FileText, Clock, Zap, PartyPopper, Gift, Share2, Coins, CheckCircle } from 'lucide-react';
+import { APP_LINKS } from '@/config/appLinks';
 
 export default function SuccessPage() {
     const router = useRouter();
@@ -41,8 +42,9 @@ export default function SuccessPage() {
             title="Registration Successful | CABI"
             description="Your driver registration is complete"
         >
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-indigo-950 dark:to-purple-950 py-12">
-                <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-slate-50 dark:bg-surface-dark py-12 relative overflow-hidden">
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[420px] rounded-full bg-[#D4AF37]/10 blur-[140px] pointer-events-none" />
+                <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     {/* Success Animation */}
                     <div className="text-center mb-8">
                         <div className="inline-flex items-center justify-center w-24 h-24 bg-green-100 dark:bg-green-900 rounded-full mb-6 animate-bounce">
@@ -60,7 +62,7 @@ export default function SuccessPage() {
 
                     {/* Payment Confirmation */}
                     {paymentDetails && (
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-6">
+                        <div className="bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 rounded-3xl shadow-xl p-8 mb-6">
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                                 Payment Confirmed
                             </h2>
@@ -88,7 +90,7 @@ export default function SuccessPage() {
                     )}
 
                     {/* Next Steps */}
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-6">
+                    <div className="bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 rounded-3xl shadow-xl p-8 mb-6">
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                             What's Next?
                         </h2>
@@ -106,9 +108,11 @@ export default function SuccessPage() {
                                     <p className="text-gray-600 dark:text-gray-400 mb-3">
                                         Get started by downloading our mobile app to complete your profile and upload required documents.
                                     </p>
-                                    <div className="flex gap-3">
+                                    <div className="flex flex-wrap gap-3">
                                         <a
-                                            href="#"
+                                            href={APP_LINKS.driver.appStore}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                             className="inline-flex items-center px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
                                         >
                                             <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
@@ -117,8 +121,10 @@ export default function SuccessPage() {
                                             App Store
                                         </a>
                                         <a
-                                            href="#"
-                                            className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                            href={APP_LINKS.driver.playStore}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center px-4 py-2 bg-primary-container text-black font-semibold rounded-lg hover:bg-primary-highlight transition-colors"
                                         >
                                             <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                                                 <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.5,12.92 20.16,13.19L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
@@ -181,16 +187,16 @@ export default function SuccessPage() {
                         <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
                             <Gift className="w-6 h-6 text-brand-yellow" /> Your Referral Code
                         </h2>
-                        <p className="mb-4 text-indigo-100">
+                        <p className="mb-4 text-neutral-300">
                             Earn extra income by referring other drivers! Share your unique code and earn commissions when they register.
                         </p>
 
-                        <div className="bg-white/20 backdrop-blur rounded-lg p-4 mb-4">
+                        <div className="bg-white/10 backdrop-blur rounded-xl border border-white/10 p-4 mb-4">
                             <div className="flex items-center justify-between">
                                 <span className="text-3xl font-bold tracking-wider">{referralCode}</span>
                                 <button
                                     onClick={copyReferralCode}
-                                    className="px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors font-medium"
+                                    className="px-4 py-2 bg-[#D4AF37] text-black rounded-lg hover:bg-[#ffe088] transition-colors font-bold"
                                 >
                                     Copy Code
                                 </button>
@@ -210,17 +216,17 @@ export default function SuccessPage() {
                     </div>
 
                     {/* Support */}
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center">
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                    <div className="bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 rounded-3xl shadow-xl p-8 text-center">
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
                             Need Help?
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-400 mb-4">
+                        <p className="text-neutral-600 dark:text-neutral-400 mb-4">
                             Our support team is available 24/7 to assist you
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <a
                                 href="mailto:support@cabi.com"
-                                className="inline-flex items-center justify-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                                className="inline-flex items-center justify-center px-6 py-3 bg-[#D4AF37] text-black font-extrabold rounded-xl hover:bg-[#ffe088] transition-colors"
                             >
                                 <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -229,7 +235,7 @@ export default function SuccessPage() {
                             </a>
                             <Link
                                 href="/faq"
-                                className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                className="inline-flex items-center justify-center px-6 py-3 border border-slate-300 dark:border-white/15 text-neutral-700 dark:text-neutral-300 rounded-xl hover:border-[#D4AF37]/50 transition-colors"
                             >
                                 <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -243,7 +249,7 @@ export default function SuccessPage() {
                     <div className="mt-8 text-center">
                         <Link
                             href="/"
-                            className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                            className="text-[#D4AF37] hover:text-[#ffe088] hover:underline font-semibold"
                         >
                             ← Back to Homepage
                         </Link>

@@ -42,23 +42,27 @@ export default function FloatingTripWidget() {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 pointer-events-none">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 pointer-events-none flex flex-col items-end">
             {/* Floating Toggle Button */}
-            <button 
-                onClick={() => setIsOpen(true)}
-                className={`pointer-events-auto w-14 h-14 lg:w-16 lg:h-16 bg-[#F59E0B] rounded-full shadow-lg flex items-center justify-center text-black transition-all duration-700 transform hover:scale-110 active:scale-95 group relative ${isOpen || !isScrolled ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
-            >
-                <FaCar className="text-xl lg:text-2xl" />
-                <span className="absolute -top-1 -right-1 flex h-4 w-4">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-4 w-4 bg-black border border-[#F59E0B] text-[8px] font-black items-center justify-center text-[#F59E0B]">!</span>
-                </span>
-            </button>
+            {!isOpen && (
+                <button 
+                    onClick={() => setIsOpen(true)}
+                    aria-label="Open quick ride booking"
+                    className={`pointer-events-auto w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-[#F59E0B] rounded-full shadow-lg flex items-center justify-center text-black transition-all duration-500 transform hover:scale-110 active:scale-95 group relative ${!isScrolled ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
+                >
+                    <FaCar className="text-lg sm:text-xl lg:text-2xl" />
+                    <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-4 w-4 bg-black border border-[#F59E0B] text-[8px] font-black items-center justify-center text-[#F59E0B]">!</span>
+                    </span>
+                </button>
+            )}
 
             {/* Floating Widget Card */}
-            <div 
-                className={`pointer-events-auto w-[320px] lg:w-[380px] bg-[#0a0a0a]/90 border border-white/10 rounded-[2.5rem] shadow-2xl transition-all duration-700 transform origin-bottom-right backdrop-blur-3xl overflow-hidden ${isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-0 opacity-0 translate-y-20'}`}
-            >
+            {isOpen && (
+                <div 
+                    className="pointer-events-auto w-[calc(100vw-2rem)] max-w-[340px] lg:max-w-[380px] bg-[#0a0a0a]/95 border border-white/15 rounded-3xl sm:rounded-[2.5rem] shadow-2xl transition-all duration-300 transform origin-bottom-right backdrop-blur-3xl overflow-hidden"
+                >
                 <div className="relative z-10">
                     <div className="p-6 pb-2 flex justify-between items-center">
                         <div className="flex items-center gap-3">
@@ -66,11 +70,11 @@ export default function FloatingTripWidget() {
                                 <FaCar className="text-[#F59E0B]" />
                             </div>
                             <div>
-                                <h3 className="text-white font-black text-sm uppercase tracking-tighter">Tactical Booking</h3>
-                                <p className="text-[9px] text-white/40 font-black uppercase tracking-[0.2em]">Neural Deployment Unit</p>
+                                <h3 className="text-white font-black text-sm uppercase tracking-tight">Quick Booking</h3>
+                                <p className="text-[9px] text-executive-gold font-black uppercase tracking-[0.2em]">Instant Ride</p>
                             </div>
                         </div>
-                        <button onClick={() => setIsOpen(false)} className="text-white/20 hover:text-white">
+                        <button onClick={() => setIsOpen(false)} className="text-white/40 hover:text-white">
                             <FaTimes />
                         </button>
                     </div>
@@ -95,12 +99,13 @@ export default function FloatingTripWidget() {
                             />
                         </div>
                         <button type="submit" className="w-full py-4 bg-[#F59E0B] rounded-2xl font-black text-xs uppercase tracking-widest text-black flex items-center justify-center gap-2">
-                            Compute Trajectory
+                            Check Fares
                             <FaChevronRight />
                         </button>
                     </form>
                 </div>
             </div>
+            )}
         </div>
     );
 }

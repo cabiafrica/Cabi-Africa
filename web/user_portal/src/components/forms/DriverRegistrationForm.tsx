@@ -67,7 +67,7 @@ function RegistrationForm() {
     );
   }
 
-  const inputStyles = "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm";
+  const inputStyles = "mt-1 block w-full rounded-xl border-slate-300 dark:border-white/10 shadow-sm focus:border-[#D4AF37] focus:ring-[#D4AF37] sm:text-sm";
   const errorStyles = "mt-1 text-sm text-red-600";
 
   return (
@@ -105,7 +105,7 @@ function RegistrationForm() {
       {apiError && <p className="text-sm text-red-600 text-center">{apiError}</p>}
 
       <div>
-        <button type="submit" disabled={isSubmitting} className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50">
+        <button type="submit" disabled={isSubmitting} className="flex w-full justify-center rounded-xl border border-transparent bg-[#D4AF37] py-2.5 px-4 text-sm font-extrabold text-black shadow-lg hover:bg-[#ffe088] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 disabled:opacity-50 transition-colors">
           {isSubmitting ? 'Submitting...' : 'Get Started'}
         </button>
       </div>

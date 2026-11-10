@@ -67,16 +67,13 @@ export default function ApplicationDashboard() {
             </Head>
 
             {/* Header / Navbar */}
-            <header className="bg-black border-b border-neutral-900 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                    <div className="flex items-center gap-6">
-                        <div className="flex items-center gap-2">
-                            <span className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-amber-500">
-                                Cabi
-                            </span>
-                            <span className="text-neutral-400 text-sm border-l pl-2 ml-2 border-neutral-800">Driver Portal</span>
+            <header className="bg-black border-b border-neutral-900 sticky top-16 md:top-20 z-40">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center gap-3">
+                    <div className="flex items-center gap-4 overflow-x-auto">
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                            <span className="text-neutral-400 text-xs font-bold uppercase tracking-wider">Driver Portal</span>
                         </div>
-                        <nav className="hidden md:flex items-center gap-2">
+                        <nav className="flex items-center gap-2">
                             <Link href="/drivers/dashboard" className="px-3 py-1.5 rounded-lg text-xs font-bold text-black bg-yellow-400 shadow-sm shadow-yellow-500/20">
                                 Dashboard
                             </Link>

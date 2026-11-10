@@ -83,7 +83,7 @@ export default function PassportPhotoUploader({
                     <div className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh]">
                         <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                             <h3 className="text-lg font-bold dark:text-white flex items-center gap-2">
-                                <FaCrop className="text-indigo-600" />
+                                <FaCrop className="text-[#D4AF37]" />
                                 Adjust Photo
                             </h3>
                             <button onClick={handleCancel} className="text-gray-500 hover:text-gray-700 dark:text-gray-400">
@@ -116,7 +116,7 @@ export default function PassportPhotoUploader({
                                     step={0.1}
                                     aria-labelledby="Zoom"
                                     onChange={(e) => setZoom(Number(e.target.value))}
-                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-indigo-600"
+                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-[#D4AF37]"
                                 />
                                 <FaSearchPlus className="text-gray-400" />
                             </div>
@@ -124,14 +124,14 @@ export default function PassportPhotoUploader({
                             <div className="flex gap-3 justify-end">
                                 <button
                                     onClick={handleCancel}
-                                    className="px-6 py-2 rounded-lg border border-gray-300 dark:border-gray-600 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                    className="px-6 py-2 rounded-xl border border-slate-300 dark:border-white/15 font-medium hover:border-[#D4AF37]/50 transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleSave}
                                     disabled={processing}
-                                    className="px-6 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-colors disabled:opacity-50 flex items-center gap-2"
+                                    className="px-6 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#ffe088] text-black font-extrabold transition-colors disabled:opacity-50 flex items-center gap-2"
                                 >
                                     {processing ? <FaSpinner className="animate-spin" /> : <FaCheck />}
                                     Save Photo
@@ -144,10 +144,10 @@ export default function PassportPhotoUploader({
                 <div className="relative">
                     <label
                         htmlFor="passport-upload"
-                        className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all group"
+                        className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-slate-300 dark:border-white/15 rounded-2xl cursor-pointer bg-slate-50 dark:bg-surface-dark hover:border-[#D4AF37]/50 transition-all group"
                     >
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <div className="w-12 h-12 mb-3 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
+                            <div className="w-12 h-12 mb-3 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] group-hover:scale-110 transition-transform">
                                 <FaCloudUploadAlt className="text-2xl" />
                             </div>
                             <p className="mb-1 text-sm text-gray-500 dark:text-gray-400 font-medium">{label}</p>

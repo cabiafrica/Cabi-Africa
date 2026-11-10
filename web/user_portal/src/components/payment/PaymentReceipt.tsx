@@ -59,7 +59,7 @@ export const PaymentReceipt: React.FC<PaymentReceiptProps> = ({
         <div className="max-w-md mx-auto bg-white border-2 border-slate-200 rounded-lg shadow-lg overflow-hidden">
             <div ref={receiptRef} className="p-8 bg-white text-slate-800">
                 <div className="text-center mb-8 border-b-2 border-slate-100 pb-6">
-                    <h2 className="text-2xl font-black uppercase tracking-widest text-indigo-700">CABI ALPHA</h2>
+                    <h2 className="text-2xl font-black uppercase tracking-widest text-[#D4AF37]">CABI AFRICA</h2>
                     <p className="text-xs text-slate-500 font-medium">OFFICIAL PAYMENT RECEIPT</p>
                 </div>
 
@@ -84,9 +84,9 @@ export const PaymentReceipt: React.FC<PaymentReceiptProps> = ({
                     <div className="flex justify-between items-end border-t border-slate-200 pt-4">
                         <div>
                             <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Amount Paid</p>
-                            <p className="text-sm text-indigo-600 font-medium">{paymentMethod}</p>
+                            <p className="text-sm text-[#B48A1E] font-semibold">{paymentMethod}</p>
                         </div>
-                        <p className="text-3xl font-black text-indigo-900">KES {amount.toLocaleString()}</p>
+                        <p className="text-3xl font-black text-slate-900">KES {amount.toLocaleString()}</p>
                     </div>
                 </div>
 

@@ -404,7 +404,7 @@
       border: 1px solid rgba(255,255,255,0.06);
     }
 
-    /* Dynamic Island & Notch */
+    /* Dynamic Island (iOS 18) & Punch-Hole Camera (Android 15 Pixel 9 Pro) */
     .dynamic-island-container {
       position: absolute;
       top: 8px;
@@ -426,6 +426,7 @@
       padding: 0 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.8);
       border: 1px solid #1a1a1a;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .island-camera {
       width: 10px;
@@ -439,6 +440,112 @@
       height: 6px;
       border-radius: 50%;
       background: #111;
+    }
+
+    /* Android 15 (Pixel 9 Pro) Hardware & Material 3 Chrome Overrides */
+    .phone-emulator.os-android {
+      border-radius: 36px;
+      padding: 10px;
+    }
+    .phone-emulator.os-android .screen-glass {
+      border-radius: 28px;
+    }
+    .phone-emulator.os-android .phone-btn-vol-up {
+      left: auto;
+      right: -9px;
+      top: 210px;
+    }
+    .phone-emulator.os-android .phone-btn-vol-down {
+      left: auto;
+      right: -9px;
+      top: 262px;
+    }
+    .phone-emulator.os-android .phone-btn-power {
+      right: -9px;
+      top: 145px;
+      height: 46px;
+    }
+    .phone-emulator.os-android .dynamic-island {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      padding: 0;
+      justify-content: center;
+      background: #000;
+      border: 1.5px solid #222;
+    }
+    .phone-emulator.os-android .island-sensor {
+      display: none;
+    }
+    .phone-emulator.os-android .island-camera {
+      width: 8px;
+      height: 8px;
+    }
+    .phone-emulator.os-android .app-card {
+      border-radius: 18px;
+    }
+    .phone-emulator.os-android .btn-action-primary,
+    .phone-emulator.os-android .btn-action-green {
+      border-radius: 999px;
+      letter-spacing: 0.02em;
+    }
+
+    /* System Bottom Bar: iOS Home Indicator vs Android 3-Button Nav Bar */
+    .android-system-navbar {
+      display: none;
+      height: 36px;
+      background: #050811;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 36px;
+      z-index: 95;
+    }
+    body.light-theme .android-system-navbar {
+      background: #f1f5f9;
+      border-top-color: #e2e8f0;
+    }
+    .sys-nav-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 4px 16px;
+      border-radius: 999px;
+      transition: all 0.15s;
+    }
+    body.light-theme .sys-nav-btn {
+      color: #475569;
+    }
+    .sys-nav-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: var(--gold);
+    }
+    .phone-emulator.os-android .android-system-navbar {
+      display: flex;
+    }
+    .phone-emulator.os-android .phone-home-indicator {
+      display: none;
+    }
+
+    .os-chip-btn {
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      border: 1px solid var(--border-light);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .os-chip-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
     }
 
     /* Status Bar */
@@ -1405,6 +1512,14 @@
         <span id="themeToggleText">Obsidian Gold</span>
       </button>
 
+      <!-- OS Platform Switcher: iOS 18 vs Android 15 vs Split -->
+      <div class="scale-controls">
+        <span>OS:</span>
+        <button class="scale-btn active" id="btnOsIos" onclick="setGlobalPlatformOS('ios')" title="Both phones on iOS 18 (iPhone 16 Pro)">🍎 iOS 18</button>
+        <button class="scale-btn" id="btnOsAndroid" onclick="setGlobalPlatformOS('android')" title="Both phones on Android 15 (Pixel 9 Pro)">🤖 Android 15</button>
+        <button class="scale-btn" id="btnOsSplit" onclick="setGlobalPlatformOS('split')" title="Passenger on iOS 18 + Driver on Android 15">🔀 Split</button>
+      </div>
+
       <div class="scale-controls">
         <span>View:</span>
         <button class="scale-btn active" id="btnViewDual" onclick="setDeviceView('dual')">👥 Dual</button>
@@ -1507,11 +1622,11 @@
 
         <!-- Phone Status Bar -->
         <div class="phone-status-bar">
-          <span id="pTime">12:30</span>
-          <div class="status-icons">
+          <span id="pTime">9:41</span>
+          <div class="status-icons" id="pStatusIcons">
             <span>5G</span>
             <span>📶</span>
-            <span>100%</span>
+            <span>🔋 100%</span>
           </div>
         </div>
 
@@ -1523,6 +1638,9 @@
               <div class="device-identity-name">Cabi Go</div>
             </div>
             <span class="device-identity-badge badge-passenger">Passenger</span>
+            <button class="os-chip-btn" id="btnPassOsChip" onclick="togglePhoneOS('passenger')" title="Click to toggle Passenger Phone between iOS 18 and Android 15">
+              🍎 iOS 18
+            </button>
           </div>
 
           <div class="view-mode-toggle">
@@ -1697,9 +1815,14 @@
           </div>
         </div>
 
-        <!-- Phone Home Indicator Bar -->
+        <!-- Phone Home Indicator Bar (iOS) & System Nav Bar (Android) -->
         <div class="phone-home-indicator">
           <div class="home-bar"></div>
+        </div>
+        <div class="android-system-navbar">
+          <button class="sys-nav-btn" onclick="resetStudioState()" title="Android Back">◀</button>
+          <button class="sys-nav-btn" onclick="setPassengerViewMode('native')" title="Android Home">●</button>
+          <button class="sys-nav-btn" onclick="togglePhoneOS('passenger')" title="Android Recents">■</button>
         </div>
       </div>
     </div>
@@ -1724,11 +1847,11 @@
 
         <!-- Phone Status Bar -->
         <div class="phone-status-bar">
-          <span id="dTime">12:30</span>
-          <div class="status-icons">
+          <span id="dTime">9:41</span>
+          <div class="status-icons" id="dStatusIcons">
             <span>5G</span>
             <span>📶</span>
-            <span>98%</span>
+            <span>🔋 98%</span>
           </div>
         </div>
 
@@ -1740,6 +1863,9 @@
               <div class="device-identity-name">Cabi Drive</div>
             </div>
             <span class="device-identity-badge badge-driver">Driver</span>
+            <button class="os-chip-btn" id="btnDriverOsChip" onclick="togglePhoneOS('driver')" title="Click to toggle Driver Phone between iOS 18 and Android 15">
+              🍎 iOS 18
+            </button>
           </div>
 
           <div class="view-mode-toggle">
@@ -2193,9 +2319,14 @@
           </div>
         </div>
 
-        <!-- Phone Home Indicator Bar -->
+        <!-- Phone Home Indicator Bar (iOS) & System Nav Bar (Android) -->
         <div class="phone-home-indicator">
           <div class="home-bar"></div>
+        </div>
+        <div class="android-system-navbar">
+          <button class="sys-nav-btn" onclick="switchDriverTab('trip')" title="Android Back">◀</button>
+          <button class="sys-nav-btn" onclick="setDriverViewMode('native')" title="Android Home">●</button>
+          <button class="sys-nav-btn" onclick="switchDriverTab('wealth')" title="Android Recents / Switch Tab">■</button>
         </div>
       </div>
     </div>
@@ -2251,6 +2382,65 @@
       const stage = document.getElementById('stageContainer');
       stage.style.transform = `scale(${scale})`;
       log(`🖥️ Studio scale set to ${Math.round(scale * 100)}%`, 'SYSTEM');
+    }
+
+    // Platform OS Switcher (iOS 18 iPhone 16 Pro vs Android 15 Pixel 9 Pro)
+    let passengerOS = 'ios';
+    let driverOS = 'ios';
+
+    function applyPhoneOS(role, os) {
+      const phoneEl = document.querySelector(role === 'passenger' ? '.passenger-phone' : '.driver-phone');
+      const chipEl = document.getElementById(role === 'passenger' ? 'btnPassOsChip' : 'btnDriverOsChip');
+      const statusIcons = document.getElementById(role === 'passenger' ? 'pStatusIcons' : 'dStatusIcons');
+      const batteryPct = role === 'passenger' ? '100%' : '98%';
+
+      if (os === 'android') {
+        phoneEl.classList.add('os-android');
+        chipEl.innerHTML = '🤖 Android 15';
+        statusIcons.innerHTML = `<span>🚕</span><span>5G UC</span><span>▲▼</span><span>🔋 ${batteryPct}</span>`;
+      } else {
+        phoneEl.classList.remove('os-android');
+        chipEl.innerHTML = '🍎 iOS 18';
+        statusIcons.innerHTML = `<span>5G</span><span>📶</span><span>🔋 ${batteryPct}</span>`;
+      }
+
+      if (role === 'passenger') passengerOS = os;
+      else driverOS = os;
+    }
+
+    function togglePhoneOS(role) {
+      const current = role === 'passenger' ? passengerOS : driverOS;
+      const next = current === 'ios' ? 'android' : 'ios';
+      applyPhoneOS(role, next);
+      syncGlobalOsButtons();
+      playTone([587.33]);
+      log(`📱 ${role.toUpperCase()} phone switched to ${next === 'ios' ? 'iOS 18 (iPhone 16 Pro)' : 'Android 15 (Pixel 9 Pro Material 3)'}.`, 'SYSTEM');
+    }
+
+    function setGlobalPlatformOS(mode) {
+      if (mode === 'ios') {
+        applyPhoneOS('passenger', 'ios');
+        applyPhoneOS('driver', 'ios');
+      } else if (mode === 'android') {
+        applyPhoneOS('passenger', 'android');
+        applyPhoneOS('driver', 'android');
+      } else if (mode === 'split') {
+        applyPhoneOS('passenger', 'ios');
+        applyPhoneOS('driver', 'android');
+      }
+      syncGlobalOsButtons();
+      playTone([523.25, 659.25]);
+      log(`📲 Platform mode set to: ${mode.toUpperCase()} (Passenger: ${passengerOS.toUpperCase()}, Driver: ${driverOS.toUpperCase()}).`, 'SYSTEM');
+    }
+
+    function syncGlobalOsButtons() {
+      const btnIos = document.getElementById('btnOsIos');
+      const btnAndroid = document.getElementById('btnOsAndroid');
+      const btnSplit = document.getElementById('btnOsSplit');
+      [btnIos, btnAndroid, btnSplit].forEach(b => b && b.classList.remove('active'));
+      if (passengerOS === 'ios' && driverOS === 'ios') btnIos?.classList.add('active');
+      else if (passengerOS === 'android' && driverOS === 'android') btnAndroid?.classList.add('active');
+      else btnSplit?.classList.add('active');
     }
 
     // Device View Mode (Dual vs Single Phone)
@@ -2368,6 +2558,10 @@
       } else {
         btnF.classList.add('active');
         vFlutter.classList.add('active-view');
+        if (!vFlutter.dataset.loaded) {
+          vFlutter.src = 'http://localhost:8082/index.html?t=' + Date.now();
+          vFlutter.dataset.loaded = '1';
+        }
         log('🚀 Passenger phone: Real Flutter Web App view (port 8082).', 'PASSENGER');
       }
     }
@@ -2410,6 +2604,10 @@
       } else {
         btnF.classList.add('active');
         vFlutter.classList.add('active-view');
+        if (!vFlutter.dataset.loaded) {
+          vFlutter.src = 'http://localhost:8081/index.html?t=' + Date.now();
+          vFlutter.dataset.loaded = '1';
+        }
         log('🚀 Driver phone: Real Flutter Web App view (port 8081).', 'DRIVER');
       }
     }

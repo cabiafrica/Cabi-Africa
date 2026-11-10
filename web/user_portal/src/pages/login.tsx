@@ -43,10 +43,10 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-brand-black relative overflow-hidden font-sans">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-brand-black text-slate-900 dark:text-white relative overflow-hidden font-sans transition-colors duration-300">
             {/* Background Gradient & Effects */}
             <div className="absolute inset-0 z-0">
-                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-gray-900 via-brand-black to-black"></div>
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-slate-100 via-slate-50 to-amber-50/40 dark:from-gray-900 dark:via-brand-black dark:to-black"></div>
                 {/* Yellow Ambient Orbs */}
                 <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-yellow/10 rounded-full blur-[120px] opacity-60"></div>
                 <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-yellow-600/10 rounded-full blur-[120px] opacity-60"></div>
@@ -55,7 +55,7 @@ export default function LoginPage() {
             {/* Glass Card */}
             <div className="relative z-10 w-full max-w-md p-8 m-4">
                 {/* Card Background with Golden/Yellow Tint Border */}
-                <div className="absolute inset-0 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]"></div>
+                <div className="absolute inset-0 bg-white/90 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xl dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]"></div>
 
                 {/* Glow Border Effect (Golden) */}
                 <div className="absolute -inset-[1px] bg-gradient-to-r from-brand-yellow/40 to-yellow-600/40 rounded-2xl opacity-30 blur-sm group-hover:opacity-100 transition duration-1000"></div>
@@ -63,8 +63,8 @@ export default function LoginPage() {
                 <div className="relative p-8">
                     {/* Logo Section */}
                     <div className="flex flex-col items-center justify-center mb-8">
-                        <div className="relative w-28 h-28 rounded-full border border-brand-yellow/30 flex items-center justify-center bg-black/40 shadow-[0_0_25px_rgba(245,158,11,0.2)] mb-4">
-                            <div className="w-24 h-24 rounded-full border border-brand-yellow/20 flex items-center justify-center overflow-hidden p-3 bg-black">
+                        <div className="relative w-28 h-28 rounded-full border border-brand-yellow/30 flex items-center justify-center bg-slate-100 dark:bg-black/40 shadow-[0_0_25px_rgba(245,158,11,0.2)] mb-4">
+                            <div className="w-24 h-24 rounded-full border border-brand-yellow/20 flex items-center justify-center overflow-hidden p-3 bg-white dark:bg-black">
                                 {imgFailed ? (
                                     <span className="text-3xl font-black text-brand-yellow tracking-tighter">Cabi</span>
                                 ) : (
@@ -77,8 +77,8 @@ export default function LoginPage() {
                                 )}
                             </div>
                         </div>
-                        <h2 className="text-2xl font-bold text-white tracking-wide">Welcome Back</h2>
-                        <p className="text-gray-400 text-xs mt-1 uppercase tracking-widest">Driver & Passenger Portal</p>
+                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-wide">Welcome Back</h2>
+                        <p className="text-slate-500 dark:text-gray-400 text-xs mt-1 uppercase tracking-widest">Driver & Passenger Portal</p>
                     </div>
 
                     {/* Visual Error Banner */}
@@ -101,7 +101,7 @@ export default function LoginPage() {
                                 type="text"
                                 autoComplete="email"
                                 required
-                                className="block w-full pl-12 pr-4 py-3.5 border border-white/5 rounded-xl bg-black/40 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 transition-all duration-300"
+                                className="block w-full pl-12 pr-4 py-3.5 border border-slate-200 dark:border-white/5 rounded-xl bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 transition-all duration-300"
                                 placeholder="Email or Phone Number"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -119,7 +119,7 @@ export default function LoginPage() {
                                 type={showPassword ? "text" : "password"}
                                 autoComplete="current-password"
                                 required
-                                className="block w-full pl-12 pr-12 py-3.5 border border-white/5 rounded-xl bg-black/40 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 transition-all duration-300 tracking-widest"
+                                className="block w-full pl-12 pr-12 py-3.5 border border-slate-200 dark:border-white/5 rounded-xl bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 transition-all duration-300 tracking-widest"
                                 placeholder="Password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -144,9 +144,9 @@ export default function LoginPage() {
                                     id="remember-me"
                                     name="remember-me"
                                     type="checkbox"
-                                    className="h-4 w-4 rounded border-gray-600 text-brand-yellow focus:ring-brand-yellow bg-black/50"
+                                    className="h-4 w-4 rounded border-slate-300 dark:border-gray-600 text-brand-yellow focus:ring-brand-yellow bg-white dark:bg-black/50"
                                 />
-                                <label htmlFor="remember-me" className="ml-2 block text-gray-400 select-none cursor-pointer">
+                                <label htmlFor="remember-me" className="ml-2 block text-slate-600 dark:text-gray-400 select-none cursor-pointer">
                                     Remember me
                                 </label>
                             </div>
@@ -170,20 +170,20 @@ export default function LoginPage() {
                     </form>
 
                     {/* Quick Demo Accounts */}
-                    <div className="mt-6 pt-5 border-t border-white/10">
+                    <div className="mt-6 pt-5 border-t border-slate-200 dark:border-white/10">
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-2.5 text-center">Quick Demo Credentials</p>
                         <div className="grid grid-cols-2 gap-2">
                             <button
                                 type="button"
                                 onClick={() => { setEmail('driver@cabi.africa'); setPassword('Cabi2026!'); setErrorMessage(null); }}
-                                className="px-3 py-2.5 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-700/80 hover:border-brand-yellow text-xs text-neutral-200 hover:text-brand-yellow font-bold transition-all text-center flex items-center justify-center gap-2 shadow-sm"
+                                className="px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-neutral-900/90 hover:bg-slate-200 dark:hover:bg-neutral-800 border border-slate-200 dark:border-neutral-700/80 hover:border-brand-yellow text-xs text-slate-800 dark:text-neutral-200 hover:text-amber-600 dark:hover:text-brand-yellow font-bold transition-all text-center flex items-center justify-center gap-2 shadow-sm"
                             >
                                 <Car className="w-4.5 h-4.5 text-brand-yellow" /> Driver Demo
                             </button>
                             <button
                                 type="button"
                                 onClick={() => { setEmail('passenger@cabi.africa'); setPassword('Cabi2026!'); setErrorMessage(null); }}
-                                className="px-3 py-2.5 rounded-xl bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-700/80 hover:border-brand-yellow text-xs text-neutral-200 hover:text-brand-yellow font-bold transition-all text-center flex items-center justify-center gap-2 shadow-sm"
+                                className="px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-neutral-900/90 hover:bg-slate-200 dark:hover:bg-neutral-800 border border-slate-200 dark:border-neutral-700/80 hover:border-brand-yellow text-xs text-slate-800 dark:text-neutral-200 hover:text-amber-600 dark:hover:text-brand-yellow font-bold transition-all text-center flex items-center justify-center gap-2 shadow-sm"
                             >
                                 <UserCircle2 className="w-4.5 h-4.5 text-brand-yellow" /> Passenger Demo
                             </button>
@@ -193,7 +193,7 @@ export default function LoginPage() {
                     <div className="mt-6 text-center">
                         <p className="text-gray-400 text-sm">
                             Don't have an account?{' '}
-                            <Link href="/register" className="font-bold text-brand-yellow hover:text-white transition-colors uppercase tracking-wide">
+                            <Link href="/register" className="font-bold text-amber-600 dark:text-brand-yellow hover:text-slate-900 dark:hover:text-white transition-colors uppercase tracking-wide">
                                 Register Here
                             </Link>
                         </p>

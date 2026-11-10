@@ -10,90 +10,118 @@ interface FeatureSplitProps {
 export default function FeatureSplit({ type }: FeatureSplitProps) {
     const isDriver = type === 'driver';
     const [mounted, setMounted] = useState(false);
+
     useEffect(() => {
         setMounted(true);
     }, []);
 
-    const content = isDriver ? {
-        title: "Drive & Earn on Your Terms",
-        message: "Join the fastest-growing network of drivers. Enjoy improved earnings, transparent tracking, and a community that supports your growth.",
-        buttonText: "Learn More",
-        buttonLink: "/blog", // User requested blog link
-        image: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070", // Happy Driver / Car
-        imageAlt: "Happy Cabi Driver"
-    } : {
-        title: "Ride in Comfort & Style",
-        message: "Experience seamless urban mobility. Whether it's a quick trip to town or a luxury ride for a special occasion, Cabi gets you there safely.",
-        buttonText: "Learn More",
-        buttonLink: "/blog", // User requested blog link
-        image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070", // Happy Passenger
-        imageAlt: "Happy Cabi Passenger"
-    };
+    const content = isDriver
+        ? {
+              eyebrow: 'For Drivers',
+              badge: 'Driver Partner',
+              titlePrefix: 'Drive & Earn on Your',
+              titleHighlight: 'Terms',
+              message:
+                  'Join a growing network of professional drivers. Enjoy fair earnings, transparent tracking, and dedicated support built for long-term growth.',
+              buttonText: 'Learn More',
+              buttonLink: '/drivers',
+              image: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070',
+              imageAlt: 'Cabi Partner Driver behind the wheel',
+          }
+        : {
+              eyebrow: 'For Passengers',
+              badge: 'Passenger Experience',
+              titlePrefix: 'Ride in Comfort &',
+              titleHighlight: 'Style',
+              message:
+                  'Experience seamless urban mobility. Whether it is a quick city commute or an executive transfer, CABI gets you there smoothly and safely.',
+              buttonText: 'Learn More',
+              buttonLink: '/passengers',
+              image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070',
+              imageAlt: 'Cabi Passenger riding in comfort',
+          };
 
     return (
-        <section className="py-32 bg-slate-50 dark:bg-brand-black overflow-hidden relative group/section">
-            <div className="container mx-auto px-6">
-                <div className={`flex flex-col lg:flex-row items-center gap-20 lg:gap-32 ${isDriver ? '' : 'lg:flex-row-reverse'}`}>
+        <section className="py-16 sm:py-24 lg:py-28 bg-slate-50 dark:bg-surface-dark border-t border-slate-200 dark:border-white/10 overflow-hidden relative group/section transition-colors duration-300">
+            {/* Ambient Obsidian-Gold Background Glow */}
+            <div
+                className={`absolute top-1/2 -translate-y-1/2 ${
+                    isDriver ? 'left-1/4' : 'right-1/4'
+                } w-[520px] h-[420px] rounded-full bg-[#D4AF37]/10 blur-[140px] pointer-events-none animate-gold-aura`}
+            />
 
-                    {/* Image Side */}
+            <div className="container mx-auto px-4 sm:px-6 max-w-7xl relative z-10">
+                <div
+                    className={`flex flex-col lg:flex-row items-center gap-10 sm:gap-16 lg:gap-20 ${
+                        isDriver ? '' : 'lg:flex-row-reverse'
+                    }`}
+                >
+                    {/* Visual Showcase with Golden Aura & Shimmer Animation */}
                     <div className="w-full lg:w-1/2 relative group">
-                        {/* Futuristic Frame */}
-                        <div className={`absolute -inset-1 bg-gradient-to-tr ${isDriver ? 'from-brand-accent to-brand-indigo' : 'from-brand-yellow to-orange-500'} rounded-[2.5rem] opacity-20 blur-2xl group-hover:opacity-60 transition-all duration-1000 rotate-1 ease-in-out`}></div>
-                        
-                        <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden border border-gray-200 dark:border-white/10 group-hover:border-gray-300 dark:group-hover:border-white/20 transition-all duration-700 shadow-2xl">
-                            <Image
-                                src={content.image}
-                                alt={content.imageAlt}
-                                fill
-                                className="object-cover transition-transform duration-[2s] group-hover:scale-110 group-hover:rotate-1"
-                            />
-                            {/* Scanning Effect Overlay */}
-                            <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-white/40 to-transparent top-0 animate-[scan_4s_linear_infinite]" />
-                            
-                            {/* Glass Badge */}
-                            <div className="absolute bottom-8 left-8 glass px-8 py-4 rounded-2xl animate-reveal border-brand-yellow/30 bg-white/80 dark:bg-white/5 backdrop-blur-xl">
-                                <div className="flex items-center gap-4">
-                                    <div className={`w-3 h-3 rounded-full animate-pulse ${isDriver ? 'bg-brand-accent shadow-[0_0_15px_rgba(34,211,238,1)]' : 'bg-brand-yellow shadow-[0_0_15px_rgba(250,204,21,1)]'}`} />
-                                    <span className={`text-xs font-black uppercase tracking-[0.3em] ${isDriver ? 'text-brand-accent' : 'text-brand-yellow'}`}>
-                                        {isDriver ? 'Operation: Carrier' : 'Operation: Voyager'}
-                                    </span>
+                        <div className="absolute -inset-2 bg-gradient-to-tr from-[#D4AF37]/40 via-[#FACC15]/25 to-[#ffe088]/35 rounded-[2.25rem] blur-2xl animate-gold-aura group-hover:opacity-90 transition-opacity duration-700 pointer-events-none" />
+
+                        <div className="relative rounded-3xl bg-white dark:bg-card-dark/90 p-2.5 sm:p-3.5 border border-slate-200 dark:border-[#D4AF37]/35 shadow-2xl transition-transform duration-700 group-hover:-translate-y-1">
+                            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#0A0A0B]">
+                                <Image
+                                    src={content.image}
+                                    alt={content.imageAlt}
+                                    fill
+                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                />
+
+                                {/* Dark-Gold Cinematic Contrast Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent pointer-events-none" />
+
+                                {/* Animated Golden Shimmer Sweep */}
+                                <div className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-[#ffe088]/25 to-transparent pointer-events-none animate-gold-shimmer" />
+
+                                {/* Obsidian-Gold Partner Pill */}
+                                <div className="absolute bottom-3 left-3 sm:bottom-6 sm:left-6 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl sm:rounded-2xl border border-[#D4AF37]/45 bg-black/80 backdrop-blur-xl shadow-lg">
+                                    <div className="flex items-center gap-2.5">
+                                        <span className="relative flex h-2.5 w-2.5">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FACC15] opacity-75" />
+                                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#D4AF37]" />
+                                        </span>
+                                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-[#ffe088]">
+                                            {content.badge}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        {/* Tech Accents */}
-                        <div className="absolute -top-6 -right-6 w-12 h-12 border-t-2 border-r-2 border-gray-300 dark:border-white/20 rounded-tr-3xl" />
-                        <div className="absolute -bottom-6 -left-6 w-12 h-12 border-b-2 border-l-2 border-gray-300 dark:border-white/20 rounded-bl-3xl" />
                     </div>
 
-                    {/* Text Side */}
-                    <div className="w-full lg:w-1/2 text-left animate-reveal">
-                        <div className="mb-8 flex items-center gap-4">
-                            <span className={`h-px w-12 ${isDriver ? 'bg-brand-accent' : 'bg-brand-yellow'} opacity-40`} />
-                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 dark:text-white/40">Unit Classification</span>
+                    {/* Editorial Copy & Golden CTA */}
+                    <div className="w-full lg:w-1/2 text-left">
+                        <div className="mb-4 sm:mb-6 flex items-center gap-3">
+                            <span className="h-px w-10 bg-gradient-to-r from-[#ffe088] via-[#FACC15] to-[#D4AF37]" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D4AF37]">
+                                {content.eyebrow}
+                            </span>
                         </div>
-                        <h2 className="text-5xl lg:text-7xl font-black text-gray-900 dark:text-white mb-8 leading-[1] tracking-tighter">
-                            {content.title.split(' ').slice(0, -1).join(' ')} <br/>
-                            <span className={`text-transparent bg-clip-text bg-gradient-to-r ${isDriver ? 'from-brand-accent to-brand-indigo' : 'from-brand-yellow to-amber-600'}`}>
-                                {content.title.split(' ').slice(-1)}
+
+                        <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white mb-5 sm:mb-7 leading-[1.08] tracking-tight">
+                            {content.titlePrefix}{' '}
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffe088] via-[#FACC15] to-[#D4AF37]">
+                                {content.titleHighlight}
                             </span>
                         </h2>
-                        <p className="text-xl text-gray-600 dark:text-white/40 mb-12 leading-relaxed max-w-xl font-medium">
+
+                        <p className="text-base sm:text-xl text-neutral-600 dark:text-neutral-300 mb-8 sm:mb-10 leading-relaxed max-w-xl font-normal">
                             {content.message}
                         </p>
+
                         <Link
                             href={content.buttonLink}
-                            className={`group inline-flex items-center gap-6 px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-sm transition-all duration-500 hover:scale-105 active:scale-95 ${
-                                isDriver 
-                                ? 'bg-brand-accent text-black shadow-[0_20px_40px_-15px_rgba(34,211,238,0.3)]' 
-                                : 'bg-brand-yellow text-black shadow-[0_20px_40px_-15px_rgba(250,204,21,0.3)]'
-                            }`}
+                            className="group/btn relative overflow-hidden inline-flex w-full sm:w-auto justify-center items-center gap-3.5 px-8 sm:px-9 py-4 rounded-2xl bg-gradient-to-r from-[#D4AF37] via-[#FACC15] to-[#D4AF37] text-black font-black uppercase tracking-widest text-xs sm:text-sm shadow-[0_18px_40px_-12px_rgba(212,175,55,0.45)] hover:shadow-[0_22px_48px_-10px_rgba(250,204,21,0.55)] transition-all duration-300 hover:scale-[1.03] active:scale-95"
                         >
-                            {content.buttonText} 
-                            {mounted && <FaArrowRight className="transition-transform duration-500 group-hover:translate-x-2" />}
+                            <span className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/35 to-transparent -translate-x-full group-hover/btn:translate-x-[350%] transition-transform duration-700 skew-x-[-18deg]" />
+                            <span className="relative z-10">{content.buttonText}</span>
+                            {mounted && (
+                                <FaArrowRight className="relative z-10 transition-transform duration-300 group-hover/btn:translate-x-1.5" />
+                            )}
                         </Link>
                     </div>
-
                 </div>
             </div>
         </section>

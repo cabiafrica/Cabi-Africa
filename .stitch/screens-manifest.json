@@ -1,0 +1,382 @@
+{
+  "projectId": "3971118461384096283",
+  "stitchUrl": "https://stitch.withgoogle.com/projects/3971118461384096283",
+  "designSystem": "assets/ab4910b2029843a08a6d321dc70ccea7",
+  "syncedAt": "2026-11-10T10:04:53.534Z",
+  "screens": [
+    {
+      "key": "design-md",
+      "routes": [
+        "DESIGN.md"
+      ],
+      "deviceType": "MOBILE",
+      "id": "6973825943445336877",
+      "name": "projects/3971118461384096283/screens/6973825943445336877",
+      "title": "DESIGN.md"
+    },
+    {
+      "key": "intel-hub-mobile",
+      "routes": [
+        "/blog"
+      ],
+      "deviceType": "MOBILE",
+      "id": "6aa44b39a50b4036b5c8f919260a50a1",
+      "name": "projects/3971118461384096283/screens/6aa44b39a50b4036b5c8f919260a50a1",
+      "title": "Cabi Africa - Mobile Intel Blog Hub",
+      "sessionId": "3882988059345210252"
+    },
+    {
+      "key": "intel-article-mobile",
+      "routes": [
+        "/blog/[slug]"
+      ],
+      "deviceType": "MOBILE",
+      "id": "e3094dd74127466488edbd13e614ecdf",
+      "name": "projects/3971118461384096283/screens/e3094dd74127466488edbd13e614ecdf",
+      "title": "Cabi Africa - Mobile Intel Article Reader",
+      "sessionId": "121437739601367911",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/5f3a52fcfb504e4794778e754efa7642:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/bcdfbf71d52141cf8b2aa922fe93a19a:download"
+    },
+    {
+      "key": "about-mobile",
+      "routes": [
+        "/about"
+      ],
+      "deviceType": "MOBILE",
+      "id": "597d1270e78d49f2a4a0954f5dd9b645",
+      "name": "projects/3971118461384096283/screens/597d1270e78d49f2a4a0954f5dd9b645",
+      "title": "Cabi Africa - Mobile About Us",
+      "sessionId": "18235207349766837005",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/da08e3095e88423c99be5fbbfc7575c8:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/82694b7d76974787b1b2e29aabc9610a:download"
+    },
+    {
+      "key": "passengers-safety-mobile",
+      "routes": [
+        "/passengers",
+        "/services",
+        "/safety"
+      ],
+      "deviceType": "MOBILE",
+      "id": "8f999f3549f5409ca78c718656679923",
+      "name": "projects/3971118461384096283/screens/8f999f3549f5409ca78c718656679923",
+      "title": "Cabi Africa - Passengers, Services & Safety",
+      "sessionId": "2774438783314882886",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/993b5d641f8a4f1c9b4321cb4e95370a:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/7f61090635da4b4898bf1502e224bb83:download"
+    },
+    {
+      "key": "drivers-referral-mobile",
+      "routes": [
+        "/drivers",
+        "/why-drive",
+        "/referral-details"
+      ],
+      "deviceType": "MOBILE",
+      "id": "4394fbc82fe346ec9268d67672c45732",
+      "name": "projects/3971118461384096283/screens/4394fbc82fe346ec9268d67672c45732",
+      "title": "Cabi Africa - For Drivers & Business Builder",
+      "sessionId": "17840237411625531571",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/870e4691aa034152b4bc58bc591ae347:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/b4fee9dd97904f379acbac530423e19e:download"
+    },
+    {
+      "key": "auth-onboarding-mobile",
+      "routes": [
+        "/login",
+        "/register",
+        "/reset-password",
+        "/drivers/register",
+        "/corporate/login"
+      ],
+      "deviceType": "MOBILE",
+      "id": "6c01bf5b6a5c403cbfc076250dc2a06c",
+      "name": "projects/3971118461384096283/screens/6c01bf5b6a5c403cbfc076250dc2a06c",
+      "title": "Cabi Africa - Mobile Auth & Portal Login",
+      "sessionId": "13122535013113657253",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/c0d0cd595c614ff69f20bca725e175ab:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/01e92a3f8f754f98b792892cfbe7b2b0:download"
+    },
+    {
+      "key": "main-dashboard-mobile",
+      "routes": [
+        "/dashboard",
+        "/settings/profile"
+      ],
+      "deviceType": "MOBILE",
+      "id": "ba18b2fa41144abcb4f93ea4456b1def",
+      "name": "projects/3971118461384096283/screens/ba18b2fa41144abcb4f93ea4456b1def",
+      "title": "Cabi Africa - User Dashboard (Mobile)",
+      "sessionId": "9826698017359873077",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/db4f26e3b9504139b28c2706a353c4f8:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/ddcaa85c870f48159545cf2bfc59fc89:download"
+    },
+    {
+      "key": "driver-portal-mobile",
+      "routes": [
+        "/drivers/dashboard",
+        "/drivers/demand-analysis"
+      ],
+      "deviceType": "MOBILE",
+      "id": "98635c0a7c334bc4bafbfeec3f7fafa4",
+      "name": "projects/3971118461384096283/screens/98635c0a7c334bc4bafbfeec3f7fafa4",
+      "title": "Cabi Africa - Driver Portal & Demand Analysis",
+      "sessionId": "6048986087750132665",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/e3660267ced04828acceef2eea05b5f4:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/66c98eb827c24a2eb41d75eb00cdf71b:download"
+    },
+    {
+      "key": "fleet-portal-mobile",
+      "routes": [
+        "/fleet/dashboard",
+        "/fleet/vehicles/[id]",
+        "/drivers/vehicles"
+      ],
+      "deviceType": "MOBILE",
+      "id": "a9d88d542a3b4b3bba6482c0f3768f4d",
+      "name": "projects/3971118461384096283/screens/a9d88d542a3b4b3bba6482c0f3768f4d",
+      "title": "Cabi Africa - Mobile Fleet Manager Dashboard",
+      "sessionId": "18332480921805103264",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/f17844b8009c4953a380ef4b0490a62f:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/004b130f0e1d4433a9c7def5cebac658:download"
+    },
+    {
+      "key": "corporate-sacco-mobile",
+      "routes": [
+        "/corporate/dashboard",
+        "/drivers/sacco",
+        "/drivers/groups/browse"
+      ],
+      "deviceType": "MOBILE",
+      "id": "307f2485b44a497a9300f812c4032e20",
+      "name": "projects/3971118461384096283/screens/307f2485b44a497a9300f812c4032e20",
+      "title": "Cabi Africa - Corporate Travel & SACCO Hub",
+      "sessionId": "10122634753715536647",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/82e82fe8f33b415d8c2cc53037ebfd1f:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/3e904e15a4094affb7cda49ec49c78bf:download"
+    },
+    {
+      "key": "live-tracking-mobile",
+      "routes": [
+        "/tracking/[tripId]"
+      ],
+      "deviceType": "MOBILE",
+      "id": "34b4bcf7e7d9480d9ddfb66cbb7c1e9b",
+      "name": "projects/3971118461384096283/screens/34b4bcf7e7d9480d9ddfb66cbb7c1e9b",
+      "title": "Cabi Africa - Live Trip Tracking (Mobile)",
+      "sessionId": "16834167357133050316",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/c0a2ac0bae5044a3afdbfb0bba826f09:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/6363850888f9489ebbb09ea7264ae16d:download"
+    },
+    {
+      "key": "faq-contact-legal-mobile",
+      "routes": [
+        "/faq",
+        "/help",
+        "/contact",
+        "/download",
+        "/careers",
+        "/privacy-policy",
+        "/terms-of-service"
+      ],
+      "deviceType": "MOBILE",
+      "id": "378b72eaa21545ee8a8e063629cc718f",
+      "name": "projects/3971118461384096283/screens/378b72eaa21545ee8a8e063629cc718f",
+      "title": "Cabi Africa - Support, FAQ & Contact (Mobile)",
+      "sessionId": "7871636415830891668",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/76fcace4469d4a45a60dfa9ffeee67c9:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/73b1d8c27a1c47479b0b253dcbde20d3:download"
+    },
+    {
+      "key": "home-desktop",
+      "routes": [
+        "/"
+      ],
+      "deviceType": "DESKTOP",
+      "id": "8a080f2e3cda43e3b26de1ce92d5b233",
+      "name": "projects/3971118461384096283/screens/8a080f2e3cda43e3b26de1ce92d5b233",
+      "title": "Cabi Africa - Desktop Landing Page (1440px)",
+      "sessionId": "3624505724541933590",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/1b83672c70a3430a8f09995b2ab63b64:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/af32401ea0e04f0688512d6f48acebae:download"
+    },
+    {
+      "key": "intel-hub-desktop",
+      "routes": [
+        "/blog"
+      ],
+      "deviceType": "DESKTOP",
+      "id": "1ba2a36dbfb4458b874e970b3a261aea",
+      "name": "projects/3971118461384096283/screens/1ba2a36dbfb4458b874e970b3a261aea",
+      "title": "Cabi Africa - Intel Blog Hub (Desktop)",
+      "sessionId": "12330049700313292414",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/44ebfb4046d644debf50f627faff7e6c:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/bd204fbf7ff448aea7a7130fa06ea22b:download"
+    },
+    {
+      "key": "intel-article-desktop",
+      "routes": [
+        "/blog/[slug]"
+      ],
+      "deviceType": "DESKTOP",
+      "id": "6bc3f0e9ef8b44369e6aee191d6898a3",
+      "name": "projects/3971118461384096283/screens/6bc3f0e9ef8b44369e6aee191d6898a3",
+      "title": "Cabi Africa - Desktop Intel Article Reader",
+      "sessionId": "4039590633039423856",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/092854356cf0479dae26e41ef74c7a30:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/c007568abf7541189ea8e74395c0a393:download"
+    },
+    {
+      "key": "about-desktop",
+      "routes": [
+        "/about"
+      ],
+      "deviceType": "DESKTOP",
+      "id": "1f9b3eff24eb4725b41daff500dbd313",
+      "name": "projects/3971118461384096283/screens/1f9b3eff24eb4725b41daff500dbd313",
+      "title": "Cabi Africa - Desktop About Us (1440px)",
+      "sessionId": "8436171130099446286",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/b40a23b2acdb45fea15b62ad9f5b7273:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/0d01a155f4fe4679b6f2e784e598d8e4:download"
+    },
+    {
+      "key": "passengers-safety-desktop",
+      "routes": [
+        "/passengers",
+        "/services",
+        "/safety"
+      ],
+      "deviceType": "DESKTOP",
+      "id": "5c2474b56e274cdba6dfa16dc7bae6ec",
+      "name": "projects/3971118461384096283/screens/5c2474b56e274cdba6dfa16dc7bae6ec",
+      "title": "Cabi Africa - Passengers, Services & Safety (Desktop)",
+      "sessionId": "8456943419725941815",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/f2463bd3c22847148496bf834307a607:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/9fa1d809085e47fc875eb6c5303729e4:download"
+    },
+    {
+      "key": "drivers-referral-desktop",
+      "routes": [
+        "/drivers",
+        "/why-drive",
+        "/referral-details"
+      ],
+      "deviceType": "DESKTOP",
+      "id": "6a45f8c61d0942b1a32ff4bb53469a11",
+      "name": "projects/3971118461384096283/screens/6a45f8c61d0942b1a32ff4bb53469a11",
+      "title": "Cabi Africa - For Drivers & Business Builder (Desktop 1440px)",
+      "sessionId": "13681822597325395787",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/0324f322ff6c49f4abf4b6e8cdf91c4a:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/ca37fa3d3c5445f882e7eaab4f1b9b10:download"
+    },
+    {
+      "key": "auth-onboarding-desktop",
+      "routes": [
+        "/login",
+        "/register",
+        "/reset-password",
+        "/drivers/register",
+        "/corporate/login"
+      ],
+      "deviceType": "DESKTOP",
+      "id": "1ecfdbbf06964b4392c138343ad85e01",
+      "name": "projects/3971118461384096283/screens/1ecfdbbf06964b4392c138343ad85e01",
+      "title": "Cabi Africa - Portal Login & Onboarding (Desktop 1440px)",
+      "sessionId": "1374518501293649541",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/dab91a0862844db981ba18ea8f8cfa91:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/ec7f977e47d44669aa007dbc19a42316:download"
+    },
+    {
+      "key": "main-dashboard-desktop",
+      "routes": [
+        "/dashboard",
+        "/settings/profile"
+      ],
+      "deviceType": "DESKTOP",
+      "id": "1a972c85f1e4415d9b42a237b25e9c6f",
+      "name": "projects/3971118461384096283/screens/1a972c85f1e4415d9b42a237b25e9c6f",
+      "title": "Cabi Africa - Unified User Dashboard (Desktop 1440px)",
+      "sessionId": "9846665244525827911",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/89609468d9c640e796d26c29880d33ba:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/a35174b47d7545508b07430b2a822bb1:download"
+    },
+    {
+      "key": "driver-portal-desktop",
+      "routes": [
+        "/drivers/dashboard",
+        "/drivers/demand-analysis"
+      ],
+      "deviceType": "DESKTOP",
+      "id": "2bba75bc597645d1ba9006132fe34b90",
+      "name": "projects/3971118461384096283/screens/2bba75bc597645d1ba9006132fe34b90",
+      "title": "Cabi Africa - Driver Portal & Demand Analysis (Desktop 1440px)",
+      "sessionId": "4941786286298210534",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/7fda5398aa3a4070b767d0757e45153c:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/80fe97201be347f4842e7d6e4cf7078c:download"
+    },
+    {
+      "key": "fleet-portal-desktop",
+      "routes": [
+        "/fleet/dashboard",
+        "/fleet/vehicles/[id]",
+        "/drivers/vehicles"
+      ],
+      "deviceType": "DESKTOP",
+      "id": "bd86f47a0bd14dc1ad24dcb11fa05fdf",
+      "name": "projects/3971118461384096283/screens/bd86f47a0bd14dc1ad24dcb11fa05fdf",
+      "title": "Cabi Africa - Fleet Manager Dashboard (Desktop 1440px)",
+      "sessionId": "3292087586291043842",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/421c350004914c8ea9c16d73b689a0ad:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/a5eeebe8ecd24946a81f661ee212b64e:download"
+    },
+    {
+      "key": "corporate-sacco-desktop",
+      "routes": [
+        "/corporate/dashboard",
+        "/drivers/sacco",
+        "/drivers/groups/browse"
+      ],
+      "deviceType": "DESKTOP",
+      "id": "efbbf70f17814fd1add302467cc32d3e",
+      "name": "projects/3971118461384096283/screens/efbbf70f17814fd1add302467cc32d3e",
+      "title": "Cabi Africa - Corporate Travel & SACCO Governance Hub (Desktop 1440px)",
+      "sessionId": "15445459701979606509",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/4ef251d6b768422fa9f3c3071a52cc9b:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/313dacd0b6d146b79c8d627e4585f1f3:download"
+    },
+    {
+      "key": "live-tracking-desktop",
+      "routes": [
+        "/tracking/[tripId]"
+      ],
+      "deviceType": "DESKTOP",
+      "id": "841507a2ae704c19bc13581b2297d3c2",
+      "name": "projects/3971118461384096283/screens/841507a2ae704c19bc13581b2297d3c2",
+      "title": "Cabi Africa - Live Trip Tracking (Desktop 1440px)",
+      "sessionId": "6462988917213801632",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/d932106a23534807b8c8ecc60c70446e:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/85605ae286c44e149980c8dbef206c81:download"
+    },
+    {
+      "key": "faq-contact-legal-desktop",
+      "routes": [
+        "/faq",
+        "/help",
+        "/contact",
+        "/download",
+        "/careers",
+        "/privacy-policy",
+        "/terms-of-service"
+      ],
+      "deviceType": "DESKTOP",
+      "id": "abc02c3470a94877adcf28a7a1cedd64",
+      "name": "projects/3971118461384096283/screens/abc02c3470a94877adcf28a7a1cedd64",
+      "title": "Cabi Africa - Support, FAQ & Contact (Desktop 1440px)",
+      "sessionId": "9150817614975240266",
+      "screenshotUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/2af7b0db7e2d4e168bc00f0d6cab8669:download",
+      "htmlUrl": "https://stitch.googleapis.com/v1/projects/3971118461384096283/files/887fc7020b814e91acb430c256bc3525:download"
+    }
+  ],
+  "desktopSyncedAt": "2026-11-10T10:04:53.536Z"
+}

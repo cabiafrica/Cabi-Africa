@@ -4,17 +4,19 @@ import Link from 'next/link';
 export default function WhyDrive() {
   return (
     <MainLayout title="Why Drive with Cabi? - Fairer, Safer, Better" description="Discover the benefits of driving with Cabi. Lower commissions, safer rides, and a community that cares.">
-      <div className="bg-white dark:bg-slate-900 py-16 px-6 lg:px-8">
+      <div className="bg-slate-50 dark:bg-surface-dark py-20 px-6 lg:px-8 border-b border-slate-200 dark:border-white/10">
         <div className="mx-auto max-w-3xl text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">Why Drive with Cabi?</h1>
-          <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
+          <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white sm:text-6xl">
+            Why Drive with <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffe088] via-[#FACC15] to-[#D4AF37]">CABI?</span>
+          </h1>
+          <p className="mt-6 text-lg leading-8 text-neutral-600 dark:text-neutral-300">
             We're building a ride-hailing service that puts drivers first. From lower commissions to better safety features, here's why you should join us.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Link href="/register" className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            <Link href="/register" className="rounded-xl bg-[#D4AF37] px-6 py-3 text-sm font-extrabold text-black shadow-lg hover:bg-[#ffe088] transition-colors">
               Get started
             </Link>
-            <Link href="/about" className="text-sm font-semibold leading-6 text-gray-900 dark:text-white">
+            <Link href="/about" className="text-sm font-bold leading-6 text-[#D4AF37] hover:text-[#ffe088] transition-colors">
               Learn more <span aria-hidden="true">→</span>
             </Link>
           </div>

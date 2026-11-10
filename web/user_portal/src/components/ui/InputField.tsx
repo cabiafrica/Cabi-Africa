@@ -27,7 +27,7 @@ export default function InputField({
                 type={type}
                 placeholder={placeholder}
                 {...register(name)}
-                className={`px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white outline-none transition-colors ${errors[name] ? 'border-red-500' : 'border-gray-300'
+                className={`px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] dark:bg-surface-dark dark:border-white/10 dark:text-white outline-none transition-colors ${errors[name] ? 'border-red-500' : 'border-slate-300'
                     }`}
             />
             {errors[name] && (

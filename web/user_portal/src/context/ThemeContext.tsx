@@ -14,19 +14,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const [theme, setTheme] = useState<Theme>('dark');
 
     useEffect(() => {
-        // Sync React state from localStorage. The _document.tsx inline script
-        // already applied the correct class before paint, so no DOM manipulation needed here.
         const savedTheme = localStorage.getItem('theme') as Theme | null;
-        if (savedTheme) {
-            setTheme(savedTheme);
-        }
+        const resolvedTheme: Theme = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'dark';
+        setTheme(resolvedTheme);
+        document.documentElement.classList.toggle('dark', resolvedTheme === 'dark');
+        document.documentElement.style.colorScheme = resolvedTheme;
     }, []);
 
     const toggleTheme = () => {
-        const newTheme = theme === 'light' ? 'dark' : 'light';
-        setTheme(newTheme);
-        localStorage.setItem('theme', newTheme);
-        document.documentElement.classList.toggle('dark', newTheme === 'dark');
+        setTheme((prev) => {
+            const newTheme: Theme = prev === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', newTheme);
+            document.documentElement.classList.toggle('dark', newTheme === 'dark');
+            document.documentElement.style.colorScheme = newTheme;
+            return newTheme;
+        });
     };
 
     return (

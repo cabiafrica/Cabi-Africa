@@ -64,20 +64,20 @@ export default function ResetPasswordPage() {
       <Head>
         <title>Reset Your Password | CABI</title>
       </Head>
-      <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="min-h-screen bg-slate-50 dark:bg-surface-dark flex flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 dark:text-white">
+          <h2 className="mt-10 text-center text-2xl font-black leading-9 tracking-tight text-slate-900 dark:text-white">
             Reset Your Password
           </h2>
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm bg-white dark:bg-card-dark border border-slate-200 dark:border-[#D4AF37]/25 p-6 sm:p-8 rounded-3xl shadow-2xl">
           {status === 'success' ? (
-            <p className="text-center text-green-600 dark:text-green-400">{feedbackMessage}</p>
+            <p className="text-center text-emerald-500 font-medium">{feedbackMessage}</p>
           ) : (
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">New Password</label>
+                <label htmlFor="password" className="block text-xs font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400">New Password</label>
                 <div className="mt-2 relative">
                   <input
                     id="password"
@@ -86,11 +86,11 @@ export default function ResetPasswordPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                    className="block w-full rounded-xl border border-slate-300 dark:border-white/10 py-2.5 pl-3 pr-10 text-slate-900 dark:text-white bg-slate-50 dark:bg-surface-dark placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] sm:text-sm"
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-white"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -103,7 +103,7 @@ export default function ResetPasswordPage() {
               </div>
 
               <div>
-                <label htmlFor="confirm-password" className="block text-sm font-medium leading-6 text-gray-900 dark:text-white">Confirm New Password</label>
+                <label htmlFor="confirm-password" className="block text-xs font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400">Confirm New Password</label>
                 <div className="mt-2 relative">
                   <input
                     id="confirm-password"
@@ -112,11 +112,11 @@ export default function ResetPasswordPage() {
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                    className="block w-full rounded-xl border border-slate-300 dark:border-white/10 py-2.5 pl-3 pr-10 text-slate-900 dark:text-white bg-slate-50 dark:bg-surface-dark placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] sm:text-sm"
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-white"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
@@ -128,10 +128,10 @@ export default function ResetPasswordPage() {
                 </div>
               </div>
 
-              {status === 'error' && <p className="text-sm text-red-600 dark:text-red-400">{feedbackMessage}</p>}
+              {status === 'error' && <p className="text-sm text-red-500">{feedbackMessage}</p>}
 
               <div>
-                <button type="submit" disabled={status === 'loading'} className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:bg-gray-400">
+                <button type="submit" disabled={status === 'loading'} className="flex w-full justify-center rounded-xl bg-[#D4AF37] px-4 py-3 text-sm font-extrabold text-black shadow-lg hover:bg-[#ffe088] transition-colors disabled:opacity-50">
                   {status === 'loading' ? 'Resetting...' : 'Reset Password'}
                 </button>
               </div>
