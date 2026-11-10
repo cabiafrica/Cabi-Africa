@@ -282,6 +282,7 @@ export default function WebBookingWidget() {
                                 <div className="font-bold text-xl text-brand-yellow">${v.price.toFixed(2)}</div>
                             </div>
                         ))}
+                    </div>
                     {errorMessage && (
                         <div className="p-3 bg-red-500/20 border border-red-500/40 rounded-xl text-xs text-red-300">
                             {errorMessage}

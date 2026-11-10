@@ -225,7 +225,7 @@ export default function SuccessPage() {
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <a
-                                href="mailto:support@cabi.com"
+                                href="mailto:cabifastafrica@gmail.com"
                                 className="inline-flex items-center justify-center px-6 py-3 bg-[#D4AF37] text-black font-extrabold rounded-xl hover:bg-[#ffe088] transition-colors"
                             >
                                 <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -70,16 +70,16 @@ const createPickupIcon = () => {
         className: 'custom-div-icon',
         html: `
       <div style="
-        background-color: black;
-        width: 14px;
-        height: 14px;
-        border-radius: 2px;
-        border: 2px solid white;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        background-color: #0A0A0B;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 3px solid #D4AF37;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.45);
       "></div>
     `,
-        iconSize: [14, 14],
-        iconAnchor: [7, 7],
+        iconSize: [18, 18],
+        iconAnchor: [9, 9],
     });
 };
 
@@ -88,15 +88,16 @@ const createDropoffIcon = () => {
         className: 'custom-div-icon',
         html: `
       <div style="
-        background-color: #3b82f6;
-        width: 14px;
-        height: 14px;
-        border: 2px solid white;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        background-color: #FACC15;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 3px solid #0A0A0B;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.45);
       "></div>
     `,
-        iconSize: [14, 14],
-        iconAnchor: [7, 7],
+        iconSize: [18, 18],
+        iconAnchor: [9, 9],
     });
 };
 
@@ -116,6 +117,8 @@ export const CabiMap: React.FC<CabiMapProps> = ({
     const markersLayerRef = useRef<L.LayerGroup | null>(null);
     const routeLayerRef = useRef<L.Polyline | null>(null);
     const trafficLayerRef = useRef<L.TileLayer | null>(null);
+    const onMapClickRef = useRef(onMapClick);
+    onMapClickRef.current = onMapClick;
 
     // Initialize map
     useEffect(() => {
@@ -135,11 +138,9 @@ export const CabiMap: React.FC<CabiMapProps> = ({
             maxZoom: 19,
         }).addTo(map);
 
-        if (onMapClick) {
-            map.on('click', (e) => {
-                onMapClick(e.latlng.lat, e.latlng.lng);
-            });
-        }
+        map.on('click', (e) => {
+            onMapClickRef.current?.(e.latlng.lat, e.latlng.lng);
+        });
 
         mapRef.current = map;
         markersLayerRef.current = L.layerGroup().addTo(map);
@@ -149,6 +150,12 @@ export const CabiMap: React.FC<CabiMapProps> = ({
             mapRef.current = null;
         };
     }, []);
+
+    // Keep map centered when center prop updates without a full route fit
+    useEffect(() => {
+        if (!mapRef.current || (route && route.length > 0)) return;
+        mapRef.current.setView(center, zoom);
+    }, [center[0], center[1], zoom, route]);
 
     // Update markers
     useEffect(() => {
@@ -202,9 +209,9 @@ export const CabiMap: React.FC<CabiMapProps> = ({
 
         if (route && route.length > 0) {
             routeLayerRef.current = L.polyline(route, {
-                color: '#3b82f6',
-                weight: 6,
-                opacity: 0.8,
+                color: '#D4AF37',
+                weight: 5,
+                opacity: 0.9,
                 lineJoin: 'round',
             }).addTo(mapRef.current);
 

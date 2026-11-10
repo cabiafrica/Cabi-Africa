@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import SocialLinks from '@/components/ui/SocialLinks';
 
 export default function Footer() {
     return (
@@ -21,6 +22,7 @@ export default function Footer() {
                         <p className="text-neutral-600 dark:text-neutral-400 text-sm max-w-sm leading-relaxed">
                             Executive African Mobility. Decentralized dispatch, fair operator revenues, and reliable diplomatic &amp; executive passenger transit.
                         </p>
+                        <SocialLinks variant="footer" />
                     </div>
 
                     {/* Mobility Ecosystem */}

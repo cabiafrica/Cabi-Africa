@@ -9,6 +9,7 @@ import FeatureSplit from '../components/marketing/FeatureSplit';
 import BookingSection from '../components/marketing/BookingSection';
 import TestimonialsWidget from '../components/marketing/TestimonialsWidget';
 import ContactSection from '../components/marketing/ContactSection';
+import SocialLinks from '@/components/ui/SocialLinks';
 import PostSummaryCard from '../components/PostSummaryCard';
 import { getPostSummaries, BlogPostSummary } from '@/services/cms';
 
@@ -90,7 +91,18 @@ export default function HomePage({ posts }: HomePageProps) {
         {/* 7. Feedback (Testimonials) */}
         <TestimonialsWidget />
 
-        {/* 8. Contact Us */}
+        {/* 8. Social Media */}
+        <section
+          id="social-media"
+          aria-label="Social Media"
+          className="py-12 sm:py-16 bg-slate-50 dark:bg-surface-dark transition-colors duration-300"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <SocialLinks variant="contact" />
+          </div>
+        </section>
+
+        {/* 9. Contact Us */}
         <ContactSection />
       </main>
 

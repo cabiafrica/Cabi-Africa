@@ -1,17 +1,24 @@
 import { useState, FormEvent } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
+import { CONTACT_ISSUE_OPTIONS } from '@/config/contactConfig';
+import ContactInfoCards from '@/components/ui/ContactInfoCards';
+import SocialLinks from '@/components/ui/SocialLinks';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: '',
+    phone: '',
     email: '',
+    issue: '',
     subject: '',
     message: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [feedbackMessage, setFeedbackMessage] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -30,13 +37,16 @@ export default function ContactPage() {
         body: JSON.stringify(formData),
       });
 
+      const payload = await response.json().catch(() => null);
       if (!response.ok) {
-        throw new Error('Failed to send message. Please try again.');
+        throw new Error(payload?.message || 'Failed to send message. Please try again.');
       }
 
       setStatus('success');
-      setFeedbackMessage("Thank you for your message! We'll get back to you soon.");
-      setFormData({ name: '', email: '', subject: '', message: '' }); // Reset form
+      setFeedbackMessage(
+        payload?.message || "Thank you for your message! We'll get back to you soon."
+      );
+      setFormData({ name: '', phone: '', email: '', issue: '', subject: '', message: '' }); // Reset form
     } catch (error: any) {
       setStatus('error');
       setFeedbackMessage(error.message || 'An unexpected error occurred.');
@@ -46,7 +56,7 @@ export default function ContactPage() {
   return (
     <MainLayout title="Contact Us | CABI" description="Get in touch with the CABI team.">
       <div className="min-h-screen bg-slate-50 dark:bg-surface-dark py-14 px-4">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
@@ -59,18 +69,37 @@ export default function ContactPage() {
               Have a question, feedback, or a partnership inquiry? We'd love to hear from you.
             </p>
           </div>
+          <SocialLinks variant="contact" className="mb-8" />
+          <ContactInfoCards layout="grid" className="mb-8" />
           <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-card-dark border border-slate-200 dark:border-[#D4AF37]/25 p-6 sm:p-8 rounded-3xl shadow-2xl">
-            <div>
-              <label htmlFor="name" className="block text-xs font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2">Name</label>
-              <input type="text" name="name" id="name" required value={formData.name} onChange={handleChange} className="block w-full px-4 py-3 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] dark:text-white" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label htmlFor="name" className="block text-xs font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2">Name *</label>
+                <input type="text" name="name" id="name" required placeholder="Amara Ochieng" value={formData.name} onChange={handleChange} className="block w-full px-4 py-3 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] dark:text-white" />
+              </div>
+              <div>
+                <label htmlFor="phone" className="block text-xs font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2">Phone Number *</label>
+                <input type="tel" name="phone" id="phone" required placeholder="+254 712 345 678" value={formData.phone} onChange={handleChange} className="block w-full px-4 py-3 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] dark:text-white" />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label htmlFor="email" className="block text-xs font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2">Email *</label>
+                <input type="email" name="email" id="email" required placeholder="name@company.com" value={formData.email} onChange={handleChange} className="block w-full px-4 py-3 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] dark:text-white" />
+              </div>
+              <div>
+                <label htmlFor="issue" className="block text-xs font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2">Issue to Address *</label>
+                <select name="issue" id="issue" required value={formData.issue} onChange={handleChange} className="block w-full px-4 py-3 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] text-slate-900 dark:text-white">
+                  <option value="">Select an issue category...</option>
+                  {CONTACT_ISSUE_OPTIONS.map((option) => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div>
-              <label htmlFor="email" className="block text-xs font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2">Email</label>
-              <input type="email" name="email" id="email" required value={formData.email} onChange={handleChange} className="block w-full px-4 py-3 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] dark:text-white" />
-            </div>
-            <div>
-              <label htmlFor="subject" className="block text-xs font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2">Subject</label>
-              <input type="text" name="subject" id="subject" required value={formData.subject} onChange={handleChange} className="block w-full px-4 py-3 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] dark:text-white" />
+              <label htmlFor="subject" className="block text-xs font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2">Subject (Optional)</label>
+              <input type="text" name="subject" id="subject" placeholder="Short summary or trip reference" value={formData.subject} onChange={handleChange} className="block w-full px-4 py-3 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] dark:text-white" />
             </div>
             <div>
               <label htmlFor="message" className="block text-xs font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2">Message</label>

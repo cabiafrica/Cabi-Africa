@@ -2,19 +2,25 @@
 
 import React, { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { Mail, MapPin, MessageSquare, Send, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { MessageSquare, Send, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { CONTACT_ISSUE_OPTIONS } from '@/config/contactConfig';
+import ContactInfoCards from '@/components/ui/ContactInfoCards';
 
 export default function ContactSection() {
     const [formData, setFormData] = useState({
         name: '',
+        phone: '',
         email: '',
+        issue: '',
         subject: '',
         message: '',
     });
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [feedback, setFeedback] = useState('');
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
@@ -38,7 +44,7 @@ export default function ContactSection() {
 
             setStatus('success');
             setFeedback(payload?.message || "Thank you for reaching out. We'll respond shortly.");
-            setFormData({ name: '', email: '', subject: '', message: '' });
+            setFormData({ name: '', phone: '', email: '', issue: '', subject: '', message: '' });
         } catch (err: any) {
             setStatus('error');
             setFeedback(err?.message || 'An unexpected error occurred.');
@@ -75,36 +81,7 @@ export default function ContactSection() {
                         </p>
 
                         <div className="space-y-4 pt-2">
-                            <a
-                                href="mailto:support@cabi.com"
-                                className="flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 hover:border-[#D4AF37]/50 transition-all group"
-                            >
-                                <div className="w-11 h-11 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] shrink-0">
-                                    <Mail className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
-                                        Concierge &amp; Support
-                                    </p>
-                                    <p className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#D4AF37] transition-colors">
-                                        support@cabi.com
-                                    </p>
-                                </div>
-                            </a>
-
-                            <div className="flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10">
-                                <div className="w-11 h-11 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] shrink-0">
-                                    <MapPin className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
-                                        Regional Headquarters
-                                    </p>
-                                    <p className="text-sm font-bold text-slate-900 dark:text-white">
-                                        Nairobi Hub (HQ) &bull; Westlands &amp; CBD
-                                    </p>
-                                </div>
-                            </div>
+                            <ContactInfoCards layout="stack" />
 
                             <Link
                                 href="/help"
@@ -138,7 +115,7 @@ export default function ContactSection() {
                                             htmlFor="home-contact-name"
                                             className="block text-[11px] font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2"
                                         >
-                                            Full Name
+                                            Full Name *
                                         </label>
                                         <input
                                             id="home-contact-name"
@@ -153,10 +130,31 @@ export default function ContactSection() {
                                     </div>
                                     <div>
                                         <label
+                                            htmlFor="home-contact-phone"
+                                            className="block text-[11px] font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2"
+                                        >
+                                            Phone Number *
+                                        </label>
+                                        <input
+                                            id="home-contact-phone"
+                                            name="phone"
+                                            type="tel"
+                                            required
+                                            placeholder="+254 712 345 678"
+                                            value={formData.phone}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:border-[#D4AF37] transition-colors"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <div>
+                                        <label
                                             htmlFor="home-contact-email"
                                             className="block text-[11px] font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2"
                                         >
-                                            Email Address
+                                            Email Address *
                                         </label>
                                         <input
                                             id="home-contact-email"
@@ -169,6 +167,29 @@ export default function ContactSection() {
                                             className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:border-[#D4AF37] transition-colors"
                                         />
                                     </div>
+                                    <div>
+                                        <label
+                                            htmlFor="home-contact-issue"
+                                            className="block text-[11px] font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2"
+                                        >
+                                            Issue to Address *
+                                        </label>
+                                        <select
+                                            id="home-contact-issue"
+                                            name="issue"
+                                            required
+                                            value={formData.issue}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-[#D4AF37] transition-colors"
+                                        >
+                                            <option value="">Select an issue category...</option>
+                                            {CONTACT_ISSUE_OPTIONS.map((option) => (
+                                                <option key={option} value={option}>
+                                                    {option}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div>
@@ -176,14 +197,13 @@ export default function ContactSection() {
                                         htmlFor="home-contact-subject"
                                         className="block text-[11px] font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2"
                                     >
-                                        Subject
+                                        Subject (Optional)
                                     </label>
                                     <input
                                         id="home-contact-subject"
                                         name="subject"
                                         type="text"
-                                        required
-                                        placeholder="Executive travel, driver onboarding, or general inquiry"
+                                        placeholder="Short summary or trip reference"
                                         value={formData.subject}
                                         onChange={handleChange}
                                         className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:border-[#D4AF37] transition-colors"

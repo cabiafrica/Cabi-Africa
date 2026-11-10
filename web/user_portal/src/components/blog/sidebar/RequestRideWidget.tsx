@@ -1,20 +1,34 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import { Car, MapPin, Navigation, ArrowRight } from 'lucide-react';
+import LocationAutocomplete from '@/components/ui/LocationAutocomplete';
 
 export default function RequestRideWidget() {
     const router = useRouter();
     const [pickup, setPickup] = useState('');
     const [destination, setDestination] = useState('');
+    const [pickupCoords, setPickupCoords] = useState<{ lat: number; lng: number } | null>(null);
+    const [dropoffCoords, setDropoffCoords] = useState<{ lat: number; lng: number } | null>(null);
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         const params = new URLSearchParams();
         if (pickup.trim()) params.set('pickup', pickup.trim());
         if (destination.trim()) params.set('destination', destination.trim());
+        if (pickupCoords) {
+            params.set('pLat', String(pickupCoords.lat));
+            params.set('pLng', String(pickupCoords.lng));
+        }
+        if (dropoffCoords) {
+            params.set('dLat', String(dropoffCoords.lat));
+            params.set('dLng', String(dropoffCoords.lng));
+        }
         const query = params.toString();
         router.push(query ? `/?${query}#booking-section` : '/#booking-section');
     };
+
+    const sharedInputClass =
+        'w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:border-[#D4AF37] transition-colors';
 
     return (
         <div className="bg-white dark:bg-card-dark rounded-2xl p-5 shadow-sm border border-slate-200 dark:border-[#D4AF37]/30">
@@ -33,28 +47,40 @@ export default function RequestRideWidget() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-2.5">
-                <div className="relative">
-                    <Navigation className="w-3.5 h-3.5 text-[#D4AF37] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    <input
-                        type="text"
-                        value={pickup}
-                        onChange={(e) => setPickup(e.target.value)}
-                        placeholder="Pickup location"
-                        aria-label="Pickup location"
-                        className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:border-[#D4AF37] transition-colors"
-                    />
-                </div>
-                <div className="relative">
-                    <MapPin className="w-3.5 h-3.5 text-[#D4AF37] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    <input
-                        type="text"
-                        value={destination}
-                        onChange={(e) => setDestination(e.target.value)}
-                        placeholder="Drop-off destination"
-                        aria-label="Drop-off destination"
-                        className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:border-[#D4AF37] transition-colors"
-                    />
-                </div>
+                <LocationAutocomplete
+                    id="sidebar-pickup-input"
+                    value={pickup}
+                    onChange={(val) => {
+                        setPickup(val);
+                        setPickupCoords(null);
+                    }}
+                    onSelect={(label, coords) => {
+                        setPickup(label);
+                        setPickupCoords(coords);
+                    }}
+                    placeholder="Pickup location"
+                    ariaLabel="Pickup location"
+                    surfaceClassName="bg-slate-50 dark:bg-surface-dark rounded-xl"
+                    inputClassName={sharedInputClass}
+                    leftIcon={<Navigation className="w-3.5 h-3.5 text-[#D4AF37]" />}
+                />
+                <LocationAutocomplete
+                    id="sidebar-dropoff-input"
+                    value={destination}
+                    onChange={(val) => {
+                        setDestination(val);
+                        setDropoffCoords(null);
+                    }}
+                    onSelect={(label, coords) => {
+                        setDestination(label);
+                        setDropoffCoords(coords);
+                    }}
+                    placeholder="Drop-off destination"
+                    ariaLabel="Drop-off destination"
+                    surfaceClassName="bg-slate-50 dark:bg-surface-dark rounded-xl"
+                    inputClassName={sharedInputClass}
+                    leftIcon={<MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />}
+                />
                 <button
                     type="submit"
                     className="w-full py-2.5 px-4 rounded-xl bg-[#D4AF37] hover:bg-[#ffe088] text-black font-black text-xs uppercase tracking-widest transition-all shadow-md flex items-center justify-center gap-2 group active:scale-95"

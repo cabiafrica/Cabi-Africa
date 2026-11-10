@@ -132,7 +132,7 @@ const faqData: FAQItem[] = [
   {
     category: 'Safety & Support',
     q: 'How do I contact Cabi support?',
-    a: 'You can contact Cabi support 24/7 through the in-app chat, email (support@cabi.com), or phone hotline. For urgent safety issues, use the in-app SOS button for immediate assistance.',
+    a: 'You can contact Cabi support 24/7 through the in-app chat, email (cabifastafrica@gmail.com), or phone hotline (+254 756 777 222). For urgent safety issues, use the in-app SOS button for immediate assistance.',
   },
 
   // Passengers
@@ -268,7 +268,7 @@ export default function FaqPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="mailto:support@cabi.com"
+                href="mailto:cabifastafrica@gmail.com"
                 className="bg-[#D4AF37] text-black font-extrabold py-3.5 px-8 rounded-xl hover:bg-[#ffe088] transition-colors"
               >
                 Email Support
