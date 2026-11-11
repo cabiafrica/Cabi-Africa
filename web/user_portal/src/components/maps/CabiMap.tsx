@@ -128,6 +128,7 @@ export const CabiMap: React.FC<CabiMapProps> = ({
             center,
             zoom,
             zoomControl: false,
+            zoomAnimation: false,
         });
 
         // Add zoom control to bottom right
@@ -146,6 +147,8 @@ export const CabiMap: React.FC<CabiMapProps> = ({
         markersLayerRef.current = L.layerGroup().addTo(map);
 
         return () => {
+            map.stop();
+            map.off();
             map.remove();
             mapRef.current = null;
         };
@@ -154,7 +157,7 @@ export const CabiMap: React.FC<CabiMapProps> = ({
     // Keep map centered when center prop updates without a full route fit
     useEffect(() => {
         if (!mapRef.current || (route && route.length > 0)) return;
-        mapRef.current.setView(center, zoom);
+        mapRef.current.setView(center, zoom, { animate: false });
     }, [center[0], center[1], zoom, route]);
 
     // Update markers
@@ -218,6 +221,7 @@ export const CabiMap: React.FC<CabiMapProps> = ({
             // Fit bounds to show the entire route
             mapRef.current.fitBounds(routeLayerRef.current.getBounds(), {
                 padding: [50, 50],
+                animate: false,
             });
         }
     }, [route]);

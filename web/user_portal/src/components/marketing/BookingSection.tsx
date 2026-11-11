@@ -17,6 +17,13 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { isValidContactPhone } from '@/config/contactConfig';
 import type { MapMarker } from '@/components/maps/CabiMap';
+import MapPinModal, {
+    Coords,
+    MapPinMode,
+    inferCoordsFromText,
+    resolveAddressFromCoords,
+    buildPinMarkers,
+} from '@/components/maps/MapPinModal';
 import LocationAutocomplete from '@/components/ui/LocationAutocomplete';
 
 const CabiMap = dynamic(() => import('@/components/maps/CabiMap'), {
@@ -36,36 +43,12 @@ interface VehicleOption {
     icon: string;
 }
 
-interface Coords {
-    lat: number;
-    lng: number;
-}
-
 interface TrajectoryData {
     distanceKm: number;
     durationMin: number;
     pickupCoords: Coords;
     dropoffCoords: Coords;
     polyline: [number, number][];
-}
-
-const NAIROBI_PRESETS: { label: string; coords: Coords }[] = [
-    { label: 'Nairobi CBD, Kenyatta Ave', coords: { lat: -1.286389, lng: 36.817223 } },
-    { label: 'Westlands, Sarit Centre', coords: { lat: -1.2611, lng: 36.8025 } },
-    { label: 'JKIA Terminal 1A, Nairobi', coords: { lat: -1.3192, lng: 36.9275 } },
-    { label: 'Kilimani, Yaya Centre', coords: { lat: -1.2928, lng: 36.7879 } },
-    { label: 'Gigiri, UN Avenue', coords: { lat: -1.2335, lng: 36.8169 } },
-];
-
-function inferCoordsFromText(label: string, fallback: Coords): Coords {
-    const lower = label.toLowerCase();
-    for (const preset of NAIROBI_PRESETS) {
-        const key = preset.label.split(',')[0].toLowerCase();
-        if (lower.includes(key)) {
-            return preset.coords;
-        }
-    }
-    return fallback;
 }
 
 export default function BookingSection() {
@@ -75,8 +58,7 @@ export default function BookingSection() {
     const [dropoffCoords, setDropoffCoords] = useState<Coords | null>(null);
     const [trajectory, setTrajectory] = useState<TrajectoryData | null>(null);
 
-    const [mapPickerMode, setMapPickerMode] = useState<'pickup' | 'dropoff' | null>(null);
-    const [resolvingPin, setResolvingPin] = useState(false);
+    const [mapPickerMode, setMapPickerMode] = useState<MapPinMode | null>(null);
 
     const [vehicleOptions, setVehicleOptions] = useState<VehicleOption[]>([]);
     const [loading, setLoading] = useState(false);
@@ -123,28 +105,6 @@ export default function BookingSection() {
         }
     }, [user]);
 
-    const resolveAddressFromCoords = async (lat: number, lng: number): Promise<string> => {
-        const coordFallback = `Pinned (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
-        try {
-            const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), 3000);
-            const res = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`,
-                { signal: controller.signal }
-            );
-            clearTimeout(timer);
-            if (res.ok) {
-                const data = await res.json();
-                if (data?.display_name) {
-                    return data.display_name.split(',').slice(0, 3).join(', ');
-                }
-            }
-        } catch {
-            // Graceful fallback when reverse geocoder is unreachable
-        }
-        return coordFallback;
-    };
-
     const getCurrentLocation = () => {
         if (typeof window !== 'undefined' && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -177,8 +137,8 @@ export default function BookingSection() {
             if (e.detail) {
                 setPickup(e.detail.pickup || '');
                 setDestination(e.detail.destination || '');
-                if (e.detail.pickupCoords) setPickupCoords(e.detail.pickupCoords);
-                if (e.detail.dropoffCoords) setDropoffCoords(e.detail.dropoffCoords);
+                if (e.detail.pickupCoords !== undefined) setPickupCoords(e.detail.pickupCoords);
+                if (e.detail.dropoffCoords !== undefined) setDropoffCoords(e.detail.dropoffCoords);
                 setExpanded(true);
             }
         };
@@ -270,30 +230,6 @@ export default function BookingSection() {
             setTripStatus('COMPLETED');
             setProgressStep(5);
             if (pollingInterval.current) clearInterval(pollingInterval.current);
-        }
-    };
-
-    const handleMapPinSelect = async (lat: number, lng: number) => {
-        if (!mapPickerMode) return;
-        setResolvingPin(true);
-        const label = await resolveAddressFromCoords(lat, lng);
-        if (mapPickerMode === 'pickup') {
-            setPickupCoords({ lat, lng });
-            setPickup(label);
-        } else {
-            setDropoffCoords({ lat, lng });
-            setDestination(label);
-        }
-        setResolvingPin(false);
-    };
-
-    const applyPresetLocation = (preset: { label: string; coords: Coords }) => {
-        if (mapPickerMode === 'pickup') {
-            setPickupCoords(preset.coords);
-            setPickup(preset.label);
-        } else if (mapPickerMode === 'dropoff') {
-            setDropoffCoords(preset.coords);
-            setDestination(preset.label);
         }
     };
 
@@ -486,33 +422,10 @@ export default function BookingSection() {
         setOtpInput('');
     };
 
-    const mapMarkers: MapMarker[] = useMemo(() => {
-        const list: MapMarker[] = [];
-        if (pickupCoords) {
-            list.push({
-                id: 'pickup-pin',
-                position: [pickupCoords.lat, pickupCoords.lng],
-                type: 'pickup',
-                popup: `Pickup: ${pickup || 'Selected Location'}`,
-            });
-        }
-        if (dropoffCoords) {
-            list.push({
-                id: 'dropoff-pin',
-                position: [dropoffCoords.lat, dropoffCoords.lng],
-                type: 'dropoff',
-                popup: `Drop-off: ${destination || 'Selected Destination'}`,
-            });
-        }
-        return list;
-    }, [pickupCoords, dropoffCoords, pickup, destination]);
-
-    const activeMapCenter: [number, number] = useMemo(() => {
-        if (mapPickerMode === 'pickup' && pickupCoords) return [pickupCoords.lat, pickupCoords.lng];
-        if (mapPickerMode === 'dropoff' && dropoffCoords) return [dropoffCoords.lat, dropoffCoords.lng];
-        if (pickupCoords) return [pickupCoords.lat, pickupCoords.lng];
-        return [-1.286389, 36.817223];
-    }, [mapPickerMode, pickupCoords, dropoffCoords]);
+    const mapMarkers: MapMarker[] = useMemo(
+        () => buildPinMarkers(pickup, pickupCoords, destination, dropoffCoords),
+        [pickupCoords, dropoffCoords, pickup, destination]
+    );
 
     const renderProgressBar = () => {
         const steps = ['Confirmed', 'Driver Assigned', 'Arrived', 'In Progress'];
@@ -921,118 +834,22 @@ export default function BookingSection() {
             </div>
 
             {/* Interactive Map Pin-Point Modal */}
-            {mapPickerMode && (
-                <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 pointer-events-auto">
-                    <div
-                        className="absolute inset-0 bg-black/75 backdrop-blur-sm"
-                        onClick={() => setMapPickerMode(null)}
-                    />
-                    <div className="relative bg-white dark:bg-card-dark border border-slate-200 dark:border-[#D4AF37]/30 rounded-3xl max-w-3xl w-full p-5 sm:p-6 shadow-2xl animate-reveal z-10">
-                        <div className="flex items-center justify-between gap-4 mb-4">
-                            <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37]">
-                                    Interactive Pin Selector
-                                </p>
-                                <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
-                                    Click anywhere on the map to set your{' '}
-                                    {mapPickerMode === 'pickup' ? 'Pickup Location' : 'Drop-off Destination'}
-                                </h3>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setMapPickerMode(null)}
-                                className="p-2 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-white/70 hover:text-black dark:hover:text-white"
-                                aria-label="Close map pin selector"
-                            >
-                                <FaTimes />
-                            </button>
-                        </div>
-
-                        {/* Switch between Pickup Pin and Drop-off Pin */}
-                        <div className="flex flex-wrap items-center gap-2 mb-4">
-                            <button
-                                type="button"
-                                onClick={() => setMapPickerMode('pickup')}
-                                className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
-                                    mapPickerMode === 'pickup'
-                                        ? 'bg-[#D4AF37] text-black'
-                                        : 'bg-slate-100 dark:bg-surface-dark text-slate-600 dark:text-neutral-300 border border-slate-200 dark:border-white/10'
-                                }`}
-                            >
-                                1. Pickup Pin {pickupCoords ? '✓' : ''}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setMapPickerMode('dropoff')}
-                                className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
-                                    mapPickerMode === 'dropoff'
-                                        ? 'bg-[#FACC15] text-black'
-                                        : 'bg-slate-100 dark:bg-surface-dark text-slate-600 dark:text-neutral-300 border border-slate-200 dark:border-white/10'
-                                }`}
-                            >
-                                2. Drop-off Pin {dropoffCoords ? '✓' : ''}
-                            </button>
-                            {resolvingPin && (
-                                <span className="text-xs font-semibold text-[#D4AF37] ml-2">
-                                    Resolving address...
-                                </span>
-                            )}
-                        </div>
-
-                        {/* Quick Nairobi Hub Presets */}
-                        <div className="flex flex-wrap gap-2 mb-4">
-                            {NAIROBI_PRESETS.map((preset) => (
-                                <button
-                                    key={preset.label}
-                                    type="button"
-                                    onClick={() => applyPresetLocation(preset)}
-                                    className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-surface-dark hover:border-[#D4AF37] border border-slate-200 dark:border-white/10 text-[11px] font-bold text-slate-700 dark:text-neutral-200 transition-colors"
-                                >
-                                    {preset.label.split(',')[0]}
-                                </button>
-                            ))}
-                        </div>
-
-                        <div className="h-[300px] sm:h-[360px] w-full rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10">
-                            <CabiMap
-                                center={activeMapCenter}
-                                zoom={13}
-                                height="100%"
-                                markers={mapMarkers}
-                                route={
-                                    pickupCoords && dropoffCoords
-                                        ? [
-                                              [pickupCoords.lat, pickupCoords.lng],
-                                              [dropoffCoords.lat, dropoffCoords.lng],
-                                          ]
-                                        : undefined
-                                }
-                                onMapClick={handleMapPinSelect}
-                            />
-                        </div>
-
-                        <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div className="text-xs text-slate-600 dark:text-neutral-300 space-y-0.5">
-                                <p>
-                                    <strong className="text-slate-900 dark:text-white">Pickup:</strong>{' '}
-                                    {pickup || 'Not pinned yet'}
-                                </p>
-                                <p>
-                                    <strong className="text-slate-900 dark:text-white">Drop-off:</strong>{' '}
-                                    {destination || 'Not pinned yet'}
-                                </p>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setMapPickerMode(null)}
-                                className="px-6 py-3 rounded-xl bg-[#D4AF37] hover:bg-[#ffe088] text-black font-black text-xs uppercase tracking-widest shadow-md"
-                            >
-                                Done Pinning
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <MapPinModal
+                mode={mapPickerMode}
+                onModeChange={setMapPickerMode}
+                pickup={pickup}
+                destination={destination}
+                pickupCoords={pickupCoords}
+                dropoffCoords={dropoffCoords}
+                onPickupSelect={(label, coords) => {
+                    setPickupCoords(coords);
+                    setPickup(label);
+                }}
+                onDropoffSelect={(label, coords) => {
+                    setDropoffCoords(coords);
+                    setDestination(label);
+                }}
+            />
 
             {/* Passenger Identity & Trip Verification Modal */}
             {showVerification && (
