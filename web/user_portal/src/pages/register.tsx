@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { User, Car, Key, ArrowRight, CheckCircle, Building, ShieldCheck, Loader2, Mail, Phone, Lock } from 'lucide-react';
 import FileUpload from '../components/forms/FileUpload';
 import VideoEmbed from '../components/VideoEmbed';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 type UserRole = 'passenger' | 'driver' | 'vehicle_owner';
 
@@ -162,8 +163,8 @@ export default function Register() {
 
                 {/* Header */}
                 <div className="mb-12 flex justify-between items-center">
-                    <Link href="/" className="text-3xl font-black tracking-tighter hover:text-brand-yellow transition-colors">
-                        Cabi <span className="text-brand-yellow">.</span>
+                    <Link href="/" className="inline-flex items-center hover:opacity-90 transition-opacity">
+                        <BrandLogo size="md" />
                     </Link>
                     <div className="text-sm text-slate-600 dark:text-gray-400">
                         Already have an account? <Link href="/login" className="text-brand-yellow hover:underline font-bold">Log In</Link>

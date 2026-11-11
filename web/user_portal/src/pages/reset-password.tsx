@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router';
 import { useState, FormEvent, useEffect } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -65,8 +67,11 @@ export default function ResetPasswordPage() {
         <title>Reset Your Password | CABI</title>
       </Head>
       <div className="min-h-screen bg-slate-50 dark:bg-surface-dark flex flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl font-black leading-9 tracking-tight text-slate-900 dark:text-white">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm text-center">
+          <Link href="/" className="inline-flex justify-center">
+            <BrandLogo size="md" />
+          </Link>
+          <h2 className="mt-6 text-center text-2xl font-black leading-9 tracking-tight text-slate-900 dark:text-white">
             Reset Your Password
           </h2>
         </div>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 import SafetyTab from '@/components/dashboard/SafetyTab';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
 import ReferralNetworkVisualizer from '@/components/dashboard/ReferralNetworkVisualizer';
@@ -88,10 +89,9 @@ export default function Dashboard() {
             {/* Sidebar Mock */}
             <aside className="w-64 border-r border-slate-200 dark:border-white/10 p-6 hidden md:block bg-white/50 dark:bg-brand-black/50 backdrop-blur-md sticky top-0 h-screen flex flex-col">
                 <div className="flex-1">
-                    <div className="text-2xl font-black mb-10 px-2 flex items-center gap-2">
-                        <div className="w-8 h-8 bg-brand-yellow rounded-md flex items-center justify-center text-black text-xs font-black">C</div>
-                        <span className="tracking-tighter">Cabi<span className="text-brand-yellow">.</span></span>
-                    </div>
+                    <Link href="/" className="mb-10 px-2 inline-flex items-center">
+                        <BrandLogo size="md" />
+                    </Link>
 
                     <nav className="space-y-1 mb-10">
                         <Link href="/" className="group flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-gray-400 transition-all font-bold text-sm">

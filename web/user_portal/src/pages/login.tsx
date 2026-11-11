@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
+import BrandLogo from '@/components/ui/BrandLogo';
 import { User, Lock, Eye, EyeOff, Loader2, Car, UserCircle2 } from 'lucide-react';
 
 export default function LoginPage() {
@@ -9,7 +10,6 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [imgFailed, setImgFailed] = useState(false);
     const { login } = useAuth();
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -63,19 +63,8 @@ export default function LoginPage() {
                 <div className="relative p-8">
                     {/* Logo Section */}
                     <div className="flex flex-col items-center justify-center mb-8">
-                        <div className="relative w-28 h-28 rounded-full border border-brand-yellow/30 flex items-center justify-center bg-slate-100 dark:bg-black/40 shadow-[0_0_25px_rgba(245,158,11,0.2)] mb-4">
-                            <div className="w-24 h-24 rounded-full border border-brand-yellow/20 flex items-center justify-center overflow-hidden p-3 bg-white dark:bg-black">
-                                {imgFailed ? (
-                                    <span className="text-3xl font-black text-brand-yellow tracking-tighter">Cabi</span>
-                                ) : (
-                                    <img
-                                        src="/logo.png"
-                                        alt="Cabi Logo"
-                                        className="w-full h-full object-contain"
-                                        onError={() => setImgFailed(true)}
-                                    />
-                                )}
-                            </div>
+                        <div className="px-6 py-3.5 rounded-2xl border border-[#D4AF37]/30 bg-slate-50 dark:bg-surface-dark/80 shadow-[0_0_25px_rgba(245,158,11,0.12)] mb-4">
+                            <BrandLogo size="lg" />
                         </div>
                         <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-wide">Welcome Back</h2>
                         <p className="text-slate-500 dark:text-gray-400 text-xs mt-1 uppercase tracking-widest">Driver & Passenger Portal</p>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import SocialLinks from '@/components/ui/SocialLinks';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 export default function Footer() {
     return (
@@ -11,14 +12,9 @@ export default function Footer() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
                     {/* Brand & Description */}
                     <div className="space-y-4">
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center shadow-md">
-                                <span className="text-lg font-black text-surface-dark tracking-tighter leading-none">C</span>
-                            </div>
-                            <span className="text-xl font-black tracking-tight text-neutral-900 dark:text-primary-highlight">
-                                CABI<span className="text-amber-500">.</span>
-                            </span>
-                        </div>
+                        <Link href="/" className="inline-flex items-center focus:outline-none hover:opacity-90 transition-opacity">
+                            <BrandLogo size="footer" />
+                        </Link>
                         <p className="text-neutral-600 dark:text-neutral-400 text-sm max-w-sm leading-relaxed">
                             Executive African Mobility. Decentralized dispatch, fair operator revenues, and reliable diplomatic &amp; executive passenger transit.
                         </p>

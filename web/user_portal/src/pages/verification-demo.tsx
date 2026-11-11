@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import VerificationFlow from '../components/verification/VerificationFlow';
 import RandomBiometricCheck from '../components/verification/RandomBiometricCheck';
+import BrandLogo from '@/components/ui/BrandLogo';
 import { FaShieldAlt } from 'react-icons/fa';
 
 export default function VerificationDemo() {
@@ -55,8 +56,8 @@ export default function VerificationDemo() {
             <div className="container mx-auto px-6 py-12 relative z-10">
                 {/* Header */}
                 <div className="mb-12 flex justify-between items-center">
-                    <Link href="/" className="text-3xl font-bold tracking-tighter hover:text-brand-yellow transition-colors">
-                        Cabi <span className="text-brand-yellow">.</span>
+                    <Link href="/" className="inline-flex items-center hover:opacity-90 transition-opacity">
+                        <BrandLogo size="md" />
                     </Link>
                     <div className="text-sm text-gray-400">
                         <Link href="/register" className="text-brand-yellow hover:underline">

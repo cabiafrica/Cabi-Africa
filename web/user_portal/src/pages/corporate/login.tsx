@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Briefcase, Lock, Mail, ArrowRight, AlertCircle, Sparkles, Building2 } from 'lucide-react';
+import { Lock, Mail, ArrowRight, AlertCircle, Sparkles, Building2 } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 export default function CorporateLoginPage() {
     const router = useRouter();
@@ -67,9 +68,7 @@ export default function CorporateLoginPage() {
                     <div className="absolute -top-12 -right-12 w-48 h-48 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
 
                     <div className="text-center mb-8">
-                        <div className="inline-flex p-3 rounded-2xl bg-brand-yellow/10 border border-brand-yellow/30 text-brand-yellow mb-3">
-                            <Briefcase className="w-6 h-6" />
-                        </div>
+                        <BrandLogo size="md" className="mx-auto mb-4" />
                         <h1 className="text-2xl font-black tracking-tight">Corporate Portal Sign In</h1>
                         <p className="text-xs text-gray-400 mt-1">
                             Access your team travel management and corporate billing dashboard

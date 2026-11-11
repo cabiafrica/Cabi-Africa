@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect, useContext, createContext, useRef } from 'react';
 import { ThemeToggle } from '../ThemeToggle';
+import BrandLogo from '../ui/BrandLogo';
 import { useAuth } from '@/context/AuthContext';
 import {
     ChevronDown,
@@ -102,16 +103,8 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                     <div className="flex justify-between h-16 md:h-20 items-center gap-4">
                         {/* Left: Brand Logo */}
                         <div className="flex-shrink-0 flex items-center group">
-                            <Link href="/" className="flex items-center gap-2.5 focus:outline-none">
-                                <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-primary-container flex items-center justify-center shadow-lg shadow-primary-container/20 group-hover:scale-105 transition-transform duration-300">
-                                    <span className="text-lg md:text-xl font-black text-surface-dark tracking-tighter leading-none">
-                                        C
-                                    </span>
-                                </div>
-                                <span className="text-lg md:text-2xl font-black tracking-tight text-slate-900 dark:text-primary-highlight group-hover:text-brand-yellow transition-colors duration-300 flex items-center gap-1.5">
-                                    CABI<span className="text-brand-yellow">.</span>
-                                    <span className="w-1.5 h-1.5 rounded-full bg-telemetry-cyan animate-pulse" />
-                                </span>
+                            <Link href="/" className="flex items-center focus:outline-none transition-transform duration-300 group-hover:scale-[1.03]">
+                                <BrandLogo size="header" />
                             </Link>
                         </div>
 
