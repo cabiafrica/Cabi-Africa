@@ -117,38 +117,30 @@ export default function AboutPage() {
 
               <div className="space-y-4 text-sm sm:text-base text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 <p>
-                  CABI was founded in 2024 around a straightforward conviction: city travel should feel effortless, dependable, and respectful for everyone on the road.
+                  CABI was founded in 2026 around a simple belief: moving through the city should feel effortless, reliable, and genuinely respectful for everyone sharing the road.
                 </p>
                 <p>
-                  What began in Nairobi has grown into a trusted community of everyday commuters, corporate teams, diplomatic guests, and dedicated driver-partners across Kenya.
+                  What started right here in Nairobi is steadily growing into a welcoming community of everyday commuters, corporate teams, diplomatic guests, and dedicated driver-partners across Kenya.
                 </p>
                 <p>
-                  Unlike conventional platforms, we are committed to empowering drivers to build lasting mobility businesses—supported by fair partner economics, instant M-Pesa settlement, and our Business Builder referral network.
+                  Unlike conventional platforms, we focus on helping drivers build lasting, rewarding mobility businesses—backed by fair partner economics, instant earnings settlement, performance incentives, and long-term wealth creation programs.
                 </p>
                 <p>
-                  As we expand across key East and Pan-African corridors, our focus remains unchanged: precision service, vetted partners, and transit you can count on.
+                  As our footprint grows across East and Pan-African corridors, our promise stays clear: thoughtful service, vetted partners, and everyday rides you can truly count on.
                 </p>
               </div>
             </div>
 
             <div className="lg:col-span-6 relative">
               <div className="relative rounded-3xl bg-white dark:bg-card-dark/90 p-2.5 sm:p-3.5 border border-slate-200 dark:border-[#D4AF37]/30 shadow-2xl">
-                <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-900">
+                <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#0A0A0B]">
                   <Image
-                    src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=2664&auto=format&fit=crop"
-                    alt="The CABI team collaborating in Nairobi"
+                    src="/images/from-nairobi-to-world.jpg"
+                    alt="Graphic map of Africa centered on a radiant Nairobi beacon with global trajectory arcs extending worldwide"
                     fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute bottom-3 left-3 sm:bottom-5 sm:left-5 bg-black/70 backdrop-blur-md px-4 py-2.5 rounded-xl border border-[#D4AF37]/35">
-                    <div className="flex items-center gap-2.5">
-                      <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />
-                      <span className="text-[11px] font-black uppercase tracking-[0.18em] text-[#ffe088]">
-                        Nairobi HQ • Founded 2024
-                      </span>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

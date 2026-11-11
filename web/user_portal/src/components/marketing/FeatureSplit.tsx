@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaArrowRight } from 'react-icons/fa';
+import AppDownloadButtons from '@/components/ui/AppDownloadButtons';
 
 interface FeatureSplitProps {
     type: 'driver' | 'passenger';
@@ -37,8 +38,8 @@ export default function FeatureSplit({ type }: FeatureSplitProps) {
                   'Experience seamless urban mobility. Whether it is a quick city commute or an executive transfer, CABI gets you there smoothly and safely.',
               buttonText: 'Learn More',
               buttonLink: '/passengers',
-              image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070',
-              imageAlt: 'Cabi Passenger riding in comfort',
+              image: '/images/passenger-satisfaction.jpg',
+              imageAlt: 'Satisfied CABI passenger smiling comfortably in an executive vehicle cabin',
           };
 
     return (
@@ -66,6 +67,7 @@ export default function FeatureSplit({ type }: FeatureSplitProps) {
                                     src={content.image}
                                     alt={content.imageAlt}
                                     fill
+                                    sizes="(max-width: 1024px) 100vw, 50vw"
                                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
 
@@ -121,6 +123,17 @@ export default function FeatureSplit({ type }: FeatureSplitProps) {
                                 <FaArrowRight className="relative z-10 transition-transform duration-300 group-hover/btn:translate-x-1.5" />
                             )}
                         </Link>
+
+                        <AppDownloadButtons
+                            role={type}
+                            align="start"
+                            caption={
+                                isDriver
+                                    ? 'Download the CABI Driver App'
+                                    : 'Download the CABI Passenger App'
+                            }
+                            className="mt-7"
+                        />
                     </div>
                 </div>
             </div>
