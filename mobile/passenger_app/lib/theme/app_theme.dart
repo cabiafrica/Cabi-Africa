@@ -66,71 +66,76 @@ class AppTheme {
     return GoogleFonts.plusJakartaSans(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
   }
 
-  // Premium Color Palette - Luxury Metallic Gold
-  static const Color primaryColor = Color(0xFFD4AF37); // Classic Metallic Gold
-  static const Color primaryDark = Color(0xFFB89028);  // Burnished Royal Gold
-  static const Color primaryLight = Color(0xFFF3E5AB); // Champagne Gold
+  // Stitch Lustre Platinum Gold Dual-Theme (stitch_cabi_africa.zip)
+  static const Color primaryColor = Color(0xFFD4AF37); // Metallic Aurum Gold
+  static const Color primaryDark = Color(0xFFB89028);  // Burnished Gold
+  static const Color primaryLight = Color(0xFFF2CA50); // Lustre Gold Highlight
+  static const Color executiveGold = Color(0xFFD4AF37); // Executive Metallic Gold
+  static const Color lustreGold = Color(0xFFF2CA50);
+  static const Color warmStone = Color(0xFFD0C5AF);
 
-  static const Color secondaryAmber = Color(0xFFC5A059); // Warm Satin Gold
-  static const Color successGreen = Color(0xFF10B981);
+  static const Color secondaryAmber = Color(0xFFF2CA50); // Lustre Gold Accent
+  static const Color successGreen = Color(0xFF10B981);   // Verified Emerald
   static const Color errorRed = Color(0xFFEF4444);
+  static const Color telemetryCyan = Color(0xFF22D3EE);
+  static const Color telemetryIndigo = Color(0xFF6366F1);
 
-  // Stitch Design System Tokens (Project 5681992570744779348)
-  static const Color obsidianCanvas = Color(0xFF121212);
-  static const Color surfaceDim = Color(0xFF0A0A0A);
-  static const Color surfaceBright = Color(0xFF1E1E1E);
-  static const Color surfaceContainer = Color(0xFF1A1A1A);
-  static const Color surfaceContainerHigh = Color(0xFF242424);
-  static const Color surfaceContainerHighest = Color(0xFF2E2E2E);
-  static const Color surfaceContainerLow = Color(0xFF1F1B13);
-  static const Color surfaceContainerLowest = Color(0xFF110E07);
-  static const Color outlineBorder = Color(0xFF27272A);
-  static const Color outlineGold = Color(0x4DD4AF37); // rgba(212, 175, 55, 0.3)
+  // Stitch Design System Tokens (Lustre Platinum Gold Dark Surfaces)
+  static const Color obsidianCanvas = Color(0xFF131313); // #131313 obsidian canvas
+  static const Color surfaceDim = Color(0xFF0E0E0E);
+  static const Color surfaceBright = Color(0xFF2A2A2A);
+  static const Color surfaceContainer = Color(0xFF1C1B1B); // #1C1B1B card surface
+  static const Color surfaceContainerHigh = Color(0xFF201F1F);
+  static const Color surfaceContainerHighest = Color(0xFF2A2A2A);
+  static const Color surfaceContainerLow = Color(0xFF171616);
+  static const Color surfaceContainerLowest = Color(0xFF0C0C0C);
+  static const Color outlineBorder = Color(0x1AFFFFFF); // rgba(255, 255, 255, 0.10)
+  static const Color outlineGold = Color(0x4DD4AF37);   // rgba(212, 175, 55, 0.30)
   static const Color primaryContainer = Color(0x26D4AF37); // rgba(212, 175, 55, 0.15)
   static const Color electricBlue = Color(0xFF067FF9);
   static const Color electricBlueContainer = Color(0x26067FF9); // rgba(6, 127, 249, 0.15)
-  static const Color accentYellow = Color(0xFFF9F906);
+  static const Color accentYellow = Color(0xFFF2CA50);
 
-  // Luxury Gold Gradients
+  // Lustre Platinum Gold Gradients
   static const LinearGradient goldGradient = LinearGradient(
-    colors: [Color(0xFFF0D278), Color(0xFFD4AF37), Color(0xFFB89028)],
+    colors: [Color(0xFFD4AF37), Color(0xFFF2CA50)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  // Light Mode Colors (Daytime Porcelain / Stitch Dual-Theme)
-  static const Color porcelainCanvas = Color(0xFFF8FAFC);
+  // Light Mode Colors (Daytime Porcelain / Lustre Platinum Dual-Theme)
+  static const Color porcelainCanvas = Color(0xFFFCF9F8);
   static const Color porcelainSurface = Colors.white;
-  static const Color porcelainSurfaceContainer = Color(0xFFF1F5F9);
-  static const Color porcelainSurfaceHigh = Color(0xFFE2E8F0);
-  static const Color porcelainOutline = Color(0xFFCBD5E1);
-  static const Color porcelainTextPrimary = Color(0xFF0F172A); // Slate 900
-  static const Color porcelainTextSecondary = Color(0xFF475569); // Slate 600
-  static const Color aurumBronze = Color(0xFF8C6D1F); // Rich Aurum for high-sun legibility
+  static const Color porcelainSurfaceContainer = Color(0xFFF6F3F2);
+  static const Color porcelainSurfaceHigh = Color(0xFFEBE7E7);
+  static const Color porcelainOutline = Color(0xFFD0C5AF);
+  static const Color porcelainTextPrimary = Color(0xFF1C1B1B);
+  static const Color porcelainTextSecondary = Color(0xFF4D4635);
+  static const Color aurumBronze = Color(0xFF735C00); // Rich Aurum for high-sun legibility
   static const Color royalBlue = Color(0xFF0260C4); // GPS route in light mode
 
-  static const Color lightBackground = Color(0xFFF8FAFC);
+  static const Color lightBackground = Color(0xFFFCF9F8);
   static const Color lightSurface = Colors.white;
-  static const Color lightTextPrimary = Color(0xFF0F172A);
-  static const Color lightTextSecondary = Color(0xFF475569);
-  static const Color lightDivider = Color(0xFFCBD5E1);
+  static const Color lightTextPrimary = Color(0xFF1C1B1B);
+  static const Color lightTextSecondary = Color(0xFF4D4635);
+  static const Color lightDivider = Color(0xFFD0C5AF);
 
-  // Dark Mode Colors ("New Dawn" Luxury / Stitch Obsidian)
-  static const Color darkBackground = Color(0xFF121212); // Deep Obsidian Canvas
-  static const Color darkSurface = Color(0xFF1A1A1A); // Surface Container
-  static const Color darkTextPrimary = Color(0xFFF9FAFB);
-  static const Color darkTextSecondary = Color(0xFF9CA3AF);
-  static const Color darkDivider = Color(0xFF27272A);
+  // Dark Mode Colors (Lustre Platinum Gold Obsidian)
+  static const Color darkBackground = Color(0xFF131313); // Deep Obsidian Canvas
+  static const Color darkSurface = Color(0xFF1C1B1B); // Elevated Card Surface
+  static const Color darkTextPrimary = Color(0xFFE5E2E1);
+  static const Color darkTextSecondary = Color(0xFFD0C5AF);
+  static const Color darkDivider = Color(0x1AFFFFFF);
 
   static ThemeData get lightTheme => ThemeData(
     useMaterial3: true,
-    fontFamily: useGoogleFonts ? GoogleFonts.outfit().fontFamily : null,
+    fontFamily: useGoogleFonts ? GoogleFonts.inter().fontFamily : null,
     colorScheme: const ColorScheme.light(
       primary: primaryColor,
-      secondary: secondaryAmber,
+      secondary: executiveGold,
       surface: lightSurface,
       error: errorRed,
-      onPrimary: Colors.black, // Gold needs dark text
+      onPrimary: Colors.black,
       onSecondary: Colors.black,
       onSurface: lightTextPrimary,
     ),
@@ -147,7 +152,7 @@ class AppTheme {
       color: lightSurface,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         side: const BorderSide(color: Color(0xFFE5E7EB), width: 1),
       ),
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -157,33 +162,33 @@ class AppTheme {
         backgroundColor: primaryColor,
         foregroundColor: Colors.black,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        textStyle: _getStyle(GoogleFonts.outfit, fontWeight: FontWeight.w600, fontSize: 16),
+        textStyle: _getStyle(GoogleFonts.inter, fontWeight: FontWeight.w700, fontSize: 15),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: Colors.black, // Dark text on Taxi Gold
-        side: const BorderSide(color: primaryColor, width: 1.5),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        foregroundColor: lightTextPrimary,
+        side: const BorderSide(color: executiveGold, width: 1.5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        textStyle: _getStyle(GoogleFonts.outfit, fontWeight: FontWeight.w600, fontSize: 16),
+        textStyle: _getStyle(GoogleFonts.inter, fontWeight: FontWeight.w600, fontSize: 15),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: Colors.white,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: lightDivider),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: lightDivider),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: primaryColor, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -193,28 +198,28 @@ class AppTheme {
       thickness: 1,
     ),
     textTheme: TextTheme(
-      headlineLarge: _getStyle(GoogleFonts.outfit,
-          fontSize: 32, fontWeight: FontWeight.bold, color: lightTextPrimary),
-      headlineMedium: _getStyle(GoogleFonts.outfit,
-          fontSize: 24, fontWeight: FontWeight.bold, color: lightTextPrimary),
-      headlineSmall: _getStyle(GoogleFonts.outfit,
+      headlineLarge: _getStyle(GoogleFonts.inter,
+          fontSize: 32, fontWeight: FontWeight.w800, color: lightTextPrimary),
+      headlineMedium: _getStyle(GoogleFonts.inter,
+          fontSize: 24, fontWeight: FontWeight.w700, color: lightTextPrimary),
+      headlineSmall: _getStyle(GoogleFonts.inter,
           fontSize: 20, fontWeight: FontWeight.w600, color: lightTextPrimary),
-      titleLarge: _getStyle(GoogleFonts.outfit,
+      titleLarge: _getStyle(GoogleFonts.inter,
           fontSize: 18, fontWeight: FontWeight.w600, color: lightTextPrimary),
-      bodyLarge: _getStyle(GoogleFonts.outfit, fontSize: 16, color: lightTextPrimary),
-      bodyMedium: _getStyle(GoogleFonts.outfit, fontSize: 14, color: lightTextSecondary),
+      bodyLarge: _getStyle(GoogleFonts.inter, fontSize: 16, color: lightTextPrimary),
+      bodyMedium: _getStyle(GoogleFonts.inter, fontSize: 14, color: lightTextSecondary),
     ),
   );
 
   static ThemeData get darkTheme => ThemeData(
     useMaterial3: true,
-    fontFamily: useGoogleFonts ? GoogleFonts.plusJakartaSans().fontFamily : null,
+    fontFamily: useGoogleFonts ? GoogleFonts.inter().fontFamily : null,
     colorScheme: const ColorScheme.dark(
       primary: primaryColor,
-      secondary: secondaryAmber,
+      secondary: executiveGold,
       surface: surfaceContainer,
       error: errorRed,
-      onPrimary: Color(0xFF241A00), // Dark text on Gold
+      onPrimary: Colors.black,
       onSecondary: Colors.black,
       onSurface: darkTextPrimary,
     ),
@@ -231,7 +236,7 @@ class AppTheme {
       color: surfaceContainer,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         side: const BorderSide(color: outlineGold, width: 1),
       ),
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -239,35 +244,35 @@ class AppTheme {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: primaryColor,
-        foregroundColor: const Color(0xFF241A00),
+        foregroundColor: Colors.black,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        textStyle: _getStyle(GoogleFonts.montserrat, fontWeight: FontWeight.w700, fontSize: 16),
+        textStyle: _getStyle(GoogleFonts.inter, fontWeight: FontWeight.w700, fontSize: 15),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: primaryColor,
-        side: const BorderSide(color: primaryColor, width: 1.5),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        side: const BorderSide(color: executiveGold, width: 1.5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        textStyle: _getStyle(GoogleFonts.montserrat, fontWeight: FontWeight.w600, fontSize: 16),
+        textStyle: _getStyle(GoogleFonts.inter, fontWeight: FontWeight.w600, fontSize: 15),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: surfaceContainerHigh,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: outlineBorder),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: outlineBorder),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: primaryColor, width: 1.8),
       ),
       hintStyle: const TextStyle(color: darkTextSecondary),
@@ -278,16 +283,16 @@ class AppTheme {
       thickness: 1,
     ),
     textTheme: TextTheme(
-      headlineLarge: _getStyle(GoogleFonts.montserrat,
+      headlineLarge: _getStyle(GoogleFonts.inter,
           fontSize: 32, fontWeight: FontWeight.w800, color: darkTextPrimary),
-      headlineMedium: _getStyle(GoogleFonts.montserrat,
+      headlineMedium: _getStyle(GoogleFonts.inter,
           fontSize: 24, fontWeight: FontWeight.w700, color: darkTextPrimary),
-      headlineSmall: _getStyle(GoogleFonts.montserrat,
+      headlineSmall: _getStyle(GoogleFonts.inter,
           fontSize: 20, fontWeight: FontWeight.w600, color: darkTextPrimary),
-      titleLarge: _getStyle(GoogleFonts.plusJakartaSans,
+      titleLarge: _getStyle(GoogleFonts.inter,
           fontSize: 18, fontWeight: FontWeight.w600, color: darkTextPrimary),
-      bodyLarge: _getStyle(GoogleFonts.plusJakartaSans, fontSize: 16, color: darkTextPrimary),
-      bodyMedium: _getStyle(GoogleFonts.plusJakartaSans, fontSize: 14, color: darkTextSecondary),
+      bodyLarge: _getStyle(GoogleFonts.inter, fontSize: 16, color: darkTextPrimary),
+      bodyMedium: _getStyle(GoogleFonts.inter, fontSize: 14, color: darkTextSecondary),
     ),
   );
 }

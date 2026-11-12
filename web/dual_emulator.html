@@ -856,6 +856,248 @@
     .btn-action-primary:active { transform: scale(0.98); }
     .btn-action-primary:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
 
+    /* Stitch Lustre Platinum Gold Dual-Theme (stitch_cabi_africa.zip) */
+    #viewPassengerNative,
+    #viewDriverNative {
+      background: #131313;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    #viewPassengerNative {
+      gap: 8px;
+      padding: 10px;
+    }
+    #viewPassengerNative .app-card {
+      padding: 10px 11px;
+    }
+    #viewPassengerNative .app-card,
+    #viewDriverNative .app-card {
+      background: #1C1B1B;
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+    #viewPassengerNative .app-card.featured-gold,
+    #viewDriverNative .app-card.featured-gold {
+      border-color: rgba(212, 175, 55, 0.45);
+    }
+    #viewPassengerNative .app-card-title,
+    #viewDriverNative .app-card-title {
+      font-family: 'Inter', sans-serif;
+      color: #D0C5AF;
+    }
+    .stitch-verified-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #10B981;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    /* 3-Segment For Me / For Someone / Leave Now Bar */
+    .seg-control-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 5px;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .seg-pill-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 6px 4px;
+      border-radius: 8px;
+      background: #201F1F;
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      color: #D0C5AF;
+      font-size: 0.66rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .seg-pill-btn.active {
+      background: linear-gradient(135deg, #D4AF37 0%, #F2CA50 100%);
+      border-color: #F2CA50;
+      color: #241A00;
+      font-weight: 800;
+      box-shadow: 0 2px 10px rgba(212, 175, 55, 0.25);
+    }
+    #viewPassengerNative .route-display,
+    #viewPassengerNative .driver-matched-box {
+      background: #131313;
+      border: 1px solid rgba(212, 175, 55, 0.20);
+      border-radius: 10px;
+    }
+    .route-swap-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: #1C1B1B;
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      color: #F2CA50;
+      font-size: 0.72rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 3;
+    }
+    .stop-chip-btn {
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: #201F1F;
+      border: 1px solid rgba(212, 175, 55, 0.30);
+      color: #F2CA50;
+      font-size: 0.62rem;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    /* 2x2 Mobility & Fleets Grid */
+    .fleet-grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+    #viewPassengerNative .tier-card {
+      background: #131313;
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      border-radius: 10px;
+      padding: 12px 8px 7px;
+      text-align: left;
+      position: relative;
+    }
+    #viewPassengerNative .tier-card.selected {
+      background: linear-gradient(180deg, #201F1F 0%, #1C1B1B 100%);
+      border: 1.5px solid #D4AF37;
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.20);
+    }
+    .fleet-badge {
+      position: absolute;
+      top: -6px;
+      right: 6px;
+      font-size: 0.54rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .fleet-badge.gold { background: linear-gradient(135deg, #D4AF37, #F2CA50); color: #241A00; }
+    .fleet-badge.cyan { background: rgba(34, 211, 238, 0.14); color: #22D3EE; border: 1px solid rgba(34, 211, 238, 0.35); }
+    .fleet-badge.vip { background: rgba(168, 85, 247, 0.16); color: #D8B4FE; border: 1px solid rgba(168, 85, 247, 0.35); }
+    .fleet-badge.fast { background: rgba(245, 158, 11, 0.16); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    #viewPassengerNative .tier-price {
+      color: #F2CA50;
+      font-size: 0.72rem;
+    }
+    #viewPassengerNative .btn-action-primary,
+    #viewDriverNative .btn-action-primary {
+      background: linear-gradient(135deg, #D4AF37 0%, #F2CA50 100%);
+      color: #241A00;
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(212, 175, 55, 0.28);
+    }
+    /* Driver Sovereign HUD & Secure PIN Card */
+    .sovereign-hud-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      background: #1C1B1B;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 10px;
+      font-size: 0.65rem;
+      color: #D0C5AF;
+    }
+    .sovereign-tier-badge {
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #D4AF37, #F2CA50);
+      color: #241A00;
+      font-weight: 800;
+      font-size: 0.6rem;
+      letter-spacing: 0.05em;
+    }
+    .secure-pin-box {
+      margin-top: 8px;
+      padding: 9px;
+      background: #131313;
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 10px;
+    }
+    .pin-slots-row {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin: 6px 0;
+    }
+    .pin-slot {
+      width: 32px;
+      height: 36px;
+      border-radius: 8px;
+      background: #201F1F;
+      border: 1px solid rgba(212, 175, 55, 0.40);
+      color: #F2CA50;
+      font-weight: 800;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Porcelain Dual-Theme Light Overrides */
+    body.light-theme #viewPassengerNative,
+    body.light-theme #viewDriverNative {
+      background: #FCF9F8;
+    }
+    body.light-theme #viewPassengerNative .app-card,
+    body.light-theme #viewDriverNative .app-card,
+    body.light-theme .sovereign-hud-strip {
+      background: #FFFFFF;
+      border-color: #D0C5AF;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    body.light-theme #viewPassengerNative .route-display,
+    body.light-theme #viewPassengerNative .driver-matched-box,
+    body.light-theme #viewPassengerNative .tier-card,
+    body.light-theme .secure-pin-box,
+    body.light-theme .seg-pill-btn {
+      background: #F6F3F2;
+      border-color: #D0C5AF;
+      color: #4D4635;
+    }
+    body.light-theme .seg-pill-btn.active {
+      background: linear-gradient(135deg, #D4AF37 0%, #F2CA50 100%);
+      color: #241A00;
+    }
+    body.light-theme #viewPassengerNative .tier-card.selected {
+      background: #FFFDF7;
+      border-color: #735C00;
+    }
+    body.light-theme #viewPassengerNative .route-text,
+    body.light-theme #viewPassengerNative .tier-name,
+    body.light-theme #viewPassengerNative .app-card-title span.val,
+    body.light-theme #viewDriverNative .app-card-title span.val {
+      color: #1C1B1B;
+    }
+    body.light-theme #viewPassengerNative .tier-price {
+      color: #735C00;
+    }
+
     .btn-action-green {
       width: 100%;
       background: linear-gradient(135deg, var(--green), #059669);
@@ -1676,69 +1918,89 @@
             </div>
           </div>
 
-          <!-- OPTION C: Native Interactive Controls View -->
+          <!-- OPTION C: Native Interactive Controls View (Lustre Platinum Gold) -->
           <div class="interactive-native-view active-view" id="viewPassengerNative">
 
             <!-- Profile & Active Balance Card -->
-            <div class="app-card">
+            <div class="app-card featured-gold">
               <div class="app-card-title">
                 <span>Rider Profile</span>
-                <span class="val" style="color: #60a5fa;">Brian K. ★ 4.90</span>
+                <span class="val" style="color: #F2CA50;">Brian K. ★ 4.90</span>
               </div>
-              <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between;">
-                <span>ID: passenger@test.com</span>
-                <span style="color: var(--green); font-weight: 700;">Wallet: KES 4,500</span>
+              <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+                <span class="stitch-verified-pill">✓ Verified Rider</span>
+                <span style="color: #10B981; font-weight: 700;">Wallet: KES 4,500</span>
               </div>
             </div>
 
-            <!-- Route Selector Card -->
+            <!-- Booking Controls + Route Selector Card -->
             <div class="app-card">
+              <div class="seg-control-bar">
+                <button class="seg-pill-btn active" id="btnPForMe" onclick="setPassengerForMode('me')">👤 For Me</button>
+                <button class="seg-pill-btn" id="btnPForSomeone" onclick="setPassengerForMode('someone')">👥 Someone</button>
+                <button class="seg-pill-btn" onclick="log('🕒 Schedule: Leave now selected.', 'PASSENGER')">🕒 Leave now ▾</button>
+              </div>
+
               <div class="app-card-title">
                 <span>Route Details</span>
-                <span class="val" id="pRouteDistance">18.4 km • 28 min</span>
+                <span class="val" id="pRouteDistance" style="color: #22D3EE;">18.4 km • 28 min</span>
               </div>
 
               <div class="route-display">
+                <button class="route-swap-btn" onclick="swapPassengerRoute()" title="Swap pickup & destination">⇅</button>
                 <div class="route-point">
                   <div class="dot-green"></div>
-                  <div>
-                    <div class="route-text">Kenyatta Avenue, Nairobi CBD</div>
+                  <div style="flex: 1; min-width: 0;">
+                    <div class="route-text" id="pPickupText">Kenyatta Avenue, Nairobi CBD</div>
                     <div class="route-sub">Near GPO / Teleposta Towers</div>
                   </div>
                 </div>
-                <div style="width: 2px; height: 12px; background: var(--border); margin-left: 4px;"></div>
+                <div id="pIntermediateStopRow" style="display: none; padding-left: 20px; font-size: 0.72rem; color: #F2CA50; font-weight: 600;">
+                  ⏸ Stop: Sarit Centre Gate B
+                </div>
+                <div style="width: 2px; height: 10px; background: var(--border); margin-left: 4px;"></div>
                 <div class="route-point">
-                  <div class="dot-gold"></div>
-                  <div>
-                    <div class="route-text">JKIA Terminal 1A, Nairobi</div>
+                  <div class="dot-gold" style="background: #F2CA50;"></div>
+                  <div style="flex: 1; min-width: 0;">
+                    <div class="route-text" id="pDropoffText">JKIA Terminal 1A, Nairobi</div>
                     <div class="route-sub">International Departures via Expressway</div>
                   </div>
+                  <button class="stop-chip-btn" id="btnPAddStop" onclick="togglePassengerStop()">+ Stop</button>
                 </div>
               </div>
             </div>
 
-            <!-- Vehicle Tier Selector -->
+            <!-- Mobility & Fleets 2x2 Selector -->
             <div class="app-card">
               <div class="app-card-title">
-                <span>Select Ride Tier</span>
-                <span class="val" id="pSelectedTierName">STANDARD</span>
+                <span>Mobility &amp; Fleets</span>
+                <span class="val" id="pSelectedTierName" style="color: #F2CA50;">STANDARD</span>
               </div>
 
-              <div class="tier-grid">
+              <div class="fleet-grid-2x2">
                 <div class="tier-card selected" id="tierStandard" onclick="selectVehicleTier('STANDARD', 1850)">
-                  <div class="tier-icon">🚗</div>
-                  <div class="tier-name">STANDARD</div>
-                  <div class="tier-price">KES 1,850</div>
+                  <span class="fleet-badge cyan">2m</span>
+                  <div class="tier-name">🚗 CabiGo</div>
+                  <div class="route-sub">Standard • 4 seats</div>
+                  <div class="tier-price" style="margin-top: 3px;">KES 1,850</div>
                 </div>
                 <div class="tier-card" id="tierComfort" onclick="selectVehicleTier('COMFORT', 2400)">
-                  <div class="tier-icon">✨</div>
-                  <div class="tier-name">COMFORT</div>
-                  <div class="tier-price">KES 2,400</div>
+                  <span class="fleet-badge gold">Executive</span>
+                  <div class="tier-name">✨ CabiX Comfort</div>
+                  <div class="route-sub">Spacious • 4m</div>
+                  <div class="tier-price" style="margin-top: 3px;">KES 2,400</div>
                 </div>
-                <div class="tier-card" id="tierXL" onclick="selectVehicleTier('XL', 3100)">
-                  <div class="tier-icon">🚙</div>
-                  <div class="tier-name">CABI XL</div>
-                  <div class="tier-price">KES 3,100</div>
+                <div class="tier-card" id="tierLux" onclick="selectVehicleTier('LUX', 3600)">
+                  <span class="fleet-badge vip">VIP</span>
+                  <div class="tier-name">👑 Cabi Lux</div>
+                  <div class="route-sub">Executive • 7m</div>
+                  <div class="tier-price" style="margin-top: 3px;">KES 3,600</div>
+                </div>
+                <div class="tier-card" id="tierBoda" onclick="selectVehicleTier('BODA', 650)">
+                  <span class="fleet-badge fast">1m</span>
+                  <div class="tier-name">🏍️ Cabi Boda</div>
+                  <div class="route-sub">Fastest • 1 helmet</div>
+                  <div class="tier-price" style="margin-top: 3px;">KES 650</div>
                 </div>
               </div>
             </div>
@@ -1747,21 +2009,22 @@
             <div class="app-card" id="pTripStatusCard" style="display: none;">
               <div class="app-card-title">
                 <span>Live Ride Status</span>
-                <span class="val" id="pTripStatusBadge" style="color: var(--gold);">SEARCHING</span>
+                <span class="val" id="pTripStatusBadge" style="color: #F2CA50;">SEARCHING</span>
               </div>
 
               <div id="pDriverInfoBlock" style="display: none; margin-top: 8px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; background: #080c16; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                <div class="driver-matched-box" style="display: flex; align-items: center; justify-content: space-between; padding: 10px;">
                   <div style="display: flex; align-items: center; gap: 8px;">
                     <div style="font-size: 1.5rem;">👨‍✈️</div>
                     <div>
-                      <div style="font-size: 0.82rem; font-weight: 800; color: #fff;" id="pDriverName">Test Driver</div>
-                      <div style="font-size: 0.7rem; color: var(--gold);" id="pDriverCar">Toyota Axio Hybrid • KDH 452X</div>
+                      <div style="font-size: 0.82rem; font-weight: 800;" id="pDriverName">Test Driver</div>
+                      <div style="font-size: 0.7rem; color: #D4AF37;" id="pDriverCar">Toyota Axio Hybrid • KDH 452X</div>
                     </div>
                   </div>
                   <div style="text-align: right;">
-                    <div style="font-size: 0.8rem; font-weight: 800; color: var(--green);">4.95 ★</div>
+                    <div style="font-size: 0.8rem; font-weight: 800; color: #10B981;">4.95 ★</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted);" id="pDriverEta">2 min away</div>
+                    <div style="font-size: 0.62rem; font-weight: 800; color: #F2CA50; margin-top: 2px;">PIN: 4829</div>
                   </div>
                 </div>
               </div>
@@ -1779,10 +2042,10 @@
             </div>
 
             <!-- Settlement & Rating Block -->
-            <div class="app-card" id="pRatingBlock" style="display: none;">
+            <div class="app-card featured-gold" id="pRatingBlock" style="display: none;">
               <div class="app-card-title">
                 <span>Trip Completed</span>
-                <span class="val" style="color: var(--green);">KES 1,850</span>
+                <span class="val" style="color: #10B981;">KES 1,850</span>
               </div>
               <div style="text-align: center; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px;">
                 Rate your trip with Test Driver:
@@ -1804,7 +2067,7 @@
               <button class="btn-action-primary" id="btnRequestRide" onclick="passengerRequestRide()">
                 <span>🚕</span> Request Ride Now (KES 1,850)
               </button>
-              <button class="btn-action-primary" id="btnRetryRide" style="display: none; width: 100%; margin-top: 8px; background: linear-gradient(135deg, var(--gold), #d97706); color: #000; font-weight: 800;" onclick="passengerRetrySearch()">
+              <button class="btn-action-primary" id="btnRetryRide" style="display: none; width: 100%; margin-top: 8px;" onclick="passengerRetrySearch()">
                 <span>🔄</span> Retry <span id="pCountdownBadge" style="margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: rgba(0,0,0,0.25); font-size: 0.75rem; font-weight: 800;">00:15</span>
               </button>
               <button class="btn-step-ghost" id="btnCancelRide" style="display: none; width: 100%; margin-top: 6px; font-size: 0.72rem;" onclick="passengerCancelRide()">
@@ -1994,8 +2257,14 @@
               </button>
             </div>
 
-            <!-- TAB 1: TRIP COCKPIT VIEW -->
+            <!-- TAB 1: TRIP COCKPIT VIEW (Lustre Platinum Gold) -->
             <div id="driverTripView" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Sovereign HUD Telemetry Strip -->
+              <div class="sovereign-hud-strip">
+                <span>📡 GPS High • 4G+ Live</span>
+                <span class="sovereign-tier-badge">SOVEREIGN</span>
+              </div>
+
               <!-- Driver Shift & Online Toggle -->
               <div class="driver-online-switch-box">
                 <div>
@@ -2039,6 +2308,20 @@
                   <div style="color: var(--text); font-weight: 700; margin-bottom: 2px;">Pickup: Kenyatta Ave, CBD</div>
                   <div style="color: var(--text-muted); font-size: 0.7rem;">Passenger: Brian K. (4.90 ★)</div>
                   <div style="color: var(--gold); font-weight: 800; margin-top: 4px;">Fare: KES 1,850.00 (Cash)</div>
+                </div>
+
+                <!-- 4-Digit Cabi Secure Pickup PIN Card (shown when arrived) -->
+                <div id="dSecurePinCard" class="secure-pin-box" style="display: none;">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 700; color: #D0C5AF;">
+                    <span>🔐 CABI SECURE PICKUP PIN</span>
+                    <span style="color: #10B981;">5m Grace • KSh 15/min</span>
+                  </div>
+                  <div class="pin-slots-row">
+                    <div class="pin-slot">4</div>
+                    <div class="pin-slot">8</div>
+                    <div class="pin-slot">2</div>
+                    <div class="pin-slot">9</div>
+                  </div>
                 </div>
 
                 <!-- Driver Trip Action Pipeline Buttons -->
@@ -2740,14 +3023,43 @@
       }
     }
 
+    // Passenger For Me / Someone, Swap Route & Stop Toggle
+    function setPassengerForMode(mode) {
+      const btnMe = document.getElementById('btnPForMe');
+      const btnSomeone = document.getElementById('btnPForSomeone');
+      if (btnMe) btnMe.classList.toggle('active', mode === 'me');
+      if (btnSomeone) btnSomeone.classList.toggle('active', mode === 'someone');
+      log(`👤 Booking mode: ${mode === 'me' ? 'For Me' : 'For Someone Else'}`, 'PASSENGER');
+    }
+
+    function swapPassengerRoute() {
+      const p = document.getElementById('pPickupText');
+      const d = document.getElementById('pDropoffText');
+      if (!p || !d) return;
+      const tmp = p.textContent;
+      p.textContent = d.textContent;
+      d.textContent = tmp;
+      log(`⇅ Swapped route: ${p.textContent} ➔ ${d.textContent}`, 'PASSENGER');
+    }
+
+    function togglePassengerStop() {
+      const row = document.getElementById('pIntermediateStopRow');
+      const btn = document.getElementById('btnPAddStop');
+      if (!row || !btn) return;
+      const showing = row.style.display !== 'none';
+      row.style.display = showing ? 'none' : 'block';
+      btn.textContent = showing ? '+ Stop' : '− Stop';
+      log(showing ? '➖ Removed intermediate stop.' : '➕ Added stop: Sarit Centre Gate B', 'PASSENGER');
+    }
+
     // Vehicle Tier Picker
     function selectVehicleTier(tier, price) {
       selectedTier = tier;
       selectedFare = price;
       document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
-      if (tier === 'STANDARD') document.getElementById('tierStandard').classList.add('selected');
-      if (tier === 'COMFORT') document.getElementById('tierComfort').classList.add('selected');
-      if (tier === 'XL') document.getElementById('tierXL').classList.add('selected');
+      const map = { STANDARD: 'tierStandard', COMFORT: 'tierComfort', LUX: 'tierLux', BODA: 'tierBoda' };
+      const el = document.getElementById(map[tier] || 'tierStandard');
+      if (el) el.classList.add('selected');
 
       document.getElementById('pSelectedTierName').textContent = tier;
       document.getElementById('btnRequestRide').innerHTML = `<span>🚕</span> Request Ride Now (KES ${price.toLocaleString()})`;
@@ -2902,13 +3214,15 @@
       document.getElementById('btnDriverArrive').style.display = 'none';
       document.getElementById('btnDriverStart').style.display = 'block';
       document.getElementById('dActiveTripStatus').textContent = 'ARRIVED_AT_PICKUP';
+      const pinCard = document.getElementById('dSecurePinCard');
+      if (pinCard) pinCard.style.display = 'block';
 
       document.getElementById('pTripStatusBadge').textContent = 'DRIVER ARRIVED!';
       document.getElementById('pDriverEta').textContent = 'At Pickup (GPO)';
       document.getElementById('pDriverEta').style.color = 'var(--green)';
 
       playTone([659.25, 783.99]);
-      log(`📍 Driver arrived at Kenyatta Avenue. Passenger notified via push notification.`, 'DRIVER');
+      log(`📍 Driver arrived at Kenyatta Avenue. Cabi Secure PIN (4829) ready for verification.`, 'DRIVER');
       log(`📱 Passenger received alert: "Your Cabi Driver has arrived outside GPO!"`, 'PASSENGER');
 
       updateStepIndicator(5);
@@ -2919,6 +3233,8 @@
       document.getElementById('btnDriverStart').style.display = 'none';
       document.getElementById('btnDriverComplete').style.display = 'block';
       document.getElementById('dActiveTripStatus').textContent = 'IN_PROGRESS';
+      const pinCard = document.getElementById('dSecurePinCard');
+      if (pinCard) pinCard.style.display = 'none';
 
       document.getElementById('pTripStatusBadge').textContent = 'IN PROGRESS (EXPRESSWAY)';
       document.getElementById('pExpresswayTrack').style.display = 'block';
@@ -3141,6 +3457,8 @@
       document.getElementById('driverActiveTripPanel').style.display = 'none';
       document.getElementById('driverRadarCard').style.display = 'block';
       document.getElementById('dExpresswaySimulation').style.display = 'none';
+      const pinCard = document.getElementById('dSecurePinCard');
+      if (pinCard) pinCard.style.display = 'none';
 
       document.getElementById('btnDriverArrive').style.display = 'block';
       document.getElementById('btnDriverStart').style.display = 'none';

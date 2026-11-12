@@ -93,8 +93,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    const primaryGold = AppTheme.primaryColor;
-    const prestigeBlack = AppTheme.darkBackground;
+    const primaryAmber = AppTheme.primaryColor;
+    const executiveGold = AppTheme.executiveGold;
+    const prestigeBlack = AppTheme.obsidianCanvas;
 
     return Scaffold(
       backgroundColor: prestigeBlack,
@@ -109,71 +110,69 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Logo Placeholder with Glow Effect
+                    // Circular Logo Frame with Executive Gold Border
                     Container(
-                      width: 120,
-                      height: 120,
+                      width: 116,
+                      height: 116,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        color: AppTheme.surfaceContainer,
                         border: Border.all(
-                            color: primaryGold, width: 2), // Golden ring
+                            color: executiveGold, width: 2),
                         boxShadow: [
                           BoxShadow(
-                            color:
-                                primaryGold.withValues(alpha: 0.25), // Increased glow
-                            blurRadius: 30,
+                            color: primaryAmber.withValues(alpha: 0.24),
+                            blurRadius: 32,
                             spreadRadius: 2,
                           ),
                         ],
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(
-                            4), // Space between ring and logo
+                        padding: const EdgeInsets.all(4),
                         child: ClipOval(
                           child: Container(
-                            color: Colors.black12,
+                            color: Colors.black26,
                             child: Image.asset(
                               'assets/images/cabi_logo.png',
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.taxi_alert,
-                                      color: primaryGold, size: 40),
+                                  const Icon(Icons.local_taxi,
+                                      color: primaryAmber, size: 40),
                             ),
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 28),
                     // App Name
                     Text(
                       'CABI GO',
-                      style: AppTheme.outfit(
-                        color: primaryGold,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 26,
-                        letterSpacing: 5.0,
+                      style: AppTheme.inter(
+                        color: primaryAmber,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 28,
+                        letterSpacing: 4.5,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
                     // Sub-Branding
                     Text(
                       'B Y   C A B I   A F R I C A',
                       style: AppTheme.inter(
-                        color: Colors.white.withValues(alpha: 0.6),
+                        color: Colors.white.withValues(alpha: 0.65),
                         fontSize: 10,
-                        letterSpacing: 4.0,
-                        fontWeight: FontWeight.w500,
+                        letterSpacing: 3.6,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 48),
-                    // Elegant Tagline
+                    const SizedBox(height: 44),
+                    // Tagline
                     Text(
                       'Where will you go today?',
-                      style: AppTheme.outfit(
-                        color: Colors.white,
+                      style: AppTheme.inter(
+                        color: AppTheme.darkTextSecondary,
                         fontSize: 14,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.w300,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],

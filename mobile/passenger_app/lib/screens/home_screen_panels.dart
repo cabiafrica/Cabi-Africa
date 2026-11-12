@@ -3,13 +3,14 @@ part of 'home_screen.dart';
 extension _HomeScreenPanels on _HomeScreenState {
   Widget _buildDriverArrivingPanel(Color primaryColor) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final panelBg = isDark ? AppTheme.darkSurface : Colors.white;
-    final panelBorder = isDark ? AppTheme.primaryColor.withValues(alpha: 0.1) : AppTheme.porcelainOutline;
+    final panelBg = isDark ? AppTheme.surfaceContainer : Colors.white;
+    final panelBorder = isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline;
     final headlineColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
-    final subColor = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
-    final goldAccent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
-    final timePillBg = isDark ? Colors.black : AppTheme.porcelainSurfaceContainer;
-    final successGreen = isDark ? Colors.greenAccent : const Color(0xFF059669);
+    final subColor = isDark ? AppTheme.warmStone : AppTheme.porcelainTextSecondary;
+    final goldAccent = isDark ? AppTheme.primaryLight : AppTheme.aurumBronze;
+    final timePillBg = isDark ? AppTheme.obsidianCanvas : AppTheme.porcelainSurfaceContainer;
+    final successGreen = isDark ? AppTheme.successGreen : const Color(0xFF059669);
+    final securityPin = (_currentRideData?['securityPin'] ?? '4829').toString();
 
     return Positioned(
       bottom: 0,
@@ -58,22 +59,45 @@ extension _HomeScreenPanels on _HomeScreenState {
                     ),
                   ],
                 ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: timePillBg,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: panelBorder, width: 0.8),
-                  ),
-                  child: Text(
-                    _currentRideData?['status'] == 'DRIVER_ARRIVED'
-                        ? "ARRIVED"
-                        : "$_arrivalDurationMinutes:00",
-                    style: TextStyle(
-                        color: goldAccent,
-                        fontWeight: FontWeight.bold),
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        gradient: AppTheme.goldGradient,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        "PIN $securityPin",
+                        style: AppTheme.inter(
+                          color: const Color(0xFF241A00),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: timePillBg,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: panelBorder, width: 0.8),
+                      ),
+                      child: Text(
+                        _currentRideData?['status'] == 'DRIVER_ARRIVED'
+                            ? "ARRIVED"
+                            : "$_arrivalDurationMinutes:00",
+                        style: TextStyle(
+                            color: goldAccent,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
                 )
               ],
             ),
@@ -615,9 +639,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: !_isForSomeone
-                                          ? AppTheme.primaryColor
-                                          : Colors.transparent,
+                                      gradient: !_isForSomeone ? AppTheme.goldGradient : null,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -625,7 +647,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       style: AppTheme.inter(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
-                                        color: !_isForSomeone ? const Color(0xFF241A00) : (isDark ? Colors.white60 : Colors.black54),
+                                        color: !_isForSomeone ? const Color(0xFF241A00) : (isDark ? AppTheme.warmStone : Colors.black54),
                                       ),
                                     ),
                                   ),
@@ -635,9 +657,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: _isForSomeone
-                                          ? AppTheme.primaryColor
-                                          : Colors.transparent,
+                                      gradient: _isForSomeone ? AppTheme.goldGradient : null,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -645,7 +665,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       style: AppTheme.inter(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
-                                        color: _isForSomeone ? const Color(0xFF241A00) : (isDark ? Colors.white60 : Colors.black54),
+                                        color: _isForSomeone ? const Color(0xFF241A00) : (isDark ? AppTheme.warmStone : Colors.black54),
                                       ),
                                     ),
                                   ),
@@ -664,25 +684,25 @@ extension _HomeScreenPanels on _HomeScreenState {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                               decoration: BoxDecoration(
-                                color: isDark ? AppTheme.surfaceDim : const Color(0xFFF0EDEC),
+                                color: isDark ? AppTheme.surfaceContainerHigh : const Color(0xFFF6F3F2),
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: isDark ? AppTheme.outlineBorder : dividerColor),
+                                border: Border.all(color: isDark ? AppTheme.outlineGold : dividerColor),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.schedule_rounded, size: 14, color: AppTheme.primaryColor),
+                                  Icon(Icons.schedule_rounded, size: 14, color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze),
                                   const SizedBox(width: 5),
                                   Text(
                                     "Leave now",
-                                    style: AppTheme.plusJakartaSans(
+                                    style: AppTheme.inter(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                       color: isDark ? Colors.white : Colors.black87,
                                     ),
                                   ),
                                   const SizedBox(width: 2),
-                                  Icon(Icons.expand_more_rounded, size: 15, color: isDark ? Colors.white60 : Colors.black54),
+                                  Icon(Icons.expand_more_rounded, size: 15, color: isDark ? AppTheme.warmStone : Colors.black54),
                                 ],
                               ),
                             ),
@@ -691,135 +711,288 @@ extension _HomeScreenPanels on _HomeScreenState {
                       ),
                       const SizedBox(height: 14),
 
-                      // 1. Location Pickers (Pickup & Destination)
+                      // 1. Lustre Platinum Location Pickers (Pickup, Swap, Optional Stop, Destination)
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: isDark ? AppTheme.surfaceDim : Colors.white,
-                          borderRadius: BorderRadius.circular(20),
+                          color: isDark ? AppTheme.surfaceContainer : Colors.white,
+                          borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: isDark ? AppTheme.outlineBorder : dividerColor,
-                            width: 1.2,
+                            color: isDark ? AppTheme.outlineGold : dividerColor,
+                            width: 1.1,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
+                              color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
+                              blurRadius: 16,
+                              offset: const Offset(0, 6),
                             )
-                          ]
+                          ],
                         ),
                         child: Column(
                           children: [
-                            // Pickup
-                            InkWell(
-                              onTap: () => _navigateToSearch(isPickup: true),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 12,
-                                    height: 12,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(color: AppTheme.electricBlue, width: 2.5),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          _pickupAddress,
-                                          style: AppTheme.plusJakartaSans(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                              color: isDark ? Colors.white70 : Colors.black87),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        if (_isLoadingLocation)
-                                          Text(
-                                            "Detecting location...",
-                                            style: AppTheme.inter(
-                                              fontSize: 11,
-                                              color: AppTheme.primaryColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.my_location_rounded,
-                                      size: 18,
-                                      color: _isLoadingLocation
-                                          ? AppTheme.primaryColor
-                                          : (isDark ? Colors.white60 : Colors.black54),
-                                    ),
-                                    tooltip: "Auto-detect location",
-                                    onPressed: () => _initLocationTracking(userInitiated: true),
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 5, top: 4, bottom: 4),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Container(
-                                  width: 2,
-                                  height: 20,
-                                  color: dividerColor,
-                                ),
-                              ),
-                            ),
-                            // Destination
-                            InkWell(
-                              onTap: () => _navigateToSearch(isPickup: false),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                                decoration: BoxDecoration(
-                                  color: isDark ? AppTheme.surfaceContainerHigh : const Color(0xFFF2F4F7),
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(
-                                    color: isDark ? AppTheme.outlineGold : const Color(0xFFD0D5DD),
-                                    width: 1.2,
-                                  ),
-                                ),
-                                child: Row(
+                            Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Column(
                                   children: [
-                                    Container(
-                                      width: 12,
-                                      height: 12,
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.primaryColor,
-                                        borderRadius: BorderRadius.circular(3),
+                                    // Pickup Card Row
+                                    InkWell(
+                                      onTap: () => _navigateToSearch(isPickup: true),
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                        decoration: BoxDecoration(
+                                          color: isDark ? AppTheme.obsidianCanvas : const Color(0xFFF6F3F2),
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: isDark ? AppTheme.outlineGold : dividerColor,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 26,
+                                              height: 26,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: AppTheme.successGreen.withValues(alpha: 0.16),
+                                                border: Border.all(color: AppTheme.successGreen.withValues(alpha: 0.45)),
+                                              ),
+                                              child: const Icon(
+                                                Icons.radio_button_checked_rounded,
+                                                size: 14,
+                                                color: AppTheme.successGreen,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "PICKUP LOCATION",
+                                                    style: AppTheme.inter(
+                                                      fontSize: 9,
+                                                      fontWeight: FontWeight.w700,
+                                                      letterSpacing: 0.8,
+                                                      color: isDark ? AppTheme.warmStone : AppTheme.porcelainTextSecondary,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 1),
+                                                  Text(
+                                                    _pickupAddress,
+                                                    style: AppTheme.inter(
+                                                      fontSize: 13.5,
+                                                      fontWeight: FontWeight.w600,
+                                                      color: isDark ? Colors.white : Colors.black87,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                  if (_isLoadingLocation)
+                                                    Text(
+                                                      "Detecting location...",
+                                                      style: AppTheme.inter(
+                                                        fontSize: 10,
+                                                        color: AppTheme.primaryLight,
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.pin_drop_outlined,
+                                                size: 17,
+                                                color: isDark ? AppTheme.warmStone : Colors.black54,
+                                              ),
+                                              tooltip: "Select pickup on map",
+                                              onPressed: () => _navigateToSearch(isPickup: true),
+                                              padding: EdgeInsets.zero,
+                                              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                            ),
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.my_location_rounded,
+                                                size: 17,
+                                                color: _isLoadingLocation
+                                                    ? AppTheme.primaryLight
+                                                    : (isDark ? AppTheme.primaryLight : AppTheme.aurumBronze),
+                                              ),
+                                              tooltip: "Auto-detect location",
+                                              onPressed: () => _initLocationTracking(userInitiated: true),
+                                              padding: EdgeInsets.zero,
+                                              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(width: 14),
-                                    Expanded(
-                                      child: Text(
-                                        _destination,
-                                        style: AppTheme.montserrat(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: isDark ? Colors.white : Colors.black87),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
+                                    const SizedBox(height: 8),
+
+                                    // Optional Intermediate Stop Row
+                                    if (_intermediateStop != null) ...[
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: isDark ? AppTheme.surfaceContainerHigh : const Color(0xFFF6F3F2),
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(color: AppTheme.outlineGold),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.pause_circle_outline_rounded,
+                                                size: 16,
+                                                color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: Text(
+                                                _intermediateStop!,
+                                                style: AppTheme.inter(
+                                                  fontSize: 12.5,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: isDark ? Colors.white : Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                            InkWell(
+                                              onTap: () => _updateState(() => _intermediateStop = null),
+                                              child: Icon(Icons.close_rounded,
+                                                  size: 16,
+                                                  color: isDark ? AppTheme.warmStone : Colors.black54),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Icon(
-                                      Icons.search_rounded,
-                                      size: 20,
-                                      color: isDark ? AppTheme.primaryColor : Colors.black54,
+                                      const SizedBox(height: 8),
+                                    ],
+
+                                    // Destination Card Row
+                                    InkWell(
+                                      onTap: () => _navigateToSearch(isPickup: false),
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                        decoration: BoxDecoration(
+                                          color: isDark ? AppTheme.obsidianCanvas : const Color(0xFFF6F3F2),
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: isDark ? AppTheme.outlineGold : dividerColor,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 26,
+                                              height: 26,
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                gradient: AppTheme.goldGradient,
+                                              ),
+                                              child: const Icon(
+                                                Icons.location_on_rounded,
+                                                size: 15,
+                                                color: Color(0xFF241A00),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "WHERE TO?",
+                                                    style: AppTheme.inter(
+                                                      fontSize: 9,
+                                                      fontWeight: FontWeight.w800,
+                                                      letterSpacing: 0.8,
+                                                      color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 1),
+                                                  Text(
+                                                    _destination,
+                                                    style: AppTheme.inter(
+                                                      fontSize: 13.5,
+                                                      fontWeight: FontWeight.w700,
+                                                      color: isDark ? Colors.white : Colors.black87,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                _updateState(() {
+                                                  _intermediateStop = _intermediateStop == null
+                                                      ? "Stop: Sarit Centre Gate B"
+                                                      : null;
+                                                });
+                                              },
+                                              borderRadius: BorderRadius.circular(6),
+                                              child: Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                                                decoration: BoxDecoration(
+                                                  color: isDark ? AppTheme.surfaceContainerHigh : Colors.white,
+                                                  borderRadius: BorderRadius.circular(6),
+                                                  border: Border.all(color: AppTheme.outlineGold),
+                                                ),
+                                                child: Text(
+                                                  _intermediateStop == null ? "+ Stop" : "− Stop",
+                                                  style: AppTheme.inter(
+                                                    fontSize: 10.5,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Icon(
+                                              Icons.map_outlined,
+                                              size: 18,
+                                              color: isDark ? AppTheme.warmStone : Colors.black54,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
+                                // Swap Pickup / Destination floating pill on right
+                                Positioned(
+                                  right: 4,
+                                  top: 24,
+                                  child: InkWell(
+                                    onTap: _swapLocations,
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: Container(
+                                      width: 28,
+                                      height: 28,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: isDark ? AppTheme.surfaceContainer : Colors.white,
+                                        border: Border.all(color: AppTheme.outlineGold, width: 1.2),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(alpha: 0.35),
+                                            blurRadius: 6,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Icon(
+                                        Icons.swap_vert_rounded,
+                                        size: 16,
+                                        color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 12),
 

@@ -213,10 +213,10 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
       builder: (context) {
         return Container(
           decoration: const BoxDecoration(
-            color: Color(0xFF141416),
+            color: AppTheme.surfaceContainer,
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
             border: Border(
-              top: BorderSide(color: Color(0xFFD4AF37), width: 1.2),
+              top: BorderSide(color: AppTheme.primaryColor, width: 1.2),
             ),
           ),
           padding: const EdgeInsets.all(24),
@@ -296,9 +296,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFD4AF37), Color(0xFFFFDF00)],
-                  ),
+                  gradient: AppTheme.goldGradient,
                 ),
                 child: ElevatedButton(
                   onPressed: () {

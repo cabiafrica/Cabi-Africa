@@ -2,65 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Premium Color Palette - Luxury Metallic Gold
+  // Stitch Lustre Platinum Gold Dual-Theme (stitch_cabi_africa.zip)
   static const Color primaryColor = Color(0xFFD4AF37); // Classic Metallic Gold
   static const Color primaryDark = Color(0xFFB89028);  // Burnished Royal Gold
-  static const Color primaryLight = Color(0xFFF3E5AB); // Champagne Gold
+  static const Color primaryLight = Color(0xFFF2CA50); // Lustre Gold Highlight
+  static const Color executiveGold = Color(0xFFD4AF37);
+  static const Color lustreGold = Color(0xFFF2CA50);
+  static const Color warmStone = Color(0xFFD0C5AF);
 
-  static const Color secondaryAmber = Color(0xFFC5A059); // Warm Satin Gold
+  static const Color secondaryAmber = Color(0xFFF2CA50);
   static const Color successGreen = Color(0xFF10B981);
   static const Color errorRed = Color(0xFFEF4444);
+  static const Color telemetryCyan = Color(0xFF22D3EE);
 
   // Luxury Gold Gradients
   static const LinearGradient goldGradient = LinearGradient(
-    colors: [Color(0xFFF0D278), Color(0xFFD4AF37), Color(0xFFB89028)],
+    colors: [Color(0xFFD4AF37), Color(0xFFF2CA50)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient darkGoldSurfaceGradient = LinearGradient(
-    colors: [Color(0xFF1F1C14), Color(0xFF141414)],
+    colors: [Color(0xFF201F1F), Color(0xFF131313)],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
 
-  // Stitch Design System Tokens (Project 5681992570744779348)
-  static const Color obsidianCanvas = Color(0xFF121212);
-  static const Color surfaceDim = Color(0xFF0A0A0A);
-  static const Color surfaceBright = Color(0xFF1E1E1E);
-  static const Color surfaceContainer = Color(0xFF1A1A1A);
-  static const Color surfaceContainerHigh = Color(0xFF242424);
-  static const Color surfaceContainerHighest = Color(0xFF2E2E2E);
-  static const Color outlineBorder = Color(0xFF27272A);
+  // Stitch Design System Tokens (Lustre Platinum Gold Dark Surfaces)
+  static const Color obsidianCanvas = Color(0xFF131313);
+  static const Color surfaceDim = Color(0xFF0E0E0E);
+  static const Color surfaceBright = Color(0xFF2A2A2A);
+  static const Color surfaceContainer = Color(0xFF1C1B1B);
+  static const Color surfaceContainerHigh = Color(0xFF201F1F);
+  static const Color surfaceContainerHighest = Color(0xFF2A2A2A);
+  static const Color outlineBorder = Color(0x1AFFFFFF);
   static const Color outlineGold = Color(0x4DD4AF37); // rgba(212, 175, 55, 0.3)
   static const Color primaryContainer = Color(0x26D4AF37); // rgba(212, 175, 55, 0.15)
   static const Color electricBlue = Color(0xFF067FF9);
   static const Color electricBlueContainer = Color(0x26067FF9); // rgba(6, 127, 249, 0.15)
-  static const Color accentYellow = Color(0xFFF9F906);
+  static const Color accentYellow = Color(0xFFF2CA50);
 
-  // Light Mode Colors
-  static const Color lightBackground = Color(0xFFF3F4F6);
+  // Light Mode Colors (Porcelain Dual-Theme)
+  static const Color lightBackground = Color(0xFFFCF9F8);
   static const Color lightSurface = Colors.white;
-  static const Color lightTextPrimary = Color(0xFF111827);
-  static const Color lightTextSecondary = Color(0xFF6B7280);
-  static const Color lightDivider = Color(0xFFE5E7EB);
+  static const Color lightTextPrimary = Color(0xFF1C1B1B);
+  static const Color lightTextSecondary = Color(0xFF4D4635);
+  static const Color lightDivider = Color(0xFFD0C5AF);
 
-  // Dark Mode Colors ("New Dawn" Luxury / Stitch Obsidian)
-  static const Color darkBackground = Color(0xFF121212); // Deep Obsidian Canvas
-  static const Color darkSurface = Color(0xFF1A1A1A); // Surface Container
-  static const Color darkTextPrimary = Color(0xFFF9FAFB);
-  static const Color darkTextSecondary = Color(0xFF9CA3AF);
-  static const Color darkDivider = Color(0xFF27272A);
+  // Dark Mode Colors (Lustre Platinum Gold Obsidian)
+  static const Color darkBackground = Color(0xFF131313); // Deep Obsidian Canvas
+  static const Color darkSurface = Color(0xFF1C1B1B); // Surface Container
+  static const Color darkTextPrimary = Color(0xFFE5E2E1);
+  static const Color darkTextSecondary = Color(0xFFD0C5AF);
+  static const Color darkDivider = Color(0x1AFFFFFF);
 
   // Light Mode Colors (Daytime Porcelain / Stitch Dual-Theme)
-  static const Color porcelainCanvas = Color(0xFFF8FAFC);
+  static const Color porcelainCanvas = Color(0xFFFCF9F8);
   static const Color porcelainSurface = Colors.white;
-  static const Color porcelainSurfaceContainer = Color(0xFFF1F5F9);
-  static const Color porcelainSurfaceHigh = Color(0xFFE2E8F0);
-  static const Color porcelainOutline = Color(0xFFCBD5E1);
-  static const Color porcelainTextPrimary = Color(0xFF0F172A);
-  static const Color porcelainTextSecondary = Color(0xFF475569);
-  static const Color aurumBronze = Color(0xFF8C6D1F);
+  static const Color porcelainSurfaceContainer = Color(0xFFF6F3F2);
+  static const Color porcelainSurfaceHigh = Color(0xFFEBE7E7);
+  static const Color porcelainOutline = Color(0xFFD0C5AF);
+  static const Color porcelainTextPrimary = Color(0xFF1C1B1B);
+  static const Color porcelainTextSecondary = Color(0xFF4D4635);
+  static const Color aurumBronze = Color(0xFF735C00);
   static const Color royalBlue = Color(0xFF0260C4);
 
   static final ThemeData lightTheme = ThemeData(

@@ -85,6 +85,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _isCancelling = false;
   bool _isFullScreenMap = false;
   bool _isForSomeone = false;
+  String? _intermediateStop;
+
+  void _swapLocations() {
+    setState(() {
+      final prevPickupAddr = _pickupAddress;
+      final prevDestAddr = _destination;
+      if (prevDestAddr == "Where to?") return;
+      _pickupAddress = prevDestAddr;
+      _destination = prevPickupAddr;
+      final prevPickupLoc = _pickupLocation;
+      _pickupLocation = _dropoffLocation;
+      _dropoffLocation = prevPickupLoc;
+    });
+  }
 
   void _exitFullScreenMap() {
     setState(() {
@@ -419,10 +433,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       });
                     },
                     backgroundColor: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF1E1E1E)
+                        ? AppTheme.surfaceContainer
                         : Colors.white,
-                    foregroundColor: _isFullScreenMap ? AppTheme.primaryColor : Colors.grey,
-                    elevation: 4,
+                    foregroundColor: _isFullScreenMap ? AppTheme.primaryColor : AppTheme.darkTextSecondary,
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? AppTheme.outlineBorder
+                            : AppTheme.porcelainOutline,
+                      ),
+                    ),
                     tooltip: _isFullScreenMap ? "Exit Fullscreen" : "Full Screen Map",
                     child: Icon(
                       _isFullScreenMap ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
@@ -436,10 +458,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     heroTag: 'my_location_btn_passenger',
                     onPressed: () => _initLocationTracking(userInitiated: true),
                     backgroundColor: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF1E1E1E)
+                        ? AppTheme.surfaceContainer
                         : Colors.white,
                     foregroundColor: AppTheme.primaryColor,
-                    elevation: 4,
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? AppTheme.outlineBorder
+                            : AppTheme.porcelainOutline,
+                      ),
+                    ),
                     tooltip: "My Location",
                     child: _isLoadingLocation
                         ? const SizedBox(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../theme/app_theme.dart';
 
 // A simple data class to hold information about each ride tier.
 class RideTier {
@@ -77,19 +78,26 @@ class _RideBookingPanelState extends State<RideBookingPanel> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.surfaceContainer : Colors.white,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+        border: Border(
+          top: BorderSide(
+            color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline,
+          ),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black26,
-            blurRadius: 10,
-            offset: Offset(0, -2),
+            color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.16),
+            blurRadius: 14,
+            offset: const Offset(0, -2),
           ),
         ],
       ),
@@ -99,7 +107,11 @@ class _RideBookingPanelState extends State<RideBookingPanel> {
         children: [
           Text(
             'Ride to ${widget.destinationAddress}',
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: AppTheme.inter(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
+            ),
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
           ),
@@ -119,11 +131,29 @@ class _RideBookingPanelState extends State<RideBookingPanel> {
                     onSelected: (selected) {
                       if (selected) setState(() => _selectedBookingType = type);
                     },
-                    selectedColor: Colors.black,
-                    labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black,
+                    selectedColor: AppTheme.primaryColor,
+                    backgroundColor: isDark
+                        ? AppTheme.surfaceContainerHigh
+                        : AppTheme.porcelainSurfaceContainer,
+                    side: BorderSide(
+                      color: isSelected
+                          ? AppTheme.primaryColor
+                          : (isDark
+                              ? AppTheme.outlineBorder
+                              : AppTheme.porcelainOutline),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    labelStyle: AppTheme.inter(
+                      fontSize: 13,
+                      color: isSelected
+                          ? Colors.black
+                          : (isDark
+                              ? AppTheme.darkTextPrimary
+                              : AppTheme.porcelainTextPrimary),
                       fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                          isSelected ? FontWeight.w700 : FontWeight.w500,
                     ),
                   ),
                 );
@@ -215,20 +245,20 @@ class _RideBookingPanelState extends State<RideBookingPanel> {
                     if (_selectedTier != tier) HapticFeedback.selectionClick();
                     setState(() => _selectedTier = tier);
                   },
-                  child: _buildTierCard(tier, isSelected),
+                  child: _buildTierCard(tier, isSelected, isDark),
                 );
               },
             ),
           ),
           const SizedBox(height: 24),
-          // Confirmation Button with Golden Look
+          // Confirmation Button with Stitch Amber CTA
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
               boxShadow: _selectedTier != null
                   ? [
                       BoxShadow(
-                        color: const Color(0xFFFFD700).withValues(alpha: 0.4),
+                        color: AppTheme.primaryColor.withValues(alpha: 0.35),
                         blurRadius: 14,
                         offset: const Offset(0, 4),
                       ),
@@ -244,17 +274,19 @@ class _RideBookingPanelState extends State<RideBookingPanel> {
                           '${_selectedTier!.name} (${_selectedBookingType.displayName})');
                     },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFD700),
+                backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.black,
-                disabledBackgroundColor: Colors.grey.shade300,
+                disabledBackgroundColor: isDark
+                    ? AppTheme.surfaceContainerHigh
+                    : Colors.grey.shade300,
                 disabledForegroundColor: Colors.grey.shade600,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                textStyle: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                textStyle: AppTheme.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               child: Text('Confirm ${_selectedTier?.name ?? ''}'),
@@ -264,54 +296,94 @@ class _RideBookingPanelState extends State<RideBookingPanel> {
           // Cancel Button
           TextButton(
             onPressed: widget.onCancel,
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            child: Text(
+              'Cancel',
+              style: AppTheme.inter(
+                color: isDark
+                    ? AppTheme.darkTextSecondary
+                    : AppTheme.porcelainTextSecondary,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTierCard(RideTier tier, bool isSelected) {
-    const goldColor = Color(0xFFFFD700);
+  Widget _buildTierCard(RideTier tier, bool isSelected, bool isDark) {
+    const amberPrimary = AppTheme.primaryColor;
 
     return Container(
       width: 140,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: isSelected
-            ? goldColor.withValues(alpha: 0.12)
-            : Colors.grey.shade100,
+            ? AppTheme.primaryContainer
+            : (isDark
+                ? AppTheme.surfaceContainerHigh
+                : AppTheme.porcelainSurfaceContainer),
         border: Border.all(
-          color: isSelected ? goldColor : Colors.grey.shade300,
-          width: isSelected ? 2.0 : 1.0,
+          color: isSelected
+              ? amberPrimary
+              : (isDark ? AppTheme.outlineBorder : AppTheme.porcelainOutline),
+          width: isSelected ? 1.8 : 1.0,
         ),
         boxShadow: isSelected
             ? [
                 BoxShadow(
-                  color: goldColor.withValues(alpha: 0.20),
-                  blurRadius: 8,
+                  color: amberPrimary.withValues(alpha: 0.20),
+                  blurRadius: 10,
                   spreadRadius: 1,
                 ),
               ]
             : null,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             tier.icon,
-            size: 30,
-            color: isSelected ? const Color(0xFFB8860B) : Colors.black87,
+            size: 28,
+            color: isSelected
+                ? amberPrimary
+                : (isDark
+                    ? AppTheme.darkTextPrimary
+                    : AppTheme.porcelainTextPrimary),
           ),
           const SizedBox(height: 4),
-          Text(tier.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            tier.name,
+            style: AppTheme.inter(
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+              color: isDark
+                  ? AppTheme.darkTextPrimary
+                  : AppTheme.porcelainTextPrimary,
+            ),
+          ),
           const SizedBox(height: 2),
           Text(
             'KES ${tier.estimatedFare.toStringAsFixed(0)}',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: AppTheme.inter(
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+              color: isSelected
+                  ? amberPrimary
+                  : (isDark
+                      ? AppTheme.darkTextPrimary
+                      : AppTheme.porcelainTextPrimary),
+            ),
           ),
-          Text(tier.eta, style: TextStyle(color: Colors.grey.shade600)),
+          Text(
+            tier.eta,
+            style: AppTheme.inter(
+              fontSize: 11,
+              color: isDark
+                  ? AppTheme.darkTextSecondary
+                  : AppTheme.porcelainTextSecondary,
+            ),
+          ),
         ],
       ),
     );

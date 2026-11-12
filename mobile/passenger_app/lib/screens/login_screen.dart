@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
+import '../widgets/primary_button.dart';
 import 'home_screen.dart';
 import 'registration_screen.dart';
 import 'forgot_password_screen.dart';
@@ -102,9 +103,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Cabi Global Colors (New Dawn)
     final primaryColor = AppTheme.primaryColor;
-    final backgroundColor = AppTheme.darkBackground;
+    final backgroundColor = AppTheme.obsidianCanvas;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -121,221 +121,254 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   constraints: const BoxConstraints(maxWidth: 400),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 60),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Cabi Logo
-                          Center(
-                            child: Container(
-                              height: 90,
-                              width: 90,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: primaryColor, width: 2),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: primaryColor.withValues(alpha: 0.2),
-                                    blurRadius: 20,
-                                    spreadRadius: 2,
-                                  ),
-                                ],
-                              ),
-                              child: ClipOval(
-                                child: Image.asset(
-                                  'assets/images/cabi_logo.png',
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Icon(Icons.taxi_alert_outlined,
-                                          color: primaryColor, size: 30),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 30),
-                          const Text(
-                            "Welcome to Cabi Go",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            "Where will you go today?",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 16, color: Colors.grey[400]),
-                          ),
-                          const SizedBox(height: 40),
-
-                          // Identifier Input (Email or Phone)
-                          _buildInputContainer(
-                            child: TextFormField(
-                              controller: _identifierController,
-                              keyboardType: TextInputType.text,
-                              decoration: _buildInputDecoration(
-                                label: 'Email or Phone Number',
-                                icon: Icons.person_outline,
-                                primaryColor: primaryColor,
-                              ),
-                              style: const TextStyle(color: Colors.white),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your email or phone number';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Password Input
-                          _buildInputContainer(
-                            child: TextFormField(
-                              controller: _passwordController,
-                              obscureText: _obscurePassword,
-                              decoration: _buildInputDecoration(
-                                label: 'Password',
-                                icon: Icons.lock_outline,
-                                primaryColor: primaryColor,
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _obscurePassword
-                                        ? Icons.visibility_outlined
-                                        : Icons.visibility_off_outlined,
-                                    color: Colors.grey,
-                                  ),
-                                  onPressed: () => setState(() =>
-                                      _obscurePassword = !_obscurePassword),
-                                ),
-                              ),
-                              style: const TextStyle(color: Colors.white),
-                              validator: (value) =>
-                                  (value == null || value.length < 6)
-                                      ? 'Password must be at least 6 characters'
-                                      : null,
-                            ),
-                          ),
-
-                          // Remember Me & Forgot Password
-                          Wrap(
-                            alignment: WrapAlignment.spaceBetween,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: Checkbox(
-                                      value: _rememberMe,
-                                      onChanged: (val) => setState(
-                                          () => _rememberMe = val ?? true),
-                                      activeColor: primaryColor,
-                                      checkColor: Colors.black,
-                                      side: const BorderSide(
-                                          color: Colors.white30),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4)),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  GestureDetector(
-                                    onTap: () => setState(
-                                        () => _rememberMe = !_rememberMe),
-                                    child: Text(
-                                      "Remember Me",
-                                      style: TextStyle(
-                                          color: Colors.grey[400],
-                                          fontSize: 14),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const ForgotPasswordScreen(),
-                                    ),
-                                  );
-                                },
-                                child: Text("Forgot Password?",
-                                    style: TextStyle(
-                                        color: primaryColor, fontSize: 14)),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 30),
-                          if (_errorMessage != null)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
-                              child: Text(_errorMessage!,
-                                  textAlign: TextAlign.center,
-                                  style:
-                                      const TextStyle(color: Colors.redAccent)),
-                            ),
-
-                          // Button
-                          ElevatedButton(
-                            onPressed: _isLoading ? null : _signIn,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor,
-                              foregroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(vertical: 18),
-                              elevation: 5,
-                              shadowColor: primaryColor.withValues(alpha: 0.4),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15)),
-                            ),
-                            child: _isLoading
-                                ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                        color: Colors.black, strokeWidth: 2),
-                                  )
-                                : const Text("Sign In",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
-                          ),
-
-                          const SizedBox(height: 30),
-                          Wrap(
-                            alignment: WrapAlignment.center,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Text("Don't have an account? ",
-                                  style: TextStyle(color: Colors.grey[400])),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) =>
-                                              const RegistrationScreen()));
-                                },
-                                child: Text("Sign Up",
-                                    style: TextStyle(
-                                        color: primaryColor,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                            ],
+                        horizontal: 20, vertical: 40),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 32),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceContainer,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                            color: AppTheme.outlineGold, width: 1),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.45),
+                            blurRadius: 28,
+                            offset: const Offset(0, 12),
                           ),
                         ],
+                      ),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Cabi Emblem
+                            Center(
+                              child: Container(
+                                height: 78,
+                                width: 78,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppTheme.obsidianCanvas,
+                                  border: Border.all(
+                                      color: AppTheme.executiveGold, width: 2),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color:
+                                          primaryColor.withValues(alpha: 0.22),
+                                      blurRadius: 22,
+                                      spreadRadius: 1,
+                                    ),
+                                  ],
+                                ),
+                                child: ClipOval(
+                                  child: Image.asset(
+                                    'assets/images/cabi_logo.png',
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) =>
+                                        Icon(Icons.local_taxi,
+                                            color: primaryColor, size: 30),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 18),
+                            Center(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryContainer,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                      color: AppTheme.outlineGold),
+                                ),
+                                child: Text(
+                                  'CABI GO PASSENGER',
+                                  style: AppTheme.inter(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 1.4,
+                                    color: primaryColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+                            Text(
+                              'Welcome Back',
+                              textAlign: TextAlign.center,
+                              style: AppTheme.inter(
+                                fontSize: 26,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: -0.4,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Where will you go today?',
+                              textAlign: TextAlign.center,
+                              style: AppTheme.inter(
+                                fontSize: 14,
+                                color: AppTheme.darkTextSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 28),
+
+                            // Identifier Input (Email or Phone)
+                            _buildInputContainer(
+                              child: TextFormField(
+                                controller: _identifierController,
+                                keyboardType: TextInputType.text,
+                                decoration: _buildInputDecoration(
+                                  label: 'Email or Phone Number',
+                                  icon: Icons.person_outline,
+                                  primaryColor: primaryColor,
+                                ),
+                                style: AppTheme.inter(color: Colors.white),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your email or phone number';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Password Input
+                            _buildInputContainer(
+                              child: TextFormField(
+                                controller: _passwordController,
+                                obscureText: _obscurePassword,
+                                decoration: _buildInputDecoration(
+                                  label: 'Password',
+                                  icon: Icons.lock_outline,
+                                  primaryColor: primaryColor,
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _obscurePassword
+                                          ? Icons.visibility_outlined
+                                          : Icons.visibility_off_outlined,
+                                      color: AppTheme.darkTextSecondary,
+                                    ),
+                                    onPressed: () => setState(() =>
+                                        _obscurePassword = !_obscurePassword),
+                                  ),
+                                ),
+                                style: AppTheme.inter(color: Colors.white),
+                                validator: (value) =>
+                                    (value == null || value.length < 6)
+                                        ? 'Password must be at least 6 characters'
+                                        : null,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+
+                            // Remember Me & Forgot Password
+                            Wrap(
+                              alignment: WrapAlignment.spaceBetween,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: Checkbox(
+                                        value: _rememberMe,
+                                        onChanged: (val) => setState(
+                                            () => _rememberMe = val ?? true),
+                                        activeColor: primaryColor,
+                                        checkColor: Colors.black,
+                                        side: const BorderSide(
+                                            color: Colors.white30),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(4)),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    GestureDetector(
+                                      onTap: () => setState(
+                                          () => _rememberMe = !_rememberMe),
+                                      child: Text(
+                                        'Remember Me',
+                                        style: AppTheme.inter(
+                                            color: AppTheme.darkTextSecondary,
+                                            fontSize: 13),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ForgotPasswordScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text('Forgot Password?',
+                                      style: AppTheme.inter(
+                                          color: primaryColor,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13)),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 24),
+                            if (_errorMessage != null)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 16),
+                                child: Text(_errorMessage!,
+                                    textAlign: TextAlign.center,
+                                    style: AppTheme.inter(
+                                        color: AppTheme.errorRed,
+                                        fontSize: 13)),
+                              ),
+
+                            // Stitch #F59E0B Amber CTA
+                            PrimaryButton(
+                              label: 'SIGN IN',
+                              isLoading: _isLoading,
+                              onPressed: _signIn,
+                            ),
+
+                            const SizedBox(height: 22),
+                            Wrap(
+                              alignment: WrapAlignment.center,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Text("Don't have an account? ",
+                                    style: AppTheme.inter(
+                                        color: AppTheme.darkTextSecondary,
+                                        fontSize: 13)),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) =>
+                                                const RegistrationScreen()));
+                                  },
+                                  child: Text('Sign Up',
+                                      style: AppTheme.inter(
+                                          color: primaryColor,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 13)),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -351,9 +384,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget _buildInputContainer({required Widget child}) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.white10),
+        color: AppTheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppTheme.outlineBorder),
       ),
       child: child,
     );
@@ -367,16 +400,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Colors.grey),
-      floatingLabelStyle: TextStyle(color: primaryColor),
-      prefixIcon: Icon(icon, color: primaryColor),
+      labelStyle: AppTheme.inter(color: AppTheme.darkTextSecondary, fontSize: 14),
+      floatingLabelStyle: AppTheme.inter(color: primaryColor, fontSize: 13),
+      prefixIcon: Icon(icon, color: primaryColor, size: 20),
       suffixIcon: suffixIcon,
       border: InputBorder.none,
       enabledBorder: InputBorder.none,
       focusedBorder: InputBorder.none,
       filled: true,
       fillColor: Colors.transparent,
-      contentPadding: const EdgeInsets.all(20),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     );
   }
 }
