@@ -490,8 +490,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           // 3. Condition UI: Full Screen Mini Bar OR Booking Sheet OR Driver Arriving Panel OR On Trip Panel
           if (_isFullScreenMap)
             _buildFullScreenFloatingBar(primaryColor)
-          else if (_tripStatus == TripStatus.idle && !_isPickingFromMap)
-            _buildBookingSheet(primaryColor)
+          else if (_tripStatus == TripStatus.idle && !_isPickingFromMap) ...[
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 14,
+              left: 72,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: (Theme.of(context).brightness == Brightness.dark
+                          ? AppTheme.surfaceContainer
+                          : Colors.white)
+                      .withValues(alpha: 0.92),
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(color: AppTheme.outlineGold),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.bolt_rounded, size: 14, color: AppTheme.primaryColor),
+                    const SizedBox(width: 4),
+                    Text(
+                      '1.2x Westlands Peak',
+                      style: AppTheme.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? AppTheme.primaryLight
+                            : AppTheme.aurumBronze,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            _buildBookingSheet(primaryColor),
+          ]
           else if (_tripStatus == TripStatus.selectingService)
             _buildServiceSelectionPanel(primaryColor)
           else if (_tripStatus == TripStatus.searching)
@@ -503,6 +536,65 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             _buildTripInProgressPanel(primaryColor),
         ],
       ),
+      bottomNavigationBar: (_tripStatus == TripStatus.idle &&
+              !_isFullScreenMap &&
+              !_isPickingFromMap)
+          ? Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? AppTheme.obsidianCanvas
+                    : AppTheme.porcelainCanvas,
+                border: Border(
+                  top: BorderSide(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppTheme.outlineBorder
+                        : AppTheme.porcelainOutline,
+                  ),
+                ),
+              ),
+              child: BottomNavigationBar(
+                currentIndex: 0,
+                type: BottomNavigationBarType.fixed,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                selectedItemColor: AppTheme.primaryColor,
+                unselectedItemColor: Theme.of(context).brightness == Brightness.dark
+                    ? AppTheme.warmStone
+                    : AppTheme.porcelainTextSecondary,
+                selectedLabelStyle: AppTheme.inter(fontSize: 11, fontWeight: FontWeight.w700),
+                unselectedLabelStyle: AppTheme.inter(fontSize: 11, fontWeight: FontWeight.w500),
+                onTap: (index) {
+                  if (index == 1) {
+                    _scaffoldKey.currentState?.openDrawer();
+                  } else if (index == 2) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Safety Center • Cabi Secure PIN active')),
+                    );
+                  } else if (index == 3) {
+                    _scaffoldKey.currentState?.openDrawer();
+                  }
+                },
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.directions_car_rounded),
+                    label: 'Ride',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.schedule_rounded),
+                    label: 'Activity',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.verified_user_rounded),
+                    label: 'Safety',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.person_outline_rounded),
+                    label: 'Account',
+                  ),
+                ],
+              ),
+            )
+          : null,
     );
   }
 }

@@ -580,7 +580,7 @@ extension _HomeScreenPanels on _HomeScreenState {
     final dividerColor = Theme.of(context).dividerColor;
 
     return DraggableScrollableSheet(
-      initialChildSize: 0.95,
+      initialChildSize: 0.68,
       minChildSize: 0.25,
       maxChildSize: 0.95,
       builder: (context, scrollController) {
@@ -1118,7 +1118,92 @@ extension _HomeScreenPanels on _HomeScreenState {
                         ),
                       ),
 
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 22),
+
+                      // Stitch 2x2 Available Fleets Grid
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "AVAILABLE FLEETS",
+                            style: AppTheme.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1.0,
+                              color: isDark ? AppTheme.warmStone : Colors.black54,
+                            ),
+                          ),
+                          Text(
+                            "Tap to compare",
+                            style: AppTheme.inter(
+                              fontSize: 11,
+                              color: isDark ? AppTheme.warmStone : Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          _buildStitchFleetCard(
+                            title: 'CabiGo',
+                            subtitle: 'Standard • 3 mins',
+                            price: '350/-',
+                            tag: 'Affordable',
+                            icon: Icons.directions_car_rounded,
+                            isPopular: false,
+                            isDark: isDark,
+                            onSurfaceColor: onSurfaceColor,
+                            dividerColor: dividerColor,
+                            onTap: () => _navigateToSearch(isPickup: false),
+                          ),
+                          const SizedBox(width: 10),
+                          _buildStitchFleetCard(
+                            title: 'CabiX Comfort',
+                            subtitle: 'Executive sedan',
+                            price: '550/-',
+                            tag: 'Climate ctrl',
+                            icon: Icons.airline_seat_recline_extra_rounded,
+                            isPopular: true,
+                            isDark: isDark,
+                            onSurfaceColor: onSurfaceColor,
+                            dividerColor: dividerColor,
+                            onTap: () => _navigateToSearch(isPickup: false),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          _buildStitchFleetCard(
+                            title: 'Cabi Lux',
+                            subtitle: 'VIP Black Series',
+                            price: '1,200/-',
+                            tag: 'Chauffeur',
+                            icon: Icons.local_taxi_rounded,
+                            isPopular: false,
+                            isDark: isDark,
+                            onSurfaceColor: onSurfaceColor,
+                            dividerColor: dividerColor,
+                            onTap: () => _navigateToSearch(isPickup: false),
+                          ),
+                          const SizedBox(width: 10),
+                          _buildStitchFleetCard(
+                            title: 'Cabi Boda',
+                            subtitle: 'Fastest city beat',
+                            price: '180/-',
+                            tag: 'Speedy',
+                            icon: Icons.two_wheeler_rounded,
+                            isPopular: false,
+                            isDark: isDark,
+                            onSurfaceColor: onSurfaceColor,
+                            dividerColor: dividerColor,
+                            onTap: () => _navigateToSearch(isPickup: false),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 24),
 
                       // ── Tours & Travel CTA Button ──
                       GestureDetector(
@@ -2806,6 +2891,106 @@ extension _HomeScreenPanels on _HomeScreenState {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStitchFleetCard({
+    required String title,
+    required String subtitle,
+    required String price,
+    required String tag,
+    required IconData icon,
+    required bool isPopular,
+    required bool isDark,
+    required Color onSurfaceColor,
+    required Color dividerColor,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: isDark ? AppTheme.surfaceContainerHigh : Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isPopular
+                  ? AppTheme.primaryColor
+                  : (isDark ? AppTheme.outlineBorder : dividerColor),
+              width: isPopular ? 1.5 : 1.0,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: AppTheme.inter(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w800,
+                            color: onSurfaceColor,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          subtitle,
+                          style: AppTheme.inter(
+                            fontSize: 10,
+                            color: isDark ? AppTheme.warmStone : Colors.black54,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    icon,
+                    size: 22,
+                    color: isPopular
+                        ? AppTheme.primaryColor
+                        : (isDark ? AppTheme.warmStone : Colors.black54),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    price,
+                    style: AppTheme.inter(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.primaryColor,
+                    ),
+                  ),
+                  Text(
+                    isPopular ? 'Popular' : tag,
+                    style: AppTheme.inter(
+                      fontSize: 9.5,
+                      fontWeight: FontWeight.w700,
+                      color: isPopular
+                          ? AppTheme.primaryColor
+                          : (isDark ? AppTheme.warmStone : Colors.black54),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
