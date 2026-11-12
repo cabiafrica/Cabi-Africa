@@ -1059,10 +1059,363 @@
       align-items: center;
       justify-content: center;
     }
+
+    /* Stitch Lustre Platinum Layout Components */
+    .stitch-exec-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 2px 2px;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .stitch-avatar-wrap {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2A2518, #1C1B1B);
+      border: 1.5px solid #D4AF37;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.78rem;
+      color: #F2CA50;
+      flex-shrink: 0;
+    }
+    .stitch-avatar-dot {
+      position: absolute;
+      bottom: -1px;
+      right: -1px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #10B981;
+      border: 2px solid #131313;
+    }
+    .stitch-icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: #1C1B1B;
+      border: 1px solid rgba(208, 197, 175, 0.22);
+      color: #E5E2E1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .stitch-map-viewport {
+      position: relative;
+      width: 100%;
+      height: 118px;
+      min-height: 118px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(212, 175, 55, 0.28);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.14), transparent 65%),
+        linear-gradient(90deg, rgba(208, 197, 175, 0.06) 1px, transparent 1px) 0 0 / 22px 22px,
+        linear-gradient(0deg, rgba(208, 197, 175, 0.06) 1px, transparent 1px) 0 0 / 22px 22px,
+        #181818;
+    }
+    .stitch-map-road {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(155deg, transparent 42%, rgba(212, 175, 55, 0.22) 44%, rgba(212, 175, 55, 0.22) 47%, transparent 49%),
+        linear-gradient(28deg, transparent 58%, rgba(255, 255, 255, 0.07) 59%, rgba(255, 255, 255, 0.07) 61%, transparent 62%);
+      pointer-events: none;
+    }
+    .stitch-map-pill {
+      position: absolute;
+      background: rgba(19, 19, 19, 0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: #F2CA50;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .stitch-you-pin {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .stitch-you-label {
+      background: linear-gradient(135deg, #D4AF37, #F2CA50);
+      color: #241A00;
+      font-size: 0.58rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      box-shadow: 0 2px 8px rgba(212, 175, 55, 0.45);
+      white-space: nowrap;
+    }
+    .stitch-you-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #F2CA50;
+      border: 2px solid #131313;
+      box-shadow: 0 0 0 6px rgba(242, 202, 80, 0.25);
+    }
+    .stitch-shortcuts-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .stitch-shortcut-chip {
+      background: #201F1F;
+      border: 1px solid rgba(208, 197, 175, 0.22);
+      color: #E5E2E1;
+      border-radius: 7px;
+      padding: 4px 8px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .stitch-concierge-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .stitch-concierge-item {
+      background: #1C1B1B;
+      border: 1px solid rgba(208, 197, 175, 0.18);
+      border-radius: 10px;
+      padding: 7px 4px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .stitch-concierge-icon {
+      width: 26px;
+      height: 26px;
+      margin: 0 auto 4px;
+      border-radius: 7px;
+      background: rgba(212, 175, 55, 0.14);
+      color: #F2CA50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+    .stitch-promo-card {
+      border-radius: 12px;
+      padding: 11px 12px;
+      background: linear-gradient(135deg, #2B230B 0%, #1C1B1B 65%, #3B2E08 100%);
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .stitch-rebook-row {
+      background: #1C1B1B;
+      border: 1px solid rgba(208, 197, 175, 0.18);
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .stitch-gauge-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .stitch-gauge-card {
+      background: #1C1B1B;
+      border: 1px solid rgba(208, 197, 175, 0.18);
+      border-radius: 10px;
+      padding: 7px 4px;
+      text-align: center;
+    }
+    .stitch-bars-wrap {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 64px;
+      padding-top: 8px;
+      gap: 6px;
+    }
+    .stitch-bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .stitch-bar-fill {
+      width: 16px;
+      border-radius: 4px 4px 0 0;
+      background: rgba(208, 197, 175, 0.25);
+    }
+    .stitch-bar-fill.peak {
+      background: linear-gradient(180deg, #F2CA50, #D4AF37);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+    }
+    .stitch-journal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .stitch-journal-card {
+      background: #1C1B1B;
+      border: 1px solid rgba(208, 197, 175, 0.18);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .stitch-journal-thumb {
+      height: 54px;
+      background: linear-gradient(135deg, #272215 0%, #171717 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.16);
+    }
+    .stitch-slider-track {
+      position: relative;
+      width: 100%;
+      height: 42px;
+      background: #131313;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 10px;
+      padding: 3px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      margin-top: 6px;
+    }
+    .stitch-slider-thumb {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #D4AF37, #F2CA50);
+      color: #241A00;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.9rem;
+      transition: transform 0.25s ease, background 0.25s ease;
+      z-index: 2;
+    }
+    .stitch-slider-track.online .stitch-slider-thumb {
+      transform: translateX(258px);
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: #042F1E;
+    }
+    .stitch-slider-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .stitch-bottom-nav {
+      position: sticky;
+      bottom: -10px;
+      margin: 8px -12px -10px;
+      padding: 6px 8px 8px;
+      background: rgba(19, 19, 19, 0.96);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(212, 175, 55, 0.25);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      z-index: 20;
+      flex-shrink: 0;
+    }
+    .stitch-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 4px 2px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.58rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .stitch-nav-item.active {
+      color: #F2CA50;
+      background: rgba(212, 175, 55, 0.1);
+    }
+
     /* Porcelain Dual-Theme Light Overrides */
     body.light-theme #viewPassengerNative,
     body.light-theme #viewDriverNative {
       background: #FCF9F8;
+    }
+    body.light-theme .stitch-icon-btn,
+    body.light-theme .stitch-shortcut-chip,
+    body.light-theme .stitch-concierge-item,
+    body.light-theme .stitch-rebook-row,
+    body.light-theme .stitch-gauge-card {
+      background: #FFFFFF;
+      border-color: #D0C5AF;
+      color: #1C1B1B;
+    }
+    body.light-theme .stitch-map-viewport {
+      background:
+        radial-gradient(circle at 50% 50%, rgba(115, 92, 0, 0.12), transparent 65%),
+        linear-gradient(90deg, rgba(115, 92, 0, 0.08) 1px, transparent 1px) 0 0 / 22px 22px,
+        linear-gradient(0deg, rgba(115, 92, 0, 0.08) 1px, transparent 1px) 0 0 / 22px 22px,
+        #F0EDEC;
+    }
+    body.light-theme .stitch-map-pill {
+      background: rgba(255, 255, 255, 0.92);
+      color: #735C00;
+    }
+    body.light-theme .stitch-promo-card {
+      background: linear-gradient(135deg, #D4AF37 0%, #735C00 100%);
+      color: #FFFFFF;
+    }
+    body.light-theme .stitch-journal-card,
+    body.light-theme .stitch-slider-track {
+      background: #FFFFFF;
+      border-color: #D0C5AF;
+      color: #1C1B1B;
+    }
+    body.light-theme .stitch-journal-thumb {
+      background: linear-gradient(135deg, #F6F3F2 0%, #EBE7E7 100%);
+    }
+    body.light-theme .stitch-bottom-nav {
+      background: rgba(252, 249, 248, 0.96);
+      border-top-color: #D0C5AF;
+    }
+    body.light-theme .stitch-nav-item.active {
+      color: #735C00;
+      background: rgba(115, 92, 0, 0.1);
     }
     body.light-theme #viewPassengerNative .app-card,
     body.light-theme #viewDriverNative .app-card,
@@ -1921,20 +2274,47 @@
           <!-- OPTION C: Native Interactive Controls View (Lustre Platinum Gold) -->
           <div class="interactive-native-view active-view" id="viewPassengerNative">
 
-            <!-- Profile & Active Balance Card -->
-            <div class="app-card featured-gold">
-              <div class="app-card-title">
-                <span>Rider Profile</span>
-                <span class="val" style="color: #F2CA50;">Brian K. ★ 4.90</span>
+            <!-- Stitch Executive Header -->
+            <div class="stitch-exec-header">
+              <div style="display: flex; align-items: center; gap: 9px; min-width: 0;">
+                <div class="stitch-avatar-wrap">
+                  <span>BK</span>
+                  <span class="stitch-avatar-dot"></span>
+                </div>
+                <div style="min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 4px;">
+                    <span style="font-size: 0.85rem; font-weight: 800; color: #F2CA50;">Hi, Brian K.</span>
+                    <span style="font-size: 0.72rem; color: #D4AF37;" title="Verified Rider">✓</span>
+                  </div>
+                  <div style="font-size: 0.65rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #D4AF37; display: inline-block;"></span>
+                    <span>Gold Tier • Westlands, Nairobi</span>
+                  </div>
+                </div>
               </div>
-              <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
-                <span class="stitch-verified-pill">✓ Verified Rider</span>
-                <span style="color: #10B981; font-weight: 700;">Wallet: KES 4,500</span>
+              <div style="display: flex; align-items: center; gap: 5px; flex-shrink: 0;">
+                <span style="font-size: 0.62rem; font-weight: 800; color: #10B981; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); padding: 3px 7px; border-radius: 7px;">KES 4,500</span>
+                <button class="stitch-icon-btn" onclick="toggleTheme()" title="Toggle Lustre / Obsidian Theme">🌗</button>
+                <button class="stitch-icon-btn" onclick="log('🔔 Notifications: 1.2x Westlands Peak active.', 'PASSENGER')" title="Notifications">🔔</button>
               </div>
             </div>
 
-            <!-- Booking Controls + Route Selector Card -->
-            <div class="app-card">
+            <!-- Interactive Map Viewport -->
+            <div class="stitch-map-viewport">
+              <div class="stitch-map-road"></div>
+              <div class="stitch-map-pill" style="top: 8px; left: 8px;">⚡ 1.2x Westlands Peak</div>
+              <button class="stitch-icon-btn" style="position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; font-size: 0.72rem;" onclick="log('📍 Map recentered to Nairobi CBD.', 'PASSENGER')" title="Recenter Map">⌖</button>
+              <div class="stitch-you-pin">
+                <div class="stitch-you-label">You are here</div>
+                <div class="stitch-you-dot"></div>
+              </div>
+              <span style="position: absolute; top: 34%; left: 22%; width: 7px; height: 7px; border-radius: 50%; background: #94A3B8; border: 1px solid #fff;"></span>
+              <span style="position: absolute; bottom: 20%; right: 24%; width: 7px; height: 7px; border-radius: 50%; background: #94A3B8; border: 1px solid #fff;"></span>
+              <span style="position: absolute; top: 24%; right: 16%; width: 7px; height: 7px; border-radius: 50%; background: #D4AF37; border: 1px solid #fff;"></span>
+            </div>
+
+            <!-- Floating Route & Booking Card -->
+            <div class="app-card featured-gold">
               <div class="seg-control-bar">
                 <button class="seg-pill-btn active" id="btnPForMe" onclick="setPassengerForMode('me')">👤 For Me</button>
                 <button class="seg-pill-btn" id="btnPForSomeone" onclick="setPassengerForMode('someone')">👥 Someone</button>
@@ -1968,12 +2348,19 @@
                   <button class="stop-chip-btn" id="btnPAddStop" onclick="togglePassengerStop()">+ Stop</button>
                 </div>
               </div>
+
+              <!-- Quick Location Shortcuts -->
+              <div class="stitch-shortcuts-row">
+                <button class="stitch-shortcut-chip" onclick="document.getElementById('pDropoffText').innerText='Lavington Green, Nairobi'; log('🏠 Destination set to Home (Lavington).', 'PASSENGER')">🏠 Home</button>
+                <button class="stitch-shortcut-chip" onclick="document.getElementById('pDropoffText').innerText='Delta Corner, Westlands'; log('🏢 Destination set to Office (Delta Corner).', 'PASSENGER')">🏢 Office</button>
+                <button class="stitch-shortcut-chip" onclick="document.getElementById('pDropoffText').innerText='JKIA Terminal 1A, Nairobi'; log('✈️ Destination set to JKIA Airport.', 'PASSENGER')">✈️ JKIA Airport</button>
+              </div>
             </div>
 
             <!-- Mobility & Fleets 2x2 Selector -->
             <div class="app-card">
               <div class="app-card-title">
-                <span>Mobility &amp; Fleets</span>
+                <span>Available Fleets</span>
                 <span class="val" id="pSelectedTierName" style="color: #F2CA50;">STANDARD</span>
               </div>
 
@@ -1985,22 +2372,123 @@
                   <div class="tier-price" style="margin-top: 3px;">KES 1,850</div>
                 </div>
                 <div class="tier-card" id="tierComfort" onclick="selectVehicleTier('COMFORT', 2400)">
-                  <span class="fleet-badge gold">Executive</span>
+                  <span class="fleet-badge gold">Popular</span>
                   <div class="tier-name">✨ CabiX Comfort</div>
-                  <div class="route-sub">Spacious • 4m</div>
+                  <div class="route-sub">Executive sedan</div>
                   <div class="tier-price" style="margin-top: 3px;">KES 2,400</div>
                 </div>
                 <div class="tier-card" id="tierLux" onclick="selectVehicleTier('LUX', 3600)">
                   <span class="fleet-badge vip">VIP</span>
                   <div class="tier-name">👑 Cabi Lux</div>
-                  <div class="route-sub">Executive • 7m</div>
+                  <div class="route-sub">VIP Black Series</div>
                   <div class="tier-price" style="margin-top: 3px;">KES 3,600</div>
                 </div>
                 <div class="tier-card" id="tierBoda" onclick="selectVehicleTier('BODA', 650)">
                   <span class="fleet-badge fast">1m</span>
                   <div class="tier-name">🏍️ Cabi Boda</div>
-                  <div class="route-sub">Fastest • 1 helmet</div>
+                  <div class="route-sub">Fastest city beat</div>
                   <div class="tier-price" style="margin-top: 3px;">KES 650</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Concierge & Specialized Services -->
+            <div>
+              <div style="font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px;">Concierge &amp; Specialized</div>
+              <div class="stitch-concierge-grid">
+                <div class="stitch-concierge-item" onclick="log('⏱️ Concierge: Hourly Chauffeur Hire (800/- hr) opened.', 'PASSENGER')">
+                  <div class="stitch-concierge-icon">⏱️</div>
+                  <div style="font-size: 0.62rem; font-weight: 700;">Hourly Hire</div>
+                  <div style="font-size: 0.55rem; color: var(--text-muted);">800/- hr</div>
+                </div>
+                <div class="stitch-concierge-item" onclick="log('✈️ Concierge: Airport VIP Meet & Greet selected.', 'PASSENGER')">
+                  <div class="stitch-concierge-icon">🛫</div>
+                  <div style="font-size: 0.62rem; font-weight: 700;">Airport VIP</div>
+                  <div style="font-size: 0.55rem; color: var(--text-muted);">Terminal 1A</div>
+                </div>
+                <div class="stitch-concierge-item" onclick="log('📦 Concierge: Cabi Parcel live courier selected.', 'PASSENGER')">
+                  <div class="stitch-concierge-icon">📦</div>
+                  <div style="font-size: 0.62rem; font-weight: 700;">Cabi Parcel</div>
+                  <div style="font-size: 0.55rem; color: var(--text-muted);">Live courier</div>
+                </div>
+                <div class="stitch-concierge-item" onclick="log('📅 Concierge: Pre-schedule ride reservation opened.', 'PASSENGER')">
+                  <div class="stitch-concierge-icon">📅</div>
+                  <div style="font-size: 0.62rem; font-weight: 700;">Reserve</div>
+                  <div style="font-size: 0.55rem; color: var(--text-muted);">Pre-schedule</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Promotional Card: Cabi Executive Pass -->
+            <div class="stitch-promo-card">
+              <div style="min-width: 0;">
+                <div style="font-size: 0.58rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #F2CA50;">Platinum Privilege</div>
+                <div style="font-size: 0.8rem; font-weight: 800; margin-top: 1px;">Cabi Executive Pass</div>
+                <div style="font-size: 0.64rem; color: var(--text-muted);">Save 15% on your next 5 rides with priority dispatch.</div>
+              </div>
+              <button onclick="log('👑 Cabi Executive Pass activated (-15% priority dispatch).', 'PASSENGER')" style="background: #F2CA50; color: #241A00; border: none; border-radius: 8px; padding: 6px 10px; font-size: 0.68rem; font-weight: 800; cursor: pointer; flex-shrink: 0;">Activate</button>
+            </div>
+
+            <!-- Fast Rebook Recent Journeys -->
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <span style="font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);">Rebook Recent Journeys</span>
+                <span style="font-size: 0.62rem; font-weight: 700; color: #F2CA50;">View all</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div class="stitch-rebook-row">
+                  <div style="min-width: 0;">
+                    <div style="font-size: 0.72rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Riverside Square, Chiromo Rd</div>
+                    <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 2px;">
+                      <span style="background: rgba(212,175,55,0.16); color: #F2CA50; padding: 1px 5px; border-radius: 4px; font-weight: 700;">CabiX Comfort</span>
+                      <span> • Yesterday, 18:40</span>
+                    </div>
+                  </div>
+                  <button onclick="document.getElementById('pDropoffText').innerText='Riverside Square, Chiromo Rd'; selectVehicleTier('COMFORT', 2400);" style="background: rgba(212,175,55,0.16); color: #F2CA50; border: 1px solid rgba(212,175,55,0.35); border-radius: 7px; padding: 5px 10px; font-size: 0.66rem; font-weight: 700; cursor: pointer;">Book</button>
+                </div>
+                <div class="stitch-rebook-row">
+                  <div style="min-width: 0;">
+                    <div style="font-size: 0.72rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Jomo Kenyatta Int'l Airport (NBO)</div>
+                    <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 2px;">
+                      <span style="background: rgba(212,175,55,0.16); color: #F2CA50; padding: 1px 5px; border-radius: 4px; font-weight: 700;">Cabi Lux</span>
+                      <span> • Oct 12</span>
+                    </div>
+                  </div>
+                  <button onclick="document.getElementById('pDropoffText').innerText='JKIA Terminal 1A, Nairobi'; selectVehicleTier('LUX', 3600);" style="background: rgba(212,175,55,0.16); color: #F2CA50; border: 1px solid rgba(212,175,55,0.35); border-radius: 7px; padding: 5px 10px; font-size: 0.66rem; font-weight: 700; cursor: pointer;">Book</button>
+                </div>
+                <div class="stitch-rebook-row">
+                  <div style="min-width: 0;">
+                    <div style="font-size: 0.72rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">The Oval, Ring Road Parklands</div>
+                    <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 2px;">
+                      <span style="background: rgba(255,255,255,0.08); color: var(--text-muted); padding: 1px 5px; border-radius: 4px; font-weight: 700;">CabiGo</span>
+                      <span> • Oct 09</span>
+                    </div>
+                  </div>
+                  <button onclick="document.getElementById('pDropoffText').innerText='The Oval, Ring Road Parklands'; selectVehicleTier('STANDARD', 1850);" style="background: rgba(212,175,55,0.16); color: #F2CA50; border: 1px solid rgba(212,175,55,0.35); border-radius: 7px; padding: 5px 10px; font-size: 0.66rem; font-weight: 700; cursor: pointer;">Book</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Executive Journal & City Insights -->
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <span style="font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);">Executive Journal</span>
+                <span style="font-size: 0.6rem; color: var(--text-muted);">City Dispatch</span>
+              </div>
+              <div class="stitch-journal-grid">
+                <div class="stitch-journal-card" onclick="log('📰 Executive Journal: Electric Fleets expand in Nairobi Westlands Hub.', 'PASSENGER')">
+                  <div class="stitch-journal-thumb">⚡🚙</div>
+                  <div style="padding: 7px 8px;">
+                    <div style="font-size: 0.52rem; font-weight: 700; text-transform: uppercase; color: #F2CA50;">Mobility Tech</div>
+                    <div style="font-size: 0.64rem; font-weight: 700; line-height: 1.25; margin-top: 2px;">Electric Fleets expand in Nairobi Westlands Hub</div>
+                  </div>
+                </div>
+                <div class="stitch-journal-card" onclick="log('🍽️ Executive Guide: Curated Dining for Business Meetings.', 'PASSENGER')">
+                  <div class="stitch-journal-thumb">🍽️✨</div>
+                  <div style="padding: 7px 8px;">
+                    <div style="font-size: 0.52rem; font-weight: 700; text-transform: uppercase; color: #F2CA50;">Executive Guide</div>
+                    <div style="font-size: 0.64rem; font-weight: 700; line-height: 1.25; margin-top: 2px;">Curated Dining: Quiet Spots for Business Meetings</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2074,6 +2562,22 @@
                 Cancel & Choose Another Service
               </button>
             </div>
+
+            <!-- Stitch Fixed 4-Tab Bottom Navigation Bar -->
+            <nav class="stitch-bottom-nav" aria-label="Passenger Bottom Navigation">
+              <button class="stitch-nav-item active" onclick="log('🚗 Tab: Ride', 'PASSENGER')">
+                <span style="font-size: 0.95rem;">🚗</span><span>Ride</span>
+              </button>
+              <button class="stitch-nav-item" onclick="log('🕒 Tab: Activity (Recent Nairobi Trips)', 'PASSENGER')">
+                <span style="font-size: 0.95rem;">🕒</span><span>Activity</span>
+              </button>
+              <button class="stitch-nav-item" onclick="log('🛡️ Tab: Safety Center (PIN 4829 & SOS)', 'PASSENGER')">
+                <span style="font-size: 0.95rem;">🛡️</span><span>Safety</span>
+              </button>
+              <button class="stitch-nav-item" onclick="log('👤 Tab: Account (Brian K. • Gold Tier)', 'PASSENGER')">
+                <span style="font-size: 0.95rem;">👤</span><span>Account</span>
+              </button>
+            </nav>
 
           </div>
         </div>
@@ -2257,43 +2761,185 @@
               </button>
             </div>
 
-            <!-- TAB 1: TRIP COCKPIT VIEW (Lustre Platinum Gold) -->
+            <!-- TAB 1: TRIP COCKPIT VIEW (Stitch Lustre Platinum Gold) -->
             <div id="driverTripView" style="display: flex; flex-direction: column; gap: 8px;">
-              <!-- Sovereign HUD Telemetry Strip -->
-              <div class="sovereign-hud-strip">
-                <span>📡 GPS High • 4G+ Live</span>
-                <span class="sovereign-tier-badge">SOVEREIGN</span>
-              </div>
-
-              <!-- Driver Shift & Online Toggle -->
-              <div class="driver-online-switch-box">
-                <div>
-                  <div class="switch-info-title" id="dOnlineStatusTitle">Driver is OFFLINE</div>
-                  <div class="switch-info-sub" id="dOnlineStatusSub">Slide or tap to start receiving dispatches</div>
-                </div>
-                <button class="btn-toggle-online offline" id="btnDriverOnlineToggle" onclick="toggleDriverOnline()">
-                  <span>🔴 OFFLINE</span>
-                </button>
-              </div>
-
-              <!-- Profile & Vehicle Badge -->
-              <div class="app-card">
-                <div class="app-card-title">
-                  <span>Vehicle & Profile</span>
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <span class="val" style="color: var(--gold);">★ 4.95</span>
-                    <button class="btn-step-ghost" onclick="openDriverLoginModal()" style="padding: 2px 8px; font-size: 0.65rem; border-radius: 6px; color: var(--gold); border-color: var(--border-gold); cursor: pointer;" title="Switch or Re-login Driver Account">
-                      🔑 Switch / Login
-                    </button>
+              <!-- Stitch HUD Overview Panel -->
+              <div class="app-card featured-gold">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                  <div style="display: flex; align-items: center; gap: 9px; min-width: 0;">
+                    <div class="stitch-avatar-wrap">
+                      <span>TD</span>
+                      <span class="stitch-avatar-dot"></span>
+                    </div>
+                    <div style="min-width: 0;">
+                      <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
+                        <span style="font-size: 0.78rem; font-weight: 800; color: var(--text);" id="dActiveDriverName">Test Driver (driver@test.com)</span>
+                        <span class="sovereign-tier-badge">SOVEREIGN</span>
+                      </div>
+                      <div style="font-size: 0.62rem; color: var(--text-muted); margin-top: 2px;">
+                        📡 GPS High • 4G+ Live • <span style="color: var(--gold); font-weight: 800;">★ 4.95</span>
+                      </div>
+                    </div>
                   </div>
+                  <button class="btn-step-ghost" onclick="openDriverLoginModal()" style="padding: 3px 7px; font-size: 0.62rem; border-radius: 6px; color: var(--gold); border-color: var(--border-gold); cursor: pointer; flex-shrink: 0;" title="Switch or Re-login Driver Account">
+                    🔑 Switch
+                  </button>
                 </div>
-                <div style="font-size: 0.78rem; font-weight: 700; color: var(--text);" id="dActiveDriverName">Test Driver (driver@test.com)</div>
-                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;" id="dActiveDriverCar">
+                <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 7px;" id="dActiveDriverCar">
                   Toyota Axio Hybrid 2022 • Plate: <strong style="color: var(--text);" id="dActiveDriverPlate">KDH 452X</strong>
                 </div>
-                <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 0.68rem;">
+                <div style="display: flex; gap: 6px; margin-top: 6px; font-size: 0.64rem;">
                   <span style="background: rgba(16, 185, 129, 0.15); color: var(--green); padding: 2px 6px; border-radius: 4px;" id="dActiveDriverStatusBadge">Status: LOGGED IN</span>
                   <span style="background: rgba(212, 175, 55, 0.15); color: var(--gold); padding: 2px 6px; border-radius: 4px;">Wealth Deductions: <strong>25%</strong></span>
+                </div>
+              </div>
+
+              <!-- Cartographic Dispatch Map: Westlands / Kilimani -->
+              <div class="stitch-map-viewport" style="height: 112px;">
+                <div class="stitch-map-road"></div>
+                <div class="stitch-map-pill" style="top: 8px; left: 8px; border-radius: 8px;">
+                  <span>⌖</span>
+                  <span>Westlands • Kilimani</span>
+                </div>
+                <div class="stitch-you-pin">
+                  <div class="stitch-you-dot" style="width: 14px; height: 14px; box-shadow: 0 0 0 8px rgba(212,175,55,0.22);"></div>
+                </div>
+                <div class="stitch-map-pill" style="bottom: 8px; left: 8px;">🟢 Surge 1.4x Active</div>
+                <div class="stitch-map-pill" style="bottom: 8px; right: 8px; color: #E5E2E1;">⏱️ 3 min ETA avg</div>
+              </div>
+
+              <!-- Today's Revenue Card -->
+              <div class="app-card">
+                <div class="app-card-title" style="margin-bottom: 4px;">
+                  <span>Today's Revenue</span>
+                  <span class="val" style="font-size: 0.62rem; background: rgba(212,175,55,0.16); color: #F2CA50; padding: 2px 6px; border-radius: 999px;">🏆 Top 5%</span>
+                </div>
+                <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 6px;">
+                  <div>
+                    <span style="font-size: 1.25rem; font-weight: 800; color: var(--text);">14,850/-</span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600;">KES</span>
+                  </div>
+                  <span style="font-size: 0.62rem; font-weight: 700; color: #10B981; background: rgba(16,185,129,0.12); padding: 2px 6px; border-radius: 6px;">↗ +2,400/- vs Target</span>
+                </div>
+                <div style="margin-top: 7px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--text-muted); margin-bottom: 3px;">
+                    <span>Shift Goal: 18,000/- KES</span>
+                    <strong style="color: #F2CA50;">82.5%</strong>
+                  </div>
+                  <div style="width: 100%; height: 5px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden;">
+                    <div style="width: 82.5%; height: 100%; background: linear-gradient(90deg, #D4AF37, #F2CA50); border-radius: 999px;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Cockpit Gauges (Rolling 24H) -->
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.58rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">
+                  <span>Cockpit Gauges (Rolling 24H)</span>
+                  <span>Precision</span>
+                </div>
+                <div class="stitch-gauge-grid">
+                  <div class="stitch-gauge-card">
+                    <div style="position: relative; width: 34px; height: 34px; margin: 0 auto;">
+                      <svg width="34" height="34" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3.2"/>
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#F2CA50" stroke-width="3.2" stroke-dasharray="98, 100" stroke-linecap="round"/>
+                      </svg>
+                      <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.56rem; font-weight: 800;">4.98</span>
+                    </div>
+                    <div style="font-size: 0.58rem; font-weight: 700; margin-top: 3px;">Rating</div>
+                    <div style="font-size: 0.5rem; color: var(--text-muted);">Elite</div>
+                  </div>
+                  <div class="stitch-gauge-card">
+                    <div style="position: relative; width: 34px; height: 34px; margin: 0 auto;">
+                      <svg width="34" height="34" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3.2"/>
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10B981" stroke-width="3.2" stroke-dasharray="80, 100" stroke-linecap="round"/>
+                      </svg>
+                      <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.56rem; font-weight: 800;">12</span>
+                    </div>
+                    <div style="font-size: 0.58rem; font-weight: 700; margin-top: 3px;">Trips</div>
+                    <div style="font-size: 0.5rem; color: var(--text-muted);">Target 15</div>
+                  </div>
+                  <div class="stitch-gauge-card">
+                    <div style="position: relative; width: 34px; height: 34px; margin: 0 auto;">
+                      <svg width="34" height="34" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3.2"/>
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#F2CA50" stroke-width="3.2" stroke-dasharray="78, 100" stroke-linecap="round"/>
+                      </svg>
+                      <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.56rem; font-weight: 800;">78%</span>
+                    </div>
+                    <div style="font-size: 0.58rem; font-weight: 700; margin-top: 3px;">Accept</div>
+                    <div style="font-size: 0.5rem; color: var(--text-muted);">Optimal</div>
+                  </div>
+                  <div class="stitch-gauge-card">
+                    <div style="position: relative; width: 34px; height: 34px; margin: 0 auto;">
+                      <svg width="34" height="34" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3.2"/>
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#22D3EE" stroke-width="3.2" stroke-dasharray="62.4, 100" stroke-linecap="round"/>
+                      </svg>
+                      <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.52rem; font-weight: 800;">62%</span>
+                    </div>
+                    <div style="font-size: 0.58rem; font-weight: 700; margin-top: 3px;">Goal</div>
+                    <div style="font-size: 0.5rem; color: var(--text-muted);">Pacing</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hourly Shift Momentum Bar Graph -->
+              <div class="app-card">
+                <div class="app-card-title" style="margin-bottom: 2px;">
+                  <span>Hourly Shift Momentum</span>
+                  <span class="val" style="font-size: 0.62rem; color: #F2CA50;">Peak: 13:00 (NBO)</span>
+                </div>
+                <div class="stitch-bars-wrap">
+                  <div class="stitch-bar-col">
+                    <span style="font-size: 0.52rem; color: var(--text-muted);">1.8k</span>
+                    <div class="stitch-bar-fill" style="height: 18px;"></div>
+                    <span style="font-size: 0.52rem; color: var(--text-muted);">10:00</span>
+                  </div>
+                  <div class="stitch-bar-col">
+                    <span style="font-size: 0.52rem; color: var(--text-muted);">2.4k</span>
+                    <div class="stitch-bar-fill" style="height: 24px;"></div>
+                    <span style="font-size: 0.52rem; color: var(--text-muted);">11:00</span>
+                  </div>
+                  <div class="stitch-bar-col">
+                    <span style="font-size: 0.52rem; color: var(--text-muted);">3.1k</span>
+                    <div class="stitch-bar-fill" style="height: 31px;"></div>
+                    <span style="font-size: 0.52rem; color: var(--text-muted);">12:00</span>
+                  </div>
+                  <div class="stitch-bar-col">
+                    <span style="font-size: 0.54rem; font-weight: 800; color: #F2CA50;">4.6k</span>
+                    <div class="stitch-bar-fill peak" style="height: 40px;"></div>
+                    <span style="font-size: 0.52rem; font-weight: 800; color: #F2CA50;">13:00</span>
+                  </div>
+                  <div class="stitch-bar-col">
+                    <span style="font-size: 0.52rem; color: var(--text-muted);">2.9k</span>
+                    <div class="stitch-bar-fill" style="height: 28px;"></div>
+                    <span style="font-size: 0.52rem; color: var(--text-muted);">14:00</span>
+                  </div>
+                  <div class="stitch-bar-col">
+                    <span style="font-size: 0.52rem; color: var(--text-muted);">--</span>
+                    <div class="stitch-bar-fill" style="height: 8px; opacity: 0.45;"></div>
+                    <span style="font-size: 0.52rem; color: var(--text-muted);">15:00</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Driver Shift & Online Toggle + Tactile Stitch Slider -->
+              <div class="driver-online-switch-box" style="flex-direction: column; align-items: stretch; gap: 6px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                  <div>
+                    <div class="switch-info-title" id="dOnlineStatusTitle">Driver is OFFLINE</div>
+                    <div class="switch-info-sub" id="dOnlineStatusSub">Slide or tap to start receiving dispatches</div>
+                  </div>
+                  <button class="btn-toggle-online offline" id="btnDriverOnlineToggle" onclick="toggleDriverOnline()">
+                    <span>🔴 OFFLINE</span>
+                  </button>
+                </div>
+                <div class="stitch-slider-track" id="dDispatchSliderTrack" onclick="toggleDriverOnline()" title="Slide or tap to toggle Online/Offline">
+                  <div class="stitch-slider-thumb" id="dSliderThumb">›</div>
+                  <div class="stitch-slider-label" id="dSliderLabel">SLIDE TO GO ONLINE</div>
                 </div>
               </div>
 
@@ -2598,6 +3244,22 @@
               </button>
 
             </div>
+
+            <!-- Stitch Fixed 4-Tab Bottom Navigation Bar -->
+            <nav class="stitch-bottom-nav" aria-label="Driver Bottom Navigation">
+              <button class="stitch-nav-item active" id="dNavCockpit" onclick="switchDriverTab('trip')">
+                <span style="font-size: 0.95rem;">⚡</span><span>Cockpit</span>
+              </button>
+              <button class="stitch-nav-item" id="dNavEarnings" onclick="switchDriverTab('wealth')">
+                <span style="font-size: 0.95rem;">💳</span><span>Earnings</span>
+              </button>
+              <button class="stitch-nav-item" onclick="log('🛣️ Tab: Trips (12 completed today)', 'DRIVER')">
+                <span style="font-size: 0.95rem;">🛣️</span><span>Trips</span>
+              </button>
+              <button class="stitch-nav-item" onclick="openDriverLoginModal()">
+                <span style="font-size: 0.95rem;">⚙️</span><span>Account</span>
+              </button>
+            </nav>
 
           </div>
         </div>
@@ -3075,6 +3737,9 @@
       const radarIcon = document.getElementById('dRadarIcon');
       const radarText = document.getElementById('dRadarText');
       const radarPill = document.getElementById('dRadarPill');
+      const sliderTrack = document.getElementById('dDispatchSliderTrack');
+      const sliderThumb = document.getElementById('dSliderThumb');
+      const sliderLabel = document.getElementById('dSliderLabel');
 
       if (isDriverOnline) {
         btn.className = 'btn-toggle-online online';
@@ -3085,6 +3750,11 @@
         radarText.textContent = 'Waiting for ride offers in Nairobi CBD';
         radarPill.textContent = 'ONLINE';
         radarPill.style.color = 'var(--green)';
+        if (sliderTrack && sliderThumb && sliderLabel) {
+          sliderTrack.classList.add('online');
+          sliderThumb.textContent = '✓';
+          sliderLabel.textContent = 'SLIDE TO GO OFFLINE';
+        }
 
         playTone([523.25, 659.25, 783.99]);
         log('🟢 Driver Test Driver (KDH 452X) went ONLINE in Nairobi CBD.', 'DRIVER');
@@ -3098,6 +3768,11 @@
         radarText.textContent = 'Driver is currently offline';
         radarPill.textContent = 'STANDBY';
         radarPill.style.color = 'var(--text-muted)';
+        if (sliderTrack && sliderThumb && sliderLabel) {
+          sliderTrack.classList.remove('online');
+          sliderThumb.textContent = '›';
+          sliderLabel.textContent = 'SLIDE TO GO ONLINE';
+        }
 
         playTone([400, 300]);
         log('🔴 Driver went OFFLINE.', 'DRIVER');
@@ -3507,18 +4182,28 @@
       const btnWealth = document.getElementById('btnDTabWealth');
       const viewTrip = document.getElementById('driverTripView');
       const viewWealth = document.getElementById('driverWealthView');
+      const navCockpit = document.getElementById('dNavCockpit');
+      const navEarnings = document.getElementById('dNavEarnings');
 
       if (tab === 'trip') {
         btnTrip.classList.add('active');
         btnWealth.classList.remove('active');
         viewTrip.style.display = 'flex';
         viewWealth.classList.remove('active');
+        if (navCockpit && navEarnings) {
+          navCockpit.classList.add('active');
+          navEarnings.classList.remove('active');
+        }
         log('🚕 Driver switched to Trip Cockpit view.', 'DRIVER');
       } else {
         btnTrip.classList.remove('active');
         btnWealth.classList.add('active');
         viewTrip.style.display = 'none';
         viewWealth.classList.add('active');
+        if (navCockpit && navEarnings) {
+          navCockpit.classList.remove('active');
+          navEarnings.classList.add('active');
+        }
         log('💎 Driver opened Wealth & Benefits selection console.', 'DRIVER');
       }
       playTone([659.25]);

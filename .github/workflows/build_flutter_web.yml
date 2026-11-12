@@ -1,0 +1,51 @@
+name: Build Flutter Web (Passenger & Driver)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'mobile/passenger_app/**'
+      - 'mobile/driver_app/**'
+      - '.github/workflows/build_flutter_web.yml'
+  workflow_dispatch:
+
+jobs:
+  build-web:
+    name: Build Passenger & Driver Web Bundles
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'latest'
+          channel: 'stable'
+          cache: true
+
+      - name: Build Passenger Flutter Web
+        working-directory: ./mobile/passenger_app
+        run: |
+          flutter pub get
+          flutter build web --release
+
+      - name: Build Driver Flutter Web
+        working-directory: ./mobile/driver_app
+        run: |
+          flutter pub get
+          flutter build web --release
+
+      - name: Upload Passenger Web Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: passenger-web-bundle
+          path: mobile/passenger_app/build/web/
+
+      - name: Upload Driver Web Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: driver-web-bundle
+          path: mobile/driver_app/build/web/
