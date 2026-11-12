@@ -621,6 +621,84 @@ extension _HomeScreenPanels on _HomeScreenState {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Stitch Executive Header
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        margin: const EdgeInsets.only(bottom: 14),
+                        decoration: BoxDecoration(
+                          color: isDark ? AppTheme.surfaceContainerHigh : Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: isDark ? AppTheme.outlineGold : dividerColor),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: AppTheme.goldGradient,
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                'BK',
+                                style: AppTheme.inter(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w800,
+                                  color: const Color(0xFF241A00),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Hi, Brian K.',
+                                        style: AppTheme.inter(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w800,
+                                          color: onSurfaceColor,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Icon(Icons.verified, size: 15, color: AppTheme.primaryColor),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Gold Tier • Westlands, Nairobi',
+                                    style: AppTheme.inter(
+                                      fontSize: 11,
+                                      color: isDark ? AppTheme.warmStone : Colors.black54,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: AppTheme.successGreen.withValues(alpha: 0.14),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: AppTheme.successGreen.withValues(alpha: 0.35)),
+                              ),
+                              child: Text(
+                                'KES 4,500',
+                                style: AppTheme.inter(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppTheme.successGreen,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
                       // 0. Stitch Top Controls: For Me / For Someone & Leave Now
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1408,7 +1486,180 @@ extension _HomeScreenPanels on _HomeScreenState {
                             ),
                       )),
 
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 24),
+
+                      // Stitch Concierge & Specialized 4-Column Strip
+                      Text(
+                        "CONCIERGE & SPECIALIZED",
+                        style: AppTheme.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.0,
+                          color: isDark ? AppTheme.warmStone : Colors.black54,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          _buildStitchConciergeCard(
+                            icon: Icons.schedule_rounded,
+                            title: 'Hourly Hire',
+                            subtitle: '800/- hr',
+                            isDark: isDark,
+                            onSurfaceColor: onSurfaceColor,
+                            dividerColor: dividerColor,
+                          ),
+                          const SizedBox(width: 8),
+                          _buildStitchConciergeCard(
+                            icon: Icons.flight_takeoff_rounded,
+                            title: 'Airport VIP',
+                            subtitle: 'Terminal 1A',
+                            isDark: isDark,
+                            onSurfaceColor: onSurfaceColor,
+                            dividerColor: dividerColor,
+                          ),
+                          const SizedBox(width: 8),
+                          _buildStitchConciergeCard(
+                            icon: Icons.inventory_2_rounded,
+                            title: 'Cabi Parcel',
+                            subtitle: 'Live courier',
+                            isDark: isDark,
+                            onSurfaceColor: onSurfaceColor,
+                            dividerColor: dividerColor,
+                          ),
+                          const SizedBox(width: 8),
+                          _buildStitchConciergeCard(
+                            icon: Icons.calendar_month_rounded,
+                            title: 'Reserve',
+                            subtitle: 'Pre-schedule',
+                            isDark: isDark,
+                            onSurfaceColor: onSurfaceColor,
+                            dividerColor: dividerColor,
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Stitch Promotional Card: Cabi Executive Pass
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          gradient: isDark
+                              ? const LinearGradient(
+                                  colors: [Color(0xFF2B230B), Color(0xFF1C1B1B), Color(0xFF3B2E08)],
+                                )
+                              : AppTheme.goldGradient,
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: AppTheme.outlineGold),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'PLATINUM PRIVILEGE',
+                                    style: AppTheme.inter(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 1.0,
+                                      color: isDark ? AppTheme.lustreGold : const Color(0xFF241A00),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Cabi Executive Pass',
+                                    style: AppTheme.inter(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                      color: isDark ? Colors.white : const Color(0xFF241A00),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Save 15% on your next 5 rides with priority dispatch.',
+                                    style: AppTheme.inter(
+                                      fontSize: 12,
+                                      color: isDark ? AppTheme.warmStone : const Color(0xFF3A2B00),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: isDark ? AppTheme.lustreGold : const Color(0xFF1C1B1B),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                'Activate',
+                                style: AppTheme.inter(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: isDark ? const Color(0xFF241A00) : AppTheme.lustreGold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Stitch Executive Journal & City Insights
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "EXECUTIVE JOURNAL",
+                            style: AppTheme.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1.0,
+                              color: isDark ? AppTheme.warmStone : Colors.black54,
+                            ),
+                          ),
+                          Text(
+                            "City Dispatch",
+                            style: AppTheme.inter(
+                              fontSize: 11,
+                              color: isDark ? AppTheme.warmStone : Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildStitchJournalCard(
+                              tag: 'Mobility Tech',
+                              title: 'Electric Fleets expand in Nairobi Westlands Hub',
+                              icon: Icons.electric_car_rounded,
+                              isDark: isDark,
+                              onSurfaceColor: onSurfaceColor,
+                              dividerColor: dividerColor,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildStitchJournalCard(
+                              tag: 'Executive Guide',
+                              title: 'Curated Dining: Quiet Spots for Business Meetings',
+                              icon: Icons.restaurant_rounded,
+                              isDark: isDark,
+                              onSurfaceColor: onSurfaceColor,
+                              dividerColor: dividerColor,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 28),
 
                       // 3. Discover More
                       Text("Discover More",
@@ -2439,6 +2690,122 @@ extension _HomeScreenPanels on _HomeScreenState {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildStitchConciergeCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required bool isDark,
+    required Color onSurfaceColor,
+    required Color dividerColor,
+  }) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+        decoration: BoxDecoration(
+          color: isDark ? AppTheme.surfaceContainerHigh : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: isDark ? AppTheme.outlineBorder : dividerColor),
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: 17, color: AppTheme.primaryColor),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              title,
+              style: AppTheme.inter(
+                fontSize: 10.5,
+                fontWeight: FontWeight.w700,
+                color: onSurfaceColor,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              subtitle,
+              style: AppTheme.inter(
+                fontSize: 9,
+                color: isDark ? AppTheme.warmStone : Colors.black54,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStitchJournalCard({
+    required String tag,
+    required String title,
+    required IconData icon,
+    required bool isDark,
+    required Color onSurfaceColor,
+    required Color dividerColor,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.surfaceContainerHigh : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: isDark ? AppTheme.outlineBorder : dividerColor),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 68,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: isDark
+                    ? [const Color(0xFF272215), const Color(0xFF171717)]
+                    : [const Color(0xFFF6F3F2), const Color(0xFFEBE7E7)],
+              ),
+            ),
+            child: Icon(icon, size: 28, color: AppTheme.primaryColor),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  tag.toUpperCase(),
+                  style: AppTheme.inter(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.primaryColor,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  title,
+                  style: AppTheme.inter(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w700,
+                    color: onSurfaceColor,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
