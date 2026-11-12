@@ -147,7 +147,7 @@ export const LoginPage = () => {
                     component="img" 
                     src={logo} 
                     alt="Cabi Africa" 
-                    sx={{ width: 60, filter: 'drop-shadow(0 0 10px rgba(255,215,0,0.3))' }} 
+                    sx={{ height: 48, width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 10px rgba(255,215,0,0.3))' }} 
                   />
                   <Box>
                     <Typography variant="h4" sx={{ fontWeight: 900, color: 'white', letterSpacing: -1 }}>

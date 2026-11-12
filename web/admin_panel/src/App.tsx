@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import { LoginPage } from './pages/LoginPage';
+import cabiLogo from './assets/cabi_logo_white.png';
 // Components 
 import { DriverApprovalDashboard } from './components/DriverApprovalDashboard';
 import { ReferralConfiguration as ReferralConfig } from './components/ReferralConfiguration';
@@ -284,6 +285,7 @@ function App() {
     <div className={`flex h-screen transition-colors duration-200 ${darkMode ? 'dark bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
       <aside className="sidebar w-64 flex-shrink-0 flex flex-col bg-slate-950 border-r border-white/5 shadow-2xl transition-colors duration-200">
         <div className="p-8 border-b border-white/5 flex flex-col items-center text-center">
+          <img src={cabiLogo} alt="Cabi Africa" className="h-10 w-auto object-contain mb-3" />
           <h1 className="text-xl font-black tracking-[0.3em] text-primary">CABI ADMIN</h1>
           <div className="mt-1 text-[10px] text-slate-500 uppercase tracking-[0.2em] mb-6">Security Terminal</div>
 

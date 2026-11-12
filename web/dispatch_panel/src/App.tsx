@@ -189,14 +189,13 @@ function App() {
             <aside className="w-72 bg-slate-900/50 backdrop-blur-xl border-r border-slate-800/50 flex-shrink-0 flex flex-col">
                 <div className="p-6 border-b border-slate-800/50">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                        </div>
+                        <img
+                            src="/cabi-logo-dark.png"
+                            alt="Cabi Africa"
+                            className="h-9 w-auto object-contain"
+                        />
                         <div>
-                            <h1 className="text-xl font-bold text-white tracking-tight">CABI</h1>
-                            <p className="text-xs text-slate-400">Dispatch Control</p>
+                            <p className="text-xs font-semibold text-amber-400 tracking-wide uppercase">Dispatch Control</p>
                         </div>
                     </div>
                 </div>
