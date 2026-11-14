@@ -73,7 +73,7 @@ export const SosResolutionModal: React.FC<SosResolutionModalProps> = ({ incident
           <button
             onClick={handleSubmit}
             disabled={!outcome || isSubmitting}
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 flex items-center"
+            className="px-6 py-2 bg-amber-500 text-black rounded hover:bg-amber-700 disabled:bg-gray-400 flex items-center"
           >
             {isSubmitting ? 'Resolving...' : 'Confirm Resolution'}
           </button>

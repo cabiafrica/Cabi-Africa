@@ -99,7 +99,7 @@ export const UserForm: React.FC<Props> = ({ user, onSave, onCancel }) => {
 
   return (
     <div className="card max-w-4xl mx-auto">
-      <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6 border-b border-slate-200 dark:border-slate-700 pb-2">{user ? 'Edit' : 'Create'} Admin User</h3>
+      <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6 border-b border-slate-200 dark:border-white/10 pb-2">{user ? 'Edit' : 'Create'} Admin User</h3>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Email Section */}
@@ -111,7 +111,7 @@ export const UserForm: React.FC<Props> = ({ user, onSave, onCancel }) => {
             onChange={e => setEmail(e.target.value)}
             required
             disabled={!!user}
-            className="w-full border-slate-300 dark:border-slate-600 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2.5 border text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 disabled:bg-slate-100 dark:disabled:bg-slate-700"
+            className="w-full border-slate-300 dark:border-slate-600 rounded-lg shadow-sm focus:ring-amber-500 focus:border-amber-500 p-2.5 border text-slate-900 dark:text-slate-100 bg-white dark:bg-card-dark disabled:bg-slate-100 dark:disabled:bg-slate-700"
             placeholder="admin@example.com"
           />
         </div>
@@ -122,12 +122,12 @@ export const UserForm: React.FC<Props> = ({ user, onSave, onCancel }) => {
           {availableRoles.length === 0 ? <p className="text-sm text-slate-500 dark:text-slate-400">No roles found.</p> : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {availableRoles.map(role => (
-                <label key={role.id} className={`flex items-center p-3 rounded-lg border cursor-pointer transition-colors ${selectedRoles.has(role.name) ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-500/50 ring-1 ring-blue-500' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'}`}>
+                <label key={role.id} className={`flex items-center p-3 rounded-lg border cursor-pointer transition-colors ${selectedRoles.has(role.name) ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-500/50 ring-1 ring-amber-500' : 'bg-white dark:bg-card-dark border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-slate-700/50'}`}>
                   <input
                     type="checkbox"
                     checked={selectedRoles.has(role.name)}
                     onChange={() => handleRoleToggle(role.name)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700"
+                    className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700"
                   />
                   <div className="ml-2">
                     <span className="block text-sm font-medium text-slate-900 dark:text-slate-100">{role.displayName}</span>
@@ -144,14 +144,14 @@ export const UserForm: React.FC<Props> = ({ user, onSave, onCancel }) => {
           <h4 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-3">Granular Permission Overrides</h4>
           <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg max-h-[400px] overflow-y-auto">
             <table className="min-w-full divide-y divide-slate-300 dark:divide-slate-700">
-              <thead className="bg-slate-50 dark:bg-slate-900 sticky top-0 z-10">
+              <thead className="bg-slate-50 dark:bg-surface-dark sticky top-0 z-10">
                 <tr>
                   <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-slate-900 dark:text-slate-100">Permission</th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-slate-900 dark:text-slate-100">Effective Status</th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-slate-900 dark:text-slate-100">Override Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-800">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-card-dark">
                 {availablePermissions.map(perm => {
                   let statusNode = <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">Not Granted</span>;
                   if (directGrants.has(perm)) {
@@ -159,7 +159,7 @@ export const UserForm: React.FC<Props> = ({ user, onSave, onCancel }) => {
                   } else if (directRevokes.has(perm)) {
                     statusNode = <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Directly Revoked</span>;
                   } else if (inheritedPermissions.has(perm)) {
-                    statusNode = <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">Inherited</span>;
+                    statusNode = <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">Inherited</span>;
                   }
 
                   return (
@@ -198,7 +198,7 @@ export const UserForm: React.FC<Props> = ({ user, onSave, onCancel }) => {
         </div>
 
         {/* Footer Actions */}
-        <div className="flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-700">
+        <div className="flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-white/10">
           <button
             type="button"
             onClick={onCancel}
@@ -210,7 +210,7 @@ export const UserForm: React.FC<Props> = ({ user, onSave, onCancel }) => {
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50"
+            className="bg-amber-500 hover:bg-amber-600 text-black px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50"
           >
             {isLoading ? 'Saving...' : 'Save User'}
           </button>

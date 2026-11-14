@@ -3668,9 +3668,11 @@
     document.addEventListener('DOMContentLoaded', () => {
       bindAndroidTouchEvents('driverAndroidWrapper', refreshAndroidScreen, 'DRIVER', 'emulator-5556');
       bindAndroidTouchEvents('passengerAndroidWrapper', refreshPassengerAndroidScreen, 'PASSENGER', 'emulator-5554');
-      // Start both screens in interactive Quick Actions mode (instant, responsive 60fps)
-      setPassengerViewMode('native');
-      setDriverViewMode('native');
+      // Start both screens in live Flutter Web App view (or mode specified in URL)
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialMode = urlParams.get('mode') || 'flutter';
+      setPassengerViewMode(initialMode);
+      setDriverViewMode(initialMode);
     });
 
     // Step Stepper Highlight

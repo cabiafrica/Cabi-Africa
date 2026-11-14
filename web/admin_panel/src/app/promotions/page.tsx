@@ -61,7 +61,7 @@ export default function PromotionsPage() {
                 <h1 className="text-2xl font-bold">Promo Codes</h1>
                 <button
                     onClick={() => setShowCreateForm(!showCreateForm)}
-                    className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+                    className="bg-amber-500 text-black px-6 py-2 rounded hover:bg-amber-700"
                 >
                     {showCreateForm ? 'Cancel' : '+ Create Promo Code'}
                 </button>
@@ -173,7 +173,7 @@ export default function PromotionsPage() {
                                 <td className="p-3">
                                     <button
                                         onClick={() => toggleActive(promo.id)}
-                                        className="text-blue-600 hover:underline mr-3"
+                                        className="text-amber-600 hover:underline mr-3"
                                     >
                                         {promo.isActive ? 'Deactivate' : 'Activate'}
                                     </button>

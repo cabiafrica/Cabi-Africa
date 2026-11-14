@@ -63,7 +63,7 @@ export default function DriverPerksPage() {
                 </div>
                 <button
                     onClick={() => setShowCreateForm(!showCreateForm)}
-                    className="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700 transition"
+                    className="bg-cyan-600 text-white px-6 py-2 rounded hover:bg-cyan-700 transition"
                 >
                     {showCreateForm ? 'Cancel' : '+ Add New Perk'}
                 </button>
@@ -79,7 +79,7 @@ export default function DriverPerksPage() {
                                 type="text"
                                 value={formData.partner}
                                 onChange={(e) => setFormData({ ...formData, partner: e.target.value })}
-                                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-cyan-500 outline-none"
                                 placeholder="e.g. Shell"
                             />
                         </div>
@@ -89,7 +89,7 @@ export default function DriverPerksPage() {
                                 type="text"
                                 value={formData.title}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-cyan-500 outline-none"
                                 placeholder="e.g. 5% Off Fuel"
                             />
                         </div>
@@ -98,7 +98,7 @@ export default function DriverPerksPage() {
                             <textarea
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-cyan-500 outline-none"
                                 rows={2}
                                 placeholder="Short description of the offer..."
                             />
@@ -108,7 +108,7 @@ export default function DriverPerksPage() {
                             <select
                                 value={formData.type}
                                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
+                                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-cyan-500 outline-none"
                             >
                                 <option value="CODE">Promo Code</option>
                                 <option value="LINK">External Link</option>
@@ -122,7 +122,7 @@ export default function DriverPerksPage() {
                                         type="text"
                                         value={formData.code}
                                         onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                                        className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none font-mono"
+                                        className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-cyan-500 outline-none font-mono"
                                         placeholder="e.g. DRIVER2024"
                                     />
                                 </div>
@@ -133,7 +133,7 @@ export default function DriverPerksPage() {
                                         type="url"
                                         value={formData.link}
                                         onChange={(e) => setFormData({ ...formData, link: e.target.value })}
-                                        className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-purple-500 outline-none text-blue-600"
+                                        className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-cyan-500 outline-none text-amber-600"
                                         placeholder="https://..."
                                     />
                                 </div>
@@ -176,7 +176,7 @@ export default function DriverPerksPage() {
                                             {perk.code}
                                         </span>
                                     ) : (
-                                        <a href={perk.link} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
+                                        <a href={perk.link} target="_blank" rel="noreferrer" className="text-amber-600 hover:underline flex items-center gap-1">
                                             Visit Site <span className="text-xs">↗</span>
                                         </a>
                                     )}
@@ -191,7 +191,7 @@ export default function DriverPerksPage() {
                                 </td>
                                 <td className="p-4">
                                     <div className="flex gap-3">
-                                        <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">Edit</button>
+                                        <button className="text-amber-600 hover:text-amber-800 text-sm font-medium">Edit</button>
                                         <button
                                             onClick={() => handleDelete(perk.id)}
                                             className="text-red-600 hover:text-red-800 text-sm font-medium"
@@ -214,17 +214,17 @@ export default function DriverPerksPage() {
             </div>
 
             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-purple-50 p-6 rounded-lg border border-purple-100">
-                    <h3 className="text-sm font-medium text-purple-700 mb-2">Total Partners</h3>
-                    <p className="text-3xl font-bold text-purple-900">{new Set(perks.map(p => p.partner)).size}</p>
+                <div className="bg-cyan-50 p-6 rounded-lg border border-cyan-100">
+                    <h3 className="text-sm font-medium text-cyan-700 mb-2">Total Partners</h3>
+                    <p className="text-3xl font-bold text-cyan-900">{new Set(perks.map(p => p.partner)).size}</p>
                 </div>
                 <div className="bg-green-50 p-6 rounded-lg border border-green-100">
                     <h3 className="text-sm font-medium text-green-700 mb-2">Active Offers</h3>
                     <p className="text-3xl font-bold text-green-900">{perks.filter(p => p.isActive).length}</p>
                 </div>
-                <div className="bg-blue-50 p-6 rounded-lg border border-blue-100">
-                    <h3 className="text-sm font-medium text-blue-700 mb-2">Total Redemptions (30d)</h3>
-                    <p className="text-3xl font-bold text-blue-900">0</p>
+                <div className="bg-amber-50 p-6 rounded-lg border border-amber-100">
+                    <h3 className="text-sm font-medium text-amber-700 mb-2">Total Redemptions (30d)</h3>
+                    <p className="text-3xl font-bold text-amber-900">0</p>
                 </div>
             </div>
         </div>

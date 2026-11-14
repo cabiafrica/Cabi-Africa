@@ -28,6 +28,10 @@ export class PermissionService {
         const permissions = new Set<string>();
 
         // 1. Add permissions from all assigned roles
+        if (user.role === 'ADMIN' || user.userRoles.some(ur => ur.role.type === 'SUPER_ADMIN')) {
+            Object.values(Permission).forEach(p => permissions.add(p));
+        }
+
         for (const userRole of user.userRoles) {
             if (!userRole.isActive || !userRole.role.isActive) continue;
             if (userRole.expiresAt && userRole.expiresAt < new Date()) continue;

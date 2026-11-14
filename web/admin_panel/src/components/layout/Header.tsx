@@ -45,7 +45,7 @@ export const Header: React.FC<{ currentView: string }> = ({ currentView }) => {
                     </div>
                     <input
                         type="text"
-                        className="block w-full pl-10 pr-3 py-2 border border-slate-700/50 rounded-lg leading-5 bg-slate-800/50 text-slate-200 placeholder-slate-500 focus:outline-none focus:placeholder-slate-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                        className="block w-full pl-10 pr-3 py-2 border border-slate-700/50 rounded-lg leading-5 bg-slate-800/50 text-slate-200 placeholder-slate-500 focus:outline-none focus:placeholder-slate-400 focus:ring-1 focus:ring-amber-500 focus:border-amber-500 sm:text-sm transition-colors"
                         placeholder="Search users, drivers..."
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
@@ -65,7 +65,7 @@ export const Header: React.FC<{ currentView: string }> = ({ currentView }) => {
                                         setQuery('');
                                     }}
                                 >
-                                    <span className={`w-2 h-2 rounded-full ${result.type === 'DRIVER' ? 'bg-blue-500' : 'bg-green-500'}`}></span>
+                                    <span className={`w-2 h-2 rounded-full ${result.type === 'DRIVER' ? 'bg-amber-500' : 'bg-green-500'}`}></span>
                                     <div className="flex flex-col">
                                         <span className="font-medium truncate">{result.name}</span>
                                         <span className="text-xs text-slate-400">{result.email} • {result.type}</span>

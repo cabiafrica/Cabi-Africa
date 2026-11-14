@@ -221,7 +221,7 @@ export default function DemandAnalysisPage() {
                 href="/drivers/sacco"
                 className="px-3 py-1.5 rounded-lg text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all"
               >
-                SACCO Benefits
+                Wealth Creation
               </Link>
             </nav>
           </div>

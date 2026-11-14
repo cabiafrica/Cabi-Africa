@@ -95,7 +95,7 @@ export default function ReferralNetworkVisualizer({ referralCode = 'CABI-REF-202
                         <div>
                             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Grow Your Network</h3>
                             <p className="text-slate-500 dark:text-gray-400 text-sm max-w-md">
-                                Share your personal referral code with others to join your network. You earn commissions from both your direct referrals and their network as well!
+                                Share your personal referral code with others to join your network. You earn 2-level recurring shares from driver earnings and passenger usage across your direct and secondary network!
                             </p>
                         </div>
 
@@ -113,7 +113,11 @@ export default function ReferralNetworkVisualizer({ referralCode = 'CABI-REF-202
                         <div className="p-3 bg-white rounded-lg">
                             <img
                                 src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://cabi.com/register?ref=${referralCode}`}
-                                alt="Referral QR Code"
+                                alt="CABI Africa Driver Referral Program unique QR registration code"
+                                width={150}
+                                height={150}
+                                loading="lazy"
+                                decoding="async"
                                 className="w-32 h-32 md:w-40 md:h-40"
                             />
                         </div>

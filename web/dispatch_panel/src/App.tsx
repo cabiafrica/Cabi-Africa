@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { io } from 'socket.io-client';
-import { RideRequest, Driver, DispatchMetrics } from './types';
+import { RideRequest, Driver, DispatchMetrics, TripHistory, DriverHistory, Passenger } from './types';
 import MetricsOverview from './components/MetricsOverview';
 import RideRequestsList from './components/RideRequestsList';
 import DriversList from './components/DriversList';
@@ -179,15 +179,84 @@ function App() {
         );
     };
 
+    const tripHistory = useMemo<TripHistory[]>(() => {
+        return rideRequests.map((ride) => ({
+            ...ride,
+            actualFare: ride.estimatedFare,
+            paymentMethod: 'mobile-money',
+            paymentStatus: ride.status === 'completed' ? 'completed' : ride.status === 'cancelled' ? 'failed' : 'pending',
+            duration: Math.max(10, Math.round((ride.distance || 5) * 2.5)),
+            completedAt: ride.status === 'completed' ? ride.requestedAt : undefined,
+        }));
+    }, [rideRequests]);
+
+    const driverHistory = useMemo<DriverHistory[]>(() => {
+        return drivers.map((driver) => ({
+            ...driver,
+            totalEarnings: driver.completedRides * 650,
+            todayEarnings: driver.status === 'online' || driver.status === 'busy' ? 3250 : 0,
+            weekEarnings: Math.min(driver.completedRides, 24) * 650,
+            monthEarnings: Math.min(driver.completedRides, 80) * 650,
+            averageRating: driver.rating || 4.8,
+            totalRatings: Math.max(1, driver.completedRides),
+            joinedDate: new Date().toISOString(),
+            lastActiveDate: new Date().toISOString(),
+            vehicleModel: driver.vehicleType || 'Sedan',
+            vehicleYear: 2022,
+            vehicleColor: 'Black',
+            licenseNumber: driver.vehiclePlate || 'PENDING',
+            licenseExpiry: '2027-12-31',
+        }));
+    }, [drivers]);
+
+    const passengersList = useMemo<Passenger[]>(() => {
+        const byId = new Map<string, Passenger>();
+        for (const ride of rideRequests) {
+            const existing = byId.get(ride.passengerId);
+            const isCompleted = ride.status === 'completed';
+            const isCancelled = ride.status === 'cancelled';
+            if (!existing) {
+                byId.set(ride.passengerId, {
+                    id: ride.passengerId,
+                    name: ride.passengerName || 'Unknown Passenger',
+                    phone: ride.passengerPhone || 'N/A',
+                    email: `${(ride.passengerName || 'passenger').toLowerCase().replace(/\s+/g, '.')}@cabi.africa`,
+                    rating: 4.8,
+                    totalRides: 1,
+                    completedRides: isCompleted ? 1 : 0,
+                    cancelledRides: isCancelled ? 1 : 0,
+                    totalSpent: isCompleted ? ride.estimatedFare : 0,
+                    joinedDate: ride.requestedAt,
+                    lastRideDate: ride.requestedAt,
+                    preferredPaymentMethod: 'mobile-money',
+                    status: 'active',
+                });
+            } else {
+                existing.totalRides += 1;
+                if (isCompleted) {
+                    existing.completedRides += 1;
+                    existing.totalSpent += ride.estimatedFare;
+                }
+                if (isCancelled) {
+                    existing.cancelledRides += 1;
+                }
+                if (new Date(ride.requestedAt) > new Date(existing.lastRideDate)) {
+                    existing.lastRideDate = ride.requestedAt;
+                }
+            }
+        }
+        return Array.from(byId.values());
+    }, [rideRequests]);
+
     if (!isAuthenticated) {
         return <LoginPage />;
     }
 
     return (
-        <div className="flex h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <div className="flex h-screen bg-gradient-to-br from-brand-black via-surface-dark to-brand-black text-white selection:bg-brand-yellow selection:text-black">
             {/* Sidebar */}
-            <aside className="w-72 bg-slate-900/50 backdrop-blur-xl border-r border-slate-800/50 flex-shrink-0 flex flex-col">
-                <div className="p-6 border-b border-slate-800/50">
+            <aside className="w-72 bg-surface-dark/90 backdrop-blur-xl border-r border-white/10 flex-shrink-0 flex flex-col">
+                <div className="p-6 border-b border-white/10">
                     <div className="flex items-center gap-3">
                         <img
                             src="/cabi-logo-dark.png"
@@ -222,8 +291,8 @@ function App() {
                             key={item.view}
                             onClick={() => setActiveView(item.view)}
                             className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === item.view
-                                ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-l-4 border-blue-500 text-white'
-                                : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+                                ? 'bg-gradient-to-r from-brand-yellow/20 to-executive-gold/10 border-l-4 border-brand-yellow text-brand-yellow'
+                                : 'text-gray-400 hover:bg-white/5 hover:text-white'
                                 }`}
                         >
                             {item.icon}
@@ -255,8 +324,8 @@ function App() {
                             key={item.view}
                             onClick={() => setActiveView(item.view)}
                             className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === item.view
-                                ? 'bg-gradient-to-r from-blue-600/25 to-cyan-600/15 border-l-4 border-blue-500 text-white'
-                                : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+                                ? 'bg-gradient-to-r from-brand-yellow/20 to-executive-gold/10 border-l-4 border-brand-yellow text-brand-yellow'
+                                : 'text-gray-400 hover:bg-white/5 hover:text-white'
                                 }`}
                         >
                             {item.icon}
@@ -309,9 +378,9 @@ function App() {
                 )}
 
                 {/* Footer */}
-                <div className="p-4 border-t border-slate-800/50">
+                <div className="p-4 border-t border-white/10">
                     <div className="flex items-center gap-3 px-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white text-sm font-bold">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-yellow to-executive-gold flex items-center justify-center text-black text-sm font-bold">
                             OP
                         </div>
                         <div className="flex-1 min-w-0">
@@ -334,7 +403,7 @@ function App() {
             {/* Main Content */}
             <main className="flex-1 overflow-hidden flex flex-col">
                 {/* Header */}
-                <header className="bg-slate-900/30 backdrop-blur-xl border-b border-slate-800/50 px-8 py-4">
+                <header className="bg-surface-dark/80 backdrop-blur-xl border-b border-white/10 px-8 py-4">
                     <div className="flex items-center justify-between">
                         <div>
                             <h2 className="text-2xl font-bold text-white capitalize">
@@ -360,7 +429,7 @@ function App() {
                             {isTripAnalyticsUndocked && (
                                 <button
                                     onClick={() => setActiveView('analytics')}
-                                    className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400 hover:bg-blue-500/20 text-xs font-semibold transition-all cursor-pointer shadow-sm"
+                                    className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-brand-yellow/10 border border-brand-yellow/30 text-brand-yellow hover:bg-brand-yellow/20 text-xs font-semibold transition-all cursor-pointer shadow-sm"
                                     title="Trip Monitoring is currently undocked on Screen 2. Click to view controls."
                                 >
                                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -442,13 +511,13 @@ function App() {
                                     <SurgeMonitor surgeZones={[]} />
                                 )}
                                 {activeView === 'trips' && (
-                                    <TripHistoryPage trips={[]} />
+                                    <TripHistoryPage trips={tripHistory} />
                                 )}
                                 {activeView === 'driver-history' && (
-                                    <DriverHistoryPage drivers={[]} />
+                                    <DriverHistoryPage drivers={driverHistory} />
                                 )}
                                 {activeView === 'passengers' && (
-                                    <PassengerManagementPage passengers={[]} />
+                                    <PassengerManagementPage passengers={passengersList} />
                                 )}
                             </>
                         );

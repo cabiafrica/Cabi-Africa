@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" height="100%">
+  <title>CABI Africa Driver Wealth Creation and Vehicle Ownership Track</title>
+  <desc>Vector infographic demonstrating 90 percent fare retention, instant daily mobile money settlement, and accelerated vehicle asset ownership for African drivers.</desc>
+  <defs>
+    <linearGradient id="sky-dusk" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E1B4B"/>
+      <stop offset="40%" stop-color="#312E81"/>
+      <stop offset="80%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFE088"/>
+      <stop offset="50%" stop-color="#FACC15"/>
+      <stop offset="100%" stop-color="#D4AF37"/>
+    </linearGradient>
+    <linearGradient id="matatu-paint" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EA580C"/>
+      <stop offset="50%" stop-color="#FACC15"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <filter id="card-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Sky Background -->
+  <rect width="1600" height="900" fill="url(#sky-dusk)"/>
+
+  <!-- City Skyline Silhouette -->
+  <g fill="#0F101A" opacity="0.85">
+    <rect x="80" y="240" width="110" height="260"/>
+    <rect x="220" y="160" width="140" height="340"/>
+    <polygon points="290,90 220,160 360,160"/>
+    <rect x="400" y="220" width="90" height="280"/>
+    <rect x="750" y="180" width="130" height="320"/>
+    <rect x="910" y="240" width="100" height="260"/>
+    <polygon points="960,150 910,240 1010,240"/>
+    <rect x="1350" y="210" width="120" height="290"/>
+    <rect x="1490" y="260" width="90" height="240"/>
+  </g>
+
+  <!-- Roadway Base -->
+  <polygon points="0,480 1600,480 1600,640 0,640" fill="#1C1E26"/>
+  <!-- Road Yellow Center Dashes -->
+  <line x1="100" y1="560" x2="300" y2="560" stroke="#FACC15" stroke-width="12" stroke-linecap="round"/>
+  <line x1="450" y1="560" x2="650" y2="560" stroke="#FACC15" stroke-width="12" stroke-linecap="round"/>
+  <line x1="800" y1="560" x2="1000" y2="560" stroke="#FACC15" stroke-width="12" stroke-linecap="round"/>
+  <line x1="1150" y1="560" x2="1350" y2="560" stroke="#FACC15" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- Iconic Vibrant Nairobi Matatu (Center-Left) with Humorous Quotes -->
+  <g transform="translate(180, 240)" filter="url(#card-shadow)">
+    <!-- Matatu Body -->
+    <rect x="60" y="100" width="460" height="230" rx="24" fill="#0F172A" stroke="#334155" stroke-width="4"/>
+    <!-- Top Aerodynamic Fin & Roof Rack -->
+    <rect x="100" y="70" width="380" height="30" rx="8" fill="#1E293B" stroke="#FACC15" stroke-width="2"/>
+    <!-- Luggage on rack -->
+    <rect x="140" y="42" width="70" height="28" rx="4" fill="#B45309"/>
+    <rect x="230" y="38" width="90" height="32" rx="4" fill="#047857"/>
+    <rect x="340" y="45" width="80" height="25" rx="4" fill="#1D4ED8"/>
+
+    <!-- Graffiti Banner Top -->
+    <rect x="80" y="115" width="420" height="36" rx="6" fill="#FACC15"/>
+    <text x="290" y="138" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="14" fill="#000" text-anchor="middle" letter-spacing="1">WHY RUSH WHEN NAIROBI IS BIG? 🚌</text>
+
+    <!-- Passenger Windows with geometric tints -->
+    <rect x="90" y="165" width="80" height="60" rx="8" fill="#38BDF8" opacity="0.3"/>
+    <rect x="185" y="165" width="80" height="60" rx="8" fill="#38BDF8" opacity="0.3"/>
+    <rect x="280" y="165" width="80" height="60" rx="8" fill="#38BDF8" opacity="0.3"/>
+    <rect x="375" y="165" width="110" height="60" rx="8" fill="#38BDF8" opacity="0.3"/>
+
+    <!-- Vibrant Graffiti Side Panel -->
+    <rect x="80" y="240" width="420" height="40" fill="url(#matatu-paint)"/>
+    <text x="290" y="266" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="13" fill="#FFF" text-anchor="middle" letter-spacing="2">PATIENCE PAYS &#8226; HAKUNA HARAKA</text>
+
+    <!-- Wheels -->
+    <circle cx="160" cy="330" r="42" fill="#0A0A0A" stroke="#64748B" stroke-width="8"/>
+    <circle cx="160" cy="330" r="16" fill="#CBD5E1"/>
+    <circle cx="430" cy="330" r="42" fill="#0A0A0A" stroke="#64748B" stroke-width="8"/>
+    <circle cx="430" cy="330" r="16" fill="#CBD5E1"/>
+  </g>
+
+  <!-- Witty Boda Boda with Tower of Avocado Crates (Center-Right) -->
+  <g transform="translate(730, 260)" filter="url(#card-shadow)">
+    <!-- Boda Motorcycle Silhouette -->
+    <path d="M 60 270 L 120 220 L 170 220 L 220 280" stroke="#E2E8F0" stroke-width="7" fill="none"/>
+    <circle cx="60" cy="280" r="32" fill="#0F172A" stroke="#D4AF37" stroke-width="6"/>
+    <circle cx="220" cy="280" r="32" fill="#0F172A" stroke="#D4AF37" stroke-width="6"/>
+    <!-- Yellow Helmet Silhouette -->
+    <circle cx="145" cy="180" r="18" fill="#FACC15" stroke="#000" stroke-width="2"/>
+    
+    <!-- Comically Tall Balanced Avocado Crates -->
+    <rect x="175" y="180" width="70" height="26" rx="4" fill="#15803D" stroke="#14532D" stroke-width="2"/>
+    <rect x="173" y="152" width="74" height="26" rx="4" fill="#166534" stroke="#14532D" stroke-width="2"/>
+    <rect x="176" y="124" width="68" height="26" rx="4" fill="#15803D" stroke="#14532D" stroke-width="2"/>
+    <rect x="174" y="96" width="72" height="26" rx="4" fill="#166534" stroke="#14532D" stroke-width="2"/>
+    <rect x="177" y="68" width="66" height="26" rx="4" fill="#15803D" stroke="#14532D" stroke-width="2"/>
+    <!-- Cute humorous tag on top crate -->
+    <rect x="130" y="38" width="150" height="24" rx="4" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+    <text x="205" y="54" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="9" fill="#92400E" text-anchor="middle">AFRICAN BALANCE 100% 🥑</text>
+  </g>
+
+  <!-- Foreground: Cabi Modern Cockpit & Sun Visor (Economic Dignity) -->
+  <path d="M 0 540 C 600 500, 1000 500, 1600 540 L 1600 900 L 0 900 Z" fill="#0D0F16" stroke="#25293A" stroke-width="5"/>
+  <path d="M 0 565 C 600 525, 1000 525, 1600 565" stroke="url(#gold-grad)" stroke-width="3" fill="none" opacity="0.8"/>
+
+  <!-- Left Dashboard Card: Driver's Upward Growth & Earnings Tablet -->
+  <g transform="translate(180, 560)" filter="url(#card-shadow)">
+    <rect x="0" y="0" width="380" height="260" rx="20" fill="#171A24" stroke="#2D3346" stroke-width="4"/>
+    <rect x="15" y="15" width="350" height="230" rx="14" fill="#0A0C12"/>
+    
+    <!-- Tablet Header -->
+    <rect x="25" y="25" width="330" height="36" rx="8" fill="#1E2333"/>
+    <circle cx="45" cy="43" r="6" fill="#10B981"/>
+    <text x="60" y="47" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="12" fill="#FFFFFF">CABI PARTNER DASHBOARD</text>
+    <text x="340" y="47" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="11" fill="#10B981" text-anchor="end">LIVE 90% PAYOUT</text>
+
+    <!-- Upward Growth Graph -->
+    <path d="M 45 150 Q 120 140, 180 110 T 320 68" fill="none" stroke="#FACC15" stroke-width="5" stroke-linecap="round"/>
+    <!-- Area under curve -->
+    <path d="M 45 150 Q 120 140, 180 110 T 320 68 L 320 170 L 45 170 Z" fill="#FACC15" opacity="0.12"/>
+    <!-- Points on graph -->
+    <circle cx="120" cy="135" r="5" fill="#FACC15"/>
+    <circle cx="210" cy="100" r="5" fill="#FACC15"/>
+    <circle cx="320" cy="68" r="7" fill="#10B981" stroke="#FFF" stroke-width="2"/>
+
+    <!-- Metrics Box -->
+    <rect x="25" y="180" width="155" height="52" rx="8" fill="#131722" stroke="#10B981" stroke-width="1.5"/>
+    <text x="35" y="198" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="9" fill="#94A3B8">DRIVER RETAINED</text>
+    <text x="35" y="222" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="18" fill="#10B981">90% FARE</text>
+
+    <rect x="195" y="180" width="160" height="52" rx="8" fill="#131722" stroke="#FACC15" stroke-width="1.5"/>
+    <text x="205" y="198" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="8.5" fill="#94A3B8">MOBILE MONEY SETTLEMENT</text>
+    <text x="205" y="222" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="16" fill="#FACC15">INSTANT DAILY</text>
+  </g>
+
+  <!-- Right Dashboard Card: Partner Wealth Certificate & Golden Car Key -->
+  <g transform="translate(680, 560)" filter="url(#card-shadow)">
+    <rect x="0" y="0" width="420" height="260" rx="20" fill="#171A24" stroke="#D4AF37" stroke-width="3"/>
+    
+    <!-- Wealth Badge Ribbon -->
+    <rect x="25" y="25" width="370" height="40" rx="10" fill="#D4AF37"/>
+    <text x="210" y="50" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="13" fill="#000" text-anchor="middle" letter-spacing="1">PARTNER WEALTH CREATION CERTIFICATE 🤝</text>
+
+    <text x="35" y="95" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="14" fill="#FFF">Vehicle Ownership Acceleration Track</text>
+    <text x="35" y="118" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="12" fill="#94A3B8">Daily trip miles build verified wealth creation equity credit.</text>
+
+    <!-- Progress Bar -->
+    <rect x="35" y="135" width="350" height="22" rx="11" fill="#0F172A" stroke="#334155" stroke-width="2"/>
+    <rect x="37" y="137" width="280" height="18" rx="9" fill="url(#gold-grad)"/>
+    <text x="180" y="151" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="11" fill="#000" text-anchor="middle">78% TOWARDS COMPLETE OWNERSHIP</text>
+
+    <!-- Golden Key Tag -->
+    <g transform="translate(35, 175)">
+      <rect x="0" y="0" width="350" height="60" rx="12" fill="#131722" stroke="#FACC15" stroke-width="1.5"/>
+      <!-- Key Graphic -->
+      <circle cx="35" cy="30" r="14" fill="none" stroke="#FACC15" stroke-width="4"/>
+      <line x1="49" y1="30" x2="85" y2="30" stroke="#FACC15" stroke-width="4"/>
+      <line x1="72" y1="30" x2="72" y2="38" stroke="#FACC15" stroke-width="4"/>
+      <line x1="82" y1="30" x2="82" y2="42" stroke="#FACC15" stroke-width="4"/>
+
+      <text x="100" y="27" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="13" fill="#FFFFFF">TARGET: 100% CAR OWNER IN 2027</text>
+      <text x="100" y="47" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="10.5" fill="#10B981">"No more endless rental fees. Dignity achieved."</text>
+    </g>
+  </g>
+
+  <!-- Bottom Title Ribbon -->
+  <g transform="translate(800, 855)" text-anchor="middle">
+    <text font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="19" fill="#FFFFFF" letter-spacing="0.5">THE ROAD TO DIGNITY</text>
+    <text y="24" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="12" fill="#D4AF37" letter-spacing="2">FAIR REVENUE &#183; DRIVER WEALTH CREATION &#183; PROUD PARTNERS</text>
+  </g>
+</svg>

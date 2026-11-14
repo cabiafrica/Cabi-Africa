@@ -62,6 +62,7 @@ export class JwtAuthGuard implements CanActivate {
             // Attach user to request with flat permissions array
             request.user = {
                 ...user,
+                identityVerified: payload.identityVerified === true,
                 permissions: Array.from(permissionsSet)
             };
 

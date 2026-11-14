@@ -161,21 +161,21 @@ export default function CommunicationsPage() {
                 {/* Featured Content Section */}
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                     {/* Section Header */}
-                    <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-6">
+                    <div className="bg-gradient-to-r from-cyan-600 to-cyan-700 text-white p-6">
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="text-2xl font-bold">What's New - {isExperiment ? 'A/B Test' : 'Featured Content'}</h2>
-                                <p className="text-purple-100 mt-1">
+                                <p className="text-cyan-100 mt-1">
                                     Manage the content displayed on user home screens
                                 </p>
                             </div>
                             <div className="flex items-center space-x-4">
-                                <label className="flex items-center space-x-2 cursor-pointer bg-purple-800 bg-opacity-50 px-3 py-1 rounded-full hover:bg-opacity-75 transition">
+                                <label className="flex items-center space-x-2 cursor-pointer bg-cyan-800 bg-opacity-50 px-3 py-1 rounded-full hover:bg-opacity-75 transition">
                                     <input
                                         type="checkbox"
                                         checked={isExperiment}
                                         onChange={(e) => setIsExperiment(e.target.checked)}
-                                        className="form-checkbox text-purple-400"
+                                        className="form-checkbox text-cyan-400"
                                     />
                                     <span className="text-sm font-medium">Enable A/B Testing</span>
                                 </label>
@@ -200,7 +200,7 @@ export default function CommunicationsPage() {
                                         key={v.id}
                                         onClick={() => setActiveVariantIndex(idx)}
                                         className={`pb-2 px-4 font-medium transition-colors ${activeVariantIndex === idx
-                                            ? 'border-b-2 border-purple-600 text-purple-600'
+                                            ? 'border-b-2 border-cyan-600 text-cyan-600'
                                             : 'text-gray-500 hover:text-gray-700'
                                             }`}
                                     >
@@ -248,7 +248,7 @@ export default function CommunicationsPage() {
                             <div className="mb-8 border rounded-lg overflow-hidden">
                                 <div className="bg-gray-50 px-4 py-2 border-b font-bold flex justify-between">
                                     <span>Experiment Results</span>
-                                    <span className={experimentResults.winner ? 'text-green-600' : 'text-blue-600'}>{experimentResults.status}</span>
+                                    <span className={experimentResults.winner ? 'text-green-600' : 'text-amber-600'}>{experimentResults.status}</span>
                                 </div>
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead>
@@ -290,7 +290,7 @@ export default function CommunicationsPage() {
                                     type="text"
                                     value={activeData.title}
                                     onChange={(e) => updateActiveData({ title: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
                                     placeholder="e.g., New Driver Organizations Feature"
                                     maxLength={60}
                                 />
@@ -308,7 +308,7 @@ export default function CommunicationsPage() {
                                     value={activeData.description}
                                     onChange={(e) => updateActiveData({ description: e.target.value })}
                                     rows={3}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
                                     placeholder="Brief description of what's new..."
                                     maxLength={120}
                                 />
@@ -326,7 +326,7 @@ export default function CommunicationsPage() {
                                     type="url"
                                     value={activeData.imageUrl}
                                     onChange={(e) => updateActiveData({ imageUrl: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
                                     placeholder="https://example.com/image.jpg"
                                 />
                                 <p className="text-xs text-gray-500 mt-1">
@@ -343,7 +343,7 @@ export default function CommunicationsPage() {
                                     type="text"
                                     value={activeData.destinationLink}
                                     onChange={(e) => updateActiveData({ destinationLink: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
                                     placeholder="https://example.com/blog/post or app://screen/name"
                                 />
                                 <p className="text-xs text-gray-500 mt-1">
@@ -426,7 +426,7 @@ export default function CommunicationsPage() {
                                 <button
                                     onClick={handlePublish}
                                     disabled={!activeData.title || !activeData.destinationLink}
-                                    className="px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                                    className="px-8 py-3 bg-gradient-to-r from-cyan-600 to-cyan-700 text-white rounded-lg hover:from-cyan-700 hover:to-cyan-800 transition-all font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -440,10 +440,10 @@ export default function CommunicationsPage() {
 
                 {/* Info Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
                         <div className="flex items-center space-x-3 mb-3">
-                            <div className="p-2 bg-blue-100 rounded-lg">
-                                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="p-2 bg-amber-100 rounded-lg">
+                                <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
@@ -468,10 +468,10 @@ export default function CommunicationsPage() {
                         </p>
                     </div>
 
-                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+                    <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-6">
                         <div className="flex items-center space-x-3 mb-3">
-                            <div className="p-2 bg-purple-100 rounded-lg">
-                                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="p-2 bg-cyan-100 rounded-lg">
+                                <svg className="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                 </svg>

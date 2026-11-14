@@ -69,7 +69,7 @@ export const LiveMap: React.FC = () => {
                     <h3 class="font-bold text-sm mb-1">${d.name || 'Unknown Driver'}</h3>
                     <div class="flex items-center gap-2 text-xs">
                         <span class="px-2 py-0.5 rounded-full ${d.status === 'AVAILABLE' ? 'bg-green-100 text-green-800' :
-                    d.status === 'ON_TRIP' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+                    d.status === 'ON_TRIP' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800'
                 }">
                             ${d.status}
                         </span>
@@ -82,7 +82,7 @@ export const LiveMap: React.FC = () => {
     }, [drivers, filter]);
 
     return (
-        <div className="relative h-[calc(100vh-100px)] bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800">
+        <div className="relative h-[calc(100vh-100px)] bg-slate-100 dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-white/10">
             {/* Map Container */}
             <div className="absolute inset-0 z-0">
                 <CabiMap
@@ -97,11 +97,11 @@ export const LiveMap: React.FC = () => {
             <div className="absolute top-4 left-4 z-10 w-80 flex flex-col gap-4">
 
                 {/* Stats Card */}
-                <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md p-4 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700">
+                <div className="bg-white/95 dark:bg-card-dark/95 backdrop-blur-md p-4 rounded-xl shadow-xl border border-slate-200 dark:border-white/10">
                     <div className="flex justify-between items-start mb-4">
                         <div>
                             <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <Map fontSize="small" className="text-blue-600" />
+                                <Map fontSize="small" className="text-amber-600" />
                                 Live Operations
                             </h2>
                             <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -133,11 +133,11 @@ export const LiveMap: React.FC = () => {
                         <div
                             onClick={() => setFilter('ON_TRIP')}
                             className={`p-2 rounded-lg cursor-pointer transition-all border ${filter === 'ON_TRIP'
-                                    ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/30 dark:border-blue-800'
+                                    ? 'bg-amber-50 border-amber-200 dark:bg-amber-900/30 dark:border-amber-800'
                                     : 'bg-slate-50 border-transparent hover:bg-slate-100 dark:bg-slate-700/50'
                                 }`}
                         >
-                            <div className="text-blue-600 dark:text-blue-400 mb-1"><DirectionsCar fontSize="small" /></div>
+                            <div className="text-amber-600 dark:text-amber-400 mb-1"><DirectionsCar fontSize="small" /></div>
                             <div className="text-2xl font-bold text-slate-900 dark:text-white">{stats.onTrip}</div>
                             <div className="text-[10px] font-semibold text-slate-500 uppercase">On Trip</div>
                         </div>
@@ -157,7 +157,7 @@ export const LiveMap: React.FC = () => {
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md p-3 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 flex flex-col gap-2">
+                <div className="bg-white/95 dark:bg-card-dark/95 backdrop-blur-md p-3 rounded-xl shadow-xl border border-slate-200 dark:border-white/10 flex flex-col gap-2">
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1">
                             <Layers fontSize="small" /> Map Filters
@@ -165,7 +165,7 @@ export const LiveMap: React.FC = () => {
                         {filter !== 'ALL' && (
                             <button
                                 onClick={() => setFilter('ALL')}
-                                className="text-xs text-blue-600 font-bold hover:underline"
+                                className="text-xs text-amber-600 font-bold hover:underline"
                             >
                                 Clear
                             </button>
@@ -189,7 +189,7 @@ export const LiveMap: React.FC = () => {
             </div>
 
             {/* Legend / Status Bar (Bottom) */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-6 py-2 rounded-full shadow-lg border border-slate-200 dark:border-slate-700 flex gap-6 text-xs font-medium">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 bg-white/90 dark:bg-surface-dark/90 backdrop-blur px-6 py-2 rounded-full shadow-lg border border-slate-200 dark:border-white/10 flex gap-6 text-xs font-medium">
                 <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></span>
                     <span className="text-slate-700 dark:text-slate-300">Live Updates Active</span>

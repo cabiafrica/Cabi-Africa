@@ -64,7 +64,7 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 required
-                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border text-gray-900"
+                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900"
                 placeholder="Enter a catchy title..."
               />
             </div>
@@ -75,7 +75,7 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
                 value={authorName}
                 onChange={e => setAuthorName(e.target.value)}
                 required
-                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border text-gray-900"
+                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900"
                 placeholder="Author"
               />
             </div>
@@ -86,7 +86,7 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
                 value={imageUrl}
                 onChange={e => setImageUrl(e.target.value)}
                 required
-                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border text-gray-900"
+                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900"
                 placeholder="https://example.com/image.jpg"
               />
             </div>
@@ -141,7 +141,7 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
           <select
             value={status}
             onChange={e => setStatus(e.target.value as any)}
-            className="w-full md:w-64 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border text-gray-900 font-medium"
+            className="w-full md:w-64 border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900 font-medium"
           >
             <option value="DRAFT">📝 Draft (Internal Only)</option>
             <option value="PENDING_APPROVAL">⏳ Ready for Approval (Notify Manager)</option>
@@ -166,7 +166,7 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50"
+            className="bg-amber-500 hover:bg-amber-600 text-black px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50"
           >
             {isLoading ? 'Saving...' : 'Save Post'}
           </button>

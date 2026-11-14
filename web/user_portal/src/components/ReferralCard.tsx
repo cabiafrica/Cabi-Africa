@@ -176,7 +176,7 @@ export default function ReferralCard({
                     <div className="bg-white rounded-2xl p-8 max-w-sm w-full">
                         <h4 className="text-xl font-bold text-gray-900 mb-4 text-center">Scan to Register</h4>
                         <div className="bg-white p-4 rounded-xl border-4 border-gray-200 mb-4">
-                            <img src={qrCodeUrl} alt="Referral QR Code" className="w-full" />
+                            <img src={qrCodeUrl} alt={`CABI Africa referral invite QR code for invitation code ${referralCode}`} width={240} height={240} loading="lazy" decoding="async" className="w-full" />
                         </div>
                         <p className="text-sm text-gray-600 text-center mb-4">
                             Code: <span className="font-bold text-gray-900">{referralCode}</span>

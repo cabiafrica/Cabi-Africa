@@ -64,7 +64,7 @@ export const DriverApprovalDashboard: React.FC = () => {
   const getStatusBadge = (status: string, score: number) => {
     if (status === 'APPROVED') return <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold">APPROVED</span>;
     if (status === 'REJECTED') return <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold">REJECTED</span>;
-    if (score >= 90) return <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-bold flex items-center gap-1"><FaRobot /> AUTO-APPROVE READY</span>;
+    if (score >= 90) return <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded text-xs font-bold flex items-center gap-1"><FaRobot /> AUTO-APPROVE READY</span>;
     if (score >= 70) return <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded text-xs font-bold flex items-center gap-1"><FaUser /> MANUAL REVIEW</span>;
     return <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold flex items-center gap-1"><FaRobot /> AUTO-REJECT</span>;
   };
@@ -114,7 +114,7 @@ export const DriverApprovalDashboard: React.FC = () => {
                 placeholder="Search name, ID, or plate..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-500 dark:bg-gray-700 dark:text-white"
               />
             </div>
           </div>
@@ -124,7 +124,7 @@ export const DriverApprovalDashboard: React.FC = () => {
               <div
                 key={driver.id}
                 onClick={() => setSelectedDriver(driver)}
-                className={`p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer transition-colors ${selectedDriver?.id === driver.id ? 'bg-indigo-50 dark:bg-indigo-900/30 border-l-4 border-l-indigo-500' : 'hover:bg-gray-50 dark:hover:bg-gray-750 border-l-4 border-l-transparent'}`}
+                className={`p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer transition-colors ${selectedDriver?.id === driver.id ? 'bg-cyan-50 dark:bg-cyan-900/30 border-l-4 border-l-cyan-500' : 'hover:bg-gray-50 dark:hover:bg-gray-750 border-l-4 border-l-transparent'}`}
               >
                 <div className="flex justify-between items-start mb-2">
                   <div>
@@ -207,7 +207,7 @@ export const DriverApprovalDashboard: React.FC = () => {
                   <div className="flex items-center gap-4 mt-2">
                     <span className="font-mono bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded text-gray-800 dark:text-gray-200 font-bold tracking-widest">{selectedDriver.vehicle.plate}</span>
                     {selectedDriver.vehicle.allowCoDriver && (
-                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">CO-DRIVER ALLOWED</span>
+                      <span className="bg-amber-100 text-amber-800 px-2 py-1 rounded text-xs font-semibold">CO-DRIVER ALLOWED</span>
                     )}
                   </div>
                 </div>
@@ -258,8 +258,8 @@ export const DriverApprovalDashboard: React.FC = () => {
             
             <div className="space-y-4 mb-8">
               {['Standard', 'PSV (Matatu)', 'Premium', 'Boda Boda', 'Delivery'].map(cat => (
-                <label key={cat} className={`flex items-center p-4 border rounded-xl cursor-pointer transition-colors ${selectedCategory === cat ? 'bg-indigo-50 border-indigo-500 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750'}`}>
-                  <input type="radio" name="category" value={cat} checked={selectedCategory === cat} onChange={() => setSelectedCategory(cat)} className="h-5 w-5 text-indigo-600" />
+                <label key={cat} className={`flex items-center p-4 border rounded-xl cursor-pointer transition-colors ${selectedCategory === cat ? 'bg-cyan-50 border-cyan-500 dark:bg-cyan-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750'}`}>
+                  <input type="radio" name="category" value={cat} checked={selectedCategory === cat} onChange={() => setSelectedCategory(cat)} className="h-5 w-5 text-cyan-600" />
                   <span className="ml-3 font-medium text-gray-900 dark:text-white">{cat}</span>
                 </label>
               ))}

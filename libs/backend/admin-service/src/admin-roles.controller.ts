@@ -5,12 +5,13 @@ import { AdminRolesService } from './admin-roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { PermissionsGuard, JwtAuthGuard } from '@cabi/backend/rbac';
+import { AdminPermissionGuard } from './admin-permission.guard';
 
 /**
  * Controller for managing admin roles and permissions.
  */
 @Controller('admin/roles')
-@UseGuards(JwtAuthGuard, PermissionsGuard)
+@UseGuards(JwtAuthGuard, AdminPermissionGuard, PermissionsGuard)
 export class AdminRolesController {
     constructor(private readonly rolesService: AdminRolesService) { }
 

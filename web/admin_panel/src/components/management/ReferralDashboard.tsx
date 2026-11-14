@@ -83,7 +83,7 @@ export const ReferralDashboard: React.FC = () => {
                             {stats.topReferrers.map((referrer) => (
                                 <li key={referrer.driverId} className="py-3 flex justify-between items-center">
                                     <div className="flex items-center gap-3">
-                                        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
+                                        <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold text-xs">
                                             {referrer.name.charAt(0)}
                                         </div>
                                         <div>

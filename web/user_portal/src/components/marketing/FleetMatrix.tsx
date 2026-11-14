@@ -26,7 +26,7 @@ const FLEET_TIERS: FleetTier[] = [
         capacity: '1 Passenger',
         trafficIndex: 'Express City Transit',
         highlight: 'Fastest in Congestion',
-        features: ['Sanitized dual helmets', 'Live ride sharing', 'Trained defensive riders', 'Direct M-Pesa fare'],
+        features: ['Sanitized dual helmets', 'Live ride sharing', 'Trained defensive riders', 'Direct mobile money fare'],
     },
     {
         id: 'cabigo',

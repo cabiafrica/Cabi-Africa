@@ -73,7 +73,7 @@ export default function SurgePricingPage() {
                 </div>
                 <button
                     onClick={() => setShowCreateForm(!showCreateForm)}
-                    className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+                    className="bg-amber-500 text-black px-6 py-2 rounded hover:bg-amber-700"
                 >
                     {showCreateForm ? 'Cancel' : '+ Create Zone'}
                 </button>
@@ -137,7 +137,7 @@ export default function SurgePricingPage() {
                         {zones.map((zone) => (
                             <div
                                 key={zone.id}
-                                className={`p-3 rounded border-2 ${zone.isActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-50'
+                                className={`p-3 rounded border-2 ${zone.isActive ? 'border-amber-500 bg-amber-50' : 'border-gray-300 bg-gray-50'
                                     }`}
                             >
                                 <div className="flex justify-between items-start mb-2">
@@ -159,7 +159,7 @@ export default function SurgePricingPage() {
                                 <div className="flex gap-2 mt-2">
                                     <button
                                         onClick={() => toggleActive(zone.id)}
-                                        className="text-xs text-blue-600 hover:underline"
+                                        className="text-xs text-amber-600 hover:underline"
                                     >
                                         {zone.isActive ? 'Deactivate' : 'Activate'}
                                     </button>
@@ -206,7 +206,7 @@ export default function SurgePricingPage() {
                 </div>
                 <div className="bg-white p-4 rounded shadow">
                     <h3 className="text-sm text-gray-600 mb-1">Surge Revenue (Mock)</h3>
-                    <p className="text-2xl font-bold text-blue-600">$12,450</p>
+                    <p className="text-2xl font-bold text-amber-600">$12,450</p>
                 </div>
             </div>
         </div>

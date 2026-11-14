@@ -41,6 +41,8 @@ export default function ForDriversPage(
     <MainLayout
       title={`${t('drivers_hero_title')} | CABI`}
       description={t('drivers_hero_subtitle')}
+      image="/images/driver-partner-ecosystem.jpg"
+      imageAlt="CABI Africa driver-partner platform — reusable commission model, vehicle asset equity, and wealth creation"
     >
       {/* Hero Section (Obsidian-Gold Identity) */}
       <section className="relative bg-slate-50 dark:bg-surface-dark text-slate-900 dark:text-white pt-12 pb-16 sm:pt-20 sm:pb-24 overflow-hidden border-b border-slate-200 dark:border-white/10 transition-colors duration-300">
@@ -116,7 +118,7 @@ export default function ForDriversPage(
                   Our Business Builder system is what sets CABI apart. It is not just about earning per trip; it is about growing a sustainable mobility enterprise on your own terms.
                 </p>
                 <p>
-                  Refer fellow drivers and fleet operators to earn ongoing commissions from completed trips across your network—supported by instant M-Pesa settlements and transparent analytics.
+                  Refer fellow drivers and fleet operators to earn ongoing 2-level referral shares from completed trips across your network—supported by instant mobile money settlements and transparent analytics.
                 </p>
               </div>
 
@@ -134,7 +136,7 @@ export default function ForDriversPage(
                 <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-900">
                   <Image
                     src="/images/driver-analytics-graph.jpg"
-                    alt="CABI Business Builder analytical earnings and referral growth graph"
+                    alt="CABI Africa Business Builder dashboard displaying driver-partner earnings, network referrals, and wealth creation metrics"
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-cover"
@@ -210,6 +212,13 @@ export default function ForDriversPage(
             role: 'Driver in Nairobi',
             avatarUrl: '/avatars/driver2.png',
           },
+          {
+            quote:
+              'With Cabi\'s reusable commission model and automated servicing reserves dedicated to wealth creation, repairing and maintaining my vehicle has become completely effortless. Fresh brake pads, genuine oil, and zero breakdown anxiety. Passengers always compliment how clean, smooth, and well-maintained the car is.',
+            name: 'Josphat K.',
+            role: 'Veteran Driver Partner, Nairobi',
+            avatarUrl: '/avatars/driver3.png',
+          },
         ]}
       />
 
@@ -234,7 +243,7 @@ export default function ForDriversPage(
               </h2>
 
               <p className="text-sm sm:text-lg text-neutral-300 mb-8 leading-relaxed">
-                Complete digital verification individually or onboard your SACCO &amp; fleet partners directly through the portal.
+                Complete digital verification individually or onboard your fleet &amp; wealth creation partners directly through the portal.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -251,7 +260,7 @@ export default function ForDriversPage(
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-white/5 text-white border border-white/15 font-bold text-sm hover:border-[#D4AF37]/60 hover:text-[#ffe088] transition-all duration-300"
                 >
                   <Users className="w-4 h-4" />
-                  <span>Fleet &amp; SACCO Registration</span>
+                  <span>Fleet &amp; Wealth Group Registration</span>
                 </Link>
               </div>
 

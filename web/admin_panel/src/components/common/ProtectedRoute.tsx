@@ -18,11 +18,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const { user, isAuthenticated } = useAuthContext();
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !user || user.identityVerified !== true) {
     return <Navigate to="/login" replace />;
   }
-
-  if (!user) return null;
 
   // Administrative override: Super Admins and Admins have all permissions
   const role = (user.role as string)?.toUpperCase();

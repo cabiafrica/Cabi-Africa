@@ -144,12 +144,12 @@ export const SosIncidentDashboard: React.FC<Props> = ({ incidentId, onBack }) =>
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <p className="text-xs text-gray-500 uppercase font-bold">Upline 1</p>
                   <p className="font-semibold">{incident.upline1.name}</p>
-                  <p className="text-sm text-blue-600">{incident.upline1.phone}</p>
+                  <p className="text-sm text-amber-600">{incident.upline1.phone}</p>
                 </div>
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <p className="text-xs text-gray-500 uppercase font-bold">Upline 2</p>
                   <p className="font-semibold">{incident.upline2.name}</p>
-                  <p className="text-sm text-blue-600">{incident.upline2.phone}</p>
+                  <p className="text-sm text-amber-600">{incident.upline2.phone}</p>
                 </div>
               </div>
             </div>
@@ -184,7 +184,7 @@ export const SosIncidentDashboard: React.FC<Props> = ({ incidentId, onBack }) =>
                     value={newLog}
                     onChange={(e) => setNewLog(e.target.value)}
                     placeholder="Record action taken..."
-                    className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+                    className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none resize-none"
                     rows={3}
                   />
                   <button

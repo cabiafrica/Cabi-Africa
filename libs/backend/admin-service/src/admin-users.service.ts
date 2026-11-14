@@ -1,12 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
+import { NotificationService } from '@cabi/backend/notification-service';
 import * as bcrypt from 'bcryptjs';
 import { AdminUser, Permission } from './admin.types'; // We'll define these types
 import { Permission as PrismaPermission } from '@prisma/client';
 
 @Injectable()
 export class AdminUsersService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly notificationService: NotificationService,
+    ) { }
 
     async findAll(): Promise<AdminUser[]> {
         const users = await this.prisma.user.findMany({
@@ -57,37 +61,120 @@ export class AdminUsersService {
         };
     }
 
-    // Create Admin User (Invite flow - simplified)
-    async create(email: string, roleNames: string[]): Promise<AdminUser> {
-        // In a real app, check if user exists, if not create placeholder/invite.
-        // For now, assuming user creation is handled via Auth service, so this might just be "promoting" an existing user or failing if not found.
-        // However, if we want to "Create Admin User" from UI, we likely need to create a User record.
+    // Create Admin User with Dual-Email Dispatch & Temporary Credentials
+    async create(email: string, roleNames: string[]): Promise<AdminUser & { tempPassword?: string; verificationPin?: string }> {
+        const tempPassword = `Cabi#${Math.random().toString(36).substring(2, 7).toUpperCase()}!${Math.floor(10 + Math.random() * 90)}`;
+        const verificationPin = `${Math.floor(100000 + Math.random() * 900000)}`;
+        const hashedPassword = await bcrypt.hash(tempPassword, 10);
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-        // Check if user exists by email
         let user = await this.prisma.user.findUnique({ where: { email } });
         if (!user) {
-            const tempPassword = `Temp${Math.random().toString(36).substring(2, 10)}!`;
-            const hashedPassword = await bcrypt.hash(tempPassword, 10);
-
-            // Create basic user
             user = await this.prisma.user.create({
                 data: {
                     email,
-                    password: hashedPassword, // Properly hashed password
+                    password: hashedPassword,
                     fullName: email.split('@')[0],
-                    phone: `+000${Math.floor(Math.random() * 1000000000)}`, // Placeholder
-                    role: 'ADMIN'
+                    phone: `+2547${Math.floor(10000000 + Math.random() * 90000000)}`,
+                    role: 'ADMIN',
+                    isIdentityVerified: false,
+                    isEmailVerified: false,
+                    forgotEmailOtp: verificationPin,
+                    forgotEmailOtpExpires: expiresAt,
+                    privacySettings: {
+                        isTemporaryPassword: true,
+                        tempPasswordExpiresAt: expiresAt.toISOString(),
+                        onboardingCompleted: false,
+                        securityQuestions: [],
+                    },
                 }
             });
-
-            // TODO: Send invite email with tempPassword
-            console.log(`Admin user created with temporary password: ${tempPassword}`);
+        } else {
+            const currentPrivacy = (user.privacySettings as any) || {};
+            user = await this.prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    password: hashedPassword,
+                    role: 'ADMIN',
+                    isIdentityVerified: false,
+                    forgotEmailOtp: verificationPin,
+                    forgotEmailOtpExpires: expiresAt,
+                    privacySettings: {
+                        ...currentPrivacy,
+                        isTemporaryPassword: true,
+                        tempPasswordExpiresAt: expiresAt.toISOString(),
+                        onboardingCompleted: false,
+                    },
+                }
+            });
         }
 
-        // Assign roles
+        // Assign specified roles
         await this.updateRoles(user.id, roleNames);
 
-        return this.findOne(user.id);
+        // 1. Send Email 1: Username & Temporary Password
+        const adminPanelUrl = process.env.ADMIN_PANEL_URL || 'http://localhost:5173';
+        const email1Html = `
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #f8fafc; padding: 40px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #27272a;">
+  <div style="text-align: center; margin-bottom: 24px;">
+    <h1 style="color: #F59E0B; margin: 0; font-size: 24px; letter-spacing: 2px;">CABI AFRICA</h1>
+    <p style="color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px;">Institutional Administrative Access</p>
+  </div>
+  <div style="background: #18181b; padding: 24px; border-radius: 8px; border: 1px solid #3f3f46; margin-bottom: 24px;">
+    <h2 style="color: #ffffff; font-size: 16px; margin-top: 0;">Administrative Credentials (Email 1 of 2)</h2>
+    <p style="color: #cbd5e1; font-size: 14px; line-height: 1.6;">You have been provisioned administrative access on the Cabi Africa Platform. Use these initial credentials for your first sign-in:</p>
+    <div style="background: #09090b; padding: 16px; border-radius: 6px; margin: 16px 0; border-left: 4px solid #F59E0B;">
+      <p style="margin: 4px 0; color: #94a3b8; font-size: 12px;">USERNAME / EMAIL:</p>
+      <p style="margin: 0 0 12px 0; color: #ffffff; font-size: 15px; font-weight: bold;">${email}</p>
+      <p style="margin: 4px 0; color: #94a3b8; font-size: 12px;">TEMPORARY PASSWORD:</p>
+      <p style="margin: 0; color: #F59E0B; font-size: 18px; font-weight: bold; font-family: monospace;">${tempPassword}</p>
+    </div>
+    <p style="color: #ef4444; font-size: 12px; font-weight: 600; margin-bottom: 0;">⚠️ Security Notice: This temporary password expires in 24 hours. Rotation is mandatory upon sign-in.</p>
+  </div>
+  <p style="color: #64748b; font-size: 12px; text-align: center;">For security verification, your activation PIN has been sent separately in Email 2.</p>
+</div>
+`;
+        await this.notificationService.sendEmail(
+            email,
+            'Your Cabi Africa Administrator Credentials',
+            email1Html
+        );
+
+        // 2. Send Email 2: Security Verification PIN & Activation Link
+        const activationLink = `${adminPanelUrl}/login?verify=${verificationPin}&email=${encodeURIComponent(email)}`;
+        const email2Html = `
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #f8fafc; padding: 40px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #27272a;">
+  <div style="text-align: center; margin-bottom: 24px;">
+    <h1 style="color: #F59E0B; margin: 0; font-size: 24px; letter-spacing: 2px;">CABI AFRICA</h1>
+    <p style="color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px;">Identity & Security Verification</p>
+  </div>
+  <div style="background: #18181b; padding: 24px; border-radius: 8px; border: 1px solid #3f3f46; margin-bottom: 24px;">
+    <h2 style="color: #ffffff; font-size: 16px; margin-top: 0;">Security Verification PIN (Email 2 of 2)</h2>
+    <p style="color: #cbd5e1; font-size: 14px; line-height: 1.6;">To finalize identity verification and configure your security safeguards, use the 6-digit PIN below:</p>
+    <div style="text-align: center; background: #09090b; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px dashed #F59E0B;">
+      <span style="font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #F59E0B; font-family: monospace;">${verificationPin}</span>
+    </div>
+    <div style="text-align: center; margin: 24px 0;">
+      <a href="${activationLink}" style="background: #F59E0B; color: #000000; padding: 12px 28px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;">Activate Administrator Account</a>
+    </div>
+    <p style="color: #94a3b8; font-size: 12px; margin-bottom: 0;">This PIN unlocks the mandatory Security Questions, Authenticator MFA (TOTP), and Biometrics enrollment wizard.</p>
+  </div>
+</div>
+`;
+        await this.notificationService.sendEmail(
+            email,
+            'Security Verification PIN & Account Activation',
+            email2Html
+        );
+
+        console.log(`[AdminUsersService] 🔐 Dual emails dispatched to ${email}: TempPass="${tempPassword}", VerificationPIN="${verificationPin}"`);
+
+        const createdUser = await this.findOne(user.id);
+        return {
+            ...createdUser,
+            tempPassword,
+            verificationPin,
+        };
     }
 
     async updateRoles(userId: string, roleNames: string[]) {

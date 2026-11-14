@@ -210,7 +210,7 @@ class _MapPinPickerScreenState extends State<MapPinPickerScreen> {
                     ),
                     child: Text(
                       widget.title,
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: isDark ? Colors.white : Colors.black87,
@@ -281,7 +281,7 @@ class _MapPinPickerScreenState extends State<MapPinPickerScreen> {
                       const SizedBox(width: 6),
                       Text(
                         'PINNED LOCATION',
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.0,
@@ -302,7 +302,7 @@ class _MapPinPickerScreenState extends State<MapPinPickerScreen> {
                   // Formatted Address
                   Text(
                     _address,
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black87,
@@ -343,7 +343,7 @@ class _MapPinPickerScreenState extends State<MapPinPickerScreen> {
                       icon: const Icon(Icons.check_circle_rounded, size: 20, color: Colors.black),
                       label: Text(
                         'Select This Location',
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.3,

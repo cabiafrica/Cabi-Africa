@@ -78,7 +78,7 @@ export const DriverApplicationDetail: React.FC<Props> = ({ applicationId, onBack
 
   if (!application) return (
     <div className="flex items-center justify-center h-64">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
     </div>
   );
 
@@ -123,7 +123,7 @@ export const DriverApplicationDetail: React.FC<Props> = ({ applicationId, onBack
             <h2 className="text-xl font-bold text-gray-900">Applicant Details</h2>
             <button
               onClick={() => setIsEditModalOpen(true)}
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium hover:underline"
+              className="text-sm text-amber-600 hover:text-amber-800 font-medium hover:underline"
             >
               Edit
             </button>
@@ -166,10 +166,10 @@ export const DriverApplicationDetail: React.FC<Props> = ({ applicationId, onBack
           <h2 className="text-xl font-bold text-gray-900 mb-6">Document Verification</h2>
           <div className="space-y-6">
             {application.documents.map(doc => (
-              <div key={doc.id} className="border border-gray-200 rounded-lg p-4 hover:border-blue-200 transition-colors">
+              <div key={doc.id} className="border border-gray-200 rounded-lg p-4 hover:border-amber-200 transition-colors">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
+                    <div className="h-10 w-10 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600">
                       📄
                     </div>
                     <div>
@@ -179,7 +179,7 @@ export const DriverApplicationDetail: React.FC<Props> = ({ applicationId, onBack
                           href={doc.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 hover:underline"
+                          className="text-amber-600 hover:text-amber-800 hover:underline"
                         >
                           View Document &rarr;
                         </a>

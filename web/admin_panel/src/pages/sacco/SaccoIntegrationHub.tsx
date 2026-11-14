@@ -806,7 +806,7 @@ function FinancialTab() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             {[
               { label: 'Not Enrolled', data: preview.notEnrolled, color: 'border-gray-500/30' },
-              { label: 'Enrolled (no incentive)', data: preview.enrolled, color: 'border-blue-500/30' },
+              { label: 'Enrolled (no incentive)', data: preview.enrolled, color: 'border-amber-500/30' },
               { label: 'Enrolled + Incentive', data: preview.enrolledWithIncentive, color: 'border-green-500/30' },
             ].map(({ label, data, color }) => (
               <div key={label} className={`p-4 rounded-xl border ${color} bg-white/5`}>

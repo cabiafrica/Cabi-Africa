@@ -29,7 +29,7 @@ export default function AboutUsManagementPage() {
                     <h1 className="text-2xl font-bold">Manage "About Us" Page</h1>
                     <p className="text-gray-600">Edit the content of the public About Us page.</p>
                 </div>
-                <button className="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50">
+                <button className="text-amber-600 border border-amber-600 px-4 py-2 rounded hover:bg-amber-50">
                     View Live Page
                 </button>
             </div>
@@ -40,7 +40,7 @@ export default function AboutUsManagementPage() {
                     ℹ️ Tip: This is a raw HTML editor. Use standard tags like &lt;h1&gt;, &lt;p&gt;, &lt;strong&gt;, etc.
                 </div>
                 <textarea
-                    className="w-full h-96 p-4 border rounded font-mono text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full h-96 p-4 border rounded font-mono text-sm focus:ring-2 focus:ring-amber-500 outline-none"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     spellCheck={false}
@@ -59,7 +59,7 @@ export default function AboutUsManagementPage() {
                         <button
                             onClick={handleSave}
                             disabled={loading}
-                            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                            className="bg-amber-500 text-black px-6 py-2 rounded hover:bg-amber-700 disabled:opacity-50 transition-colors"
                         >
                             {loading ? 'Saving...' : 'Save Changes'}
                         </button>

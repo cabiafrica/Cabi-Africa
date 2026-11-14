@@ -41,8 +41,8 @@ export const ExportableReports: React.FC = () => {
   const getReportIcon = (type: ReportType) => {
     switch (type) {
       case 'FINANCIAL_SUMMARY': return <ReceiptLong className="text-green-600 dark:text-green-400" />;
-      case 'DRIVER_PERFORMANCE': return <Person className="text-blue-600 dark:text-blue-400" />;
-      case 'TRIP_LOGS': return <TableChart className="text-purple-600 dark:text-purple-400" />;
+      case 'DRIVER_PERFORMANCE': return <Person className="text-amber-600 dark:text-amber-400" />;
+      case 'TRIP_LOGS': return <TableChart className="text-cyan-600 dark:text-cyan-400" />;
     }
   };
 
@@ -58,13 +58,13 @@ export const ExportableReports: React.FC = () => {
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <Summarize className="text-blue-600 dark:text-blue-400" />
+          <Summarize className="text-amber-600 dark:text-amber-400" />
           Data Exports
         </h1>
         <p className="text-slate-500 dark:text-slate-400 mt-1">Download monthly system reports in CSV format.</p>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-slate-200 dark:border-slate-700 p-6 md:p-8">
+      <div className="bg-white dark:bg-card-dark shadow-sm rounded-xl border border-slate-200 dark:border-white/10 p-6 md:p-8">
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* CONFIG SECTION */}
@@ -80,15 +80,15 @@ export const ExportableReports: React.FC = () => {
                     key={type}
                     onClick={() => setReportType(type)}
                     className={`p-4 rounded-lg border-2 cursor-pointer transition-all flex items-start gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 ${reportType === type
-                        ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/10'
-                        : 'border-slate-200 dark:border-slate-700'
+                        ? 'border-amber-500 bg-amber-50/50 dark:bg-amber-900/10'
+                        : 'border-slate-200 dark:border-white/10'
                       }`}
                   >
-                    <div className={`mt-0.5 p-2 rounded-full ${reportType === type ? 'bg-white dark:bg-slate-800 shadow-sm' : 'bg-slate-100 dark:bg-slate-700'}`}>
+                    <div className={`mt-0.5 p-2 rounded-full ${reportType === type ? 'bg-white dark:bg-card-dark shadow-sm' : 'bg-slate-100 dark:bg-slate-700'}`}>
                       {getReportIcon(type)}
                     </div>
                     <div className="flex-1">
-                      <span className={`block text-sm font-bold ${reportType === type ? 'text-blue-700 dark:text-blue-300' : 'text-slate-900 dark:text-white'}`}>
+                      <span className={`block text-sm font-bold ${reportType === type ? 'text-amber-700 dark:text-amber-300' : 'text-slate-900 dark:text-white'}`}>
                         {type.replace('_', ' ')}
                       </span>
                       <span className="block text-xs text-slate-500 dark:text-slate-400 mt-1 leading-snug">
@@ -112,7 +112,7 @@ export const ExportableReports: React.FC = () => {
                 <div>
                   <span className="text-xs text-slate-500 dark:text-slate-400 mb-1 block">Month</span>
                   <select
-                    className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full px-3 py-2.5 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
                     value={month}
                     onChange={(e) => setMonth(parseInt(e.target.value))}
                   >
@@ -122,7 +122,7 @@ export const ExportableReports: React.FC = () => {
                 <div>
                   <span className="text-xs text-slate-500 dark:text-slate-400 mb-1 block">Year</span>
                   <select
-                    className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full px-3 py-2.5 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none"
                     value={year}
                     onChange={(e) => setYear(parseInt(e.target.value))}
                   >
@@ -131,7 +131,7 @@ export const ExportableReports: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-8 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div className="mt-8 p-4 bg-slate-50 dark:bg-surface-dark rounded-lg border border-slate-200 dark:border-white/10">
                 <h4 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Summary</h4>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-slate-600 dark:text-slate-300">File Format:</span>
@@ -147,7 +147,7 @@ export const ExportableReports: React.FC = () => {
             <button
               onClick={handleDownload}
               disabled={isDownloading}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold shadow-md transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-wait flex justify-center items-center gap-2"
+              className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-black rounded-lg font-bold shadow-md transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-wait flex justify-center items-center gap-2"
             >
               {isDownloading ? (
                 <>

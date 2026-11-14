@@ -16,6 +16,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === 'POST') {
         try {
+            // Check if this is a bulk import request
+            if (req.body.bulk === true && Array.isArray(req.body.members)) {
+                const { members, invitedBy } = req.body;
+                if (!members || members.length === 0) {
+                    return res.status(400).json({ success: false, message: 'No employee records provided for import' });
+                }
+
+                const result = corporateService.importMembersBulk({
+                    corporateAccountId: targetOrgId,
+                    members,
+                    invitedBy: invitedBy || 'Company Admin'
+                });
+
+                return res.status(201).json({
+                    success: true,
+                    message: `Successfully imported ${result.added.length} team members (${result.skipped} duplicates skipped)`,
+                    data: {
+                        addedCount: result.added.length,
+                        skippedCount: result.skipped,
+                        errors: result.errors,
+                        members: result.added
+                    }
+                });
+            }
+
             const { fullName, email, phone, role, department, invitedBy } = req.body;
 
             if (!fullName?.trim() || !email?.trim() || !phone?.trim()) {

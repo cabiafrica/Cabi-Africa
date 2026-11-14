@@ -117,7 +117,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
       appBar: AppBar(
         title: Text(
           'FINANCIAL SERVICES',
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
             fontSize: 15,
@@ -185,7 +185,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                                 const SizedBox(width: 4),
                                 Text(
                                   'FINANCIAL PORTFOLIO',
-                                  style: GoogleFonts.outfit(
+                                  style: GoogleFonts.inter(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 10.5,
@@ -197,7 +197,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                           ),
                           Text(
                             '$activeCount Active • $inactiveCount Available',
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               color: AppTheme.primaryLight,
                               fontSize: 11.5,
                               fontWeight: FontWeight.w600,
@@ -208,7 +208,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                       const SizedBox(height: 16),
                       Text(
                         'Total Cooperative Savings',
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           color: Colors.white70,
                           fontSize: 12,
                           letterSpacing: 0.5,
@@ -217,7 +217,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                       const SizedBox(height: 4),
                       Text(
                         'KES 22,650.00',
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 28,
                           fontWeight: FontWeight.w900,
@@ -284,7 +284,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                                 children: [
                                   Text(
                                     'WEALTH CREATION',
-                                    style: GoogleFonts.outfit(
+                                    style: GoogleFonts.inter(
                                       color: AppTheme.primaryColor,
                                       fontWeight: FontWeight.w800,
                                       fontSize: 11,
@@ -300,7 +300,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                                     ),
                                     child: Text(
                                       'MAX 30%',
-                                      style: GoogleFonts.outfit(
+                                      style: GoogleFonts.inter(
                                         color: Colors.amber,
                                         fontWeight: FontWeight.w800,
                                         fontSize: 9,
@@ -312,7 +312,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                               const SizedBox(height: 3),
                               Text(
                                 'Select SACCO, Insurance & MMF per trip',
-                                style: GoogleFonts.outfit(
+                                style: GoogleFonts.inter(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 14,
@@ -320,7 +320,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                               ),
                               Text(
                                 'Deducted directly from 80% net payouts',
-                                style: GoogleFonts.outfit(
+                                style: GoogleFonts.inter(
                                   color: AppTheme.darkTextSecondary,
                                   fontSize: 11,
                                 ),
@@ -342,7 +342,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                   children: [
                     Text(
                       'AVAILABLE SERVICES',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         color: isDark ? Colors.white : Colors.black87,
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
@@ -351,7 +351,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                     ),
                     Text(
                       'Tap to configure',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         color: Colors.grey,
                         fontSize: 11,
                       ),
@@ -388,7 +388,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                 icon: const Icon(Icons.tune_rounded, size: 20),
                 label: Text(
                   'OPEN USER PORTAL TO CONFIGURE',
-                  style: GoogleFonts.outfit(
+                  style: GoogleFonts.inter(
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.0,
                     fontSize: 13,
@@ -425,12 +425,12 @@ class _FinanceScreenState extends State<FinanceScreen> {
           children: [
             Text(
               label,
-              style: GoogleFonts.outfit(color: Colors.white60, fontSize: 10),
+              style: GoogleFonts.inter(color: Colors.white60, fontSize: 10),
             ),
             const SizedBox(height: 2),
             Text(
               value,
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 color: color,
                 fontWeight: FontWeight.bold,
                 fontSize: 11.5,
@@ -499,7 +499,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                         children: [
                           Text(
                             svc['category'] as String,
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               color: accentColor,
                               fontSize: 9.5,
                               fontWeight: FontWeight.bold,
@@ -509,7 +509,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                           const SizedBox(height: 2),
                           Text(
                             svc['title'] as String,
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               color: isDark ? Colors.white : Colors.black87,
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
@@ -518,7 +518,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                           const SizedBox(height: 2),
                           Text(
                             svc['partner'] as String,
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               color: Colors.grey,
                               fontSize: 11,
                             ),
@@ -553,7 +553,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                           const SizedBox(width: 4),
                           Text(
                             isSubscribed ? 'ACTIVE' : 'INACTIVE',
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               color: isSubscribed ? const Color(0xFF00E676) : Colors.grey,
                               fontWeight: FontWeight.bold,
                               fontSize: 9.5,
@@ -571,7 +571,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                 // Detail Description
                 Text(
                   svc['detail'] as String,
-                  style: GoogleFonts.outfit(
+                  style: GoogleFonts.inter(
                     color: isDark ? Colors.white70 : Colors.black87,
                     fontSize: 11.5,
                     height: 1.35,
@@ -595,11 +595,11 @@ class _FinanceScreenState extends State<FinanceScreen> {
                         children: [
                           Text(
                             svc['statsLabel'] as String,
-                            style: GoogleFonts.outfit(color: Colors.grey, fontSize: 10),
+                            style: GoogleFonts.inter(color: Colors.grey, fontSize: 10),
                           ),
                           Text(
                             svc['statsValue'] as String,
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               color: isSubscribed ? accentColor : (isDark ? Colors.white70 : Colors.black87),
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
@@ -611,7 +611,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                         children: [
                           Text(
                             isSubscribed ? 'Configure' : 'Apply',
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 11.5,

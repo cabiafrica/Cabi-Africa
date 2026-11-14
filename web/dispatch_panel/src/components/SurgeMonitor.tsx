@@ -43,7 +43,7 @@ const SurgeMonitor = ({ surgeZones }: SurgeMonitorProps) => {
             <div className="space-y-4">
                 <div className="flex items-center justify-between">
                     <h3 className="text-xl font-semibold text-white">Surge Zone Details</h3>
-                    <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                    <button className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-black rounded-lg text-sm font-medium transition-colors">
                         Adjust Pricing
                     </button>
                 </div>

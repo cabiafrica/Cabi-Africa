@@ -322,8 +322,8 @@ export default function BlogManagementPage() {
                                 <p className="text-sm text-gray-600 font-medium">Total Posts</p>
                                 <p className="text-3xl font-bold text-gray-900 mt-2">{posts.length}</p>
                             </div>
-                            <div className="p-3 bg-blue-100 rounded-lg">
-                                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="p-3 bg-amber-100 rounded-lg">
+                                <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                             </div>
@@ -396,7 +396,7 @@ export default function BlogManagementPage() {
                                         <div className="text-sm text-gray-500">{post.excerpt.substring(0, 60)}...</div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-100 text-amber-800">
                                             {post.category}
                                         </span>
                                     </td>
@@ -423,7 +423,7 @@ export default function BlogManagementPage() {
                                                     <span>📩</span> <span className="font-semibold">{post.promotionStats.opens}</span>
                                                     <span className="text-gray-400 ml-1">({Math.round(post.promotionStats.opens / post.promotionStats.recipients * 100)}%)</span>
                                                 </div>
-                                                <div className="flex items-center space-x-1 mt-1 text-blue-600" title="Clicks">
+                                                <div className="flex items-center space-x-1 mt-1 text-amber-600" title="Clicks">
                                                     <span>🖱️</span> <span className="font-semibold">{post.promotionStats.clicks}</span>
                                                     <span className="text-gray-400 ml-1">({Math.round(post.promotionStats.clicks / post.promotionStats.recipients * 100)}%)</span>
                                                 </div>
@@ -436,14 +436,14 @@ export default function BlogManagementPage() {
                                         <div className="flex items-center justify-end space-x-2">
                                             <button
                                                 onClick={() => handleEdit(post)}
-                                                className="text-blue-600 hover:text-blue-900"
+                                                className="text-amber-600 hover:text-amber-900"
                                             >
                                                 Edit
                                             </button>
                                             {post.status === 'published' && (
                                                 <button
                                                     onClick={() => handlePromote(post)}
-                                                    className="text-purple-600 hover:text-purple-900"
+                                                    className="text-cyan-600 hover:text-cyan-900"
                                                 >
                                                     Promote
                                                 </button>
@@ -503,15 +503,15 @@ export default function BlogManagementPage() {
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                         <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                             {/* Modal Header */}
-                            <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-6 rounded-t-2xl">
+                            <div className="bg-gradient-to-r from-cyan-600 to-cyan-700 text-white p-6 rounded-t-2xl">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <h2 className="text-2xl font-bold">Promote Blog Post</h2>
-                                        <p className="text-purple-100 mt-1">Send to users via in-app message</p>
+                                        <p className="text-cyan-100 mt-1">Send to users via in-app message</p>
                                     </div>
                                     <button
                                         onClick={() => setIsPromoting(false)}
-                                        className="text-white hover:bg-purple-800 rounded-lg p-2 transition-colors"
+                                        className="text-white hover:bg-cyan-800 rounded-lg p-2 transition-colors"
                                     >
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -523,11 +523,11 @@ export default function BlogManagementPage() {
                             {/* Modal Body */}
                             <div className="p-6 space-y-6">
                                 {/* Post Preview */}
-                                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border-2 border-purple-200">
-                                    <p className="text-xs text-purple-600 font-semibold uppercase mb-2">Post to Promote</p>
+                                <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-lg p-4 border-2 border-cyan-200">
+                                    <p className="text-xs text-cyan-600 font-semibold uppercase mb-2">Post to Promote</p>
                                     <h3 className="text-lg font-bold text-gray-900 mb-2">{promotionPost.title}</h3>
                                     <p className="text-sm text-gray-600 mb-3">{promotionPost.excerpt}</p>
-                                    <div className="flex items-center space-x-2 text-xs text-purple-700">
+                                    <div className="flex items-center space-x-2 text-xs text-cyan-700">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                                         </svg>
@@ -551,8 +551,8 @@ export default function BlogManagementPage() {
                                                 key={option.value}
                                                 onClick={() => setPromotionData({ ...promotionData, audience: option.value })}
                                                 className={`p-4 rounded-lg border-2 transition-all ${promotionData.audience === option.value
-                                                    ? 'border-purple-600 bg-purple-50 shadow-md'
-                                                    : 'border-gray-200 hover:border-purple-300'
+                                                    ? 'border-cyan-600 bg-cyan-50 shadow-md'
+                                                    : 'border-gray-200 hover:border-cyan-300'
                                                     }`}
                                             >
                                                 <div className="text-2xl mb-2">{option.icon}</div>
@@ -569,11 +569,11 @@ export default function BlogManagementPage() {
                                             type="checkbox"
                                             checked={promotionData.sendPushNotification}
                                             onChange={(e) => setPromotionData({ ...promotionData, sendPushNotification: e.target.checked })}
-                                            className="w-5 h-5 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
+                                            className="w-5 h-5 text-cyan-600 rounded focus:ring-2 focus:ring-cyan-500"
                                         />
                                         <div className="flex-1">
                                             <div className="flex items-center space-x-2">
-                                                <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                                 </svg>
                                                 <span className="font-semibold text-gray-900">Send High-Priority Push Notification</span>
@@ -589,14 +589,14 @@ export default function BlogManagementPage() {
                                         Delivery Schedule *
                                     </label>
                                     <div className="space-y-3">
-                                        <label className="flex items-start space-x-3 cursor-pointer p-3 rounded-lg border-2 transition-all hover:bg-gray-50 ${promotionData.scheduleType === 'immediate' ? 'border-purple-600 bg-purple-50' : 'border-gray-200'}">
+                                        <label className="flex items-start space-x-3 cursor-pointer p-3 rounded-lg border-2 transition-all hover:bg-gray-50 ${promotionData.scheduleType === 'immediate' ? 'border-cyan-600 bg-cyan-50' : 'border-gray-200'}">
                                             <input
                                                 type="radio"
                                                 name="scheduleType"
                                                 value="immediate"
                                                 checked={promotionData.scheduleType === 'immediate'}
                                                 onChange={(e) => setPromotionData({ ...promotionData, scheduleType: e.target.value })}
-                                                className="mt-1 w-4 h-4 text-purple-600"
+                                                className="mt-1 w-4 h-4 text-cyan-600"
                                             />
                                             <div>
                                                 <div className="font-semibold text-gray-900">Send Immediately</div>
@@ -604,14 +604,14 @@ export default function BlogManagementPage() {
                                             </div>
                                         </label>
 
-                                        <label className="flex items-start space-x-3 cursor-pointer p-3 rounded-lg border-2 transition-all hover:bg-gray-50 ${promotionData.scheduleType === 'scheduled' ? 'border-purple-600 bg-purple-50' : 'border-gray-200'}">
+                                        <label className="flex items-start space-x-3 cursor-pointer p-3 rounded-lg border-2 transition-all hover:bg-gray-50 ${promotionData.scheduleType === 'scheduled' ? 'border-cyan-600 bg-cyan-50' : 'border-gray-200'}">
                                             <input
                                                 type="radio"
                                                 name="scheduleType"
                                                 value="scheduled"
                                                 checked={promotionData.scheduleType === 'scheduled'}
                                                 onChange={(e) => setPromotionData({ ...promotionData, scheduleType: e.target.value })}
-                                                className="mt-1 w-4 h-4 text-purple-600"
+                                                className="mt-1 w-4 h-4 text-cyan-600"
                                             />
                                             <div className="flex-1">
                                                 <div className="font-semibold text-gray-900">Schedule for Later</div>
@@ -622,13 +622,13 @@ export default function BlogManagementPage() {
                                                             type="date"
                                                             value={promotionData.scheduledDate}
                                                             onChange={(e) => setPromotionData({ ...promotionData, scheduledDate: e.target.value })}
-                                                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
+                                                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm"
                                                         />
                                                         <input
                                                             type="time"
                                                             value={promotionData.scheduledTime}
                                                             onChange={(e) => setPromotionData({ ...promotionData, scheduledTime: e.target.value })}
-                                                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
+                                                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 text-sm"
                                                         />
                                                     </div>
                                                 )}
@@ -668,7 +668,7 @@ export default function BlogManagementPage() {
                                 </button>
                                 <button
                                     onClick={handleSendPromotion}
-                                    className="px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all font-bold shadow-lg flex items-center space-x-2"
+                                    className="px-8 py-3 bg-gradient-to-r from-cyan-600 to-cyan-700 text-white rounded-lg hover:from-cyan-700 hover:to-cyan-800 transition-all font-bold shadow-lg flex items-center space-x-2"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

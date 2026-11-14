@@ -31,7 +31,7 @@ const CORE_VALUES = [
   {
     title: 'Driver Empowerment',
     description:
-      'Drivers are true partners. We provide transparent earnings, M-Pesa instant settlements, and sustainable tools so operators can build lasting mobility businesses.',
+      'Drivers are true partners. We provide transparent earnings, mobile money instant settlements, and sustainable tools so operators can build lasting mobility businesses.',
     icon: Users,
   },
   {
@@ -65,6 +65,8 @@ export default function AboutPage() {
     <MainLayout
       title="About Us | CABI"
       description="Learn about CABI's mission, vision, and commitment to safe, dignified urban mobility across Africa."
+      image="/images/from-nairobi-to-world.jpg"
+      imageAlt="CABI Africa pan-African mobility network map centered on Nairobi Kenya"
     >
       {/* Hero Section (Obsidian-Gold Identity) */}
       <section className="relative bg-slate-50 dark:bg-surface-dark text-slate-900 dark:text-white pt-12 pb-16 sm:pt-20 sm:pb-24 overflow-hidden border-b border-slate-200 dark:border-white/10 transition-colors duration-300">
@@ -136,7 +138,7 @@ export default function AboutPage() {
                 <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#0A0A0B]">
                   <Image
                     src="/images/from-nairobi-to-world.jpg"
-                    alt="Graphic map of Africa centered on a radiant Nairobi beacon with global trajectory arcs extending worldwide"
+                    alt="CABI Africa pan-African mobility route map centered on Nairobi Kenya with transit networks extending across Africa"
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-cover"

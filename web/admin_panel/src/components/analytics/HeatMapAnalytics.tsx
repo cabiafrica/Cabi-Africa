@@ -45,7 +45,7 @@ export const HeatMapAnalytics: React.FC = () => {
                         <select
                             value={serviceId}
                             onChange={(e) => setServiceId(e.target.value)}
-                            className="appearance-none pl-4 pr-10 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none shadow-sm min-w-[160px]"
+                            className="appearance-none pl-4 pr-10 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none shadow-sm min-w-[160px]"
                         >
                             {services.map(s => (
                                 <option key={s.id} value={s.id}>{s.name}</option>
@@ -56,7 +56,7 @@ export const HeatMapAnalytics: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex shadow-inner">
+                    <div className="bg-slate-100 dark:bg-card-dark p-1 rounded-lg flex shadow-inner">
                         <button
                             onClick={() => setType('DEMAND')}
                             className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-bold transition-all ${type === 'DEMAND'
@@ -87,7 +87,7 @@ export const HeatMapAnalytics: React.FC = () => {
                 {loading && (
                     <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-20 animate-in fade-in">
                         <div className="flex flex-col items-center gap-2">
-                            <div className="w-8 h-8 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
+                            <div className="w-8 h-8 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin"></div>
                             <span className="text-white font-medium text-sm">Generating Heatmap...</span>
                         </div>
                     </div>

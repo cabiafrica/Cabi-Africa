@@ -91,7 +91,7 @@ class _TripSummaryPanelState extends State<TripSummaryPanel> {
                     children: [
                       Text(
                         'TRIP COMPLETED',
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           color: AppTheme.successGreen,
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
@@ -100,7 +100,7 @@ class _TripSummaryPanelState extends State<TripSummaryPanel> {
                       ),
                       Text(
                         'Confirm payment below',
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           color: Colors.white54,
                           fontSize: 12,
                         ),
@@ -143,7 +143,7 @@ class _TripSummaryPanelState extends State<TripSummaryPanel> {
                       children: [
                         Text(
                           'TOTAL',
-                          style: GoogleFonts.outfit(
+                          style: GoogleFonts.inter(
                             color: Colors.white,
                             fontWeight: FontWeight.w800,
                             fontSize: 13,
@@ -152,7 +152,7 @@ class _TripSummaryPanelState extends State<TripSummaryPanel> {
                         ),
                         Text(
                           'KES ${totalAmount.toStringAsFixed(0)}',
-                          style: GoogleFonts.outfit(
+                          style: GoogleFonts.inter(
                             color: AppTheme.primaryColor,
                             fontWeight: FontWeight.w900,
                             fontSize: 22,
@@ -165,7 +165,7 @@ class _TripSummaryPanelState extends State<TripSummaryPanel> {
                       alignment: Alignment.centerRight,
                       child: Text(
                         'Your earnings: KES ${driverNet.toStringAsFixed(0)}',
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           color: AppTheme.successGreen,
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
@@ -180,7 +180,7 @@ class _TripSummaryPanelState extends State<TripSummaryPanel> {
               // ── Tip selector ──
               Text(
                 'ADD A TIP',
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   color: Colors.white38,
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
@@ -214,7 +214,7 @@ class _TripSummaryPanelState extends State<TripSummaryPanel> {
                             children: [
                               Text(
                                 '${[10, 15, 20][i]}%',
-                                style: GoogleFonts.outfit(
+                                style: GoogleFonts.inter(
                                   color: _selectedTipIndex == i
                                       ? AppTheme.primaryColor
                                       : Colors.white70,
@@ -224,7 +224,7 @@ class _TripSummaryPanelState extends State<TripSummaryPanel> {
                               ),
                               Text(
                                 'KES ${(widget.ride.fare * [0.10, 0.15, 0.20][i]).toStringAsFixed(0)}',
-                                style: GoogleFonts.outfit(
+                                style: GoogleFonts.inter(
                                   color: _selectedTipIndex == i
                                       ? AppTheme.primaryColor
                                       : Colors.white30,
@@ -271,7 +271,7 @@ class _TripSummaryPanelState extends State<TripSummaryPanel> {
                   ),
                   child: Text(
                     'CONFIRM  KES ${totalAmount.toStringAsFixed(0)}',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       color: Colors.black,
                       fontWeight: FontWeight.w900,
                       fontSize: 15,
@@ -306,14 +306,14 @@ class _FareRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             color: Colors.white54,
             fontSize: 13,
           ),
         ),
         Text(
           amount,
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             color: color,
             fontWeight: FontWeight.w700,
             fontSize: 14,

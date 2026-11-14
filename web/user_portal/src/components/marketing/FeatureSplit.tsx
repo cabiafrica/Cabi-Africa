@@ -26,8 +26,8 @@ export default function FeatureSplit({ type }: FeatureSplitProps) {
                   'Join a growing network of professional drivers. Enjoy fair earnings, transparent tracking, and dedicated support built for long-term growth.',
               buttonText: 'Learn More',
               buttonLink: '/drivers',
-              image: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070',
-              imageAlt: 'Cabi Partner Driver behind the wheel',
+              image: '/images/driver-partner-ecosystem.jpg',
+              imageAlt: 'CABI Africa driver-partner mobility platform — reusable commission model, vehicle wealth creation, and instant mobile money settlement illustration',
           }
         : {
               eyebrow: 'For Passengers',
@@ -38,8 +38,8 @@ export default function FeatureSplit({ type }: FeatureSplitProps) {
                   'Experience seamless urban mobility. Whether it is a quick city commute or an executive transfer, CABI gets you there smoothly and safely.',
               buttonText: 'Learn More',
               buttonLink: '/passengers',
-              image: '/images/passenger-satisfaction.jpg',
-              imageAlt: 'Satisfied CABI passenger smiling comfortably in an executive vehicle cabin',
+              image: '/images/passenger-executive-comfort.jpg',
+              imageAlt: 'CABI Africa executive passenger cabin experience — ambient luxury sanctuary, verified PIN safety, and seamless urban transit in Nairobi',
           };
 
     return (
@@ -61,7 +61,7 @@ export default function FeatureSplit({ type }: FeatureSplitProps) {
                     <div className="w-full lg:w-1/2 relative group">
                         <div className="absolute -inset-2 bg-gradient-to-tr from-[#D4AF37]/40 via-[#FACC15]/25 to-[#ffe088]/35 rounded-[2.25rem] blur-2xl animate-gold-aura group-hover:opacity-90 transition-opacity duration-700 pointer-events-none" />
 
-                        <div className="relative rounded-3xl bg-white dark:bg-card-dark/90 p-2.5 sm:p-3.5 border border-slate-200 dark:border-[#D4AF37]/35 shadow-2xl transition-transform duration-700 group-hover:-translate-y-1">
+                        <figure className="relative rounded-3xl bg-white dark:bg-card-dark/90 p-2.5 sm:p-3.5 border border-slate-200 dark:border-[#D4AF37]/35 shadow-2xl transition-transform duration-700 group-hover:-translate-y-1">
                             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#0A0A0B]">
                                 <Image
                                     src={content.image}
@@ -69,6 +69,7 @@ export default function FeatureSplit({ type }: FeatureSplitProps) {
                                     fill
                                     sizes="(max-width: 1024px) 100vw, 50vw"
                                     className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                    priority={isDriver}
                                 />
 
                                 {/* Dark-Gold Cinematic Contrast Overlay */}
@@ -90,7 +91,10 @@ export default function FeatureSplit({ type }: FeatureSplitProps) {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            <figcaption className="sr-only">
+                                {content.imageAlt}
+                            </figcaption>
+                        </figure>
                     </div>
 
                     {/* Editorial Copy & Golden CTA */}

@@ -48,7 +48,7 @@ export default function HighPriorityMessagingPage() {
 
     const getPriorityColor = (priority: string) => {
         const colors = {
-            normal: 'bg-blue-100 text-blue-800',
+            normal: 'bg-amber-100 text-amber-800',
             high: 'bg-orange-100 text-orange-800',
             urgent: 'bg-red-100 text-red-800',
         };
@@ -264,7 +264,7 @@ export default function HighPriorityMessagingPage() {
                                                 {message.priority.toUpperCase()}
                                             </span>
                                             {message.isPushNotification && (
-                                                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800 flex items-center space-x-1">
+                                                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-cyan-100 text-cyan-800 flex items-center space-x-1">
                                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                                     </svg>

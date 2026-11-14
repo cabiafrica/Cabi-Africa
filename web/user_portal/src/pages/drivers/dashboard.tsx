@@ -82,7 +82,7 @@ export default function ApplicationDashboard() {
                                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 font-extrabold">HOT</span>
                             </Link>
                             <Link href="/drivers/sacco" className="px-3 py-1.5 rounded-lg text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all">
-                                SACCO
+                                Wealth Creation
                             </Link>
                         </nav>
                     </div>
@@ -336,7 +336,7 @@ export default function ApplicationDashboard() {
                                     <div className="text-xs text-neutral-400 uppercase font-black tracking-widest mb-1">Your Referral Code</div>
                                     <div className="text-3xl font-black mb-3 font-mono tracking-widest text-brand-yellow">DRIVER123</div>
                                     <p className="text-neutral-300 text-xs leading-relaxed mb-5 max-w-md">
-                                        Invite other drivers and passengers. Earn 5% commission on their first 50 trips.
+                                        Invite fellow drivers and passengers. Earn 2-level recurring referral shares from driver earnings and passenger ride usage in Ksh.
                                     </p>
                                     <button className="bg-brand-yellow text-black px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-yellow-400 transition-colors shadow-lg shadow-brand-yellow/20">
                                         Copy Link

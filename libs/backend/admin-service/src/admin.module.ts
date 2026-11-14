@@ -12,6 +12,7 @@ import { AdminRolesService } from './admin-roles.service';
 import { Admin2FAService } from './admin-2fa.service';
 import { AdminGeofenceInterceptor } from './admin-geofence.interceptor';
 import { RbacModule, JwtAuthGuard } from '@cabi/backend/rbac';
+import { NotificationModule } from '@cabi/backend/notification-service';
 
 import { AdminUsersController } from './admin-users.controller';
 import { AdminUsersService } from './admin-users.service';
@@ -31,6 +32,7 @@ import { OrganizationService } from './organization.service';
 @Module({
   imports: [
     RbacModule,
+    NotificationModule,
   ],
   controllers: [
     AdminController, 

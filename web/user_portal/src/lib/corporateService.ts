@@ -347,7 +347,7 @@ class CorporateStore {
                 reference: 'QGK7294821',
                 balanceAfter: 100000,
                 overdraftUsedAfter: 0,
-                description: 'Prepaid corporate wallet top-up via M-Pesa Paybill',
+                description: 'Prepaid corporate wallet top-up via Mobile Money Paybill',
                 createdAt: new Date(Date.now() - 15 * 24 * 3600 * 1000).toISOString()
             },
             {
@@ -374,6 +374,14 @@ class CorporateStore {
             }
         }
         return undefined;
+    }
+
+    public updateAccount(id: string, updates: Partial<CorporateAccount>): CorporateAccount | undefined {
+        const account = this.accounts.get(id);
+        if (!account) return undefined;
+        const updated = { ...account, ...updates, updatedAt: new Date().toISOString() };
+        this.accounts.set(id, updated);
+        return updated;
     }
 
     public createAccount(data: {
@@ -647,6 +655,88 @@ class CorporateStore {
 
     public removeMember(memberId: string): boolean {
         return this.members.delete(memberId);
+    }
+
+    public importMembersBulk(data: {
+        corporateAccountId: string;
+        members: Array<{
+            fullName: string;
+            email: string;
+            phone: string;
+            role?: 'ADMIN' | 'BILLING_LEAD' | 'EMPLOYEE';
+            department?: string;
+            employeeNumber?: string;
+        }>;
+        invitedBy: string;
+    }): { added: CorporateMember[]; skipped: number; errors: string[] } {
+        const added: CorporateMember[] = [];
+        const errors: string[] = [];
+        let skipped = 0;
+        const now = new Date().toISOString();
+
+        // Get existing emails for deduping
+        const existingEmails = new Set(
+            Array.from(this.members.values())
+                .filter(m => m.corporateAccountId === data.corporateAccountId)
+                .map(m => m.email.toLowerCase().trim())
+        );
+
+        for (const item of data.members) {
+            const cleanEmail = item.email?.trim().toLowerCase();
+            const cleanName = item.fullName?.trim();
+            const cleanPhone = item.phone?.trim() || '+254';
+
+            if (!cleanName || !cleanEmail) {
+                errors.push(`Skipped row: missing name or email (${cleanName || 'No Name'})`);
+                continue;
+            }
+
+            if (existingEmails.has(cleanEmail)) {
+                skipped++;
+                continue;
+            }
+
+            const token = 'cabi-corp-' + crypto.randomBytes(16).toString('hex');
+            const memberId = 'cmem-' + crypto.randomUUID().slice(0, 8);
+
+            const newMember: CorporateMember = {
+                id: memberId,
+                corporateAccountId: data.corporateAccountId,
+                fullName: cleanName,
+                email: cleanEmail,
+                phone: cleanPhone,
+                role: item.role || 'EMPLOYEE',
+                department: item.department || 'General',
+                employeeNumber: item.employeeNumber,
+                spendThisMonth: 0,
+                tripsThisMonth: 0,
+                status: 'INVITED',
+                invitedAt: now
+            };
+
+            this.members.set(memberId, newMember);
+            existingEmails.add(cleanEmail);
+
+            // Register invite token
+            const invite: CorporateInvite = {
+                id: 'inv-' + crypto.randomUUID().slice(0, 8),
+                token,
+                corporateAccountId: data.corporateAccountId,
+                email: cleanEmail,
+                phone: cleanPhone,
+                role: item.role || 'EMPLOYEE',
+                department: item.department || 'General',
+                invitedBy: data.invitedBy,
+                createdAt: now,
+                expiresAt: new Date(Date.now() + 7 * 24 * 3600 * 1000).toISOString(),
+                status: 'PENDING'
+            };
+            this.invites.set(token, invite);
+
+            added.push(newMember);
+        }
+
+        return { added, skipped, errors };
     }
 
     // Trip & Justification methods

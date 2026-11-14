@@ -107,7 +107,7 @@ class _SecureWebViewState extends State<SecureWebView> {
       appBar: AppBar(
         title: Text(
           widget.title,
-          style: GoogleFonts.outfit(fontWeight: FontWeight.w600, color: Colors.white),
+          style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: Colors.white),
         ),
         backgroundColor: const Color(0xFF1A1A1A),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -124,12 +124,12 @@ class _SecureWebViewState extends State<SecureWebView> {
                     const SizedBox(height: 16),
                     Text(
                       widget.title,
-                      style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Web portal view for ${widget.title}',
-                      style: GoogleFonts.outfit(color: Colors.white70, fontSize: 14),
+                      style: GoogleFonts.inter(color: Colors.white70, fontSize: 14),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),

@@ -32,6 +32,10 @@ export class AdminPermissionGuard implements CanActivate {
             return false; 
         }
 
+        if (user.identityVerified !== true) {
+            throw new ForbiddenException('Identity verification is required before accessing admin resources.');
+        }
+
         // 2. Get required permissions from metadata
         const required = this.reflector.getAllAndOverride<string | string[]>('requiredPermission', [
             context.getHandler(),

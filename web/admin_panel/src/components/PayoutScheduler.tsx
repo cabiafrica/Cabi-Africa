@@ -45,15 +45,15 @@ export const PayoutScheduler: React.FC = () => {
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <Schedule className="text-blue-600 dark:text-blue-400" />
+          <Schedule className="text-amber-600 dark:text-amber-400" />
           Automated Payout Scheduler
         </h1>
         <p className="text-slate-500 dark:text-slate-400 mt-1">Manage automated withdrawal processing intervals.</p>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden">
         {/* Status Header */}
-        <div className={`px-6 py-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between ${config.enabled ? 'bg-green-50/50 dark:bg-green-900/10' : 'bg-amber-50/50 dark:bg-amber-900/10'}`}>
+        <div className={`px-6 py-6 border-b border-slate-200 dark:border-white/10 flex items-center justify-between ${config.enabled ? 'bg-green-50/50 dark:bg-green-900/10' : 'bg-amber-50/50 dark:bg-amber-900/10'}`}>
           <div className="flex items-center gap-3">
             <div className={`w-3 h-3 rounded-full animate-pulse ${config.enabled ? 'bg-green-500' : 'bg-amber-500'}`} />
             <div>
@@ -79,15 +79,15 @@ export const PayoutScheduler: React.FC = () => {
 
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-6">
-            <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-100 dark:border-slate-700">
+            <div className="bg-slate-50 dark:bg-surface-dark p-4 rounded-lg border border-slate-100 dark:border-white/10">
               <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider block mb-1">Current Frequency</span>
               <div className="flex items-center gap-2 text-slate-900 dark:text-white font-bold">
-                <Update className="text-blue-500" fontSize="small" />
+                <Update className="text-amber-500" fontSize="small" />
                 {config.schedule}
               </div>
             </div>
 
-            <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-lg border border-slate-100 dark:border-slate-700">
+            <div className="bg-slate-50 dark:bg-surface-dark p-4 rounded-lg border border-slate-100 dark:border-white/10">
               <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider block mb-1">Next Scheduled Run</span>
               <div className="text-slate-900 dark:text-white font-bold font-mono text-lg">
                 {new Date(config.nextRun).toLocaleString()}
@@ -98,7 +98,7 @@ export const PayoutScheduler: React.FC = () => {
               <button
                 onClick={handleRunNow}
                 disabled={isRunning}
-                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold shadow-md transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+                className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-black rounded-lg font-bold shadow-md transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
               >
                 {isRunning ? (
                   <>
@@ -118,7 +118,7 @@ export const PayoutScheduler: React.FC = () => {
             </div>
           </div>
 
-          <div className="border-l border-slate-200 dark:border-slate-700 pl-8 md:block flex flex-col gap-6">
+          <div className="border-l border-slate-200 dark:border-white/10 pl-8 md:block flex flex-col gap-6">
             <div>
               <h4 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                 <History fontSize="small" className="text-slate-400" />

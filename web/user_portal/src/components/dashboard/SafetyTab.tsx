@@ -225,7 +225,7 @@ function IncidentDetail({
               <div className="flex items-center gap-4 bg-slate-50 dark:bg-white/4 rounded-xl p-4">
                 <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 dark:bg-white/10 flex items-center justify-center flex-shrink-0">
                   {incident.counterparty.photoUrl
-                    ? <img src={incident.counterparty.photoUrl} alt="Profile" className="w-full h-full object-cover" />
+                    ? <img src={incident.counterparty.photoUrl} alt={`${incident.counterparty.name} verified profile photo`} width={48} height={48} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                     : <User className="w-5 h-5 text-slate-400" />
                   }
                 </div>

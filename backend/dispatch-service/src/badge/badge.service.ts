@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
 import { Badge, BadgeCategory, BadgeTier } from '@prisma/client';
+import { WealthService } from '../wealth/wealth.service';
 
 interface BadgeWithProgress {
     badge: Badge;
@@ -19,7 +20,10 @@ interface DriverStats {
 export class BadgeService {
     private readonly logger = new Logger(BadgeService.name);
 
-    constructor(private prisma: PrismaService) { }
+    constructor(
+        private prisma: PrismaService,
+        @Optional() private wealthService?: WealthService
+    ) { }
 
     /**
      * Check and award badges after ride completion
@@ -154,6 +158,8 @@ export class BadgeService {
                 badgeId: badge.id,
             },
         });
+
+        await this.wealthService?.applyBadgeIncentivesForUser(userId, badge.id);
 
         this.logger.log(`Awarded badge ${badgeCode} to user ${userId}`);
         return badge;

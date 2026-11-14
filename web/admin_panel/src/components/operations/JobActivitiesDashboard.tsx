@@ -287,12 +287,12 @@ export function JobActivitiesDashboard() {
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Tooltip title="Refresh">
             <IconButton onClick={fetchRides} color="primary">
-              <Refresh className="text-blue-600 dark:text-blue-400" />
+              <Refresh className="text-amber-600 dark:text-amber-400" />
             </IconButton>
           </Tooltip>
           <Tooltip title="Export to CSV">
             <IconButton onClick={handleExport} color="primary">
-              <Download className="text-blue-600 dark:text-blue-400" />
+              <Download className="text-amber-600 dark:text-amber-400" />
             </IconButton>
           </Tooltip>
         </Box>
@@ -301,7 +301,7 @@ export function JobActivitiesDashboard() {
       {/* Statistics Cards */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border border-slate-200 dark:border-slate-700">
+          <div className="bg-white dark:bg-card-dark rounded-xl shadow p-4 border border-slate-200 dark:border-white/10">
             <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
               Total Rides
             </Typography>
@@ -311,17 +311,17 @@ export function JobActivitiesDashboard() {
           </div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border border-slate-200 dark:border-slate-700">
+          <div className="bg-white dark:bg-card-dark rounded-xl shadow p-4 border border-slate-200 dark:border-white/10">
             <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
               Active Rides
             </Typography>
-            <Typography variant="h4" fontWeight="bold" className="text-blue-600 dark:text-blue-400">
+            <Typography variant="h4" fontWeight="bold" className="text-amber-600 dark:text-amber-400">
               {stats.inProgress + stats.assigned}
             </Typography>
           </div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border border-slate-200 dark:border-slate-700">
+          <div className="bg-white dark:bg-card-dark rounded-xl shadow p-4 border border-slate-200 dark:border-white/10">
             <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
               Completed
             </Typography>
@@ -331,7 +331,7 @@ export function JobActivitiesDashboard() {
           </div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-4 border border-slate-200 dark:border-slate-700">
+          <div className="bg-white dark:bg-card-dark rounded-xl shadow p-4 border border-slate-200 dark:border-white/10">
             <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
               Total Revenue
             </Typography>
@@ -343,13 +343,13 @@ export function JobActivitiesDashboard() {
       </Grid>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow mb-6 border border-slate-200 dark:border-slate-700">
+      <div className="bg-white dark:bg-card-dark rounded-xl shadow mb-6 border border-slate-200 dark:border-white/10">
         <div className="p-4">
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={4}>
               <input
                 type="text"
-                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-amber-500 outline-none"
                 placeholder="Search by passenger, driver, or ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -357,7 +357,7 @@ export function JobActivitiesDashboard() {
             </Grid>
             <Grid item xs={12} sm={3}>
               <select
-                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-amber-500 outline-none"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -374,7 +374,7 @@ export function JobActivitiesDashboard() {
             <Grid item xs={12} sm={3}>
               <input
                 type="date"
-                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none placeholder-slate-400"
+                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-amber-500 outline-none placeholder-slate-400"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
               />
@@ -389,10 +389,10 @@ export function JobActivitiesDashboard() {
       </div>
 
       {/* Rides Table */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-card-dark rounded-xl shadow border border-slate-200 dark:border-white/10 overflow-hidden">
         <TableContainer>
           <Table>
-            <TableHead className="bg-slate-50 dark:bg-slate-900">
+            <TableHead className="bg-slate-50 dark:bg-surface-dark">
               <TableRow>
                 <TableCell className="text-slate-500 dark:text-slate-400 font-semibold">Ride ID</TableCell>
                 <TableCell className="text-slate-500 dark:text-slate-400 font-semibold">Passenger</TableCell>
@@ -421,7 +421,7 @@ export function JobActivitiesDashboard() {
                 </TableRow>
               ) : (
                 filteredRides.map((ride) => (
-                  <TableRow key={ride.id} hover className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors border-b border-slate-200 dark:border-slate-700">
+                  <TableRow key={ride.id} hover className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors border-b border-slate-200 dark:border-white/10">
                     <TableCell>
                       <Typography variant="body2" fontFamily="monospace" className="text-slate-900 dark:text-slate-100">
                         {ride.id.substring(0, 8)}...
@@ -487,7 +487,7 @@ export function JobActivitiesDashboard() {
                     </TableCell>
                     <TableCell>
                       <Tooltip title="View Details">
-                        <IconButton size="small" onClick={() => handleViewDetails(ride)} className="text-blue-600 dark:text-blue-400">
+                        <IconButton size="small" onClick={() => handleViewDetails(ride)} className="text-amber-600 dark:text-amber-400">
                           <Visibility fontSize="small" />
                         </IconButton>
                       </Tooltip>

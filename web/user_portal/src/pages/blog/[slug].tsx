@@ -41,11 +41,51 @@ export default function BlogPostPage({ post, recentPosts, categories }: BlogPost
     const safeCategories = Array.isArray(categories) ? categories : ['Technology', 'Lifestyle', 'Updates'];
 
     return (
-        <MainLayout title={`${post.title} | CABI Intel`} description={post.summary}>
+        <MainLayout
+            title={`${post.title} | CABI Intel`}
+            description={post.summary}
+            image={post.imageUrl}
+            imageAlt={`${post.title} — CABI Africa Intel Editorial Photography`}
+        >
             <Head>
-                <meta property="og:title" content={post.title} />
-                <meta property="og:description" content={post.summary} />
-                {post.imageUrl && <meta property="og:image" content={post.imageUrl} />}
+                {/* Structured Data: Schema.org BlogPosting & ImageObject */}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            '@context': 'https://schema.org',
+                            '@type': 'BlogPosting',
+                            headline: post.title,
+                            description: post.summary,
+                            image: {
+                                '@type': 'ImageObject',
+                                url: post.imageUrl?.startsWith('http') ? post.imageUrl : `https://cabi.africa${post.imageUrl}`,
+                                caption: `${post.title} — CABI Africa Intel Editorial Photography`,
+                                width: 1200,
+                                height: 675,
+                            },
+                            author: {
+                                '@type': 'Organization',
+                                name: post.authorName || 'CABI Editorial Team',
+                                url: 'https://cabi.africa',
+                            },
+                            publisher: {
+                                '@type': 'Organization',
+                                name: 'CABI Africa Technologies Inc.',
+                                logo: {
+                                    '@type': 'ImageObject',
+                                    url: 'https://cabi.africa/images/cabi-logo-dark.png',
+                                },
+                            },
+                            datePublished: post.publishedDate,
+                            dateModified: post.publishedDate,
+                            mainEntityOfPage: {
+                                '@type': 'WebPage',
+                                '@id': `https://cabi.africa/blog/${post.slug || post.id}`,
+                            },
+                        }),
+                    }}
+                />
             </Head>
 
             {/* Editorial Article Hero Banner (Obsidian-Gold Identity) */}
@@ -104,8 +144,10 @@ export default function BlogPostPage({ post, recentPosts, categories }: BlogPost
                                     <figure className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-lg mb-8 not-prose bg-surface-dark border border-white/10 mt-0">
                                         <Image
                                             src={post.imageUrl}
-                                            alt={post.title}
+                                            alt={`${post.title} — CABI Africa urban mobility editorial photography`}
                                             fill
+                                            unoptimized
+                                            sizes="(max-width: 1024px) 100vw, 900px"
                                             className="object-cover"
                                             priority
                                         />

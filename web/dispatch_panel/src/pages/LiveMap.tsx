@@ -170,7 +170,7 @@ export default function LiveMapPage() {
                                 type="checkbox"
                                 checked={showOnlineOnly}
                                 onChange={(e) => setShowOnlineOnly(e.target.checked)}
-                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                             />
                             <span className="text-sm text-gray-700">Show online only</span>
                         </label>
@@ -179,17 +179,17 @@ export default function LiveMapPage() {
 
                 {/* Stats */}
                 <div className="grid grid-cols-4 gap-4 mt-4">
-                    <div className="bg-blue-50 rounded-lg p-3">
-                        <div className="text-2xl font-bold text-blue-600">{stats.total}</div>
-                        <div className="text-xs text-blue-700">Total Drivers</div>
+                    <div className="bg-amber-50 rounded-lg p-3">
+                        <div className="text-2xl font-bold text-amber-600">{stats.total}</div>
+                        <div className="text-xs text-amber-700">Total Drivers</div>
                     </div>
                     <div className="bg-green-50 rounded-lg p-3">
                         <div className="text-2xl font-bold text-green-600">{stats.online}</div>
                         <div className="text-xs text-green-700">Online</div>
                     </div>
-                    <div className="bg-purple-50 rounded-lg p-3">
-                        <div className="text-2xl font-bold text-purple-600">{stats.onTrip}</div>
-                        <div className="text-xs text-purple-700">On Trip</div>
+                    <div className="bg-cyan-50 rounded-lg p-3">
+                        <div className="text-2xl font-bold text-cyan-600">{stats.onTrip}</div>
+                        <div className="text-xs text-cyan-700">On Trip</div>
                     </div>
                     <div className="bg-orange-50 rounded-lg p-3">
                         <div className="text-2xl font-bold text-orange-600">{stats.available}</div>
@@ -224,7 +224,7 @@ export default function LiveMapPage() {
                                     key={driver.id}
                                     onClick={() => setSelectedDriver(driver)}
                                     className={`p-3 rounded-lg border cursor-pointer transition-colors ${selectedDriver?.id === driver.id
-                                            ? 'border-blue-500 bg-blue-50'
+                                            ? 'border-amber-500 bg-amber-50'
                                             : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                                         }`}
                                 >
@@ -243,7 +243,7 @@ export default function LiveMapPage() {
                                                 ID: {driver.id}
                                             </div>
                                             {driver.currentTrip && (
-                                                <div className="mt-2 text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                                                <div className="mt-2 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded">
                                                     On trip with {driver.currentTrip.passengerName}
                                                 </div>
                                             )}

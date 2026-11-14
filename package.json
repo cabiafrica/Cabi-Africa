@@ -15,7 +15,7 @@
     "dev:user": "cd web/user_portal && npm run dev",
     "dev:dispatch": "cd web/dispatch_panel && npm run dev",
     "build": "nx build",
-    "test": "nx test --all",
+    "test": "nx run-many --target=test --all",
     "lint": "nx run-many --target=lint --all --parallel=3",
     "lint:web": "nx run-many --target=lint --projects=user-portal,admin-panel,dispatch-panel --parallel=3",
     "lint:backend": "nx run-many --target=lint --projects=auth-gateway,admin-service,user-service,verification-service,dispatch-service,driver-lead-service --parallel=3",

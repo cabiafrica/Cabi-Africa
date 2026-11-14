@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" height="100%">
+  <title>The Future of Urban Mobility in Kenya by CABI Africa</title>
+  <desc>Vector illustration showing Nairobi skyline with electric bodas, smart traffic telemetry, and clean decentralized urban transit.</desc>
+  <defs>
+    <linearGradient id="morning-sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="35%" stop-color="#1E293B"/>
+      <stop offset="70%" stop-color="#9A3412"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <linearGradient id="ev-green" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <filter id="svg-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Sky Background -->
+  <rect width="1600" height="900" fill="url(#morning-sky)"/>
+
+  <!-- Morning Sun Rays over Nairobi Skyline -->
+  <circle cx="800" cy="420" r="160" fill="#FDE047" opacity="0.35"/>
+  <circle cx="800" cy="420" r="90" fill="#FEF08A" opacity="0.6"/>
+
+  <!-- Skyline Silhouettes (Nairobi Towers) -->
+  <g fill="#0B0F19" opacity="0.85">
+    <rect x="120" y="220" width="100" height="280"/>
+    <rect x="250" y="140" width="130" height="360"/>
+    <polygon points="315,60 250,140 380,140"/>
+    <rect x="420" y="240" width="90" height="260"/>
+    <rect x="730" y="160" width="140" height="340"/>
+    <polygon points="800,90 730,160 870,160"/>
+    <rect x="910" y="210" width="110" height="290"/>
+    <rect x="1200" y="180" width="120" height="320"/>
+    <rect x="1350" y="250" width="100" height="250"/>
+  </g>
+
+  <!-- Street Roadway -->
+  <polygon points="0,480 1600,480 1600,680 0,680" fill="#181B24"/>
+  <line x1="50" y1="580" x2="250" y2="580" stroke="#FACC15" stroke-width="12" stroke-linecap="round"/>
+  <line x1="400" y1="580" x2="600" y2="580" stroke="#FACC15" stroke-width="12" stroke-linecap="round"/>
+  <line x1="750" y1="580" x2="950" y2="580" stroke="#FACC15" stroke-width="12" stroke-linecap="round"/>
+  <line x1="1100" y1="580" x2="1300" y2="580" stroke="#FACC15" stroke-width="12" stroke-linecap="round"/>
+  <line x1="1450" y1="580" x2="1600" y2="580" stroke="#FACC15" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- LEFT ROAD SIDE: Corner Kiosk (Duka) with Battery Swap Station (Witty African Detail) -->
+  <g transform="translate(80, 290)" filter="url(#svg-shadow)">
+    <!-- Wooden Kiosk Structure -->
+    <rect x="0" y="80" width="340" height="230" rx="12" fill="#78350F" stroke="#451A03" stroke-width="4"/>
+    <!-- Striped Awning -->
+    <polygon points="-10,80 350,80 330,20 10,20" fill="#EA580C"/>
+    <polygon points="30,80 80,80 70,20 20,20" fill="#FACC15"/>
+    <polygon points="120,80 170,80 160,20 110,20" fill="#FACC15"/>
+    <polygon points="210,80 260,80 250,20 200,20" fill="#FACC15"/>
+    <polygon points="300,80 350,80 340,20 290,20" fill="#FACC15"/>
+
+    <!-- Hand-painted Duka Sign -->
+    <rect x="25" y="95" width="290" height="42" rx="6" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>
+    <text x="170" y="117" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="12" fill="#78350F" text-anchor="middle">MAMA MBOGA &amp; EV POWER ⚡</text>
+    <text x="170" y="130" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="9.5" fill="#B45309" text-anchor="middle">"Fresh Bananas &amp; Charged Batteries!"</text>
+
+    <!-- Battery Swap Locker Cabinet -->
+    <rect x="30" y="150" width="140" height="150" rx="8" fill="#0F172A" stroke="#10B981" stroke-width="3"/>
+    <text x="100" y="172" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="10" fill="#34D399" text-anchor="middle">BATTERY SWAP</text>
+    
+    <!-- Battery Slots (Glowing Green) -->
+    <rect x="42" y="185" width="50" height="40" rx="4" fill="#064E3B" stroke="#10B981" stroke-width="1.5"/>
+    <circle cx="67" cy="205" r="8" fill="#10B981"/>
+    <rect x="105" y="185" width="50" height="40" rx="4" fill="#064E3B" stroke="#10B981" stroke-width="1.5"/>
+    <circle cx="130" cy="205" r="8" fill="#10B981"/>
+
+    <rect x="42" y="235" width="50" height="40" rx="4" fill="#064E3B" stroke="#10B981" stroke-width="1.5"/>
+    <circle cx="67" cy="255" r="8" fill="#10B981"/>
+    <rect x="105" y="235" width="50" height="40" rx="4" fill="#064E3B" stroke="#10B981" stroke-width="1.5"/>
+    <circle cx="130" cy="255" r="8" fill="#10B981"/>
+
+    <!-- Banana bunches hanging beside swap cabinet -->
+    <g transform="translate(200, 160)">
+      <path d="M 10 0 C 30 20, 20 60, 5 70" stroke="#EAB308" stroke-width="12" fill="none" stroke-linecap="round"/>
+      <path d="M 25 0 C 45 20, 35 60, 20 70" stroke="#FACC15" stroke-width="12" fill="none" stroke-linecap="round"/>
+      <path d="M 40 0 C 60 20, 50 60, 35 70" stroke="#EAB308" stroke-width="12" fill="none" stroke-linecap="round"/>
+      <text x="30" y="95" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="10" fill="#FEF08A">100% Sweet</text>
+    </g>
+  </g>
+
+  <!-- CENTER: The Sleek Electric Boda Boda Gliding Silently (The Hero) -->
+  <g transform="translate(480, 320)" filter="url(#svg-shadow)">
+    <!-- Electric Motorcycle Chassis -->
+    <path d="M 80 260 L 170 260 L 220 180 L 150 140 L 70 200 Z" fill="#064E3B" stroke="#10B981" stroke-width="4"/>
+    
+    <!-- Neon Green Battery Core -->
+    <rect x="95" y="190" width="80" height="60" rx="8" fill="url(#ev-green)" stroke="#A7F3D0" stroke-width="2"/>
+    <text x="135" y="226" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="14" fill="#FFF" text-anchor="middle">EV</text>
+    <text x="135" y="240" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="8" fill="#D1FAE5" text-anchor="middle">LITHIUM POWER</text>
+
+    <!-- Wheels (Speed motion lines) -->
+    <circle cx="60" cy="260" r="50" fill="#0F172A" stroke="#10B981" stroke-width="8"/>
+    <circle cx="60" cy="260" r="22" fill="#E2E8F0"/>
+    <circle cx="280" cy="260" r="50" fill="#0F172A" stroke="#10B981" stroke-width="8"/>
+    <circle cx="280" cy="260" r="22" fill="#E2E8F0"/>
+
+    <!-- Fork & Handlebars -->
+    <line x1="280" y1="260" x2="230" y2="130" stroke="#94A3B8" stroke-width="8"/>
+    <circle cx="225" cy="120" r="14" fill="#FACC15"/>
+
+    <!-- Solar Helmet Rider Silhouette -->
+    <circle cx="160" cy="95" r="28" fill="#FACC15" stroke="#000" stroke-width="3"/>
+    <path d="M 125 130 Q 160 115, 195 130 L 210 210 L 120 210 Z" fill="#1E293B"/>
+
+    <!-- Funny Mudguard Sticker -->
+    <rect x="0" y="285" width="220" height="34" rx="6" fill="#FACC15" stroke="#000" stroke-width="2"/>
+    <text x="110" y="306" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="10" fill="#000" text-anchor="middle">ZERO SMOKE &#8226; 100% SPEED! ⚡</text>
+  </g>
+
+  <!-- RIGHT: The Old Sputtering Smoke Bus with Coughing Clouds (Humorous Contrast) -->
+  <g transform="translate(1020, 240)" filter="url(#svg-shadow)">
+    <!-- Bus Body -->
+    <rect x="0" y="60" width="460" height="230" rx="18" fill="#7F1D1D" stroke="#991B1B" stroke-width="4"/>
+    <rect x="20" y="80" width="420" height="70" rx="10" fill="#1E293B"/>
+    <text x="230" y="122" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="18" fill="#FEF08A" text-anchor="middle">DIESEL SMOKER 1998</text>
+
+    <!-- Exhaust Pipe & Comic Cough Bubbles -->
+    <rect x="-30" y="250" width="40" height="18" rx="4" fill="#374151"/>
+    <!-- Exhaust Cloud Bubbles -->
+    <circle cx="-60" cy="250" r="28" fill="#4B5563" opacity="0.6"/>
+    <circle cx="-100" cy="235" r="38" fill="#6B7280" opacity="0.5"/>
+    <circle cx="-150" cy="210" r="50" fill="#9CA3AF" opacity="0.4"/>
+    <!-- Comic Cough Text Bubble -->
+    <rect x="-180" y="110" width="160" height="46" rx="10" fill="#FFF" stroke="#000" stroke-width="2"/>
+    <text x="-100" y="132" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="12" fill="#DC2626" text-anchor="middle">COUGH! COUGH!</text>
+    <text x="-100" y="146" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="9" fill="#4B5563" text-anchor="middle">"I need to retire to the village..."</text>
+
+    <!-- Wheels -->
+    <circle cx="80" cy="290" r="45" fill="#0A0A0A" stroke="#52525B" stroke-width="8"/>
+    <circle cx="380" cy="290" r="45" fill="#0A0A0A" stroke="#52525B" stroke-width="8"/>
+  </g>
+
+  <!-- Bottom Title Ribbon -->
+  <g transform="translate(800, 855)" text-anchor="middle">
+    <text font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="19" fill="#FFFFFF" letter-spacing="0.5">THE FUTURE OF URBAN MOBILITY</text>
+    <text y="24" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="12" fill="#D4AF37" letter-spacing="2">CLEAN BODAS &#183; DECENTRALIZED BATTERY SWAP &#183; GREEN KENYAN ROADS</text>
+  </g>
+</svg>

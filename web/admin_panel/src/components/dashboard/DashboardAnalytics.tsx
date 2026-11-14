@@ -96,7 +96,7 @@ export const DashboardAnalytics: React.FC = () => {
                                         </ListItem>
                                         <ListItem className="py-3">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]" />
+                                                <div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_#22D3EE]" />
                                                 <Text className="text-slate-200">System Backup Completed</Text>
                                             </div>
                                             <Text className="text-slate-500 text-xs">1h ago</Text>

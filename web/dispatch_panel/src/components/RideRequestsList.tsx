@@ -22,13 +22,13 @@ const RideRequestsList = ({
             case 'pending':
                 return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
             case 'assigned':
-                return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+                return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
             case 'accepted':
                 return 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30';
             case 'in-progress':
                 return 'bg-green-500/20 text-green-400 border-green-500/30';
             case 'completed':
-                return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
+                return 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30';
             case 'cancelled':
                 return 'bg-red-500/20 text-red-400 border-red-500/30';
             default:
@@ -45,7 +45,7 @@ const RideRequestsList = ({
             case 'medium':
                 return 'bg-yellow-500 text-white';
             case 'low':
-                return 'bg-blue-500 text-white';
+                return 'bg-amber-500 text-black';
             default:
                 return 'bg-slate-500 text-white';
         }
@@ -74,7 +74,7 @@ const RideRequestsList = ({
                         <button className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors">
                             Filter
                         </button>
-                        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                        <button className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-black rounded-lg text-sm font-medium transition-colors">
                             Refresh
                         </button>
                     </div>
@@ -85,14 +85,14 @@ const RideRequestsList = ({
                         <div
                             key={ride.id}
                             onClick={() => onSelectRide(ride)}
-                            className={`bg-slate-900/50 backdrop-blur-xl border rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:border-blue-500/50 ${selectedRide?.id === ride.id
-                                    ? 'border-blue-500 shadow-lg shadow-blue-500/20'
+                            className={`bg-slate-900/50 backdrop-blur-xl border rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:border-amber-500/50 ${selectedRide?.id === ride.id
+                                    ? 'border-amber-500 shadow-lg shadow-amber-500/20'
                                     : 'border-slate-800/50'
                                 }`}
                         >
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-start gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-white font-bold">
                                         {ride.passengerName.charAt(0)}
                                     </div>
                                     <div>
@@ -150,7 +150,7 @@ const RideRequestsList = ({
                                     </div>
                                 </div>
                                 {ride.assignedDriverId && (
-                                    <span className="text-xs text-blue-400">
+                                    <span className="text-xs text-amber-400">
                                         Driver: {drivers.find(d => d.id === ride.assignedDriverId)?.name}
                                     </span>
                                 )}
@@ -201,7 +201,7 @@ const RideRequestsList = ({
                                         <button
                                             key={driver.id}
                                             onClick={() => onAssignDriver(selectedRide.id, driver.id)}
-                                            className="w-full bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 hover:border-blue-500/50 rounded-xl p-3 text-left transition-all duration-200"
+                                            className="w-full bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 hover:border-amber-500/50 rounded-xl p-3 text-left transition-all duration-200"
                                         >
                                             <div className="flex items-center justify-between mb-2">
                                                 <span className="text-white font-medium text-sm">{driver.name}</span>
@@ -229,8 +229,8 @@ const RideRequestsList = ({
                         )}
 
                         {selectedRide.status !== 'pending' && (
-                            <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-                                <p className="text-sm text-blue-400">
+                            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
+                                <p className="text-sm text-amber-400">
                                     This ride is currently <span className="font-semibold">{selectedRide.status}</span>
                                 </p>
                             </div>

@@ -82,6 +82,11 @@ export function useUndockableWindow({
 
         externalWindowRef.current = newWindow;
 
+        const safeTitle = title.replace(/[&<>'"]/g, (tag) => {
+            const map: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' };
+            return map[tag] || tag;
+        });
+
         // Setup Document in Child Window
         const childDoc = newWindow.document;
         childDoc.title = `${title} — Cabi Dispatch External Monitor`;
@@ -90,7 +95,7 @@ export function useUndockableWindow({
         childDoc.head.innerHTML = `
             <meta charset="utf-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>${title} — Cabi Dispatch External Display</title>
+            <title>${safeTitle} — Cabi Dispatch External Display</title>
         `;
 
         // Copy all parent stylesheets, inline styles, and font links to child window
@@ -102,7 +107,7 @@ export function useUndockableWindow({
         });
 
         // Setup base body styling
-        childDoc.body.className = 'bg-slate-950 text-slate-100 min-h-screen overflow-x-hidden antialiased selection:bg-blue-600 selection:text-white m-0 p-0';
+        childDoc.body.className = 'bg-neutral-950 text-slate-100 min-h-screen overflow-x-hidden antialiased selection:bg-amber-500 selection:text-black m-0 p-0';
 
         // Create main layout structure inside child document
         const shell = childDoc.createElement('div');
@@ -113,12 +118,12 @@ export function useUndockableWindow({
         topBar.className = 'sticky top-0 z-50 flex items-center justify-between px-6 py-3 bg-slate-900/90 backdrop-blur-xl border-b border-slate-800 shadow-lg';
         topBar.innerHTML = `
             <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-md shadow-blue-500/20">
+                <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center font-bold text-black shadow-md shadow-amber-500/20">
                     C
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="text-white font-semibold text-sm tracking-wide">${title}</span>
+                        <span class="text-white font-semibold text-sm tracking-wide">${safeTitle}</span>
                         <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                             EXTERNAL SCREEN
@@ -132,7 +137,7 @@ export function useUndockableWindow({
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
                     Fullscreen
                 </button>
-                <button id="cabi-dock-btn" class="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 border border-blue-400/30 rounded-lg transition-all shadow-md shadow-blue-600/30 cursor-pointer" title="Restore back to main workstation (Esc)">
+                <button id="cabi-dock-btn" class="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-black bg-amber-500 hover:bg-amber-400 border border-amber-400/30 rounded-lg transition-all shadow-md shadow-amber-600/30 cursor-pointer" title="Restore back to main workstation (Esc)">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
                     Dock to Main Display
                 </button>
@@ -161,9 +166,13 @@ export function useUndockableWindow({
         if (fsBtn) {
             fsBtn.addEventListener('click', () => {
                 if (!childDoc.fullscreenElement) {
-                    childDoc.documentElement.requestFullscreen?.().catch(() => {});
+                    childDoc.documentElement.requestFullscreen?.().catch((err) => {
+                        console.warn('[UndockableWindow] Fullscreen request rejected:', err);
+                    });
                 } else {
-                    childDoc.exitFullscreen?.().catch(() => {});
+                    childDoc.exitFullscreen?.().catch((err) => {
+                        console.warn('[UndockableWindow] Exit fullscreen rejected:', err);
+                    });
                 }
             });
         }

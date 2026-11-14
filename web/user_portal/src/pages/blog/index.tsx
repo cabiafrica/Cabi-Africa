@@ -29,7 +29,12 @@ export default function BlogIndex({ posts, categories }: BlogIndexProps) {
         : safePosts.filter((post) => post.category === selectedCategory);
 
     return (
-        <MainLayout title="Intel | CABI" description="Stories, mobility insights, and updates from across the CABI network.">
+        <MainLayout
+            title="Intel | CABI"
+            description="Stories, mobility insights, and updates from across the CABI network."
+            image="/images/blog/future-urban-mobility.svg"
+            imageAlt="CABI Africa Intel editorial — urban mobility, driver wealth creation, and safety insights"
+        >
             {/* Full-Width Hero Banner (Scrolls out on scroll, matching Single Blog Page) */}
             <section
                 aria-label="Intel overview"

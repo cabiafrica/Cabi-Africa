@@ -53,7 +53,7 @@ export const CorporateEmployeeManagement: React.FC = () => {
             onChange={e => setInviteEmail(e.target.value)}
             required
           />
-          <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+          <button type="submit" className="bg-amber-500 text-black px-6 py-2 rounded hover:bg-amber-700">
             Send Invite
           </button>
         </form>

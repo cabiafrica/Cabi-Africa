@@ -72,7 +72,7 @@ export default function PassengerActivityReport() {
                 <button
                     onClick={generateReport}
                     disabled={!selectedPassenger || !dateRange.start || !dateRange.end}
-                    className="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+                    className="mt-4 bg-amber-500 text-black px-6 py-2 rounded hover:bg-amber-700 disabled:bg-gray-400"
                 >
                     Generate Report
                 </button>
@@ -156,7 +156,7 @@ export default function PassengerActivityReport() {
                                         <div className="flex items-center gap-2">
                                             <div className="w-32 bg-gray-200 rounded-full h-2">
                                                 <div
-                                                    className="bg-blue-600 h-2 rounded-full"
+                                                    className="bg-amber-600 h-2 rounded-full"
                                                     style={{ width: `${(count / report.totalTrips) * 100}%` }}
                                                 />
                                             </div>
@@ -176,7 +176,7 @@ export default function PassengerActivityReport() {
                                         <div className="flex items-center gap-2">
                                             <div className="w-32 bg-gray-200 rounded-full h-2">
                                                 <div
-                                                    className="bg-purple-600 h-2 rounded-full"
+                                                    className="bg-cyan-600 h-2 rounded-full"
                                                     style={{ width: `${(count / report.totalTrips) * 100}%` }}
                                                 />
                                             </div>

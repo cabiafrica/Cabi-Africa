@@ -83,7 +83,7 @@ export const UserManagement: React.FC = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
         <Box>
           <Typography variant="h4" fontWeight="800" sx={{
-            background: 'linear-gradient(45deg, #6366f1 30%, #8b5cf6 90%)',
+            background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             mb: 1
@@ -99,7 +99,7 @@ export const UserManagement: React.FC = () => {
           startIcon={<AddIcon />}
           onClick={() => setEditingUser('new')}
           sx={{
-            background: 'linear-gradient(45deg, #6366f1 30%, #8b5cf6 90%)',
+            background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
             boxShadow: '0 3px 5px 2px rgba(99, 102, 241, .3)',
             fontWeight: 'bold',
             px: 3,

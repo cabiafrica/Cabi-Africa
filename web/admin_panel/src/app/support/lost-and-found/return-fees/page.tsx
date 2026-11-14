@@ -148,7 +148,7 @@ export default function LostItemReturnFeePage() {
                                         {transactions.map((transaction) => (
                                             <tr key={transaction.id} className="hover:bg-gray-50">
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="text-sm font-medium text-blue-600">
+                                                    <span className="text-sm font-medium text-amber-600">
                                                         {transaction.ticketId}
                                                     </span>
                                                 </td>
@@ -202,16 +202,16 @@ export default function LostItemReturnFeePage() {
                 </div>
 
                 {/* Info Panel */}
-                <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <div className="mt-6 bg-amber-50 border border-amber-200 rounded-lg p-6">
                     <div className="flex items-start">
                         <div className="flex-shrink-0">
-                            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
                         <div className="ml-4">
-                            <h3 className="text-lg font-semibold text-blue-900 mb-2">How Return Fees Work</h3>
-                            <ul className="space-y-2 text-sm text-blue-800">
+                            <h3 className="text-lg font-semibold text-amber-900 mb-2">How Return Fees Work</h3>
+                            <ul className="space-y-2 text-sm text-amber-800">
                                 <li>• When a driver returns a lost item, a return fee is automatically charged to the passenger</li>
                                 <li>• The full fee amount is credited to the driver's earnings as compensation for their time</li>
                                 <li>• Fees are processed through the payment service and appear in both user's transaction history</li>

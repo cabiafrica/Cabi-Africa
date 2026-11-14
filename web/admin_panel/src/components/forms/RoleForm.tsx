@@ -48,7 +48,7 @@ export const RoleForm: React.FC<Props> = ({ role, onSave, onCancel }) => {
 
   return (
     <div className="card max-w-4xl mx-auto">
-      <h3 className="text-2xl font-bold text-current mb-6 border-b border-slate-200 dark:border-slate-700 pb-2">{role ? 'Edit' : 'Create'} Role</h3>
+      <h3 className="text-2xl font-bold text-current mb-6 border-b border-slate-200 dark:border-white/10 pb-2">{role ? 'Edit' : 'Create'} Role</h3>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
@@ -68,12 +68,12 @@ export const RoleForm: React.FC<Props> = ({ role, onSave, onCancel }) => {
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 max-h-[400px] overflow-y-auto custom-scrollbar">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {availablePermissions.map(perm => (
-                <label key={perm.id} className={`flex items-start p-3 rounded-lg border cursor-pointer transition-colors ${selectedPermissions.has(perm.id) ? 'bg-blue-50 border-blue-200 ring-1 ring-blue-500' : 'bg-white border-gray-200 hover:bg-gray-50'}`}>
+                <label key={perm.id} className={`flex items-start p-3 rounded-lg border cursor-pointer transition-colors ${selectedPermissions.has(perm.id) ? 'bg-amber-50 border-amber-200 ring-1 ring-amber-500' : 'bg-white border-gray-200 hover:bg-gray-50'}`}>
                   <input
                     type="checkbox"
                     checked={selectedPermissions.has(perm.id)}
                     onChange={() => handlePermissionToggle(perm.id)}
-                    className="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="mt-0.5 h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
                   />
                   <div className="ml-3">
                     <span className="block text-sm font-medium text-gray-900 font-mono">{perm.id}</span>
@@ -98,7 +98,7 @@ export const RoleForm: React.FC<Props> = ({ role, onSave, onCancel }) => {
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50"
+            className="bg-amber-500 hover:bg-amber-600 text-black px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50"
           >
             {isLoading ? 'Saving...' : 'Save Role'}
           </button>

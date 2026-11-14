@@ -14,12 +14,12 @@ export default function HeatmapReportPage() {
                     <option>Last 24 Hours</option>
                     <option>Last 7 Days</option>
                 </select>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded">Update Map</button>
+                <button className="bg-amber-500 text-black px-4 py-2 rounded">Update Map</button>
             </div>
 
             <div className="border border-gray-300 rounded-lg h-96 bg-gray-100 flex items-center justify-center relative overflow-hidden">
                 {/* Mock Map Background */}
-                <div className="absolute inset-0 bg-blue-50 opacity-50"></div>
+                <div className="absolute inset-0 bg-amber-50 opacity-50"></div>
                 <p className="text-gray-500 z-10">Map Visualization Placeholder (Would use Leaflet/Google Maps)</p>
 
                 {/* Mock Hitpoints */}

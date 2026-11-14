@@ -19,6 +19,9 @@ class WealthProgramItem {
   final double maxPct;
   final double defaultPct;
   final String dividendOrYield;
+  final bool isDriverSelectable;
+  final double platformBonusPct;
+  final String? requiredBadgeName;
   bool isEnrolled;
   double selectedPct;
 
@@ -32,11 +35,15 @@ class WealthProgramItem {
     required this.maxPct,
     required this.defaultPct,
     required this.dividendOrYield,
+    this.isDriverSelectable = true,
+    this.platformBonusPct = 0.0,
+    this.requiredBadgeName,
     this.isEnrolled = false,
     this.selectedPct = 0.0,
   });
 
   factory WealthProgramItem.fromJson(Map<String, dynamic> json) {
+    final reqBadge = json['requiredBadge'] as Map<String, dynamic>?;
     return WealthProgramItem(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
@@ -47,6 +54,9 @@ class WealthProgramItem {
       maxPct: (json['maxPct'] as num?)?.toDouble() ?? 0.20,
       defaultPct: (json['defaultPct'] as num?)?.toDouble() ?? 0.05,
       dividendOrYield: json['dividendOrYield'] ?? '',
+      isDriverSelectable: json['isDriverSelectable'] ?? true,
+      platformBonusPct: (json['platformBonusPct'] as num?)?.toDouble() ?? 0.0,
+      requiredBadgeName: reqBadge?['name'] as String?,
       isEnrolled: false,
       selectedPct: 0.0,
     );
@@ -313,7 +323,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
       appBar: AppBar(
         title: Text(
           'Wealth Creation Programs',
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             fontWeight: FontWeight.w700,
             fontSize: 18,
             color: Colors.white,
@@ -353,7 +363,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                     children: [
                       Text(
                         'ADMIN-APPROVED PROGRAMS',
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.2,
@@ -362,7 +372,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                       ),
                       Text(
                         '${_programs.where((p) => p.isEnrolled).length}/${_programs.length} Active',
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: AppTheme.darkTextSecondary,
@@ -408,7 +418,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                             )
                           : Text(
                               'Save Wealth Preferences',
-                              style: GoogleFonts.outfit(
+                              style: GoogleFonts.inter(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 0.5,
@@ -459,7 +469,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                 children: [
                   Text(
                     'TOTAL TRIP DEDUCTION',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.1,
@@ -473,7 +483,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                     children: [
                       Text(
                         '${(totalPct * 100).toStringAsFixed(1)}%',
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           fontSize: 32,
                           fontWeight: FontWeight.w900,
                           color: isFull ? AppTheme.primaryColor : Colors.white,
@@ -482,7 +492,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                       const SizedBox(width: 6),
                       Text(
                         '/ 30.0% Max Limit',
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: AppTheme.darkTextSecondary,
@@ -509,7 +519,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                   children: [
                     Text(
                       'AVAILABLE',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.8,
@@ -518,7 +528,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                     ),
                     Text(
                       '${(remainingPct * 100).toStringAsFixed(1)}%',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                         color: isFull ? AppTheme.primaryColor : AppTheme.successGreen,
@@ -566,7 +576,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                   Expanded(
                     child: Text(
                       'Maximum 30% limit reached. Adjust existing percentages to redistribute.',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         fontSize: 11,
                         color: Colors.amber,
                         fontWeight: FontWeight.w500,
@@ -579,7 +589,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
           else
             Text(
               'Deductions are automatically allocated from your 80% net trip earnings.',
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 fontSize: 11.5,
                 color: AppTheme.darkTextSecondary,
               ),
@@ -595,7 +605,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
       children: [
         Text(
           'QUICK ALLOCATION PRESETS',
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.1,
@@ -675,7 +685,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
             const SizedBox(width: 6),
             Text(
               label,
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
@@ -690,7 +700,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
               ),
               child: Text(
                 pct,
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   color: isAccent ? AppTheme.primaryColor : AppTheme.successGreen,
@@ -770,7 +780,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                       children: [
                         Text(
                           program.serviceCategory.replaceAll('_', ' '),
-                          style: GoogleFonts.outfit(
+                          style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
                             color: categoryColor,
@@ -779,7 +789,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                         ),
                         Text(
                           program.name,
-                          style: GoogleFonts.outfit(
+                          style: GoogleFonts.inter(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -827,7 +837,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
             // Benefit description
             Text(
               program.description,
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 fontSize: 12,
                 color: AppTheme.darkTextSecondary,
                 height: 1.35,
@@ -851,7 +861,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                   const SizedBox(width: 6),
                   Text(
                     program.dividendOrYield,
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: Colors.white70,
@@ -860,6 +870,50 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                 ],
               ),
             ),
+
+            if (program.platformBonusPct > 0 || program.requiredBadgeName != null) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                children: [
+                  if (program.platformBonusPct > 0)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.35)),
+                      ),
+                      child: Text(
+                        '+${(program.platformBonusPct * 100).toStringAsFixed(0)}% Platform Bonus Match',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.primaryColor,
+                        ),
+                      ),
+                    ),
+                  if (program.requiredBadgeName != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.06),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppTheme.outlineBorder),
+                      ),
+                      child: Text(
+                        'Badge: ${program.requiredBadgeName}',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
 
             if (isEnrolled) ...[
               const Divider(color: AppTheme.outlineBorder, height: 24),
@@ -870,7 +924,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                 children: [
                   Text(
                     'Contribution Rate per Trip:',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -898,7 +952,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                         ),
                         child: Text(
                           '${(selectedPct * 100).toStringAsFixed(0)}%',
-                          style: GoogleFonts.outfit(
+                          style: GoogleFonts.inter(
                             fontSize: 16,
                             fontWeight: FontWeight.w900,
                             color: AppTheme.primaryColor,
@@ -931,7 +985,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
               // Trip Deduction Example Preview
               Text(
                 'Example: On a KES 500 trip net payout (KES 400), deduction is KES ${(400 * selectedPct).toStringAsFixed(2)}',
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   fontSize: 11,
                   fontStyle: FontStyle.italic,
                   color: AppTheme.darkTextSecondary,
@@ -967,7 +1021,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
               const SizedBox(width: 8),
               Text(
                 'HOW YOUR COMMISSIONS ARE DEDUCTED',
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.9,
@@ -979,7 +1033,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
           const SizedBox(height: 10),
           Text(
             'For every completed trip, Cabi deducts your chosen wealth contributions directly from your 80% net payout. You never need to deposit manually.',
-            style: GoogleFonts.outfit(fontSize: 11.5, color: Colors.white70, height: 1.4),
+            style: GoogleFonts.inter(fontSize: 11.5, color: Colors.white70, height: 1.4),
           ),
           const SizedBox(height: 10),
           _buildReceiptRow('Example Gross Trip Fare:', 'KES ${exampleGross.toStringAsFixed(0)}'),
@@ -1010,7 +1064,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: isBold ? FontWeight.w700 : FontWeight.w400,
               color: Colors.white70,
@@ -1018,7 +1072,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
           ),
           Text(
             value,
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: isBold ? FontWeight.w800 : FontWeight.w500,
               color: highlightColor ?? Colors.white,

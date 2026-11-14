@@ -19,7 +19,9 @@ export default function ContactInfoCards({
 
     const handlePhoneClick = () => {
         if (typeof navigator !== 'undefined' && navigator.clipboard) {
-            navigator.clipboard.writeText(CONTACT_INFO.phoneDisplay).catch(() => {});
+            navigator.clipboard.writeText(CONTACT_INFO.phoneDisplay).catch((err) => {
+                console.warn('[Clipboard] Failed to copy phone number:', err);
+            });
         }
         setCopiedPhone(true);
         setTimeout(() => setCopiedPhone(false), 2500);

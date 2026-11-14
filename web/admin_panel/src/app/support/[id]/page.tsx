@@ -41,9 +41,9 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                 <div className="flex-1 p-4 overflow-y-auto space-y-4">
                     {mockTicket.messages.map(msg => (
                         <div key={msg.id} className={`flex ${msg.sender === 'Agent' ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`p-3 rounded-lg max-w-sm ${msg.sender === 'Agent' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                            <div className={`p-3 rounded-lg max-w-sm ${msg.sender === 'Agent' ? 'bg-amber-500 text-black' : 'bg-gray-200 text-gray-800'}`}>
                                 <p className="text-sm">{msg.text}</p>
-                                <p className={`text-xs mt-1 ${msg.sender === 'Agent' ? 'text-blue-100' : 'text-gray-500'}`}>{msg.time}</p>
+                                <p className={`text-xs mt-1 ${msg.sender === 'Agent' ? 'text-amber-100' : 'text-gray-500'}`}>{msg.time}</p>
                             </div>
                         </div>
                     ))}
@@ -52,7 +52,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                 <div className="p-4 border-t">
                     <div className="flex gap-2">
                         <input type="text" className="flex-1 border p-2 rounded" placeholder="Type a reply..." />
-                        <button className="bg-blue-600 text-white px-4 py-2 rounded">Send</button>
+                        <button className="bg-amber-500 text-black px-4 py-2 rounded">Send</button>
                     </div>
                 </div>
             </div>
@@ -86,7 +86,7 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
                         <p><span className="text-gray-500">Route:</span> {mockContext.lastTrip.route}</p>
                         <p><span className="text-gray-500">Date:</span> {mockContext.lastTrip.date}</p>
                         <p><span className="text-gray-500">Fare:</span> {mockContext.lastTrip.amount}</p>
-                        <button className="text-blue-600 hover:underline text-xs mt-2">View Trip Details</button>
+                        <button className="text-amber-600 hover:underline text-xs mt-2">View Trip Details</button>
                     </div>
                 </div>
             </div>

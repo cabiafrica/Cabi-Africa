@@ -52,11 +52,11 @@ const DriversList = ({ drivers }: DriversListProps) => {
                 {drivers.map((driver) => (
                     <div
                         key={driver.id}
-                        className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-2xl p-5 hover:border-blue-500/50 transition-all duration-300"
+                        className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-2xl p-5 hover:border-amber-500/50 transition-all duration-300"
                     >
                         <div className="flex items-start justify-between mb-4">
                             <div className="flex items-start gap-3">
-                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-white font-bold text-lg">
                                     {driver.name.charAt(0)}
                                 </div>
                                 <div>
@@ -113,7 +113,7 @@ const DriversList = ({ drivers }: DriversListProps) => {
                                 <div className={`w-2 h-2 rounded-full ${driver.status === 'online' ? 'bg-green-500' : driver.status === 'busy' ? 'bg-yellow-500' : 'bg-slate-500'}`}></div>
                                 <span className="text-xs text-slate-400">Score: {driver.score}</span>
                             </div>
-                            <button className="text-xs text-blue-400 hover:text-blue-300 font-medium">
+                            <button className="text-xs text-amber-400 hover:text-amber-300 font-medium">
                                 View Details →
                             </button>
                         </div>

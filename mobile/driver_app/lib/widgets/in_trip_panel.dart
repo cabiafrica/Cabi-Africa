@@ -63,7 +63,7 @@ class InTripPanel extends StatelessWidget {
                   color: Color(0xFFEF4444), size: 28),
               const SizedBox(width: 10),
               Text('Confirm SOS',
-                  style: GoogleFonts.outfit(
+                  style: GoogleFonts.inter(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   )),
@@ -71,13 +71,13 @@ class InTripPanel extends StatelessWidget {
           ),
           content: Text(
             'Are you sure you want to activate the emergency SOS alert? This will notify Cabi dispatch and emergency contacts immediately.',
-            style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13),
+            style: GoogleFonts.inter(color: Colors.white70, fontSize: 13),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
               child: Text('Cancel',
-                  style: GoogleFonts.outfit(color: Colors.white54)),
+                  style: GoogleFonts.inter(color: Colors.white54)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -88,7 +88,7 @@ class InTripPanel extends StatelessWidget {
               ),
               onPressed: () => Navigator.of(context).pop(true),
               child: Text('ACTIVATE SOS',
-                  style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+                  style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -180,7 +180,7 @@ class InTripPanel extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     'TRIP IN PROGRESS',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       color: AppTheme.successGreen,
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
@@ -205,7 +205,7 @@ class InTripPanel extends StatelessWidget {
                       children: [
                         Text(
                           'DESTINATION',
-                          style: GoogleFonts.outfit(
+                          style: GoogleFonts.inter(
                             color: const Color(0xFFEF4444),
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
@@ -214,7 +214,7 @@ class InTripPanel extends StatelessWidget {
                         ),
                         Text(
                           destination,
-                          style: GoogleFonts.outfit(
+                          style: GoogleFonts.inter(
                             color: Colors.white,
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
@@ -238,7 +238,7 @@ class InTripPanel extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     passengerName,
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       color: Colors.white70,
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
@@ -316,7 +316,7 @@ class InTripPanel extends StatelessWidget {
                             color: Colors.black, size: 18),
                         label: Text(
                           'Complete Trip',
-                          style: GoogleFonts.outfit(
+                          style: GoogleFonts.inter(
                             color: Colors.black,
                             fontWeight: FontWeight.w900,
                             fontSize: 15,
@@ -331,7 +331,7 @@ class InTripPanel extends StatelessWidget {
               Center(
                 child: Text(
                   'Hold SOS button for 2s in emergency',
-                  style: GoogleFonts.outfit(
+                  style: GoogleFonts.inter(
                     color: Colors.white24,
                     fontSize: 10,
                   ),

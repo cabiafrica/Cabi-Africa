@@ -118,7 +118,7 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                     <button
                         onClick={() => setViewStyle('grid')}
                         className={`p-2 rounded-lg transition-all ${viewStyle === 'grid'
-                            ? 'bg-blue-600 text-white'
+                            ? 'bg-amber-500 text-black'
                             : 'text-slate-400 hover:text-white hover:bg-slate-800'
                             }`}
                         title="Grid View"
@@ -135,7 +135,7 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                     <button
                         onClick={() => setViewStyle('list')}
                         className={`p-2 rounded-lg transition-all ${viewStyle === 'list'
-                            ? 'bg-blue-600 text-white'
+                            ? 'bg-amber-500 text-black'
                             : 'text-slate-400 hover:text-white hover:bg-slate-800'
                             }`}
                         title="List View"
@@ -152,7 +152,7 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                     <button
                         onClick={() => setViewStyle('table')}
                         className={`p-2 rounded-lg transition-all ${viewStyle === 'table'
-                            ? 'bg-blue-600 text-white'
+                            ? 'bg-amber-500 text-black'
                             : 'text-slate-400 hover:text-white hover:bg-slate-800'
                             }`}
                         title="Table View"
@@ -171,8 +171,8 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
 
             {/* Summary Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-gradient-to-br from-blue-600/10 to-blue-600/5 border border-blue-500/20 rounded-xl p-4">
-                    <p className="text-sm text-blue-400 mb-1">Total Passengers</p>
+                <div className="bg-gradient-to-br from-amber-600/10 to-amber-600/5 border border-amber-500/20 rounded-xl p-4">
+                    <p className="text-sm text-amber-400 mb-1">Total Passengers</p>
                     <p className="text-3xl font-bold text-white">{filteredPassengers.length}</p>
                 </div>
                 <div className="bg-gradient-to-br from-green-600/10 to-green-600/5 border border-green-500/20 rounded-xl p-4">
@@ -181,8 +181,8 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                         {filteredPassengers.filter((p) => p.status === 'active').length}
                     </p>
                 </div>
-                <div className="bg-gradient-to-br from-purple-600/10 to-purple-600/5 border border-purple-500/20 rounded-xl p-4">
-                    <p className="text-sm text-purple-400 mb-1">Total Rides</p>
+                <div className="bg-gradient-to-br from-cyan-600/10 to-cyan-600/5 border border-cyan-500/20 rounded-xl p-4">
+                    <p className="text-sm text-cyan-400 mb-1">Total Rides</p>
                     <p className="text-3xl font-bold text-white">
                         {filteredPassengers.reduce((sum, p) => sum + p.totalRides, 0).toLocaleString()}
                     </p>
@@ -202,16 +202,16 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                         <div
                             key={passenger.id}
                             onClick={() => setSelectedPassenger(passenger)}
-                            className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-xl p-6 hover:border-blue-500/50 transition-all cursor-pointer group"
+                            className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-xl p-6 hover:border-amber-500/50 transition-all cursor-pointer group"
                         >
                             {/* Passenger Header */}
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-lg">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-white font-bold text-lg">
                                         {passenger.name.charAt(0)}
                                     </div>
                                     <div>
-                                        <h3 className="font-semibold text-white group-hover:text-blue-400 transition-colors">
+                                        <h3 className="font-semibold text-white group-hover:text-amber-400 transition-colors">
                                             {passenger.name}
                                         </h3>
                                         <p className="text-xs text-slate-500 font-mono">{passenger.id}</p>
@@ -279,16 +279,16 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                         <div
                             key={passenger.id}
                             onClick={() => setSelectedPassenger(passenger)}
-                            className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-xl p-4 hover:border-blue-500/50 transition-all cursor-pointer group"
+                            className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-xl p-4 hover:border-amber-500/50 transition-all cursor-pointer group"
                         >
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4 flex-1">
-                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
                                         {passenger.name.charAt(0)}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-3 mb-1">
-                                            <h3 className="font-semibold text-white group-hover:text-blue-400 transition-colors">
+                                            <h3 className="font-semibold text-white group-hover:text-amber-400 transition-colors">
                                                 {passenger.name}
                                             </h3>
                                             <span
@@ -368,7 +368,7 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                                     >
                                         <td className="py-4 px-6">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold">
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-white font-bold">
                                                     {passenger.name.charAt(0)}
                                                 </div>
                                                 <div>
@@ -451,7 +451,7 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                         <div className="sticky top-0 bg-slate-900 border-b border-slate-800 p-6">
                             <div className="flex items-start justify-between">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-2xl">
+                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-white font-bold text-2xl">
                                         {selectedPassenger.name.charAt(0)}
                                     </div>
                                     <div>
@@ -491,10 +491,10 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                         <div className="p-6 space-y-6">
                             {/* Stats Overview */}
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div className="bg-gradient-to-br from-blue-600/10 to-blue-600/5 border border-blue-500/20 rounded-xl p-4">
+                                <div className="bg-gradient-to-br from-amber-600/10 to-amber-600/5 border border-amber-500/20 rounded-xl p-4">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <TrendingUp className="w-4 h-4 text-blue-400" />
-                                        <p className="text-xs text-blue-400">Total Rides</p>
+                                        <TrendingUp className="w-4 h-4 text-amber-400" />
+                                        <p className="text-xs text-amber-400">Total Rides</p>
                                     </div>
                                     <p className="text-2xl font-bold text-white">{selectedPassenger.totalRides}</p>
                                 </div>
@@ -514,10 +514,10 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                                     </div>
                                     <p className="text-2xl font-bold text-white">{selectedPassenger.rating.toFixed(1)}</p>
                                 </div>
-                                <div className="bg-gradient-to-br from-purple-600/10 to-purple-600/5 border border-purple-500/20 rounded-xl p-4">
+                                <div className="bg-gradient-to-br from-cyan-600/10 to-cyan-600/5 border border-cyan-500/20 rounded-xl p-4">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <TrendingUp className="w-4 h-4 text-purple-400" />
-                                        <p className="text-xs text-purple-400">Completed</p>
+                                        <TrendingUp className="w-4 h-4 text-cyan-400" />
+                                        <p className="text-xs text-cyan-400">Completed</p>
                                     </div>
                                     <p className="text-2xl font-bold text-white">{selectedPassenger.completedRides}</p>
                                 </div>

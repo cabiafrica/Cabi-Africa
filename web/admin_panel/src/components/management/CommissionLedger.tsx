@@ -64,14 +64,14 @@ export const CommissionLedger: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <AccountBalanceWallet className="text-blue-600 dark:text-blue-400" />
+                        <AccountBalanceWallet className="text-amber-600 dark:text-amber-400" />
                         Commission Ledger
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-1">Track financial transactions and commission history.</p>
                 </div>
 
-                <div className="flex bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-1">
-                    <div className="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700">
+                <div className="flex bg-white dark:bg-card-dark rounded-lg shadow-sm border border-slate-200 dark:border-white/10 p-1">
+                    <div className="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-white/10">
                         Total Records
                     </div>
                     <div className="px-4 py-2 text-sm font-bold text-slate-900 dark:text-white">
@@ -81,7 +81,7 @@ export const CommissionLedger: React.FC = () => {
             </div>
 
             {/* Filter Bar */}
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 transition-all">
+            <div className="bg-white dark:bg-card-dark p-4 rounded-xl shadow-sm border border-slate-200 dark:border-white/10 transition-all">
                 <div className="flex flex-col lg:flex-row items-end lg:items-center gap-4">
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
@@ -92,7 +92,7 @@ export const CommissionLedger: React.FC = () => {
                                 <input
                                     type="text"
                                     placeholder="Search..."
-                                    className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                    className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-amber-500 outline-none"
                                     value={driverId}
                                     onChange={e => setDriverId(e.target.value)}
                                 />
@@ -103,7 +103,7 @@ export const CommissionLedger: React.FC = () => {
                             <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 ml-1">Start Date</label>
                             <input
                                 type="date"
-                                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full px-3 py-2 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-amber-500 outline-none"
                                 value={startDate}
                                 onChange={e => setStartDate(e.target.value)}
                             />
@@ -113,7 +113,7 @@ export const CommissionLedger: React.FC = () => {
                             <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 ml-1">End Date</label>
                             <input
                                 type="date"
-                                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                                className="w-full px-3 py-2 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-amber-500 outline-none"
                                 value={endDate}
                                 onChange={e => setEndDate(e.target.value)}
                             />
@@ -130,7 +130,7 @@ export const CommissionLedger: React.FC = () => {
                         </button>
                         <button
                             onClick={() => fetchLedger()}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-medium shadow-sm transition-transform active:scale-95 w-full lg:w-auto flex justify-center items-center gap-2"
+                            className="bg-amber-500 hover:bg-amber-600 text-black px-6 py-2.5 rounded-lg text-sm font-medium shadow-sm transition-transform active:scale-95 w-full lg:w-auto flex justify-center items-center gap-2"
                         >
                             <FilterList fontSize="small" />
                             Apply Filters
@@ -139,10 +139,10 @@ export const CommissionLedger: React.FC = () => {
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="bg-white dark:bg-card-dark shadow-sm rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                        <thead className="bg-slate-50 dark:bg-slate-900">
+                        <thead className="bg-slate-50 dark:bg-surface-dark">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date & Time</th>
                                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Driver</th>
@@ -151,7 +151,7 @@ export const CommissionLedger: React.FC = () => {
                                 <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Amount (KES)</th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+                        <tbody className="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
                             {loading ? (
                                 <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">Loading ledger data...</td></tr>
                             ) : entries.length === 0 ? (
@@ -175,7 +175,7 @@ export const CommissionLedger: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
                                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${entry.transactionType === 'MANUAL_ADJUSTMENT'
-                                                    ? 'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800'
+                                                    ? 'bg-cyan-50 text-cyan-700 border-cyan-100 dark:bg-cyan-900/20 dark:text-cyan-300 dark:border-cyan-800'
                                                     : 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600'
                                                 }`}>
                                                 {entry.transactionType.replace(/_/g, ' ')}
@@ -203,7 +203,7 @@ export const CommissionLedger: React.FC = () => {
                     </table>
                 </div>
 
-                <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex justify-between items-center text-sm text-slate-600 dark:text-slate-400">
+                <div className="px-6 py-4 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark flex justify-between items-center text-sm text-slate-600 dark:text-slate-400">
                     <div>Page {page}</div>
                     <div className="flex gap-2">
                         <button

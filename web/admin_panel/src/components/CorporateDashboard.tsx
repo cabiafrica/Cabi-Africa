@@ -35,7 +35,7 @@ export const CorporateDashboard: React.FC = () => {
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <div className="px-6 py-4 border-b flex justify-between items-center">
           <h3 className="font-bold text-lg">Recent Trip Activity</h3>
-          <button className="text-blue-600 text-sm hover:underline">View All Reports</button>
+          <button className="text-amber-600 text-sm hover:underline">View All Reports</button>
         </div>
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">

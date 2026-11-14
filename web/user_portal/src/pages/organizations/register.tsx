@@ -36,7 +36,7 @@ const MemberRow = ({ index, register, setValue }: { index: number, register: any
             <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                     {selectedPhoto ? (
-                        <img src={selectedPhoto} alt="Passport" className="w-12 h-12 rounded-lg object-cover border border-white/20" />
+                        <img src={selectedPhoto} alt="Organization director passport photograph" width={48} height={48} loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover border border-white/20" />
                     ) : (
                         <div className="w-12 h-12 rounded-lg bg-white/5 flex items-center justify-center border border-white/10">
                             <FaUser className="text-gray-500" />
@@ -75,7 +75,7 @@ const MemberRow = ({ index, register, setValue }: { index: number, register: any
                                         onClick={() => !driver.orgId && selectDriver(driver)}
                                         className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors border-b border-white/5 last:border-0 ${driver.orgId ? 'opacity-50 cursor-not-allowed bg-red-500/5' : 'hover:bg-white/10'}`}
                                     >
-                                        <img src={driver.passportUrl} alt={driver.name} className="w-10 h-10 rounded-full object-cover border border-white/10" />
+                                        <img src={driver.passportUrl} alt={`${driver.name} verified fleet driver passport photograph`} width={40} height={40} loading="lazy" decoding="async" className="w-10 h-10 rounded-full object-cover border border-white/10" />
                                         <div>
                                             <div className="text-sm font-bold text-white">
                                                 {driver.name}
@@ -267,7 +267,7 @@ export default function RegisterOrganization() {
                             <FaBuilding />
                         </div>
                         <h1 className="text-4xl font-bold mb-4">Register Your Organization</h1>
-                        <p className="text-gray-400 text-lg mb-8">Scale your operations. Required for Fleets and Saccos.</p>
+                        <p className="text-gray-400 text-lg mb-8">Scale your operations. Required for Fleets and Wealth Creation Partner Groups.</p>
 
                         {/* Video Embed */}
                         <VideoEmbed

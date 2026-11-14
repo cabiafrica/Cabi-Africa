@@ -142,13 +142,13 @@ export const VehicleCategoriesManagement: React.FC = () => {
             case 'BASIC':
                 return <DirectionsCar className="text-emerald-500" />;
             case 'STANDARD':
-                return <LocalTaxi className="text-blue-500" />;
+                return <LocalTaxi className="text-amber-500" />;
             case 'XL':
-                return <AirportShuttle className="text-indigo-500" />;
+                return <AirportShuttle className="text-cyan-500" />;
             case 'PREMIUM':
                 return <Stars className="text-yellow-500" />;
             default:
-                return <LocalTaxi className="text-blue-500" />;
+                return <LocalTaxi className="text-amber-500" />;
         }
     };
 
@@ -222,10 +222,10 @@ export const VehicleCategoriesManagement: React.FC = () => {
                 {categories.map((c) => (
                     <div
                         key={c.category}
-                        className={`bg-white dark:bg-slate-800 rounded-xl border transition-all shadow-sm overflow-hidden flex flex-col justify-between ${
+                        className={`bg-white dark:bg-card-dark rounded-xl border transition-all shadow-sm overflow-hidden flex flex-col justify-between ${
                             selectedCategory === c.category
                                 ? 'border-emerald-500 ring-2 ring-emerald-500/20'
-                                : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                                : 'border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-slate-600'
                         }`}
                     >
                         <div className="p-5 space-y-4">
@@ -258,7 +258,7 @@ export const VehicleCategoriesManagement: React.FC = () => {
                             </p>
 
                             {/* Rates Breakdown */}
-                            <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800 font-mono">
+                            <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-surface-dark/50 p-3 rounded-lg border border-slate-100 dark:border-white/10 font-mono">
                                 <div>
                                     <span className="text-slate-400 block text-[10px] uppercase font-sans">Base Fare</span>
                                     <span className="font-bold text-slate-800 dark:text-slate-200">KES {c.baseFare}</span>
@@ -294,7 +294,7 @@ export const VehicleCategoriesManagement: React.FC = () => {
                         </div>
 
                         {/* Simulator Selector Button */}
-                        <div className="p-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                        <div className="p-3 bg-slate-50 dark:bg-surface-dark border-t border-slate-100 dark:border-white/10 flex justify-between items-center">
                             <span className="text-xs text-slate-500 dark:text-slate-400">
                                 {c.isActive ? 'Active in Dispatch' : 'Inactive'}
                             </span>
@@ -314,8 +314,8 @@ export const VehicleCategoriesManagement: React.FC = () => {
             </div>
 
             {/* Interactive Live Taximeter Simulator */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-emerald-50/30 dark:from-slate-900 dark:to-emerald-950/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="bg-white dark:bg-card-dark rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-slate-200 dark:border-white/10 bg-gradient-to-r from-slate-50 to-emerald-50/30 dark:from-slate-900 dark:to-emerald-950/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                             <Calculate className="text-emerald-600 dark:text-emerald-400" />
@@ -330,7 +330,7 @@ export const VehicleCategoriesManagement: React.FC = () => {
                         <select
                             value={selectedCategory}
                             onChange={(e) => setSelectedCategory(e.target.value)}
-                            className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            className="bg-white dark:bg-surface-dark border border-slate-300 dark:border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         >
                             {categories.map((c) => (
                                 <option key={c.category} value={c.category}>
@@ -397,21 +397,21 @@ export const VehicleCategoriesManagement: React.FC = () => {
                         </div>
 
                         {/* Detailed Formula Steps */}
-                        <div className="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+                        <div className="bg-slate-50 dark:bg-surface-dark/60 p-4 rounded-xl border border-slate-200 dark:border-white/10 space-y-2 text-xs">
                             <h4 className="font-semibold text-slate-800 dark:text-slate-200">
                                 Math Breakdown for {activeSimConfig?.displayName}:
                             </h4>
-                            <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-800 font-mono">
+                            <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-white/10 font-mono">
                                 <span className="text-slate-500 font-sans">Base Pickup Fare</span>
                                 <span>KES {activeSimConfig?.baseFare.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-800 font-mono">
+                            <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-white/10 font-mono">
                                 <span className="text-slate-500 font-sans">
                                     Distance ({simDistance.toFixed(1)} km × KES {activeSimConfig?.perKmRate})
                                 </span>
                                 <span>KES {simDistanceCost.toFixed(2)}</span>
                             </div>
-                            <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-800 font-mono">
+                            <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-white/10 font-mono">
                                 <span className="text-slate-500 font-sans">
                                     Time ({simDuration} min × KES {activeSimConfig?.perMinuteRate})
                                 </span>
@@ -481,8 +481,8 @@ export const VehicleCategoriesManagement: React.FC = () => {
             {/* Category Edit Modal */}
             {editingCategory && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-6">
-                        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+                    <div className="bg-white dark:bg-surface-dark rounded-2xl max-w-lg w-full p-6 border border-slate-200 dark:border-white/10 shadow-2xl space-y-6">
+                        <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-4">
                             <div className="flex items-center gap-3">
                                 {getCategoryIcon(editingCategory.category)}
                                 <div>
@@ -513,7 +513,7 @@ export const VehicleCategoriesManagement: React.FC = () => {
                                     onChange={(e) =>
                                         setEditingCategory({ ...editingCategory, displayName: e.target.value })
                                     }
-                                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-white"
+                                    className="w-full bg-slate-50 dark:bg-card-dark border border-slate-300 dark:border-white/10 rounded-lg px-3 py-2 text-slate-900 dark:text-white"
                                 />
                             </div>
 
@@ -532,7 +532,7 @@ export const VehicleCategoriesManagement: React.FC = () => {
                                                 baseFare: Math.max(0, Number(e.target.value)),
                                             })
                                         }
-                                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono"
+                                        className="w-full bg-slate-50 dark:bg-card-dark border border-slate-300 dark:border-white/10 rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono"
                                     />
                                 </div>
                                 <div>
@@ -549,7 +549,7 @@ export const VehicleCategoriesManagement: React.FC = () => {
                                                 minimumFare: Math.max(0, Number(e.target.value)),
                                             })
                                         }
-                                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono"
+                                        className="w-full bg-slate-50 dark:bg-card-dark border border-slate-300 dark:border-white/10 rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono"
                                     />
                                 </div>
                             </div>
@@ -569,7 +569,7 @@ export const VehicleCategoriesManagement: React.FC = () => {
                                                 perKmRate: Math.max(0, Number(e.target.value)),
                                             })
                                         }
-                                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono"
+                                        className="w-full bg-slate-50 dark:bg-card-dark border border-slate-300 dark:border-white/10 rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono"
                                     />
                                 </div>
                                 <div>
@@ -586,7 +586,7 @@ export const VehicleCategoriesManagement: React.FC = () => {
                                                 perMinuteRate: Math.max(0, Number(e.target.value)),
                                             })
                                         }
-                                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono"
+                                        className="w-full bg-slate-50 dark:bg-card-dark border border-slate-300 dark:border-white/10 rounded-lg px-3 py-2 text-slate-900 dark:text-white font-mono"
                                     />
                                 </div>
                             </div>
@@ -610,7 +610,7 @@ export const VehicleCategoriesManagement: React.FC = () => {
                                             className={`px-3 py-1.5 rounded-lg font-mono font-bold text-xs transition-colors ${
                                                 editingCategory.roundingStep === step
                                                     ? 'bg-emerald-600 text-white shadow-sm'
-                                                    : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100'
+                                                    : 'bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100'
                                             }`}
                                         >
                                             KES {step}
@@ -620,7 +620,7 @@ export const VehicleCategoriesManagement: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+                        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-white/10">
                             <button
                                 type="button"
                                 onClick={() => setEditingCategory(null)}

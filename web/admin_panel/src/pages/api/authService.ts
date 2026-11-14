@@ -4,6 +4,9 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://auth-gateway-74665
 
 export interface AuthResponse {
     token: string;
+    requiresOnboarding?: boolean;
+    onboardingToken?: string;
+    message?: string;
     user: {
         id: string;
         email?: string;
@@ -11,32 +14,93 @@ export interface AuthResponse {
         role: string;
         permissions: string[];
         driverProfileId?: string;
+        identityVerified?: boolean;
+        isIdentityVerified?: boolean;
     };
 }
 
+export interface AdminLoginChallengeResponse {
+    requiresVerification: boolean;
+    requiresOnboarding?: boolean;
+    isTemporaryPassword?: boolean;
+    challengeToken: string;
+    maskedEmail: string;
+    expiresInSeconds: number;
+    devOtpPreview?: string;
+}
+
+export interface SecurityQuestion {
+    id: string;
+    text: string;
+}
+
+export interface TotpSetupResponse {
+    secretBase32: string;
+    otpauthUrl?: string;
+    qrCodeDataUrl: string;
+}
+
+export const getSecurityQuestions = async (): Promise<SecurityQuestion[]> => {
+    const { data } = await axios.get<SecurityQuestion[]>(`${API_BASE_URL}/auth/admin/onboarding/questions`, {
+        timeout: 5000,
+    });
+    return data;
+};
+
+export const setupOnboardingTotp = async (onboardingToken: string): Promise<TotpSetupResponse> => {
+    const { data } = await axios.post<TotpSetupResponse>(`${API_BASE_URL}/auth/admin/onboarding/totp-setup`, {
+        onboardingToken,
+    }, {
+        timeout: 5000,
+    });
+    return data;
+};
+
+export const completeAdminOnboarding = async (payload: {
+    onboardingToken: string;
+    newPassword: string;
+    securityQuestions: Array<{ questionId: string; question: string; answer: string }>;
+    totpSecret: string;
+    totpCode: string;
+    biometricCredential?: any;
+}): Promise<AuthResponse> => {
+    const { data } = await axios.post<AuthResponse>(`${API_BASE_URL}/auth/admin/onboarding/complete`, payload, {
+        timeout: 10000,
+    });
+    return data;
+};
+
+export const initiateAdminLogin = async (credentials: { email: string; password: string }): Promise<AdminLoginChallengeResponse> => {
+    const { data } = await axios.post<AdminLoginChallengeResponse>(`${API_BASE_URL}/auth/admin/initiate-login`, credentials, {
+        timeout: 5000
+    });
+    return data;
+};
+
+export const verifyAdminIdentity = async (challengeToken: string, otpCode: string): Promise<AuthResponse> => {
+    const { data } = await axios.post<AuthResponse>(`${API_BASE_URL}/auth/admin/verify-identity`, {
+        challengeToken,
+        otpCode,
+    }, {
+        timeout: 5000
+    });
+    return data;
+};
+
+export const resendAdminOtp = async (challengeToken: string): Promise<AdminLoginChallengeResponse> => {
+    const { data } = await axios.post<AdminLoginChallengeResponse>(`${API_BASE_URL}/auth/admin/resend-otp`, {
+        challengeToken,
+    }, {
+        timeout: 5000
+    });
+    return data;
+};
+
 export const loginUser = async (credentials: { email: string; password: string }): Promise<AuthResponse> => {
-    const normalized = credentials.email.toLowerCase().trim();
-    try {
-        const { data } = await axios.post<AuthResponse>(`${API_BASE_URL}/auth/login`, credentials, {
-            timeout: 3000
-        });
-        return data;
-    } catch (err: any) {
-        // Graceful development demo fallback when local backend is offline
-        if (normalized === 'admin@cabi.africa' || normalized === 'superadmin@cabi.africa' || normalized.startsWith('admin')) {
-            return {
-                token: `cabi-admin-demo-token-${Date.now()}`,
-                user: {
-                    id: 'admin-ops-001',
-                    email: credentials.email,
-                    fullName: 'CABI Africa Operations Admin',
-                    role: 'admin',
-                    permissions: ['*'],
-                }
-            };
-        }
-        throw err;
-    }
+    const { data } = await axios.post<AuthResponse>(`${API_BASE_URL}/auth/login`, credentials, {
+        timeout: 5000
+    });
+    return data;
 };
 
 export const forgotPassword = async (email: string): Promise<{ success: boolean }> => {

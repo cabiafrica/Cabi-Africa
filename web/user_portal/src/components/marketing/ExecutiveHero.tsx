@@ -31,7 +31,7 @@ export default function ExecutiveHero() {
 
                     {/* Subtitle */}
                     <p className="text-sm sm:text-lg text-neutral-600 dark:text-neutral-300 max-w-xl font-normal leading-relaxed">
-                        Premium mobility powered by seamless ride booking, M-Pesa instant checkout, and dedicated executive service. Engineered for business leaders, travelers, and everyday city commutes.
+                        Premium mobility powered by seamless ride booking, mobile money instant checkout, and dedicated executive service. Engineered for business leaders, travelers, and everyday city commutes.
                     </p>
 
                     {/* CTAs */}
@@ -58,9 +58,13 @@ export default function ExecutiveHero() {
                     <div className="relative rounded-3xl bg-neutral-100 dark:bg-card-dark/90 backdrop-blur-2xl p-2.5 sm:p-3.5 border border-neutral-200 dark:border-[#D4AF37]/30 shadow-2xl">
                         <div className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-neutral-900">
                             <img
-                                alt="Cabi Africa multi-tier fleet including Boda, Compact, Executive Sedan, and Diplomatic Van"
+                                alt="Cabi Africa multi-tier mobility fleet including electric Boda, CabiGo compact, Executive Sedan, and Diplomatic XL Van across Nairobi"
                                 className="w-full h-full object-cover"
                                 src="/images/hero-fleet.jpg?v=2"
+                                width={1200}
+                                height={750}
+                                loading="eager"
+                                decoding="async"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                             <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 flex items-end justify-between gap-2">

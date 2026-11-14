@@ -51,8 +51,9 @@ export default function Testimonials({ title, testimonials }: TestimonialsProps)
                                         {hasExternalAvatar ? (
                                             <Image
                                                 src={testimonial.avatarUrl!}
-                                                alt={testimonial.name}
+                                                alt={`${testimonial.name} — CABI Africa verified rider testimonial`}
                                                 fill
+                                                sizes="44px"
                                                 className="object-cover"
                                                 unoptimized
                                             />

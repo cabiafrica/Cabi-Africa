@@ -46,7 +46,7 @@ export const OrganizationManagement: React.FC = () => {
         return (
             <div className="space-y-6">
                 {/* Detail Header */}
-                <div className="bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 rounded-xl px-6 py-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="bg-white dark:bg-card-dark shadow-sm border border-slate-200 dark:border-white/10 rounded-xl px-6 py-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => setSelectedOrgId(null)}
@@ -56,7 +56,7 @@ export const OrganizationManagement: React.FC = () => {
                         </button>
                         <div>
                             <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <Business className="text-blue-600 dark:text-blue-400" />
+                                <Business className="text-amber-600 dark:text-amber-400" />
                                 {selectedOrg?.name || 'Organization Details'}
                             </h2>
                             <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
@@ -68,7 +68,7 @@ export const OrganizationManagement: React.FC = () => {
                         <button
                             onClick={() => setActiveTab('subgroups')}
                             className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'subgroups'
-                                ? 'bg-white dark:bg-slate-600 shadow text-blue-600 dark:text-blue-400'
+                                ? 'bg-white dark:bg-slate-600 shadow text-amber-600 dark:text-amber-400'
                                 : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                                 }`}
                         >
@@ -77,7 +77,7 @@ export const OrganizationManagement: React.FC = () => {
                         <button
                             onClick={() => setActiveTab('audit')}
                             className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'audit'
-                                ? 'bg-white dark:bg-slate-600 shadow text-blue-600 dark:text-blue-400'
+                                ? 'bg-white dark:bg-slate-600 shadow text-amber-600 dark:text-amber-400'
                                 : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                                 }`}
                         >
@@ -89,11 +89,11 @@ export const OrganizationManagement: React.FC = () => {
                 {/* Content */}
                 <div className="animate-in fade-in slide-in-from-bottom-2">
                     {activeTab === 'subgroups' ? (
-                        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                        <div className="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-white/10 p-6">
                             <SubgroupManagement orgId={selectedOrgId} onBack={() => { /* No-op */ }} />
                         </div>
                     ) : (
-                        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                        <div className="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-white/10 p-6">
                             <OrganizationAuditLog orgId={selectedOrgId} />
                         </div>
                     )}
@@ -108,7 +108,7 @@ export const OrganizationManagement: React.FC = () => {
 
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <CorporateFare className="text-blue-600 dark:text-blue-400" />
+                    <CorporateFare className="text-amber-600 dark:text-amber-400" />
                     Organizations
                 </h2>
 
@@ -117,24 +117,24 @@ export const OrganizationManagement: React.FC = () => {
                     <input
                         type="text"
                         placeholder="Search organizations..."
-                        className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full pl-10 pr-4 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-amber-500 outline-none"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex justify-between items-center">
+            <div className="bg-white dark:bg-card-dark shadow-sm rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark flex justify-between items-center">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100">All Organizations</h3>
-                    <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                    <span className="bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 text-xs font-semibold px-2.5 py-0.5 rounded-full">
                         {filteredOrgs.length} Total
                     </span>
                 </div>
 
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                        <thead className="bg-slate-50 dark:bg-slate-900">
+                        <thead className="bg-slate-50 dark:bg-surface-dark">
                             <tr>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Name</th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Members</th>
@@ -145,7 +145,7 @@ export const OrganizationManagement: React.FC = () => {
                             </tr>
                         </thead>
 
-                        <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+                        <tbody className="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
                             {loading ? (
                                 <tr><td colSpan={6} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Loading organizations...</td></tr>
                             ) : filteredOrgs.length === 0 ? (
@@ -189,7 +189,7 @@ export const OrganizationManagement: React.FC = () => {
                                         <div className="flex justify-end gap-3 items-center">
                                             <button
                                                 onClick={() => setSelectedOrgId(org.id)}
-                                                className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+                                                className="text-amber-600 hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-300 font-medium"
                                             >
                                                 Manage
                                             </button>

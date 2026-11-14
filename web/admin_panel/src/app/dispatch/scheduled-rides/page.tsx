@@ -45,7 +45,7 @@ export default function ScheduledRidesPage() {
                                     )}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button className="text-blue-600 hover:text-blue-900 font-bold border border-blue-200 px-3 py-1 rounded bg-blue-50">
+                                    <button className="text-amber-600 hover:text-amber-900 font-bold border border-amber-200 px-3 py-1 rounded bg-amber-50">
                                         {ride.assignedDriver ? 'Reassign' : 'Assign Driver'}
                                     </button>
                                 </td>

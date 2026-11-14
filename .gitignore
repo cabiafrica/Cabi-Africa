@@ -215,6 +215,7 @@ storybook-static/
 # ===================================
 # Screenshots & Artifacts
 # ===================================
+web/screenshots/
 *.png
 !mobile/passenger_app/assets/**/*.png
 !web/**/*.png

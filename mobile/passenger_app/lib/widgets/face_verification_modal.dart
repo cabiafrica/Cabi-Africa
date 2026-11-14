@@ -72,7 +72,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
           const SizedBox(height: 32),
           Text(
             'Identity Verification',
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.inter(
               color: AppTheme.primaryColor,
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -146,7 +146,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
           const SizedBox(height: 32),
           Text(
             _statusText,
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.inter(
               color: _isSuccess ? Colors.green : Colors.white,
               fontSize: 15,
               fontWeight: FontWeight.w600,

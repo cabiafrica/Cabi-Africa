@@ -122,18 +122,18 @@ const RoleEditor: React.FC = () => {
     }, [searchTerm]);
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-4 md:p-8 pb-24 font-sans text-slate-900 dark:text-slate-100">
+        <div className="min-h-screen bg-slate-50 dark:bg-surface-dark p-4 md:p-8 pb-24 font-sans text-slate-900 dark:text-slate-100">
             <form onSubmit={handleSubmit} className="max-w-7xl mx-auto space-y-6">
 
                 {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm mb-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-card-dark p-4 rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm mb-6">
                     <div className="flex items-center gap-3">
                         <IconButton onClick={() => navigate('/roles')} className="text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700">
                             <ArrowBackIcon />
                         </IconButton>
                         <div>
                             <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <SecurityIcon className="text-purple-600 dark:text-purple-400" />
+                                <SecurityIcon className="text-brand-yellow" />
                                 {isEditMode ? 'Edit Role' : 'Create Access Role'}
                             </h1>
                             <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -152,7 +152,7 @@ const RoleEditor: React.FC = () => {
                         </Button>
                         <button
                             type="submit"
-                            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-bold shadow-lg shadow-purple-900/20 active:scale-95 transition-all flex items-center gap-2"
+                            className="bg-brand-yellow hover:bg-brand-yellowHover text-black px-6 py-2 rounded-lg font-bold shadow-sm active:scale-95 transition-all flex items-center gap-2"
                         >
                             <SaveIcon fontSize="small" />
                             Save Configuration
@@ -162,7 +162,7 @@ const RoleEditor: React.FC = () => {
 
                 {/* Main Configuration Card */}
                 <Grow in={true} timeout={300}>
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm">
+                    <div className="bg-white dark:bg-card-dark p-6 rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <TextField
                                 fullWidth
@@ -172,7 +172,7 @@ const RoleEditor: React.FC = () => {
                                 onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
                                 required
                                 variant="outlined"
-                                className="bg-white dark:bg-slate-900"
+                                className="bg-white dark:bg-surface-dark"
                                 InputLabelProps={{ className: "dark:text-slate-400" }}
                                 InputProps={{ className: "dark:text-white" }}
                             />
@@ -185,7 +185,7 @@ const RoleEditor: React.FC = () => {
                                 helperText={!isEditMode && "Uppercase, underscores only. Cannot be changed later."}
                                 required
                                 variant="outlined"
-                                className="bg-white dark:bg-slate-900"
+                                className="bg-white dark:bg-surface-dark"
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start"><SecurityIcon className="text-slate-400" /></InputAdornment>,
                                     className: "dark:text-white"
@@ -201,7 +201,7 @@ const RoleEditor: React.FC = () => {
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     variant="outlined"
-                                    className="bg-white dark:bg-slate-900"
+                                    className="bg-white dark:bg-surface-dark"
                                     InputLabelProps={{ className: "dark:text-slate-400" }}
                                     InputProps={{ className: "dark:text-white" }}
                                 />
@@ -224,11 +224,11 @@ const RoleEditor: React.FC = () => {
                                                 onClick={() => setFormData({ ...formData, platform: opt.value })}
                                                 className={`cursor-pointer p-4 rounded-xl border text-center transition-all duration-200
                                                     ${isSelected
-                                                        ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-500 ring-1 ring-purple-500 text-purple-700 dark:text-purple-300 shadow-sm'
-                                                        : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                                        ? 'bg-amber-500/15 border-brand-yellow ring-1 ring-brand-yellow text-brand-yellow shadow-sm'
+                                                        : 'bg-slate-50 dark:bg-surface-dark border-slate-200 dark:border-white/10 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'
                                                     }`}
                                             >
-                                                <div className={`mb-2 ${isSelected ? 'text-purple-600 dark:text-purple-400' : 'text-slate-400'}`}>
+                                                <div className={`mb-2 ${isSelected ? 'text-brand-yellow' : 'text-slate-400'}`}>
                                                     {opt.icon}
                                                 </div>
                                                 <p className="font-semibold text-sm">{opt.label}</p>
@@ -238,13 +238,16 @@ const RoleEditor: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="col-span-1 md:col-span-2 border-t border-slate-200 dark:border-slate-700 pt-4">
+                            <div className="col-span-1 md:col-span-2 border-t border-slate-200 dark:border-white/10 pt-4">
                                 <FormControlLabel
                                     control={
                                         <Switch
                                             checked={formData.isActive}
                                             onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                                            color="secondary" // Maps vaguely to purple in default MUI, or we can leave it
+                                            sx={{
+                                                '& .MuiSwitch-switchBase.Mui-checked': { color: '#F59E0B' },
+                                                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#F59E0B' }
+                                            }}
                                         />
                                     }
                                     label={
@@ -270,7 +273,7 @@ const RoleEditor: React.FC = () => {
                                 placeholder="Search permissions..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none shadow-sm w-full sm:w-64"
+                                className="pl-10 pr-4 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-yellow outline-none shadow-sm w-full sm:w-64"
                             />
                         </div>
                     </div>
@@ -296,13 +299,13 @@ const RoleEditor: React.FC = () => {
                             return (
                                 <Grow in={true} timeout={300 + (index * 100)} key={category}>
                                     <div
-                                        className="bg-white dark:bg-slate-800 rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm hover:shadow-md transition-all duration-200"
+                                        className="bg-white dark:bg-card-dark rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm hover:shadow-md transition-all duration-200"
                                         onMouseEnter={() => setHoveredCategory(category)}
                                         onMouseLeave={() => setHoveredCategory(null)}
                                     >
-                                        <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800">
+                                        <div className="p-4 border-b border-slate-100 dark:border-white/10 flex items-center justify-between bg-slate-50/50 dark:bg-card-dark">
                                             <div className="flex items-center gap-2">
-                                                <div className="w-1 h-5 bg-purple-500 rounded-full"></div>
+                                                <div className="w-1 h-5 bg-brand-yellow rounded-full"></div>
                                                 <h3 className="font-bold text-slate-800 dark:text-slate-200">{category}</h3>
                                             </div>
                                             <Tooltip title={allChecked ? "Deselect All" : "Select All"}>
@@ -311,8 +314,8 @@ const RoleEditor: React.FC = () => {
                                                     indeterminate={someChecked && !allChecked}
                                                     onChange={(e) => handleCategoryToggle(prefixes, e.target.checked)}
                                                     size="small"
-                                                    className="text-slate-400 data-[state=checked]:text-purple-600"
-                                                    sx={{ color: 'inherit', '&.Mui-checked': { color: '#9333ea' }, '&.MuiCheckbox-indeterminate': { color: '#9333ea' } }}
+                                                    className="text-slate-400"
+                                                    sx={{ color: 'inherit', '&.Mui-checked': { color: '#F59E0B' }, '&.MuiCheckbox-indeterminate': { color: '#F59E0B' } }}
                                                 />
                                             </Tooltip>
                                         </div>
@@ -326,7 +329,7 @@ const RoleEditor: React.FC = () => {
                                                         onClick={() => handlePermissionChange(perm, !isSelected)}
                                                         className={`flex items-start gap-2 p-2 rounded-lg cursor-pointer transition-colors
                                                             ${isSelected
-                                                                ? 'bg-purple-50 dark:bg-purple-900/20'
+                                                                ? 'bg-amber-500/10 border border-brand-yellow/30'
                                                                 : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
                                                             }`}
                                                     >
@@ -337,12 +340,12 @@ const RoleEditor: React.FC = () => {
                                                             className="mt-0.5"
                                                             sx={{
                                                                 padding: 0,
-                                                                color: isSelected ? '#9333ea' : 'rgb(148, 163, 184)',
-                                                                '&.Mui-checked': { color: '#9333ea' }
+                                                                color: isSelected ? '#F59E0B' : 'rgb(148, 163, 184)',
+                                                                '&.Mui-checked': { color: '#F59E0B' }
                                                             }}
                                                         />
                                                         <div>
-                                                            <p className={`text-sm font-medium ${isSelected ? 'text-purple-700 dark:text-purple-300' : 'text-slate-700 dark:text-slate-300'}`}>
+                                                            <p className={`text-sm font-medium ${isSelected ? 'text-brand-yellow' : 'text-slate-700 dark:text-slate-300'}`}>
                                                                 {perm.replace(prefixes[0] || '', '').replace(/_/g, ' ').toLowerCase()}
                                                             </p>
                                                             <p className="text-xs text-slate-400 mt-0.5 font-mono opacity-70">

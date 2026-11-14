@@ -72,7 +72,7 @@ export const OccurrenceList = () => {
       case 'RESOLVED':
         return { color: '#10b981', label: 'RESOLVED', glow: 'rgba(16, 185, 129, 0.2)' };
       case 'DISPUTED':
-        return { color: '#8b5cf6', label: 'DISPUTED', glow: 'rgba(139, 92, 246, 0.2)' };
+        return { color: '#D4AF37', label: 'DISPUTED', glow: 'rgba(139, 92, 246, 0.2)' };
       default:
         return { color: '#94a3b8', label: status, glow: 'rgba(148, 163, 184, 0.2)' };
     }

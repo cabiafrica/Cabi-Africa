@@ -93,7 +93,7 @@ const LiveMap = ({ drivers, rideRequests, surgeZones }: LiveMapProps) => {
                             type="checkbox"
                             checked={showOnlineOnly}
                             onChange={(e) => setShowOnlineOnly(e.target.checked)}
-                            className="rounded border-slate-600 text-blue-600 focus:ring-blue-500 bg-slate-700"
+                            className="rounded border-slate-600 text-amber-600 focus:ring-amber-500 bg-slate-700"
                         />
                         <span className="text-sm text-slate-300">Show online only</span>
                     </label>
@@ -121,7 +121,7 @@ const LiveMap = ({ drivers, rideRequests, surgeZones }: LiveMapProps) => {
                                 <span className="text-xs text-slate-300">On Trip ({onlineDrivers.filter(d => d.status === 'busy').length})</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                                <div className="w-3 h-3 rounded-full bg-amber-500"></div>
                                 <span className="text-xs text-slate-300">Pickup Points ({activeRides.length})</span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -169,8 +169,8 @@ const LiveMap = ({ drivers, rideRequests, surgeZones }: LiveMapProps) => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-xl p-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
+                            <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             </svg>
                         </div>

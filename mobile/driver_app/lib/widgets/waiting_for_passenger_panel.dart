@@ -88,7 +88,7 @@ class WaitingForPassengerPanel extends StatelessWidget {
               const SizedBox(height: 14),
               Text(
                 passengerName,
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -124,7 +124,7 @@ class WaitingForPassengerPanel extends StatelessWidget {
               const SizedBox(height: 14),
               Text(
                 'COMPLIMENTS',
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   color: Colors.white38,
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
@@ -205,7 +205,7 @@ class WaitingForPassengerPanel extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     'ARRIVED AT PICKUP',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       color: AppTheme.primaryColor,
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
@@ -250,7 +250,7 @@ class WaitingForPassengerPanel extends StatelessWidget {
                         children: [
                           Text(
                             'PASSENGER',
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               color: Colors.white38,
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
@@ -261,7 +261,7 @@ class WaitingForPassengerPanel extends StatelessWidget {
                             children: [
                               Text(
                                 passengerName,
-                                style: GoogleFonts.outfit(
+                                style: GoogleFonts.inter(
                                   color: Colors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -274,7 +274,7 @@ class WaitingForPassengerPanel extends StatelessWidget {
                           ),
                           Text(
                             pickupAddress,
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               color: Colors.white38,
                               fontSize: 11,
                             ),
@@ -301,7 +301,7 @@ class WaitingForPassengerPanel extends StatelessWidget {
                           const SizedBox(width: 3),
                           Text(
                             '${request['passengerRating'] ?? '4.9'}',
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               color: AppTheme.primaryColor,
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
@@ -372,7 +372,7 @@ class WaitingForPassengerPanel extends StatelessWidget {
                       color: Colors.black, size: 18),
                   label: Text(
                     'ENTER PIN TO START TRIP',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       color: Colors.black,
                       fontWeight: FontWeight.w900,
                       fontSize: 14,
@@ -470,7 +470,7 @@ class _ActionButton extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               label,
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 color: color,
                 fontWeight: FontWeight.w700,
                 fontSize: 13,

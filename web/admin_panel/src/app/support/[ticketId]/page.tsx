@@ -58,7 +58,7 @@ export default function TicketDetailPage({ params }: { params: { ticketId: strin
             <div className="grid grid-cols-3 gap-6">
                 <div className="col-span-2 space-y-4">
                     {ticket.messages.map((msg: any, i: number) => (
-                        <div key={i} className={`p-4 rounded ${msg.from === 'user' ? 'bg-gray-100' : 'bg-blue-50'}`}>
+                        <div key={i} className={`p-4 rounded ${msg.from === 'user' ? 'bg-gray-100' : 'bg-amber-50'}`}>
                             <div className="font-bold mb-2">{msg.from === 'user' ? ticket.userName : 'Support Agent'}</div>
                             <p>{msg.text}</p>
                             <p className="text-xs text-gray-500 mt-2">{msg.timestamp}</p>
@@ -70,7 +70,7 @@ export default function TicketDetailPage({ params }: { params: { ticketId: strin
                             <h3 className="font-bold">Reply</h3>
                             <button
                                 onClick={() => setShowKnowledgeBase(!showKnowledgeBase)}
-                                className="text-sm text-blue-600 hover:underline"
+                                className="text-sm text-amber-600 hover:underline"
                             >
                                 📚 Search Knowledge Base
                             </button>
@@ -100,7 +100,7 @@ export default function TicketDetailPage({ params }: { params: { ticketId: strin
                         />
                         <button
                             onClick={sendReply}
-                            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+                            className="bg-amber-500 text-black px-6 py-2 rounded hover:bg-amber-700"
                         >
                             Send Reply
                         </button>

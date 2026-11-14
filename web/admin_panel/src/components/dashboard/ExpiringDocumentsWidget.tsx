@@ -40,7 +40,7 @@ export const ExpiringDocumentsWidget: React.FC = () => {
                 ))}
             </div>
             <div className="bg-gray-50 px-6 py-2 text-center">
-                <button className="text-xs text-blue-600 hover:text-blue-800 font-medium hover:underline">
+                <button className="text-xs text-amber-600 hover:text-amber-800 font-medium hover:underline">
                     View All Expiring Documents &rarr;
                 </button>
             </div>

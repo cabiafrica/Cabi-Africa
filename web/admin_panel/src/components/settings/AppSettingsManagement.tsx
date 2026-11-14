@@ -148,8 +148,8 @@ export function AppSettingsManagement() {
 
       <div className="space-y-6">
         {/* Ride Verification Settings Card */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
+        <div className="bg-white dark:bg-card-dark rounded-2xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 flex items-center gap-3">
             <span className="text-2xl">🛡️</span>
             <div>
               <h3 className="font-semibold text-slate-900 dark:text-white">Ride Verification Gate</h3>
@@ -162,7 +162,7 @@ export function AppSettingsManagement() {
           <div className="px-6 py-6">
             {isLoading ? (
               <div className="flex items-center justify-center py-6">
-                <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-6 h-6 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (
               <div className="flex items-center justify-between">
@@ -179,7 +179,7 @@ export function AppSettingsManagement() {
                     checked={settings.RIDE_VERIFICATION_ENABLED === 'true'}
                     onChange={(e) => setSettings({ ...settings, RIDE_VERIFICATION_ENABLED: e.target.checked ? 'true' : 'false' })}
                   />
-                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-blue-600"></div>
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-amber-300 dark:peer-focus:ring-amber-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-amber-600"></div>
                 </label>
               </div>
             )}
@@ -187,8 +187,8 @@ export function AppSettingsManagement() {
         </div>
 
         {/* Tours URL Settings Card */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
+        <div className="bg-white dark:bg-card-dark rounded-2xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 flex items-center gap-3">
             <span className="text-2xl">🌍</span>
             <div>
               <h3 className="font-semibold text-slate-900 dark:text-white">External Tours Button</h3>
@@ -201,7 +201,7 @@ export function AppSettingsManagement() {
           <div className="px-6 py-6 space-y-6">
             {isLoading ? (
               <div className="flex items-center justify-center py-6">
-                <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-6 h-6 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (
               <>
@@ -218,7 +218,7 @@ export function AppSettingsManagement() {
                     value={settings.tours_url}
                     onChange={(e) => setSettings({ ...settings, tours_url: e.target.value })}
                     placeholder="https://your-tours-partner.com"
-                    className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
                   />
                   <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
                     Leave empty to disable the Tours button in the passenger app.
@@ -226,7 +226,7 @@ export function AppSettingsManagement() {
                 </div>
 
                 {settings.tours_url && (
-                  <div className="flex items-center gap-2 px-4 py-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-sm text-blue-700 dark:text-blue-300">
+                  <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-sm text-amber-700 dark:text-amber-300">
                     <span>🔗</span>
                     <span className="truncate font-mono">{settings.tours_url}</span>
                     <a
@@ -245,8 +245,8 @@ export function AppSettingsManagement() {
         </div>
 
         {/* Wait Time Fee Configuration Card */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
+        <div className="bg-white dark:bg-card-dark rounded-2xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 flex items-center gap-3">
             <span className="text-2xl">⏱️</span>
             <div>
               <h3 className="font-semibold text-slate-900 dark:text-white">Wait Time Fee</h3>
@@ -258,7 +258,7 @@ export function AppSettingsManagement() {
           <div className="px-6 py-6 space-y-5">
             {waitConfigLoading ? (
               <div className="flex items-center justify-center py-6">
-                <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-6 h-6 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (
               <>
@@ -273,7 +273,7 @@ export function AppSettingsManagement() {
                       step={1}
                       value={waitConfig.gracePeriodMinutes}
                       onChange={(e) => setWaitConfig({ ...waitConfig, gracePeriodMinutes: Number(e.target.value) })}
-                      className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-surface-dark text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
                     />
                     <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Free waiting before fee applies</p>
                   </div>
@@ -287,7 +287,7 @@ export function AppSettingsManagement() {
                       step={0.5}
                       value={waitConfig.feePerMinute}
                       onChange={(e) => setWaitConfig({ ...waitConfig, feePerMinute: Number(e.target.value) })}
-                      className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-surface-dark text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
                     />
                     <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Charged after grace period ends</p>
                   </div>
@@ -318,7 +318,7 @@ export function AppSettingsManagement() {
         </div>
 
         {/* Global Feedback and Save Actions */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="bg-white dark:bg-card-dark rounded-2xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden">
           <div className="px-6 py-4 space-y-4">
             {error && (
               <div className="px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-400">
@@ -344,7 +344,7 @@ export function AppSettingsManagement() {
                 disabled={isSaving || !isDirty}
                 className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                   isDirty && !isSaving
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md'
+                    ? 'bg-amber-500 hover:bg-amber-600 text-black shadow-sm hover:shadow-md'
                     : 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed'
                 }`}
               >

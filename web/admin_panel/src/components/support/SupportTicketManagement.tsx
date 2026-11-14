@@ -47,7 +47,7 @@ export const SupportTicketManagement: React.FC = () => {
                     </button>
                     <div>
                         <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <Message className="text-blue-600 dark:text-blue-400" />
+                            <Message className="text-amber-600 dark:text-amber-400" />
                             Manage Saved Messages
                         </h2>
                         <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
@@ -56,18 +56,18 @@ export const SupportTicketManagement: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 rounded-xl p-6 max-w-2xl">
+                <div className="bg-white dark:bg-card-dark shadow-sm border border-slate-200 dark:border-white/10 rounded-xl p-6 max-w-2xl">
                     <div className="flex gap-3 mb-6">
                         <input
                             type="text"
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
                             placeholder="Type new canned response..."
-                            className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-surface-dark text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-amber-500 outline-none"
                         />
                         <button
                             onClick={handleAddMessage}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+                            className="bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
                         >
                             <Add fontSize="small" />
                             Add
@@ -76,12 +76,12 @@ export const SupportTicketManagement: React.FC = () => {
 
                     <div className="space-y-3">
                         {savedMessages.length === 0 ? (
-                            <div className="text-center py-8 text-slate-500 dark:text-slate-400 border border-dashed border-slate-200 dark:border-slate-700 rounded-lg">
+                            <div className="text-center py-8 text-slate-500 dark:text-slate-400 border border-dashed border-slate-200 dark:border-white/10 rounded-lg">
                                 No saved messages yet. Add one above!
                             </div>
                         ) : (
                             savedMessages.map((msg, idx) => (
-                                <div key={idx} className="p-3 border border-slate-100 dark:border-slate-700 rounded-lg flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 group hover:border-blue-200 dark:hover:border-blue-800 transition-all">
+                                <div key={idx} className="p-3 border border-slate-100 dark:border-white/10 rounded-lg flex justify-between items-center bg-slate-50 dark:bg-surface-dark/50 group hover:border-amber-200 dark:hover:border-amber-800 transition-all">
                                     <span className="text-slate-700 dark:text-slate-300">{msg}</span>
                                     <button
                                         onClick={() => setSavedMessages(savedMessages.filter((_, i) => i !== idx))}
@@ -103,36 +103,36 @@ export const SupportTicketManagement: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <SupportAgent className="text-blue-600 dark:text-blue-400" />
+                        <SupportAgent className="text-amber-600 dark:text-amber-400" />
                         Support Tickets
                     </h2>
                     <p className="text-slate-500 dark:text-slate-400 mt-1">Manage and resolve user inquiries.</p>
                 </div>
                 <button
                     onClick={() => setShowSavedMessages(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm font-medium"
+                    className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-card-dark text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm font-medium"
                 >
-                    <Message fontSize="small" className="text-blue-500" />
+                    <Message fontSize="small" className="text-amber-500" />
                     Saved Messages
                 </button>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex justify-between items-center">
+            <div className="bg-white dark:bg-card-dark shadow-sm rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark flex justify-between items-center">
                     <h3 className="font-semibold text-slate-800 dark:text-slate-100">All Tickets</h3>
                     <div className="relative">
                         <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm" fontSize="small" />
                         <input
                             type="text"
                             placeholder="Search tickets..."
-                            className="pl-8 pr-3 py-1.5 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-md text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-blue-500 outline-none w-48 transition-all focus:w-64"
+                            className="pl-8 pr-3 py-1.5 text-sm bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-md text-slate-900 dark:text-slate-100 focus:ring-1 focus:ring-amber-500 outline-none w-48 transition-all focus:w-64"
                         />
                     </div>
                 </div>
 
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                        <thead className="bg-slate-50 dark:bg-slate-900">
+                        <thead className="bg-slate-50 dark:bg-surface-dark">
                             <tr>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Subject</th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">User</th>
@@ -141,7 +141,7 @@ export const SupportTicketManagement: React.FC = () => {
                                 <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+                        <tbody className="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
                             {loading ? (
                                 <tr><td colSpan={5} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">Loading tickets...</td></tr>
                             ) : tickets.length === 0 ? (
@@ -153,7 +153,7 @@ export const SupportTicketManagement: React.FC = () => {
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2.5 py-0.5 inline-flex items-center gap-1.5 text-xs font-semibold rounded-full border ${t.status === 'RESOLVED'
                                                 ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800'
-                                                : 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800'
+                                                : 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800'
                                             }`}>
                                             {t.status === 'RESOLVED' ? <CheckCircle style={{ fontSize: 12 }} /> : <WatchLater style={{ fontSize: 12 }} />}
                                             {t.status}
@@ -169,7 +169,7 @@ export const SupportTicketManagement: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <button className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors">
+                                        <button className="text-amber-600 hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-300 font-medium transition-colors">
                                             View Details
                                         </button>
                                     </td>

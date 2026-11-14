@@ -57,7 +57,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
               const SizedBox(width: 12),
               Text(
                 'Leave Group?',
-                style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
+                style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -68,10 +68,10 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
               children: [
                 Text(
                   'Are you sure you want to leave this community driver group?',
-                  style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                Text('By leaving, you will:', style: GoogleFonts.outfit(color: Colors.white70)),
+                Text('By leaving, you will:', style: GoogleFonts.inter(color: Colors.white70)),
                 const SizedBox(height: 8),
                 _buildBulletPoint('Lose access to group-specific discussions & dispatches'),
                 _buildBulletPoint('No longer receive group stage priority alerts'),
@@ -92,7 +92,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
                       Expanded(
                         child: Text(
                           'You can join another group or re-apply via the Driver Web Portal.',
-                          style: GoogleFonts.outfit(fontSize: 12, color: Colors.cyanAccent),
+                          style: GoogleFonts.inter(fontSize: 12, color: Colors.cyanAccent),
                         ),
                       ),
                     ],
@@ -103,7 +103,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel', style: GoogleFonts.outfit(color: Colors.grey)),
+              child: Text('Cancel', style: GoogleFonts.inter(color: Colors.grey)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -117,7 +117,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
                 Navigator.of(context).pop();
                 _leaveOrganization();
               },
-              child: Text('Leave Group', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+              child: Text('Leave Group', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -132,7 +132,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('• ', style: TextStyle(fontSize: 16, color: Colors.white70)),
-          Expanded(child: Text(text, style: GoogleFonts.outfit(fontSize: 13, color: Colors.white70))),
+          Expanded(child: Text(text, style: GoogleFonts.inter(fontSize: 13, color: Colors.white70))),
         ],
       ),
     );
@@ -154,7 +154,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('You have successfully left the group', style: GoogleFonts.outfit()),
+        content: Text('You have successfully left the group', style: GoogleFonts.inter()),
         backgroundColor: Colors.green,
         duration: const Duration(seconds: 3),
       ),
@@ -173,7 +173,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
       appBar: AppBar(
         title: Text(
           'DRIVER GROUP',
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
             fontSize: 15,
@@ -237,7 +237,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
                           children: [
                             Text(
                               organizationName,
-                              style: GoogleFonts.outfit(
+                              style: GoogleFonts.inter(
                                 fontSize: 19,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -260,7 +260,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
                                       const SizedBox(width: 4),
                                       Text(
                                         'ACTIVE FLEET GROUP',
-                                        style: GoogleFonts.outfit(
+                                        style: GoogleFonts.inter(
                                           fontSize: 10,
                                           color: const Color(0xFF00E676),
                                           fontWeight: FontWeight.bold,
@@ -272,7 +272,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   '$activeOnlineCount Peers Online',
-                                  style: GoogleFonts.outfit(
+                                  style: GoogleFonts.inter(
                                     fontSize: 11,
                                     color: Colors.cyanAccent,
                                     fontWeight: FontWeight.w600,
@@ -300,7 +300,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
                     children: [
                       Text(
                         'GROUP DETAILS & STAGE',
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.0,
@@ -312,7 +312,7 @@ class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
                         icon: const Icon(Icons.open_in_new_rounded, size: 14, color: AppTheme.primaryColor),
                         label: Text(
                           'Web Portal',
-                          style: GoogleFonts.outfit(color: AppTheme.primaryColor, fontWeight: FontWeight.bold, fontSize: 12),
+                          style: GoogleFonts.inter(color: AppTheme.primaryColor, fontWeight: FontWeight.bold, fontSize: 12),
                         ),
                       ),
                     ],

@@ -64,7 +64,7 @@ export default function SOSDashboard() {
                                 <button onClick={() => acknowledge(a.id)} className="bg-red-600 text-white px-6 py-3 rounded font-bold hover:bg-red-700">
                                     ACKNOWLEDGE & DISPATCH SUPPORT TO {a.tripId}
                                 </button>
-                                <button className="bg-blue-600 text-white px-6 py-3 rounded font-bold">
+                                <button className="bg-amber-500 text-black px-6 py-3 rounded font-bold">
                                     VIEW ON MAP
                                 </button>
                             </div>

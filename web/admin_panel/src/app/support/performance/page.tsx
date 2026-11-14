@@ -6,7 +6,7 @@ export default function AgentPerformance() {
             <h1 className="text-2xl font-bold mb-6">Agent Performance Dashboard</h1>
 
             <div className="grid grid-cols-4 gap-4 mb-8">
-                <Card title="Avg Response Time" value="45m" color="bg-blue-50" />
+                <Card title="Avg Response Time" value="45m" color="bg-amber-50" />
                 <Card title="Tickets Resolved (24h)" value="124" color="bg-green-50" />
                 <Card title="Avg CSAT Score" value="4.8/5.0" color="bg-yellow-50" />
                 <Card title="SLA Breaches" value="2" color="bg-red-50" />

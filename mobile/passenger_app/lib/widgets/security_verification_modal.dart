@@ -348,7 +348,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                     widget.isFirstTimeSetup
                         ? 'ONE-TIME IDENTITY SETUP'
                         : 'PASSENGER VERIFICATION',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.5,
@@ -363,7 +363,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                     ? 'Configure your biometric verification once for this device. You can update your preferences anytime in Settings.'
                     : 'Identity verification is necessary to guarantee trust, safety, and priority driver dispatch.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   fontSize: 13,
                   color: textSub,
                   height: 1.35,
@@ -399,7 +399,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                   icon: Icon(Icons.arrow_back_rounded, size: 16, color: accent),
                   label: Text(
                     'Choose Another Verification Method',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       color: accent,
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
@@ -449,7 +449,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
         Text(
           'ACCOUNT TEMPORARILY LOCKED',
           textAlign: TextAlign.center,
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.2,
@@ -460,7 +460,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
         Text(
           'Biometric face verification failed 3 consecutive times against your registered passport photo. Your account is temporarily deactivated to prevent unauthorized use.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             fontSize: 13,
             color: textSub,
             height: 1.4,
@@ -487,7 +487,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                   const SizedBox(width: 8),
                   Text(
                     'UNLOCK WITH ALTERNATIVE METHOD',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       color: accent,
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
@@ -564,7 +564,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                   const SizedBox(width: 8),
                   Text(
                     'Need Help? Contact Customer Care',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       color: textHeadline,
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
@@ -737,7 +737,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                     children: [
                       Text(
                         title,
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: textHeadline,
@@ -765,7 +765,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                   const SizedBox(height: 3),
                   Text(
                     subtitle,
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       fontSize: 12,
                       color: textSub,
                     ),
@@ -967,7 +967,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               child: Text(
                 _scanningStatusText,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   color: _failedAttempts > 0 ? Colors.orangeAccent : textHeadline,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
@@ -993,7 +993,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               const SizedBox(width: 6),
               Text(
                 'Compared with Registered Passport Photo • Zero Image Stored',
-                style: GoogleFonts.outfit(color: textSub, fontSize: 10),
+                style: GoogleFonts.inter(color: textSub, fontSize: 10),
               ),
             ],
           ),
@@ -1112,7 +1112,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
         Text(
           _scanningStatusText,
           textAlign: TextAlign.center,
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             fontSize: 15,
             fontWeight: FontWeight.w600,
             color: textHeadline,
@@ -1179,7 +1179,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
             maxLength: 6,
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.inter(
               fontSize: 26,
               letterSpacing: 8,
               color: textHeadline,
@@ -1301,7 +1301,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
         const SizedBox(height: 18),
         Text(
           'PASSENGER VERIFIED',
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
@@ -1312,7 +1312,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
         Text(
           'Your identity has been verified. Drivers will see your Verified Rider badge upon dispatch.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             fontSize: 13,
             color: textSub,
           ),

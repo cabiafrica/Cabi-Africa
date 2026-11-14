@@ -45,8 +45,8 @@ export const DriverPerformanceReport: React.FC = () => {
             icon: DirectionsCar,
             color: "blue",
             growth: report.weeklyGrowth,
-            bgClass: "bg-blue-50 dark:bg-blue-900/20",
-            textClass: "text-blue-600 dark:text-blue-400"
+            bgClass: "bg-amber-50 dark:bg-amber-900/20",
+            textClass: "text-amber-600 dark:text-amber-400"
         },
         {
             label: "Total Earnings",
@@ -72,8 +72,8 @@ export const DriverPerformanceReport: React.FC = () => {
             icon: ThumbUp,
             color: "purple",
             growth: report.acceptanceGrowth,
-            bgClass: "bg-purple-50 dark:bg-purple-900/20",
-            textClass: "text-purple-600 dark:text-purple-400"
+            bgClass: "bg-cyan-50 dark:bg-cyan-900/20",
+            textClass: "text-cyan-600 dark:text-cyan-400"
         }
     ];
 
@@ -82,7 +82,7 @@ export const DriverPerformanceReport: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <Assessment className="text-blue-600 dark:text-blue-400" />
+                        <Assessment className="text-amber-600 dark:text-amber-400" />
                         Driver Performance Report
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-1">Overview of fleet metrics and driver efficiency.</p>
@@ -95,7 +95,7 @@ export const DriverPerformanceReport: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {cards.map((card, idx) => (
-                    <div key={idx} className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 transition-all hover:shadow-md">
+                    <div key={idx} className="bg-white dark:bg-card-dark p-6 rounded-xl shadow-sm border border-slate-200 dark:border-white/10 transition-all hover:shadow-md">
                         <div className="flex justify-between items-start mb-4">
                             <div className={`p-3 rounded-lg ${card.bgClass} ${card.textClass}`}>
                                 <card.icon fontSize="medium" />
@@ -115,8 +115,8 @@ export const DriverPerformanceReport: React.FC = () => {
 
             {/* Placeholder Chart / Table Area */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 h-80 flex flex-col justify-center items-center text-center">
-                    <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-full mb-4">
+                <div className="bg-white dark:bg-card-dark p-6 rounded-xl shadow-sm border border-slate-200 dark:border-white/10 h-80 flex flex-col justify-center items-center text-center">
+                    <div className="p-4 bg-slate-50 dark:bg-surface-dark rounded-full mb-4">
                         <DirectionsCar className="text-slate-300 dark:text-slate-600 text-4xl" />
                     </div>
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Driver Activity Trends</h3>
@@ -125,8 +125,8 @@ export const DriverPerformanceReport: React.FC = () => {
                     </p>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 h-80 flex flex-col justify-center items-center text-center">
-                    <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-full mb-4">
+                <div className="bg-white dark:bg-card-dark p-6 rounded-xl shadow-sm border border-slate-200 dark:border-white/10 h-80 flex flex-col justify-center items-center text-center">
+                    <div className="p-4 bg-slate-50 dark:bg-surface-dark rounded-full mb-4">
                         <MonetizationOn className="text-slate-300 dark:text-slate-600 text-4xl" />
                     </div>
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Earnings Distribution</h3>

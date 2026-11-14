@@ -50,14 +50,14 @@ const AdvancedFilters = ({ filters, onFilterChange, onClear }: AdvancedFiltersPr
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`flex items-center gap-2 px-4 py-3 rounded-xl border transition-all duration-200 ${isOpen || activeFilterCount > 0
-                        ? 'bg-blue-600/20 border-blue-500/50 text-blue-400'
+                        ? 'bg-amber-600/20 border-amber-500/50 text-amber-400'
                         : 'bg-slate-900/50 border-slate-800/50 text-slate-400 hover:border-slate-700/50 hover:text-white'
                     }`}
             >
                 <Filter className="w-5 h-5" />
                 <span className="text-sm font-medium">Filters</span>
                 {activeFilterCount > 0 && (
-                    <span className="bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    <span className="bg-amber-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">
                         {activeFilterCount}
                     </span>
                 )}
@@ -73,7 +73,7 @@ const AdvancedFilters = ({ filters, onFilterChange, onClear }: AdvancedFiltersPr
                         {activeFilterCount > 0 && (
                             <button
                                 onClick={handleClearAll}
-                                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                                className="text-xs text-amber-400 hover:text-amber-300 transition-colors"
                             >
                                 Clear All
                             </button>
@@ -92,7 +92,7 @@ const AdvancedFilters = ({ filters, onFilterChange, onClear }: AdvancedFiltersPr
                                     <select
                                         value={activeFilters[filter.id] || ''}
                                         onChange={(e) => handleFilterChange(filter.id, e.target.value)}
-                                        className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500/50 focus:outline-none transition-colors"
+                                        className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500/50 focus:outline-none transition-colors"
                                     >
                                         <option value="">All</option>
                                         {filter.options?.map((option) => (
@@ -123,7 +123,7 @@ const AdvancedFilters = ({ filters, onFilterChange, onClear }: AdvancedFiltersPr
                                                             : current.filter((v: string) => v !== option.value);
                                                         handleFilterChange(filter.id, newValue);
                                                     }}
-                                                    className="w-4 h-4 rounded border-slate-700 bg-slate-800 text-blue-500 focus:ring-blue-500 focus:ring-offset-0"
+                                                    className="w-4 h-4 rounded border-slate-700 bg-slate-800 text-amber-500 focus:ring-amber-500 focus:ring-offset-0"
                                                 />
                                                 <span className="text-sm text-slate-400 group-hover:text-white transition-colors">
                                                     {option.label}
@@ -138,7 +138,7 @@ const AdvancedFilters = ({ filters, onFilterChange, onClear }: AdvancedFiltersPr
                                         type="date"
                                         value={activeFilters[filter.id] || ''}
                                         onChange={(e) => handleFilterChange(filter.id, e.target.value)}
-                                        className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500/50 focus:outline-none transition-colors"
+                                        className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500/50 focus:outline-none transition-colors"
                                     />
                                 )}
 
@@ -154,7 +154,7 @@ const AdvancedFilters = ({ filters, onFilterChange, onClear }: AdvancedFiltersPr
                                                 })
                                             }
                                             placeholder="Start date"
-                                            className="bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500/50 focus:outline-none transition-colors"
+                                            className="bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500/50 focus:outline-none transition-colors"
                                         />
                                         <input
                                             type="date"
@@ -166,7 +166,7 @@ const AdvancedFilters = ({ filters, onFilterChange, onClear }: AdvancedFiltersPr
                                                 })
                                             }
                                             placeholder="End date"
-                                            className="bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500/50 focus:outline-none transition-colors"
+                                            className="bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500/50 focus:outline-none transition-colors"
                                         />
                                     </div>
                                 )}

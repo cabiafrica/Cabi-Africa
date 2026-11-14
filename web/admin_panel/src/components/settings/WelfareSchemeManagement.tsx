@@ -197,7 +197,7 @@ export function WelfareSchemeManagement() {
         </div>
         <button
           onClick={openCreateModal}
-          className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow-md"
+          className="flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-black rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow-md"
         >
           <span>＋</span> New Scheme
         </button>
@@ -218,10 +218,10 @@ export function WelfareSchemeManagement() {
       {/* Schemes List */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : schemes.length === 0 ? (
-        <div className="text-center py-20 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+        <div className="text-center py-20 bg-white dark:bg-card-dark rounded-2xl border border-slate-200 dark:border-white/10">
           <span className="text-5xl mb-4 block">🏦</span>
           <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">
             No welfare schemes yet
@@ -235,7 +235,7 @@ export function WelfareSchemeManagement() {
           {schemes.map((scheme) => (
             <div
               key={scheme.id}
-              className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+              className="bg-white dark:bg-card-dark rounded-2xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden"
             >
               <div className="p-6 flex items-start justify-between">
                 <div className="flex items-start gap-4">
@@ -299,7 +299,7 @@ export function WelfareSchemeManagement() {
                   </button>
                   <button
                     onClick={() => openEditModal(scheme)}
-                    className="px-3 py-1.5 text-xs font-medium bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-400 rounded-lg transition-colors"
+                    className="px-3 py-1.5 text-xs font-medium bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 dark:hover:bg-amber-900/40 text-amber-700 dark:text-amber-400 rounded-lg transition-colors"
                   >
                     ✏️ Edit
                   </button>
@@ -322,8 +322,8 @@ export function WelfareSchemeManagement() {
 
       {/* Report Panel */}
       {reportSchemeId && report && (
-        <div className="mt-8 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+        <div className="mt-8 bg-white dark:bg-card-dark rounded-2xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-2xl">📊</span>
               <div>
@@ -348,12 +348,12 @@ export function WelfareSchemeManagement() {
 
           {isLoadingReport ? (
             <div className="flex items-center justify-center py-12">
-              <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              <div className="w-6 h-6 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : (
             <div className="p-6">
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 text-center">
+                <div className="bg-slate-50 dark:bg-surface-dark rounded-xl p-4 text-center">
                   <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                     KSH {(report.totalCollected ?? 0).toLocaleString()}
                   </div>
@@ -361,8 +361,8 @@ export function WelfareSchemeManagement() {
                     Total Collected
                   </div>
                 </div>
-                <div className="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 text-center">
-                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                <div className="bg-slate-50 dark:bg-surface-dark rounded-xl p-4 text-center">
+                  <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">
                     {report.enrolledDrivers?.length ?? 0}
                   </div>
                   <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-wider">
@@ -380,7 +380,7 @@ export function WelfareSchemeManagement() {
                     {report.enrolledDrivers.map((d: any) => (
                       <div
                         key={d.driverProfileId}
-                        className="flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-slate-900 rounded-lg"
+                        className="flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-surface-dark rounded-lg"
                       >
                         <div>
                           <span className="text-sm font-medium text-slate-900 dark:text-white">
@@ -407,8 +407,8 @@ export function WelfareSchemeManagement() {
       {/* Create/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+          <div className="bg-white dark:bg-card-dark rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                 {editingScheme ? 'Edit Scheme' : 'Create Welfare Scheme'}
               </h3>
@@ -428,8 +428,8 @@ export function WelfareSchemeManagement() {
                         onClick={() => handleTypeChange(t)}
                         className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all border-2 ${
                           form.type === t
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
-                            : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300'
+                            ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                            : 'border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:border-slate-300'
                         }`}
                       >
                         <span className="text-xl">
@@ -452,7 +452,7 @@ export function WelfareSchemeManagement() {
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder={form.type === 'PENSION' ? 'NSSF Pension Scheme' : 'Cabi Housing Fund'}
-                  className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
                 />
               </div>
 
@@ -469,7 +469,7 @@ export function WelfareSchemeManagement() {
                   value={form.amount}
                   onChange={(e) => setForm({ ...form, amount: e.target.value })}
                   placeholder={form.type === 'PENSION' ? '10' : '300'}
-                  className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
                 />
                 <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                   {form.type === 'PENSION'
@@ -493,7 +493,7 @@ export function WelfareSchemeManagement() {
                         setForm({ ...form, minAmount: e.target.value })
                       }
                       placeholder="100"
-                      className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
                     />
                   </div>
                   <div>
@@ -508,7 +508,7 @@ export function WelfareSchemeManagement() {
                         setForm({ ...form, maxAmount: e.target.value })
                       }
                       placeholder="1000"
-                      className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
                     />
                   </div>
                 </div>
@@ -526,7 +526,7 @@ export function WelfareSchemeManagement() {
                   }
                   rows={2}
                   placeholder="Voluntary pension contribution deducted per trip..."
-                  className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none"
+                  className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all resize-none"
                 />
               </div>
 
@@ -543,7 +543,7 @@ export function WelfareSchemeManagement() {
                       setForm({ ...form, providerName: e.target.value })
                     }
                     placeholder="NSSF"
-                    className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                    className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
                   />
                 </div>
                 <div>
@@ -557,14 +557,14 @@ export function WelfareSchemeManagement() {
                       setForm({ ...form, providerAccount: e.target.value })
                     }
                     placeholder="ACC-001234"
-                    className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                    className="w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
                   />
                 </div>
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
+            <div className="px-6 py-4 border-t border-slate-200 dark:border-white/10 flex justify-end gap-3">
               <button
                 onClick={() => setShowModal(false)}
                 className="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
@@ -576,7 +576,7 @@ export function WelfareSchemeManagement() {
                 disabled={isSaving || !form.name || !form.amount}
                 className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                   !isSaving && form.name && form.amount
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm'
+                    ? 'bg-amber-500 hover:bg-amber-600 text-black shadow-sm'
                     : 'bg-slate-200 dark:bg-slate-700 text-slate-400 cursor-not-allowed'
                 }`}
               >

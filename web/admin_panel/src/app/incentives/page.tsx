@@ -58,7 +58,7 @@ export default function IncentivesPage() {
                 <h1 className="text-2xl font-bold">Driver Incentives</h1>
                 <button
                     onClick={() => setShowCreateForm(!showCreateForm)}
-                    className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+                    className="bg-amber-500 text-black px-6 py-2 rounded hover:bg-amber-700"
                 >
                     {showCreateForm ? 'Cancel' : '+ Create Incentive Rule'}
                 </button>
@@ -146,7 +146,7 @@ export default function IncentivesPage() {
                             <tr key={rule.id} className="border-b">
                                 <td className="p-3 font-medium">{rule.name}</td>
                                 <td className="p-3">
-                                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
+                                    <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs">
                                         {rule.type.replace('_', ' ')}
                                     </span>
                                 </td>
@@ -160,7 +160,7 @@ export default function IncentivesPage() {
                                 <td className="p-3">
                                     <button
                                         onClick={() => toggleActive(rule.id)}
-                                        className="text-blue-600 hover:underline mr-3"
+                                        className="text-amber-600 hover:underline mr-3"
                                     >
                                         {rule.isActive ? 'Deactivate' : 'Activate'}
                                     </button>
@@ -185,7 +185,7 @@ export default function IncentivesPage() {
                 </div>
                 <div className="bg-white p-6 rounded shadow">
                     <h3 className="text-sm text-gray-600 mb-2">Bonuses Awarded (Mock)</h3>
-                    <p className="text-3xl font-bold text-blue-600">$1,234.50</p>
+                    <p className="text-3xl font-bold text-amber-600">$1,234.50</p>
                 </div>
             </div>
         </div>

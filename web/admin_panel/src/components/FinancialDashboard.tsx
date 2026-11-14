@@ -97,8 +97,8 @@ export const FinancialDashboard: React.FC = () => {
               onClick={() => setDateRange(opt.value)}
               className={`px-3 py-1 text-sm rounded-full border transition-colors ${
                 dateRange === opt.value
-                  ? 'bg-indigo-600 text-white border-indigo-600'
-                  : 'bg-white text-gray-600 border-gray-300 hover:border-indigo-400'
+                  ? 'bg-amber-500 text-black border-cyan-600'
+                  : 'bg-white text-gray-600 border-gray-300 hover:border-cyan-400'
               }`}
             >
               {opt.label}
@@ -145,7 +145,7 @@ export const FinancialDashboard: React.FC = () => {
               <YAxis tickFormatter={(v) => `KES ${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11 }} />
               <Tooltip formatter={(value) => formatCurrency(value as number)} />
               <Legend />
-              <Bar dataKey="revenue" fill="#6366f1" name="Revenue" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="revenue" fill="#F59E0B" name="Revenue" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         )}

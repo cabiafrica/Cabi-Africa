@@ -37,7 +37,7 @@ export const BlogManagement: React.FC = () => {
         <h2 className="text-xl font-semibold text-gray-800">Blog Post Management</h2>
         <button
           onClick={() => setEditingPost('new')}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          className="bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-lg text-sm font-medium transition-colors"
         >
           Create New Post
         </button>
@@ -96,7 +96,7 @@ export const BlogManagement: React.FC = () => {
                   <div className="flex justify-end gap-2">
                     <button 
                       onClick={() => setEditingPost(post)} 
-                      className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                      className="p-2 text-cyan-600 hover:bg-cyan-50 rounded-lg transition-colors"
                       title="Edit Post"
                     >
                       ✏️

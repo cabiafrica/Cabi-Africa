@@ -204,7 +204,7 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
                       isLoading
                           ? "UPDATING STATUS..."
                           : (isOnline ? "SLIDE TO GO OFFLINE" : "SLIDE TO GO ONLINE"),
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         color: isOnline
                             ? (isDark ? const Color(0xFFFCA5A5) : const Color(0xFFB91C1C))
                             : (isDark ? AppTheme.primaryLight : AppTheme.aurumBronze),

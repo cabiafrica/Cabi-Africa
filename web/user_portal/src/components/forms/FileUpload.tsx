@@ -169,7 +169,7 @@ export default function FileUpload({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {preview ? (
-                <img src={preview} alt="Preview" className="w-12 h-12 object-cover rounded" />
+                <img src={preview} alt="Uploaded document preview thumbnail" width={48} height={48} loading="lazy" decoding="async" className="w-12 h-12 object-cover rounded" />
               ) : (
                 <div className="w-12 h-12 bg-gray-800 rounded flex items-center justify-center">
                   {value.type === 'application/pdf' ? (

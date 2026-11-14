@@ -108,7 +108,7 @@ export default function OrganizationsPage() {
                 <button
                     onClick={() => setFilter('all')}
                     className={`px-4 py-2 rounded-lg font-medium ${filter === 'all'
-                            ? 'bg-blue-600 text-white'
+                            ? 'bg-amber-500 text-black'
                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         }`}
                 >
@@ -185,7 +185,7 @@ export default function OrganizationsPage() {
                                             <span className="text-sm text-gray-400">Not set</span>
                                         )}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-blue-600 hover:underline cursor-pointer">
+                                    <td className="px-6 py-4 whitespace-nowrap text-amber-600 hover:underline cursor-pointer">
                                         View Certificate
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

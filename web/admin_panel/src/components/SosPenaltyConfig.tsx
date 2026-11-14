@@ -69,7 +69,7 @@ export const SosPenaltyConfig: React.FC = () => {
         <p className="text-slate-500 dark:text-slate-400 mt-1">Configure automated penalties for false SOS alerts.</p>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-slate-200 dark:border-slate-700 p-6 md:p-8">
+      <div className="bg-white dark:bg-card-dark shadow-sm rounded-xl border border-slate-200 dark:border-white/10 p-6 md:p-8">
 
         {/* WARNING BANNER */}
         <div className="mb-8 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-lg p-4 flex gap-3">
@@ -90,39 +90,39 @@ export const SosPenaltyConfig: React.FC = () => {
             </label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className={`relative flex items-start p-4 cursor-pointer rounded-lg border-2 transition-all ${config.type === 'FEE'
-                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/10'
-                : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'
+                ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/10'
+                : 'border-slate-200 dark:border-white/10 hover:border-amber-300'
                 }`}>
                 <div className="flex items-center h-5">
                   <input
                     type="radio"
                     name="penaltyType"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300"
                     checked={config.type === 'FEE'}
                     onChange={() => setConfig({ ...config, type: 'FEE' })}
                   />
                 </div>
                 <div className="ml-3">
-                  <span className={`block text-sm font-bold ${config.type === 'FEE' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-900 dark:text-white'}`}>Monetary Fine</span>
+                  <span className={`block text-sm font-bold ${config.type === 'FEE' ? 'text-amber-700 dark:text-amber-300' : 'text-slate-900 dark:text-white'}`}>Monetary Fine</span>
                   <span className="block text-xs text-slate-500 dark:text-slate-400 mt-1">Deduct a fixed amount from the driver's wallet.</span>
                 </div>
               </label>
 
               <label className={`relative flex items-start p-4 cursor-pointer rounded-lg border-2 transition-all ${config.type === 'REVOKE_BADGE'
-                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/10'
-                : 'border-slate-200 dark:border-slate-700 hover:border-blue-300'
+                ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/10'
+                : 'border-slate-200 dark:border-white/10 hover:border-amber-300'
                 }`}>
                 <div className="flex items-center h-5">
                   <input
                     type="radio"
                     name="penaltyType"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                    className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300"
                     checked={config.type === 'REVOKE_BADGE'}
                     onChange={() => setConfig({ ...config, type: 'REVOKE_BADGE' })}
                   />
                 </div>
                 <div className="ml-3">
-                  <span className={`block text-sm font-bold ${config.type === 'REVOKE_BADGE' ? 'text-blue-700 dark:text-blue-300' : 'text-slate-900 dark:text-white'}`}>Revoke Privilege</span>
+                  <span className={`block text-sm font-bold ${config.type === 'REVOKE_BADGE' ? 'text-amber-700 dark:text-amber-300' : 'text-slate-900 dark:text-white'}`}>Revoke Privilege</span>
                   <span className="block text-xs text-slate-500 dark:text-slate-400 mt-1">Remove a specific badge or qualification.</span>
                 </div>
               </label>
@@ -131,27 +131,27 @@ export const SosPenaltyConfig: React.FC = () => {
 
           <div className="animate-in fade-in slide-in-from-top-2 duration-300">
             {config.type === 'FEE' ? (
-              <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg border border-slate-100 dark:border-slate-600">
+              <div className="bg-slate-50 dark:bg-surface-dark p-6 rounded-lg border border-slate-100 dark:border-slate-600">
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
                   <MonetizationOn fontSize="small" className="text-green-600" />
                   Fee Amount (KES)
                 </label>
                 <input
                   type="number"
-                  className="block w-full md:w-1/2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-lg font-mono font-bold"
+                  className="block w-full md:w-1/2 px-4 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none text-lg font-mono font-bold"
                   value={config.feeAmount || ''}
                   onChange={(e) => setConfig({ ...config, feeAmount: parseFloat(e.target.value) })}
                   placeholder="e.g. 500"
                 />
               </div>
             ) : (
-              <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-lg border border-slate-100 dark:border-slate-600">
+              <div className="bg-slate-50 dark:bg-surface-dark p-6 rounded-lg border border-slate-100 dark:border-slate-600">
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
                   <RemoveCircle fontSize="small" className="text-red-600" />
                   Select Badge to Revoke
                 </label>
                 <select
-                  className="block w-full md:w-1/2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
+                  className="block w-full md:w-1/2 px-4 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer"
                   value={config.badgeId || ''}
                   onChange={(e) => setConfig({ ...config, badgeId: e.target.value })}
                 >
@@ -176,7 +176,7 @@ export const SosPenaltyConfig: React.FC = () => {
             disabled={saveStatus !== 'idle'}
             className={`flex items-center gap-2 px-8 py-3 rounded-lg font-bold shadow-md transition-all transform active:scale-95 ${saveStatus === 'saved'
               ? 'bg-green-600 text-white'
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
+              : 'bg-amber-500 hover:bg-amber-600 text-black'
               }`}
           >
             {saveStatus === 'saving' ? 'Saving Rule...' : saveStatus === 'saved' ? 'Saved' : 'Save Configuration'}

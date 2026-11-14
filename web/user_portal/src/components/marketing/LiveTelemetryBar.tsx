@@ -28,7 +28,7 @@ export default function LiveTelemetryBar() {
                     </div>
                     <div className="hidden sm:flex items-center gap-1.5 text-[#10B981]">
                         <Zap className="w-3.5 h-3.5 text-[#10B981]" />
-                        <span>M-Pesa Daraja 3.0 Instant Payouts Active</span>
+                        <span>Mobile Money Instant Payouts Active</span>
                     </div>
                     <div className="hidden lg:flex items-center gap-1 text-[#D4AF37]">
                         <ShieldCheck className="w-3.5 h-3.5" />

@@ -41,6 +41,8 @@ export default function ForPassengersPage(
     <MainLayout
       title={`${t('passengers_hero_title')} | CABI`}
       description={t('passengers_hero_subtitle')}
+      image="/images/passenger-executive-comfort.jpg"
+      imageAlt="CABI Africa executive passenger sanctuary with luxury seating, verified PIN safety, and digital ride concierge"
     >
       {/* Hero Section (Obsidian-Gold Identity) */}
       <section className="relative bg-slate-50 dark:bg-surface-dark text-slate-900 dark:text-white pt-12 pb-16 sm:pt-20 sm:pb-24 overflow-hidden border-b border-slate-200 dark:border-white/10 transition-colors duration-300">
@@ -101,8 +103,8 @@ export default function ForPassengersPage(
               <div className="relative rounded-3xl bg-white dark:bg-card-dark/90 p-2.5 sm:p-3.5 border border-slate-200 dark:border-[#D4AF37]/30 shadow-2xl">
                 <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-900">
                   <Image
-                    src="/images/passenger-satisfaction.jpg"
-                    alt="Satisfied CABI passenger relaxing in an executive vehicle cabin"
+                    src="/images/passenger-executive-comfort.jpg"
+                    alt="CABI Africa executive vehicle passenger sanctuary featuring luxury leather seating, ambient gold lighting, and digital ride concierge in Nairobi"
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-cover"
@@ -140,7 +142,7 @@ export default function ForPassengersPage(
                   Whether you are heading across Westlands for an early board meeting, catching a flight at JKIA, or commuting home in the evening, CABI delivers quiet consistency on every corridor.
                 </p>
                 <p>
-                  Choose from agile Boda rides, Economy sedans, or Diplomatic-grade SUVs—backed by transparent fare estimates, M-Pesa instant checkout, and vetted professional chauffeurs.
+                  Choose from agile Boda rides, Economy sedans, or Diplomatic-grade SUVs—backed by transparent fare estimates, mobile money instant checkout, and vetted professional chauffeurs.
                 </p>
               </div>
             </div>

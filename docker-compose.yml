@@ -7,15 +7,15 @@ services:
     container_name: cabi_postgres
     restart: always
     environment:
-      POSTGRES_USER: cabi_user
-      POSTGRES_PASSWORD: cabi_password
-      POSTGRES_DB: cabi_africa
+      POSTGRES_USER: ${POSTGRES_USER:-cabi_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cabi_password}
+      POSTGRES_DB: ${POSTGRES_DB:-cabi_africa}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U cabi_user" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cabi_user}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -46,8 +46,8 @@ services:
       - "3003:3003"
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
-      REDIS_URL: redis://redis:6379
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
       PORT: 3003
     depends_on:
       postgres:
@@ -68,7 +68,7 @@ services:
       - "3337:3337"
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
+      DATABASE_URL: ${DATABASE_URL}
       PORT: 3337
     depends_on:
       postgres:
@@ -87,7 +87,7 @@ services:
       - "3338:3338"
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
+      DATABASE_URL: ${DATABASE_URL}
       PORT: 3338
     depends_on:
       postgres:
@@ -106,8 +106,8 @@ services:
       - "3030:3030"
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://cabi_user:cabi_password@postgres:5432/cabi_africa
-      REDIS_URL: redis://redis:6379
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
       PORT: 3030
     depends_on:
       postgres:

@@ -320,7 +320,7 @@ export const VehicleQualificationsPage: React.FC = () => {
         )}
 
         {/* Create / Edit Modal */}
-        <Dialog open={openModal} onClose={handleCloseModal} PaperProps={{ sx: { background: '#0F172A', border: '1px solid #FFD700', borderRadius: 4, minWidth: 450, color: 'white' } }}>
+        <Dialog open={openModal} onClose={handleCloseModal} PaperProps={{ sx: { background: '#141416', border: '1px solid #FFD700', borderRadius: 4, minWidth: 450, color: 'white' } }}>
           <form onSubmit={handleSave}>
             <DialogTitle sx={{ borderBottom: '1px solid rgba(255,255,255,0.1)', pb: 2, fontWeight: 800, color: '#FFD700' }}>
               {editingQual ? 'Edit Tier Qualification' : 'Create Tier Qualification'}

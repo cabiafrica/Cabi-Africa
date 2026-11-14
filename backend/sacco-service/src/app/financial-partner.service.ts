@@ -121,6 +121,41 @@ export class FinancialPartnerService {
      * Returns database partners if active, or comprehensive platform defaults.
      */
     async getDriverWealthPrograms(): Promise<any[]> {
+        let adminPrograms: any[] = [];
+        try {
+            adminPrograms = await (this.prisma as any).wealthProgram?.findMany({
+                where: { isActive: true },
+                include: {
+                    requiredBadge: { select: { id: true, code: true, name: true, tier: true } },
+                    badgeIncentives: {
+                        where: { isActive: true },
+                        include: { badge: { select: { id: true, code: true, name: true, tier: true } } },
+                    },
+                },
+                orderBy: { createdAt: 'desc' },
+            }) ?? [];
+        } catch (e: any) {
+            this.logger.warn(`Could not fetch WealthProgram records: ${e?.message}`);
+        }
+
+        const mappedAdminPrograms = adminPrograms.map((wp) => ({
+            id: wp.id,
+            code: wp.code,
+            name: wp.name,
+            serviceCategory: wp.category,
+            description: wp.description ?? '',
+            providerName: wp.providerName,
+            logoUrl: wp.logoUrl,
+            minPct: wp.minPct ?? 0.02,
+            maxPct: wp.maxPct ?? 0.20,
+            defaultPct: wp.defaultPct ?? 0.05,
+            dividendOrYield: wp.dividendOrYield,
+            isDriverSelectable: wp.isDriverSelectable ?? true,
+            requiredBadge: wp.requiredBadge ?? null,
+            platformBonusPct: wp.platformBonusPct ?? 0,
+            badgeIncentives: wp.badgeIncentives ?? [],
+        }));
+
         let partners: any[] = [];
         try {
             partners = await this.prisma.saccoPartner.findMany({
@@ -131,8 +166,8 @@ export class FinancialPartnerService {
             this.logger.warn(`Could not fetch partners from DB, serving defaults: ${e?.message}`);
         }
 
-        if (partners && partners.length > 0) {
-            return partners.map(p => ({
+        if (mappedAdminPrograms.length > 0 || (partners && partners.length > 0)) {
+            const mappedPartners = partners.map(p => ({
                 id: p.id,
                 name: p.name,
                 serviceCategory: p.serviceCategory,
@@ -145,7 +180,9 @@ export class FinancialPartnerService {
                                  p.serviceCategory === 'INVESTMENT_MMF' ? '13.5% Daily Compound Yield' :
                                  p.serviceCategory === 'PENSION' ? 'Government Tax-Exempt Retirement Scheme' :
                                  'KES 500,000 Comprehensive Medical & Accident Cover',
+                isDriverSelectable: true,
             }));
+            return [...mappedAdminPrograms, ...mappedPartners];
         }
 
         // Standard Admin Curated Wealth Programs

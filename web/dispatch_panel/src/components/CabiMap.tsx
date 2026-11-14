@@ -61,7 +61,7 @@ const createPassengerIcon = () => {
         className: 'custom-div-icon',
         html: `
       <div style="
-        background-color: #3b82f6;
+        background-color: #F59E0B;
         width: 36px;
         height: 36px;
         border-radius: 50%;
@@ -229,7 +229,7 @@ export const CabiMap: React.FC<CabiMapProps> = ({
 
         if (route && route.length > 0) {
             routeLayerRef.current = L.polyline(route, {
-                color: '#3b82f6',
+                color: '#F59E0B',
                 weight: 4,
                 opacity: 0.8,
             }).addTo(mapRef.current);

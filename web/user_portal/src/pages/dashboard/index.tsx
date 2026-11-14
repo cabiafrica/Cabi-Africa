@@ -56,9 +56,9 @@ export default function Dashboard() {
 
     const connectSacco = async () => {
         setIsConnectingSacco(true);
-        // Simulate API call to external Sacco system
+        // Simulate API call to external Wealth Creation system
         await new Promise(r => setTimeout(r, 2000));
-        alert('Successfully connected to Nairobi Central Sacco API!');
+        alert('Successfully connected to Nairobi Wealth & Asset Cooperative API!');
         setIsConnectingSacco(false);
     };
 
@@ -216,7 +216,7 @@ export default function Dashboard() {
                             <div className={`w-14 h-14 rounded-lg bg-gradient-to-tr from-[#FACC15] to-[#D4AF37] p-[2px] shadow-lg shadow-[#D4AF37]/15 group-hover:scale-105 transition-all ${showProfileMenu ? 'scale-105 rotate-3' : ''}`}>
                                 <div className="w-full h-full rounded-lg bg-white dark:bg-brand-black flex items-center justify-center text-2xl border-2 border-white dark:border-brand-black overflow-hidden relative">
                                     {mounted && user?.profilePictureUrl ? (
-                                        <img src={user.profilePictureUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                        <img src={user.profilePictureUrl} alt={`${user?.fullName || 'CABI User'} verified account profile photo`} width={56} height={56} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                                     ) : (
                                         <User className="w-6 h-6 text-slate-400" />
                                     )}
@@ -354,16 +354,16 @@ export default function Dashboard() {
                                         </div>
                                     </div>
 
-                                    {/* Sacco/Org Status */}
+                                    {/* Wealth & Partner Group Status */}
                                     <div className="relative overflow-hidden bg-gradient-to-br from-[#D4AF37]/15 to-card-dark p-8 rounded-xl border border-[#D4AF37]/30 group">
                                         <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37]/10 rounded-full blur-[100px] group-hover:bg-[#D4AF37]/20 transition-all duration-700"></div>
                                         <div className="relative z-10">
-                                            <h2 className="text-xl font-bold mb-2">Nairobi Central Sacco</h2>
-                                            <p className="text-slate-500 dark:text-gray-400 text-sm mb-6">Connected Partner Organization</p>
+                                            <h2 className="text-xl font-bold mb-2">Nairobi Wealth &amp; Asset Cooperative</h2>
+                                            <p className="text-slate-500 dark:text-gray-400 text-sm mb-6">Connected Wealth Creation Partner</p>
 
                                             <div className="grid grid-cols-2 gap-4 mb-8">
                                                 <div className="p-4 bg-white/5 rounded-lg backdrop-blur-sm border border-white/5">
-                                                    <div className="text-slate-500 dark:text-gray-500 text-xs font-bold uppercase mb-1">Welfare Fund</div>
+                                                    <div className="text-slate-500 dark:text-gray-500 text-xs font-bold uppercase mb-1">Wealth &amp; Welfare Fund</div>
                                                     <div className="text-lg font-bold">KES 14,200</div>
                                                 </div>
                                                 <div className="p-4 bg-white/5 rounded-lg backdrop-blur-sm border border-white/5">
@@ -381,7 +381,7 @@ export default function Dashboard() {
                                                     <span className="animate-spin text-xl">◌</span>
                                                 ) : (
                                                     <>
-                                                        <Building2 className="w-4 h-4" /> View Sacco Portal (External API)
+                                                        <Building2 className="w-4 h-4" /> View Wealth Portal (External API)
                                                     </>
                                                 )}
                                             </button>
@@ -473,9 +473,9 @@ export default function Dashboard() {
                                         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                                             <div>
                                                 <div className="inline-block px-3 py-1 rounded-full bg-brand-accent/20 text-brand-accent text-xs font-bold mb-3">Scale Your Business</div>
-                                                <h2 className="text-2xl font-bold mb-2">Join or Start an Organization</h2>
+                                                <h2 className="text-2xl font-bold mb-2">Join or Start a Wealth Partner Group</h2>
                                                 <p className="text-gray-400 max-w-lg text-sm leading-relaxed">
-                                                    Unlock fleet management tools, welfare support, and investment opportunities. Register your own fleet or join an existing Sacco.
+                                                    Unlock fleet management tools, welfare support, and wealth creation opportunities. Register your own fleet or join an existing Wealth Creation Cooperative.
                                                 </p>
                                             </div>
                                             <div className="flex gap-4">
@@ -483,7 +483,7 @@ export default function Dashboard() {
                                                     Register Organization
                                                 </Link>
                                                 <Link href="#" className="px-6 py-3 bg-white/5 text-white font-bold rounded-xl hover:bg-white/10 transition-all border border-white/10 text-sm">
-                                                    Find Sacco
+                                                    Find Wealth Group
                                                 </Link>
                                             </div>
                                         </div>
@@ -497,7 +497,7 @@ export default function Dashboard() {
                                             <div className="flex justify-between items-start mb-6">
                                                 <div>
                                                     <div className="inline-block px-3 py-1 rounded-full bg-brand-purple/20 text-brand-purple text-xs font-bold mb-3">My Organization</div>
-                                                    <h2 className="text-2xl font-bold">Nairobi Central Sacco</h2>
+                                                    <h2 className="text-2xl font-bold">Nairobi Wealth &amp; Asset Cooperative</h2>
                                                     <p className="text-gray-400 text-sm">Member since Dec 2024</p>
                                                 </div>
                                                 <button className="px-4 py-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg text-xs font-bold transition-colors">
@@ -640,7 +640,7 @@ export default function Dashboard() {
                                         <span className="animate-spin text-lg">◌</span>
                                     ) : (
                                         <>
-                                            <Building2 className="w-4 h-4" /> Sacco Link
+                                            <Building2 className="w-4 h-4" /> Wealth Portal
                                         </>
                                     )}
                                 </button>
@@ -705,7 +705,7 @@ export default function Dashboard() {
                             <div className="space-y-4">
                                 {[
                                     { title: 'Ride to CBD', type: 'Ride', amount: '-450', color: 'text-slate-900 dark:text-white', date: 'Today, 2:30 PM' },
-                                    { title: 'Top-up via M-Pesa', type: 'Deposit', amount: '+2,000', color: 'text-green-500', date: 'Yesterday' },
+                                    { title: 'Top-up via Mobile Money', type: 'Deposit', amount: '+2,000', color: 'text-green-500', date: 'Yesterday' },
                                     { title: 'Referral Bonus', type: 'Network', amount: '+150', color: 'text-brand-yellow', date: '2 days ago' },
                                 ].map((tx, i) => (
                                     <div key={i} className="flex items-center justify-between p-6 glass rounded-xl border border-slate-200 dark:border-white/5">

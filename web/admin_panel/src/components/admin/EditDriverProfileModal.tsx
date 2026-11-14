@@ -46,7 +46,7 @@ export const EditDriverProfileModal: React.FC<Props> = ({ driverId, initialName,
                             type="text"
                             value={name}
                             onChange={e => setName(e.target.value)}
-                            className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full border p-2 rounded focus:ring-2 focus:ring-amber-500 outline-none"
                             required
                         />
                     </div>
@@ -57,7 +57,7 @@ export const EditDriverProfileModal: React.FC<Props> = ({ driverId, initialName,
                             type="text"
                             value={phone}
                             onChange={e => setPhone(e.target.value)}
-                            className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full border p-2 rounded focus:ring-2 focus:ring-amber-500 outline-none"
                             required
                         />
                     </div>
@@ -68,7 +68,7 @@ export const EditDriverProfileModal: React.FC<Props> = ({ driverId, initialName,
                             type="email"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
-                            className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full border p-2 rounded focus:ring-2 focus:ring-amber-500 outline-none"
                         />
                     </div>
 
@@ -77,7 +77,7 @@ export const EditDriverProfileModal: React.FC<Props> = ({ driverId, initialName,
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                            className="px-4 py-2 bg-amber-500 text-black rounded hover:bg-amber-700 disabled:opacity-50"
                         >
                             {loading ? 'Saving...' : 'Save Changes'}
                         </button>

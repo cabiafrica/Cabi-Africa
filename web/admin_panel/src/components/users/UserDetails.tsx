@@ -80,7 +80,7 @@ export const UserDetails: React.FC<UserDetailsProps> = ({ userId, onBack }) => {
                         </button>
                     )}
                     <h2 className="text-xl font-bold text-gray-800">{user.name}</h2>
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${user.type === 'DRIVER' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${user.type === 'DRIVER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800'}`}>
                         {user.type}
                     </span>
                 </div>
@@ -90,7 +90,7 @@ export const UserDetails: React.FC<UserDetailsProps> = ({ userId, onBack }) => {
                     <button
                         onClick={handleImpersonate}
                         disabled={impersonating}
-                        className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded shadow flex items-center gap-2 disabled:opacity-50 text-sm"
+                        className="bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-1.5 rounded shadow flex items-center gap-2 disabled:opacity-50 text-sm"
                     >
                         {impersonating ? 'Starting Session...' : '🕵️ Login as User'}
                     </button>
@@ -156,20 +156,20 @@ export const UserDetails: React.FC<UserDetailsProps> = ({ userId, onBack }) => {
                 <nav className="-mb-px flex space-x-8">
                     <button
                         onClick={() => setActiveTab('DETAILS')}
-                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'DETAILS' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
+                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'DETAILS' ? 'border-amber-500 text-amber-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
                     >
                         Profile Details
                     </button>
                     <button
                         onClick={() => setActiveTab('PAYMENTS')}
-                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'PAYMENTS' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
+                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'PAYMENTS' ? 'border-amber-500 text-amber-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
                     >
                         Payment History
                     </button>
                     {user.type === 'DRIVER' && (
                         <button
                             onClick={() => setActiveTab('DOCUMENTS')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'DOCUMENTS' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'DOCUMENTS' ? 'border-amber-500 text-amber-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
                         >
                             Documents
                         </button>
@@ -177,14 +177,14 @@ export const UserDetails: React.FC<UserDetailsProps> = ({ userId, onBack }) => {
                     {user.type === 'DRIVER' && (
                         <button
                             onClick={() => setActiveTab('DOWNLINE')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'DOWNLINE' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
+                            className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'DOWNLINE' ? 'border-amber-500 text-amber-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
                         >
                             Downline & Referral
                         </button>
                     )}
                     <button
                         onClick={() => setActiveTab('AUDIT')}
-                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'AUDIT' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
+                        className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'AUDIT' ? 'border-amber-500 text-amber-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
                     >
                         Audit Log
                     </button>

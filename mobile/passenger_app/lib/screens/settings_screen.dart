@@ -80,6 +80,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           _buildSettingsSection(l10n.appearance.toUpperCase(), isDark: theme.brightness == Brightness.dark),
           const SizedBox(height: 12),
+          _buildThemeSelector(context, themeProvider, theme.brightness == Brightness.dark),
+          const SizedBox(height: 12),
           _buildNavigationTile(
             context: context,
             title: l10n.language,
@@ -91,15 +93,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 builder: (context) => const LanguageSelectionScreen(),
               ),
             ),
-          ),
-          const SizedBox(height: 12),
-          _buildSwitchTile(
-            context: context,
-            title: l10n.darkMode,
-            subtitle: 'Toggle premium dark aesthetic',
-            icon: Icons.dark_mode_outlined,
-            value: themeProvider.themeMode == ThemeMode.dark,
-            onChanged: (isDark) => themeProvider.toggleTheme(isDark),
           ),
           const SizedBox(height: 32),
           _buildSettingsSection('NOTIFICATION SOUNDS & CHIMES', isDark: theme.brightness == Brightness.dark),
@@ -202,6 +195,173 @@ class _SettingsScreenState extends State<SettingsScreen> {
           fontWeight: FontWeight.bold,
           letterSpacing: 1.5,
         ),
+      ),
+    );
+  }
+
+  Widget _buildThemeSelector(BuildContext context, ThemeProvider themeProvider, bool isDark) {
+    final activeBorder = AppTheme.primaryColor;
+    final inactiveBorder = isDark ? AppTheme.outlineGold.withValues(alpha: 0.3) : AppTheme.porcelainOutline;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark
+            ? (Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface)
+            : AppTheme.porcelainSurface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isDark ? Theme.of(context).dividerColor : AppTheme.porcelainOutline),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.palette_outlined, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'THEME MODE',
+                style: TextStyle(
+                  color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              // Light Mode Card
+              Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () => themeProvider.setTheme(ThemeMode.light),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: !isDark ? AppTheme.primaryColor.withValues(alpha: 0.15) : Colors.black26,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: !isDark ? activeBorder : inactiveBorder,
+                        width: !isDark ? 2.0 : 1.0,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.wb_sunny_rounded,
+                          color: !isDark ? AppTheme.primaryColor : Colors.white60,
+                          size: 26,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Light Mode',
+                          style: TextStyle(
+                            color: !isDark ? (isDark ? Colors.white : AppTheme.porcelainTextPrimary) : Colors.white70,
+                            fontWeight: !isDark ? FontWeight.bold : FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Porcelain Day',
+                          style: TextStyle(
+                            color: !isDark ? AppTheme.primaryColor : Colors.white38,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Dark Mode Card
+              Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () => themeProvider.setTheme(ThemeMode.dark),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.04),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isDark ? activeBorder : inactiveBorder,
+                        width: isDark ? 2.0 : 1.0,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.dark_mode_rounded,
+                          color: isDark ? AppTheme.primaryColor : Colors.black54,
+                          size: 26,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Dark Mode',
+                          style: TextStyle(
+                            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
+                            fontWeight: isDark ? FontWeight.bold : FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Obsidian Night',
+                          style: TextStyle(
+                            color: isDark ? AppTheme.primaryColor : Colors.black45,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // System Default toggle option
+          InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () => themeProvider.setTheme(ThemeMode.system),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+              child: Row(
+                children: [
+                  Icon(
+                    themeProvider.themeMode == ThemeMode.system
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_off,
+                    size: 16,
+                    color: themeProvider.themeMode == ThemeMode.system
+                        ? (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze)
+                        : (isDark ? Colors.white38 : Colors.black38),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Match device system settings',
+                    style: TextStyle(
+                      color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
+                      fontSize: 12,
+                      fontWeight: themeProvider.themeMode == ThemeMode.system
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

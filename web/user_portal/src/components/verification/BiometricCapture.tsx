@@ -151,7 +151,7 @@ export default function BiometricCapture({
                         </button>
                     </div>
                 ) : capturedImage ? (
-                    <img src={capturedImage} alt="Captured selfie" className="w-full h-full object-cover" />
+                    <img src={capturedImage} alt="Live biometric verification face capture" width={400} height={400} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                 ) : (
                     <>
                         <video

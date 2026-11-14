@@ -37,9 +37,9 @@ const MetricsOverview = ({
         <div className="space-y-6">
             {/* Multi-Monitor Dispatch Banner */}
             {onUndockTripAnalytics && (
-                <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-3.5 rounded-2xl bg-gradient-to-r from-blue-900/30 via-slate-900/40 to-slate-900/30 border border-blue-500/20 backdrop-blur-xl shadow-lg">
+                <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-3.5 rounded-2xl bg-gradient-to-r from-amber-900/30 via-slate-900/40 to-slate-900/30 border border-amber-500/20 backdrop-blur-xl shadow-lg">
                     <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                        <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
@@ -70,7 +70,7 @@ const MetricsOverview = ({
                         className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                             isTripAnalyticsUndocked
                                 ? 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700'
-                                : 'bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/20 border border-blue-400/30'
+                                : 'bg-amber-500 hover:bg-amber-400 text-black shadow-md shadow-amber-600/20 border border-amber-400/30'
                         }`}
                     >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,17 +83,17 @@ const MetricsOverview = ({
             {/* Key Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Active Rides */}
-                <div className="bg-gradient-to-br from-blue-600/10 to-blue-600/5 backdrop-blur-xl border border-blue-500/20 rounded-2xl p-6 hover:border-blue-500/40 transition-all duration-300">
+                <div className="bg-gradient-to-br from-amber-600/10 to-amber-600/5 backdrop-blur-xl border border-amber-500/20 rounded-2xl p-6 hover:border-amber-500/40 transition-all duration-300">
                     <div className="flex items-start justify-between">
                         <div>
-                            <p className="text-sm font-medium text-blue-400 mb-1">Active Rides</p>
+                            <p className="text-sm font-medium text-amber-400 mb-1">Active Rides</p>
                             <h3 className="text-4xl font-bold text-white mb-2">{activeRides.length}</h3>
                             <p className="text-xs text-slate-400">
                                 <span className="text-green-400">↑ 12%</span> from last hour
                             </p>
                         </div>
-                        <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                            <svg className="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                             </svg>
                         </div>
@@ -164,8 +164,8 @@ const MetricsOverview = ({
                         <AreaChart data={hourlyData}>
                             <defs>
                                 <linearGradient id="colorRides" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
                                 </linearGradient>
                                 <linearGradient id="colorDrivers" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
@@ -183,13 +183,13 @@ const MetricsOverview = ({
                                     color: '#fff'
                                 }}
                             />
-                            <Area type="monotone" dataKey="rides" stroke="#3b82f6" fillOpacity={1} fill="url(#colorRides)" />
+                            <Area type="monotone" dataKey="rides" stroke="#F59E0B" fillOpacity={1} fill="url(#colorRides)" />
                             <Area type="monotone" dataKey="drivers" stroke="#10b981" fillOpacity={1} fill="url(#colorDrivers)" />
                         </AreaChart>
                     </ResponsiveContainer>
                     <div className="flex items-center justify-center gap-6 mt-4">
                         <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                            <div className="w-3 h-3 rounded-full bg-amber-500"></div>
                             <span className="text-sm text-slate-400">Rides</span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -235,7 +235,7 @@ const MetricsOverview = ({
                     {metrics.peakDemandZones.map((zone) => (
                         <div
                             key={zone}
-                            className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300"
+                            className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50 hover:border-amber-500/50 transition-all duration-300"
                         >
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-white font-medium">{zone}</span>

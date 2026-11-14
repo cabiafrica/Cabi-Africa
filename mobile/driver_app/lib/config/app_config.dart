@@ -8,8 +8,8 @@ class AppConfig {
   static const String customHost = String.fromEnvironment('API_HOST', defaultValue: '192.168.100.35');
 
   static String get host {
-    if (customHost.isNotEmpty) return customHost;
     if (kIsWeb) return 'localhost';
+    if (customHost.isNotEmpty) return customHost;
     if (isProduction) return 'auth-gateway-746659778850.us-central1.run.app';
     // Android emulator / physical device fallback
     if (defaultTargetPlatform == TargetPlatform.android) return '192.168.100.35';

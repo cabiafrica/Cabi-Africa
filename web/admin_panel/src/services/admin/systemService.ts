@@ -76,7 +76,7 @@ export class SystemService {
         } catch {
             const cached = localStorage.getItem('cabi_pricing_categories');
             if (cached) {
-                try { return JSON.parse(cached); } catch {}
+                try { return JSON.parse(cached); } catch (e) { console.warn('[Pricing] Cached category parse error:', e); }
             }
             return [
                 { category: 'BODA', displayName: 'Boda Boda (Motorcycle)', baseFare: 50, perKmRate: 25, perMinuteRate: 2, minimumFare: 50, roundingStep: 10, isActive: true, description: 'Motorcycles with nearest 10 rounding' },

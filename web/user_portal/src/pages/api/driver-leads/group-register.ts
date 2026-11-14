@@ -32,7 +32,7 @@ interface GroupRegistrationResponse {
     error?: string;
 }
 
-const REGISTRATION_FEE_PER_DRIVER = 2000; // KES
+const REGISTRATION_FEE_PER_DRIVER = 0; // KES - Free Onboarding
 const GROUP_DISCOUNT_THRESHOLD = 10;
 const GROUP_DISCOUNT_PERCENTAGE = 15;
 
@@ -110,47 +110,15 @@ export default async function handler(
 
         const groupData = await backendResponse.json();
 
-        // Calculate pricing
+        // Calculate pricing - Zero driver registration fees
         const numberOfDrivers = data.drivers.length;
-        const registrationFeePerDriver = 2000; // KES
-        const subtotal = numberOfDrivers * registrationFeePerDriver;
+        const registrationFeePerDriver = 0; // KES - Free registration
+        const subtotal = 0;
+        const discount = 0;
+        const finalAmount = 0;
 
-        let discount = 0;
-        const groupDiscountThreshold = 10;
-        const groupDiscountPercentage = 15;
-        if (numberOfDrivers >= groupDiscountThreshold) {
-            discount = subtotal * (groupDiscountPercentage / 100);
-        }
-
-        const finalAmount = subtotal - discount;
-
-        // Generate payment intent
-        const PAYMENT_SERVICE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://auth-gateway-746659778850.us-central1.run.app/api';
-        const paymentResponse = await fetch(`${PAYMENT_SERVICE_URL}/payments/create-intent`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                amount: finalAmount,
-                currency: 'KES',
-                description: `Driver Group Registration - ${data.organizationName}`,
-                metadata: {
-                    organizationId: groupData.id,
-                    numberOfDrivers,
-                    registrationType: 'DRIVER_GROUP',
-                },
-            }),
-        });
-
-        if (!paymentResponse.ok) {
-            return res.status(400).json({
-                success: false,
-                error: 'Failed to create payment intent',
-            });
-        }
-
-        const paymentData = await paymentResponse.json();
+        // Skip payment intent since registration is 100% free
+        const paymentData = { id: `free-group-${Date.now()}`, clientSecret: 'FREE_ONBOARDING' };
 
         // Create drivers with referral relationships
         const driverIds = [];

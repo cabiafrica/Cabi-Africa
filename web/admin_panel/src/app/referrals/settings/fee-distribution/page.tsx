@@ -136,7 +136,7 @@ export default function FeeDistributionPage() {
                     <button
                         type="submit"
                         disabled={saving}
-                        className={`bg-blue-600 text-white font-bold py-2 px-6 rounded hover:bg-blue-700 ${saving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`bg-amber-500 text-black font-bold py-2 px-6 rounded hover:bg-amber-700 ${saving ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         {saving ? 'Saving...' : 'Save Configuration'}
                     </button>

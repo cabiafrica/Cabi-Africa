@@ -101,7 +101,7 @@ export default function UserProfileHistoryPage({ params }: { params: { userId: s
                                                 {entry.field.includes('Picture') ? 'Image URL' : entry.newValue}
                                             </td>
                                             <td className="px-6 py-4 text-sm text-gray-500">
-                                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${entry.changedBy.includes('Admin') ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}>
+                                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${entry.changedBy.includes('Admin') ? 'bg-cyan-100 text-cyan-800' : 'bg-gray-100 text-gray-800'}`}>
                                                     {entry.changedBy}
                                                 </span>
                                             </td>

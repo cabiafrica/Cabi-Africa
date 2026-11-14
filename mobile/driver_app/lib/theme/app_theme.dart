@@ -69,7 +69,7 @@ class AppTheme {
 
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
-    fontFamily: GoogleFonts.outfit().fontFamily,
+    fontFamily: GoogleFonts.inter().fontFamily,
     colorScheme: const ColorScheme.light(
       primary: primaryColor,
       secondary: secondaryAmber,
@@ -138,22 +138,22 @@ class AppTheme {
       thickness: 1,
     ),
     textTheme: TextTheme(
-      headlineLarge: GoogleFonts.outfit(
+      headlineLarge: GoogleFonts.inter(
           fontSize: 32, fontWeight: FontWeight.bold, color: lightTextPrimary),
-      headlineMedium: GoogleFonts.outfit(
+      headlineMedium: GoogleFonts.inter(
           fontSize: 24, fontWeight: FontWeight.bold, color: lightTextPrimary),
-      headlineSmall: GoogleFonts.outfit(
+      headlineSmall: GoogleFonts.inter(
           fontSize: 20, fontWeight: FontWeight.w600, color: lightTextPrimary),
-      titleLarge: GoogleFonts.outfit(
+      titleLarge: GoogleFonts.inter(
           fontSize: 18, fontWeight: FontWeight.w600, color: lightTextPrimary),
-      bodyLarge: GoogleFonts.outfit(fontSize: 16, color: lightTextPrimary),
-      bodyMedium: GoogleFonts.outfit(fontSize: 14, color: lightTextSecondary),
+      bodyLarge: GoogleFonts.inter(fontSize: 16, color: lightTextPrimary),
+      bodyMedium: GoogleFonts.inter(fontSize: 14, color: lightTextSecondary),
     ),
   );
 
   static final ThemeData darkTheme = ThemeData(
     useMaterial3: true,
-    fontFamily: GoogleFonts.outfit().fontFamily,
+    fontFamily: GoogleFonts.inter().fontFamily,
     colorScheme: const ColorScheme.dark(
       primary: primaryColor,
       secondary: secondaryAmber,
@@ -223,16 +223,16 @@ class AppTheme {
       thickness: 1,
     ),
     textTheme: TextTheme(
-      headlineLarge: GoogleFonts.outfit(
+      headlineLarge: GoogleFonts.inter(
           fontSize: 32, fontWeight: FontWeight.bold, color: darkTextPrimary),
-      headlineMedium: GoogleFonts.outfit(
+      headlineMedium: GoogleFonts.inter(
           fontSize: 24, fontWeight: FontWeight.bold, color: darkTextPrimary),
-      headlineSmall: GoogleFonts.outfit(
+      headlineSmall: GoogleFonts.inter(
           fontSize: 20, fontWeight: FontWeight.w600, color: darkTextPrimary),
-      titleLarge: GoogleFonts.outfit(
+      titleLarge: GoogleFonts.inter(
           fontSize: 18, fontWeight: FontWeight.w600, color: darkTextPrimary),
-      bodyLarge: GoogleFonts.outfit(fontSize: 16, color: darkTextPrimary),
-      bodyMedium: GoogleFonts.outfit(fontSize: 14, color: darkTextSecondary),
+      bodyLarge: GoogleFonts.inter(fontSize: 16, color: darkTextPrimary),
+      bodyMedium: GoogleFonts.inter(fontSize: 14, color: darkTextSecondary),
     ),
   );
 
@@ -258,7 +258,7 @@ class AppTheme {
     TextDecorationStyle? decorationStyle,
     double? decorationThickness,
   }) {
-    return GoogleFonts.outfit(
+    return GoogleFonts.inter(
       textStyle: textStyle,
       color: color,
       backgroundColor: backgroundColor,
@@ -346,7 +346,7 @@ class AppTheme {
     TextDecorationStyle? decorationStyle,
     double? decorationThickness,
   }) {
-    return GoogleFonts.montserrat(
+    return GoogleFonts.inter(
       textStyle: textStyle,
       color: color,
       backgroundColor: backgroundColor,
@@ -390,7 +390,7 @@ class AppTheme {
     TextDecorationStyle? decorationStyle,
     double? decorationThickness,
   }) {
-    return GoogleFonts.plusJakartaSans(
+    return GoogleFonts.inter(
       textStyle: textStyle,
       color: color,
       backgroundColor: backgroundColor,

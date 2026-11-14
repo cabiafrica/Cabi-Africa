@@ -94,7 +94,7 @@ const DriverHistoryPage = ({ drivers }: DriverHistoryPageProps) => {
             case 'online':
                 return 'bg-green-500/20 text-green-400 border-green-500/30';
             case 'busy':
-                return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+                return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
             case 'on-break':
                 return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
             case 'offline':
@@ -122,8 +122,8 @@ const DriverHistoryPage = ({ drivers }: DriverHistoryPageProps) => {
 
             {/* Summary Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-gradient-to-br from-blue-600/10 to-blue-600/5 border border-blue-500/20 rounded-xl p-4">
-                    <p className="text-sm text-blue-400 mb-1">Total Drivers</p>
+                <div className="bg-gradient-to-br from-amber-600/10 to-amber-600/5 border border-amber-500/20 rounded-xl p-4">
+                    <p className="text-sm text-amber-400 mb-1">Total Drivers</p>
                     <p className="text-3xl font-bold text-white">{filteredDrivers.length}</p>
                 </div>
                 <div className="bg-gradient-to-br from-green-600/10 to-green-600/5 border border-green-500/20 rounded-xl p-4">
@@ -132,8 +132,8 @@ const DriverHistoryPage = ({ drivers }: DriverHistoryPageProps) => {
                         {filteredDrivers.filter((d) => d.status === 'online').length}
                     </p>
                 </div>
-                <div className="bg-gradient-to-br from-purple-600/10 to-purple-600/5 border border-purple-500/20 rounded-xl p-4">
-                    <p className="text-sm text-purple-400 mb-1">Avg. Rating</p>
+                <div className="bg-gradient-to-br from-cyan-600/10 to-cyan-600/5 border border-cyan-500/20 rounded-xl p-4">
+                    <p className="text-sm text-cyan-400 mb-1">Avg. Rating</p>
                     <p className="text-3xl font-bold text-white">
                         {filteredDrivers.length > 0
                             ? (filteredDrivers.reduce((sum, d) => sum + d.rating, 0) / filteredDrivers.length).toFixed(1)
@@ -154,16 +154,16 @@ const DriverHistoryPage = ({ drivers }: DriverHistoryPageProps) => {
                     <div
                         key={driver.id}
                         onClick={() => setSelectedDriver(driver)}
-                        className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-xl p-6 hover:border-blue-500/50 transition-all cursor-pointer group"
+                        className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-xl p-6 hover:border-amber-500/50 transition-all cursor-pointer group"
                     >
                         {/* Driver Header */}
                         <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-white font-bold text-lg">
                                     {driver.name.charAt(0)}
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-white group-hover:text-blue-400 transition-colors">
+                                    <h3 className="font-semibold text-white group-hover:text-amber-400 transition-colors">
                                         {driver.name}
                                     </h3>
                                     <p className="text-xs text-slate-500 font-mono">{driver.id}</p>
@@ -258,7 +258,7 @@ const DriverHistoryPage = ({ drivers }: DriverHistoryPageProps) => {
                         <div className="sticky top-0 bg-slate-900 border-b border-slate-800 p-6">
                             <div className="flex items-start justify-between">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-2xl">
+                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-white font-bold text-2xl">
                                         {selectedDriver.name.charAt(0)}
                                     </div>
                                     <div>
@@ -298,10 +298,10 @@ const DriverHistoryPage = ({ drivers }: DriverHistoryPageProps) => {
                         <div className="p-6 space-y-6">
                             {/* Performance Metrics */}
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div className="bg-gradient-to-br from-blue-600/10 to-blue-600/5 border border-blue-500/20 rounded-xl p-4">
+                                <div className="bg-gradient-to-br from-amber-600/10 to-amber-600/5 border border-amber-500/20 rounded-xl p-4">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <TrendingUp className="w-4 h-4 text-blue-400" />
-                                        <p className="text-xs text-blue-400">Completed Rides</p>
+                                        <TrendingUp className="w-4 h-4 text-amber-400" />
+                                        <p className="text-xs text-amber-400">Completed Rides</p>
                                     </div>
                                     <p className="text-2xl font-bold text-white">{selectedDriver.completedRides}</p>
                                 </div>
@@ -321,10 +321,10 @@ const DriverHistoryPage = ({ drivers }: DriverHistoryPageProps) => {
                                     </div>
                                     <p className="text-2xl font-bold text-white">{selectedDriver.rating.toFixed(1)}</p>
                                 </div>
-                                <div className="bg-gradient-to-br from-purple-600/10 to-purple-600/5 border border-purple-500/20 rounded-xl p-4">
+                                <div className="bg-gradient-to-br from-cyan-600/10 to-cyan-600/5 border border-cyan-500/20 rounded-xl p-4">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <Award className="w-4 h-4 text-purple-400" />
-                                        <p className="text-xs text-purple-400">Acceptance Rate</p>
+                                        <Award className="w-4 h-4 text-cyan-400" />
+                                        <p className="text-xs text-cyan-400">Acceptance Rate</p>
                                     </div>
                                     <p className="text-2xl font-bold text-white">{selectedDriver.acceptanceRate}%</p>
                                 </div>

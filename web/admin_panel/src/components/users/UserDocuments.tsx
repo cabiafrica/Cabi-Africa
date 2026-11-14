@@ -24,7 +24,7 @@ export const UserDocuments: React.FC<Props> = ({ userId }) => {
                 {documents.map(doc => (
                     <div key={doc.id} className="p-4 flex items-center justify-between hover:bg-gray-50">
                         <div className="flex items-center gap-3">
-                            <div className="bg-blue-50 p-2 rounded text-blue-600">📄</div>
+                            <div className="bg-amber-50 p-2 rounded text-amber-600">📄</div>
                             <div>
                                 <p className="font-medium text-gray-900">{doc.type}</p>
                                 <p className="text-sm text-gray-500">Expires: {new Date(doc.expiryDate).toLocaleDateString()}</p>
@@ -36,7 +36,7 @@ export const UserDocuments: React.FC<Props> = ({ userId }) => {
                                 }`}>
                                 {doc.status}
                             </span>
-                            <a href={doc.url} className="text-blue-600 text-sm hover:underline">View</a>
+                            <a href={doc.url} className="text-amber-600 text-sm hover:underline">View</a>
                         </div>
                     </div>
                 ))}

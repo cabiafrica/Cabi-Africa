@@ -46,11 +46,11 @@ export const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
+        <div className="min-h-screen flex items-center justify-center bg-brand-black text-white selection:bg-brand-yellow selection:text-black">
             {/* Background Effects */}
             <div className="absolute inset-0 overflow-hidden z-0 pointer-events-none">
-                <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-blue-600/10 blur-[100px]" />
-                <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] rounded-full bg-purple-600/10 blur-[100px]" />
+                <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-brand-yellow/10 blur-[100px]" />
+                <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] rounded-full bg-executive-gold/10 blur-[100px]" />
             </div>
 
             <div className="w-full max-w-md p-8 relative z-10">
@@ -61,30 +61,30 @@ export const LoginPage = () => {
                         className="h-14 w-auto mx-auto mb-5 object-contain drop-shadow-[0_4px_16px_rgba(212,175,55,0.25)]"
                     />
                     <h1 className="text-3xl font-bold tracking-tight mb-2">Dispatch Console</h1>
-                    <p className="text-slate-400">Sign in to access control center</p>
+                    <p className="text-gray-400">Sign in to access control center</p>
                 </div>
 
-                <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div className="bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
                     <form onSubmit={handleLogin} className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-1">Email Address</label>
+                            <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-1.5">Email Address</label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-500 transition-all outline-none"
+                                className="w-full px-4 py-3 bg-brand-black/60 border border-white/15 rounded-xl focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow text-white placeholder-gray-500 transition-all outline-none"
                                 placeholder="operator@cabi.com"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-1">Password</label>
+                            <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-1.5">Password</label>
                             <div className="relative">
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-500 transition-all outline-none"
+                                    className="w-full px-4 py-3 bg-brand-black/60 border border-white/15 rounded-xl focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow text-white placeholder-gray-500 transition-all outline-none"
                                     placeholder="••••••••"
                                     required
                                 />
@@ -110,14 +110,14 @@ export const LoginPage = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold rounded-lg shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+                            className="w-full py-3 px-4 bg-brand-yellow hover:bg-brand-yellowHover text-black font-bold rounded-xl shadow-lg shadow-brand-yellow/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-4"
                         >
                             {isLoading ? 'Authenticating...' : 'Sign In'}
                         </button>
                     </form>
                 </div>
                 <div className="mt-8 text-center">
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-gray-500">
                         Authorized Personnel Only
                     </p>
                 </div>

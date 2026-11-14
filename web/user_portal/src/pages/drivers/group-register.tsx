@@ -17,14 +17,14 @@ interface OrganizationData {
     contactPerson: string;
     contactEmail: string;
     contactPhone: string;
-    organizationType: 'sacco' | 'fleet' | 'cooperative' | 'other' | '';
+    organizationType: 'wealth_group' | 'fleet' | 'cooperative' | 'other' | '';
     numberOfDrivers: number;
     referralCode: string;
 }
 
-const REGISTRATION_FEE_PER_DRIVER = 2000; // KES
+const REGISTRATION_FEE_PER_DRIVER = 0; // KES - Free onboarding
 const GROUP_DISCOUNT_THRESHOLD = 10;
-const GROUP_DISCOUNT_PERCENTAGE = 15; // 15% discount for 10+ drivers
+const GROUP_DISCOUNT_PERCENTAGE = 0;
 
 export default function GroupRegistrationPage() {
     const router = useRouter();
@@ -209,9 +209,9 @@ export default function GroupRegistrationPage() {
                         <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                     </svg>
                     <div>
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-[#ffe088] mb-1">Group Registration Benefits</h3>
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-[#ffe088] mb-1">Fleet &amp; Driver Group Onboarding</h3>
                         <p className="text-sm text-neutral-700 dark:text-neutral-300">
-                            Register 10 or more drivers and get <strong className="text-[#D4AF37]">{GROUP_DISCOUNT_PERCENTAGE}% off</strong> the registration fee!
+                            Register your drivers or fleet with streamlined verification, coordinated dispatch management, and automated wealth creation pools.
                         </p>
                     </div>
                 </div>
@@ -232,7 +232,7 @@ export default function GroupRegistrationPage() {
                         onChange={handleOrgInputChange}
                         className={`w-full px-4 py-3 rounded-xl border ${errors.organizationName ? 'border-red-500' : 'border-slate-300 dark:border-white/10'
                             } focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-slate-50 dark:bg-surface-dark dark:text-white`}
-                        placeholder="e.g., Nairobi Drivers SACCO"
+                        placeholder="e.g., Nairobi Drivers Wealth Cooperative"
                     />
                     {errors.organizationName && <p className="mt-1 text-sm text-red-500">{errors.organizationName}</p>}
                 </div>
@@ -250,9 +250,9 @@ export default function GroupRegistrationPage() {
                             } focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-slate-50 dark:bg-surface-dark dark:text-white`}
                     >
                         <option value="">Select Type</option>
-                        <option value="sacco">SACCO</option>
+                        <option value="wealth_group">Wealth Creation Group / Cooperative</option>
                         <option value="fleet">Fleet Operator</option>
-                        <option value="cooperative">Cooperative</option>
+                        <option value="cooperative">Driver Cooperative</option>
                         <option value="other">Other</option>
                     </select>
                     {errors.organizationType && <p className="mt-1 text-sm text-red-500">{errors.organizationType}</p>}
@@ -469,38 +469,20 @@ export default function GroupRegistrationPage() {
             </div>
 
             <div className="bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 rounded-2xl p-6">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Cost Breakdown</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Onboarding Summary</h3>
 
                 <div className="space-y-3">
-                    <div className="flex justify-between text-sm">
-                        <span className="text-neutral-600 dark:text-neutral-400">Registration Fee per Driver:</span>
-                        <span className="font-medium text-slate-900 dark:text-white">KES {REGISTRATION_FEE_PER_DRIVER.toLocaleString()}</span>
-                    </div>
                     <div className="flex justify-between text-sm">
                         <span className="text-neutral-600 dark:text-neutral-400">Number of Drivers:</span>
                         <span className="font-medium text-slate-900 dark:text-white">{drivers.length}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                        <span className="text-neutral-600 dark:text-neutral-400">Subtotal:</span>
-                        <span className="font-medium text-slate-900 dark:text-white">
-                            KES {(drivers.length * REGISTRATION_FEE_PER_DRIVER).toLocaleString()}
-                        </span>
+                        <span className="text-neutral-600 dark:text-neutral-400">Onboarding &amp; Verification:</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">Included</span>
                     </div>
-
-                    {calculateSavings() > 0 && (
-                        <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400">
-                            <span className="font-medium">Group Discount ({GROUP_DISCOUNT_PERCENTAGE}%):</span>
-                            <span className="font-medium">- KES {calculateSavings().toLocaleString()}</span>
-                        </div>
-                    )}
-
-                    <div className="border-t border-slate-200 dark:border-white/10 pt-3 mt-3">
-                        <div className="flex justify-between">
-                            <span className="text-lg font-bold text-slate-900 dark:text-white">Total:</span>
-                            <span className="text-lg font-black text-[#D4AF37]">
-                                KES {calculateTotalCost().toLocaleString()}
-                            </span>
-                        </div>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-neutral-600 dark:text-neutral-400">Fleet Account Status:</span>
+                        <span className="font-bold text-[#D4AF37]">Active Setup</span>
                     </div>
                 </div>
             </div>
@@ -535,7 +517,7 @@ export default function GroupRegistrationPage() {
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 mb-4">
                             <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37]">
-                                SACCO &amp; Fleet Onboarding
+                                Wealth Creation Group &amp; Fleet Onboarding
                             </span>
                         </div>
                         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-2">

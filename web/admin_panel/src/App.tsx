@@ -1,84 +1,93 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, lazy, Suspense, ReactNode } from 'react';
 import { useLocation, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import { LoginPage } from './pages/LoginPage';
 import cabiLogo from './assets/cabi_logo_white.png';
-// Components 
-import { DriverApprovalDashboard } from './components/DriverApprovalDashboard';
-import { ReferralConfiguration as ReferralConfig } from './components/ReferralConfiguration';
-import { PromotionalConfig as PromoConfig } from './components/PromotionalConfig';
-import { BadgeManagement } from './components/management/BadgeManagement';
-import { BlogManagement } from './components/management/BlogManagement';
-import { PermissionManagement } from './components/management/PermissionManagement';
-import { UserManagement } from './components/management/UserManagement';
-import { UserManagementDashboard as PlatformUsers } from './components/management/PlatformUsers';
-import { OrganizationManagement } from './components/management/OrganizationManagement';
-import { SimulationDashboard } from './components/management/SimulationDashboard';
-import { ExpiringDocumentsWidget } from './components/dashboard/ExpiringDocumentsWidget';
-import { CommissionLedger } from './components/management/CommissionLedger';
-import { ReferralDashboard } from './components/management/ReferralDashboard';
-import { AuditLogViewer } from './components/viewers/AuditLogViewer';
-import { TractionLogs } from './components/management/TractionLogs';
-import { SuspendedAccountManagement as SuspendedAccounts } from './components/SuspendedAccountManagement';
-import { SosPenaltyConfig } from './components/SosPenaltyConfig';
-import { SupportTicketManagement } from './components/support/SupportTicketManagement';
-import { ZoneManagement } from './components/locations/ZoneManagement';
-import { VehicleCategoriesManagement } from './components/settings/VehicleCategoriesManagement';
-import { PromoCodeManagement } from './components/marketing/PromoCodeManagement';
-import { ScheduledRideManagement } from './components/operations/ScheduledRideManagement';
-import { CMSManagement } from './components/content/CMSManagement';
-import { BulkMessaging } from './components/communications/BulkMessaging';
-import { DriverPerformanceReport } from './components/reports/DriverPerformanceReport';
-import { CityManagementDashboard } from './components/city/CityManagementDashboard';
-import { HeatMapAnalytics } from './components/analytics/HeatMapAnalytics';
-import { DriverUnionManagement } from './components/drivers/DriverUnionManagement';
-import { LiveMap } from './components/locations/LiveMap';
-import { BIDashboard } from './components/dashboard/BIDashboard';
-import { FraudDetectionDashboard } from './components/dashboard/FraudDetectionDashboard';
 import { Header } from './components/layout/Header';
-import { DashboardAnalytics } from './components/dashboard/DashboardAnalytics';
-import { GamificationManagement } from './components/settings/GamificationManagement';
-import { AppSettingsManagement } from './components/settings/AppSettingsManagement';
-import { JobActivitiesDashboard } from './components/operations/JobActivitiesDashboard';
-import { WelfareSchemeManagement } from './components/settings/WelfareSchemeManagement';
-import SaccoIntegrationHub from './pages/sacco/SaccoIntegrationHub';
+import { CommandPalette, CommandItem } from './components/layout/CommandPalette';
+import { ProtectedRoute } from './components/common/ProtectedRoute';
+import {
+  LayoutDashboard, Radio, Flame, TrendingUp, ShieldAlert,
+  Users, UserCog, FileCheck, FolderKanban, BarChart3, Building2, Ban,
+  Car, CalendarClock, ClipboardList, Scale, Ticket, ShieldCheck,
+  Percent, Wallet, Clock, Landmark, Building, Download, Activity,
+  MapPin, Zap, Plane, Tag, Gift, Award, Gamepad2, Settings,
+  Megaphone, FileText, Newspaper, Lock, PhoneCall, Compass, ScrollText,
+  Search, Sun, Moon, ChevronDown, ChevronUp, Monitor, User as UserIcon, ArrowUpRight, LogOut
+} from 'lucide-react';
 
-// New Role Pages
-import RolesList from './pages/Roles/RolesList';
-import RoleEditor from './pages/Roles/RoleEditor';
-import { DriverGroupsPage } from './pages/DriverGroupsPage';
-import { SosIncidentDashboard } from './pages/SosIncidentDashboard';
-import { OccurrenceList } from './pages/OccurrenceList';
-import OrganizationsList from './pages/organizations/OrganizationsList';
-import OrganizationDetails from './pages/organizations/OrganizationDetails';
-import { VehicleBenefitsPage } from './pages/VehicleBenefitsPage';
-import { VehicleQualificationsPage } from './pages/VehicleQualificationsPage';
-import { BenefitClaimsPage } from './pages/BenefitClaimsPage';
-
+// Lazy-loaded Route Components
+const DriverApprovalDashboard = lazy(() => import('./components/DriverApprovalDashboard').then(m => ({ default: m.DriverApprovalDashboard })));
+const ReferralConfig = lazy(() => import('./components/ReferralConfiguration').then(m => ({ default: m.ReferralConfiguration })));
+const PromoConfig = lazy(() => import('./components/PromotionalConfig').then(m => ({ default: m.PromotionalConfig })));
+const BadgeManagement = lazy(() => import('./components/management/BadgeManagement').then(m => ({ default: m.BadgeManagement })));
+const BlogManagement = lazy(() => import('./components/management/BlogManagement').then(m => ({ default: m.BlogManagement })));
+const PermissionManagement = lazy(() => import('./components/management/PermissionManagement').then(m => ({ default: m.PermissionManagement })));
+const UserManagement = lazy(() => import('./components/management/UserManagement').then(m => ({ default: m.UserManagement })));
+const PlatformUsers = lazy(() => import('./components/management/PlatformUsers').then(m => ({ default: m.UserManagementDashboard })));
+const SimulationDashboard = lazy(() => import('./components/management/SimulationDashboard').then(m => ({ default: m.SimulationDashboard })));
+const ExpiringDocumentsWidget = lazy(() => import('./components/dashboard/ExpiringDocumentsWidget').then(m => ({ default: m.ExpiringDocumentsWidget })));
+const CommissionLedger = lazy(() => import('./components/management/CommissionLedger').then(m => ({ default: m.CommissionLedger })));
+const ReferralDashboard = lazy(() => import('./components/management/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
+const AuditLogViewer = lazy(() => import('./components/viewers/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
+const TractionLogs = lazy(() => import('./components/management/TractionLogs').then(m => ({ default: m.TractionLogs })));
+const SuspendedAccounts = lazy(() => import('./components/SuspendedAccountManagement').then(m => ({ default: m.SuspendedAccountManagement })));
+const SosPenaltyConfig = lazy(() => import('./components/SosPenaltyConfig').then(m => ({ default: m.SosPenaltyConfig })));
+const SupportTicketManagement = lazy(() => import('./components/support/SupportTicketManagement').then(m => ({ default: m.SupportTicketManagement })));
+const ZoneManagement = lazy(() => import('./components/locations/ZoneManagement').then(m => ({ default: m.ZoneManagement })));
+const VehicleCategoriesManagement = lazy(() => import('./components/settings/VehicleCategoriesManagement').then(m => ({ default: m.VehicleCategoriesManagement })));
+const PromoCodeManagement = lazy(() => import('./components/marketing/PromoCodeManagement').then(m => ({ default: m.PromoCodeManagement })));
+const ScheduledRideManagement = lazy(() => import('./components/operations/ScheduledRideManagement').then(m => ({ default: m.ScheduledRideManagement })));
+const CMSManagement = lazy(() => import('./components/content/CMSManagement').then(m => ({ default: m.CMSManagement })));
+const BulkMessaging = lazy(() => import('./components/communications/BulkMessaging').then(m => ({ default: m.BulkMessaging })));
+const DriverPerformanceReport = lazy(() => import('./components/reports/DriverPerformanceReport').then(m => ({ default: m.DriverPerformanceReport })));
+const CityManagementDashboard = lazy(() => import('./components/city/CityManagementDashboard').then(m => ({ default: m.CityManagementDashboard })));
+const HeatMapAnalytics = lazy(() => import('./components/analytics/HeatMapAnalytics').then(m => ({ default: m.HeatMapAnalytics })));
+const DriverUnionManagement = lazy(() => import('./components/drivers/DriverUnionManagement').then(m => ({ default: m.DriverUnionManagement })));
+const LiveMap = lazy(() => import('./components/locations/LiveMap').then(m => ({ default: m.LiveMap })));
+const BIDashboard = lazy(() => import('./components/dashboard/BIDashboard').then(m => ({ default: m.BIDashboard })));
+const FraudDetectionDashboard = lazy(() => import('./components/dashboard/FraudDetectionDashboard').then(m => ({ default: m.FraudDetectionDashboard })));
+const DashboardAnalytics = lazy(() => import('./components/dashboard/DashboardAnalytics').then(m => ({ default: m.DashboardAnalytics })));
+const GamificationManagement = lazy(() => import('./components/settings/GamificationManagement').then(m => ({ default: m.GamificationManagement })));
+const AppSettingsManagement = lazy(() => import('./components/settings/AppSettingsManagement').then(m => ({ default: m.AppSettingsManagement })));
+const JobActivitiesDashboard = lazy(() => import('./components/operations/JobActivitiesDashboard').then(m => ({ default: m.JobActivitiesDashboard })));
+const WelfareSchemeManagement = lazy(() => import('./components/settings/WelfareSchemeManagement').then(m => ({ default: m.WelfareSchemeManagement })));
+const WealthCreationProgramsPage = lazy(() => import('./pages/WealthCreationProgramsPage').then(m => ({ default: m.WealthCreationProgramsPage })));
+const SaccoIntegrationHub = lazy(() => import('./pages/sacco/SaccoIntegrationHub'));
+const RolesList = lazy(() => import('./pages/Roles/RolesList'));
+const RoleEditor = lazy(() => import('./pages/Roles/RoleEditor'));
+const DriverGroupsPage = lazy(() => import('./pages/DriverGroupsPage').then(m => ({ default: m.DriverGroupsPage })));
+const SosIncidentDashboard = lazy(() => import('./pages/SosIncidentDashboard').then(m => ({ default: m.SosIncidentDashboard })));
+const OccurrenceList = lazy(() => import('./pages/OccurrenceList').then(m => ({ default: m.OccurrenceList })));
+const OrganizationsList = lazy(() => import('./pages/organizations/OrganizationsList'));
+const OrganizationDetails = lazy(() => import('./pages/organizations/OrganizationDetails'));
+const VehicleBenefitsPage = lazy(() => import('./pages/VehicleBenefitsPage').then(m => ({ default: m.VehicleBenefitsPage })));
+const VehicleQualificationsPage = lazy(() => import('./pages/VehicleQualificationsPage').then(m => ({ default: m.VehicleQualificationsPage })));
+const BenefitClaimsPage = lazy(() => import('./pages/BenefitClaimsPage').then(m => ({ default: m.BenefitClaimsPage })));
 
 // Widgets
-import { RevenueWidget } from './components/widgets/RevenueWidget';
-import { RideStatusWidget } from './components/widgets/RideStatusWidget';
-import { NetworkGrowthWidget } from './components/widgets/NetworkGrowthWidget';
-import { AcquisitionChannelWidget } from './components/widgets/AcquisitionChannelWidget';
+const RevenueWidget = lazy(() => import('./components/widgets/RevenueWidget').then(m => ({ default: m.RevenueWidget })));
+const RideStatusWidget = lazy(() => import('./components/widgets/RideStatusWidget').then(m => ({ default: m.RideStatusWidget })));
+const NetworkGrowthWidget = lazy(() => import('./components/widgets/NetworkGrowthWidget').then(m => ({ default: m.NetworkGrowthWidget })));
+const AcquisitionChannelWidget = lazy(() => import('./components/widgets/AcquisitionChannelWidget').then(m => ({ default: m.AcquisitionChannelWidget })));
 
 // Enhanced Finance & Reporting Components
-import { PayoutProcessing } from './components/PayoutProcessing';
-import { PayoutScheduler } from './components/PayoutScheduler';
-import { ExportableReports } from './components/ExportableReports';
+const PayoutProcessing = lazy(() => import('./components/PayoutProcessing').then(m => ({ default: m.PayoutProcessing })));
+const PayoutScheduler = lazy(() => import('./components/PayoutScheduler').then(m => ({ default: m.PayoutScheduler })));
+const ExportableReports = lazy(() => import('./components/ExportableReports').then(m => ({ default: m.ExportableReports })));
 
-// Guards
-import { ProtectedRoute } from './components/common/ProtectedRoute';
-
-// Icons
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
+const RouteFallback = () => (
+  <div className="flex items-center justify-center py-20 text-sm text-gray-400">
+    Loading module...
+  </div>
+);
 
 type View = 'dashboard' | 'applications' | 'job-activities' | 'referral-dashboard' | 'referral-config' | 'promo-config' | 'badge-management' | 'blog-management' | 'permissions' | 'roles' | 'users' | 'platform-users' | 'commission-ledger' | 'audit-log' | 'sos-config' | 'suspended-accounts' | 'organization-management' | 'simulation-dashboard' | 'support-tickets' | 'surge-zones' | 'airport-zones' | 'vehicle-categories' | 'promo-codes' | 'scheduled-rides' | 'cms' | 'bulk-messaging' | 'driver-performance' | 'city-management' | 'heat-maps' | 'driver-unions' | 'live-map' | 'bi-dashboard' | 'fraud-alerts' | 'gamification' | 'traction-logs' | 'occurrences';
 
 interface MenuItem {
-  icon: string;
+  icon: ReactNode;
   label: string;
-  view?: string; // Changed from View to string path
+  view?: string;
   permission?: string;
   external?: boolean;
 }
@@ -90,81 +99,72 @@ interface MenuGroup {
 
 const SIDEBAR_MENU: MenuGroup[] = [
   {
-    label: 'Operations',
+    label: 'Command Center',
     items: [
-      { icon: '🏠', label: 'Dashboard', view: '/dashboard', permission: 'DISPATCH_DASHBOARD_VIEW' },
-      { icon: '🚗', label: 'Job Activities', view: '/job-activities', permission: 'DISPATCH_DASHBOARD_VIEW' },
-      { icon: '📄', label: 'Driver Applications', view: '/applications', permission: 'DRIVER_APPLICATIONS_VIEW' },
-      { icon: '🏢', label: 'Organizations', view: '/organizations', permission: 'ORGANIZATION_VIEW' },
-      { icon: '📁', label: 'Driver Groups', view: '/driver-groups', permission: 'ORGANIZATION_VIEW' },
-      { icon: '📅', label: 'Scheduled Rides', view: '/scheduled-rides', permission: 'DISPATCH_RIDE_MONITOR' },
-      { icon: '🎫', label: 'Support Tickets', view: '/support-tickets', permission: 'OCCURRENCE_VIEW' },
-      { icon: '📊', label: 'Driver Performance', view: '/driver-performance', permission: 'DISPATCH_ANALYTICS_VIEW' },
-      { icon: '🛡️', label: 'Benefit Claims', view: '/benefit-claims', permission: 'OCCURRENCE_VIEW' },
+      { icon: <LayoutDashboard className="w-4 h-4" />, label: 'Dashboard', view: '/dashboard', permission: 'DISPATCH_DASHBOARD_VIEW' },
+      { icon: <Radio className="w-4 h-4" />, label: 'Live Map', view: '/live-map', permission: 'DISPATCH_REAL_TIME_MAP' },
+      { icon: <Flame className="w-4 h-4" />, label: 'Heat Maps', view: '/heat-maps', permission: 'DISPATCH_ANALYTICS_VIEW' },
+      { icon: <TrendingUp className="w-4 h-4" />, label: 'BI Dashboard', view: '/bi-dashboard', permission: 'DISPATCH_ANALYTICS_VIEW' },
+      { icon: <ShieldAlert className="w-4 h-4" />, label: 'Fraud Alerts', view: '/fraud-alerts', permission: 'AUDIT_LOGS_VIEW' },
     ]
   },
   {
-    label: 'Analytics & Map',
+    label: 'Fleet & People',
     items: [
-      { icon: '📡', label: 'Live Map', view: '/live-map', permission: 'DISPATCH_REAL_TIME_MAP' },
-      { icon: '🔥', label: 'Heat Maps', view: '/heat-maps', permission: 'DISPATCH_ANALYTICS_VIEW' },
-      { icon: '📈', label: 'BI Dashboard', view: '/bi-dashboard', permission: 'DISPATCH_ANALYTICS_VIEW' },
-      { icon: '🏙️', label: 'City Management', view: '/city-management', permission: 'LOCATIONS_EDIT' },
-      { icon: '📥', label: 'Data Exports', view: '/exports', permission: 'FINANCIAL_REPORTS_VIEW' },
+      { icon: <Users className="w-4 h-4" />, label: 'All Users', view: '/platform-users', permission: 'PEOPLE_VIEW' },
+      { icon: <UserCog className="w-4 h-4" />, label: 'Admin Users', view: '/users', permission: 'PEOPLE_VIEW' },
+      { icon: <FileCheck className="w-4 h-4" />, label: 'Driver Applications', view: '/applications', permission: 'DRIVER_APPLICATIONS_VIEW' },
+      { icon: <FolderKanban className="w-4 h-4" />, label: 'Driver Groups', view: '/driver-groups', permission: 'ORGANIZATION_VIEW' },
+      { icon: <BarChart3 className="w-4 h-4" />, label: 'Driver Performance', view: '/driver-performance', permission: 'DISPATCH_ANALYTICS_VIEW' },
+      { icon: <Building2 className="w-4 h-4" />, label: 'Organizations', view: '/organizations', permission: 'ORGANIZATION_VIEW' },
+      { icon: <Ban className="w-4 h-4" />, label: 'Suspended Accounts', view: '/suspended-accounts', permission: 'DRIVER_SUSPEND' },
     ]
   },
   {
-    label: 'Security',
+    label: 'Trips & Safety',
     items: [
-      { icon: '🚨', label: 'Fraud Alerts', view: '/fraud-alerts', permission: 'AUDIT_LOGS_VIEW' },
-      { icon: '📋', label: 'Occurrences', view: '/occurrences', permission: 'OCCURRENCE_VIEW' },
-      { icon: '⚖️', label: 'Resolution Dash', view: '/resolution-dashboard', permission: 'OCCURRENCE_RESOLVE' },
-      { icon: '🚫', label: 'Suspended Accounts', view: '/suspended-accounts', permission: 'DRIVER_SUSPEND' },
-      { icon: '📜', label: 'Audit Log', view: '/audit-log', permission: 'AUDIT_LOGS_VIEW' },
-      { icon: '🔒', label: 'Roles & Permissions', view: '/roles', permission: 'USER_ROLES_ASSIGN' },
-      { icon: '🆘', label: 'SOS Config', view: '/sos-config', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: <Car className="w-4 h-4" />, label: 'Job Activities', view: '/job-activities', permission: 'DISPATCH_DASHBOARD_VIEW' },
+      { icon: <CalendarClock className="w-4 h-4" />, label: 'Scheduled Rides', view: '/scheduled-rides', permission: 'DISPATCH_RIDE_MONITOR' },
+      { icon: <ClipboardList className="w-4 h-4" />, label: 'Occurrences', view: '/occurrences', permission: 'OCCURRENCE_VIEW' },
+      { icon: <Scale className="w-4 h-4" />, label: 'Resolution Dash', view: '/resolution-dashboard', permission: 'OCCURRENCE_RESOLVE' },
+      { icon: <Ticket className="w-4 h-4" />, label: 'Support Tickets', view: '/support-tickets', permission: 'OCCURRENCE_VIEW' },
+      { icon: <ShieldCheck className="w-4 h-4" />, label: 'Benefit Claims', view: '/benefit-claims', permission: 'OCCURRENCE_VIEW' },
     ]
   },
   {
-    label: 'User Management',
+    label: 'Finance & Sacco',
     items: [
-      { icon: '🌍', label: 'All Users', view: '/platform-users', permission: 'PEOPLE_VIEW' },
-      { icon: '👥', label: 'Admin Users', view: '/users', permission: 'PEOPLE_VIEW' },
+      { icon: <Percent className="w-4 h-4" />, label: 'Commissions', view: '/commission-ledger', permission: 'COMMISSION_VIEW' },
+      { icon: <Wallet className="w-4 h-4" />, label: 'Payout Processing', view: '/payouts', permission: 'PAYMENTS_PROCESS' },
+      { icon: <Clock className="w-4 h-4" />, label: 'Payout Scheduler', view: '/payout-scheduler', permission: 'PAYMENTS_PROCESS' },
+      { icon: <Landmark className="w-4 h-4" />, label: 'Welfare Schemes', view: '/welfare-schemes', permission: 'COMMISSION_EDIT' },
+      { icon: <TrendingUp className="w-4 h-4" />, label: 'Wealth Creation', view: '/wealth-programs', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: <Building className="w-4 h-4" />, label: 'Sacco Integration', view: '/sacco-integration', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: <Download className="w-4 h-4" />, label: 'Data Exports', view: '/exports', permission: 'FINANCIAL_REPORTS_VIEW' },
+      { icon: <Activity className="w-4 h-4" />, label: 'Traction Logs', view: '/traction-logs', permission: 'AUDIT_LOGS_VIEW' },
     ]
   },
   {
-    label: 'Configuration',
+    label: 'Growth & Platform',
     items: [
-      { icon: '💰', label: 'Referral Config', view: '/referral-config', permission: 'REFERRAL_FORMULA_VIEW' },
-      { icon: '🔮', label: 'Simulation', view: '/simulation-dashboard', permission: 'DISPATCH_ANALYTICS_VIEW' },
-      { icon: '🗺️', label: 'Surge Zones', view: '/surge-zones', permission: 'LOCATIONS_EDIT' },
-      { icon: '✈️', label: 'Airport Zones', view: '/airport-zones', permission: 'LOCATIONS_EDIT' },
-      { icon: '🚗', label: 'Services', view: '/vehicle-categories', permission: 'VEHICLES_VIEW' },
-      { icon: '🏅', label: 'Badges', view: '/badge-management', permission: 'SYSTEM_SETTINGS_EDIT' },
-      { icon: '🎮', label: 'Gamification', view: '/gamification', permission: 'SYSTEM_SETTINGS_EDIT' },
-      { icon: '⚙️', label: 'App Settings', view: '/app-settings', permission: 'SYSTEM_SETTINGS_EDIT' },
-      { icon: '🎁', label: 'Vehicle Benefits', view: '/vehicle-benefits', permission: 'SYSTEM_SETTINGS_EDIT' },
-      { icon: '🏆', label: 'Qualifications', view: '/vehicle-qualifications', permission: 'SYSTEM_SETTINGS_EDIT' },
-    ]
-  },
-  {
-    label: 'Marketing & Content',
-    items: [
-      { icon: '🏷️', label: 'Promo Codes', view: '/promo-codes', permission: 'MARKETING_CONTENT_EDIT' },
-      { icon: '📢', label: 'Bulk Msg', view: '/bulk-messaging', permission: 'NOTIFICATIONS_MANAGE' },
-      { icon: '📝', label: 'CMS', view: '/cms', permission: 'BLOG_POSTS_EDIT' },
-      { icon: '📰', label: 'Blog Management', view: '/blog-management', permission: 'BLOG_POSTS_EDIT' },
-    ]
-  },
-  {
-    label: 'Finance & System',
-    items: [
-      { icon: '💹', label: 'Commissions', view: '/commission-ledger', permission: 'COMMISSION_VIEW' },
-      { icon: '💸', label: 'Payout Processing', view: '/payouts', permission: 'PAYMENTS_PROCESS' },
-      { icon: '⏱️', label: 'Payout Scheduler', view: '/payout-scheduler', permission: 'PAYMENTS_PROCESS' },
-      { icon: '🏦', label: 'Welfare Schemes', view: '/welfare-schemes', permission: 'COMMISSION_EDIT' },
-      { icon: '💰', label: 'Traction Logs', view: '/traction-logs', permission: 'AUDIT_LOGS_VIEW' },
-      { icon: '🏛️', label: 'Sacco Integration', view: '/sacco-integration', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: <MapPin className="w-4 h-4" />, label: 'City Management', view: '/city-management', permission: 'LOCATIONS_EDIT' },
+      { icon: <Zap className="w-4 h-4" />, label: 'Surge Zones', view: '/surge-zones', permission: 'LOCATIONS_EDIT' },
+      { icon: <Plane className="w-4 h-4" />, label: 'Airport Zones', view: '/airport-zones', permission: 'LOCATIONS_EDIT' },
+      { icon: <Car className="w-4 h-4" />, label: 'Services', view: '/vehicle-categories', permission: 'VEHICLES_VIEW' },
+      { icon: <Tag className="w-4 h-4" />, label: 'Promo Codes', view: '/promo-codes', permission: 'MARKETING_CONTENT_EDIT' },
+      { icon: <Gift className="w-4 h-4" />, label: 'Referral Config', view: '/referral-config', permission: 'REFERRAL_FORMULA_VIEW' },
+      { icon: <Award className="w-4 h-4" />, label: 'Badges', view: '/badge-management', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: <Gamepad2 className="w-4 h-4" />, label: 'Gamification', view: '/gamification', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: <Gift className="w-4 h-4" />, label: 'Vehicle Benefits', view: '/vehicle-benefits', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: <Award className="w-4 h-4" />, label: 'Qualifications', view: '/vehicle-qualifications', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: <Megaphone className="w-4 h-4" />, label: 'Bulk Msg', view: '/bulk-messaging', permission: 'NOTIFICATIONS_MANAGE' },
+      { icon: <FileText className="w-4 h-4" />, label: 'CMS', view: '/cms', permission: 'BLOG_POSTS_EDIT' },
+      { icon: <Newspaper className="w-4 h-4" />, label: 'Blog Management', view: '/blog-management', permission: 'BLOG_POSTS_EDIT' },
+      { icon: <Lock className="w-4 h-4" />, label: 'Roles & Permissions', view: '/roles', permission: 'USER_ROLES_ASSIGN' },
+      { icon: <PhoneCall className="w-4 h-4" />, label: 'SOS Config', view: '/sos-config', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: <Settings className="w-4 h-4" />, label: 'App Settings', view: '/app-settings', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: <Compass className="w-4 h-4" />, label: 'Simulation', view: '/simulation-dashboard', permission: 'DISPATCH_ANALYTICS_VIEW' },
+      { icon: <ScrollText className="w-4 h-4" />, label: 'Audit Log', view: '/audit-log', permission: 'AUDIT_LOGS_VIEW' },
     ]
   }
 ];
@@ -174,7 +174,19 @@ function App() {
   const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [expandedMenus, setExpandedMenus] = useState<string[]>(['Operations']);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(['Command Center']);
+  const [isCommandOpen, setIsCommandOpen] = useState(false);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
 
   // Theme state
   const [darkMode, setDarkMode] = useState(() => {
@@ -201,13 +213,34 @@ function App() {
     setDarkMode(prev => !prev);
   };
 
+  const hasPermission = (p: string) => {
+    if (!user) return false;
+    const role = (user.role as string)?.toUpperCase();
+    if (role === 'SUPER_ADMIN' || role === 'ADMIN') return true;
+    if (!user.permissions) return false;
+    return user.permissions.includes('*') || user.permissions.includes(p);
+  };
+
+  const commandItems = useMemo<CommandItem[]>(() => {
+    return SIDEBAR_MENU.flatMap((group) =>
+      group.items
+        .filter((item) => !item.permission || hasPermission(item.permission))
+        .map((item) => ({
+          label: item.label,
+          view: item.view,
+          group: group.label,
+          icon: item.icon,
+        }))
+    );
+  }, [user]);
+
   // Detached Visualization Mode for External Screens
   if (location.pathname.startsWith('/visualize')) {
     return (
-      <div className="min-h-screen w-screen bg-slate-950 text-white flex flex-col antialiased">
-        <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-3 bg-slate-900/90 backdrop-blur-xl border-b border-slate-800 shadow-lg">
+      <div className="min-h-screen w-screen bg-brand-black text-white flex flex-col antialiased">
+        <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-3 bg-surface-dark/90 backdrop-blur-xl border-b border-white/10 shadow-lg">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-md shadow-blue-500/20">
+            <div className="w-8 h-8 rounded-lg bg-brand-yellow flex items-center justify-center font-bold text-black shadow-md shadow-brand-yellow/20">
               C
             </div>
             <div>
@@ -225,9 +258,13 @@ function App() {
             <button
               onClick={() => {
                 if (!document.fullscreenElement) {
-                  document.documentElement.requestFullscreen?.().catch(() => {});
+                  document.documentElement.requestFullscreen?.().catch((err) => {
+                    console.warn('[AdminApp] Fullscreen error:', err);
+                  });
                 } else {
-                  document.exitFullscreen?.().catch(() => {});
+                  document.exitFullscreen?.().catch((err) => {
+                    console.warn('[AdminApp] Exit fullscreen error:', err);
+                  });
                 }
               }}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700/60 rounded-lg transition-colors cursor-pointer"
@@ -238,7 +275,7 @@ function App() {
             </button>
             <button
               onClick={() => window.close()}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 border border-blue-400/30 rounded-lg transition-all shadow-md shadow-blue-600/30 cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-black bg-brand-yellow hover:bg-brand-yellowHover rounded-lg transition-all shadow-md shadow-brand-yellow/20 cursor-pointer"
               title="Close window and return to main panel"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
@@ -248,29 +285,21 @@ function App() {
         </header>
         <div className="flex-1 p-6 overflow-y-auto flex items-center justify-center">
           <div className="w-full max-w-7xl">
-            <Routes>
-              <Route path="/visualize/revenue" element={<RevenueWidget />} />
-              <Route path="/visualize/ride-status" element={<RideStatusWidget />} />
-              <Route path="/visualize/growth" element={<NetworkGrowthWidget />} />
-              <Route path="/visualize/acquisition" element={<AcquisitionChannelWidget />} />
-            </Routes>
+            <Suspense fallback={<RouteFallback />}>
+              <Routes>
+                <Route path="/visualize/revenue" element={<RevenueWidget />} />
+                <Route path="/visualize/ride-status" element={<RideStatusWidget />} />
+                <Route path="/visualize/growth" element={<NetworkGrowthWidget />} />
+                <Route path="/visualize/acquisition" element={<AcquisitionChannelWidget />} />
+              </Routes>
+            </Suspense>
           </div>
         </div>
       </div>
     );
   }
 
-  if (!isAuthenticated) return <LoginPage />;
-
-  const hasPermission = (p: string) => {
-    if (!user) return false;
-    // Super admins/Admins should have access to everything for now or via granular roles
-    const role = (user.role as string)?.toUpperCase();
-    if (role === 'SUPER_ADMIN' || role === 'ADMIN') return true;
-
-    if (!user.permissions) return false;
-    return user.permissions.includes('*') || user.permissions.includes(p);
-  };
+  if (!isAuthenticated || user?.identityVerified !== true) return <LoginPage />;
 
   const toggleMenu = (label: string) => {
     setExpandedMenus(prev =>
@@ -282,8 +311,9 @@ function App() {
   const isActive = (path?: string) => path && location.pathname.startsWith(path);
 
   return (
-    <div className={`flex h-screen transition-colors duration-200 ${darkMode ? 'dark bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
-      <aside className="sidebar w-64 flex-shrink-0 flex flex-col bg-slate-950 border-r border-white/5 shadow-2xl transition-colors duration-200">
+    <div className={`flex h-screen transition-colors duration-200 ${darkMode ? 'dark bg-brand-black text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+      <CommandPalette items={commandItems} isOpen={isCommandOpen} onClose={() => setIsCommandOpen(false)} />
+      <aside className="sidebar w-64 flex-shrink-0 flex flex-col bg-surface-dark border-r border-white/10 shadow-2xl transition-colors duration-200">
         <div className="p-8 border-b border-white/5 flex flex-col items-center text-center">
           <img src={cabiLogo} alt="Cabi Africa" className="h-10 w-auto object-contain mb-3" />
           <h1 className="text-xl font-black tracking-[0.3em] text-primary">CABI ADMIN</h1>
@@ -300,19 +330,30 @@ function App() {
           <div className="flex gap-2 w-full justify-center">
             <button
               onClick={toggleTheme}
-              className="p-2 text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-white/10 rounded-full transition-all duration-200 text-slate-400"
+              className="p-2 text-xs font-medium bg-card-dark hover:bg-white/10 border border-white/10 rounded-full transition-all duration-200 text-gray-400 hover:text-brand-yellow"
               title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
-              {darkMode ? '☀️' : '🌙'}
+              {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
             <button
               onClick={logout}
-              className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-slate-900 hover:bg-primary hover:text-black border border-white/10 rounded-full transition-all duration-300 group text-slate-400"
+              className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-card-dark hover:bg-brand-yellow hover:text-black border border-white/10 rounded-full transition-all duration-300 group text-gray-400"
             >
               <span>Log Out</span>
-              <span className="group-hover:translate-x-1 transition-transform">→</span>
+              <LogOut className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
+
+          <button
+            onClick={() => setIsCommandOpen(true)}
+            className="mt-4 w-full flex items-center justify-between px-3 py-2 text-xs text-gray-400 bg-brand-black/60 hover:bg-brand-black border border-white/10 hover:border-brand-yellow/40 rounded-xl transition-all"
+          >
+            <span className="flex items-center gap-2">
+              <Search className="w-3.5 h-3.5 text-brand-yellow" />
+              <span>Quick Jump...</span>
+            </span>
+            <kbd className="text-[10px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-gray-500">⌘K</kbd>
+          </button>
         </div>
 
         <nav className="flex-1 overflow-y-auto py-4">
@@ -326,13 +367,13 @@ function App() {
               <div key={group.label} className="mb-2">
                 <button
                   onClick={() => toggleMenu(group.label)}
-                  className="w-full flex items-center justify-between px-4 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider hover:bg-white/5 transition-colors"
                 >
                   <span>{group.label}</span>
-                  {isExpanded ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" />}
+                  {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
 
-                <div className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${isExpanded ? 'max-h-[500px]' : 'max-h-0'}`}>
+                <div className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${isExpanded ? 'max-h-[900px]' : 'max-h-0'}`}>
                   {visibleItems.map(item => (
                     <button
                       key={item.label}
@@ -343,11 +384,11 @@ function App() {
                           navigate(item.view);
                         }
                       }}
-                      className={`w-full text-left px-6 py-3 hover:bg-white/5 flex items-center gap-3 transition-colors border-l-2 ${isActive(item.view) ? 'bg-primary/5 border-primary text-primary font-semibold' : 'border-transparent text-slate-500 hover:text-slate-200'}`}
+                      className={`w-full text-left px-5 py-2.5 hover:bg-white/5 flex items-center gap-3 transition-colors border-l-2 ${isActive(item.view) ? 'bg-brand-yellow/10 border-brand-yellow text-brand-yellow font-semibold' : 'border-transparent text-gray-400 hover:text-white'}`}
                     >
-                      <span className="text-lg">{item.icon}</span>
-                      <span className="text-sm">{item.label}</span>
-                      {item.external && <span className="text-xs ml-auto opacity-50">↗️</span>}
+                      <span className="flex-shrink-0">{item.icon}</span>
+                      <span className="text-sm truncate">{item.label}</span>
+                      {item.external && <ArrowUpRight className="w-3.5 h-3.5 ml-auto opacity-50" />}
                     </button>
                   ))}
                 </div>
@@ -358,7 +399,7 @@ function App() {
 
         {/* Global Access Buttons - Persistent Footer */}
         {((user?.role as string)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as string)?.toUpperCase() === 'ADMIN' || hasPermission('DISPATCH_DASHBOARD_VIEW') || hasPermission('USER_PORTAL_DASHBOARD_VIEW')) && (
-          <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2 bg-slate-50/50 dark:bg-slate-800/20">
+          <div className="p-4 border-t border-slate-200 dark:border-white/10 space-y-2 bg-slate-50/50 dark:bg-card-dark/20">
             <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2 mb-2">
               System Access
             </div>
@@ -374,9 +415,9 @@ function App() {
                 className="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:bg-primary hover:text-black rounded-lg transition-all duration-300 group border border-white/5"
                 title="Launch Dispatch Management Panel"
               >
-                <span className="text-base group-hover:scale-110 transition-transform">🖥️</span>
+                <Monitor className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 <span>Dispatch Panel</span>
-                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">LAUNCH ↗️</span>
+                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-0.5">LAUNCH <ArrowUpRight className="w-3 h-3" /></span>
               </button>
             )}
             {((user?.role as string)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as string)?.toUpperCase() === 'ADMIN' || hasPermission('USER_PORTAL_DASHBOARD_VIEW')) && (
@@ -388,25 +429,26 @@ function App() {
                       : 'http://localhost:3000');
                   window.location.href = url;
                 }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:bg-primary hover:text-black rounded-lg transition-all duration-300 group border border-white/5"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-gray-400 hover:bg-brand-yellow hover:text-black rounded-lg transition-all duration-300 group border border-white/5"
                 title="View User Portal Dashboard"
               >
-                <span className="text-base group-hover:scale-110 transition-transform">👤</span>
+                <UserIcon className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 <span>User Portal</span>
-                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">VIEW ↗️</span>
+                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-0.5">VIEW <ArrowUpRight className="w-3 h-3" /></span>
               </button>
             )}
           </div>
         )}
       </aside>
 
-      <main className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      <main className="flex-1 overflow-y-auto bg-slate-50 dark:bg-brand-black text-slate-900 dark:text-slate-100 transition-colors duration-200">
         {/* Using light bg for content area, can revert to dark if requested */}
         <Header currentView={location.pathname.replace('/', '') as View} />
 
         <div className="p-6">
           <div className="max-w-7xl mx-auto space-y-6">
-            <Routes>
+            <Suspense fallback={<RouteFallback />}>
+              <Routes>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
               <Route path="/dashboard" element={
@@ -471,11 +513,13 @@ function App() {
               <Route path="/gamification" element={<GamificationManagement />} />
               <Route path="/app-settings" element={<AppSettingsManagement />} />
               <Route path="/welfare-schemes" element={<WelfareSchemeManagement />} />
+              <Route path="/wealth-programs" element={<WealthCreationProgramsPage />} />
               <Route path="/vehicle-benefits" element={<VehicleBenefitsPage />} />
               <Route path="/vehicle-qualifications" element={<VehicleQualificationsPage />} />
               <Route path="/benefit-claims" element={<BenefitClaimsPage />} />
               <Route path="/sacco-integration" element={<ProtectedRoute permission="SYSTEM_SETTINGS_EDIT"><SaccoIntegrationHub /></ProtectedRoute>} />
-            </Routes>
+              </Routes>
+            </Suspense>
           </div>
         </div>
       </main>

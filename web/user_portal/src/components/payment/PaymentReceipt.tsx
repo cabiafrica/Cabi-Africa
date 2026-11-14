@@ -95,7 +95,7 @@ export const PaymentReceipt: React.FC<PaymentReceiptProps> = ({
                         Account Status: {status}
                     </div>
                     <p className="text-xs text-slate-500 mt-2 italic px-4">
-                        Funds are held in a suspense account pending Sacco verification.
+                        Funds are held in a suspense account pending partner verification.
                     </p>
                 </div>
 
@@ -113,7 +113,7 @@ export const PaymentReceipt: React.FC<PaymentReceiptProps> = ({
                     Download / Print Receipt
                 </button>
                 <p className="text-xs text-center text-slate-500">
-                    <strong>Next Step:</strong> Upload this receipt to your Sacco Platform to unlock your account.
+                    <strong>Next Step:</strong> Upload this receipt to your Partner Wealth Portal to unlock your account.
                 </p>
             </div>
         </div>

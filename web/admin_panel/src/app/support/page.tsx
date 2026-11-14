@@ -24,9 +24,9 @@ export default function SupportDashboard() {
                     <h3 className="text-lg font-bold">Critical (SLA Breaching)</h3>
                     <p className="text-3xl text-red-600">1</p>
                 </div>
-                <div className="bg-blue-100 p-4 rounded shadow">
+                <div className="bg-amber-100 p-4 rounded shadow">
                     <h3 className="text-lg font-bold">Open Tickets</h3>
-                    <p className="text-3xl text-blue-600">14</p>
+                    <p className="text-3xl text-amber-600">14</p>
                 </div>
             </div>
 
@@ -62,7 +62,7 @@ export default function SupportDashboard() {
                                 {t.slaDueAt.toLocaleTimeString()}
                             </td>
                             <td className="py-2 px-4 border-b">
-                                <a href={`/support/${t.id}`} className="text-blue-600 hover:underline">View</a>
+                                <a href={`/support/${t.id}`} className="text-amber-600 hover:underline">View</a>
                             </td>
                         </tr>
                     ))}

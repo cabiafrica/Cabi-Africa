@@ -330,7 +330,7 @@ export const BenefitClaimsPage: React.FC = () => {
         )}
 
         {/* Review Authorization Modal */}
-        <Dialog open={!!selectedClaim} onClose={handleCloseReview} PaperProps={{ sx: { background: '#0F172A', border: `1px solid ${reviewAction === 'APPROVED' ? '#10B981' : '#EF4444'}`, borderRadius: 4, minWidth: 450, color: 'white' } }}>
+        <Dialog open={!!selectedClaim} onClose={handleCloseReview} PaperProps={{ sx: { background: '#141416', border: `1px solid ${reviewAction === 'APPROVED' ? '#10B981' : '#EF4444'}`, borderRadius: 4, minWidth: 450, color: 'white' } }}>
           <DialogTitle sx={{ borderBottom: '1px solid rgba(255,255,255,0.1)', pb: 2, fontWeight: 800, color: reviewAction === 'APPROVED' ? '#10B981' : '#EF4444' }}>
             {reviewAction === 'APPROVED' ? 'Confirm Claim Approval' : 'Decline Benefit Claim'}
           </DialogTitle>

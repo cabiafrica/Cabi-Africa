@@ -14,7 +14,7 @@ export const CONTACT_ISSUE_OPTIONS = [
     'Ride Booking or Fare Inquiry',
     'Lost Item in Vehicle',
     'Driver or Safety Concern',
-    'M-Pesa Payment & Receipt Issue',
+    'Mobile Money Payment & Receipt Issue',
     'Corporate Travel Account Inquiry',
     'Driver / Fleet Partner Onboarding',
     'Account Verification & App Support',

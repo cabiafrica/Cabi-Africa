@@ -29,7 +29,7 @@ export const FraudDetectionDashboard: React.FC = () => {
         switch (severity) {
             case 'HIGH': return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-900';
             case 'MEDIUM': return 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-900';
-            default: return 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
+            default: return 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-card-dark dark:text-slate-400 dark:border-white/10';
         }
     };
 
@@ -46,13 +46,13 @@ export const FraudDetectionDashboard: React.FC = () => {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setFilter('ALL')}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${filter === 'ALL' ? 'bg-slate-800 text-white dark:bg-white dark:text-slate-900 border-transparent' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'}`}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${filter === 'ALL' ? 'bg-slate-800 text-white dark:bg-white dark:text-slate-900 border-transparent' : 'bg-white dark:bg-card-dark text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10'}`}
                     >
                         All Alerts
                     </button>
                     <button
                         onClick={() => setFilter('HIGH')}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${filter === 'HIGH' ? 'bg-red-600 text-white border-red-600' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:text-red-600'}`}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${filter === 'HIGH' ? 'bg-red-600 text-white border-red-600' : 'bg-white dark:bg-card-dark text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:text-red-600'}`}
                     >
                         High Severity
                     </button>
@@ -66,7 +66,7 @@ export const FraudDetectionDashboard: React.FC = () => {
                         <p className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">Active Critical Alerts</p>
                         <p className="text-3xl font-bold text-red-900 dark:text-red-200 mt-2">{alerts.filter(a => a.severity === 'HIGH').length}</p>
                     </div>
-                    <div className="p-3 bg-white dark:bg-slate-800 rounded-full shadow-sm text-red-500">
+                    <div className="p-3 bg-white dark:bg-card-dark rounded-full shadow-sm text-red-500">
                         <Warning />
                     </div>
                 </div>
@@ -76,7 +76,7 @@ export const FraudDetectionDashboard: React.FC = () => {
                         <p className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Suspicious Patterns</p>
                         <p className="text-3xl font-bold text-amber-900 dark:text-amber-200 mt-2">{alerts.filter(a => a.severity === 'MEDIUM').length}</p>
                     </div>
-                    <div className="p-3 bg-white dark:bg-slate-800 rounded-full shadow-sm text-amber-500">
+                    <div className="p-3 bg-white dark:bg-card-dark rounded-full shadow-sm text-amber-500">
                         <ErrorOutline />
                     </div>
                 </div>
@@ -86,14 +86,14 @@ export const FraudDetectionDashboard: React.FC = () => {
                         <p className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wider">Resolved Today</p>
                         <p className="text-3xl font-bold text-green-900 dark:text-green-200 mt-2">0</p>
                     </div>
-                    <div className="p-3 bg-white dark:bg-slate-800 rounded-full shadow-sm text-green-500">
+                    <div className="p-3 bg-white dark:bg-card-dark rounded-full shadow-sm text-green-500">
                         <CheckCircle />
                     </div>
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900">
+            <div className="bg-white dark:bg-card-dark shadow-sm rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 flex justify-between items-center bg-slate-50 dark:bg-surface-dark">
                     <h3 className="font-bold text-slate-700 dark:text-slate-200 text-sm">Recent Alerts</h3>
                     <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
                         <FilterList fontSize="small" /> Filtered by: {filter}
@@ -102,7 +102,7 @@ export const FraudDetectionDashboard: React.FC = () => {
 
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                        <thead className="bg-white dark:bg-slate-800">
+                        <thead className="bg-white dark:bg-card-dark">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Alert Type</th>
                                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">User / Entity</th>
@@ -111,7 +111,7 @@ export const FraudDetectionDashboard: React.FC = () => {
                                 <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+                        <tbody className="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
                             {loading ? (
                                 <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-500">Scanning activity logs...</td></tr>
                             ) : filteredAlerts.length === 0 ? (
@@ -143,7 +143,7 @@ export const FraudDetectionDashboard: React.FC = () => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" title="View Details">
+                                            <button className="text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300" title="View Details">
                                                 <RemoveRedEye fontSize="small" />
                                             </button>
                                             <button className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300" title="Suspend User">

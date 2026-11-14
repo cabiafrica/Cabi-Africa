@@ -60,8 +60,8 @@ export const TractionLogs: React.FC = () => {
 
     const getTypeConfig = (type: string) => {
         switch (type) {
-            case 'RIDE': return { icon: <History />, color: 'text-blue-600 dark:text-blue-400' };
-            case 'COMMISSION': return { icon: <ReceiptLong />, color: 'text-purple-600 dark:text-purple-400' };
+            case 'RIDE': return { icon: <History />, color: 'text-amber-600 dark:text-amber-400' };
+            case 'COMMISSION': return { icon: <ReceiptLong />, color: 'text-cyan-600 dark:text-cyan-400' };
             case 'PAYOUT': return { icon: <Payments />, color: 'text-emerald-600 dark:text-emerald-400' };
             case 'REFUND': return { icon: <AccountBalance />, color: 'text-orange-600 dark:text-orange-400' };
             default: return { icon: <History />, color: 'text-slate-600' };
@@ -87,27 +87,27 @@ export const TractionLogs: React.FC = () => {
                 </button>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden">
                 {/* Toolbar */}
-                <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between gap-4">
+                <div className="p-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark/50 flex items-center justify-between gap-4">
                     <div className="relative flex-1 max-w-md">
                         <input
                             type="text"
                             placeholder="Search by ID, User, or Description..."
                             value={filterText}
                             onChange={(e) => setFilterText(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm"
+                            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-cyan-500 outline-none shadow-sm"
                         />
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
                     </div>
-                    <button className="p-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                    <button className="p-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                         <FilterList />
                     </button>
                 </div>
 
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                        <thead className="bg-white dark:bg-slate-800">
+                        <thead className="bg-white dark:bg-card-dark">
                             <tr>
                                 <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Transaction ID</th>
                                 <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Type</th>
@@ -117,7 +117,7 @@ export const TractionLogs: React.FC = () => {
                                 <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date</th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-100 dark:divide-slate-700">
+                        <tbody className="bg-white dark:bg-card-dark divide-y divide-slate-100 dark:divide-slate-700">
                             {loading ? (
                                 <tr><td colSpan={6} className="text-center py-12 text-slate-500">Loading traction logs...</td></tr>
                             ) : filteredLogs
@@ -129,7 +129,7 @@ export const TractionLogs: React.FC = () => {
                                         <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex flex-col">
-                                                    <span className="font-mono text-sm font-bold text-indigo-600 dark:text-indigo-400">{log.id}</span>
+                                                    <span className="font-mono text-sm font-bold text-cyan-600 dark:text-cyan-400">{log.id}</span>
                                                     <span className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[200px]" title={log.description}>{log.description}</span>
                                                 </div>
                                             </td>
@@ -175,20 +175,20 @@ export const TractionLogs: React.FC = () => {
                 </div>
 
                 {/* Pagination (Simplified for Demo) */}
-                <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
+                <div className="p-4 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark/50 flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
                     <span>Showing {Math.min(filteredLogs.length, rowsPerPage)} of {filteredLogs.length} entries</span>
                     <div className="flex gap-2">
                         <button
                             disabled={page === 0}
                             onClick={() => setPage(p => p - 1)}
-                            className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded hover:bg-slate-50 disabled:opacity-50"
+                            className="px-3 py-1 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded hover:bg-slate-50 disabled:opacity-50"
                         >
                             Previous
                         </button>
                         <button
                             disabled={(page + 1) * rowsPerPage >= filteredLogs.length}
                             onClick={() => setPage(p => p + 1)}
-                            className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded hover:bg-slate-50 disabled:opacity-50"
+                            className="px-3 py-1 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded hover:bg-slate-50 disabled:opacity-50"
                         >
                             Next
                         </button>

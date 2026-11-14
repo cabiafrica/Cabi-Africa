@@ -458,6 +458,10 @@ export default function CorporateRegisterPage() {
                                 </div>
                                 <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-gray-300">
                                     <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                                    <span><strong>1-Click Platform Migration:</strong> Easily import your employee roster from Uber for Business, Bolt, or Little Cab via CSV.</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-gray-300">
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                                     <span><strong>Instant Team Invites:</strong> One-click Email and SMS invite links for all staff.</span>
                                 </div>
                             </div>

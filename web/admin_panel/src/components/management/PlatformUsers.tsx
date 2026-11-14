@@ -93,17 +93,17 @@ export const UserManagementDashboard: React.FC = () => {
     }
 
     return (
-        <div className="bg-white dark:bg-slate-800 shadow rounded-lg overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50 dark:bg-slate-900">
+        <div className="bg-white dark:bg-card-dark shadow rounded-lg overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50 dark:bg-surface-dark">
                 <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">User Management</h2>
 
                 {selectedUserIds.length > 0 ? (
-                    <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded">
-                        <span className="text-sm font-medium text-blue-800 dark:text-blue-200">{selectedUserIds.length} Selected</span>
-                        <div className="h-4 w-px bg-blue-200 dark:bg-blue-700"></div>
+                    <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-900/20 px-4 py-2 rounded">
+                        <span className="text-sm font-medium text-amber-800 dark:text-amber-200">{selectedUserIds.length} Selected</span>
+                        <div className="h-4 w-px bg-amber-200 dark:bg-amber-700"></div>
                         <select
                             onChange={(e) => handleBulkAction(e.target.value as any)}
-                            className="bg-white dark:bg-slate-800 border border-blue-200 dark:border-blue-700/50 text-sm rounded shadow-sm focus:outline-none text-slate-900 dark:text-slate-100"
+                            className="bg-white dark:bg-card-dark border border-amber-200 dark:border-amber-700/50 text-sm rounded shadow-sm focus:outline-none text-slate-900 dark:text-slate-100"
                             defaultValue=""
                         >
                             <option value="" disabled>Bulk Actions...</option>
@@ -119,7 +119,7 @@ export const UserManagementDashboard: React.FC = () => {
                             placeholder="Search by name or email..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                            className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-card-dark text-slate-900 dark:text-slate-100"
                         />
                         <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
                     </div>
@@ -128,12 +128,12 @@ export const UserManagementDashboard: React.FC = () => {
 
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                    <thead className="bg-slate-50 dark:bg-slate-900">
+                    <thead className="bg-slate-50 dark:bg-surface-dark">
                         <tr>
                             <th scope="col" className="px-6 py-3">
                                 <input
                                     type="checkbox"
-                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                    className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                                     checked={users.length > 0 && selectedUserIds.length === users.length}
                                     onChange={(e) => toggleSelectAll(e.target.checked)}
                                 />
@@ -145,35 +145,35 @@ export const UserManagementDashboard: React.FC = () => {
                             <th scope="col" className="relative px-6 py-3"><span className="sr-only">Actions</span></th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+                    <tbody className="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
                         {loading || isBulkProcessing ? (
                             <tr>
                                 <td colSpan={6} className="px-6 py-4 text-center">Loading...</td>
                             </tr>
                         ) : users.map(user => (
-                            <tr key={user.id} className={`hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${selectedUserIds.includes(user.id) ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}>
+                            <tr key={user.id} className={`hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${selectedUserIds.includes(user.id) ? 'bg-amber-50 dark:bg-amber-900/20' : ''}`}>
                                 <td className="px-6 py-4">
                                     <input
                                         type="checkbox"
-                                        className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 bg-white dark:bg-slate-700"
+                                        className="rounded border-slate-300 dark:border-slate-600 text-amber-600 focus:ring-amber-500 bg-white dark:bg-slate-700"
                                         checked={selectedUserIds.includes(user.id)}
                                         onChange={(e) => toggleSelectUser(user.id, e.target.checked)}
                                     />
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-slate-100">
-                                    <button onClick={() => setSelectedUser(user)} className="text-blue-600 hover:text-blue-900 dark:hover:text-blue-400 font-medium text-left">
+                                    <button onClick={() => setSelectedUser(user)} className="text-amber-600 hover:text-amber-900 dark:hover:text-amber-400 font-medium text-left">
                                         {user.name}
                                     </button>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{user.email}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${user.type === 'DRIVER' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'}`}>
+                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${user.type === 'DRIVER' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'}`}>
                                         {user.type}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{new Date(user.registrationDate).toLocaleDateString()}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <button onClick={() => setSelectedUser(user)} className="text-blue-600 hover:text-blue-900">
+                                    <button onClick={() => setSelectedUser(user)} className="text-amber-600 hover:text-amber-900">
                                         Manage
                                     </button>
                                 </td>

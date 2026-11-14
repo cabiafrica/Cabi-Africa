@@ -37,8 +37,8 @@ export const AuditLogViewer: React.FC = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 shadow rounded-lg overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+    <div className="bg-white dark:bg-card-dark shadow rounded-lg overflow-hidden">
+      <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark">
         <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-4">Audit Log</h2>
 
         <form onSubmit={handleFilterSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -49,7 +49,7 @@ export const AuditLogViewer: React.FC = () => {
             value={filters.userEmail}
             onChange={handleFilterChange}
             aria-label="Filter by User Email"
-            className="border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+            className="border-slate-300 dark:border-slate-600 focus:ring-amber-500 focus:border-amber-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
           />
           <input
             type="text"
@@ -57,21 +57,21 @@ export const AuditLogViewer: React.FC = () => {
             placeholder="Filter by Action..."
             value={filters.action}
             onChange={handleFilterChange}
-            className="border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+            className="border-slate-300 dark:border-slate-600 focus:ring-amber-500 focus:border-amber-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
           />
           <input
             type="date"
             name="startDate"
             value={filters.startDate}
             onChange={handleFilterChange}
-            className="border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+            className="border-slate-300 dark:border-slate-600 focus:ring-amber-500 focus:border-amber-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
           />
           <input
             type="date"
             name="endDate"
             value={filters.endDate}
             onChange={handleFilterChange}
-            className="border-slate-300 dark:border-slate-600 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+            className="border-slate-300 dark:border-slate-600 focus:ring-amber-500 focus:border-amber-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
           />
           <button
             type="submit"
@@ -84,7 +84,7 @@ export const AuditLogViewer: React.FC = () => {
 
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-          <thead className="bg-slate-50 dark:bg-slate-900">
+          <thead className="bg-slate-50 dark:bg-surface-dark">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Timestamp</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">User</th>
@@ -93,7 +93,7 @@ export const AuditLogViewer: React.FC = () => {
               <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">IP Address</th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+          <tbody className="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
             {isLoading ? (
               <tr>
                 <td colSpan={5} className="px-6 py-10 text-center text-gray-500">

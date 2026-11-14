@@ -73,8 +73,8 @@ export const SuspendedAccountManagement: React.FC = () => {
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Review and manage account suspensions and bans.</p>
         </div>
-        <div className="flex bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-1">
-          <div className="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700">
+        <div className="flex bg-white dark:bg-card-dark rounded-lg shadow-sm border border-slate-200 dark:border-white/10 p-1">
+          <div className="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-white/10">
             Total Suspended
           </div>
           <div className="px-4 py-2 text-sm font-bold text-red-600 dark:text-red-400">
@@ -83,20 +83,20 @@ export const SuspendedAccountManagement: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-card-dark shadow-sm rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
         {/* Toolbar */}
-        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="relative w-full sm:w-80">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
             <input
               type="text"
               placeholder="Search by name or phone..."
-              className="w-full pl-9 pr-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full pl-9 pr-3 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-amber-500 outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
             <FilterList fontSize="small" />
             Filter Reason
           </button>
@@ -104,7 +104,7 @@ export const SuspendedAccountManagement: React.FC = () => {
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-            <thead className="bg-slate-50 dark:bg-slate-900">
+            <thead className="bg-slate-50 dark:bg-surface-dark">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">User</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Reason</th>
@@ -112,7 +112,7 @@ export const SuspendedAccountManagement: React.FC = () => {
                 <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+            <tbody className="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
               {loading ? (
                 <tr><td colSpan={4} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">Loading suspended users...</td></tr>
               ) : filteredUsers.length === 0 ? (
@@ -159,7 +159,7 @@ export const SuspendedAccountManagement: React.FC = () => {
       {/* Confirmation Modal */}
       {userToReactivate && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-6 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-700 scale-100 animate-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-card-dark rounded-xl p-6 max-w-md w-full shadow-2xl border border-slate-200 dark:border-white/10 scale-100 animate-in zoom-in-95 duration-200">
             <h2 className="text-xl font-bold mb-4 text-slate-900 dark:text-white flex items-center gap-2">
               <CheckCircle className="text-green-600 dark:text-green-400" />
               Confirm Reactivation

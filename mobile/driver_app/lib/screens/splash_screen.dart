@@ -142,7 +142,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     // App Name
                     Text(
                       'CABI DRIVE',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         color: primaryGold,
                         fontWeight: FontWeight.bold,
                         fontSize: 26,
@@ -164,7 +164,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     // Elegant Tagline
                     Text(
                       'Drive. Earn. Thrive.',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         color: Colors.white,
                         fontSize: 14,
                         fontStyle: FontStyle.italic,

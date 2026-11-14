@@ -9,6 +9,8 @@ import { NotFoundException, BadRequestException, UnauthorizedException } from '@
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import * as crypto from 'crypto';
+import * as speakeasy from 'speakeasy';
+import * as QRCode from 'qrcode';
 
 @Injectable()
 export class UserService {
@@ -21,12 +23,45 @@ export class UserService {
     @Inject('EmailProvider') private readonly emailProvider: EmailProvider,
   ) { }
 
-  async generateToken(user: any) {
+  private readonly failedAttempts = new Map<string, { attempts: number; lockedUntil?: number; lastAttempt: number }>();
+
+  private checkRateLimit(key: string, maxAttempts = 5, lockDurationMs = 15 * 60 * 1000): void {
+    const record = this.failedAttempts.get(key);
+    if (!record) return;
+    const now = Date.now();
+    if (record.lockedUntil && now < record.lockedUntil) {
+      const minutesRemaining = Math.max(1, Math.ceil((record.lockedUntil - now) / 60000));
+      throw new UnauthorizedException(
+        `Too many failed attempts. Account temporarily locked. Please try again in ${minutesRemaining} minute(s).`
+      );
+    }
+    if (!record.lockedUntil && now - record.lastAttempt > lockDurationMs) {
+      this.failedAttempts.delete(key);
+    }
+  }
+
+  private recordFailedAttempt(key: string, maxAttempts = 5, lockDurationMs = 15 * 60 * 1000): void {
+    const now = Date.now();
+    const record = this.failedAttempts.get(key) || { attempts: 0, lastAttempt: now };
+    record.attempts += 1;
+    record.lastAttempt = now;
+    if (record.attempts >= maxAttempts) {
+      record.lockedUntil = now + lockDurationMs;
+    }
+    this.failedAttempts.set(key, record);
+  }
+
+  private resetFailedAttempts(key: string): void {
+    this.failedAttempts.delete(key);
+  }
+
+  async generateToken(user: any, options?: { identityVerified?: boolean }) {
     const payload = {
       sub: user.id,
       email: user.email,
       role: user.role,
-      permissions: user.permissions || []
+      permissions: user.permissions || [],
+      identityVerified: options?.identityVerified ?? false,
     };
     return this.jwtService.sign(payload);
   }
@@ -361,6 +396,439 @@ export class UserService {
       passportPhotoUrl: user.passportPhotoUrl,
       profilePicture: user.passportPhotoUrl,
     };
+  }
+
+  private maskEmailAddress(email: string): string {
+    const [local, domain] = (email || '').split('@');
+    if (!local || !domain) return '***';
+    const visible = local.slice(0, 2);
+    return `${visible}***@${domain}`;
+  }
+
+  private async issueAdminOtpChallenge(userId: string, email: string, phone?: string | null) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { forgotEmailOtp: true, forgotEmailOtpExpires: true, privacySettings: true },
+    });
+    const privacy = (user?.privacySettings as any) || {};
+    const isTemporaryPassword = !!privacy.isTemporaryPassword;
+    const requiresOnboarding = isTemporaryPassword || privacy.onboardingCompleted === false;
+
+    let otpCode = user?.forgotEmailOtp;
+    if (!otpCode || !user?.forgotEmailOtpExpires || new Date() > user.forgotEmailOtpExpires) {
+      otpCode = crypto.randomInt(100000, 1000000).toString();
+      const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          forgotEmailOtp: otpCode,
+          forgotEmailOtpExpires: otpExpires,
+        },
+      });
+
+      await this.emailProvider.sendEmail(
+        email,
+        'Cabi Africa Admin Panel — Identity Verification Code',
+        `Your 6-digit identity verification code is ${otpCode}. It expires in 10 minutes.`
+      );
+
+      if (phone) {
+        await this.smsProvider.sendSms(
+          phone,
+          `Cabi Africa Admin verification code: ${otpCode}. Expires in 10 minutes.`
+        );
+      }
+    }
+
+    const challengeToken = this.jwtService.sign(
+      { sub: userId, email, purpose: 'ADMIN_IDENTITY_VERIFICATION', requiresOnboarding },
+      { expiresIn: '20m' }
+    );
+
+    return {
+      requiresVerification: true,
+      requiresOnboarding,
+      isTemporaryPassword,
+      challengeToken,
+      maskedEmail: this.maskEmailAddress(email),
+      expiresInSeconds: 1200,
+      ...(process.env.NODE_ENV !== 'production' ? { devOtpPreview: otpCode } : {}),
+    };
+  }
+
+  async initiateAdminLogin(identifier: string, password: string) {
+    const rateKey = `admin-login:${identifier.toLowerCase().trim()}`;
+    this.checkRateLimit(rateKey);
+
+    let authUser: any;
+    try {
+      authUser = await this.login(identifier, password);
+    } catch {
+      this.recordFailedAttempt(rateKey);
+      throw new UnauthorizedException('Invalid credentials.');
+    }
+    this.resetFailedAttempts(rateKey);
+
+    const hasStaffAccess =
+      authUser.role === LegacyRole.ADMIN ||
+      (Array.isArray(authUser.permissions) && authUser.permissions.length > 0);
+
+    if (!hasStaffAccess) {
+      throw new UnauthorizedException('Admin panel access requires an authorized staff account.');
+    }
+
+    const dbUser = await this.prisma.user.findUnique({
+      where: { id: authUser.id },
+      select: { id: true, email: true, phone: true },
+    });
+    if (!dbUser) {
+      throw new UnauthorizedException('User account not found.');
+    }
+
+    return this.issueAdminOtpChallenge(dbUser.id, dbUser.email, dbUser.phone);
+  }
+
+  async verifyAdminIdentity(challengeToken: string, otpCode: string) {
+    let decoded: any;
+    try {
+      decoded = this.jwtService.verify(challengeToken);
+    } catch {
+      throw new UnauthorizedException('Verification session expired. Please sign in again.');
+    }
+
+    if (decoded?.purpose !== 'ADMIN_IDENTITY_VERIFICATION' || !decoded?.sub) {
+      throw new UnauthorizedException('Invalid verification challenge.');
+    }
+
+    const otpRateKey = `admin-otp:${decoded.sub}`;
+    this.checkRateLimit(otpRateKey);
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: decoded.sub },
+      include: {
+        userRoles: { include: { role: true } },
+        userPermissions: true,
+        driverProfile: { include: { vehicles: true } },
+      },
+    });
+
+    if (!user || !user.forgotEmailOtp || !user.forgotEmailOtpExpires) {
+      throw new UnauthorizedException('No active verification code found. Please resend.');
+    }
+
+    if (new Date() > user.forgotEmailOtpExpires) {
+      throw new UnauthorizedException('Verification code expired. Please request a new code.');
+    }
+
+    if (user.forgotEmailOtp !== otpCode.trim()) {
+      this.recordFailedAttempt(otpRateKey);
+      throw new UnauthorizedException('Invalid 6-digit verification code.');
+    }
+
+    this.resetFailedAttempts(otpRateKey);
+
+    const privacy = (user.privacySettings as any) || {};
+    const requiresOnboarding = privacy.isTemporaryPassword || privacy.onboardingCompleted === false;
+
+    if (requiresOnboarding) {
+      const onboardingToken = this.jwtService.sign(
+        { sub: user.id, email: user.email, purpose: 'ADMIN_ONBOARDING_GATE' },
+        { expiresIn: '30m' }
+      );
+      return {
+        requiresOnboarding: true,
+        message: 'Identity verified. Complete mandatory security setup (Password Change, Security Questions, MFA).',
+        onboardingToken,
+        user: {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+          role: user.role,
+        },
+      };
+    }
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        forgotEmailOtp: null,
+        forgotEmailOtpExpires: null,
+        isIdentityVerified: true,
+        lastVerificationAt: new Date(),
+        lastActiveAt: new Date(),
+      },
+    });
+
+    const permissions = new Set<string>();
+    user.userRoles.forEach((ur: PrismaUserRole & { role: PrismaRole }) => {
+      if (ur.isActive && ur.role.isActive) {
+        ur.role.permissions.forEach((p: string) => permissions.add(p));
+      }
+    });
+    user.userPermissions.forEach((up: PrismaUserPermission) => {
+      if (up.isGranted) permissions.add(up.permission);
+      else permissions.delete(up.permission);
+    });
+    if (permissions.size === 0 && user.role === LegacyRole.ADMIN) {
+      permissions.add('DISPATCH_DASHBOARD_VIEW');
+      permissions.add('DISPATCH_RIDE_MONITOR');
+    }
+
+    const safeUser = {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      permissions: Array.from(permissions),
+      driverProfile: user.driverProfile,
+      isEmailVerified: user.isEmailVerified,
+      isPhoneVerified: user.isPhoneVerified,
+      isIdentityVerified: true,
+      identityVerified: true,
+      passportPhotoUrl: user.passportPhotoUrl,
+      profilePicture: user.passportPhotoUrl,
+    };
+
+    const token = await this.generateToken(safeUser, { identityVerified: true });
+
+    return {
+      message: 'Identity verified successfully.',
+      accessToken: token,
+      token,
+      user: safeUser,
+    };
+  }
+
+  getPredefinedSecurityQuestions() {
+    return [
+      { id: 'first_car', text: 'What was the make and model of your first car or vehicle?' },
+      { id: 'parents_city', text: 'In what city or town did your parents meet?' },
+      { id: 'primary_school', text: 'What was the name of your first elementary or primary school?' },
+      { id: 'childhood_street', text: 'What was the name of the street you lived on when you were ten years old?' },
+      { id: 'first_job', text: 'What was the title of your first paid job?' },
+    ];
+  }
+
+  async generateOnboardingTotp(tokenString: string) {
+    let decoded: any;
+    try {
+      decoded = this.jwtService.verify(tokenString);
+    } catch {
+      throw new UnauthorizedException('Session expired. Please sign in again.');
+    }
+    const user = await this.prisma.user.findUnique({ where: { id: decoded.sub } });
+    if (!user) throw new UnauthorizedException('User not found.');
+
+    const secret = speakeasy.generateSecret({
+      name: `Cabi Admin (${user.email})`,
+      issuer: 'Cabi Africa',
+    });
+    const qrCodeDataUrl = await QRCode.toDataURL(secret.otpauth_url || '');
+
+    return {
+      secretBase32: secret.base32,
+      otpauthUrl: secret.otpauth_url,
+      qrCodeDataUrl,
+    };
+  }
+
+  async completeAdminOnboarding(body: {
+    challengeToken?: string;
+    onboardingToken?: string;
+    newPassword: string;
+    securityQuestions: Array<{ questionId: string; question: string; answer: string }>;
+    totpSecret: string;
+    totpCode: string;
+    biometricCredential?: any;
+  }) {
+    const tokenToVerify = body.onboardingToken || body.challengeToken;
+    if (!tokenToVerify) {
+      throw new UnauthorizedException('Onboarding verification token is required.');
+    }
+
+    let decoded: any;
+    try {
+      decoded = this.jwtService.verify(tokenToVerify);
+    } catch {
+      throw new UnauthorizedException('Onboarding session expired. Please sign in again.');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: decoded.sub },
+      include: {
+        userRoles: { include: { role: true } },
+        userPermissions: true,
+      },
+    });
+    if (!user) throw new UnauthorizedException('User not found.');
+
+    // 1. Validate permanent password
+    if (!body.newPassword || body.newPassword.length < 8) {
+      throw new BadRequestException('New password must be at least 8 characters with numbers and symbols.');
+    }
+
+    // 2. Validate TOTP Code
+    const isTotpValid = speakeasy.totp.verify({
+      secret: body.totpSecret,
+      encoding: 'base32',
+      token: body.totpCode.trim(),
+      window: 1,
+    });
+    if (!isTotpValid) {
+      throw new BadRequestException('Invalid 6-digit Authenticator verification code. Please check your app.');
+    }
+
+    // 3. Validate and hash Security Questions (minimum 2 questions)
+    if (!Array.isArray(body.securityQuestions) || body.securityQuestions.length < 2) {
+      throw new BadRequestException('At least two unique security questions must be configured.');
+    }
+    const hashedQuestions = [];
+    for (const sq of body.securityQuestions) {
+      if (!sq.questionId || !sq.answer || sq.answer.trim().length < 2) {
+        throw new BadRequestException('Each security question requires a valid answer.');
+      }
+      const answerHash = await bcrypt.hash(sq.answer.trim().toLowerCase(), 10);
+      hashedQuestions.push({
+        questionId: sq.questionId,
+        question: sq.question,
+        answerHash,
+      });
+    }
+
+    const newHashedPassword = await bcrypt.hash(body.newPassword, 10);
+    const currentPrivacy = (user.privacySettings as any) || {};
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: newHashedPassword,
+        isTwoFactorEnabled: true,
+        twoFactorSecret: body.totpSecret,
+        isIdentityVerified: true,
+        isEmailVerified: true,
+        forgotEmailOtp: null,
+        forgotEmailOtpExpires: null,
+        lastVerificationAt: new Date(),
+        lastActiveAt: new Date(),
+        privacySettings: {
+          ...currentPrivacy,
+          isTemporaryPassword: false,
+          onboardingCompleted: true,
+          onboardedAt: new Date().toISOString(),
+          securityQuestions: hashedQuestions,
+          biometricsEnabled: !!body.biometricCredential,
+        },
+      },
+    });
+
+    const permissions = new Set<string>();
+    user.userRoles.forEach((ur: PrismaUserRole & { role: PrismaRole }) => {
+      if (ur.isActive && ur.role.isActive) {
+        ur.role.permissions.forEach((p: string) => permissions.add(p));
+      }
+    });
+    user.userPermissions.forEach((up: PrismaUserPermission) => {
+      if (up.isGranted) permissions.add(up.permission);
+      else permissions.delete(up.permission);
+    });
+    if (permissions.size === 0 && user.role === LegacyRole.ADMIN) {
+      permissions.add('DISPATCH_DASHBOARD_VIEW');
+      permissions.add('DISPATCH_RIDE_MONITOR');
+    }
+
+    const safeUser = {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      permissions: Array.from(permissions),
+      isIdentityVerified: true,
+      identityVerified: true,
+      passportPhotoUrl: user.passportPhotoUrl,
+      profilePicture: user.passportPhotoUrl,
+    };
+
+    const token = await this.generateToken(safeUser, { identityVerified: true });
+
+    return {
+      success: true,
+      message: 'Onboarding complete. Full administrative access activated.',
+      accessToken: token,
+      token,
+      user: safeUser,
+    };
+  }
+
+  async recoverAccountWithSecurityQuestions(email: string, answers: Array<{ questionId: string; answer: string }>) {
+    const recoveryRateKey = `admin-recovery:${email.toLowerCase().trim()}`;
+    this.checkRateLimit(recoveryRateKey);
+
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) throw new NotFoundException('Account not found.');
+
+    const privacy = (user.privacySettings as any) || {};
+    const storedQuestions: Array<{ questionId: string; answerHash: string }> = privacy.securityQuestions || [];
+    if (storedQuestions.length === 0) {
+      throw new BadRequestException('No security questions on file. Contact Super Administrator for manual recovery.');
+    }
+
+    let matchCount = 0;
+    for (const provided of answers) {
+      const match = storedQuestions.find(q => q.questionId === provided.questionId);
+      if (match && await bcrypt.compare(provided.answer.trim().toLowerCase(), match.answerHash)) {
+        matchCount++;
+      }
+    }
+
+    if (matchCount < Math.min(2, storedQuestions.length)) {
+      this.recordFailedAttempt(recoveryRateKey);
+      throw new UnauthorizedException('Security answers do not match our records.');
+    }
+
+    this.resetFailedAttempts(recoveryRateKey);
+
+    const resetOtp = crypto.randomInt(100000, 1000000).toString();
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        forgotEmailOtp: resetOtp,
+        forgotEmailOtpExpires: new Date(Date.now() + 15 * 60 * 1000),
+      },
+    });
+
+    await this.emailProvider.sendEmail(
+      email,
+      'Cabi Africa Admin Panel — Account Recovery Authorization',
+      `Your account recovery code is ${resetOtp}. Use it to reset your credentials.`
+    );
+
+    return {
+      success: true,
+      message: 'Security answers verified. A recovery PIN has been sent to your registered email.',
+    };
+  }
+
+  async resendAdminOtp(challengeToken: string) {
+    let decoded: any;
+    try {
+      decoded = this.jwtService.verify(challengeToken);
+    } catch {
+      throw new UnauthorizedException('Verification session expired. Please sign in again.');
+    }
+
+    if (decoded?.purpose !== 'ADMIN_IDENTITY_VERIFICATION' || !decoded?.sub) {
+      throw new UnauthorizedException('Invalid verification challenge.');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: decoded.sub },
+      select: { id: true, email: true, phone: true },
+    });
+    if (!user) {
+      throw new UnauthorizedException('User account not found.');
+    }
+
+    return this.issueAdminOtpChallenge(user.id, user.email, user.phone);
   }
 
   async createProspect(data: { firstName: string, lastName: string, email: string, phone: string, city: string, password?: string, referralCode?: string }) {

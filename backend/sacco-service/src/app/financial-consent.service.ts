@@ -57,7 +57,7 @@ export class FinancialConsentService {
      * - 6 Months (Half-year notice)
      * - 12 Months (1 Year / Annual notice)
      */
-    static calculateOptOutEffectiveDate(durationMonths: number = 1, from: Date = new Date()): Date {
+    static calculateOptOutEffectiveDate(durationMonths = 1, from: Date = new Date()): Date {
         const validMonths = Math.max(1, Math.round(durationMonths));
         const year = from.getUTCFullYear();
         const month = from.getUTCMonth();

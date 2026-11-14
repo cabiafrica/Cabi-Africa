@@ -147,7 +147,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
               const SizedBox(height: 12),
               Text(
                 'Driver Security SMS OTP',
-                style: GoogleFonts.outfit(color: textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
+                style: GoogleFonts.inter(color: textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 6),
               Text(
@@ -249,7 +249,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
             Text(
               'DRIVER ACCOUNT TEMPORARILY LOCKED',
               textAlign: TextAlign.center,
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 color: Colors.redAccent,
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
@@ -329,7 +329,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
             // Normal Face Verification Screen
             Text(
               'Driver Identity Security Check',
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 color: textPrimary,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -427,7 +427,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
             Text(
               _statusText,
               textAlign: TextAlign.center,
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 color: _isSuccess ? Colors.greenAccent : (_failedAttempts > 0 ? Colors.orangeAccent : textPrimary),
                 fontSize: 14,
                 fontWeight: FontWeight.w600,

@@ -27,11 +27,11 @@ const SearchBar = ({ placeholder = 'Search...', onSearch, onClear, className = '
         <div className={`relative ${className}`}>
             <div
                 className={`flex items-center gap-3 bg-slate-900/50 backdrop-blur-xl border rounded-xl px-4 py-3 transition-all duration-200 ${isFocused
-                        ? 'border-blue-500/50 shadow-lg shadow-blue-500/10'
+                        ? 'border-amber-500/50 shadow-lg shadow-amber-500/10'
                         : 'border-slate-800/50 hover:border-slate-700/50'
                     }`}
             >
-                <Search className={`w-5 h-5 transition-colors ${isFocused ? 'text-blue-400' : 'text-slate-500'}`} />
+                <Search className={`w-5 h-5 transition-colors ${isFocused ? 'text-amber-400' : 'text-slate-500'}`} />
                 <input
                     type="text"
                     value={query}

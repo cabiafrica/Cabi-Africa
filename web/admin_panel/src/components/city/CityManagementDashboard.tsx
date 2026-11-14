@@ -31,8 +31,8 @@ export const CityManagementDashboard: React.FC = () => {
             value: kpis?.activeDrivers || 0,
             icon: DirectionsCar,
             color: "blue",
-            bgClass: "bg-blue-50 dark:bg-blue-900/20",
-            textClass: "text-blue-600 dark:text-blue-400"
+            bgClass: "bg-amber-50 dark:bg-amber-900/20",
+            textClass: "text-amber-600 dark:text-amber-400"
         },
         {
             label: "Total Trips (Today)",
@@ -65,7 +65,7 @@ export const CityManagementDashboard: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <LocationCity className="text-blue-600 dark:text-blue-400" />
+                        <LocationCity className="text-amber-600 dark:text-amber-400" />
                         City Management: Nairobi
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-1">Real-time city performance and configuration.</p>
@@ -80,7 +80,7 @@ export const CityManagementDashboard: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {cards.map((card, idx) => (
-                    <div key={idx} className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 transition-all hover:shadow-md">
+                    <div key={idx} className="bg-white dark:bg-card-dark p-6 rounded-xl shadow-sm border border-slate-200 dark:border-white/10 transition-all hover:shadow-md">
                         <div className="flex justify-between items-start mb-4">
                             <div className={`p-3 rounded-lg ${card.bgClass} ${card.textClass}`}>
                                 <card.icon fontSize="medium" />
@@ -94,32 +94,32 @@ export const CityManagementDashboard: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* SETTINGS PANEL */}
-                <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                <div className="lg:col-span-2 bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-white/10 p-6">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
                         <Settings className="text-slate-400" />
                         Regional Configuration
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <button className="flex flex-col items-center justify-center p-6 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all group">
-                            <div className="p-3 bg-blue-50 dark:bg-slate-700 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                                <AttachMoney className="text-blue-600 dark:text-blue-400" />
+                        <button className="flex flex-col items-center justify-center p-6 border border-slate-200 dark:border-white/10 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all group">
+                            <div className="p-3 bg-amber-50 dark:bg-slate-700 rounded-full mb-3 group-hover:scale-110 transition-transform">
+                                <AttachMoney className="text-amber-600 dark:text-amber-400" />
                             </div>
                             <span className="font-semibold text-slate-900 dark:text-white">Base Fare</span>
                             <span className="text-xs text-slate-500 text-center mt-1">Manage pricing models</span>
                         </button>
 
-                        <button className="flex flex-col items-center justify-center p-6 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all group">
-                            <div className="p-3 bg-blue-50 dark:bg-slate-700 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                                <TrendingUp className="text-blue-600 dark:text-blue-400" />
+                        <button className="flex flex-col items-center justify-center p-6 border border-slate-200 dark:border-white/10 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all group">
+                            <div className="p-3 bg-amber-50 dark:bg-slate-700 rounded-full mb-3 group-hover:scale-110 transition-transform">
+                                <TrendingUp className="text-amber-600 dark:text-amber-400" />
                             </div>
                             <span className="font-semibold text-slate-900 dark:text-white">Surge Settings</span>
                             <span className="text-xs text-slate-500 text-center mt-1">Configure multipliers</span>
                         </button>
 
-                        <button className="flex flex-col items-center justify-center p-6 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all group">
-                            <div className="p-3 bg-blue-50 dark:bg-slate-700 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                                <Map className="text-blue-600 dark:text-blue-400" />
+                        <button className="flex flex-col items-center justify-center p-6 border border-slate-200 dark:border-white/10 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all group">
+                            <div className="p-3 bg-amber-50 dark:bg-slate-700 rounded-full mb-3 group-hover:scale-110 transition-transform">
+                                <Map className="text-amber-600 dark:text-amber-400" />
                             </div>
                             <span className="font-semibold text-slate-900 dark:text-white">Zone Management</span>
                             <span className="text-xs text-slate-500 text-center mt-1">Geofencing & Borders</span>
@@ -128,7 +128,7 @@ export const CityManagementDashboard: React.FC = () => {
                 </div>
 
                 {/* ALERTS PANEL */}
-                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                <div className="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-white/10 p-6">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                         <Warning className="text-orange-500" />
                         Active Alerts
@@ -138,7 +138,7 @@ export const CityManagementDashboard: React.FC = () => {
                             <p className="font-semibold text-orange-800 dark:text-orange-300">High Demand in CBD</p>
                             <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">Surge multiplier auto-set to 1.5x due to lack of drivers.</p>
                         </div>
-                        <div className="p-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-lg text-sm text-center text-slate-500 italic">
+                        <div className="p-3 bg-slate-50 dark:bg-surface-dark border border-slate-100 dark:border-white/10 rounded-lg text-sm text-center text-slate-500 italic">
                             No critical system alerts.
                         </div>
                     </div>

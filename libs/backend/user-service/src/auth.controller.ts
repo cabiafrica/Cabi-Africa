@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Put, Patch, Body, ValidationPipe, UnauthorizedException, UseInterceptors, UploadedFiles, UploadedFile, Req } from '@nestjs/common';
+import { Controller, Post, Get, Put, Patch, Body, ValidationPipe, UnauthorizedException, BadRequestException, UseInterceptors, UploadedFiles, UploadedFile, Req } from '@nestjs/common';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { Public } from '@cabi/backend/rbac';
 import { UserService } from './user.service';
@@ -53,6 +53,73 @@ export class AuthController {
       console.error('Login error:', error?.message || error);
       throw new UnauthorizedException('Invalid email/phone or password.');
     }
+  }
+
+  @Post('admin/initiate-login')
+  @Public()
+  async initiateAdminLogin(@Body(new ValidationPipe()) loginDto: LoginDto) {
+    try {
+      return await this.userService.initiateAdminLogin(loginDto.email, loginDto.password);
+    } catch (error: any) {
+      throw new UnauthorizedException(error?.message || 'Invalid credentials.');
+    }
+  }
+
+  @Post('admin/verify-identity')
+  @Public()
+  async verifyAdminIdentity(@Body() body: { challengeToken: string; otpCode: string }) {
+    if (!body?.challengeToken || !body?.otpCode) {
+      throw new UnauthorizedException('Verification token and 6-digit code are required.');
+    }
+    return this.userService.verifyAdminIdentity(body.challengeToken, body.otpCode);
+  }
+
+  @Post('admin/resend-otp')
+  @Public()
+  async resendAdminOtp(@Body() body: { challengeToken: string }) {
+    if (!body?.challengeToken) {
+      throw new UnauthorizedException('Verification challenge token is required.');
+    }
+    return this.userService.resendAdminOtp(body.challengeToken);
+  }
+
+  @Get('admin/onboarding/questions')
+  @Public()
+  getOnboardingQuestions() {
+    return this.userService.getPredefinedSecurityQuestions();
+  }
+
+  @Post('admin/onboarding/totp-setup')
+  @Public()
+  async setupTotp(@Body() body: { challengeToken?: string; onboardingToken?: string }) {
+    const token = body.onboardingToken || body.challengeToken;
+    if (!token) {
+      throw new UnauthorizedException('Onboarding token is required.');
+    }
+    return this.userService.generateOnboardingTotp(token);
+  }
+
+  @Post('admin/onboarding/complete')
+  @Public()
+  async completeOnboarding(@Body() body: {
+    challengeToken?: string;
+    onboardingToken?: string;
+    newPassword: string;
+    securityQuestions: Array<{ questionId: string; question: string; answer: string }>;
+    totpSecret: string;
+    totpCode: string;
+    biometricCredential?: any;
+  }) {
+    return this.userService.completeAdminOnboarding(body);
+  }
+
+  @Post('admin/recover-account')
+  @Public()
+  async recoverAccount(@Body() body: { email: string; answers: Array<{ questionId: string; answer: string }> }) {
+    if (!body?.email || !Array.isArray(body?.answers)) {
+      throw new BadRequestException('Email and security answers are required.');
+    }
+    return this.userService.recoverAccountWithSecurityQuestions(body.email, body.answers);
   }
 
   @Post('forgot-password')

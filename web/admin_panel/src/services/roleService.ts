@@ -44,27 +44,27 @@ export type RoleFormData = Omit<Role, 'id' | 'isSystem'>;
 
 class RoleService {
     async getAllRoles(): Promise<Role[]> {
-        const response = await apiClient.get('/roles');
+        const response = await apiClient.get('/admin/roles');
         return response.data;
     }
 
     async getRole(id: string): Promise<Role> {
-        const response = await apiClient.get(`/roles/${id}`);
+        const response = await apiClient.get(`/admin/roles/${id}`);
         return response.data;
     }
 
     async createRole(data: RoleFormData): Promise<Role> {
-        const response = await apiClient.post('/roles', data);
+        const response = await apiClient.post('/admin/roles', data);
         return response.data;
     }
 
     async updateRole(id: string, data: Partial<RoleFormData>): Promise<Role> {
-        const response = await apiClient.patch(`/roles/${id}`, data);
+        const response = await apiClient.patch(`/admin/roles/${id}`, data);
         return response.data;
     }
 
     async deleteRole(id: string): Promise<void> {
-        await apiClient.delete(`/roles/${id}`);
+        await apiClient.delete(`/admin/roles/${id}`);
     }
 
     // Helper to get available permissions (could be hardcoded or fetched)

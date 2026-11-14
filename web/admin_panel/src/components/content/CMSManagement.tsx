@@ -82,34 +82,34 @@ export const CMSManagement: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <Article className="text-blue-600 dark:text-blue-400" />
+                        <Article className="text-amber-600 dark:text-amber-400" />
                         CMS Management
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-1">Manage static pages, FAQs, and app content.</p>
                 </div>
                 <button
                     onClick={handleAdd}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm"
+                    className="bg-amber-500 hover:bg-amber-600 text-black px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm"
                 >
                     <Add fontSize="small" />
                     Add New {activeTab === 'FAQ' ? 'FAQ' : 'Page'}
                 </button>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden min-h-[500px]">
+            <div className="bg-white dark:bg-card-dark shadow-sm rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden min-h-[500px]">
                 {/* Tabs */}
-                <div className="border-b border-slate-200 dark:border-slate-700">
+                <div className="border-b border-slate-200 dark:border-white/10">
                     <div className="flex px-6 pt-4 gap-6">
                         <button
                             onClick={() => { setActiveTab('FAQ'); setEditingItem(null); }}
-                            className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'FAQ' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
+                            className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'FAQ' ? 'border-amber-500 text-amber-600 dark:text-amber-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
                         >
                             <Help fontSize="small" />
                             FAQs
                         </button>
                         <button
                             onClick={() => { setActiveTab('PAGE'); setEditingItem(null); }}
-                            className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'PAGE' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
+                            className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'PAGE' ? 'border-amber-500 text-amber-600 dark:text-amber-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
                         >
                             <Description fontSize="small" />
                             Legal & Pages
@@ -129,7 +129,7 @@ export const CMSManagement: React.FC = () => {
                                     <input
                                         type="text"
                                         placeholder="Search FAQs..."
-                                        className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
+                                        className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-amber-500 outline-none"
                                     />
                                 </div>
                             )}
@@ -139,11 +139,11 @@ export const CMSManagement: React.FC = () => {
                                 <div className="text-center py-12 text-slate-400">No content found.</div>
                             ) : (
                                 (activeTab === 'FAQ' ? faqs : pages).map((item: any) => (
-                                    <div key={item.id} className="group relative bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:shadow-md transition-all">
+                                    <div key={item.id} className="group relative bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 rounded-lg p-4 hover:shadow-md transition-all">
                                         <div className="flex justify-between items-start gap-4">
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-2 mb-1">
-                                                    {activeTab === 'FAQ' ? <QuestionAnswer fontSize="small" className="text-blue-500" /> : <Article fontSize="small" className="text-purple-500" />}
+                                                    {activeTab === 'FAQ' ? <QuestionAnswer fontSize="small" className="text-amber-500" /> : <Article fontSize="small" className="text-cyan-500" />}
                                                     <h3 className="font-semibold text-slate-900 dark:text-white text-base">
                                                         {activeTab === 'FAQ' ? item.question : item.title}
                                                     </h3>
@@ -153,7 +153,7 @@ export const CMSManagement: React.FC = () => {
                                                 </p>
                                             </div>
                                             <div className="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button onClick={() => handleEdit(item)} className="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 bg-slate-50 dark:bg-slate-700 rounded-md">
+                                                <button onClick={() => handleEdit(item)} className="p-1.5 text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 bg-slate-50 dark:bg-slate-700 rounded-md">
                                                     <Edit fontSize="small" />
                                                 </button>
                                                 <button className="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 bg-slate-50 dark:bg-slate-700 rounded-md">
@@ -172,7 +172,7 @@ export const CMSManagement: React.FC = () => {
             {/* MODAL */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl w-full max-w-2xl shadow-2xl border border-slate-200 dark:border-slate-700 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="bg-white dark:bg-card-dark p-6 rounded-xl w-full max-w-2xl shadow-2xl border border-slate-200 dark:border-white/10 animate-in fade-in zoom-in-95 duration-200">
                         <h3 className="text-xl font-bold mb-6 text-slate-900 dark:text-white flex items-center gap-2">
                             {editingItem.id ? <Edit fontSize="small" /> : <Add fontSize="small" />}
                             {editingItem.id ? 'Edit' : 'Add New'} {activeTab === 'FAQ' ? 'FAQ' : 'Page'}
@@ -185,7 +185,7 @@ export const CMSManagement: React.FC = () => {
                                         <input
                                             value={editingItem.question || ''}
                                             onChange={e => setEditingItem({ ...editingItem, question: e.target.value })}
-                                            className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" required
+                                            className="w-full px-4 py-2 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none" required
                                             placeholder="e.g., How do I reset my password?"
                                         />
                                     </div>
@@ -194,7 +194,7 @@ export const CMSManagement: React.FC = () => {
                                         <textarea
                                             value={editingItem.answer || ''}
                                             onChange={e => setEditingItem({ ...editingItem, answer: e.target.value })}
-                                            className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none h-32 resize-none" required
+                                            className="w-full px-4 py-2 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none h-32 resize-none" required
                                             placeholder="Enter the answer..."
                                         />
                                     </div>
@@ -206,7 +206,7 @@ export const CMSManagement: React.FC = () => {
                                         <input
                                             value={editingItem.title || ''}
                                             onChange={e => setEditingItem({ ...editingItem, title: e.target.value })}
-                                            className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" required
+                                            className="w-full px-4 py-2 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none" required
                                         />
                                     </div>
                                     <div>
@@ -214,7 +214,7 @@ export const CMSManagement: React.FC = () => {
                                         <textarea
                                             value={editingItem.content || ''}
                                             onChange={e => setEditingItem({ ...editingItem, content: e.target.value })}
-                                            className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none h-64 font-mono text-sm" required
+                                            className="w-full px-4 py-2 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 outline-none h-64 font-mono text-sm" required
                                         />
                                     </div>
                                 </>
@@ -229,7 +229,7 @@ export const CMSManagement: React.FC = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-sm"
+                                    className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-black rounded-lg font-medium transition-colors shadow-sm"
                                 >
                                     Save Changes
                                 </button>

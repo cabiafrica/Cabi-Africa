@@ -720,7 +720,7 @@ export const AuditLogPage = () => {
                 fontSize={12}
               />
               <Tooltip 
-                contentStyle={{ background: '#0F172A', border: '1px solid rgba(255,215,0,0.2)', borderRadius: '12px' }}
+                contentStyle={{ background: '#141416', border: '1px solid rgba(255,215,0,0.2)', borderRadius: '12px' }}
                 itemStyle={{ color: '#FFD700' }}
               />
               <Legend 

@@ -123,14 +123,14 @@ export const DriverApplicationsList: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <RecentActors className="text-blue-600 dark:text-blue-400" />
+            <RecentActors className="text-amber-600 dark:text-amber-400" />
             Driver Applications
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Review and approve new driver registrations.</p>
         </div>
 <div className="flex gap-4">
-          <div className="flex bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-1">
-            <div className="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700">
+          <div className="flex bg-white dark:bg-card-dark rounded-lg shadow-sm border border-slate-200 dark:border-white/10 p-1">
+            <div className="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-white/10">
               Pending
             </div>
             <div className="px-4 py-2 text-sm font-bold text-slate-900 dark:text-white">
@@ -140,15 +140,15 @@ export const DriverApplicationsList: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden space-y-4">
+      <div className="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden space-y-4">
         {/* Controls Header */}
-        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="w-full sm:w-auto relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
             <input
               type="text"
               placeholder="Search name or email..."
-              className="w-full sm:w-64 pl-9 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full sm:w-64 pl-9 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-card-dark text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-amber-500 outline-none"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -157,7 +157,7 @@ export const DriverApplicationsList: React.FC = () => {
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <span className="text-sm text-slate-500 dark:text-slate-400">Rows:</span>
             <select
-              className="border border-slate-300 dark:border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 cursor-pointer"
+              className="border border-slate-300 dark:border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-white dark:bg-card-dark text-slate-900 dark:text-slate-100 cursor-pointer"
               value={pageSize}
               onChange={(e) => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}
             >
@@ -170,15 +170,15 @@ export const DriverApplicationsList: React.FC = () => {
 
         {/* Bulk Actions Bar */}
         {selectedDriverIds.length > 0 && (
-          <div className="px-6 py-2 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-100 dark:border-blue-800 flex items-center justify-between animate-in fade-in slide-in-from-top-1">
-            <span className="text-sm text-blue-800 dark:text-blue-300 font-medium flex items-center gap-2">
+          <div className="px-6 py-2 bg-amber-50 dark:bg-amber-900/20 border-b border-amber-100 dark:border-amber-800 flex items-center justify-between animate-in fade-in slide-in-from-top-1">
+            <span className="text-sm text-amber-800 dark:text-amber-300 font-medium flex items-center gap-2">
               <CheckCircle fontSize="small" />
               {selectedDriverIds.length} selected
             </span>
             <div className="flex gap-2">
               <button
                 onClick={() => setIsBulkRejectModalOpen(true)}
-                className="flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-red-300 dark:border-red-500/50 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                className="flex items-center gap-1.5 bg-white dark:bg-card-dark border border-red-300 dark:border-red-500/50 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
               >
                 <Cancel fontSize="small" />
                 Reject Selected
@@ -186,7 +186,7 @@ export const DriverApplicationsList: React.FC = () => {
               <button
                 onClick={handleBulkApprove}
                 disabled={isBulkApproving}
-                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-black px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
               >
                 <CheckCircle fontSize="small" />
                 {isBulkApproving ? 'Approving...' : 'Approve Selected'}
@@ -197,12 +197,12 @@ export const DriverApplicationsList: React.FC = () => {
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-            <thead className="bg-slate-50 dark:bg-slate-900">
+            <thead className="bg-slate-50 dark:bg-surface-dark">
               <tr>
                 <th scope="col" className="px-6 py-3 text-left w-10">
                   <input
                     type="checkbox"
-                    className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 bg-white dark:bg-slate-700"
+                    className="rounded border-slate-300 dark:border-slate-600 text-amber-600 focus:ring-amber-500 bg-white dark:bg-slate-700"
                     checked={selectedDriverIds.length > 0 && currentData.every(d => selectedDriverIds.includes(d.id))}
                     onChange={handleSelectAll}
                   />
@@ -214,17 +214,17 @@ export const DriverApplicationsList: React.FC = () => {
                 <th scope="col" className="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+            <tbody className="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
               {loading ? (
                 <tr><td colSpan={6} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">Loading applications...</td></tr>
               ) : currentData.length === 0 ? (
                 <tr><td colSpan={6} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">No applications match your search.</td></tr>
               ) : currentData.map(app => (
-                <tr key={app.id} className={`hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${selectedDriverIds.includes(app.id) ? 'bg-blue-50 dark:bg-blue-900/10' : ''}`}>
+                <tr key={app.id} className={`hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${selectedDriverIds.includes(app.id) ? 'bg-amber-50 dark:bg-amber-900/10' : ''}`}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <input
                       type="checkbox"
-                      className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 bg-white dark:bg-slate-700"
+                      className="rounded border-slate-300 dark:border-slate-600 text-amber-600 focus:ring-amber-500 bg-white dark:bg-slate-700"
                       checked={selectedDriverIds.includes(app.id)}
                       onChange={() => handleSelectOne(app.id)}
                     />
@@ -236,7 +236,7 @@ export const DriverApplicationsList: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
                       onClick={() => setSelectedAppId(app.id)}
-                      className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 font-semibold flex items-center justify-end gap-1 w-full"
+                      className="text-amber-600 hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-300 font-semibold flex items-center justify-end gap-1 w-full"
                     >
                       <Visibility fontSize="small" />
                       Review
@@ -250,10 +250,10 @@ export const DriverApplicationsList: React.FC = () => {
 
         {/* Pagination Footer */}
         {totalPages > 1 && (
-          <div className="bg-white dark:bg-slate-800 px-6 py-4 flex items-center justify-between border-t border-slate-200 dark:border-slate-700">
+          <div className="bg-white dark:bg-card-dark px-6 py-4 flex items-center justify-between border-t border-slate-200 dark:border-white/10">
             <div className="flex-1 flex justify-between sm:hidden">
-              <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="relative inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-md text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700">Previous</button>
-              <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-md text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700">Next</button>
+              <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="relative inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-md text-slate-700 dark:text-slate-300 bg-white dark:bg-card-dark hover:bg-slate-50 dark:hover:bg-slate-700">Previous</button>
+              <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-md text-slate-700 dark:text-slate-300 bg-white dark:bg-card-dark hover:bg-slate-50 dark:hover:bg-slate-700">Next</button>
             </div>
             <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
               <div>
@@ -266,7 +266,7 @@ export const DriverApplicationsList: React.FC = () => {
                   <button
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
-                    className="relative inline-flex items-center px-2 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
+                    className="relative inline-flex items-center px-2 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-card-dark text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
                   >
                     <NavigateBefore fontSize="small" />
                   </button>
@@ -275,8 +275,8 @@ export const DriverApplicationsList: React.FC = () => {
                       key={page}
                       onClick={() => setCurrentPage(page)}
                       className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md ${currentPage === page
-                        ? 'z-10 bg-blue-50 dark:bg-blue-900/30 border-blue-500 dark:border-blue-500 text-blue-600 dark:text-blue-400'
-                        : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
+                        ? 'z-10 bg-amber-50 dark:bg-amber-900/30 border-amber-500 dark:border-amber-500 text-amber-600 dark:text-amber-400'
+                        : 'bg-white dark:bg-card-dark border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
                         }`}
                     >
                       {page}
@@ -285,7 +285,7 @@ export const DriverApplicationsList: React.FC = () => {
                   <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
-                    className="relative inline-flex items-center px-2 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
+                    className="relative inline-flex items-center px-2 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-card-dark text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
                   >
                     <NavigateNext fontSize="small" />
                   </button>

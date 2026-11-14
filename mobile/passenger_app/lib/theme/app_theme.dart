@@ -42,7 +42,7 @@ class AppTheme {
     if (!useGoogleFonts) {
       return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
     }
-    return GoogleFonts.outfit(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
+    return GoogleFonts.inter(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
   }
 
   static TextStyle inter({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle, double? height, TextDecoration? decoration, Color? decorationColor}) {
@@ -56,14 +56,14 @@ class AppTheme {
     if (!useGoogleFonts) {
       return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
     }
-    return GoogleFonts.montserrat(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
+    return GoogleFonts.inter(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
   }
 
   static TextStyle plusJakartaSans({double? fontSize, FontWeight? fontWeight, Color? color, double? letterSpacing, FontStyle? fontStyle, double? height, TextDecoration? decoration, Color? decorationColor}) {
     if (!useGoogleFonts) {
       return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
     }
-    return GoogleFonts.plusJakartaSans(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
+    return GoogleFonts.inter(fontSize: fontSize, fontWeight: fontWeight, color: color, letterSpacing: letterSpacing, fontStyle: fontStyle, height: height, decoration: decoration, decorationColor: decorationColor);
   }
 
   // Stitch Lustre Platinum Gold Dual-Theme (stitch_cabi_africa.zip)

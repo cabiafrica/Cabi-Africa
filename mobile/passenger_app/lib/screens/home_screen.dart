@@ -292,80 +292,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   child: Icon(_isPickingFromMap ? Icons.arrow_back : Icons.menu),
                 ),
-                if (!_isPickingFromMap) ...[
-                  const SizedBox(width: 8),
-                  // Stitch Day/Night Toggle Pill
-                  () {
-                    final themeProvider = legacy_provider.Provider.of<ThemeProvider>(context);
-                    final isDark = Theme.of(context).brightness == Brightness.dark;
-                    return Container(
-                      height: 40,
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        color: isDark ? AppTheme.surfaceContainerHigh : Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline,
-                          width: 1.0,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          )
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Daytime (Porcelain) Sun Toggle
-                          InkWell(
-                            borderRadius: BorderRadius.circular(16),
-                            onTap: () {
-                              if (isDark) themeProvider.toggleTheme(false);
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                color: !isDark ? AppTheme.primaryColor : Colors.transparent,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.wb_sunny_rounded,
-                                size: 16,
-                                color: !isDark ? const Color(0xFF241A00) : Colors.white54,
-                              ),
-                            ),
-                          ),
-                          // Night (Obsidian) Moon Toggle
-                          InkWell(
-                            borderRadius: BorderRadius.circular(16),
-                            onTap: () {
-                              if (!isDark) themeProvider.toggleTheme(true);
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                color: isDark ? AppTheme.primaryColor : Colors.transparent,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.dark_mode_rounded,
-                                size: 16,
-                                color: isDark ? const Color(0xFF241A00) : Colors.black45,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }(),
-                ],
               ],
             ),
           ),
@@ -565,13 +491,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 unselectedLabelStyle: AppTheme.inter(fontSize: 11, fontWeight: FontWeight.w500),
                 onTap: (index) {
                   if (index == 1) {
-                    _scaffoldKey.currentState?.openDrawer();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const RideHistoryScreen()),
+                    );
                   } else if (index == 2) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Safety Center • Cabi Secure PIN active')),
                     );
                   } else if (index == 3) {
-                    _scaffoldKey.currentState?.openDrawer();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const UserDashboardScreen()),
+                    );
                   }
                 },
                 items: const [

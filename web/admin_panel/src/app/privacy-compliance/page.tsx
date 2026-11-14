@@ -116,7 +116,7 @@ export default function PrivacyCompliancePage() {
             {/* Header */}
             <Box mb={4}>
                 <Typography variant="h4" fontWeight="800" sx={{
-                    background: 'linear-gradient(45deg, #6366f1 30%, #8b5cf6 90%)',
+                    background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                     mb: 1

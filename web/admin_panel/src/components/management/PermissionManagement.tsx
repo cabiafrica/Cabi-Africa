@@ -53,7 +53,7 @@ export const PermissionManagement: React.FC = () => {
 
   if (isFormVisible) {
     return (
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow max-w-lg mx-auto">
+      <div className="bg-white dark:bg-card-dark p-6 rounded-lg shadow max-w-lg mx-auto">
         <h3 className="text-xl font-bold mb-4 text-slate-900 dark:text-white">{currentPermission.id ? 'Edit' : 'Create'} Permission</h3>
         <form onSubmit={handleSave} className="space-y-4">
           <div>
@@ -68,7 +68,7 @@ export const PermissionManagement: React.FC = () => {
               // Simplification: if we are editing an existing permission, we usually disable ID editing.
               // Here I check if we are in 'edit mode' vs 'create mode' effectively.
               // A better way is to pass a prop or state flag, but let's stick to simple logic:
-              className="mt-1 block w-full border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+              className="mt-1 block w-full border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500 sm:text-sm p-2 border bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
             />
           </div>
           <div>
@@ -78,7 +78,7 @@ export const PermissionManagement: React.FC = () => {
               value={currentPermission.description || ''}
               onChange={e => setCurrentPermission(p => ({ ...p, description: e.target.value }))}
               required
-              className="mt-1 block w-full border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+              className="mt-1 block w-full border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500 sm:text-sm p-2 border bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
             />
           </div>
           <div className="flex justify-end gap-3 pt-4">
@@ -92,7 +92,7 @@ export const PermissionManagement: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors disabled:opacity-50"
+              className="bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-md transition-colors disabled:opacity-50"
             >
               {isLoading ? 'Saving...' : 'Save Permission'}
             </button>
@@ -103,12 +103,12 @@ export const PermissionManagement: React.FC = () => {
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 shadow rounded-lg overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900">
+    <div className="bg-white dark:bg-card-dark shadow rounded-lg overflow-hidden">
+      <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 flex justify-between items-center bg-slate-50 dark:bg-surface-dark">
         <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Permission Management</h2>
         <button
           onClick={handleCreate}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          className="bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-lg text-sm font-medium transition-colors"
         >
           Create New Permission
         </button>
@@ -116,20 +116,20 @@ export const PermissionManagement: React.FC = () => {
 
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-          <thead className="bg-slate-50 dark:bg-slate-900">
+          <thead className="bg-slate-50 dark:bg-surface-dark">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">ID</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Description</th>
               <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+          <tbody className="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
             {permissions.map(perm => (
               <tr key={perm.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-slate-100">{perm.id}</td>
                 <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{perm.description}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button onClick={() => handleEdit(perm)} className="text-blue-600 hover:text-blue-900 dark:hover:text-blue-400 mr-4">Edit</button>
+                  <button onClick={() => handleEdit(perm)} className="text-amber-600 hover:text-amber-900 dark:hover:text-amber-400 mr-4">Edit</button>
                   <button onClick={() => handleDelete(perm.id)} className="text-red-600 hover:text-red-900 dark:hover:text-red-400">Delete</button>
                 </td>
               </tr>

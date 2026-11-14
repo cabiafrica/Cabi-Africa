@@ -337,7 +337,7 @@ class MenuScreen extends ConsumerWidget {
                         Flexible(
                           child: Text(
                             name.toUpperCase(),
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               fontWeight: FontWeight.w800,
                               fontSize: 16,
                               color: isDark ? Colors.white : Colors.black87,
@@ -395,7 +395,7 @@ class MenuScreen extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             email ?? 'driver@cabi.africa',
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               color: isDark ? Colors.white70 : Colors.black87,
                               fontSize: 11.5,
                             ),
@@ -419,7 +419,7 @@ class MenuScreen extends ConsumerWidget {
                         const SizedBox(width: 5),
                         Text(
                           phone ?? '+254 700 000 000',
-                          style: GoogleFonts.outfit(
+                          style: GoogleFonts.inter(
                             color: isDark ? Colors.white70 : Colors.black87,
                             fontSize: 11.5,
                             fontWeight: FontWeight.w500,
@@ -451,7 +451,7 @@ class MenuScreen extends ConsumerWidget {
                               const SizedBox(width: 3),
                               Text(
                                 '${rating.toStringAsFixed(1)} ★',
-                                style: GoogleFonts.outfit(
+                                style: GoogleFonts.inter(
                                   color: Colors.amber,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 11,
@@ -483,7 +483,7 @@ class MenuScreen extends ConsumerWidget {
                                 Flexible(
                                   child: Text(
                                     driverGroup,
-                                    style: GoogleFonts.outfit(
+                                    style: GoogleFonts.inter(
                                       color: isDark ? Colors.cyanAccent : Colors.cyan.shade800,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 10.5,

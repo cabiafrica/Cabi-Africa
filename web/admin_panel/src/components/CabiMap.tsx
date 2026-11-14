@@ -50,7 +50,7 @@ const createDriverIcon = (status: 'online' | 'busy' | 'offline' = 'online') => {
         }
       </style>
       <div class="${pulseClass}" style="
-        background-color: #0F172A;
+        background-color: #141416;
         width: 36px;
         height: 36px;
         border-radius: 50%;
@@ -75,7 +75,7 @@ const createPassengerIcon = () => {
         className: 'custom-div-icon',
         html: `
       <div style="
-        background-color: #3b82f6;
+        background-color: #22D3EE;
         width: 32px;
         height: 32px;
         border-radius: 50%;

@@ -201,7 +201,7 @@ class _ScheduledRidesScreenState extends State<ScheduledRidesScreen>
       title: Column(
         children: [
           Text('SCHEDULED RIDES',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: c.gold,
@@ -365,7 +365,7 @@ class _ScheduledRidesScreenState extends State<ScheduledRidesScreen>
             ),
             const SizedBox(height: 20),
             Text(title,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.inter(
                     color: c.white, fontSize: 17, fontWeight: FontWeight.w700),
                 textAlign: TextAlign.center),
             const SizedBox(height: 10),
@@ -489,7 +489,7 @@ class _OpportunityCardState extends State<_OpportunityCard>
                         _DateChip(label: ride.dateChip),
                         const SizedBox(height: 4),
                         Text(ride.timeWindow,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.inter(
                                 color: c.white, fontSize: 15, fontWeight: FontWeight.w700)),
                       ],
                     ),
@@ -498,7 +498,7 @@ class _OpportunityCardState extends State<_OpportunityCard>
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(ride.fare,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.inter(
                               color: c.gold, fontSize: 20, fontWeight: FontWeight.w800)),
                       if (ride.isSurge)
                         Container(
@@ -651,7 +651,7 @@ class _ScheduledCard extends StatelessWidget {
                       _DateChip(label: ride.dateChip),
                       const SizedBox(height: 4),
                       Text(ride.timeWindow,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.inter(
                               color: c.white, fontSize: 15, fontWeight: FontWeight.w700)),
                     ],
                   ),
@@ -698,7 +698,7 @@ class _ScheduledCard extends StatelessWidget {
                 _InfoChip(icon: Icons.access_time_rounded, label: ride.eta),
                 const Spacer(),
                 Text(ride.fare,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.inter(
                         color: c.gold, fontSize: 18, fontWeight: FontWeight.w800)),
               ],
             ),

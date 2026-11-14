@@ -188,7 +188,7 @@ export default function SuccessPage() {
                             <Gift className="w-6 h-6 text-brand-yellow" /> Your Referral Code
                         </h2>
                         <p className="mb-4 text-neutral-300">
-                            Earn extra income by referring other drivers! Share your unique code and earn commissions when they register.
+                            Earn recurring income by referring fellow drivers and passengers! Share your unique code to unlock 2 levels of ongoing incentives in Ksh.
                         </p>
 
                         <div className="bg-white/10 backdrop-blur rounded-xl border border-white/10 p-4 mb-4">
@@ -211,7 +211,7 @@ export default function SuccessPage() {
                         </button>
 
                         <p className="mt-4 text-sm text-neutral-400 flex items-center gap-1.5">
-                            <Coins className="w-4 h-4 text-brand-yellow" /> Earn 30% commission (KES 600) for each driver you refer!
+                            <Coins className="w-4 h-4 text-brand-yellow" /> Earn 2-level recurring rewards in Ksh from driver earnings and rider usage!
                         </p>
                     </div>
 

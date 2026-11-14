@@ -59,7 +59,7 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
             value={name}
             onChange={e => setName(e.target.value)}
             required
-            className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 p-2.5 border text-gray-900"
+            className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900"
             placeholder="e.g. Top Rated Driver"
           />
         </div>
@@ -70,7 +70,7 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
             value={description}
             onChange={e => setDescription(e.target.value)}
             rows={3}
-            className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 p-2.5 border text-gray-900"
+            className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900"
             placeholder="Describe the criteria and benefits..."
           />
         </div>
@@ -81,7 +81,7 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
             type="number"
             value={value || ''}
             onChange={e => setValue(parseFloat(e.target.value))}
-            className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 p-2.5 border text-gray-900"
+            className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900"
             placeholder="e.g. 100"
           />
           <p className="text-xs text-gray-500 mt-1">Numeric value associated with this badge (e.g., points, priority level).</p>
@@ -93,7 +93,7 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
             <button
               type="button"
               onClick={addRule}
-              className="text-sm text-purple-600 hover:text-purple-800 font-medium"
+              className="text-sm text-cyan-600 hover:text-cyan-800 font-medium"
             >
               + Add Rule
             </button>
@@ -105,7 +105,7 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
                 <select
                   value={rule.metric}
                   onChange={e => handleRuleChange(index, 'metric', e.target.value)}
-                  className="flex-1 text-sm border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 p-2 border"
+                  className="flex-1 text-sm border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2 border"
                 >
                   <option value="averageRating">Average Rating</option>
                   <option value="completedTrips">Completed Trips</option>
@@ -114,7 +114,7 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
                 <select
                   value={rule.operator}
                   onChange={e => handleRuleChange(index, 'operator', e.target.value)}
-                  className="w-24 text-sm border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 p-2 border"
+                  className="w-24 text-sm border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2 border"
                 >
                   <option value="GT">&gt;</option>
                   <option value="GTE">&ge;</option>
@@ -127,7 +127,7 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
                   step="0.1"
                   value={rule.value}
                   onChange={e => handleRuleChange(index, 'value', e.target.value)}
-                  className="w-28 text-sm border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 p-2 border"
+                  className="w-28 text-sm border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2 border"
                   required
                 />
                 <button
@@ -156,7 +156,7 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50"
+            className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50"
           >
             {isLoading ? 'Saving...' : 'Save Badge'}
           </button>

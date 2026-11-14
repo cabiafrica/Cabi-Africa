@@ -192,7 +192,7 @@ export const SosIncidentDashboard = () => {
   };
 
   if (loading) return (
-    <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgcolor="#0F172A">
+    <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgcolor="#141416">
       <CircularProgress sx={{ color: '#FFD700' }} />
     </Box>
   );
@@ -203,7 +203,7 @@ export const SosIncidentDashboard = () => {
 
   return (
     <Fade in={true} timeout={800}>
-      <Box sx={{ minHeight: '100vh', bgcolor: '#0F172A', color: 'white' }}>
+      <Box sx={{ minHeight: '100vh', bgcolor: '#141416', color: 'white' }}>
         
         {/* Header Console */}
         <Box sx={{ 
@@ -267,9 +267,9 @@ export const SosIncidentDashboard = () => {
             <Grid item xs={12} md={4}>
               <Stack spacing={3}>
                 {/* Driver Intel */}
-                <CrisisCard title="Driver Intelligence" icon={<LaunchIcon fontSize="small" />} color="#3B82F6">
+                <CrisisCard title="Driver Intelligence" icon={<LaunchIcon fontSize="small" />} color="#22D3EE">
                   <Stack direction="row" spacing={2} alignItems="center">
-                    <Avatar src={incident.driver.photoUrl} sx={{ width: 64, height: 64, border: `2px solid #3B82F6` }}>{incident.driver.name[0]}</Avatar>
+                    <Avatar src={incident.driver.photoUrl} sx={{ width: 64, height: 64, border: `2px solid #22D3EE` }}>{incident.driver.name[0]}</Avatar>
                     <Box>
                       <Typography variant="h6" sx={{ fontWeight: 800 }}>{incident.driver.name}</Typography>
                       <Rating value={incident.driver.rating} readOnly size="small" />
@@ -293,7 +293,7 @@ export const SosIncidentDashboard = () => {
                     ))}
                   </Stack>
                   <Box sx={{ mt: 1.5, p: 1.5, borderRadius: 2, bgcolor: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
-                    <Typography variant="caption" sx={{ color: '#3B82F6', fontWeight: 800, display: 'block' }}>ORG UNIT</Typography>
+                    <Typography variant="caption" sx={{ color: '#22D3EE', fontWeight: 800, display: 'block' }}>ORG UNIT</Typography>
                     <Typography variant="body2" sx={{ fontWeight: 700 }}>{incident.driver.organization?.name || 'Independent'}</Typography>
                   </Box>
                 </CrisisCard>
@@ -421,7 +421,7 @@ export const SosIncidentDashboard = () => {
                         }}>
                           <Box sx={{ 
                             position: 'absolute', top: 0, left: 0, width: 3, height: '100%', 
-                            bgcolor: log.actorRole === 'Driver' ? '#3B82F6' : log.actorRole === 'Passenger' ? '#A855F7' : '#FFD700' 
+                            bgcolor: log.actorRole === 'Driver' ? '#22D3EE' : log.actorRole === 'Passenger' ? '#A855F7' : '#FFD700' 
                           }} />
                           <Box display="flex" justifyContent="space-between" mb={1} alignItems="center">
                             <Stack direction="row" spacing={1} alignItems="center">

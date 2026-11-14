@@ -72,7 +72,7 @@ export const PayoutProcessing: React.FC = () => {
 
   const getMethodIcon = (method: string) => {
     if (method.includes('M-Pesa')) return <PhoneAndroid fontSize="small" className="text-green-600" />;
-    if (method.includes('Bank')) return <AccountBalance fontSize="small" className="text-blue-600" />;
+    if (method.includes('Bank')) return <AccountBalance fontSize="small" className="text-amber-600" />;
     return <CreditCard fontSize="small" className="text-slate-500" />;
   };
 
@@ -81,7 +81,7 @@ export const PayoutProcessing: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Payments className="text-blue-600 dark:text-blue-400" />
+            <Payments className="text-amber-600 dark:text-amber-400" />
             Payout Processing
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Review and approve driver withdrawals manually.</p>
@@ -110,10 +110,10 @@ export const PayoutProcessing: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 shadow-sm rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-card-dark shadow-sm rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
 
         {/* Total Summary Bar */}
-        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+        <div className="px-6 py-4 bg-slate-50 dark:bg-surface-dark border-b border-slate-200 dark:border-white/10 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">Total Pending:</span>
             <span className="text-lg font-bold text-slate-900 dark:text-white">
@@ -122,8 +122,8 @@ export const PayoutProcessing: React.FC = () => {
           </div>
           {selectedDriverIds.size > 0 && (
             <div className="flex items-center gap-2 animate-in fade-in">
-              <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">Selected Total:</span>
-              <span className="text-lg font-bold text-blue-700 dark:text-blue-300">
+              <span className="text-sm font-semibold text-amber-600 dark:text-amber-400">Selected Total:</span>
+              <span className="text-lg font-bold text-amber-700 dark:text-amber-300">
                 KES {pendingPayouts.filter(p => selectedDriverIds.has(p.driverId)).reduce((acc, curr) => acc + curr.pendingBalance, 0).toLocaleString()}
               </span>
             </div>
@@ -132,7 +132,7 @@ export const PayoutProcessing: React.FC = () => {
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-            <thead className="bg-slate-50 dark:bg-slate-900">
+            <thead className="bg-slate-50 dark:bg-surface-dark">
               <tr>
                 <th className="px-6 py-3 text-left w-10">
                   <input
@@ -140,7 +140,7 @@ export const PayoutProcessing: React.FC = () => {
                     checked={selectedDriverIds.size === pendingPayouts.length && pendingPayouts.length > 0}
                     onChange={toggleSelectAll}
                     disabled={loading || pendingPayouts.length === 0}
-                    className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 bg-white dark:bg-slate-700 cursor-pointer"
+                    className="rounded border-slate-300 dark:border-slate-600 text-amber-600 focus:ring-amber-500 bg-white dark:bg-slate-700 cursor-pointer"
                   />
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Driver</th>
@@ -148,7 +148,7 @@ export const PayoutProcessing: React.FC = () => {
                 <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pending Balance</th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+            <tbody className="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
               {loading ? (
                 <tr><td colSpan={4} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">Loading payout queue...</td></tr>
               ) : pendingPayouts.length === 0 ? (
@@ -161,7 +161,7 @@ export const PayoutProcessing: React.FC = () => {
               ) : pendingPayouts.map((payout) => (
                 <tr
                   key={payout.driverId}
-                  className={`hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer ${selectedDriverIds.has(payout.driverId) ? 'bg-blue-50 dark:bg-blue-900/10' : ''
+                  className={`hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer ${selectedDriverIds.has(payout.driverId) ? 'bg-amber-50 dark:bg-amber-900/10' : ''
                     }`}
                   onClick={() => toggleSelection(payout.driverId)}
                 >
@@ -170,7 +170,7 @@ export const PayoutProcessing: React.FC = () => {
                       type="checkbox"
                       checked={selectedDriverIds.has(payout.driverId)}
                       onChange={() => toggleSelection(payout.driverId)}
-                      className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 bg-white dark:bg-slate-700 cursor-pointer"
+                      className="rounded border-slate-300 dark:border-slate-600 text-amber-600 focus:ring-amber-500 bg-white dark:bg-slate-700 cursor-pointer"
                     />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-900 dark:text-white">

@@ -459,7 +459,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     const SizedBox(width: 8),
                     Text(
                       'Reorganize Stop ${stopIndex + 1}',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -755,7 +755,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   const SizedBox(width: 8),
                   Text(
                     'Route',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: isDark ? Colors.white : Colors.black87,
@@ -1116,7 +1116,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       _stopControllers.isNotEmpty
                           ? 'Confirm Route (${_stopControllers.length} stop${_stopControllers.length > 1 ? "s" : ""})'
                           : 'Confirm Route & View Rides',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.2,

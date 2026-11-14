@@ -46,7 +46,7 @@ export default function RejectionReasonModal({
         <div className="space-y-4">
           <div>
             <label htmlFor="reason" className="block text-sm font-medium text-gray-700">Reason for Rejection</label>
-            <textarea id="reason" name="reason" rows={4} value={reason} onChange={(e) => setReason(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., The photo is blurry, please re-upload a clearer image." />
+            <textarea id="reason" name="reason" rows={4} value={reason} onChange={(e) => setReason(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm" placeholder="e.g., The photo is blurry, please re-upload a clearer image." />
           </div>
         </div>
         {error && <p className="text-red-500 text-sm mt-4">{error}</p>}

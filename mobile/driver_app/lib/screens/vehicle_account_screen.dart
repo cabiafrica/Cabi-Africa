@@ -339,7 +339,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
             Expanded(
               child: Text(
                 'Incentive Voucher',
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   color: textPrimary,
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
@@ -354,7 +354,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           children: [
             Text(
               inc.title,
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 color: gold,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -363,7 +363,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
             const SizedBox(height: 8),
             Text(
               inc.description,
-              style: GoogleFonts.outfit(color: textSecondary, fontSize: 13),
+              style: GoogleFonts.inter(color: textSecondary, fontSize: 13),
             ),
             const SizedBox(height: 16),
             Container(
@@ -484,7 +484,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
             const SizedBox(width: 10),
             Text(
               'Log Maintenance',
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 color: textPrimary,
                 fontWeight: FontWeight.bold,
               ),
@@ -616,7 +616,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
         foregroundColor: textPrimary,
         title: Text(
           'Vehicle Account',
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             fontWeight: FontWeight.bold,
             color: textPrimary,
             fontSize: 20,
@@ -758,7 +758,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                   children: [
                     Text(
                       '$make $model',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         color: textPrimary,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -767,7 +767,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                     const SizedBox(height: 2),
                     Text(
                       '$year • $color • $type',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         color: textSecondary,
                         fontSize: 13,
                       ),
@@ -875,7 +875,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
         const SizedBox(width: 4),
         Text(
           label,
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             color: textSecondary,
             fontSize: 11,
             fontWeight: FontWeight.w500,
@@ -981,7 +981,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           const SizedBox(height: 8),
           Text(
             value,
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.inter(
               color: textPrimary,
               fontSize: 17,
               fontWeight: FontWeight.bold,
@@ -990,7 +990,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           const SizedBox(height: 2),
           Text(
             label,
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.inter(
               color: textSecondary,
               fontSize: 11,
             ),
@@ -1021,7 +1021,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                 const SizedBox(width: 8),
                 Text(
                   'Incentive Qualification',
-                  style: GoogleFonts.outfit(
+                  style: GoogleFonts.inter(
                     color: textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -1050,7 +1050,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
         const SizedBox(height: 8),
         Text(
           'This vehicle qualifies for benefits based on completed trips and verified vehicle inspections.',
-          style: GoogleFonts.outfit(color: textSecondary, fontSize: 13),
+          style: GoogleFonts.inter(color: textSecondary, fontSize: 13),
         ),
         const SizedBox(height: 12),
         // Incentive Cards list
@@ -1111,7 +1111,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                   children: [
                     Text(
                       inc.title,
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         color: textPrimary,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -1119,7 +1119,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                     ),
                     Text(
                       inc.reward,
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         color: gold,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -1184,7 +1184,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           const SizedBox(height: 10),
           Text(
             inc.description,
-            style: GoogleFonts.outfit(color: textSecondary, fontSize: 12),
+            style: GoogleFonts.inter(color: textSecondary, fontSize: 12),
           ),
           const SizedBox(height: 12),
           // Progress bar
@@ -1253,7 +1253,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
             indicatorColor: gold,
             labelColor: gold,
             unselectedLabelColor: isDark ? Colors.grey : textSecondary,
-            labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+            labelStyle: GoogleFonts.inter(fontWeight: FontWeight.bold),
             tabs: const [
               Tab(text: 'Trip History'),
               Tab(text: 'Maintenance'),
@@ -1351,7 +1351,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                         ),
                         Text(
                           'KES ${trip.fare.toStringAsFixed(0)}',
-                          style: GoogleFonts.outfit(
+                          style: GoogleFonts.inter(
                             color: gold,
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -1364,7 +1364,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                       '${trip.pickup} → ${trip.dropoff}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         color: textSecondary,
                         fontSize: 12,
                       ),
@@ -1410,7 +1410,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
           children: [
             Text(
               'Maintenance Records (${_maintenance.length})',
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                   color: textPrimary, fontWeight: FontWeight.bold),
             ),
             TextButton.icon(
@@ -1463,7 +1463,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                               Expanded(
                                 child: Text(
                                   m.title,
-                                  style: GoogleFonts.outfit(
+                                  style: GoogleFonts.inter(
                                     color: textPrimary,
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -1472,7 +1472,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                               ),
                               Text(
                                 m.cost,
-                                style: GoogleFonts.outfit(
+                                style: GoogleFonts.inter(
                                   color: gold,
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -1483,7 +1483,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                           const SizedBox(height: 4),
                           Text(
                             m.garage,
-                            style: GoogleFonts.outfit(
+                            style: GoogleFonts.inter(
                               color: textSecondary,
                               fontSize: 11,
                             ),
@@ -1625,7 +1625,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                     Expanded(
                       child: Text(
                         title,
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           color: textPrimary,
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -1653,7 +1653,7 @@ class _VehicleAccountScreenState extends State<VehicleAccountScreen>
                 const SizedBox(height: 4),
                 Text(
                   issuer,
-                  style: GoogleFonts.outfit(color: textSecondary, fontSize: 12),
+                  style: GoogleFonts.inter(color: textSecondary, fontSize: 12),
                 ),
                 const SizedBox(height: 2),
                 Text(

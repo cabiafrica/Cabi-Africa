@@ -120,7 +120,7 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
             case 'completed':
                 return 'bg-green-500/20 text-green-400 border-green-500/30';
             case 'in-progress':
-                return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+                return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
             case 'cancelled':
                 return 'bg-red-500/20 text-red-400 border-red-500/30';
             case 'pending':
@@ -163,8 +163,8 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
 
             {/* Summary Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-gradient-to-br from-blue-600/10 to-blue-600/5 border border-blue-500/20 rounded-xl p-4">
-                    <p className="text-sm text-blue-400 mb-1">Total Trips</p>
+                <div className="bg-gradient-to-br from-amber-600/10 to-amber-600/5 border border-amber-500/20 rounded-xl p-4">
+                    <p className="text-sm text-amber-400 mb-1">Total Trips</p>
                     <p className="text-3xl font-bold text-white">{filteredTrips.length}</p>
                 </div>
                 <div className="bg-gradient-to-br from-green-600/10 to-green-600/5 border border-green-500/20 rounded-xl p-4">
@@ -173,8 +173,8 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
                         {filteredTrips.filter((t) => t.status === 'completed').length}
                     </p>
                 </div>
-                <div className="bg-gradient-to-br from-purple-600/10 to-purple-600/5 border border-purple-500/20 rounded-xl p-4">
-                    <p className="text-sm text-purple-400 mb-1">Total Revenue</p>
+                <div className="bg-gradient-to-br from-cyan-600/10 to-cyan-600/5 border border-cyan-500/20 rounded-xl p-4">
+                    <p className="text-sm text-cyan-400 mb-1">Total Revenue</p>
                     <p className="text-3xl font-bold text-white">
                         KES {filteredTrips.reduce((sum, t) => sum + (t.actualFare || 0), 0).toLocaleString()}
                     </p>
@@ -219,7 +219,7 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
                                     <td className="py-4 px-6">
                                         <div className="flex flex-col">
                                             <span className="text-xs font-bold text-gray-500 uppercase">Trip Code</span>
-                                            <span className="text-sm font-mono font-bold text-blue-400">{trip.id}</span>
+                                            <span className="text-sm font-mono font-bold text-amber-400">{trip.id}</span>
                                         </div>
                                     </td>
                                     <td className="py-4 px-6">
@@ -296,7 +296,7 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
                                                 e.stopPropagation();
                                                 setSelectedTrip(trip);
                                             }}
-                                            className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                                            className="text-sm text-amber-400 hover:text-amber-300 transition-colors"
                                         >
                                             View Details
                                         </button>

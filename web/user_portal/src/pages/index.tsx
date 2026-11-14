@@ -24,8 +24,25 @@ export default function HomePage({ posts }: HomePageProps) {
         <title>CABI Africa | Precision Chauffeur &amp; Urban Transit</title>
         <meta
           name="description"
-          content="Ultra-premium African mobility ecosystem with seamless ride booking, M-Pesa instant settlement, and executive concierge."
+          content="Ultra-premium African mobility ecosystem with seamless ride booking, mobile money instant settlement, and executive concierge."
         />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {/* OpenGraph Image SEO */}
+        <meta property="og:title" content="CABI Africa | Precision Chauffeur &amp; Urban Transit" />
+        <meta property="og:description" content="Ultra-premium African mobility ecosystem with seamless ride booking, mobile money instant settlement, and executive concierge." />
+        <meta property="og:image" content="https://cabi.africa/images/hero-fleet.jpg" />
+        <meta property="og:image:alt" content="CABI Africa multi-tier mobility fleet including electric Boda, CabiGo compact, Executive Sedan, and Diplomatic XL Van across Nairobi" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:type" content="website" />
+
+        {/* Twitter Card Image SEO */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="CABI Africa | Precision Chauffeur &amp; Urban Transit" />
+        <meta name="twitter:description" content="Ultra-premium African mobility ecosystem with seamless ride booking, mobile money instant settlement, and executive concierge." />
+        <meta name="twitter:image" content="https://cabi.africa/images/hero-fleet.jpg" />
+        <meta name="twitter:image:alt" content="CABI Africa multi-tier mobility fleet including electric Boda, CabiGo compact, Executive Sedan, and Diplomatic XL Van across Nairobi" />
       </Head>
 
       <Header />

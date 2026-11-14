@@ -157,7 +157,7 @@ export default function DocumentUpload({
                 ) : (
                     <div className="space-y-4">
                         <div className="relative rounded-lg overflow-hidden">
-                            <img src={preview} alt="Document preview" className="w-full h-auto max-h-96 object-contain bg-gray-900" />
+                            <img src={preview} alt="Verified driver identification document preview" width={600} height={400} loading="lazy" decoding="async" className="w-full h-auto max-h-96 object-contain bg-gray-900" />
                         </div>
                         <div className="flex gap-3">
                             <label

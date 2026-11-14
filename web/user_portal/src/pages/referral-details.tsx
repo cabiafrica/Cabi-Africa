@@ -17,10 +17,10 @@ import AppDownloadButtons from '@/components/ui/AppDownloadButtons';
 
 const WEALTH_INCENTIVES = [
     {
-        title: 'SACCO Additional Deposits',
+        title: 'Driver Wealth Equity Deposits',
         tag: 'Asset & Credit Growth',
         description:
-            'Qualifying drivers receive promotional top-up deposits directly into their partnered SACCO accounts—accelerating share capital, dividend earnings, and access to low-interest vehicle or personal financing.',
+            'Qualifying drivers receive promotional top-up deposits directly into their partnered wealth creation accounts—accelerating share capital, dividend earnings, and access to low-interest vehicle or personal financing.',
         icon: Landmark,
     },
     {
@@ -41,7 +41,7 @@ const WEALTH_INCENTIVES = [
         title: 'Multi-Tier Referral Network',
         tag: 'Passive Income',
         description:
-            'Invite fellow drivers and fleet operators with your unique referral code. When they complete verified trips, you earn ongoing referral commissions across direct and extended network tiers.',
+            'Invite fellow drivers and fleet operators with your unique referral code. When they complete verified trips, you earn ongoing referral incentives across direct and extended network tiers.',
         icon: Network,
     },
     {
@@ -55,7 +55,7 @@ const WEALTH_INCENTIVES = [
         title: 'Transparent Tracking & Fast Payouts',
         tag: 'Live Telemetry',
         description:
-            'Monitor referral earnings, promotional qualification progress, SACCO deposit credits, and M-Pesa settlements in real time inside your CABI Driver App.',
+            'Monitor referral earnings, promotional qualification progress, wealth creation credits, and mobile money settlements in real time inside your CABI Driver App.',
         icon: TrendingUp,
     },
 ] as const;
@@ -63,15 +63,17 @@ const WEALTH_INCENTIVES = [
 const QUALIFICATION_PILLARS = [
     'Complete consistent weekly trip milestones and maintain strong rider satisfaction ratings.',
     'Remain in good standing on safety, compliance, and digital verification checks.',
-    'Expand your active referral network by mentoring new CABI drivers and SACCO peers.',
-    'Receive automated promotional rewards as cash bonuses, SACCO deposits, insurance credits, or pension top-ups based on each active campaign.',
+    'Expand your active referral network by mentoring new CABI drivers and partner peers.',
+    'Receive automated promotional rewards as cash bonuses, wealth creation deposits, insurance credits, or pension top-ups based on each active campaign.',
 ];
 
 export default function ReferralDetailsPage() {
     return (
         <MainLayout
             title="CABI Wealth Promotions & Business Builder | CABI"
-            description="Explore CABI wealth-creation promotions including qualifying driver SACCO additional deposits, insurance support, pension top-ups, and multi-tier referral income."
+            description="Explore CABI wealth-creation promotions including qualifying driver wealth equity deposits, insurance support, pension top-ups, and multi-tier referral income."
+            image="/images/driver-analytics-graph.jpg"
+            imageAlt="CABI Africa Business Builder multi-tier driver referral and wealth creation promotions"
         >
             <div className="bg-slate-50 dark:bg-surface-dark transition-colors duration-300">
                 {/* Hero Section */}
@@ -93,9 +95,9 @@ export default function ReferralDetailsPage() {
                         </h1>
 
                         <p className="text-sm sm:text-lg text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto leading-relaxed">
-                            CABI runs ongoing promotional programs designed to help qualifying drivers and fleet partners create lasting wealth—combining multi-tier referral commissions with incentives such as{' '}
+                            CABI runs ongoing promotional programs designed to help qualifying drivers and fleet partners create lasting wealth—combining 2-level referral incentives with rewards such as{' '}
                             <span className="font-bold text-slate-900 dark:text-white">
-                                additional SACCO deposits, insurance support, and pension contributions
+                                additional wealth creation deposits, insurance support, and pension contributions
                             </span>.
                         </p>
 
@@ -202,7 +204,7 @@ export default function ReferralDetailsPage() {
                             How Drivers Qualify for Promotions &amp; Wealth Incentives
                         </h2>
                         <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed mb-6">
-                            Every CABI promotion announces clear qualification criteria in advance inside the Driver App so every operator knows how to unlock extra SACCO deposits, insurance subsidies, pension top-ups, and referral bonuses:
+                            Every CABI promotion announces clear qualification criteria in advance inside the Driver App so every operator knows how to unlock extra wealth creation deposits, insurance subsidies, pension top-ups, and referral bonuses:
                         </p>
                         <ul className="space-y-3.5">
                             {QUALIFICATION_PILLARS.map((item) => (
@@ -225,7 +227,7 @@ export default function ReferralDetailsPage() {
                                 </span>
                             </h2>
                             <p className="text-sm sm:text-lg text-neutral-300 mb-8 leading-relaxed">
-                                Join CABI as a verified driver or SACCO partner to qualify for upcoming promotions, SACCO deposit matches, insurance &amp; pension incentives, and referral earnings.
+                                Join CABI as a verified driver or wealth creation partner to qualify for upcoming promotions, wealth deposit matches, insurance &amp; pension incentives, and referral earnings.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <Link
@@ -240,7 +242,7 @@ export default function ReferralDetailsPage() {
                                     href="/drivers/group-register"
                                     className="inline-flex items-center justify-center px-8 py-3.5 rounded-xl bg-white/5 text-white border border-white/15 font-bold text-sm hover:border-[#D4AF37]/60 hover:text-[#ffe088] transition-colors"
                                 >
-                                    Register Fleet / SACCO
+                                    Register Fleet / Partner Group
                                 </Link>
                             </div>
 

@@ -4,7 +4,12 @@ import { APP_LINKS } from '@/config/appLinks';
 
 export default function DownloadApp() {
     return (
-        <MainLayout title="Download Cabi App" description="Get the Cabi app for iOS and Android.">
+        <MainLayout
+            title="Download Cabi App | CABI Africa"
+            description="Get the Cabi app for iOS and Android. Request rides or drive and earn with instant mobile money payouts."
+            image="/images/hero-fleet.jpg"
+            imageAlt="CABI Africa Passenger and Driver mobile apps for iOS and Android"
+        >
             <div className="bg-slate-50 dark:bg-surface-dark py-16 sm:py-24 px-4 sm:px-6 lg:px-8 min-h-[75vh] flex items-center">
                 <div className="mx-auto max-w-4xl w-full text-center">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-executive-gold/15 border border-executive-gold/30 mb-5">
@@ -25,7 +30,7 @@ export default function DownloadApp() {
                             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-executive-gold mb-2">For Riders</p>
                             <h2 className="text-xl font-black text-slate-900 dark:text-white mb-2">Cabi Passenger App</h2>
                             <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
-                                Request Boda, CabiGo, Executive, and Diplomatic rides with instant M-Pesa STK checkout.
+                                Request Boda, CabiGo, Executive, and Diplomatic rides with instant mobile money STK checkout.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-3">
                                 <a
@@ -60,7 +65,7 @@ export default function DownloadApp() {
                             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-executive-gold mb-2">For Partners</p>
                             <h2 className="text-xl font-black text-slate-900 dark:text-white mb-2">Cabi Driver App</h2>
                             <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
-                                Accept trip requests, track earnings in real time, and withdraw straight to M-Pesa.
+                                Accept trip requests, track earnings in real time, and withdraw straight to mobile money.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-3">
                                 <a

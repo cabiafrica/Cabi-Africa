@@ -1,28 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --primary: #FFD700;
-  /* Prestige Gold */
-  --primary-dark: #E6C200;
-  --secondary: #F59E0B;
-  --background: #0A0A0A;
-  /* Deep Prestige Black */
-  --surface: #141414;
-  /* Elevated Black Surface */
+  --primary: #F59E0B;
+  /* Cabi Brand Yellow */
+  --primary-dark: #D97706;
+  --secondary: #10B981;
+  --background: #0a0a0a;
+  /* Cabi Brand Black */
+  --surface: #121212;
+  /* Elevated Dark Surface */
   --text-main: #f1f5f9;
-  /* Slate 100 */
   --text-muted: #94a3b8;
-  /* Slate 400 */
 }
 
 body {
   background-color: var(--background);
   color: var(--text-main);
-  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -39,14 +37,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
-  /* Slate-700 */
+  background: #2E2E32;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
-  /* Slate-600 */
+  background: #D4AF37;
 }
 
 /* Fade in animation */
@@ -68,16 +64,15 @@ body {
 
 /* Glassmorphism utility */
 .glass-panel {
-  background: rgba(30, 41, 59, 0.7);
-  /* Darker glass */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Card component */
 .card {
-  @apply bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border border-slate-200 dark:border-slate-700/50 text-slate-900 dark:text-slate-100;
+  @apply bg-white dark:bg-card-dark rounded-xl shadow-lg p-6 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-slate-100;
 }
 
 /* Button component */
@@ -105,7 +100,7 @@ body {
   input[type="url"],
   textarea,
   select {
-    @apply bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-slate-400;
+    @apply bg-white dark:bg-card-dark text-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-slate-400;
   }
 }
 

@@ -130,7 +130,7 @@ export const SubgroupManagement: React.FC<Props> = ({ orgId, onBack }) => {
                                 <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{node.item.memberCount} members</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button onClick={() => openMembers(node.item)} className="text-xs text-blue-600 hover:text-blue-800">Members</button>
+                                <button onClick={() => openMembers(node.item)} className="text-xs text-amber-600 hover:text-amber-800">Members</button>
                                 <button onClick={() => { setIsCreating(true); setParentIdForCreate(node.item.id); setEditingNode(null); }} className="text-xs text-green-600 hover:text-green-800">+ Subgroup</button>
                                 <button onClick={() => { setEditingNode(node.item); setIsCreating(false); }} className="text-xs text-orange-600 hover:text-orange-800">Edit</button>
                                 <button onClick={() => handleDelete(node.item.id)} className="text-xs text-red-600 hover:text-red-800">Delete</button>
@@ -146,11 +146,11 @@ export const SubgroupManagement: React.FC<Props> = ({ orgId, onBack }) => {
     return (
         <div className="bg-white shadow rounded-lg p-6">
             <div className="flex items-center justify-between mb-6">
-                <button onClick={onBack} className="text-blue-600 hover:text-blue-800 flex items-center font-medium">&larr; Back to Orgs</button>
+                <button onClick={onBack} className="text-amber-600 hover:text-amber-800 flex items-center font-medium">&larr; Back to Orgs</button>
                 <h2 className="text-xl font-bold text-gray-800">Subgroup Management</h2>
                 <button
                     onClick={() => { setIsCreating(true); setParentIdForCreate(null); setEditingNode(null); }}
-                    className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700"
+                    className="bg-amber-500 text-black px-4 py-2 rounded text-sm hover:bg-amber-700"
                 >
                     Create Root Subgroup
                 </button>
@@ -182,7 +182,7 @@ export const SubgroupManagement: React.FC<Props> = ({ orgId, onBack }) => {
                             />
                             <div className="flex justify-end gap-2">
                                 <button type="button" onClick={() => { setEditingNode(null); setIsCreating(false); }} className="px-4 py-2 text-gray-600">Cancel</button>
-                                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
+                                <button type="submit" className="px-4 py-2 bg-amber-500 text-black rounded">Save</button>
                             </div>
                         </form>
                     </div>

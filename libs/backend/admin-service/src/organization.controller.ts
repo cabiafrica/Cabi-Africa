@@ -1,9 +1,10 @@
 import { Controller, Get, Post, Patch, Delete, Param, Body, UseGuards } from '@nestjs/common';
 import { OrganizationService } from './organization.service';
 import { JwtAuthGuard } from '@cabi/backend/rbac';
+import { AdminPermissionGuard } from './admin-permission.guard';
 
 @Controller('v1/organizations')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, AdminPermissionGuard)
 export class OrganizationController {
   constructor(private readonly orgService: OrganizationService) {}
 

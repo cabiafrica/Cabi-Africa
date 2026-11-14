@@ -9,6 +9,7 @@ export interface AuthUser {
   permissions?: string[]; // Granular permissions
   profilePictureUrl?: string;
   isTwoFactorEnabled?: boolean;
+  identityVerified?: boolean;
   driverProfileId?: string;
 }
 
@@ -34,7 +35,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const userDataString = localStorage.getItem('authUser');
     if (token && userDataString) {
       try {
-        setUser(JSON.parse(userDataString));
+        const parsed = JSON.parse(userDataString) as AuthUser;
+        if (parsed?.identityVerified === true) {
+          setUser(parsed);
+        } else {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('authUser');
+        }
       } catch (e) {
         localStorage.clear(); // Clear corrupted data
       }

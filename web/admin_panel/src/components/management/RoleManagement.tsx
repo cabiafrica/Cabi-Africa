@@ -37,7 +37,7 @@ export const RoleManagement: React.FC = () => {
         <h2 className="text-xl font-semibold text-gray-800">Role Management</h2>
         <button
           onClick={() => setEditingRole('new')}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          className="bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-lg text-sm font-medium transition-colors"
         >
           Create New Role
         </button>
@@ -54,7 +54,7 @@ export const RoleManagement: React.FC = () => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {roles.map(role => (
-              <tr key={role.id} className="hover:bg-indigo-50 transition-colors">
+              <tr key={role.id} className="hover:bg-cyan-50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">{role.name}</div>
                   <div className="text-xs text-gray-400">ID: {role.id}</div>
@@ -74,7 +74,7 @@ export const RoleManagement: React.FC = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button onClick={() => setEditingRole(role)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
+                  <button onClick={() => setEditingRole(role)} className="text-cyan-600 hover:text-cyan-900 mr-4">Edit</button>
                   <button onClick={() => handleDelete(role.id)} className="text-red-600 hover:text-red-900">Delete</button>
                 </td>
               </tr>

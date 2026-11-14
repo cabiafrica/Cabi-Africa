@@ -157,14 +157,23 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                 >
                                     {mounted && isAuthenticated ? (
                                         <>
-                                            <img
-                                                className="h-8 w-8 rounded-full object-cover border border-brand-yellow"
-                                                src={
-                                                    user?.profilePictureUrl ||
-                                                    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-                                                }
-                                                alt="User Avatar"
-                                            />
+                                            {user?.profilePictureUrl && !user.profilePictureUrl.includes('unsplash.com') ? (
+                                                <img
+                                                    className="h-8 w-8 rounded-full object-cover border border-brand-yellow"
+                                                    src={user.profilePictureUrl}
+                                                    alt={`${user?.firstName ? `${user.firstName}'s` : 'User'} Verified Profile Avatar`}
+                                                    width={32}
+                                                    height={32}
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                />
+                                            ) : (
+                                                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#ffe088] via-[#FACC15] to-[#D4AF37] p-0.5 shadow-sm">
+                                                    <div className="h-full w-full rounded-full bg-neutral-900 flex items-center justify-center text-[#D4AF37] font-black text-xs">
+                                                        {(user?.firstName?.[0] || 'C').toUpperCase()}
+                                                    </div>
+                                                </div>
+                                            )}
                                             <span className="hidden sm:block text-xs font-bold max-w-[90px] truncate">
                                                 {user?.firstName || 'Account'}
                                             </span>

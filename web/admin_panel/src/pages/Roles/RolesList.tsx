@@ -72,10 +72,10 @@ const RolesList: React.FC = () => {
 
     const getPlatformColor = (platform: string) => {
         switch (platform) {
-            case 'ADMIN_PANEL': return 'primary';
+            case 'ADMIN_PANEL': return 'warning';
             case 'DISPATCH_PANEL': return 'warning';
             case 'USER_PORTAL': return 'success';
-            case 'MOBILE_APP': return 'secondary';
+            case 'MOBILE_APP': return 'default';
             default: return 'default';
         }
     };
@@ -113,8 +113,9 @@ const RolesList: React.FC = () => {
                     startIcon={<AddIcon />}
                     onClick={() => navigate('/roles/new')}
                     sx={{
-                        background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                        boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+                        backgroundColor: '#F59E0B',
+                        color: '#0a0a0a',
+                        '&:hover': { backgroundColor: '#D97706' },
                         fontWeight: 'bold',
                         px: 3, py: 1
                     }}
@@ -170,7 +171,7 @@ const RolesList: React.FC = () => {
                                 }}>
                                     <TableCell sx={{ borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'white' }}>
                                         <Box display="flex" alignItems="center" gap={2}>
-                                            <Avatar sx={{ bgcolor: 'rgba(33, 150, 243, 0.2)', color: '#2196F3' }}>
+                                            <Avatar sx={{ bgcolor: 'rgba(245, 158, 11, 0.18)', color: '#F59E0B' }}>
                                                 <SecurityIcon fontSize="small" />
                                             </Avatar>
                                             <Box>
@@ -209,7 +210,7 @@ const RolesList: React.FC = () => {
                                             <Tooltip title="Edit Role">
                                                 <IconButton
                                                     onClick={() => navigate(`/roles/${role.id}`)}
-                                                    sx={{ color: '#2196F3' }}
+                                                    sx={{ color: '#F59E0B' }}
                                                 >
                                                     <EditIcon />
                                                 </IconButton>

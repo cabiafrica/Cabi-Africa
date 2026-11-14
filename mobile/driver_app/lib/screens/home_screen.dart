@@ -69,13 +69,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             const SizedBox(width: 10),
             Text(
               'Switched Offline',
-              style: GoogleFonts.outfit(color: isDark ? Colors.white : AppTheme.porcelainTextPrimary, fontWeight: FontWeight.bold),
+              style: GoogleFonts.inter(color: isDark ? Colors.white : AppTheme.porcelainTextPrimary, fontWeight: FontWeight.bold),
             ),
           ],
         ),
         content: Text(
           'You were automatically set offline after missing 3 consecutive qualifying trip requests in your pickup zone.\n\nNon-qualifying trips (outside radius or unaligned destinations) did not count against your record.\n\nSwipe online whenever you are ready to receive passenger trips.',
-          style: GoogleFonts.outfit(color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary, fontSize: 13, height: 1.4),
+          style: GoogleFonts.inter(color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary, fontSize: 13, height: 1.4),
         ),
         actions: [
           ElevatedButton(
@@ -84,7 +84,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               foregroundColor: isDark ? Colors.black : Colors.white,
             ),
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('Understood', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+            child: Text('Understood', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -668,7 +668,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 ),
                 Text(
                   existing == null ? 'Add Favourite Place' : 'Edit Favourite Place',
-                  style: GoogleFonts.outfit(
+                  style: GoogleFonts.inter(
                     fontSize: 18, fontWeight: FontWeight.bold,
                     color: Theme.of(context).textTheme.titleLarge?.color,
                   ),
@@ -1165,7 +1165,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             const SizedBox(width: 8),
                             Text(
                               "${vehicle['make']} ${vehicle['model']} • ${vehicle['plateNumber']}",
-                              style: GoogleFonts.outfit(
+                              style: GoogleFonts.inter(
                                 color: theme.textTheme.bodyLarge?.color?.withValues(alpha: 0.9),
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -1181,7 +1181,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                               ),
                               child: Text(
                                 service['badge'] as String,
-                                style: GoogleFonts.outfit(
+                                style: GoogleFonts.inter(
                                   color: AppTheme.primaryColor,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w800,
@@ -1196,7 +1196,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
                   Text(
                     _isOnline ? 'You are online' : 'Ready to drive?',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       color: theme.textTheme.bodyLarge?.color,
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
@@ -1215,7 +1215,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                             ? 'Looking for passenger trips near you (${service['name']})...'
                             : 'Go online to start receiving ride requests in your area.',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           color: theme.textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary,
                           fontSize: 13,
                         ),
@@ -1280,7 +1280,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                     const SizedBox(width: 8),
                                     Text(
                                       'Active Pick-up Radius',
-                                      style: GoogleFonts.outfit(
+                                      style: GoogleFonts.inter(
                                         color: theme.textTheme.bodyLarge?.color,
                                         fontWeight: FontWeight.w600,
                                         fontSize: 13,
@@ -1299,7 +1299,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                       ),
                                       child: Text(
                                         '${_tripRadiusKm.toStringAsFixed(1)} km (Max 5 km)',
-                                        style: GoogleFonts.outfit(
+                                        style: GoogleFonts.inter(
                                           color: AppTheme.primaryColor,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 11.5,
@@ -1378,7 +1378,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                   const SizedBox(width: 8),
                                   Text(
                                     'Trip Radius Filter',
-                                    style: GoogleFonts.outfit(
+                                    style: GoogleFonts.inter(
                                       color: theme.textTheme.bodyLarge?.color,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
@@ -1395,7 +1395,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                 ),
                                 child: Text(
                                   '${_tripRadiusKm.toStringAsFixed(1)} km (Max 5 km)',
-                                  style: GoogleFonts.outfit(
+                                  style: GoogleFonts.inter(
                                     color: AppTheme.primaryColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 12.5,
@@ -1509,7 +1509,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     const SizedBox(width: 10),
                     Text(
                       'SELECT NAVIGATION MAP',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
@@ -1521,7 +1521,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 const SizedBox(height: 6),
                 Text(
                   'Choose your preferred mapping provider for dispatch & live driving',
-                  style: GoogleFonts.outfit(
+                  style: GoogleFonts.inter(
                     fontSize: 13,
                     color: isDark ? Colors.white60 : Colors.black54,
                   ),
@@ -1617,7 +1617,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     children: [
                       Text(
                         title,
-                        style: GoogleFonts.outfit(
+                        style: GoogleFonts.inter(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: isSelected ? AppTheme.primaryColor : null,
@@ -1716,7 +1716,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 children: [
                   Text(
                     _isOnline ? 'Online • Full Screen Map' : 'Offline • Full Screen Map',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                       color: theme.textTheme.bodyLarge?.color,
@@ -1726,7 +1726,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     _isOnline
                         ? 'Monitoring trips (${_tripRadiusKm.toStringAsFixed(1)} km radius)'
                         : 'Explore Nairobi hotspots & traffic flow',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       fontSize: 11,
                       color: Colors.grey,
                     ),
@@ -1796,7 +1796,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         const SizedBox(width: 8),
                         Text(
                           name,
-                          style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -1948,7 +1948,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         const SizedBox(width: 10),
                         Text(
                           'DRIVER ROUTE PREFERENCES',
-                          style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                          style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1),
                         ),
                       ],
                     ),
@@ -2208,7 +2208,7 @@ class _StatCard extends StatelessWidget {
       children: [
         Text(
           value,
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             color: valueColor ?? AppTheme.primaryColor,
             fontWeight: FontWeight.w700,
             fontSize: 15,
@@ -2217,7 +2217,7 @@ class _StatCard extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           label,
-          style: GoogleFonts.outfit(
+          style: GoogleFonts.inter(
             color: Theme.of(context).textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary,
             fontSize: 11,
           ),
@@ -2253,7 +2253,7 @@ extension _FavouritePlacesUI on _HomeScreenState {
             const SizedBox(width: 6),
             Text(
               'Favourite Places',
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 color: theme.textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
@@ -2277,7 +2277,7 @@ extension _FavouritePlacesUI on _HomeScreenState {
                     const SizedBox(width: 4),
                     Text(
                       'Add',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         color: AppTheme.primaryColor,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -2295,7 +2295,7 @@ extension _FavouritePlacesUI on _HomeScreenState {
             padding: const EdgeInsets.only(bottom: 16),
             child: Text(
               'Save your home, work or frequent spots for fast destination setting.',
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 color: isDark ? Colors.white38 : Colors.black38,
                 fontSize: 12,
               ),
@@ -2333,14 +2333,14 @@ extension _FavouritePlacesUI on _HomeScreenState {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(label,
-                                    style: GoogleFonts.outfit(
+                                    style: GoogleFonts.inter(
                                         fontSize: 17,
                                         fontWeight: FontWeight.bold,
                                         color: theme
                                             .textTheme.titleLarge?.color)),
                                 const SizedBox(height: 6),
                                 Text(address,
-                                    style: GoogleFonts.outfit(
+                                    style: GoogleFonts.inter(
                                         color: isDark
                                             ? Colors.white54
                                             : Colors.black54,
@@ -2428,7 +2428,7 @@ extension _FavouritePlacesUI on _HomeScreenState {
                             const SizedBox(height: 4),
                             Text(
                               label,
-                              style: GoogleFonts.outfit(
+                              style: GoogleFonts.inter(
                                 color: isActive
                                     ? (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze)
                                     : theme.textTheme.bodyLarge?.color,
@@ -2440,7 +2440,7 @@ extension _FavouritePlacesUI on _HomeScreenState {
                             ),
                             Text(
                               address,
-                              style: GoogleFonts.outfit(
+                              style: GoogleFonts.inter(
                                 color: isDark
                                     ? Colors.white38
                                     : AppTheme.porcelainTextSecondary,
@@ -2658,7 +2658,7 @@ class _ExpandedHud extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 isOnline ? 'ONLINE' : 'OFFLINE',
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   color: onlineColor,
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
@@ -2682,7 +2682,7 @@ class _ExpandedHud extends StatelessWidget {
               ),
               child: Text(
                 isOnline ? 'Go Offline' : 'Go Online',
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   color: onlineColor,
                   fontSize: 11,
                   fontWeight: FontWeight.w700,

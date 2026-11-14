@@ -88,8 +88,8 @@ export default function ReferralAnalyticsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
                     <div className="bg-white rounded-lg shadow p-6">
                         <div className="flex items-center justify-between mb-4">
-                            <div className="p-3 bg-blue-100 rounded-lg">
-                                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="p-3 bg-amber-100 rounded-lg">
+                                <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                 </svg>
                             </div>
@@ -114,8 +114,8 @@ export default function ReferralAnalyticsPage() {
 
                     <div className="bg-white rounded-lg shadow p-6">
                         <div className="flex items-center justify-between mb-4">
-                            <div className="p-3 bg-purple-100 rounded-lg">
-                                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="p-3 bg-cyan-100 rounded-lg">
+                                <svg className="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                 </svg>
                             </div>
@@ -162,7 +162,7 @@ export default function ReferralAnalyticsPage() {
                                 <div className="flex items-center justify-between mb-2">
                                     <span className="text-sm font-semibold text-gray-700">{data.date}</span>
                                     <div className="flex space-x-4 text-sm">
-                                        <span className="text-blue-600">
+                                        <span className="text-amber-600">
                                             {data.referrals} referrals
                                         </span>
                                         <span className="text-green-600">
@@ -177,7 +177,7 @@ export default function ReferralAnalyticsPage() {
                                         <span className="text-xs text-gray-500 w-20">Referrals</span>
                                         <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
                                             <div
-                                                className="bg-blue-500 h-full rounded-full transition-all duration-500"
+                                                className="bg-amber-500 h-full rounded-full transition-all duration-500"
                                                 style={{ width: `${(data.referrals / 350) * 100}%` }}
                                             />
                                         </div>
@@ -239,7 +239,7 @@ export default function ReferralAnalyticsPage() {
                                         <div className="text-sm font-medium text-gray-900">{referrer.name}</div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${referrer.type === 'Driver' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${referrer.type === 'Driver' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800'
                                             }`}>
                                             {referrer.type}
                                         </span>

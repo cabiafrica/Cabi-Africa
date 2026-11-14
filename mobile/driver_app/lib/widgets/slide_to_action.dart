@@ -42,7 +42,7 @@ class _SlideToActionState extends State<SlideToAction> {
           Center(
             child: Text(
               widget.label,
-              style: GoogleFonts.outfit(
+              style: GoogleFonts.inter(
                 color: widget.textColor.withValues(alpha: 0.7),
                 fontSize: 12,
                 fontWeight: FontWeight.w700,

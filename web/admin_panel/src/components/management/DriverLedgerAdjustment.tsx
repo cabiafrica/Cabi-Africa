@@ -60,7 +60,7 @@ export const DriverLedgerAdjustment: React.FC<DriverLedgerAdjustmentProps> = ({ 
                             type="number"
                             value={amount}
                             onChange={(e) => setAmount(Number(e.target.value))}
-                            className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 pr-12 sm:text-sm border-gray-300 rounded-md py-2 border"
+                            className="focus:ring-amber-500 focus:border-amber-500 block w-full pl-3 pr-12 sm:text-sm border-gray-300 rounded-md py-2 border"
                             placeholder="0.00"
                             required
                         />
@@ -73,7 +73,7 @@ export const DriverLedgerAdjustment: React.FC<DriverLedgerAdjustmentProps> = ({ 
                     <select
                         value={type}
                         onChange={(e) => setType(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md border"
+                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm rounded-md border"
                     >
                         <option value="Manual Credit">Manual Credit</option>
                         <option value="Manual Debit">Manual Debit</option>
@@ -89,7 +89,7 @@ export const DriverLedgerAdjustment: React.FC<DriverLedgerAdjustmentProps> = ({ 
                         value={reason}
                         onChange={(e) => setReason(e.target.value)}
                         rows={3}
-                        className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border py-2 px-3 focus:ring-blue-500 focus:border-blue-500"
+                        className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border py-2 px-3 focus:ring-amber-500 focus:border-amber-500"
                         required
                         placeholder="Explain why this adjustment is being made..."
                     />
@@ -98,7 +98,7 @@ export const DriverLedgerAdjustment: React.FC<DriverLedgerAdjustmentProps> = ({ 
                 <button
                     type="submit"
                     disabled={loading}
-                    className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-amber-500 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                     {loading ? 'Processing...' : 'Submit Adjustment'}
                 </button>

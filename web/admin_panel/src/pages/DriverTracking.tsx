@@ -97,7 +97,7 @@ export default function DriverTracking() {
         type: 'driver',
         status: driver.status,
         popup: `
-          <div style="padding: 8px; min-width: 150px; background: #0F172A; color: white;">
+          <div style="padding: 8px; min-width: 150px; background: #141416; color: white;">
             <strong style="font-size: 14px; color: #FFD700;">${driver.name}</strong><br/>
             <span style="font-size: 12px; opacity: 0.8;">${driver.id}</span>
           </div>

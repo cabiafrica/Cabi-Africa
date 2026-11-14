@@ -79,7 +79,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
 
           Text(
             'Driver Coming From Afar',
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.inter(
               color: textPrimary,
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -89,7 +89,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
           Text(
             'Your driver is traveling from outside their standard pickup area to reach you.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(
+            style: GoogleFonts.inter(
               color: textSecondary,
               fontSize: 13,
             ),
@@ -111,7 +111,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
                   children: [
                     Text(
                       '${distanceKm.toStringAsFixed(1)} KM',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         color: goldColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -119,7 +119,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
                     ),
                     Text(
                       'Pickup Distance',
-                      style: GoogleFonts.outfit(color: textDim, fontSize: 11),
+                      style: GoogleFonts.inter(color: textDim, fontSize: 11),
                     ),
                   ],
                 ),
@@ -128,7 +128,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
                   children: [
                     Text(
                       '~$estimatedArrivalMinutes MINS',
-                      style: GoogleFonts.outfit(
+                      style: GoogleFonts.inter(
                         color: textPrimary,
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -136,7 +136,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
                     ),
                     Text(
                       'Expected Wait Time',
-                      style: GoogleFonts.outfit(color: textDim, fontSize: 11),
+                      style: GoogleFonts.inter(color: textDim, fontSize: 11),
                     ),
                   ],
                 ),
@@ -162,7 +162,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'No Extra Fee: Standard fare applies. Cabi compensates the driver for the extra distance.',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       color: isDark ? const Color(0xFF6EE7B7) : const Color(0xFF065F46),
                       fontSize: 11.5,
                       fontWeight: FontWeight.w500,
@@ -188,7 +188,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Communication is encouraged: call or message your driver to coordinate your pickup spot.',
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       color: textSecondary,
                       fontSize: 11,
                     ),
@@ -215,7 +215,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
               ),
               child: Text(
                 'I AGREE TO WAIT (~$estimatedArrivalMinutes MINS)',
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   fontWeight: FontWeight.bold,
                   fontSize: 13.5,
                   letterSpacing: 0.5,
@@ -232,7 +232,7 @@ class ExtendedPickupConsentModal extends StatelessWidget {
               onPressed: onDecline,
               child: Text(
                 'Find Closer Driver / Cancel',
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   color: textDim,
                   fontSize: 13,
                 ),

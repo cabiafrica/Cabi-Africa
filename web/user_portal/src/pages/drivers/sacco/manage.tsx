@@ -141,7 +141,7 @@ export default function DriverSaccoManage() {
         body: JSON.stringify({ driverId }),
       });
       setConfirmUnenroll(false);
-      setSuccessMsg('You have unenrolled from the Sacco. No further remittances will be deducted.');
+      setSuccessMsg('You have unenrolled from the Wealth Creation program. No further remittances will be deducted.');
       await loadData();
     } catch (e: any) {
       setError(e.message);
@@ -167,10 +167,10 @@ export default function DriverSaccoManage() {
         <div>
           <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
             <Building2 className="w-7 h-7 text-yellow-400" />
-            Sacco Services
+            Wealth Creation &amp; Equity Services
           </h1>
           <p className="text-gray-400 text-sm mt-1">
-            Opt into our partner Sacco to grow your financial security — voluntary, transparent, yours.
+            Opt into our wealth creation and asset ownership programs to grow your financial security — voluntary, transparent, yours.
           </p>
         </div>
 
@@ -193,7 +193,7 @@ export default function DriverSaccoManage() {
           <div className="p-6 bg-white/5 border border-white/10 rounded-2xl text-center">
             <Building2 className="w-10 h-10 mx-auto mb-3 text-gray-500 opacity-50" />
             <p className="text-gray-400 text-sm">
-              No Sacco partner is currently active. Check back soon.
+              No wealth creation partner is currently active. Check back soon.
             </p>
           </div>
         )}
@@ -247,7 +247,7 @@ export default function DriverSaccoManage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">To Sacco</p>
+                    <p className="text-xs text-gray-500">To Wealth Fund</p>
                     <p className={`font-black text-lg ${status.enrolled ? 'text-yellow-400' : 'text-gray-600'}`}>
                       {status.enrolled
                         ? `${status.incentiveActive ? (status.mandatoryPct ?? 2) + 3 : status.mandatoryPct ?? 2}%`
@@ -265,7 +265,7 @@ export default function DriverSaccoManage() {
                 </div>
                 {status.enrolled && status.incentiveActive && (
                   <p className="text-xs text-green-400 text-center mt-2">
-                    ✨ Joining incentive active — Cabi is contributing an extra 3% to your Sacco
+                    ✨ Joining incentive active — Cabi is contributing an extra 3% to your Wealth Creation Fund
                   </p>
                 )}
               </div>
@@ -283,12 +283,12 @@ export default function DriverSaccoManage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-bold text-white">
-                  {status.enrolled ? 'Enrolled in Sacco' : 'Not enrolled'}
+                  {status.enrolled ? 'Enrolled in Wealth Creation Fund' : 'Not enrolled'}
                 </p>
                 <p className="text-xs text-gray-400 mt-0.5">
                   {status.enrolled
                     ? `Joined ${new Date(status.saccoEnrolledAt!).toLocaleDateString('en-KE', { day: '2-digit', month: 'short', year: 'numeric' })}`
-                    : 'Enroll to start building your financial safety net'}
+                    : 'Enroll to start building your financial safety net and asset equity'}
                 </p>
               </div>
               {status.enrolled ? (
@@ -308,7 +308,7 @@ export default function DriverSaccoManage() {
             {status.enrolled && (
               <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
                 <p className="text-xs text-gray-500">
-                  You can opt out at any time. Existing remittances remain in the Sacco.
+                  You can opt out at any time. Existing remittances remain in your wealth creation account.
                 </p>
                 <button
                   onClick={() => setConfirmUnenroll(true)}
@@ -329,7 +329,7 @@ export default function DriverSaccoManage() {
             <div>
               <p className="font-bold text-yellow-400 text-sm">Joining Incentive Active</p>
               <p className="text-xs text-gray-400 mt-0.5">
-                Cabi is adding an extra 3% to your Sacco for{' '}
+                Cabi is adding an extra 3% to your Wealth Creation Fund for{' '}
                 <span className="text-white font-bold">{daysRemaining(status.incentiveExpiresAt)} more days</span>.
                 Expires{' '}
                 {new Date(status.incentiveExpiresAt).toLocaleDateString('en-KE', {
@@ -348,7 +348,7 @@ export default function DriverSaccoManage() {
             <div className="flex items-center gap-3">
               <TrendingUp className="w-5 h-5 text-yellow-400" />
               <div>
-                <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Total Remitted to Sacco</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Total Remitted to Wealth Fund</p>
                 <p className="text-2xl font-black text-white">{kes(status.totalRemitted)}</p>
               </div>
             </div>
@@ -387,9 +387,9 @@ export default function DriverSaccoManage() {
         {confirmUnenroll && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
             <div className="bg-[#111] border border-white/10 rounded-2xl w-full max-w-sm p-6 space-y-4">
-              <h3 className="font-bold text-white text-lg">Opt out of Sacco?</h3>
+              <h3 className="font-bold text-white text-lg">Opt out of Wealth Creation Program?</h3>
               <p className="text-sm text-gray-400 leading-relaxed">
-                You will stop making remittances after your next trip. Funds already sent to the Sacco remain in your account with {partner?.name}.
+                You will stop making remittances after your next trip. Funds already remitted to the wealth fund remain in your account with {partner?.name}.
               </p>
               <div className="flex gap-3 pt-2">
                 <button

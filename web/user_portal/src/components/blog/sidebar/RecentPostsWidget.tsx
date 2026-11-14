@@ -24,7 +24,11 @@ export default function RecentPostsWidget({ posts }: RecentPostsWidgetProps) {
                             <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-surface-dark border border-white/10">
                                 <img
                                     src={post.imageUrl}
-                                    alt={post.title}
+                                    alt={`${post.title} — CABI Africa mobility editorial thumbnail`}
+                                    width={64}
+                                    height={64}
+                                    loading="lazy"
+                                    decoding="async"
                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform"
                                 />
                             </div>

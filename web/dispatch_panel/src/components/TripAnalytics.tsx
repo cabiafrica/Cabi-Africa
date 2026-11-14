@@ -65,8 +65,8 @@ const TripAnalytics = ({ analytics: rawAnalytics, onUndock, isUndocked }: TripAn
     // Data for Cancellation Source Pie Chart (avoiding purple, using cyan)
     const cancellationSourceData = [
         { name: 'Passenger', value: analytics.cancellationsByPassenger, color: '#f59e0b', source: 'passenger' as const },
-        { name: 'Driver', value: analytics.cancellationsByDriver, color: '#3b82f6', source: 'driver' as const },
-        { name: 'System', value: analytics.cancellationsBySystem, color: '#06b6d4', source: 'system' as const },
+        { name: 'Driver', value: analytics.cancellationsByDriver, color: '#22D3EE', source: 'driver' as const },
+        { name: 'System', value: analytics.cancellationsBySystem, color: '#94A3B8', source: 'system' as const },
     ];
 
     // Filter cancellation reasons based on selected source
@@ -101,7 +101,7 @@ const TripAnalytics = ({ analytics: rawAnalytics, onUndock, isUndocked }: TripAn
             case 'passenger':
                 return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
             case 'driver':
-                return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+                return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
             case 'system':
                 return 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30';
         }
@@ -134,7 +134,7 @@ const TripAnalytics = ({ analytics: rawAnalytics, onUndock, isUndocked }: TripAn
                         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span>Trip Telemetry Monitor</span>
                         {isUndocked && (
-                            <span className="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full">
+                            <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full">
                                 SCREEN 2
                             </span>
                         )}
@@ -149,8 +149,8 @@ const TripAnalytics = ({ analytics: rawAnalytics, onUndock, isUndocked }: TripAn
             )}
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-gradient-to-br from-blue-600/10 to-blue-600/5 border border-blue-500/20 rounded-xl p-6">
-                    <p className="text-sm text-blue-400 mb-2">Total Trips</p>
+                <div className="bg-gradient-to-br from-amber-600/10 to-amber-600/5 border border-amber-500/20 rounded-xl p-6">
+                    <p className="text-sm text-amber-400 mb-2">Total Trips</p>
                     <p className="text-4xl font-bold text-white">{analytics.totalTrips}</p>
                 </div>
                 <div className="bg-gradient-to-br from-green-600/10 to-green-600/5 border border-green-500/20 rounded-xl p-6">
@@ -261,11 +261,11 @@ const TripAnalytics = ({ analytics: rawAnalytics, onUndock, isUndocked }: TripAn
                         <button
                             onClick={() => handlePieClick({ source: 'driver' })}
                             className={`flex items-center gap-2 px-3 py-1 rounded-lg transition-all ${selectedSource === 'driver'
-                                ? 'bg-blue-500/20 border border-blue-500/50'
+                                ? 'bg-amber-500/20 border border-amber-500/50'
                                 : 'hover:bg-slate-800/50'
                                 }`}
                         >
-                            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                            <div className="w-3 h-3 rounded-full bg-amber-500"></div>
                             <span className="text-sm text-slate-400">Driver ({analytics.cancellationsByDriver})</span>
                         </button>
                         <button
@@ -320,7 +320,7 @@ const TripAnalytics = ({ analytics: rawAnalytics, onUndock, isUndocked }: TripAn
                             </span>
                         )}
                     </h3>
-                    <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                    <button className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-black rounded-lg text-sm font-medium transition-colors">
                         View All
                     </button>
                 </div>
@@ -340,7 +340,7 @@ const TripAnalytics = ({ analytics: rawAnalytics, onUndock, isUndocked }: TripAn
                             {filteredRecentCancellations.map((cancellation) => (
                                 <tr key={cancellation.id} className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
                                     <td className="py-4 px-4">
-                                        <span className="text-sm font-mono text-blue-400">{cancellation.rideId}</span>
+                                        <span className="text-sm font-mono text-amber-400">{cancellation.rideId}</span>
                                     </td>
                                     <td className="py-4 px-4">
                                         <span className="text-sm text-white">{cancellation.passengerName || 'N/A'}</span>

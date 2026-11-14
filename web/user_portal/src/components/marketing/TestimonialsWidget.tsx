@@ -1,39 +1,45 @@
 import Slider from 'react-slick';
-import Image from 'next/image';
 import { FaQuoteLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { ShieldCheck, TrendingUp, Sparkles, Wrench } from 'lucide-react';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 const testimonials = [
     {
-        content: "Cabi has completely transformed how I manage my daily commute. The reliability is unmatched and the chauffeurs are always courteous.",
-        author: "Sarah J.",
-        role: "Regular Passenger",
-        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+        content: "The chauffeurs are suddenly so calm, courteous, and respectful. It proved the driver was never the problem—oppressive commissions on legacy apps were. Treated with dignity and fair pay, you get an executive experience no other app can touch.",
+        author: "Amina N.",
+        role: "Corporate Commuter, Nairobi",
+        seal: "Dignity & Courtesy Crest",
+        initials: "AN",
+        icon: ShieldCheck,
+        highlight: "Respect & Dignity",
     },
     {
-        content: "Finally, a platform that respects drivers. The commission rates are fair, and payouts settle fast. I'm building my own business.",
-        author: "David K.",
-        role: "Partner Driver",
-        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+        content: "You feel a different energy in the cabin. Daily rides directly fund vehicle ownership and family wealth creation through Cabi's reusable commission. Drivers can finally build lasting wealth, and that pride shines in every mile.",
+        author: "David M.",
+        role: "Tech Executive & Regular Rider",
+        seal: "Partner Wealth & Equity Crest",
+        initials: "DM",
+        icon: TrendingUp,
+        highlight: "Driver Wealth Creation",
     },
     {
-        content: "Managing our team's vehicles and driver schedules is effortless through the Cabi fleet dashboard. It's a huge step forward.",
-        author: "Michael T.",
-        role: "Fleet Manager",
-        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+        content: "Oppressive commissions on other apps forced us to postpone repairs. Now, with Cabi's reusable commission funding vehicle upkeep and wealth creation, servicing my car is completely effortless. Passengers immediately notice how silent and well-maintained it is.",
+        author: "Josphat K.",
+        role: "Driver Partner (4 Yrs Driving), Nairobi",
+        seal: "Vehicle Wellness & Upkeep Crest",
+        initials: "JK",
+        icon: Wrench,
+        highlight: "Effortless Maintenance & Pride",
     },
     {
-        content: "Safety is my top priority, and Cabi's live ride sharing and trip PIN features give me peace of mind every time I ride at night.",
-        author: "Emily R.",
-        role: "Passenger",
-        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    },
-    {
-        content: "The ability to onboard our vehicles and track operations transparently has helped our SACCO grow with confidence.",
-        author: "James O.",
-        role: "Sacco Owner",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+        content: "Hands down the best mobility experience. Verified 4-digit PIN safety, calm sanctuaries, and zero surge extortion. Cabi proved drivers were never chaotic—greedy app design was. Riding here is peaceful, reliable, and best-in-class.",
+        author: "Zainab B.",
+        role: "Regional Business Traveler",
+        seal: "Executive Sanctuary Seal",
+        initials: "ZB",
+        icon: Sparkles,
+        highlight: "Best Experience Like No Other",
     },
 ];
 
@@ -69,17 +75,18 @@ export default function TestimonialsWidget() {
         slidesToShow: 3,
         slidesToScroll: 1,
         autoplay: true,
-        autoplaySpeed: 5000,
+        autoplaySpeed: 5500,
+        pauseOnHover: true,
         nextArrow: <NextArrow />,
         prevArrow: <PrevArrow />,
         responsive: [
             {
                 breakpoint: 1280,
-                settings: { slidesToShow: 2 },
+                settings: { slidesToShow: 2, infinite: true, autoplay: true, autoplaySpeed: 5000 },
             },
             {
                 breakpoint: 768,
-                settings: { slidesToShow: 1, arrows: false },
+                settings: { slidesToShow: 1, infinite: true, autoplay: true, autoplaySpeed: 5000, arrows: false },
             },
         ],
         customPaging: () => (
@@ -97,7 +104,7 @@ export default function TestimonialsWidget() {
                     <div className="mb-4 flex items-center justify-center gap-3">
                         <span className="h-px w-8 bg-[#D4AF37] opacity-60" />
                         <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D4AF37]">
-                            Community Feedback
+                            Satisfied Users
                         </span>
                         <span className="h-px w-8 bg-[#D4AF37] opacity-60" />
                     </div>
@@ -108,39 +115,47 @@ export default function TestimonialsWidget() {
                         </span>
                     </h2>
                     <p className="text-neutral-600 dark:text-neutral-400 text-sm sm:text-lg max-w-2xl mx-auto leading-relaxed">
-                        Stories and feedback from passengers, driver-partners, and fleet operators riding with CABI.
+                        What happens when you eliminate exploitative platform greed and treat partners with dignity: real reflections from riders and driver partners across our ecosystem.
                     </p>
                 </div>
 
-                <div className="mx-auto max-w-7xl px-0 sm:px-10">
+                <div className="mx-auto max-w-7xl px-0 sm:px-6">
                     <Slider {...settings} className="testimonial-slider">
                         {testimonials.map((t, i) => (
-                            <div key={i} className="px-2 sm:px-3 py-4 sm:py-6">
-                                <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 hover:border-[#D4AF37]/50 shadow-sm hover:shadow-xl transition-all duration-500 h-full flex flex-col group relative overflow-hidden">
+                            <div key={i} className="px-2 sm:px-3 py-4 sm:py-6 h-full">
+                                <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 hover:border-[#D4AF37]/50 shadow-sm hover:shadow-xl transition-all duration-500 h-full flex flex-col justify-between group relative overflow-hidden min-h-[380px]">
                                     <div className="absolute -top-10 -right-10 w-28 h-28 bg-[#D4AF37]/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                                    <FaQuoteLeft className="text-[#D4AF37]/25 group-hover:text-[#D4AF37]/50 text-3xl mb-6 transition-colors duration-300" />
+                                    <div>
+                                        <div className="flex items-center justify-between mb-6">
+                                            <FaQuoteLeft className="text-[#D4AF37]/30 group-hover:text-[#D4AF37]/60 text-2xl sm:text-3xl transition-colors duration-300" />
+                                            <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30">
+                                                {t.highlight}
+                                            </span>
+                                        </div>
 
-                                    <p className="text-neutral-700 dark:text-neutral-300 text-base sm:text-lg leading-relaxed mb-8 font-normal italic relative z-10">
-                                        &ldquo;{t.content}&rdquo;
-                                    </p>
+                                        <p className="text-neutral-700 dark:text-neutral-300 text-sm sm:text-base leading-relaxed mb-8 font-normal italic relative z-10">
+                                            &ldquo;{t.content}&rdquo;
+                                        </p>
+                                    </div>
 
                                     <div className="flex items-center gap-4 mt-auto pt-6 border-t border-slate-200 dark:border-white/10 relative z-10">
-                                        <div className="relative">
-                                            <div className="absolute -inset-1 bg-gradient-to-tr from-[#ffe088] via-[#FACC15] to-[#D4AF37] rounded-full opacity-35 group-hover:opacity-80 transition-opacity duration-500 blur-sm" />
-                                            <Image
-                                                src={t.image}
-                                                alt={t.author}
-                                                width={52}
-                                                height={52}
-                                                className="rounded-full relative z-10 border-2 border-[#D4AF37]/40"
-                                            />
+                                        <div className="relative flex-shrink-0">
+                                            <div className="absolute -inset-1 bg-gradient-to-tr from-[#ffe088] via-[#FACC15] to-[#D4AF37] rounded-2xl opacity-40 group-hover:opacity-90 transition-opacity duration-500 blur-sm" />
+                                            <div className="w-12 h-12 rounded-2xl bg-neutral-900 border border-[#D4AF37]/50 flex items-center justify-center relative z-10 shadow-md">
+                                                <t.icon className="w-5 h-5 text-[#D4AF37]" />
+                                            </div>
                                         </div>
                                         <div>
-                                            <h4 className="font-black text-slate-900 dark:text-white text-base tracking-tight uppercase">
-                                                {t.author}
-                                            </h4>
-                                            <p className="text-[11px] text-[#D4AF37] font-extrabold uppercase tracking-[0.2em]">
+                                            <div className="flex items-center gap-2">
+                                                <h4 className="font-black text-slate-900 dark:text-white text-base tracking-tight uppercase">
+                                                    {t.author}
+                                                </h4>
+                                                <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30">
+                                                    {t.initials}
+                                                </span>
+                                            </div>
+                                            <p className="text-[11px] text-[#D4AF37] font-extrabold uppercase tracking-[0.15em]">
                                                 {t.role}
                                             </p>
                                         </div>

@@ -41,7 +41,7 @@ export default function HomepageManagementPage() {
                     <h1 className="text-2xl font-bold">Manage Homepage</h1>
                     <p className="text-gray-600">Update key sections of the homepage.</p>
                 </div>
-                <button className="text-blue-600 border border-blue-600 px-4 py-2 rounded hover:bg-blue-50">
+                <button className="text-amber-600 border border-amber-600 px-4 py-2 rounded hover:bg-amber-50">
                     View Live Site
                 </button>
             </div>
@@ -55,7 +55,7 @@ export default function HomepageManagementPage() {
                         <p className="text-xs text-gray-500 mb-1">The main headline that appears at the top of the page.</p>
                         <input
                             type="text"
-                            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full p-2 border rounded focus:ring-2 focus:ring-amber-500 outline-none"
                             value={data.heroTitle}
                             onChange={(e) => handleChange('heroTitle', e.target.value)}
                         />
@@ -66,7 +66,7 @@ export default function HomepageManagementPage() {
                         <p className="text-xs text-gray-500 mb-1">A brief description under the title.</p>
                         <input
                             type="text"
-                            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full p-2 border rounded focus:ring-2 focus:ring-amber-500 outline-none"
                             value={data.heroSubtitle}
                             onChange={(e) => handleChange('heroSubtitle', e.target.value)}
                         />
@@ -77,7 +77,7 @@ export default function HomepageManagementPage() {
                         <p className="text-xs text-gray-500 mb-1">The text on the primary button (e.g. "Join Now")</p>
                         <input
                             type="text"
-                            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full p-2 border rounded focus:ring-2 focus:ring-amber-500 outline-none"
                             value={data.ctaText}
                             onChange={(e) => handleChange('ctaText', e.target.value)}
                         />
@@ -93,7 +93,7 @@ export default function HomepageManagementPage() {
                     <button
                         onClick={handleSave}
                         disabled={loading}
-                        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                        className="bg-amber-500 text-black px-6 py-2 rounded hover:bg-amber-700 disabled:opacity-50 transition-colors"
                     >
                         {loading ? 'Saving...' : 'Save Updates'}
                     </button>

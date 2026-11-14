@@ -19,7 +19,7 @@ export default function HelpContentManager() {
                             <tr key={f.id}>
                                 <td className="border p-2">{f.q}</td>
                                 <td className="border p-2">{f.category}</td>
-                                <td className="border p-2 text-blue-600">Edit</td>
+                                <td className="border p-2 text-amber-600">Edit</td>
                             </tr>
                         ))}
                     </tbody>

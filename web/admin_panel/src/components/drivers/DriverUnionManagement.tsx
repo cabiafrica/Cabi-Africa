@@ -39,7 +39,7 @@ export const DriverUnionManagement: React.FC = () => {
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button className="text-blue-600 hover:text-blue-900 mr-2">Manage</button>
+                                    <button className="text-amber-600 hover:text-amber-900 mr-2">Manage</button>
                                     {u.status === 'PENDING' && <button className="text-green-600 hover:text-green-900">Approve</button>}
                                 </td>
                             </tr>

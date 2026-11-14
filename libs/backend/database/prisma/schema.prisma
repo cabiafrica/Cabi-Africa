@@ -130,6 +130,7 @@ model DriverProfile {
   benefitClaims       VehicleBenefitClaim[]    // self-reported maintenance
   welfareEnrollments  WelfareEnrollment[]
   welfareDeductions   WelfareDeduction[]
+  wealthEnrollments   DriverWealthEnrollment[]
 
   // External Sacco & Financial Services integration
   saccoEnrolled       Boolean                  @default(false)
@@ -605,9 +606,11 @@ model Badge {
   criteria            Json
   isActive            Boolean              @default(true)
   createdAt           DateTime             @default(now())
-  badgeRewardMappings BadgeRewardMapping[]
-  sosConfigs          SosConfig[]
-  userBadges          UserBadge[]
+  badgeRewardMappings    BadgeRewardMapping[]
+  sosConfigs             SosConfig[]
+  userBadges             UserBadge[]
+  wealthProgramsRequired WealthProgram[]          @relation("WealthProgramRequiredBadge")
+  wealthIncentives       BadgeWealthIncentive[]
 
   @@map("badges")
 }
@@ -1381,4 +1384,87 @@ model FinancialIncentiveRule {
   updatedAt    DateTime             @updatedAt
 
   @@map("financial_incentive_rules")
+}
+
+// ─── Wealth Creation Programs & Badge Incentives ───────────────────────────────
+
+enum WealthProgramCategory {
+  SACCO
+  INVESTMENT_MMF
+  PENSION
+  INSURANCE_HEALTH
+  ASSET_FINANCING
+}
+
+enum WealthIncentiveMode {
+  UNLOCK_ACCESS
+  AUTO_ENROLL
+  PLATFORM_MATCH
+  UNLOCK_AND_MATCH
+}
+
+enum WealthEnrollmentSource {
+  DRIVER_CHOSEN
+  BADGE_INCENTIVE
+}
+
+model WealthProgram {
+  id                 String                   @id @default(uuid())
+  code               String                   @unique
+  name               String
+  description        String
+  category           WealthProgramCategory    @default(SACCO)
+  providerName       String?
+  logoUrl            String?
+  minPct             Float                    @default(0.02)
+  maxPct             Float                    @default(0.20)
+  defaultPct         Float                    @default(0.05)
+  dividendOrYield    String
+  isDriverSelectable Boolean                  @default(true)
+  requiredBadgeId    String?
+  platformBonusPct   Float                    @default(0.0)
+  isActive           Boolean                  @default(true)
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  requiredBadge      Badge?                   @relation("WealthProgramRequiredBadge", fields: [requiredBadgeId], references: [id])
+  badgeIncentives    BadgeWealthIncentive[]
+  enrollments        DriverWealthEnrollment[]
+
+  @@map("wealth_programs")
+}
+
+model BadgeWealthIncentive {
+  id            String              @id @default(uuid())
+  badgeId       String
+  programId     String
+  incentiveMode WealthIncentiveMode @default(UNLOCK_AND_MATCH)
+  bonusMatchPct Float               @default(0.0)
+  autoEnrollPct Float               @default(0.0)
+  isActive      Boolean             @default(true)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  badge         Badge               @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  program       WealthProgram       @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@unique([badgeId, programId])
+  @@map("badge_wealth_incentives")
+}
+
+model DriverWealthEnrollment {
+  id               String                 @id @default(uuid())
+  driverProfileId  String
+  programId        String
+  source           WealthEnrollmentSource @default(DRIVER_CHOSEN)
+  grantedByBadgeId String?
+  deductionPct     Float                  @default(0.05)
+  platformBonusPct Float                  @default(0.0)
+  status           String                 @default("ACTIVE")
+  enrolledAt       DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  driverProfile    DriverProfile          @relation(fields: [driverProfileId], references: [id], onDelete: Cascade)
+  program          WealthProgram          @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@unique([driverProfileId, programId])
+  @@index([driverProfileId, status])
+  @@map("driver_wealth_enrollments")
 }

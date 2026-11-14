@@ -20,9 +20,10 @@ export default function PostSummaryCard({
         >
             <div className="relative aspect-video w-full overflow-hidden bg-surface-dark">
                 <Image
-                    src={post.imageUrl || `https://source.unsplash.com/random/800x600/?${post.category?.toLowerCase() || 'transport'}`}
-                    alt={post.title}
+                    src={post.imageUrl && !post.imageUrl.includes('unsplash.com') ? post.imageUrl : '/images/from-nairobi-to-world.jpg'}
+                    alt={`${post.title} — CABI Africa urban mobility editorial photography`}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
             </div>
