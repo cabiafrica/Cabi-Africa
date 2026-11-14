@@ -38,7 +38,7 @@ export interface ParseResult {
  */
 export function normalizePhone(rawPhone: string): string {
     if (!rawPhone) return '';
-    let cleaned = rawPhone.replace(/[\s\-\(\)\.]/g, '').trim();
+    const cleaned = rawPhone.replace(/[\s\-().]/g, '').trim();
 
     // Already in +254 or international format
     if (cleaned.startsWith('+')) {
@@ -258,7 +258,7 @@ export function parseMigrationCsv(
         // Spending Limit
         let monthlyLimit: number | undefined = defaults?.defaultLimit || 35000;
         if (limitIdx !== -1 && values[limitIdx]) {
-            const parsedNum = Number(values[limitIdx].replace(/[^0-9\.]/g, ''));
+            const parsedNum = Number(values[limitIdx].replace(/[^0-9.]/g, ''));
             if (!isNaN(parsedNum) && parsedNum > 0) {
                 monthlyLimit = parsedNum;
             }
