@@ -1,0 +1,8 @@
+{
+  "name": "mpesa-service",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/mpesa-service/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {}
+}

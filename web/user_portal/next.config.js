@@ -40,8 +40,8 @@ const nextConfig = {
       },
     ];
   },
-  // Standalone output for Cloud Run Docker deployment
-  output: 'standalone',
+  // Standalone output for Cloud Run Docker deployment (Vercel manages output mode automatically)
+  ...(process.env.VERCEL ? {} : { output: 'standalone' }),
 
 
 
@@ -99,14 +99,18 @@ const nextConfig = {
   // Webpack optimizations
   webpack: (config, { dev, isServer }) => {
     const path = require('path');
+    const fs = require('fs');
     const localLucide = path.resolve(__dirname, 'node_modules/lucide-react');
     const rootLucide = path.resolve(__dirname, '../../node_modules/lucide-react');
-    config.resolve = config.resolve || {};
-    config.resolve.alias = {
-      ...(config.resolve.alias || {}),
-      'lucide-react': localLucide,
-      [rootLucide]: localLucide,
-    };
+    const resolvedLucide = fs.existsSync(localLucide) ? localLucide : (fs.existsSync(rootLucide) ? rootLucide : null);
+    if (resolvedLucide) {
+      config.resolve = config.resolve || {};
+      config.resolve.alias = {
+        ...(config.resolve.alias || {}),
+        'lucide-react': resolvedLucide,
+        [rootLucide]: resolvedLucide,
+      };
+    }
     // Production optimizations
     if (!dev && !isServer) {
       config.optimization = {

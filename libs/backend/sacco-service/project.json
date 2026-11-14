@@ -1,0 +1,8 @@
+{
+  "name": "sacco-service-lib",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/sacco-service",
+  "projectType": "library",
+  "tags": [],
+  "targets": {}
+}
