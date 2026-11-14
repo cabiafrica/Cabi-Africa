@@ -77,7 +77,7 @@ export default function DriverRegistrationPage() {
       if (currentStep === 1) {
         setIsSubmitting(true);
         try {
-          const response = await fetch('http://localhost:3010/api/v1/driver-leads/register', {
+          const response = await fetch('/api/driver-leads/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

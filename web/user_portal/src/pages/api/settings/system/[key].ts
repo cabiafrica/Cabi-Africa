@@ -5,7 +5,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'GET') {
     try {
-      const response = await fetch(`http://localhost:3334/settings/system/${key}`);
+      const base =
+        process.env.DISPATCH_SERVICE_URL?.replace(/\/api\/?$/, '') ||
+        (process.env.NODE_ENV === 'production'
+          ? 'https://dispatch-service-746659778850.us-central1.run.app'
+          : 'http://localhost:3334');
+      const response = await fetch(`${base}/settings/system/${key}`);
       const data = await response.json();
       return res.status(200).json(data);
     } catch (error) {

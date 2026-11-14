@@ -86,7 +86,11 @@ export default async function handler(
         }
 
         // Call backend API to create driver group and process payment
-        const BACKEND_URL = process.env.NEXT_PUBLIC_DRIVER_LEAD_SERVICE_URL || 'http://localhost:3010';
+        const BACKEND_URL =
+            process.env.NEXT_PUBLIC_DRIVER_LEAD_SERVICE_URL ||
+            (process.env.NODE_ENV === 'production'
+                ? 'https://driver-lead-service-746659778850.us-central1.run.app'
+                : 'http://localhost:3010');
         const backendResponse = await fetch(`${BACKEND_URL}/api/v1/driver-groups`, {
             method: 'POST',
             headers: {
@@ -156,7 +160,11 @@ export default async function handler(
 
         // Trigger Referral command processing
         if (previousDriverId) {
-            const referralUrl = process.env.NEXT_PUBLIC_REFERRAL_SERVICE_URL || 'http://localhost:3338';
+            const referralUrl =
+                process.env.NEXT_PUBLIC_REFERRAL_SERVICE_URL ||
+                (process.env.NODE_ENV === 'production'
+                    ? 'https://referral-service-746659778850.us-central1.run.app'
+                    : 'http://localhost:3338');
             await fetch(`${referralUrl}/api/referral/process-registration`, {
                 method: 'POST',
                 headers: {

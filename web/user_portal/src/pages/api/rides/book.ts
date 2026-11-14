@@ -60,7 +60,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const rawDispatchUrl =
             process.env.DISPATCH_SERVICE_URL ||
             process.env.NEXT_PUBLIC_DISPATCH_SERVICE_URL ||
-            'http://127.0.0.1:3334/api';
+            (process.env.NODE_ENV === 'production'
+                ? 'https://dispatch-service-746659778850.us-central1.run.app/api'
+                : 'http://127.0.0.1:3334/api');
         const cleanBaseUrl = rawDispatchUrl.replace(/\/+$/, '');
         const targetUrl = cleanBaseUrl.endsWith('/api') ? `${cleanBaseUrl}/rides` : `${cleanBaseUrl}/api/rides`;
 

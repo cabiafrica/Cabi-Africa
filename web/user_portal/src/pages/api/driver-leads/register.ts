@@ -87,7 +87,11 @@ export default async function handler(
         };
 
         try {
-            const backendUrl = process.env.DRIVER_LEAD_SERVICE_URL || 'http://localhost:3010/api/v1';
+            const backendUrl =
+                process.env.DRIVER_LEAD_SERVICE_URL ||
+                (process.env.NODE_ENV === 'production'
+                    ? 'https://driver-lead-service-746659778850.us-central1.run.app/api/v1'
+                    : 'http://localhost:3010/api/v1');
             const response = await fetch(`${backendUrl}/driver-leads/register`, {
                 method: 'POST',
                 headers: {
