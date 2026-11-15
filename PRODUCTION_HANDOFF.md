@@ -23,13 +23,34 @@
 
 ## 🔒 Security & Connectivity
 
+### **Email & Vendor Accounts Architecture**
+*   **Infrastructure & Vendor Services (`ke.africabi@gmail.com`)**:
+    *   **GitHub**: Repository owner/author for `ibnke/Cabi-Africa`.
+    *   **Supabase**: Super Admin account and database ownership.
+    *   **Safaricom Daraja**: Developer Portal account & M-Pesa integration.
+    *   **CI/CD & Internal Scripts**: Deployment automation author.
+*   **Public Support & Communications (`cabifastafrica@gmail.com`)**:
+    *   **Customer Support**: 24/7 help desk email in app FAQ (`/faq`).
+    *   **Driver Onboarding**: Direct support link on driver registration completion (`/drivers/register/success`).
+    *   **Central Contact Configuration**: [contactConfig.ts](web/user_portal/src/config/contactConfig.ts).
+
 ### **CORS Policy**
 *   **Allowed Origins**: `*.cabi.africa`, `*.cabi-africa.com`, `*.run.app`.
 *   **Security**: WebSocket gateways are locked down to production domains in `NODE_ENV=production`.
 
-### **Database (Supabase)**
+### **Database & Storage (Supabase)**
 *   **Access**: Through GCP Secret Manager (Secrets: `DATABASE_URL`, `DIRECT_URL`).
+*   **Pooler**: PgBouncer session pooling on `aws-1-eu-west-1.pooler.supabase.com:6543` with `DIRECT_URL` on port `5432`.
+*   **Storage**: Dedicated `driver-documents` bucket for driver KYC and licenses.
 *   **Hardening**: RLS is enabled on all business-critical tables with `service_role` full access for the backends.
+
+### **Payments & SMS Infrastructure**
+*   **Safaricom Daraja (M-Pesa)**:
+    *   Automated Lipa Na M-Pesa Online STK Push invoked immediately on ride completion (`/api/rides/[id]/complete`).
+    *   **Production Verification Proof**: Live trip `CB-2857` (ID: `3f8bdded-16eb-4821-85d7-0c1bda8a63f3`), CheckoutRequestId: `ws_CO_161120260021439712345678`, ResponseCode: `0` (Success).
+*   **Africa's Talking SMS Gateway**:
+    *   Provider adapter: [backend/driver-lead-service/src/sms.provider.ts](backend/driver-lead-service/src/sms.provider.ts).
+    *   Cellular dispatch active when `AT_USERNAME` & `AT_API_KEY` are provided in environment secrets, with graceful zero-downtime mock logging fallback.
 
 ---
 
@@ -37,13 +58,13 @@
 
 ### **Driver App (`africa.cabi.driver`)**
 *   **Base API URL**: `https://www.cabi.africa/api` (with automatic Cloud Run proxy + Supabase Prisma fallback)
-*   **Android Direct APK**: `https://www.cabi.africa/downloads/Cabi-Drive-Official.apk` (built & published via `.github/workflows/release_passenger_apk.yml`)
+*   **Android Direct APK (Verified 48.47 MB)**: `https://www.cabi.africa/downloads/Cabi-Drive-Official.apk`
 *   **iOS / iPhone PWA**: `https://www.cabi.africa/apps/driver/index.html` (Safari → Share → Add to Home Screen)
 *   **Sockets**: Use `wss://` for secure production WebSocket communication.
 
 ### **Passenger App (`africa.cabi.passenger`)**
 *   **Base API URL**: `https://www.cabi.africa/api` (with automatic Cloud Run proxy + Supabase Prisma fallback)
-*   **Android Direct APK**: `https://www.cabi.africa/downloads/Cabi-Go-Official.apk`
+*   **Android Direct APK (Verified 56.76 MB)**: `https://www.cabi.africa/downloads/Cabi-Go-Official.apk`
 *   **iOS / iPhone PWA**: `https://www.cabi.africa/apps/passenger/index.html` (Safari → Share → Add to Home Screen)
 
 ---
