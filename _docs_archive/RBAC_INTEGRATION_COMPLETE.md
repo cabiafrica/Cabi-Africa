@@ -99,7 +99,7 @@ try {
 **Updated:** `scripts/test_rbac_crud.ts`
 
 Updated to use current super admin credentials:
-- Email: `ithrivebusinessnetworks@gmail.com`
+- Email: `ke.africabi@gmail.com`
 - Password: `Admin@2026`
 
 ---

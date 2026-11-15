@@ -5,7 +5,7 @@
 import axios from 'axios';
 
 const API_URL = 'http://localhost:3333/api';
-const ADMIN_EMAIL = 'ithrivebusinessnetworks@gmail.com';
+const ADMIN_EMAIL = 'ke.africabi@gmail.com';
 const ADMIN_PASSWORD = 'Admin@2026';
 
 async function test() {

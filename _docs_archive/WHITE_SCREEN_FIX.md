@@ -76,7 +76,7 @@ The Vite dev server should automatically reload with the changes:
 - ✅ Username and password fields visible
 
 **Login with:**
-- Email: `ithrivebusinessnetworks@gmail.com`
+- Email: `ke.africabi@gmail.com`
 - Password: `Admin@2026`
 
 **After Login:**
@@ -113,7 +113,7 @@ The backend already returns the email field in the login response, so no backend
 - [ ] Verify login page loads (no white screen)
 - [ ] Enter credentials and click "LOGIN"
 - [ ] Verify redirect to dashboard
-- [ ] Check sidebar shows email: `ithrivebusinessnetworks@gmail.com`
+- [ ] Check sidebar shows email: `ke.africabi@gmail.com`
 - [ ] Navigate to "Job Activities"
 - [ ] Verify rides table displays data
 - [ ] Check browser console (F12) - should be no errors

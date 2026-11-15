@@ -37,7 +37,7 @@ npm run dev
 
 3. **Enter Credentials:**
    ```
-   Email/Username: ithrivebusinessnetworks@gmail.com
+   Email/Username: ke.africabi@gmail.com
    Password: Admin@2026
    ```
 
@@ -357,7 +357,7 @@ Once you confirm everything works:
 - Admin Panel: `http://localhost:3001`
 
 **Credentials:**
-- Email: `ithrivebusinessnetworks@gmail.com`
+- Email: `ke.africabi@gmail.com`
 - Password: `Admin@2026`
 
 **Test Data:**

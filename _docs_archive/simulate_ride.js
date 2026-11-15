@@ -6,7 +6,7 @@ async function simulateRideCycle() {
         // 1. Login Admin (to get passenger ID)
         console.log('1️⃣ Logging in Admin (Passenger)...');
         const adminLogin = await axios.post('http://localhost:3333/api/auth/login', {
-            email: 'ithrivebusinessnetworks@gmail.com',
+            email: 'ke.africabi@gmail.com',
             password: 'Admin@2026'
         });
         const adminId = adminLogin.data.user.id;

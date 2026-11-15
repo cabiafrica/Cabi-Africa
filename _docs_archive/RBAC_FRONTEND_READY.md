@@ -71,7 +71,7 @@ curl http://localhost:3001
 ### **Step 1: Login**
 1. Open browser: **http://localhost:3001**
 2. Enter credentials:
-   - **Email:** `ithrivebusinessnetworks@gmail.com`
+   - **Email:** `ke.africabi@gmail.com`
    - **Password:** `Admin@2026`
 3. Click **Login**
 4. ✅ Should redirect to dashboard

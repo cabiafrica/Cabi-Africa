@@ -35,7 +35,7 @@ node scripts/test_rbac_permissions.js
 ### Frontend Validation (Manual)
 Since Cypress had environment issues, perform this manual sanity check:
 1.  Open `http://localhost:3001`
-2.  Login with `ithrivebusinessnetworks@gmail.com` / `Admin@2026`
+2.  Login with `ke.africabi@gmail.com` / `Admin@2026`
 3.  Navigate to **Roles & Permissions**.
 4.  Create a new role "UI Test Role".
 5.  Verify it appears in the list.

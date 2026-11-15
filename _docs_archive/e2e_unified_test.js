@@ -45,7 +45,7 @@ async function runE2ETest() {
 
         console.log(`🚀 Step 2: Logging in Admin to Approve Driver...`);
         const adminLogin = await axios.post(`${AUTH_URL}/login`, {
-            email: 'ithrivebusinessnetworks@gmail.com',
+            email: 'ke.africabi@gmail.com',
             password: 'Admin@2026'
         });
         const adminToken = adminLogin.data.accessToken;

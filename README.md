@@ -208,7 +208,7 @@ npm run admin:verify
 
 **Default Super Admin Credentials:**
 ```
-Email:    ithrivebusinessnetworks@gmail.com
+Email:    ke.africabi@gmail.com
 Password: Admin@2026
 Username: superadmin
 ```

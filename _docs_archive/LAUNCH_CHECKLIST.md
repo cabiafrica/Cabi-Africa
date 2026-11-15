@@ -38,7 +38,7 @@
 ### ✅ Super Admin Account
 
 **Default Credentials:**
-- **Email:** ithrivebusinessnetworks@gmail.com
+- **Email:** ke.africabi@gmail.com
 - **Password:** Admin@2026
 - **Username:** superadmin
 

@@ -128,7 +128,7 @@ const faqData: FAQItem[] = [
   {
     category: 'Safety & Support',
     q: 'How do I contact Cabi Customer Support?',
-    a: 'You can contact Cabi support 24/7 through in-app live chat, email at cabifastafrica@gmail.com, or our customer hotline at +254 756 777 222. For any inquiries regarding referral incentives or accounts, always check out our Terms & Conditions or contact us.',
+    a: 'You can contact Cabi support 24/7 through in-app live chat, email at ke.africabi@gmail.com, or our customer hotline at +254 756 777 222. For any inquiries regarding referral incentives or accounts, always check out our Terms & Conditions or contact us.',
   },
 ];
 

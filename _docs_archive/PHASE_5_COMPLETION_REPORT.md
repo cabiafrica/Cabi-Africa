@@ -431,7 +431,7 @@ server: {
 - Database: Supabase PostgreSQL
 
 ### Credentials
-- Super Admin Email: `ithrivebusinessnetworks@gmail.com`
+- Super Admin Email: `ke.africabi@gmail.com`
 - Super Admin Password: `Admin@2026`
 
 ---

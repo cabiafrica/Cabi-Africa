@@ -38,7 +38,7 @@ async function testLoginPage() {
         console.log('3️⃣ Testing login endpoint...');
         try {
             const loginResponse = await axios.post('http://localhost:3333/api/auth/login', {
-                email: 'ithrivebusinessnetworks@gmail.com',
+                email: 'ke.africabi@gmail.com',
                 password: 'Admin@2026'
             });
 
@@ -79,7 +79,7 @@ async function testLoginPage() {
         console.log('1. Open your browser to: http://localhost:3001');
         console.log('2. You should see the login page (dark theme with Cabi logo)');
         console.log('3. Login with:');
-        console.log('   Email: ithrivebusinessnetworks@gmail.com');
+        console.log('   Email: ke.africabi@gmail.com');
         console.log('   Password: Admin@2026');
         console.log('4. After login, navigate to "Job Activities" in the sidebar');
         console.log('═══════════════════════════════════════════════════════\n');

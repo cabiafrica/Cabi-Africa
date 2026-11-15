@@ -3,7 +3,7 @@ const axios = require('axios');
 async function testLogin() {
   const url = 'https://auth-gateway-746659778850.us-central1.run.app/api/auth/login';
   const data = {
-    email: 'ithrivebusinessnetworks@gmail.com',
+    email: 'ke.africabi@gmail.com',
     password: 'Admin@2026'
   };
 

@@ -93,7 +93,7 @@ node scripts/list-users.js
 
 **Expected Result:**
 - Total Users: 1
-- User: ithrivebusinessnetworks@gmail.com
+- User: ke.africabi@gmail.com
 - Role: SUPER_ADMIN
 - Permissions: 102 active permissions
 
@@ -103,7 +103,7 @@ node scripts/list-users.js
 
 After running the preparation script, you'll have:
 
-**Email:** ithrivebusinessnetworks@gmail.com  
+**Email:** ke.africabi@gmail.com  
 **Password:** Admin@2026 (or your custom password)  
 **Username:** superadmin
 

@@ -17,7 +17,7 @@ async function finalVerification() {
         // 1. Check user exists
         console.log('┌─ Step 1: Checking User Existence');
         const user = await prisma.user.findUnique({
-            where: { email: 'ithrivebusinessnetworks@gmail.com' },
+            where: { email: 'ke.africabi@gmail.com' },
             include: {
                 userRoles: {
                     include: {
@@ -108,8 +108,8 @@ async function finalVerification() {
             const loginUser = await prisma.user.findFirst({
                 where: {
                     OR: [
-                        { email: 'ithrivebusinessnetworks@gmail.com' },
-                        { phone: 'ithrivebusinessnetworks@gmail.com' }
+                        { email: 'ke.africabi@gmail.com' },
+                        { phone: 'ke.africabi@gmail.com' }
                     ]
                 },
                 include: {
@@ -229,7 +229,7 @@ async function finalVerification() {
             console.log('━'.repeat(100));
             console.log('LOGIN CREDENTIALS');
             console.log('━'.repeat(100));
-            console.log('Email:    ithrivebusinessnetworks@gmail.com');
+            console.log('Email:    ke.africabi@gmail.com');
             console.log('Password: Admin@2026');
             console.log('━'.repeat(100));
             console.log();

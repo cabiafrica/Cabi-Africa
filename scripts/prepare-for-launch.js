@@ -104,7 +104,7 @@ async function prepareForLaunch() {
 
         const superAdminData = {
             fullName: 'Super Admin',
-            email: 'ithrivebusinessnetworks@gmail.com',
+            email: 'ke.africabi@gmail.com',
             phone: '+254711786722',
             username: 'superadmin',
             password: await bcrypt.hash(superAdminPassword, 10),

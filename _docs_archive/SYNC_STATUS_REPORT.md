@@ -147,7 +147,7 @@ npm run dev
 
 ### 3. **Test Authentication**
 - Login with Super Admin credentials
-- Email: `ithrivebusinessnetworks@gmail.com`
+- Email: `ke.africabi@gmail.com`
 - Password: `Admin@2026`
 
 ### 4. **Test Key Features**

@@ -15,7 +15,7 @@ async function simulateDriverApprovalFlow() {
         // Step 1: Admin Login
         console.log('\n📋 Step 1: Admin Login');
         const adminLogin = await axios.post(`${AUTH_URL}/auth/login`, {
-            email: 'ithrivebusinessnetworks@gmail.com',
+            email: 'ke.africabi@gmail.com',
             password: 'Admin@2026'
         });
         const adminToken = adminLogin.data.token;

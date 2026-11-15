@@ -4,7 +4,7 @@
 
 ### 📧 Login Credentials
 ```
-Email:    ithrivebusinessnetworks@gmail.com
+Email:    ke.africabi@gmail.com
 Password: Admin@2026
 ```
 
@@ -46,7 +46,7 @@ node scripts/recreate-super-admin.js YourPassword123!
 |-------|-------|
 | User ID | ad797d40-a7ba-4354-b055-e992ec2d8fee |
 | Name | Super Admin |
-| Email | ithrivebusinessnetworks@gmail.com |
+| Email | ke.africabi@gmail.com |
 | Phone | +254711786722 |
 | Username | superadmin |
 | Role Type | SUPER_ADMIN |
@@ -63,7 +63,7 @@ node scripts/recreate-super-admin.js YourPassword123!
 node scripts/recreate-super-admin.js
 
 # Then try logging in with:
-# Email: ithrivebusinessnetworks@gmail.com
+# Email: ke.africabi@gmail.com
 # Password: Admin@2026
 ```
 

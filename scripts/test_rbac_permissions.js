@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 const API_URL = 'http://localhost:3333/api';
 
 const SUPER_ADMIN_CREDS = {
-    email: 'ithrivebusinessnetworks@gmail.com',
+    email: 'ke.africabi@gmail.com',
     password: 'Admin@2026'
 };
 

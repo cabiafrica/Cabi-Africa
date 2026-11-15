@@ -108,7 +108,7 @@ npx prisma db execute --stdin < "
 npx ts-node scripts/recreate-super-admin.js
 ```
 
-**Expected:** Super admin with email `ithrivebusinessnetworks@gmail.com`
+**Expected:** Super admin with email `ke.africabi@gmail.com`
 
 ---
 

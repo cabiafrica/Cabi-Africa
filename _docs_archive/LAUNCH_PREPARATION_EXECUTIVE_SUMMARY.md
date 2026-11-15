@@ -93,7 +93,7 @@ Added to `package.json`:
 After running the launch preparation, you'll have:
 
 **Credentials:**
-- **Email:** ithrivebusinessnetworks@gmail.com
+- **Email:** ke.africabi@gmail.com
 - **Password:** Admin@2026 (or your custom password)
 - **Username:** superadmin
 
@@ -194,7 +194,7 @@ npm run launch:list-users
 
 **Expected Output:**
 - Total Users: 1
-- Email: ithrivebusinessnetworks@gmail.com
+- Email: ke.africabi@gmail.com
 - Role: SUPER_ADMIN
 - Permissions: 102
 

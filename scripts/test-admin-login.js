@@ -11,7 +11,7 @@ async function testAdminLogin() {
         console.log();
 
         const testCredentials = {
-            email: 'ithrivebusinessnetworks@gmail.com',
+            email: 'ke.africabi@gmail.com',
             password: 'Admin@2026'
         };
 

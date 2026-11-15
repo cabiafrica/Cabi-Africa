@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 async function checkPermissions() {
     try {
         const user = await prisma.user.findUnique({
-            where: { email: 'ithrivebusinessnetworks@gmail.com' },
+            where: { email: 'ke.africabi@gmail.com' },
             include: {
                 userRoles: {
                     include: {

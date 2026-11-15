@@ -6,7 +6,7 @@ async function simulateApproval() {
         const leadId = '97c01ee0-e434-4a16-b18a-f0e0b615ab7b';
         console.log('Logging in as Admin...');
         const loginRes = await axios.post('http://localhost:3333/api/auth/login', {
-            email: 'ithrivebusinessnetworks@gmail.com',
+            email: 'ke.africabi@gmail.com',
             password: 'Admin@2026'
         });
 

@@ -19,7 +19,7 @@ This document outlines the integration of the Admin Panel with the verified back
 - Automatic redirect on successful authentication
 
 **Credentials:**
-- Email: `ithrivebusinessnetworks@gmail.com`
+- Email: `ke.africabi@gmail.com`
 - Password: `Admin@2026`
 
 ### 2. Job Activities Dashboard
@@ -159,7 +159,7 @@ async getAllRides(limit: number = 100) {
 #### 1. Login Test
 - [ ] Navigate to `http://localhost:3001/login`
 - [ ] Enter credentials:
-  - Email: `ithrivebusinessnetworks@gmail.com`
+  - Email: `ke.africabi@gmail.com`
   - Password: `Admin@2026`
 - [ ] Click "Login"
 - [ ] Verify redirect to dashboard

@@ -8,7 +8,7 @@ describe('RBAC Integration Test', () => {
         cy.visit('/login');
 
         // 2. Perform Login
-        cy.get('input[name="email"]').should('be.visible').type('ithrivebusinessnetworks@gmail.com');
+        cy.get('input[name="email"]').should('be.visible').type('ke.africabi@gmail.com');
         cy.get('input[name="password"]').should('be.visible').type('Admin@2026');
         cy.get('button[type="submit"]').click();
 

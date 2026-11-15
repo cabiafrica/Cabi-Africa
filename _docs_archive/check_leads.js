@@ -25,7 +25,7 @@ async function checkLeads() {
         console.log('Recent Pending/Prospect Users:', users.map(u => ({ id: u.id, email: u.email, status: u.status, role: u.role })));
 
         const admin = await prisma.user.findFirst({
-            where: { email: 'ithrivebusinessnetworks@gmail.com' }
+            where: { email: 'ke.africabi@gmail.com' }
         });
         console.log('Admin User Found:', admin ? admin.email : 'NOT FOUND');
 
