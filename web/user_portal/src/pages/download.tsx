@@ -1,6 +1,5 @@
 import MainLayout from '../components/layout/MainLayout';
-import { FaAndroid, FaApple, FaCheckCircle, FaDownload, FaMobileAlt, FaCarSide, FaShieldAlt } from 'react-icons/fa';
-import { APP_LINKS } from '@/config/appLinks';
+import { FaAndroid, FaApple, FaCheckCircle, FaArrowDown, FaMobileAlt, FaCarSide, FaShieldAlt } from 'react-icons/fa';
 
 export default function DownloadApp() {
     return (
@@ -44,43 +43,20 @@ export default function DownloadApp() {
                                     Create your personal rider account, book Boda, Standard, XL, and Executive rides with live GPS tracking, and pay seamlessly via M-Pesa STK or Wallet.
                                 </p>
                             </div>
-                            <div className="space-y-3">
+                            <div>
                                 <a
-                                    href={APP_LINKS.passenger.apkDirect}
-                                    download={APP_LINKS.passenger.fileName}
+                                    href="#footer-download-menu"
                                     className="w-full bg-executive-gold text-black font-extrabold px-6 py-4 rounded-xl flex items-center justify-between gap-3 hover:brightness-110 transition-all shadow-md"
                                 >
-                                    <div className="flex items-center gap-3">
-                                        <FaAndroid className="text-2xl" />
-                                        <div className="text-left">
-                                            <div className="text-[10px] uppercase tracking-wider opacity-80">
-                                                Android Direct Download ({APP_LINKS.passenger.fileName})
-                                            </div>
-                                            <div className="text-base font-black leading-none mt-0.5">
-                                                Download CABI Go (Android APK)
-                                            </div>
+                                    <div className="text-left">
+                                        <div className="text-[10px] uppercase tracking-wider opacity-80">
+                                            Android (.apk) &amp; iOS (iPhone / iPad)
+                                        </div>
+                                        <div className="text-base font-black leading-none mt-0.5">
+                                            Download CABI Go in Footer Menu
                                         </div>
                                     </div>
-                                    <FaDownload className="text-lg" />
-                                </a>
-                                <a
-                                    href={APP_LINKS.passenger.iosWebApp}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full bg-slate-900 dark:bg-black/70 text-white border border-slate-700 dark:border-white/20 font-extrabold px-6 py-3.5 rounded-xl flex items-center justify-between gap-3 hover:border-executive-gold transition-all"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <FaApple className="text-2xl text-white" />
-                                        <div className="text-left">
-                                            <div className="text-[10px] uppercase tracking-wider text-executive-gold">
-                                                iPhone &amp; iPad (Safari Install)
-                                            </div>
-                                            <div className="text-sm font-black leading-none mt-0.5">
-                                                Install CABI Go for iOS
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span className="text-xs font-black uppercase tracking-wider text-executive-gold">Open</span>
+                                    <FaArrowDown className="text-lg" />
                                 </a>
                             </div>
                         </div>
@@ -103,43 +79,20 @@ export default function DownloadApp() {
                                     Sign up or log in as a verified CABI driver partner, go online to receive real-time trip dispatches, track your live earnings, and withdraw instantly to M-Pesa.
                                 </p>
                             </div>
-                            <div className="space-y-3">
+                            <div>
                                 <a
-                                    href={APP_LINKS.driver.apkDirect}
-                                    download={APP_LINKS.driver.fileName}
+                                    href="#footer-download-menu"
                                     className="w-full bg-slate-900 dark:bg-black text-white border border-executive-gold/50 font-extrabold px-6 py-4 rounded-xl flex items-center justify-between gap-3 hover:border-executive-gold transition-all shadow-md"
                                 >
-                                    <div className="flex items-center gap-3">
-                                        <FaAndroid className="text-2xl text-emerald-400" />
-                                        <div className="text-left">
-                                            <div className="text-[10px] uppercase tracking-wider text-executive-gold">
-                                                Android Direct Download ({APP_LINKS.driver.fileName})
-                                            </div>
-                                            <div className="text-base font-black leading-none mt-0.5">
-                                                Download CABI Drive (Android APK)
-                                            </div>
+                                    <div className="text-left">
+                                        <div className="text-[10px] uppercase tracking-wider text-executive-gold">
+                                            Android (.apk) &amp; iOS (iPhone / iPad)
+                                        </div>
+                                        <div className="text-base font-black leading-none mt-0.5">
+                                            Download CABI Drive in Footer Menu
                                         </div>
                                     </div>
-                                    <FaDownload className="text-lg text-executive-gold" />
-                                </a>
-                                <a
-                                    href={APP_LINKS.driver.iosWebApp}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-white border border-slate-300 dark:border-white/20 font-extrabold px-6 py-3.5 rounded-xl flex items-center justify-between gap-3 hover:border-executive-gold transition-all"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <FaApple className="text-2xl" />
-                                        <div className="text-left">
-                                            <div className="text-[10px] uppercase tracking-wider text-executive-gold">
-                                                iPhone &amp; iPad (Safari Install)
-                                            </div>
-                                            <div className="text-sm font-black leading-none mt-0.5">
-                                                Install CABI Drive for iOS
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span className="text-xs font-black uppercase tracking-wider text-executive-gold">Open</span>
+                                    <FaArrowDown className="text-lg text-executive-gold" />
                                 </a>
                             </div>
                         </div>

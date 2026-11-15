@@ -151,23 +151,13 @@ export default function AuthWidget() {
                 {/* Social / App Links */}
                 {mode === 'register' && role === 'passenger' && (
                     <div className="text-center pt-2">
-                        <p className="text-xs text-gray-500 mb-3">Or sign up faster with the app</p>
-                        <div className="flex gap-2 justify-center">
+                        <p className="text-xs text-gray-500 mb-3">Or sign up faster with the mobile app</p>
+                        <div className="flex justify-center">
                             <a
-                                href={APP_LINKS.passenger.appStore}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="glass px-4 py-2 rounded-lg flex items-center gap-2 text-xs font-bold hover:bg-white/10"
+                                href="#footer-download-menu"
+                                className="glass px-4 py-2 rounded-lg inline-flex items-center gap-2 text-xs font-bold hover:bg-white/10"
                             >
-                                <FaApple /> App Store
-                            </a>
-                            <a
-                                href={APP_LINKS.passenger.playStore}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="glass px-4 py-2 rounded-lg flex items-center gap-2 text-xs font-bold hover:bg-white/10"
-                            >
-                                <FaGoogle /> Play Store
+                                Download CABI Go in Footer Menu ↓
                             </a>
                         </div>
                     </div>
