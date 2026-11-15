@@ -35,12 +35,12 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: 🐦 Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: 'latest'
-          channel: 'stable'
-          cache: true
+      - name: 🐦 Setup Flutter Stable
+        run: |
+          git clone --depth 1 -b stable https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/flutter/bin/flutter" config --no-analytics
+          "$RUNNER_TEMP/flutter/bin/flutter" --version
 
       - name: 🚖 Build CABI Drive (Driver App) Production APK
         working-directory: ./mobile/driver_app
@@ -58,6 +58,8 @@ jobs:
 
       - name: 📦 Stage APKs into User Portal Public Downloads
         run: |
+          git checkout main
+          git pull --rebase origin main
           mkdir -p web/user_portal/public/downloads
           cp Cabi-Drive-Official.apk web/user_portal/public/downloads/Cabi-Drive-Official.apk
           cp Cabi-Go-Official.apk web/user_portal/public/downloads/Cabi-Go-Official.apk
@@ -66,7 +68,6 @@ jobs:
           git add -f web/user_portal/public/downloads/Cabi-Drive-Official.apk web/user_portal/public/downloads/Cabi-Go-Official.apk
           if ! git diff --staged --quiet; then
             git commit -m "chore(mobile): publish fresh production Android APKs to user_portal/public/downloads"
-            git pull --rebase origin main
             git push origin HEAD:main
           fi
 

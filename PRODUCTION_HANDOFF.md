@@ -35,12 +35,16 @@
 
 ## 📱 Mobile Applications
 
-### **Driver App**
-*   **Base URL**: `auth-gateway-746659778850.us-central1.run.app`
+### **Driver App (`africa.cabi.driver`)**
+*   **Base API URL**: `https://www.cabi.africa/api` (with automatic Cloud Run proxy + Supabase Prisma fallback)
+*   **Android Direct APK**: `https://www.cabi.africa/downloads/Cabi-Drive-Official.apk` (built & published via `.github/workflows/release_passenger_apk.yml`)
+*   **iOS / iPhone PWA**: `https://www.cabi.africa/apps/driver/index.html` (Safari → Share → Add to Home Screen)
 *   **Sockets**: Use `wss://` for secure production WebSocket communication.
 
-### **Passenger App**
-*   **Base URL**: `auth-gateway-746659778850.us-central1.run.app`
+### **Passenger App (`africa.cabi.passenger`)**
+*   **Base API URL**: `https://www.cabi.africa/api` (with automatic Cloud Run proxy + Supabase Prisma fallback)
+*   **Android Direct APK**: `https://www.cabi.africa/downloads/Cabi-Go-Official.apk`
+*   **iOS / iPhone PWA**: `https://www.cabi.africa/apps/passenger/index.html` (Safari → Share → Add to Home Screen)
 
 ---
 
