@@ -617,15 +617,23 @@ export class RideService implements OnModuleInit {
   }
 
   async getDemandHotspots() {
-    const hotspots = [
+    const activeRides = await this.prisma.ride.findMany({
+      where: {
+        status: { in: ['REQUESTED', 'MATCHING'] as any },
+      },
+      select: {
+        pickupLocation: true,
+      },
+    });
+
+    const zones = [
       {
         id: 'westlands',
         name: 'Westlands & Mpaka Rd',
         lat: -1.2655,
         lng: 36.8048,
         radiusKm: 2.5,
-        baseMultiplier: 1.5,
-        activeRequests: 24,
+        baseMultiplier: 1.0,
         peakHours: '17:00 - 22:00',
         peakDays: ['Thursday', 'Friday', 'Saturday'],
         category: 'Nightlife & Tech Hub'
@@ -636,8 +644,7 @@ export class RideService implements OnModuleInit {
         lat: -1.286389,
         lng: 36.817223,
         radiusKm: 2.0,
-        baseMultiplier: 1.3,
-        activeRequests: 38,
+        baseMultiplier: 1.0,
         peakHours: '07:00 - 09:30 & 16:30 - 19:30',
         peakDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
         category: 'Business & Commuter'
@@ -648,8 +655,7 @@ export class RideService implements OnModuleInit {
         lat: -1.2921,
         lng: 36.7865,
         radiusKm: 2.2,
-        baseMultiplier: 1.4,
-        activeRequests: 19,
+        baseMultiplier: 1.0,
         peakHours: '12:00 - 14:30 & 18:00 - 21:30',
         peakDays: ['Wednesday', 'Friday', 'Saturday', 'Sunday'],
         category: 'Dining & Residential'
@@ -660,8 +666,7 @@ export class RideService implements OnModuleInit {
         lat: -1.2985,
         lng: 36.8142,
         radiusKm: 2.0,
-        baseMultiplier: 1.3,
-        activeRequests: 15,
+        baseMultiplier: 1.0,
         peakHours: '07:30 - 09:00 & 16:30 - 19:00',
         peakDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
         category: 'Corporate & Hospitals'
@@ -672,8 +677,7 @@ export class RideService implements OnModuleInit {
         lat: -1.3192,
         lng: 36.9275,
         radiusKm: 4.0,
-        baseMultiplier: 1.6,
-        activeRequests: 12,
+        baseMultiplier: 1.0,
         peakHours: '05:00 - 08:00 & 19:00 - 23:00',
         peakDays: ['Thursday', 'Friday', 'Sunday'],
         category: 'Airport Express'
@@ -684,13 +688,25 @@ export class RideService implements OnModuleInit {
         lat: -1.2333,
         lng: 36.8055,
         radiusKm: 3.0,
-        baseMultiplier: 1.3,
-        activeRequests: 10,
+        baseMultiplier: 1.0,
         peakHours: '11:00 - 16:00',
         peakDays: ['Friday', 'Saturday', 'Sunday'],
         category: 'Diplomatic & Shopping'
       }
     ];
+
+    const hotspots = zones.map((zone) => {
+      const count = activeRides.filter((r) => {
+        const loc = r.pickupLocation as any;
+        if (!loc || typeof loc.lat !== 'number' || typeof loc.lng !== 'number') return false;
+        const dist = this.matchingService.calculateDistance(zone.lat, zone.lng, loc.lat, loc.lng);
+        return dist <= zone.radiusKm;
+      }).length;
+      return {
+        ...zone,
+        activeRequests: count,
+      };
+    });
 
     return {
       success: true,

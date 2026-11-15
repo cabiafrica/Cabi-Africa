@@ -1,20 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import Link from 'next/link';
 import { FaPaperPlane, FaSearch, FaCheck } from 'react-icons/fa';
 
-// Mock drivers who are not in any organization
-const MOCK_DRIVERS = [
-    { id: 'd1', name: 'James Kamau', location: 'Westlands, Nairobi', rating: 4.8, vehicle: 'Toyota Fielder' },
-    { id: 'd2', name: 'Sarah Ochieng', location: 'Kilimani, Nairobi', rating: 4.9, vehicle: 'Mazda Demio' },
-    { id: 'd3', name: 'Peter Njoroge', location: 'Thika Road, Nairobi', rating: 4.6, vehicle: 'Nissan Tiida' },
-    { id: 'd4', name: 'John Doe', location: 'CBD, Nairobi', rating: 4.7, vehicle: 'Toyota Vitz' },
-];
+interface UngroupedDriver {
+    id: string;
+    name: string;
+    location: string;
+    rating: number;
+    vehicle: string;
+}
 
 export default function HunterDashboard() {
     const [searchQuery, setSearchQuery] = useState('');
     const [invitedDrivers, setInvitedDrivers] = useState<string[]>([]);
-    const [drivers, setDrivers] = useState(MOCK_DRIVERS);
+    const [drivers, setDrivers] = useState<UngroupedDriver[]>([]);
+
+    useEffect(() => {
+        fetch('/api/vehicles/available-drivers')
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data) => {
+                if (data?.drivers && Array.isArray(data.drivers)) {
+                    setDrivers(
+                        data.drivers.map((d: any) => ({
+                            id: d.driverProfileId || d.userId,
+                            name: d.fullName || 'Verified Driver',
+                            location: 'Nairobi',
+                            rating: Number(d.rating) || 5.0,
+                            vehicle: d.licenseNumber || 'Registered Vehicle',
+                        }))
+                    );
+                }
+            })
+            .catch((err) => console.error('Failed to load ungrouped drivers:', err));
+    }, []);
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
@@ -26,9 +45,7 @@ export default function HunterDashboard() {
     );
 
     const handleInvite = (id: string) => {
-        // Mock API call
         setInvitedDrivers([...invitedDrivers, id]);
-        alert(`Invitation sent to ${drivers.find(d => d.id === id)?.name}!`);
     };
 
     return (
@@ -45,7 +62,7 @@ export default function HunterDashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                         <div className="bg-white dark:bg-card-dark p-6 rounded-2xl border border-slate-200 dark:border-white/10">
                             <h3 className="text-neutral-500 text-sm font-medium">Ungrouped Drivers Near You</h3>
-                            <p className="text-3xl font-bold text-slate-900 dark:text-white mt-2">124</p>
+                            <p className="text-3xl font-bold text-slate-900 dark:text-white mt-2">{drivers.length}</p>
                         </div>
                         <div className="bg-white dark:bg-card-dark p-6 rounded-2xl border border-slate-200 dark:border-white/10">
                             <h3 className="text-neutral-500 text-sm font-medium">Invitations Sent</h3>
@@ -53,7 +70,7 @@ export default function HunterDashboard() {
                         </div>
                         <div className="bg-white dark:bg-card-dark p-6 rounded-2xl border border-slate-200 dark:border-white/10">
                             <h3 className="text-neutral-500 text-sm font-medium">Successful Recruits</h3>
-                            <p className="text-3xl font-bold text-[#D4AF37] mt-2">12</p>
+                            <p className="text-3xl font-bold text-[#D4AF37] mt-2">0</p>
                         </div>
                     </div>
 

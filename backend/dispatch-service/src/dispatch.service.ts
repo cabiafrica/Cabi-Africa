@@ -32,31 +32,41 @@ export class DispatchService {
     constructor(private prisma: PrismaService) { }
 
     async getDashboardMetrics() {
-        const [activeRides, pendingRequests, onlineDrivers, completedToday] = await Promise.all([
+        const startOfToday = new Date(new Date().setHours(0, 0, 0, 0));
+        const [activeRides, pendingRequests, onlineDrivers, completedTodayRides] = await Promise.all([
             this.prisma.ride.count({ where: { status: RideStatus.IN_PROGRESS } }),
             this.prisma.ride.count({ where: { status: RideStatus.REQUESTED } }),
             this.prisma.driverProfile.count({ where: { isOnline: true } }),
-            this.prisma.ride.count({
+            this.prisma.ride.findMany({
                 where: {
                     status: RideStatus.COMPLETED,
-                    updatedAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) },
+                    updatedAt: { gte: startOfToday },
+                },
+                select: {
+                    fare: true,
+                    matchingDurationMs: true,
                 },
             }),
         ]);
 
-        const averageWaitTime = 8.5;
-        const averageMatchTime = 4.2;
+        const completedToday = completedTodayRides.length;
+        const revenue = completedTodayRides.reduce((sum, r) => sum + Number(r.fare ?? 0), 0);
+        const matchedRides = completedTodayRides.filter((r) => typeof r.matchingDurationMs === 'number' && r.matchingDurationMs > 0);
+        const averageMatchTime =
+            matchedRides.length > 0
+                ? Number((matchedRides.reduce((sum, r) => sum + (r.matchingDurationMs ?? 0) / 1000, 0) / matchedRides.length).toFixed(1))
+                : 0;
 
         return {
             activeRides,
             pendingRequests,
             onlineDrivers,
             completedToday,
-            revenue: 0,
-            averageWaitTime,
+            revenue,
+            averageWaitTime: 0,
             averageMatchTime,
-            peakDemandZones: ['Westlands', 'Kilimani'],
-            surgeAreas: 2,
+            peakDemandZones: [],
+            surgeAreas: 0,
         };
     }
 

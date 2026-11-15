@@ -10,7 +10,7 @@ extension _HomeScreenPanels on _HomeScreenState {
     final goldAccent = isDark ? AppTheme.primaryLight : AppTheme.aurumBronze;
     final timePillBg = isDark ? AppTheme.obsidianCanvas : AppTheme.porcelainSurfaceContainer;
     final successGreen = isDark ? AppTheme.successGreen : const Color(0xFF059669);
-    final securityPin = (_currentRideData?['securityPin'] ?? '4829').toString();
+    final securityPin = (_currentRideData?['securityPin'] ?? _currentRideData?['tripCode'] ?? '----').toString();
 
     return Positioned(
       bottom: 0,
@@ -212,10 +212,11 @@ extension _HomeScreenPanels on _HomeScreenState {
               final vehicleMap = driverMap?['vehicle'] as Map<String, dynamic>?;
               final vehiclePlate = (vehicleMap?['licensePlate'] ??
                       vehicleMap?['plateNumber'] ??
-                      'KCZ 123A')
+                      driverMap?['licenseNumber'] ??
+                      'Assigned')
                   .toString();
-              final vehicleColor = (vehicleMap?['color'] ?? 'Silver').toString();
-              final vehicleModel = (vehicleMap?['model'] ?? 'Toyota Axio').toString();
+              final vehicleColor = (vehicleMap?['color'] ?? 'Verified').toString();
+              final vehicleModel = (vehicleMap?['model'] ?? 'Chauffeur Vehicle').toString();
 
               return Row(
                 children: [
@@ -578,6 +579,23 @@ extension _HomeScreenPanels on _HomeScreenState {
     final surfaceColor = Theme.of(context).colorScheme.surface;
     final onSurfaceColor = Theme.of(context).colorScheme.onSurface;
     final dividerColor = Theme.of(context).dividerColor;
+    final authState = ref.watch(passengerAuthProvider);
+    final authUser = authState is Authenticated ? authState.user : null;
+    final rawFullName = (authUser?['fullName'] ??
+            authUser?['firstName'] ??
+            authUser?['nickname'] ??
+            'Verified Rider')
+        .toString()
+        .trim();
+    final initials = rawFullName.isNotEmpty
+        ? rawFullName
+            .split(' ')
+            .where((p) => p.isNotEmpty)
+            .take(2)
+            .map((p) => p[0].toUpperCase())
+            .join()
+        : 'CR';
+    final walletBalance = (authUser?['walletBalance'] ?? 0).toString();
 
     return DraggableScrollableSheet(
       initialChildSize: 0.68,
@@ -641,7 +659,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                               ),
                               alignment: Alignment.center,
                               child: Text(
-                                'BK',
+                                initials,
                                 style: AppTheme.inter(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w800,
@@ -657,7 +675,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                   Row(
                                     children: [
                                       Text(
-                                        'Hi, Brian K.',
+                                        'Hi, $rawFullName',
                                         style: AppTheme.inter(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w800,
@@ -670,7 +688,9 @@ extension _HomeScreenPanels on _HomeScreenState {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    'Gold Tier • Westlands, Nairobi',
+                                    _pickupAddress,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: AppTheme.inter(
                                       fontSize: 11,
                                       color: isDark ? AppTheme.warmStone : Colors.black54,
@@ -687,7 +707,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                                 border: Border.all(color: AppTheme.successGreen.withValues(alpha: 0.35)),
                               ),
                               child: Text(
-                                'KES 4,500',
+                                'KES $walletBalance',
                                 style: AppTheme.inter(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w800,

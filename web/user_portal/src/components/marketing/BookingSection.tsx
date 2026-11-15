@@ -86,14 +86,12 @@ export default function BookingSection() {
     const [activeRideId, setActiveRideId] = useState<string | null>(null);
     const [driverInfo, setDriverInfo] = useState<any>(null);
     const pollingInterval = useRef<NodeJS.Timeout | null>(null);
-    const simTimeouts = useRef<NodeJS.Timeout[]>([]);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
         return () => {
             if (pollingInterval.current) clearInterval(pollingInterval.current);
-            simTimeouts.current.forEach(clearTimeout);
         };
     }, []);
 
@@ -172,23 +170,24 @@ export default function BookingSection() {
             if (response.ok) {
                 const ride = await response.json();
                 handleRideUpdate(ride);
-                startPolling(passengerId);
+                startPolling(ride.id, passengerId);
             }
         } catch (error) {
             console.error('Failed to check active ride', error);
         }
     };
 
-    const startPolling = (passengerId: string) => {
+    const startPolling = (rideId?: string, passengerId?: string) => {
         if (pollingInterval.current) clearInterval(pollingInterval.current);
         pollingInterval.current = setInterval(() => {
-            pollRideStatus(passengerId);
+            pollRideStatus(rideId, passengerId);
         }, 5000);
     };
 
-    const pollRideStatus = async (passengerId: string) => {
+    const pollRideStatus = async (rideId?: string, passengerId?: string) => {
         try {
-            const response = await fetch(`/api/rides/status?passengerId=${passengerId}`);
+            const query = rideId ? `rideId=${encodeURIComponent(rideId)}` : `passengerId=${encodeURIComponent(passengerId || '')}`;
+            const response = await fetch(`/api/rides/status?${query}`);
             if (response.ok) {
                 const ride = await response.json();
                 handleRideUpdate(ride);
@@ -205,13 +204,13 @@ export default function BookingSection() {
     };
 
     const handleRideUpdate = (ride: any) => {
-        setActiveRideId(ride.id);
+        setActiveRideId(ride.tripCode || ride.id);
         setPickup(typeof ride.pickupLocation === 'string' ? ride.pickupLocation : ride.pickupLocation?.address || pickup);
         setDestination(typeof ride.dropoffLocation === 'string' ? ride.dropoffLocation : ride.dropoffLocation?.address || destination);
         setBookingConfirmed(true);
 
         const status = ride.status;
-        if (status === 'REQUESTED') {
+        if (status === 'REQUESTED' || status === 'MATCHING') {
             setTripStatus('CONFIRMED');
             setProgressStep(1);
         } else if (status === 'DRIVER_ASSIGNED') {
@@ -220,7 +219,16 @@ export default function BookingSection() {
             if (ride.driver?.user) {
                 setDriverInfo({
                     name: ride.driver.user.fullName,
-                    plate: ride.driver.licenseNumber || 'KDK 482G',
+                    plate: ride.driver.vehicles?.[0]?.plateNumber || ride.driver.licenseNumber || 'Assigned Vehicle',
+                });
+            }
+        } else if (status === 'DRIVER_ARRIVED') {
+            setTripStatus('ARRIVED');
+            setProgressStep(3);
+            if (ride.driver?.user) {
+                setDriverInfo({
+                    name: ride.driver.user.fullName,
+                    plate: ride.driver.vehicles?.[0]?.plateNumber || ride.driver.licenseNumber || 'Assigned Vehicle',
                 });
             }
         } else if (status === 'IN_PROGRESS') {
@@ -287,7 +295,7 @@ export default function BookingSection() {
         if (!selectedVehicle) return;
         setVerificationError(null);
         if (!otpSentCode) {
-            setOtpSentCode('4829');
+            setOtpSentCode(String(Math.floor(1000 + Math.random() * 9000)));
         }
         setShowVerification(true);
     };
@@ -298,7 +306,7 @@ export default function BookingSection() {
             setVerificationError('Please enter a valid phone number before requesting a code.');
             return;
         }
-        setOtpSentCode('4829');
+        setOtpSentCode(String(Math.floor(1000 + Math.random() * 9000)));
     };
 
     const handleVerifyAndBook = async () => {
@@ -377,30 +385,16 @@ export default function BookingSection() {
             setBookingConfirmed(true);
             setTripStatus('CONFIRMED');
             setProgressStep(1);
-            setActiveRideId(ride.id);
+            setActiveRideId(ride.tripCode || ride.id);
 
             if (ride.driver?.user) {
                 setDriverInfo({
                     name: ride.driver.user.fullName,
-                    plate: ride.driver.licenseNumber || 'KDK 482G',
+                    plate: ride.driver.vehicles?.[0]?.plateNumber || ride.driver.licenseNumber || 'Assigned Vehicle',
                 });
             }
 
-            if (ride.simulatedQueue) {
-                simTimeouts.current.forEach(clearTimeout);
-                simTimeouts.current = [
-                    setTimeout(() => {
-                        setTripStatus('DRIVER_ASSIGNED');
-                        setProgressStep(2);
-                    }, 3000),
-                    setTimeout(() => {
-                        setTripStatus('ARRIVED');
-                        setProgressStep(3);
-                    }, 7000),
-                ];
-            } else if (user?.id) {
-                startPolling(user.id);
-            }
+            startPolling(ride.id, ride.passengerId || user?.id);
         } catch (error) {
             console.error('Failed to book ride', error);
             setVerificationError('Network error confirming your trip request.');
@@ -410,7 +404,6 @@ export default function BookingSection() {
     };
 
     const handleResetBooking = () => {
-        simTimeouts.current.forEach(clearTimeout);
         if (pollingInterval.current) clearInterval(pollingInterval.current);
         setBookingConfirmed(false);
         setTripStatus('IDLE');
@@ -889,7 +882,7 @@ export default function BookingSection() {
                                     type="text"
                                     value={verifyName}
                                     onChange={(e) => setVerifyName(e.target.value)}
-                                    placeholder="Amara Ochieng"
+                                    placeholder="Enter your full name"
                                     className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-[#D4AF37]"
                                 />
                             </div>
@@ -903,7 +896,7 @@ export default function BookingSection() {
                                         type="tel"
                                         value={verifyPhone}
                                         onChange={(e) => setVerifyPhone(e.target.value)}
-                                        placeholder="+254 712 345 678"
+                                        placeholder="+254 7XX XXX XXX"
                                         className="flex-1 px-4 py-3 rounded-xl bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-[#D4AF37]"
                                     />
                                     <button
@@ -938,7 +931,7 @@ export default function BookingSection() {
                                         maxLength={4}
                                         value={otpInput}
                                         onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
-                                        placeholder="Enter 4-digit code (e.g. 4829)"
+                                        placeholder="Enter 4-digit SMS code"
                                         className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-sm font-mono tracking-widest text-slate-900 dark:text-white focus:outline-none focus:border-[#D4AF37]"
                                     />
                                 </div>

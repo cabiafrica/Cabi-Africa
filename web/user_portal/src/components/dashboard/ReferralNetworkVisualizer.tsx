@@ -10,30 +10,18 @@ interface NetworkMember {
     level: 0 | 1 | 2;
 }
 
-const networkData: NetworkMember[] = [
-    { id: 'me', name: 'You', role: 'driver', avatar: '👤', earnings: 'KES 45,000', level: 0 },
-    // Level 1
-    { id: 'l1-1', name: 'John D.', role: 'driver', avatar: '🚗', earnings: 'KES 15,200', level: 1 },
-    { id: 'l1-2', name: 'Alice K.', role: 'driver', avatar: '🚕', earnings: 'KES 8,900', level: 1 },
-    { id: 'l1-3', name: 'Eve R.', role: 'passenger', avatar: '🙋‍♀️', earnings: 'KES 2,000', level: 1 },
-    { id: 'l1-4', name: 'Mark S.', role: 'driver', avatar: '🚙', earnings: 'KES 5,400', level: 1 },
-    // Level 2 (children of l1-1, l1-2, etc - shown as outer ring)
-    { id: 'l2-1', name: 'Sarah M.', role: 'passenger', avatar: '🙋‍♀️', earnings: 'KES 450', level: 2 },
-    { id: 'l2-2', name: 'Mike T.', role: 'passenger', avatar: '🙋‍♂️', earnings: 'KES 120', level: 2 },
-    { id: 'l2-3', name: 'Bob W.', role: 'passenger', avatar: '🙋‍♂️', earnings: 'KES 1,200', level: 2 },
-    { id: 'l2-4', name: 'Charlie', role: 'driver', avatar: '🚙', earnings: 'KES 4,500', level: 2 },
-    { id: 'l2-5', name: 'Dave P.', role: 'passenger', avatar: '🙋‍♂️', earnings: 'KES 500', level: 2 },
-    { id: 'l2-6', name: 'Anna J.', role: 'passenger', avatar: '🙋‍♀️', earnings: 'KES 300', level: 2 },
-    { id: 'l2-7', name: 'Tom H.', role: 'driver', avatar: '🚗', earnings: 'KES 2,100', level: 2 },
-    { id: 'l2-8', name: 'Lucy L.', role: 'passenger', avatar: '🙋‍♀️', earnings: 'KES 150', level: 2 },
-];
-
 interface VisualizerProps {
     referralCode?: string;
+    members?: NetworkMember[];
+    totalValue?: number;
 }
 
-export default function ReferralNetworkVisualizer({ referralCode = 'CABI-REF-2024' }: VisualizerProps) {
-    const [hoveredMember, setHoveredMember] = useState<NetworkMember | null>(null);
+export default function ReferralNetworkVisualizer({
+    referralCode = 'CABI-REF-2026',
+    members = [],
+    totalValue = 0,
+}: VisualizerProps) {
+    const [, setHoveredMember] = useState<NetworkMember | null>(null);
 
     const renderCircleMember = (member: NetworkMember, index: number, total: number, radius: number) => {
         // Calculate position on circle
@@ -72,8 +60,8 @@ export default function ReferralNetworkVisualizer({ referralCode = 'CABI-REF-202
         );
     };
 
-    const level1Members = networkData.filter(m => m.level === 1);
-    const level2Members = networkData.filter(m => m.level === 2);
+    const level1Members = members.filter(m => m.level === 1);
+    const level2Members = members.filter(m => m.level === 2);
 
     return (
         <div className="space-y-6 animate-fade-in">
@@ -84,7 +72,7 @@ export default function ReferralNetworkVisualizer({ referralCode = 'CABI-REF-202
                 </div>
                 <div className="text-right">
                     <div className="text-sm text-slate-500 dark:text-gray-400 uppercase font-bold tracking-wider mb-1">Total Network Value</div>
-                    <div className="text-2xl font-bold text-brand-yellow">KES 72,170</div>
+                    <div className="text-2xl font-bold text-brand-yellow">KES {totalValue.toLocaleString()}</div>
                 </div>
             </div>
 
@@ -142,7 +130,7 @@ export default function ReferralNetworkVisualizer({ referralCode = 'CABI-REF-202
                     </div>
                     <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 text-center">
                         <div className="font-black text-slate-900 dark:text-white uppercase tracking-tighter text-sm">You</div>
-                        <div className="text-xs text-brand-yellow font-bold">KES 45,000</div>
+                        <div className="text-xs text-brand-yellow font-bold">KES {totalValue.toLocaleString()}</div>
                     </div>
                 </div>
 

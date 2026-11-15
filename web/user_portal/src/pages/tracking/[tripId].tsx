@@ -11,21 +11,6 @@ const CabiMap = dynamic(() => import('@/components/maps/CabiMap'), {
     loading: () => <div className="bg-slate-100 dark:bg-white/5 w-full h-96 rounded-lg animate-pulse flex items-center justify-center">Loading Map...</div>
 });
 
-const MOCK_ROUTE: [number, number][] = [
-    [-1.286389, 36.817223],
-    [-1.285389, 36.818223],
-    [-1.284389, 36.819223],
-    [-1.283389, 36.820223],
-    [-1.282389, 36.821223],
-];
-
-const MOCK_DIRECTIONS = [
-    { instruction: 'Head north on Moi Ave toward Kenyatta Ave', distance: '200m' },
-    { instruction: 'Turn left onto Kenyatta Ave', distance: '1.2km' },
-    { instruction: 'Turn right onto State House Rd', distance: '800m' },
-    { instruction: 'Your destination will be on the left', distance: '150m' }
-];
-
 export default function TrackingPage() {
     const router = useRouter();
     const { tripId } = router.query;
@@ -50,8 +35,6 @@ export default function TrackingPage() {
                 setLoading(false);
             } catch (err) {
                 console.error(err);
-                // Only stop loading if we haven't loaded initial data yet? 
-                // Or maybe keep loading state handled more gracefully.
                 if (loading) setLoading(false);
             }
         };
@@ -61,13 +44,27 @@ export default function TrackingPage() {
         return () => clearInterval(interval);
     }, [tripId]);
 
-    if (loading) return <div className="p-8 text-center text-gray-600 dark:text-gray-400">Loading delivery status...</div>;
-    if (!trackingData) return <div className="p-8 text-center text-red-600">Delivery not found.</div>;
+    if (loading) return <div className="p-8 text-center text-gray-600 dark:text-gray-400">Loading trip status...</div>;
+    if (!trackingData) return <div className="p-8 text-center text-red-600">Trip not found.</div>;
 
     const markers: any[] = [
-        { id: 'driver', position: [trackingData.currentLocation.lat, trackingData.currentLocation.lng], type: 'driver', popup: 'Sarah M. (Driver)' },
+        ...(trackingData.driver
+            ? [
+                  {
+                      id: 'driver',
+                      position: [trackingData.currentLocation.lat, trackingData.currentLocation.lng],
+                      type: 'driver',
+                      popup: `${trackingData.driver.name} (Driver)`,
+                  },
+              ]
+            : []),
         { id: 'pickup', position: trackingData.pickup.position, type: 'pickup', popup: 'Pickup Point' },
-        { id: 'dropoff', position: trackingData.dropoff.position, type: 'dropoff', popup: 'Drop-off Point' }
+        { id: 'dropoff', position: trackingData.dropoff.position, type: 'dropoff', popup: 'Drop-off Point' },
+    ];
+
+    const liveRoute: [number, number][] = [
+        trackingData.pickup.position,
+        trackingData.dropoff.position,
     ];
 
     return (
@@ -96,21 +93,27 @@ export default function TrackingPage() {
                         </div>
 
                         <div className="p-6">
-                            <div className="flex items-center mb-8">
-                                <div className="w-14 h-14 bg-brand-yellow/10 rounded-xl flex items-center justify-center border border-brand-yellow/20 shadow-inner">
-                                    <UserCircle2 className="w-8 h-8 text-brand-yellow" />
+                            {trackingData.driver ? (
+                                <div className="flex items-center mb-8">
+                                    <div className="w-14 h-14 bg-brand-yellow/10 rounded-xl flex items-center justify-center border border-brand-yellow/20 shadow-inner">
+                                        <UserCircle2 className="w-8 h-8 text-brand-yellow" />
+                                    </div>
+                                    <div className="ml-4">
+                                        <h3 className="font-black text-lg text-slate-900 dark:text-white leading-tight">{trackingData.driver.name}</h3>
+                                        <p className="text-slate-500 dark:text-gray-400 text-xs font-bold mt-1">
+                                            {trackingData.driver.vehicle} • <span className="text-brand-yellow">{trackingData.driver.plate}</span>
+                                        </p>
+                                    </div>
+                                    <div className="ml-auto flex items-center gap-1 bg-brand-yellow/10 px-2 py-1 rounded-lg">
+                                        <span className="text-brand-yellow text-xs">★</span>
+                                        <span className="font-black text-brand-yellow text-sm">{trackingData.driver.rating}</span>
+                                    </div>
                                 </div>
-                                <div className="ml-4">
-                                    <h3 className="font-black text-lg text-slate-900 dark:text-white leading-tight">{trackingData.driver.name}</h3>
-                                    <p className="text-slate-500 dark:text-gray-400 text-xs font-bold mt-1">
-                                        {trackingData.driver.vehicle} • <span className="text-brand-yellow">{trackingData.driver.plate}</span>
-                                    </p>
+                            ) : (
+                                <div className="mb-8 p-4 rounded-xl bg-brand-yellow/10 border border-brand-yellow/20 text-xs font-bold text-slate-700 dark:text-neutral-300">
+                                    Matching your trip with the nearest verified chauffeur...
                                 </div>
-                                <div className="ml-auto flex items-center gap-1 bg-brand-yellow/10 px-2 py-1 rounded-lg">
-                                    <span className="text-brand-yellow text-xs">★</span>
-                                    <span className="font-black text-brand-yellow text-sm">{trackingData.driver.rating}</span>
-                                </div>
-                            </div>
+                            )}
 
                             <div className="space-y-6 relative before:absolute before:left-4 before:top-4 before:bottom-4 before:w-[2px] before:bg-slate-200 dark:before:bg-white/5">
                                 <div className="relative pl-10">
@@ -156,10 +159,9 @@ export default function TrackingPage() {
                 <div className="lg:col-span-2 relative h-[600px] lg:h-auto rounded-3xl overflow-hidden shadow-3xl animate-fade-in border border-slate-200 dark:border-white/10">
                     <CabiMap
                         markers={markers}
-                        route={MOCK_ROUTE}
+                        route={liveRoute}
                         height="100%"
                         showTraffic={showTraffic}
-                        directions={MOCK_DIRECTIONS}
                     />
 
                     {/* Floating Controls Overlay */}
