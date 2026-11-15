@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { initiateStkPush } from '@/lib/mpesa';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -50,7 +51,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (action === 'complete') {
             const { distanceKm, durationMinutes } = req.body ?? {};
-            const existing = await prisma.ride.findUnique({ where: { id: rideId } });
+            const existing = await prisma.ride.findUnique({
+                where: { id: rideId },
+                include: { passenger: true },
+            });
             const computedFare =
                 existing?.fare && Number(existing.fare) > 0
                     ? Number(existing.fare)
@@ -65,7 +69,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     ...(durationMinutes ? { duration: Math.round(Number(durationMinutes)) } : {}),
                 },
             });
-            return res.status(200).json({ fare: computedFare, ride: updated });
+
+            // Automatically trigger M-Pesa STK Push to the passenger
+            let mpesaResult = null;
+            const passengerPhone = existing?.passenger?.phone;
+            if (passengerPhone) {
+                try {
+                    const tripCode = (existing as any).tripCode || (existing?.pickupLocation as any)?.tripCode || rideId.slice(0, 8);
+                    mpesaResult = await initiateStkPush({
+                        phone: passengerPhone,
+                        amount: computedFare,
+                        accountReference: tripCode,
+                        transactionDesc: `Cabi Trip ${tripCode}`,
+                    });
+                } catch (mpesaErr: any) {
+                    console.warn('Auto M-Pesa STK Push trigger warning:', mpesaErr?.message);
+                }
+            }
+
+            return res.status(200).json({ fare: computedFare, ride: updated, mpesa: mpesaResult });
         }
 
         if (action === 'cancel' || action === 'reject' || action === 'pass') {
