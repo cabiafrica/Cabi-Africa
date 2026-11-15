@@ -21,6 +21,7 @@ Priority Order:
 """
 
 import sys
+import os
 import subprocess
 import argparse
 from pathlib import Path
@@ -93,10 +94,15 @@ def run_script(name: str, script_path: Path, project_path: str, url: Optional[st
     
     # Run script
     try:
+        env = os.environ.copy()
+        if "/Users/user/.local/node/bin" not in env.get("PATH", ""):
+            env["PATH"] = f"/Users/user/.local/node/bin:{env.get('PATH', '')}"
+            
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
+            env=env,
             timeout=300  # 5 minute timeout
         )
         

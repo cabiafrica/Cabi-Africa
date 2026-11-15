@@ -4,7 +4,7 @@
 export const CONTACT_INFO = {
     phoneDisplay: '+254 756 777 222',
     phoneDial: '+254756777222',
-    email: 'ke.africabi@gmail.com',
+    email: 'cabifastafrica@gmail.com',
     officeName: 'Nairobi Hub (HQ) • Westlands & CBD',
     officeHours: 'Mon – Sat • 8:00 AM – 6:00 PM EAT',
     appointmentPath: '/appointments',
