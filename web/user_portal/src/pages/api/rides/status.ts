@@ -1,37 +1,40 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
-    const { passengerId } = req.query;
+    const { passengerId, rideId } = req.query;
 
-    if (!passengerId) {
-        return res.status(400).json({ message: 'Missing passengerId' });
+    if (!passengerId && !rideId) {
+        return res.status(400).json({ message: 'Missing passengerId or rideId' });
     }
 
     try {
+        const whereClause: Record<string, unknown> = rideId
+            ? { id: rideId as string }
+            : {
+                  passengerId: passengerId as string,
+                  status: {
+                      in: ['REQUESTED', 'MATCHING', 'DRIVER_ASSIGNED', 'DRIVER_ARRIVED', 'IN_PROGRESS'],
+                  },
+              };
+
         const ride = await prisma.ride.findFirst({
-            where: {
-                passengerId: passengerId as string,
-                status: {
-                    in: ['REQUESTED', 'MATCHING', 'DRIVER_ASSIGNED', 'DRIVER_ARRIVED', 'IN_PROGRESS']
-                }
-            },
+            where: whereClause,
             include: {
                 driver: {
                     include: {
-                        user: true
-                    }
-                }
+                        user: true,
+                        vehicles: true,
+                    },
+                },
             },
             orderBy: {
-                createdAt: 'desc'
-            }
+                createdAt: 'desc',
+            },
         });
 
         if (!ride) {

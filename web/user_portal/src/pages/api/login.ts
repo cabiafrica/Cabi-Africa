@@ -70,13 +70,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(200).json({
                     success: true,
                     token,
+                    accessToken: token,
                     user: {
                         id: dbUser.id,
                         email: dbUser.email,
+                        fullName: dbUser.fullName,
                         firstName: nameParts[0],
                         lastName: nameParts.slice(1).join(' '),
                         role,
                         phone: dbUser.phone,
+                        driverProfileId: dbUser.driverProfile?.id,
+                        driverProfile: dbUser.driverProfile,
                         fleetManagerId: dbUser.fleetManagerProfile?.id
                     }
                 });

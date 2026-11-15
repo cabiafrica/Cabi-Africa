@@ -43,7 +43,7 @@ android {
         manifestPlaceholders["googleMapsApiKey"] =
             localProperties.getProperty("GOOGLE_MAPS_API_KEY")
                 ?: System.getenv("GOOGLE_MAPS_API_KEY")
-                ?: ""
+                ?: "AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0"
     }
 
     signingConfigs {

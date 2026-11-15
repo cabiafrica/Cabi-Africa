@@ -7,9 +7,7 @@ import 'package:image_picker/image_picker.dart';
 // In a real app, the Dio instance would be configured and provided globally.
 final dioProvider = Provider(
   (ref) {
-    // Backend is on port 3000 (driver-lead-service default?) or via gateway.
-    // Assuming 3000 based on previous checks.
-    final baseUrl = 'http://${AppConfig.host}:3010/api/v1';
+    final baseUrl = AppConfig.authApiUrl;
     return Dio(BaseOptions(baseUrl: baseUrl));
   },
 );

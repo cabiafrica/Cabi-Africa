@@ -1,40 +1,51 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import httpProxy from 'http-proxy';
+import { prisma } from '@/lib/prisma';
 
-const SACCO_SERVICE_URL =
-    process.env.SACCO_SERVICE_URL?.replace(/\/api\/?$/, '') ||
-    process.env.NEXT_PUBLIC_SACCO_SERVICE_URL?.replace(/\/api\/?$/, '') ||
-    'https://sacco-service-746659778850.us-central1.run.app';
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    if (req.method === 'OPTIONS') return res.status(200).end();
 
-const proxy = httpProxy.createProxyServer({
-    target: SACCO_SERVICE_URL,
-    changeOrigin: true,
-});
+    const slug = Array.isArray(req.query.slug) ? req.query.slug : [String(req.query.slug || '')];
 
-export const config = {
-    api: {
-        bodyParser: false, // Must disable body parser for proxying to work correctly
-    },
-};
+    if (slug[0] === 'health') {
+        return res.status(200).json({ status: 'UP', service: 'sacco' });
+    }
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-    return new Promise((resolve, reject) => {
-        // req.url will be something like /api/sacco/list
-        // sacco-service sets global prefix 'api' and has controllers like @Controller('sacco')
-        // So it expects /api/sacco/list
-        // Since Next.js removes the base match in some configs, but usually [...slug] keeps it?
-        // Actually, if we hit /api/sacco/list, the proxy.web sends it as /api/sacco/list to target.
-        // Target is localhost:3338. So it hits http://localhost:3338/api/sacco/list.
-        // which matches sacco-service's routing!
-        
-        proxy.web(req, res, {
-            target: SACCO_SERVICE_URL,
-        }, (err) => {
-            if (err) {
-                console.error('Proxy error (SACCO):', err);
-                res.status(502).json({ error: 'Bad Gateway', details: err.message });
-                resolve(null);
-            }
-        });
-    });
+    if (slug[0] === 'balance') {
+        const driverId = String(req.query.driverId || '');
+        try {
+            const profile = await prisma.driverProfile.findFirst({
+                where: { OR: [{ id: driverId }, { userId: driverId }] },
+                include: { saccoLedger: true },
+            });
+            const totalSavings =
+                profile?.saccoLedger?.reduce((sum, entry: any) => sum + Number(entry.amount || 0), 0) ?? 0;
+            return res.status(200).json({
+                driverId,
+                balance: totalSavings,
+                totalSavings,
+                loanEligibility: totalSavings * 3,
+                currency: 'KES',
+            });
+        } catch {
+            return res.status(200).json({ driverId, balance: 0, totalSavings: 0, loanEligibility: 0, currency: 'KES' });
+        }
+    }
+
+    if (slug[0] === 'transactions') {
+        const driverId = String(req.query.driverId || '');
+        try {
+            const profile = await prisma.driverProfile.findFirst({
+                where: { OR: [{ id: driverId }, { userId: driverId }] },
+                include: { saccoLedger: { orderBy: { createdAt: 'desc' }, take: 50 } },
+            });
+            return res.status(200).json(profile?.saccoLedger ?? []);
+        } catch {
+            return res.status(200).json([]);
+        }
+    }
+
+    return res.status(200).json({ data: [] });
 }

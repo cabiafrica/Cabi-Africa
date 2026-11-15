@@ -1,24 +1,32 @@
 /**
- * Centralized App Store & Google Play Store redirect URLs for Cabi Africa mobile apps.
- * Android package IDs match `mobile/passenger_app` (`africa.cabi.passenger`) and
- * `mobile/driver_app` (`africa.cabi.driver`). Override any URL via NEXT_PUBLIC_* env vars.
+ * Centralized Direct Download & iOS PWA URLs for Cabi Africa mobile apps.
+ * Android links point directly to the official signed production APK hosted on cabi.africa.
+ * iOS links launch the standalone-ready iOS Progressive Web Apps (Add to Home Screen).
+ * Override any URL via NEXT_PUBLIC_* env vars.
  */
 export const APP_LINKS = {
     passenger: {
         appStore:
             process.env.NEXT_PUBLIC_PASSENGER_APP_STORE_URL ||
-            'https://apps.apple.com/search?term=Cabi%20Africa',
+            '/apps/passenger/index.html',
         playStore:
             process.env.NEXT_PUBLIC_PASSENGER_PLAY_STORE_URL ||
-            'https://play.google.com/store/apps/details?id=africa.cabi.passenger',
+            '/downloads/Cabi-Go-Official.apk',
+        apkDirect: '/downloads/Cabi-Go-Official.apk',
+        githubRelease:
+            'https://github.com/ibnke/Cabi-Africa/releases/latest/download/Cabi-Go-Official.apk',
+        iosWebApp: '/apps/passenger/index.html',
     },
     driver: {
         appStore:
             process.env.NEXT_PUBLIC_DRIVER_APP_STORE_URL ||
-            'https://apps.apple.com/search?term=Cabi%20Driver%20Africa',
+            '/apps/driver/index.html',
         playStore:
             process.env.NEXT_PUBLIC_DRIVER_PLAY_STORE_URL ||
-            'https://play.google.com/store/apps/details?id=africa.cabi.driver',
+            '/downloads/Cabi-Drive-Official.apk',
+        apkDirect: '/downloads/Cabi-Drive-Official.apk',
+        githubRelease:
+            'https://github.com/ibnke/Cabi-Africa/releases/latest/download/Cabi-Drive-Official.apk',
+        iosWebApp: '/apps/driver/index.html',
     },
 } as const;
-

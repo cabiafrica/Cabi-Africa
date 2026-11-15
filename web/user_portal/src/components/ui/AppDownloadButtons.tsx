@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaApple, FaGooglePlay } from 'react-icons/fa';
+import { FaApple, FaAndroid } from 'react-icons/fa';
 import { APP_LINKS } from '@/config/appLinks';
 
 interface AppDownloadButtonsProps {
@@ -11,7 +11,7 @@ interface AppDownloadButtonsProps {
 }
 
 /**
- * Direct App Store & Google Play download links parameterized by app role.
+ * Direct iOS Web App & Android APK download links parameterized by app role.
  */
 export default function AppDownloadButtons({
     role,
@@ -23,8 +23,8 @@ export default function AppDownloadButtons({
     const links = APP_LINKS[role];
     const defaultCaption =
         role === 'driver'
-            ? 'Direct Download — CABI Driver App'
-            : 'Direct Download — CABI Passenger App';
+            ? 'Direct Install — CABI Driver App (iOS & Android)'
+            : 'Direct Install — CABI Passenger App (iOS & Android)';
 
     const captionColor =
         tone === 'dark'
@@ -47,37 +47,33 @@ export default function AppDownloadButtons({
             <div className={`flex flex-col sm:flex-row items-stretch sm:items-center ${alignRow} gap-3 w-full sm:w-auto`}>
                 <a
                     href={links.appStore}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Download CABI ${role === 'driver' ? 'Driver' : 'Passenger'} App on the App Store`}
+                    aria-label={`Install CABI ${role === 'driver' ? 'Driver' : 'Passenger'} App on iPhone (iOS)`}
                     className={`group inline-flex items-center justify-center gap-3 px-5 py-3 rounded-xl border shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(212,175,55,0.35)] active:scale-95 ${cardSurface}`}
                 >
                     <FaApple className="text-xl text-white group-hover:text-[#ffe088] transition-colors shrink-0" />
                     <div className="text-left">
                         <div className="text-[10px] uppercase tracking-wider opacity-70 leading-tight">
-                            Download on the
+                            Launch & Install on
                         </div>
-                        <div className="text-sm font-extrabold leading-tight">App Store</div>
+                        <div className="text-sm font-extrabold leading-tight">iPhone / iOS</div>
                     </div>
                 </a>
 
                 <a
                     href={links.playStore}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Download CABI ${role === 'driver' ? 'Driver' : 'Passenger'} App on Google Play`}
+                    download
+                    aria-label={`Download CABI ${role === 'driver' ? 'Driver' : 'Passenger'} Android APK`}
                     className={`group inline-flex items-center justify-center gap-3 px-5 py-3 rounded-xl border shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(212,175,55,0.35)] active:scale-95 ${cardSurface}`}
                 >
-                    <FaGooglePlay className="text-lg text-emerald-400 group-hover:scale-110 transition-transform shrink-0" />
+                    <FaAndroid className="text-xl text-emerald-400 group-hover:scale-110 transition-transform shrink-0" />
                     <div className="text-left">
                         <div className="text-[10px] uppercase tracking-wider opacity-70 leading-tight">
-                            Get it on
+                            Direct Download
                         </div>
-                        <div className="text-sm font-extrabold leading-tight">Google Play</div>
+                        <div className="text-sm font-extrabold leading-tight">Android APK</div>
                     </div>
                 </a>
             </div>
         </div>
     );
 }
-

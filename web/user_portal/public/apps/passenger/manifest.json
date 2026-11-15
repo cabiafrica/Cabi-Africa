@@ -1,0 +1,25 @@
+{
+    "name": "CABI Go — Passenger App",
+    "short_name": "CABI Go",
+    "start_url": "/apps/passenger/index.html",
+    "scope": "/apps/passenger/",
+    "display": "standalone",
+    "background_color": "#0A0A0A",
+    "theme_color": "#D4AF37",
+    "description": "CABI Africa Official Passenger App — Book Boda, Basic, Standard, XL, and Executive rides.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

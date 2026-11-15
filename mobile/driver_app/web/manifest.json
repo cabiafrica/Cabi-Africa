@@ -1,11 +1,25 @@
 {
-    "name": "Cabi Driver",
-    "short_name": "Cabi Driver",
-    "start_url": ".",
+    "name": "CABI Drive — Driver App",
+    "short_name": "CABI Drive",
+    "start_url": "/apps/driver/index.html",
+    "scope": "/apps/driver/",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "Cabi Driver App",
+    "background_color": "#0A0A0A",
+    "theme_color": "#D4AF37",
+    "description": "CABI Africa Official Driver App — Accept rides, track earnings, and withdraw to Mobile Money.",
     "orientation": "portrait-primary",
-    "prefer_related_applications": false
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
 }

@@ -70,6 +70,8 @@ project-graph.json
 # Flutter engine/SDK (use system-installed Flutter)
 tools/flutter/
 *.apk
+!web/user_portal/public/downloads/*.apk
+!web/user_portal/public/apps/**
 apks/
 
 

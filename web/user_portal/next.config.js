@@ -25,7 +25,7 @@ const securityHeaders = [
   },
   {
     key: 'Content-Security-Policy',
-    value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://images.unsplash.com https://www.gstatic.com https://*.tile.openstreetmap.org https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com; frame-src 'self' https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://www.google.com https://nominatim.openstreetmap.org https://*.run.app wss://*.run.app;"
+    value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://www.google.com https://www.gstatic.com https://maps.googleapis.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://images.unsplash.com https://www.gstatic.com https://maps.gstatic.com https://maps.googleapis.com https://*.tile.openstreetmap.org https://cdnjs.cloudflare.com https://placehold.co; font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com; frame-src 'self' https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://www.google.com https://www.gstatic.com https://maps.googleapis.com https://fonts.gstatic.com https://fonts.googleapis.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org https://*.cabi.africa https://*.run.app wss://*.run.app;"
   }
 ];
 
