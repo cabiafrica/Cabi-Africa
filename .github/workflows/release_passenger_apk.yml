@@ -46,14 +46,14 @@ jobs:
         working-directory: ./mobile/driver_app
         run: |
           flutter pub get
-          flutter build apk --release --target-platform android-arm,android-arm64 --dart-define=IS_PRODUCTION=true --no-tree-shake-icons
+          flutter build apk --release --android-skip-build-dependency-validation --target-platform android-arm,android-arm64 --dart-define=IS_PRODUCTION=true --no-tree-shake-icons
           cp build/app/outputs/flutter-apk/app-release.apk ../../Cabi-Drive-Official.apk
 
       - name: 📱 Build CABI Go (Passenger App) Production APK
         working-directory: ./mobile/passenger_app
         run: |
           flutter pub get
-          flutter build apk --release --target-platform android-arm,android-arm64 --dart-define=IS_PRODUCTION=true --no-tree-shake-icons
+          flutter build apk --release --android-skip-build-dependency-validation --target-platform android-arm,android-arm64 --dart-define=IS_PRODUCTION=true --no-tree-shake-icons
           cp build/app/outputs/flutter-apk/app-release.apk ../../Cabi-Go-Official.apk
 
       - name: 📦 Stage APKs into User Portal Public Downloads
