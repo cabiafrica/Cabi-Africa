@@ -11,22 +11,7 @@ class _IncognitoTripsScreenState extends State<IncognitoTripsScreen> {
   bool _isUnlocked = false;
   final TextEditingController _pinController = TextEditingController();
 
-  final List<Map<String, dynamic>> _incognitoTrips = [
-    {
-      'id': 'trip_inc_1',
-      'date': DateTime.now().subtract(const Duration(days: 2)),
-      'pickup': 'Confidential Location A',
-      'dropoff': 'Confidential Location B',
-      'fare': 2850.00,
-    },
-    {
-      'id': 'trip_inc_2',
-      'date': DateTime.now().subtract(const Duration(days: 5)),
-      'pickup': 'Private Address',
-      'dropoff': 'Undisclosed Destination',
-      'fare': 4200.00,
-    },
-  ];
+  final List<Map<String, dynamic>> _incognitoTrips = [];
 
   void _attemptUnlock() {
     // Mock PIN verification (in production, this would verify against user's PIN)
@@ -126,11 +111,6 @@ class _IncognitoTripsScreenState extends State<IncognitoTripsScreen> {
                 ),
               ),
               child: const Text('UNLOCK', style: TextStyle(fontSize: 16)),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Demo PIN: 1234',
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
             ),
           ],
         ),

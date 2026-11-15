@@ -466,7 +466,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                             Row(
                               children: [
                                 Text(
-                                  widget.driverName.isEmpty ? 'Samuel Mwangi' : widget.driverName,
+                                  widget.driverName.isEmpty ? 'Your Driver' : widget.driverName,
                                   style: AppTheme.outfit(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,

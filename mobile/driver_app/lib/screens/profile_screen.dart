@@ -271,17 +271,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         Container(
           height: 320,
           width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
               colors: [AppTheme.darkSurface, AppTheme.darkBackground],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-            ),
-            image: DecorationImage(
-              image: const NetworkImage("https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&q=80&w=1000"),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                  Colors.black.withValues(alpha: 0.7), BlendMode.darken),
             ),
           ),
           child: SafeArea(

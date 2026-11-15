@@ -1102,9 +1102,6 @@ extension _HomeScreenPanels on _HomeScreenState {
                                   label: "Home",
                                   isDark: isDark,
                                   onTap: () {
-                                    _updateState(() {
-                                      _destination = "Home • Westlands";
-                                    });
                                     _navigateToSearch(isPickup: false);
                                   },
                                 ),
@@ -1114,9 +1111,6 @@ extension _HomeScreenPanels on _HomeScreenState {
                                   label: "Office",
                                   isDark: isDark,
                                   onTap: () {
-                                    _updateState(() {
-                                      _destination = "Office • Delta Corner";
-                                    });
                                     _navigateToSearch(isPickup: false);
                                   },
                                 ),

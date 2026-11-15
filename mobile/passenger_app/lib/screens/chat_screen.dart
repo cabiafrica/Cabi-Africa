@@ -62,41 +62,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    final driver = widget.driverName ?? 'Samuel Mwangi';
-    _messages = [
-      ChatMessageItem(
-        id: '1',
-        senderName: driver,
-        role: 'Chauffeur',
-        text: 'Good afternoon. I have arrived at the executive drop-off bay. Vehicle hazard lights are on.',
-        isMe: false,
-        timestamp: '14:32',
-      ),
-      const ChatMessageItem(
-        id: '2',
-        text: 'Thank you! Taking the elevator down now. See you in 2 minutes.',
-        isMe: true,
-        timestamp: '14:33',
-        isDelivered: true,
-      ),
-      ChatMessageItem(
-        id: '3',
-        senderName: driver,
-        role: 'Chauffeur',
-        text: 'Understood! Climate control is chilled to 21°C as per your VIP preference. Doors are unlocked.',
-        isMe: false,
-        timestamp: '14:34',
-      ),
-      ChatMessageItem(
-        id: '4',
-        senderName: driver,
-        role: 'Chauffeur',
-        text: 'Vehicle spotted & parked ready in VIP Bay #4.',
-        isMe: false,
-        timestamp: '14:35',
-        locationTag: 'Bay 4 • Executive Terminal',
-      ),
-    ];
+    _messages = [];
   }
 
   @override
@@ -179,9 +145,9 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final gold = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
-    final driver = widget.driverName ?? 'Samuel Mwangi';
-    final vehicle = widget.vehicleInfo ?? 'Mercedes E200 · KDA 482B';
-    final rating = widget.driverRating ?? '4.98';
+    final driver = widget.driverName ?? 'Your Driver';
+    final vehicle = widget.vehicleInfo ?? 'Assigned Vehicle';
+    final rating = widget.driverRating ?? '—';
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0D0D0E) : AppTheme.porcelainCanvas,
@@ -656,7 +622,7 @@ class _ChatScreenState extends State<ChatScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  msg.senderName ?? 'Samuel Mwangi',
+                  msg.senderName ?? 'Driver',
                   style: AppTheme.outfit(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,

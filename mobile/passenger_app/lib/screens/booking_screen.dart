@@ -105,11 +105,7 @@ class _BookingScreenState extends State<BookingScreen> {
   late int _selectedDurationIndex;
   late int _selectedVehicleIndex;
 
-  final List<String> _waypoints = [
-    'Villa Rosa Kempinski, Westlands (Lobby Gate)',
-    'State House Rd Offices (Wait time: ~45 mins)',
-    'Two Rivers Mall Meeting Lounge (Valet Bay 2)',
-  ];
+  final List<String> _waypoints = [];
 
   final TextEditingController _stopController = TextEditingController();
 

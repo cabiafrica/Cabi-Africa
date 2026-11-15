@@ -709,20 +709,23 @@ class _SafetyCenterScreenState extends State<SafetyCenterScreen>
                   ),
                   const SizedBox(height: 12),
 
-                  _buildContactCard(
-                    icon: Icons.family_restroom_rounded,
-                    name: 'Dr. Karuri Mwangi',
-                    role: 'Spouse • +254 722 000 128',
-                    phone: '+254722000128',
-                    isDark: isDark,
-                  ),
-                  const SizedBox(height: 8),
-                  _buildContactCard(
-                    icon: Icons.corporate_fare_rounded,
-                    name: 'Deloitte Security Desk',
-                    role: 'Corporate • +254 20 423 0000',
-                    phone: '+254204230000',
-                    isDark: isDark,
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.03),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isDark ? Colors.white12 : Colors.black12,
+                      ),
+                    ),
+                    child: Text(
+                      'No trusted contacts added yet. Add emergency contacts in your profile settings for one-tap SOS sharing.',
+                      style: AppTheme.inter(
+                        fontSize: 12,
+                        color: isDark ? Colors.white60 : Colors.black54,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   _buildContactCard(
