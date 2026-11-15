@@ -140,21 +140,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (resolvedPassengerId) {
         try {
             const tripCode = `CB-${Math.floor(1000 + Math.random() * 9000)}`;
+            const pickupPayload =
+                typeof pickupLocation === 'string'
+                    ? { address: pickupLocation, tripCode }
+                    : { ...pickupLocation, tripCode };
+            const dropoffPayload =
+                typeof dropoffLocation === 'string'
+                    ? { address: dropoffLocation }
+                    : dropoffLocation;
+
             const ride = await prisma.ride.create({
                 data: {
                     passengerId: resolvedPassengerId,
-                    pickupLocation: typeof pickupLocation === 'string' ? { address: pickupLocation } : pickupLocation,
-                    dropoffLocation: typeof dropoffLocation === 'string' ? { address: dropoffLocation } : dropoffLocation,
+                    pickupLocation: pickupPayload,
+                    dropoffLocation: dropoffPayload,
                     status: 'REQUESTED',
                     requestedVehicleType: normalizeVehicleType(vehicleType),
                     matchingStartedAt: new Date(),
                     fare: numericFare,
                     distance: 0,
                     duration: 0,
-                    tripCode,
                 },
             });
-            return res.status(201).json(ride);
+            return res.status(201).json({ ...ride, tripCode });
         } catch (dbRideErr) {
             console.error('Database ride persistence failed:', (dbRideErr as Error).message);
         }

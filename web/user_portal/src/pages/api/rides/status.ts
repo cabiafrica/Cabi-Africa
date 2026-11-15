@@ -41,7 +41,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(404).json({ message: 'No active ride found' });
         }
 
-        return res.status(200).json(ride);
+        const tripCode = (ride as any).tripCode || (ride.pickupLocation as any)?.tripCode || ride.id;
+        return res.status(200).json({ ...ride, tripCode });
     } catch (error) {
         console.error('Fetch ride status error:', error);
         return res.status(500).json({ message: 'Internal server error' });
