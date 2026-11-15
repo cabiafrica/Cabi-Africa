@@ -1,5 +1,5 @@
 import MainLayout from '../components/layout/MainLayout';
-import { FaAndroid, FaCheckCircle, FaDownload, FaMobileAlt, FaCarSide, FaShieldAlt } from 'react-icons/fa';
+import { FaAndroid, FaApple, FaCheckCircle, FaDownload, FaMobileAlt, FaCarSide, FaShieldAlt } from 'react-icons/fa';
 import { APP_LINKS } from '@/config/appLinks';
 
 export default function DownloadApp() {
@@ -44,7 +44,7 @@ export default function DownloadApp() {
                                     Create your personal rider account, book Boda, Standard, XL, and Executive rides with live GPS tracking, and pay seamlessly via M-Pesa STK or Wallet.
                                 </p>
                             </div>
-                            <div>
+                            <div className="space-y-3">
                                 <a
                                     href={APP_LINKS.passenger.apkDirect}
                                     download={APP_LINKS.passenger.fileName}
@@ -54,14 +54,33 @@ export default function DownloadApp() {
                                         <FaAndroid className="text-2xl" />
                                         <div className="text-left">
                                             <div className="text-[10px] uppercase tracking-wider opacity-80">
-                                                Direct Download to Device ({APP_LINKS.passenger.fileName})
+                                                Android Direct Download ({APP_LINKS.passenger.fileName})
                                             </div>
                                             <div className="text-base font-black leading-none mt-0.5">
-                                                Download CABI Go (Full Version)
+                                                Download CABI Go (Android APK)
                                             </div>
                                         </div>
                                     </div>
                                     <FaDownload className="text-lg" />
+                                </a>
+                                <a
+                                    href={APP_LINKS.passenger.iosWebApp}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full bg-slate-900 dark:bg-black/70 text-white border border-slate-700 dark:border-white/20 font-extrabold px-6 py-3.5 rounded-xl flex items-center justify-between gap-3 hover:border-executive-gold transition-all"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <FaApple className="text-2xl text-white" />
+                                        <div className="text-left">
+                                            <div className="text-[10px] uppercase tracking-wider text-executive-gold">
+                                                iPhone &amp; iPad (Safari Install)
+                                            </div>
+                                            <div className="text-sm font-black leading-none mt-0.5">
+                                                Install CABI Go for iOS
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span className="text-xs font-black uppercase tracking-wider text-executive-gold">Open</span>
                                 </a>
                             </div>
                         </div>
@@ -84,7 +103,7 @@ export default function DownloadApp() {
                                     Sign up or log in as a verified CABI driver partner, go online to receive real-time trip dispatches, track your live earnings, and withdraw instantly to M-Pesa.
                                 </p>
                             </div>
-                            <div>
+                            <div className="space-y-3">
                                 <a
                                     href={APP_LINKS.driver.apkDirect}
                                     download={APP_LINKS.driver.fileName}
@@ -94,30 +113,61 @@ export default function DownloadApp() {
                                         <FaAndroid className="text-2xl text-emerald-400" />
                                         <div className="text-left">
                                             <div className="text-[10px] uppercase tracking-wider text-executive-gold">
-                                                Direct Download to Device ({APP_LINKS.driver.fileName})
+                                                Android Direct Download ({APP_LINKS.driver.fileName})
                                             </div>
                                             <div className="text-base font-black leading-none mt-0.5">
-                                                Download CABI Drive (Full Version)
+                                                Download CABI Drive (Android APK)
                                             </div>
                                         </div>
                                     </div>
                                     <FaDownload className="text-lg text-executive-gold" />
+                                </a>
+                                <a
+                                    href={APP_LINKS.driver.iosWebApp}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-white border border-slate-300 dark:border-white/20 font-extrabold px-6 py-3.5 rounded-xl flex items-center justify-between gap-3 hover:border-executive-gold transition-all"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <FaApple className="text-2xl" />
+                                        <div className="text-left">
+                                            <div className="text-[10px] uppercase tracking-wider text-executive-gold">
+                                                iPhone &amp; iPad (Safari Install)
+                                            </div>
+                                            <div className="text-sm font-black leading-none mt-0.5">
+                                                Install CABI Drive for iOS
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span className="text-xs font-black uppercase tracking-wider text-executive-gold">Open</span>
                                 </a>
                             </div>
                         </div>
                     </div>
 
                     {/* Quick Installation Guide */}
-                    <div className="mt-10 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 p-6 text-left">
-                        <h3 className="text-sm font-black uppercase tracking-wider text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                            <FaAndroid className="text-emerald-500 text-lg" /> How to Install &amp; Use on Your Phone
-                        </h3>
-                        <ol className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2 list-decimal list-inside">
-                            <li>Tap <strong>Download CABI Go</strong> (for Riders) or <strong>Download CABI Drive</strong> (for Drivers) above.</li>
-                            <li>Your phone will save <code className="font-bold">Cabi-Go-Official.apk</code> or <code className="font-bold">Cabi-Drive-Official.apk</code> directly into your device&apos;s <strong>Downloads</strong> folder.</li>
-                            <li>Tap the completed download notification (or open your <strong>Files / Downloads</strong> folder) and tap <strong>Install</strong>.</li>
-                            <li>Open the installed app, create your new account or sign in, and enjoy full production access.</li>
-                        </ol>
+                    <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                        <div className="rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 p-6">
+                            <h3 className="text-sm font-black uppercase tracking-wider text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                                <FaAndroid className="text-emerald-500 text-lg" /> Android Installation
+                            </h3>
+                            <ol className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2 list-decimal list-inside">
+                                <li>Tap <strong>Download CABI Go</strong> or <strong>Download CABI Drive (Android APK)</strong>.</li>
+                                <li>Your phone saves <code className="font-bold">Cabi-Go-Official.apk</code> or <code className="font-bold">Cabi-Drive-Official.apk</code> into your <strong>Downloads</strong> folder.</li>
+                                <li>Tap the completed download (or open <strong>Files / Downloads</strong>) and tap <strong>Install</strong>.</li>
+                            </ol>
+                        </div>
+
+                        <div className="rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 p-6">
+                            <h3 className="text-sm font-black uppercase tracking-wider text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                                <FaApple className="text-slate-900 dark:text-white text-lg" /> iPhone &amp; iPad (iOS) Installation
+                            </h3>
+                            <ol className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2 list-decimal list-inside">
+                                <li>Open this page in <strong>Safari</strong> and tap <strong>Install CABI Go for iOS</strong> or <strong>Install CABI Drive for iOS</strong>.</li>
+                                <li>Tap the Safari <strong>Share</strong> icon (square with upward arrow) at the bottom of the screen.</li>
+                                <li>Tap <strong>Add to Home Screen</strong> → <strong>Add</strong> to install the full-screen app on your iPhone.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 /**
- * Centralized Direct Download URLs for Cabi Africa Official Production Mobile Apps.
- * All links trigger direct binary downloads (.apk) to the user's device Downloads folder.
+ * Centralized Direct Download & Install URLs for Cabi Africa Official Production Mobile Apps.
+ * - Android: Direct .apk download to the device's Downloads folder.
+ * - iOS (iPhone / iPad): Installable full-screen PWA via Safari "Add to Home Screen".
  * No third-party app store redirects or trial versions.
  */
 export const APP_LINKS = {
@@ -11,10 +12,10 @@ export const APP_LINKS = {
         packageId: 'africa.cabi.passenger',
         apkDirect: '/downloads/Cabi-Go-Official.apk',
         playStore: '/downloads/Cabi-Go-Official.apk',
-        appStore: '/downloads/Cabi-Go-Official.apk',
+        appStore: '/apps/passenger/index.html',
         githubRelease:
             'https://github.com/ibnke/Cabi-Africa/releases/latest/download/Cabi-Go-Official.apk',
-        iosWebApp: '/downloads/Cabi-Go-Official.apk',
+        iosWebApp: '/apps/passenger/index.html',
     },
     driver: {
         name: 'CABI Drive (Driver App)',
@@ -23,9 +24,9 @@ export const APP_LINKS = {
         packageId: 'africa.cabi.driver',
         apkDirect: '/downloads/Cabi-Drive-Official.apk',
         playStore: '/downloads/Cabi-Drive-Official.apk',
-        appStore: '/downloads/Cabi-Drive-Official.apk',
+        appStore: '/apps/driver/index.html',
         githubRelease:
             'https://github.com/ibnke/Cabi-Africa/releases/latest/download/Cabi-Drive-Official.apk',
-        iosWebApp: '/downloads/Cabi-Drive-Official.apk',
+        iosWebApp: '/apps/driver/index.html',
     },
 } as const;

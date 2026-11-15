@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FaDownload, FaMobileAlt, FaCarSide, FaCheckCircle, FaShieldAlt } from 'react-icons/fa';
+import { FaDownload, FaMobileAlt, FaCarSide, FaCheckCircle, FaShieldAlt, FaAndroid, FaApple } from 'react-icons/fa';
 import SocialLinks from '@/components/ui/SocialLinks';
 import BrandLogo from '@/components/ui/BrandLogo';
 import { APP_LINKS } from '@/config/appLinks';
@@ -25,18 +25,14 @@ export default function Footer() {
                                 Download CABI Africa to Your Phone
                             </h3>
                             <p className="mt-1.5 text-xs sm:text-sm text-neutral-300 leading-relaxed">
-                                Select your edition below to download the full, market-ready installer (<code className="text-amber-400 font-semibold">.apk</code>) directly into your phone&apos;s <strong>Downloads</strong> folder—no store redirects, no trial limits, ready for immediate installation and full use.
+                                Select your edition below. Android downloads the full <code className="text-amber-400 font-semibold">.apk</code> directly into your phone&apos;s <strong>Downloads</strong> folder; iPhone/iPad opens the full iOS App (tap <strong>Share → Add to Home Screen</strong> in Safari)—no store redirects, no trial limits.
                             </p>
                         </div>
 
                         {/* Separate Market Download Options */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full lg:w-auto lg:min-w-[460px]">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full lg:w-auto lg:min-w-[520px]">
                             {/* Option 1: CABI Go (Passenger App) */}
-                            <a
-                                href={APP_LINKS.passenger.apkDirect}
-                                download={APP_LINKS.passenger.fileName}
-                                className="group flex flex-col justify-between rounded-xl bg-gradient-to-br from-amber-400 via-[#D4AF37] to-amber-600 text-black p-4 shadow-lg hover:brightness-105 transition-all duration-200 active:scale-[0.99]"
-                            >
+                            <div className="flex flex-col justify-between rounded-xl bg-gradient-to-br from-amber-400 via-[#D4AF37] to-amber-600 text-black p-4 shadow-lg">
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="p-2.5 rounded-lg bg-black/10 text-black">
                                         <FaMobileAlt className="text-xl" />
@@ -49,22 +45,39 @@ export default function Footer() {
                                     <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-80">
                                         Passenger Edition • v1.1.0
                                     </div>
-                                    <div className="text-base font-black leading-snug flex items-center justify-between mt-0.5">
-                                        <span>CABI Go App</span>
-                                        <FaDownload className="text-sm group-hover:translate-y-0.5 transition-transform" />
+                                    <div className="text-base font-black leading-snug mt-0.5">
+                                        CABI Go App
                                     </div>
-                                    <div className="text-[11px] font-semibold opacity-85 mt-1">
-                                        Saves {APP_LINKS.passenger.fileName} to Downloads
+                                    <div className="mt-3 flex flex-col gap-2">
+                                        <a
+                                            href={APP_LINKS.passenger.apkDirect}
+                                            download={APP_LINKS.passenger.fileName}
+                                            className="flex items-center justify-between gap-2 rounded-lg bg-black text-amber-400 px-3 py-2 text-xs font-extrabold hover:bg-neutral-900 transition-colors"
+                                        >
+                                            <span className="inline-flex items-center gap-1.5">
+                                                <FaAndroid className="text-sm text-emerald-400" />
+                                                Android (.apk)
+                                            </span>
+                                            <FaDownload className="text-[11px]" />
+                                        </a>
+                                        <a
+                                            href={APP_LINKS.passenger.iosWebApp}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-between gap-2 rounded-lg bg-black/15 hover:bg-black/25 text-black px-3 py-2 text-xs font-extrabold transition-colors"
+                                        >
+                                            <span className="inline-flex items-center gap-1.5">
+                                                <FaApple className="text-sm" />
+                                                iOS (iPhone / iPad)
+                                            </span>
+                                            <span className="text-[10px] uppercase tracking-wider opacity-85">Install</span>
+                                        </a>
                                     </div>
                                 </div>
-                            </a>
+                            </div>
 
                             {/* Option 2: CABI Drive (Driver App) */}
-                            <a
-                                href={APP_LINKS.driver.apkDirect}
-                                download={APP_LINKS.driver.fileName}
-                                className="group flex flex-col justify-between rounded-xl bg-white/5 hover:bg-white/10 text-white border border-amber-500/40 p-4 shadow-lg transition-all duration-200 active:scale-[0.99]"
-                            >
+                            <div className="flex flex-col justify-between rounded-xl bg-white/5 text-white border border-amber-500/40 p-4 shadow-lg">
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="p-2.5 rounded-lg bg-amber-500/15 text-amber-400">
                                         <FaCarSide className="text-xl" />
@@ -77,15 +90,36 @@ export default function Footer() {
                                     <div className="text-[10px] font-extrabold uppercase tracking-wider text-amber-400">
                                         Driver Partner Edition • v1.1.0
                                     </div>
-                                    <div className="text-base font-black leading-snug flex items-center justify-between mt-0.5">
-                                        <span>CABI Drive App</span>
-                                        <FaDownload className="text-sm text-amber-400 group-hover:translate-y-0.5 transition-transform" />
+                                    <div className="text-base font-black leading-snug mt-0.5">
+                                        CABI Drive App
                                     </div>
-                                    <div className="text-[11px] text-neutral-300 mt-1">
-                                        Saves {APP_LINKS.driver.fileName} to Downloads
+                                    <div className="mt-3 flex flex-col gap-2">
+                                        <a
+                                            href={APP_LINKS.driver.apkDirect}
+                                            download={APP_LINKS.driver.fileName}
+                                            className="flex items-center justify-between gap-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black px-3 py-2 text-xs font-extrabold transition-colors"
+                                        >
+                                            <span className="inline-flex items-center gap-1.5">
+                                                <FaAndroid className="text-sm" />
+                                                Android (.apk)
+                                            </span>
+                                            <FaDownload className="text-[11px]" />
+                                        </a>
+                                        <a
+                                            href={APP_LINKS.driver.iosWebApp}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-between gap-2 rounded-lg bg-white/10 hover:bg-white/15 text-white border border-white/15 px-3 py-2 text-xs font-extrabold transition-colors"
+                                        >
+                                            <span className="inline-flex items-center gap-1.5">
+                                                <FaApple className="text-sm" />
+                                                iOS (iPhone / iPad)
+                                            </span>
+                                            <span className="text-[10px] uppercase tracking-wider text-amber-400">Install</span>
+                                        </a>
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -127,6 +161,28 @@ export default function Footer() {
                                 >
                                     <FaDownload className="text-xs text-amber-500" />
                                     CABI Drive (Driver APK)
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href={APP_LINKS.passenger.iosWebApp}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+                                >
+                                    <FaApple className="text-xs text-amber-500" />
+                                    CABI Go (iOS App)
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href={APP_LINKS.driver.iosWebApp}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+                                >
+                                    <FaApple className="text-xs text-amber-500" />
+                                    CABI Drive (iOS App)
                                 </a>
                             </li>
                             <li>
