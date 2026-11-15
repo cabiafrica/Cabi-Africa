@@ -13,6 +13,7 @@ import '../providers/ride_request_provider.dart';
 import '../widgets/ride_request_modal.dart';
 import '../providers/auth_provider.dart';
 import '../providers/map_provider.dart';
+import '../providers/theme_provider.dart';
 import '../widgets/face_verification_modal.dart';
 import '../widgets/swipeable_online_button.dart';
 import '../widgets/sos_button.dart';
@@ -912,6 +913,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               mainAxisSize: MainAxisSize.min,
               children: [
                 _MapButton(
+                  icon: isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                  iconColor: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
+                  tooltip: isDark ? 'Switch to Lustre Platinum (Light)' : 'Switch to Obsidian Gold (Dark)',
+                  onTap: () => ref.read(themeProvider.notifier).toggleTheme(),
+                ),
+                const SizedBox(width: 8),
+                _MapButton(
                   icon: Icons.layers_outlined,
                   tooltip: 'Change Map Provider',
                   onTap: () => _showMapSelectionSheet(context, mapType),
@@ -1092,47 +1100,75 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                 borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
-                                'Top 5%',
+                                _isOnline ? 'Live' : 'Standby',
                                 style: GoogleFonts.inter(
                                   fontSize: 9.5,
                                   fontWeight: FontWeight.w800,
-                                  color: AppTheme.primaryColor,
+                                  color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
                                 ),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 4),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '14,850/- KES',
-                              style: GoogleFonts.inter(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w800,
-                                color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
-                              ),
-                            ),
-                            Text(
-                              '+2,400/- vs Target',
-                              style: GoogleFonts.inter(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF10B981),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(999),
-                          child: LinearProgressIndicator(
-                            value: 0.825,
-                            minHeight: 5,
-                            backgroundColor: isDark ? Colors.white10 : Colors.black12,
-                            valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
-                          ),
+                        Builder(
+                          builder: (context) {
+                            final authUser = ref.watch(authProvider).user;
+                            final driverProf = authUser?['driverProfile'] as Map<String, dynamic>?;
+                            final rawToday = double.tryParse(
+                                  (driverProf?['todayEarnings'] ??
+                                          authUser?['todayEarnings'] ??
+                                          0)
+                                      .toString(),
+                                ) ??
+                                0.0;
+                            final dailyGoal = double.tryParse(
+                                  (driverProf?['dailyGoal'] ?? 10000).toString(),
+                                ) ??
+                                10000.0;
+                            final progress = dailyGoal > 0
+                                ? (rawToday / dailyGoal).clamp(0.0, 1.0)
+                                : 0.0;
+                            final formattedToday = rawToday.toStringAsFixed(2);
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'KES $formattedToday',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w800,
+                                        color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Goal: KES ${dailyGoal.toStringAsFixed(0)}',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 10.5,
+                                        fontWeight: FontWeight.w700,
+                                        color: isDark ? AppTheme.warmStone : AppTheme.porcelainTextSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(999),
+                                  child: LinearProgressIndicator(
+                                    value: progress,
+                                    minHeight: 5,
+                                    backgroundColor: isDark ? Colors.white10 : Colors.black12,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ],
                     ),

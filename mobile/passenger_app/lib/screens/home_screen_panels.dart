@@ -715,6 +715,35 @@ extension _HomeScreenPanels on _HomeScreenState {
                                 ),
                               ),
                             ),
+                            const SizedBox(width: 8),
+                            InkWell(
+                              onTap: () {
+                                final tp = legacy_provider.Provider.of<ThemeProvider>(
+                                  context,
+                                  listen: false,
+                                );
+                                tp.setTheme(isDark ? ThemeMode.light : ThemeMode.dark);
+                              },
+                              borderRadius: BorderRadius.circular(18),
+                              child: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isDark
+                                      ? AppTheme.obsidianCanvas
+                                      : const Color(0xFFF0EDEC),
+                                  border: Border.all(
+                                    color: isDark ? AppTheme.outlineGold : dividerColor,
+                                  ),
+                                ),
+                                child: Icon(
+                                  isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                                  size: 17,
+                                  color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:driver_app/providers/auth_provider.dart';
+import 'package:driver_app/providers/theme_provider.dart';
 import 'package:driver_app/widgets/driver_analytics_cards.dart';
 import 'package:driver_app/theme/app_theme.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -21,9 +22,25 @@ class DashboardScreen extends ConsumerWidget {
     final totalTrips = (driverProfile?['totalTrips'] ?? user?['totalTrips'] ?? '0').toString();
     final rawRef = (user?['referralCode'] ?? driverProfile?['referralCode'] ?? user?['id'] ?? 'DRIVER').toString();
     final referralCode = rawRef.length > 10 ? 'DRV-${rawRef.substring(0, 6).toUpperCase()}' : rawRef;
+    final fullName = (user?['fullName'] ?? user?['name'] ?? 'Driver').toString().trim();
+    final firstName = fullName.isNotEmpty ? fullName.split(' ').first : 'Driver';
+    final initials = fullName.isNotEmpty
+        ? fullName
+            .split(' ')
+            .where((e) => e.isNotEmpty)
+            .take(2)
+            .map((e) => e[0].toUpperCase())
+            .join()
+        : 'CD';
+    final tierLabel = (driverProfile?['tier'] ?? 'CABI PARTNER').toString().toUpperCase();
+    final isOnline = driverProfile?['isOnline'] == true;
+    final todayEarnings = double.tryParse(
+          (driverProfile?['todayEarnings'] ?? user?['todayEarnings'] ?? 0).toString(),
+        ) ??
+        0.0;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: isDark ? AppTheme.obsidianCanvas : AppTheme.porcelainCanvas,
       appBar: AppBar(
         title: Row(
           mainAxisSize: MainAxisSize.min,
@@ -34,45 +51,47 @@ class DashboardScreen extends ConsumerWidget {
                 color: AppTheme.primaryColor.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.insights_rounded,
-                color: AppTheme.primaryDark,
+              child: Icon(
+                Icons.space_dashboard_rounded,
+                color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
                 size: 18,
               ),
             ),
             const SizedBox(width: 8),
             Text(
-              'Performance Overview',
+              'Driver Cockpit',
               style: TextStyle(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w800,
                 fontSize: 18,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
               ),
             ),
           ],
         ),
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: isDark ? AppTheme.obsidianCanvas : Colors.white,
         elevation: 0,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : AppTheme.porcelainTextPrimary),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 14.0),
-            child: Center(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: InkWell(
+              onTap: () => ref.read(themeProvider.notifier).toggleTheme(),
+              borderRadius: BorderRadius.circular(18),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
-                  gradient: AppTheme.goldGradient,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Text(
-                  'PRO',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 11,
-                    letterSpacing: 0.5,
+                  shape: BoxShape.circle,
+                  color: isDark ? AppTheme.surfaceContainer : AppTheme.porcelainSurfaceContainer,
+                  border: Border.all(
+                    color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline,
                   ),
+                ),
+                child: Icon(
+                  isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                  size: 18,
+                  color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
                 ),
               ),
             ),
@@ -84,6 +103,166 @@ class DashboardScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Stitch Driver Cockpit HUD Overview Panel
+            Container(
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: isDark ? AppTheme.surfaceContainer : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.28 : 0.04),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: AppTheme.goldGradient,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          initials,
+                          style: const TextStyle(
+                            color: Color(0xFF241A00),
+                            fontWeight: FontWeight.w900,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    'Hi, $firstName',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                      color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.primaryColor.withValues(alpha: 0.16),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    tierLabel,
+                                    style: TextStyle(
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.w800,
+                                      color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 7,
+                                  height: 7,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: isOnline ? AppTheme.successGreen : Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  '${isOnline ? "Online" : "Standby"}  •  GPS High  •  4G+ Live',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark ? AppTheme.warmStone : AppTheme.porcelainTextSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppTheme.obsidianCanvas : AppTheme.porcelainSurfaceContainer,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isDark ? AppTheme.outlineBorder : AppTheme.porcelainOutline,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "TODAY'S REVENUE",
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.8,
+                                color: isDark ? AppTheme.warmStone : AppTheme.porcelainTextSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'KES ${todayEarnings.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                                color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: AppTheme.successGreen.withValues(alpha: 0.14),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            '$totalTrips Trips',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                              color: AppTheme.successGreen,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
             // Score Matrix & Tier Overview
             const DriverAnalyticsCards(),
             const SizedBox(height: 24),

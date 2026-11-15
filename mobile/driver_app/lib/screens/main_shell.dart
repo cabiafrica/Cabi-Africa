@@ -24,8 +24,10 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
-    const primaryGold = AppTheme.primaryColor;
-    const prestigeBlack = AppTheme.darkBackground;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final activeColor = isDark ? AppTheme.primaryLight : AppTheme.aurumBronze;
+    final navBg = isDark ? AppTheme.obsidianCanvas : Colors.white;
+    final borderColor = isDark ? AppTheme.outlineGold : AppTheme.porcelainOutline;
 
     return Scaffold(
       body: IndexedStack(
@@ -34,11 +36,14 @@ class _MainShellState extends State<MainShell> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: prestigeBlack,
+          color: navBg,
+          border: Border(
+            top: BorderSide(color: borderColor, width: 1),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
-              blurRadius: 20,
+              color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.06),
+              blurRadius: 16,
               offset: const Offset(0, -4),
             ),
           ],
@@ -54,15 +59,15 @@ class _MainShellState extends State<MainShell> {
                   activeIcon: Icons.map,
                   label: 'Drive',
                   isActive: _currentIndex == 0,
-                  activeColor: primaryGold,
+                  activeColor: activeColor,
                   onTap: () => setState(() => _currentIndex = 0),
                 ),
                 _NavItem(
-                  icon: Icons.bar_chart_outlined,
-                  activeIcon: Icons.bar_chart,
-                  label: 'Dashboard',
+                  icon: Icons.space_dashboard_outlined,
+                  activeIcon: Icons.space_dashboard_rounded,
+                  label: 'Cockpit',
                   isActive: _currentIndex == 1,
-                  activeColor: primaryGold,
+                  activeColor: activeColor,
                   onTap: () => setState(() => _currentIndex = 1),
                 ),
                 _NavItem(
@@ -70,15 +75,15 @@ class _MainShellState extends State<MainShell> {
                   activeIcon: Icons.account_balance_wallet,
                   label: 'Earnings',
                   isActive: _currentIndex == 2,
-                  activeColor: primaryGold,
+                  activeColor: activeColor,
                   onTap: () => setState(() => _currentIndex = 2),
                 ),
                 _NavItem(
-                  icon: Icons.grid_view_outlined,
-                  activeIcon: Icons.grid_view,
-                  label: 'Menu',
+                  icon: Icons.person_outline_rounded,
+                  activeIcon: Icons.person_rounded,
+                  label: 'Account',
                   isActive: _currentIndex == 3,
-                  activeColor: primaryGold,
+                  activeColor: activeColor,
                   onTap: () => setState(() => _currentIndex = 3),
                 ),
               ],
@@ -109,6 +114,8 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final inactiveColor = isDark ? Colors.white54 : AppTheme.porcelainTextSecondary;
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -117,7 +124,7 @@ class _NavItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: isActive
             ? BoxDecoration(
-                color: activeColor.withValues(alpha: 0.15),
+                color: activeColor.withValues(alpha: isDark ? 0.15 : 0.12),
                 borderRadius: BorderRadius.circular(20),
               )
             : null,
@@ -126,16 +133,16 @@ class _NavItem extends StatelessWidget {
           children: [
             Icon(
               isActive ? activeIcon : icon,
-              color: isActive ? activeColor : Colors.white38,
+              color: isActive ? activeColor : inactiveColor,
               size: 24,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
-                color: isActive ? activeColor : Colors.white38,
+                color: isActive ? activeColor : inactiveColor,
                 fontSize: 10,
-                fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
+                fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
                 letterSpacing: 0.5,
               ),
             ),
