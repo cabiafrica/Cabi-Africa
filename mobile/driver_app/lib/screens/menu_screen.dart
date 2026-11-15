@@ -16,27 +16,28 @@ class MenuScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
-    String userName = 'ALEXANDER MWANGI';
-    String? userEmail = 'driver.alex@cabi.africa';
-    String? userPhone = '+254 712 345 678';
+    String userName = 'Driver Partner';
+    String? userEmail;
+    String? userPhone;
     String? userId;
-    String profilePic = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80';
-    double rating = 4.9;
-    String driverGroup = 'Nairobi Central Fleet';
-    String badge = 'PRO DRIVER';
+    String profilePic = '';
+    double rating = 0.0;
+    String driverGroup = 'Independent Partner';
+    String badge = 'STANDARD';
 
     if (authState is Authenticated && authState.user != null) {
       final user = authState.user!;
-      userName = user['firstName'] != null
-          ? "${user['firstName']} ${user['lastName'] ?? ''}"
-          : user['name'] ?? 'ALEXANDER MWANGI';
-      userEmail = user['email'] ?? userEmail;
-      userPhone = user['phone'] ?? user['phoneNumber'] ?? userPhone;
-      userId = user['id'];
+      final fullName = "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim();
+      userName = fullName.isNotEmpty
+          ? fullName
+          : (user['name'] ?? user['email'] ?? 'Driver Partner').toString();
+      userEmail = user['email']?.toString();
+      userPhone = (user['phone'] ?? user['phoneNumber'])?.toString();
+      userId = user['id']?.toString();
       if (user['passportPhoto'] != null && user['passportPhoto'].toString().isNotEmpty) {
-        profilePic = user['passportPhoto'];
+        profilePic = user['passportPhoto'].toString();
       } else if (user['profilePicture'] != null && user['profilePicture'].toString().isNotEmpty) {
-        profilePic = user['profilePicture'];
+        profilePic = user['profilePicture'].toString();
       }
       if (user['rating'] != null) {
         rating = (user['rating'] as num).toDouble();
@@ -320,7 +321,10 @@ class MenuScreen extends ConsumerWidget {
                 child: CircleAvatar(
                   radius: 34,
                   backgroundColor: isDark ? const Color(0xFF22201C) : Colors.grey.shade200,
-                  backgroundImage: NetworkImage(profilePic),
+                  backgroundImage: profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
+                  child: profilePic.isEmpty
+                      ? const Icon(Icons.person_rounded, size: 34, color: AppTheme.primaryColor)
+                      : null,
                 ),
               ),
 

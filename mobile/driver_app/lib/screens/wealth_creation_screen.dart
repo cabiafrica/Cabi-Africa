@@ -171,7 +171,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
         maxPct: 0.20,
         defaultPct: 0.10,
         dividendOrYield: '11.2% Projected Annual Dividend',
-        isEnrolled: true,
+        isEnrolled: false,
         selectedPct: 0.10,
       ),
       WealthProgramItem(
@@ -183,7 +183,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
         maxPct: 0.10,
         defaultPct: 0.05,
         dividendOrYield: 'KES 500,000 Medical & Accident Cover',
-        isEnrolled: true,
+        isEnrolled: false,
         selectedPct: 0.05,
       ),
       WealthProgramItem(

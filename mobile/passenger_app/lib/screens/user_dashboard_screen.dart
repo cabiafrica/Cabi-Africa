@@ -29,7 +29,12 @@ class UserDashboardScreen extends StatelessWidget {
             Consumer<AuthProvider>(
               builder: (context, auth, _) {
                 final user = auth.user;
-                final fullName = user != null ? "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim() : 'Elite Member';
+                final fullName = user != null
+                    ? ("${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim().isNotEmpty
+                        ? "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim()
+                        : (user['fullName'] ?? user['name'] ?? 'My Account').toString())
+                    : 'My Account';
+                final avatarProvider = getPassengerAvatarProvider(user);
                 
                 return Container(
                   padding: const EdgeInsets.all(20),
@@ -62,7 +67,10 @@ class UserDashboardScreen extends StatelessWidget {
                         child: CircleAvatar(
                           radius: 30,
                           backgroundColor: const Color(0xFF1E1E1E),
-                          backgroundImage: getPassengerAvatarProvider(user),
+                          backgroundImage: avatarProvider,
+                          child: avatarProvider == null
+                              ? const Icon(Icons.person_rounded, color: AppTheme.primaryColor, size: 30)
+                              : null,
                         ),
                       ),
                       const SizedBox(width: 20),
@@ -70,7 +78,7 @@ class UserDashboardScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            fullName.isNotEmpty ? fullName : 'Elite Member',
+                            fullName,
                             style: const TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
                           ),

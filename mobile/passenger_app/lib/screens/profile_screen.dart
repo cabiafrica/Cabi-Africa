@@ -254,7 +254,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     child: legacy_provider.Consumer<AuthProvider>(
                       builder: (context, auth, child) {
-                        ImageProvider avatarProvider;
+                        ImageProvider? avatarProvider;
                         if (_imageFile != null) {
                           avatarProvider = FileImage(_imageFile!);
                         } else {
@@ -265,6 +265,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           radius: 65,
                           backgroundImage: avatarProvider,
                           backgroundColor: surfaceColor,
+                          child: avatarProvider == null
+                              ? const Icon(Icons.person_rounded, size: 65, color: AppTheme.primaryColor)
+                              : null,
                         );
                       },
                     ),

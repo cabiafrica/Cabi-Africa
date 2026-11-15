@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart' as legacy_provider;
 import '../services/auth_service.dart';
 import '../providers/auth_provider.dart';
-import 'package:provider/provider.dart';
+import 'home_screen.dart';
 
-class OtpVerificationScreen extends StatefulWidget {
+class OtpVerificationScreen extends ConsumerStatefulWidget {
   final String phone;
   final AuthService? authService;
 
@@ -14,10 +16,11 @@ class OtpVerificationScreen extends StatefulWidget {
   });
 
   @override
-  State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
+  ConsumerState<OtpVerificationScreen> createState() =>
+      _OtpVerificationScreenState();
 }
 
-class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
+class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _otpController = TextEditingController();
   bool _isLoading = false;
@@ -37,10 +40,18 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           phone: widget.phone,
           otp: _otpController.text,
         );
-        // Use Provider to update auth state and trigger navigation
-        if (mounted && result.isSignedIn) {
-          Provider.of<AuthProvider>(context, listen: false)
-              .login(result.token!, result.user);
+        if (mounted && result.isSignedIn && result.token != null) {
+          await ref
+              .read(passengerAuthProvider.notifier)
+              .setSession(result.token!, result.user);
+          if (mounted) {
+            legacy_provider.Provider.of<AuthProvider>(context, listen: false)
+                .login(result.token!, result.user);
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const HomeScreen()),
+              (route) => false,
+            );
+          }
         } else if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(result.error ?? 'Invalid OTP')),

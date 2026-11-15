@@ -40,12 +40,13 @@ class _ReferralScreenState extends State<ReferralScreen> {
   Future<void> _fetchData() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final userId = authProvider.userId;
+    final userCode = authProvider.user?['referralCode']?.toString();
 
     if (userId == null) {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _myReferralCode = 'CABI-VIP';
+          _myReferralCode = userCode ?? 'CABI-MEMBER';
         });
       }
       return;
@@ -57,10 +58,10 @@ class _ReferralScreenState extends State<ReferralScreen> {
 
       if (mounted) {
         setState(() {
-          _myReferralCode = code ?? 'CABI-VIP-8849';
+          _myReferralCode = code ?? userCode ?? 'CABI-${userId.substring(0, math.min(6, userId.length)).toUpperCase()}';
           _totalEarned =
-              double.tryParse(historyData['totalEarned']?.toString() ?? '0.0') ?? 48650.0;
-          _referralHistory = historyData['history'] ?? _mockSyndicateHistory();
+              double.tryParse(historyData['totalEarned']?.toString() ?? '0.0') ?? 0.0;
+          _referralHistory = (historyData['history'] as List?) ?? [];
           _isLoading = false;
         });
       }
@@ -68,41 +69,12 @@ class _ReferralScreenState extends State<ReferralScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _myReferralCode = 'CABI-VIP-8849';
-          _totalEarned = 48650.0;
-          _referralHistory = _mockSyndicateHistory();
+          _myReferralCode = userCode ?? 'CABI-${userId.substring(0, math.min(6, userId.length)).toUpperCase()}';
+          _totalEarned = 0.0;
+          _referralHistory = [];
         });
       }
     }
-  }
-
-  List<Map<String, dynamic>> _mockSyndicateHistory() {
-    return [
-      {
-        'description': 'Ambassador First Ride • Dr. A. Omondi',
-        'tier': 'L1 Direct',
-        'date': DateTime.now().subtract(const Duration(hours: 4)).toIso8601String(),
-        'amount': '1,250',
-      },
-      {
-        'description': 'Syndicate Downline • Delta Tower Corporate',
-        'tier': 'L2 Indirect',
-        'date': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
-        'amount': '620',
-      },
-      {
-        'description': 'VIP Chauffeur Commission • Nairobi Safari Club',
-        'tier': 'L1 Direct',
-        'date': DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
-        'amount': '2,400',
-      },
-      {
-        'description': 'Direct Ambassador Referral • K. Wanjiku',
-        'tier': 'L1 Direct',
-        'date': DateTime.now().subtract(const Duration(days: 3)).toIso8601String(),
-        'amount': '950',
-      },
-    ];
   }
 
   Future<void> _applyCode() async {
@@ -355,7 +327,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
                 child: _buildTelemetryCell(
                   label: 'SEATS',
                   value: '${_referralHistory.length} Active',
-                  subtitle: '18 L1 • 6 L2',
+                  subtitle: '${_referralHistory.length} L1 • 0 L2',
                   accentColor: isDark ? Colors.white : Colors.black87,
                   isDark: isDark,
                 ),
@@ -364,7 +336,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
               Expanded(
                 child: _buildTelemetryCell(
                   label: 'ESCROW',
-                  value: 'KES 3,200',
+                  value: 'KES 0',
                   subtitle: 'Pending Ride',
                   accentColor: AppTheme.successGreen,
                   isDark: isDark,

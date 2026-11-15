@@ -41,14 +41,27 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   AuthNotifier(this._authService, this._storage) : super(const AuthInitial());
 
+  Map<String, dynamic> _normalizeDriverUser(Map<String, dynamic> rawUser) {
+    final normalized = Map<String, dynamic>.from(rawUser);
+    if (normalized['driverProfile'] == null) {
+      normalized['driverProfile'] = {
+        'id': normalized['id'] ?? normalized['userId'],
+        'isOnline': false,
+        'isBiometricVerified': false,
+      };
+    }
+    return normalized;
+  }
+
   Future<void> tryAutoLogin() async {
     final token = await _storage.read(key: 'jwt_token');
     if (token != null) {
       final res = await _authService.getMe(token);
       if (res.isSignedIn && res.user != null) {
-        state = Authenticated(token, res.user);
+        state = Authenticated(token, _normalizeDriverUser(res.user!));
       } else {
-        state = Authenticated(token);
+        await _storage.delete(key: 'jwt_token');
+        state = const Unauthenticated();
       }
     } else {
       state = const Unauthenticated();
@@ -83,7 +96,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
         } else {
           // Don't persist — session only; do not actively delete existing token
         }
-        state = Authenticated(result.token!, result.user);
+        final userMap = result.user != null
+            ? _normalizeDriverUser(result.user!)
+            : null;
+        state = Authenticated(result.token!, userMap);
       } else {
         state = const Unauthenticated();
         throw Exception(result.error ?? 'Login failed');
@@ -92,6 +108,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       state = const Unauthenticated();
       rethrow;
     }
+  }
+
+  Future<void> setSession(String token, Map<String, dynamic>? user) async {
+    await _storage.write(key: 'jwt_token', value: token);
+    final normalized = user != null ? _normalizeDriverUser(user) : null;
+    state = Authenticated(token, normalized);
   }
 
   Future<void> logout() async {

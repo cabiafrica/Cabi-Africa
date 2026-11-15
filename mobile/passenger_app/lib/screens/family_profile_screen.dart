@@ -29,42 +29,7 @@ class FamilyProfileScreen extends StatefulWidget {
 
 class _FamilyProfileScreenState extends State<FamilyProfileScreen> {
   bool isFamilyOrganizer = true;
-  List<FamilyMember> familyMembers = [
-    FamilyMember(
-      id: '1',
-      name: "Elite Member",
-      email: 'john@example.com',
-      role: 'organizer',
-      status: 'active',
-      tripsThisMonth: 12,
-      spendingThisMonth: 14550.00,
-    ),
-    FamilyMember(
-      id: '2',
-      name: 'Sarah Smith',
-      email: 'sarah@example.com',
-      role: 'adult',
-      status: 'active',
-      tripsThisMonth: 8,
-      spendingThisMonth: 8925.00,
-    ),
-    FamilyMember(
-      id: '3',
-      name: 'Emma Smith',
-      email: 'emma@example.com',
-      role: 'teen',
-      status: 'active',
-      tripsThisMonth: 5,
-      spendingThisMonth: 4200.00,
-    ),
-    FamilyMember(
-      id: '4',
-      name: 'Mike Johnson',
-      email: 'mike@example.com',
-      role: 'adult',
-      status: 'pending',
-    ),
-  ];
+  List<FamilyMember> familyMembers = [];
 
   double get totalSpending => familyMembers
       .where((m) => m.status == 'active')

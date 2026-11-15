@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:driver_app/providers/auth_provider.dart';
 import 'package:driver_app/theme/app_theme.dart';
 
-class DriverAnalyticsCards extends StatelessWidget {
+class DriverAnalyticsCards extends ConsumerWidget {
   const DriverAnalyticsCards({super.key});
 
   void _openUserPortal(BuildContext context) {
@@ -30,7 +32,19 @@ class DriverAnalyticsCards extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+    final user = authState is Authenticated ? authState.user : null;
+    final driverProfile = user?['driverProfile'] as Map<String, dynamic>?;
+    final tierLabel = (user?['tier'] ?? driverProfile?['tier'] ?? 'STANDARD DRIVER').toString().toUpperCase();
+    final badgesCount = (driverProfile?['badgesCount'] ?? user?['badgesCount'] ?? 0).toString();
+    final pointsVal = (driverProfile?['points'] ?? user?['points'] ?? 0) as num;
+    final ratingVal = driverProfile?['rating'] ?? user?['rating'];
+    final ratingDisplay = ratingVal != null ? '$ratingVal ★' : 'New ★';
+    final acceptanceDisplay = (driverProfile?['acceptanceRate'] ?? user?['acceptanceRate'] ?? '0%').toString();
+    final driverScoreDisplay = (driverProfile?['driverScore'] ?? user?['driverScore'] ?? '0%').toString();
+    final weeklyEarnings = (driverProfile?['weeklyEarnings'] ?? user?['weeklyEarnings'] ?? 0) as num;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -151,18 +165,18 @@ class DriverAnalyticsCards extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.workspace_premium_rounded,
                           color: Colors.black,
                           size: 15,
                         ),
-                        SizedBox(width: 5),
+                        const SizedBox(width: 5),
                         Text(
-                          'GOLD TIER DRIVER',
-                          style: TextStyle(
+                          tierLabel,
+                          style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w800,
                             fontSize: 11,
@@ -181,27 +195,27 @@ class DriverAnalyticsCards extends StatelessWidget {
                         color: AppTheme.primaryLight.withValues(alpha: 0.25),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.military_tech_rounded,
                           color: AppTheme.primaryLight,
                           size: 20,
                         ),
-                        SizedBox(width: 6),
+                        const SizedBox(width: 6),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '12',
-                              style: TextStyle(
+                              badgesCount,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
                                 height: 1.1,
                               ),
                             ),
-                            Text(
+                            const Text(
                               'Badges',
                               style: TextStyle(
                                 color: AppTheme.primaryLight,
@@ -224,9 +238,9 @@ class DriverAnalyticsCards extends StatelessWidget {
                   ShaderMask(
                     shaderCallback: (bounds) =>
                         AppTheme.goldGradient.createShader(bounds),
-                    child: const Text(
-                      '2,450',
-                      style: TextStyle(
+                    child: Text(
+                      pointsVal.toStringAsFixed(0),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 34,
                         fontWeight: FontWeight.w900,
@@ -254,16 +268,16 @@ class DriverAnalyticsCards extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Progress to Platinum Tier',
+                        'Progress to Next Tier',
                         style: TextStyle(
                           color: Colors.grey.shade400,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      const Text(
-                        '550 pts remaining',
-                        style: TextStyle(
+                      Text(
+                        '${(3000 - pointsVal).clamp(0, 3000).toStringAsFixed(0)} pts remaining',
+                        style: const TextStyle(
                           color: AppTheme.primaryLight,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -280,7 +294,7 @@ class DriverAnalyticsCards extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.1),
                       child: FractionallySizedBox(
                         alignment: Alignment.centerLeft,
-                        widthFactor: 0.82,
+                        widthFactor: (pointsVal / 3000.0).clamp(0.02, 1.0),
                         child: Container(
                           decoration: const BoxDecoration(
                             gradient: AppTheme.goldGradient,
@@ -305,7 +319,7 @@ class DriverAnalyticsCards extends StatelessWidget {
                 context,
                 Icons.star_rounded,
                 AppTheme.primaryColor,
-                '4.92 ★',
+                ratingDisplay,
                 'Driver Rating',
                 'Passenger Exp.',
                 infoText: 'Driver Rating: The overall 5-star rating calculated from passenger feedback and ride reviews.',
@@ -317,7 +331,7 @@ class DriverAnalyticsCards extends StatelessWidget {
                 context,
                 Icons.check_circle_rounded,
                 AppTheme.successGreen,
-                '96%',
+                acceptanceDisplay.contains('%') ? acceptanceDisplay : '$acceptanceDisplay%',
                 'Acceptance Rate',
                 'Qualifying (100)',
                 infoText: 'Acceptance Rate: Out of 100 qualifying trips (trips within your pickup radius & preferred destination), how many trips you have taken vs passed. Non-qualifying trips do not penalize your rate.',
@@ -329,7 +343,7 @@ class DriverAnalyticsCards extends StatelessWidget {
                 context,
                 Icons.speed_rounded,
                 AppTheme.secondaryAmber,
-                '98%',
+                driverScoreDisplay.contains('%') ? driverScoreDisplay : '$driverScoreDisplay%',
                 'Driver Score',
                 'Completed (100)',
                 infoText: 'Driver Score: Out of 100 recent trips that you have accepted, how many you have successfully completed without driver-initiated cancellations.',
@@ -406,13 +420,13 @@ class DriverAnalyticsCards extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  _buildBar('Mon', 40),
-                  _buildBar('Tue', 65),
-                  _buildBar('Wed', 92, isActive: true, labelValue: 'Peak'),
-                  _buildBar('Thu', 30),
-                  _buildBar('Fri', 55),
-                  _buildBar('Sat', 70),
-                  _buildBar('Sun', 25),
+                  _buildBar('Mon', 8),
+                  _buildBar('Tue', 8),
+                  _buildBar('Wed', 8),
+                  _buildBar('Thu', 8),
+                  _buildBar('Fri', 8),
+                  _buildBar('Sat', 8),
+                  _buildBar('Sun', 8),
                 ],
               ),
               const SizedBox(height: 18),
@@ -421,10 +435,10 @@ class DriverAnalyticsCards extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Total Weekly Earnings',
                         style: TextStyle(
                           fontSize: 12,
@@ -432,10 +446,10 @@ class DriverAnalyticsCards extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      SizedBox(height: 2),
+                      const SizedBox(height: 2),
                       Text(
-                        'KES 14,500',
-                        style: TextStyle(
+                        'KES ${weeklyEarnings.toStringAsFixed(0)}',
+                        style: const TextStyle(
                           fontWeight: FontWeight.w800,
                           fontSize: 18,
                         ),
@@ -457,7 +471,7 @@ class DriverAnalyticsCards extends StatelessWidget {
                         ),
                         SizedBox(width: 4),
                         Text(
-                          '+12% vs last week',
+                          'Live Ledger',
                           style: TextStyle(
                             color: AppTheme.successGreen,
                             fontWeight: FontWeight.bold,

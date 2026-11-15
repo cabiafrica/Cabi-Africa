@@ -13,15 +13,14 @@ class MyOrganizationScreen extends StatefulWidget {
 }
 
 class _MyOrganizationScreenState extends State<MyOrganizationScreen> {
-  // Mock organization data
-  final String organizationName = 'Nairobi Central Fleet Group';
-  final String organizationStatus = 'Active';
-  final int memberCount = 145;
-  final int activeOnlineCount = 42;
-  final String joinedDate = '2024-01-15';
-  final String role = 'Senior Driver';
-  final String stageLocation = 'CBD Kencom & Railway Stage';
-  final String groupLeader = 'John Mwangi (+254 722 000 111)';
+  final String organizationName = 'Independent Driver Partner';
+  final String organizationStatus = 'No Active Group';
+  final int memberCount = 0;
+  final int activeOnlineCount = 0;
+  final String joinedDate = '—';
+  final String role = 'Independent Partner';
+  final String stageLocation = 'Unassigned';
+  final String groupLeader = 'Not Enrolled';
 
   void _openPortalGroups(BuildContext context) {
     Navigator.push(

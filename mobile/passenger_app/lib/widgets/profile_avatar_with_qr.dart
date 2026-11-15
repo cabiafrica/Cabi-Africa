@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:passenger_app/theme/app_theme.dart';
 
-ImageProvider getPassengerAvatarProvider(dynamic userOrUrl) {
+ImageProvider? getPassengerAvatarProvider(dynamic userOrUrl) {
   if (userOrUrl is Map) {
     final photo = userOrUrl['profilePicture'] ?? userOrUrl['passportPhotoUrl'] ?? userOrUrl['avatar'];
     if (photo != null && photo.toString().trim().isNotEmpty) {
@@ -30,9 +30,7 @@ ImageProvider getPassengerAvatarProvider(dynamic userOrUrl) {
       return AssetImage(str);
     }
   }
-  return const NetworkImage(
-    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
-  );
+  return null;
 }
 
 class ProfileAvatarWithQr extends StatelessWidget {
@@ -157,7 +155,7 @@ class ProfileAvatarWithQr extends StatelessWidget {
     );
   }
 
-  ImageProvider _resolveAvatar() {
+  ImageProvider? _resolveAvatar() {
     if (user != null) {
       return getPassengerAvatarProvider(user);
     }
@@ -167,13 +165,14 @@ class ProfileAvatarWithQr extends StatelessWidget {
       }
       return AssetImage(imageUrl);
     }
-    return getPassengerAvatarProvider(null);
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final avatarProvider = _resolveAvatar();
 
     return Stack(
       children: [
@@ -195,7 +194,10 @@ class ProfileAvatarWithQr extends StatelessWidget {
             backgroundColor: isDark
                 ? const Color(0xFF1E1E1E)
                 : AppTheme.porcelainSurfaceContainer,
-            backgroundImage: _resolveAvatar(),
+            backgroundImage: avatarProvider,
+            child: avatarProvider == null
+                ? Icon(Icons.person_rounded, size: radius, color: accent)
+                : null,
           ),
         ),
         if (showQrIcon)

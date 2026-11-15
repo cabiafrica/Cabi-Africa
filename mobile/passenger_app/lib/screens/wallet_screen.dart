@@ -414,9 +414,16 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                                   ),
                                 ],
                               ),
-                              Text(
-                                '+254 712 ••• 456 Prompt',
-                                style: AppTheme.inter(fontSize: 11.5, color: isDark ? Colors.white54 : Colors.grey[600]),
+                              Builder(
+                                builder: (context) {
+                                  final authState = ref.watch(passengerAuthProvider);
+                                  final userMap = authState is Authenticated ? authState.user : null;
+                                  final phone = userMap?['phone']?.toString() ?? 'Registered M-Pesa Line';
+                                  return Text(
+                                    '$phone Prompt',
+                                    style: AppTheme.inter(fontSize: 11.5, color: isDark ? Colors.white54 : Colors.grey[600]),
+                                  );
+                                },
                               ),
                             ],
                           ),
@@ -743,13 +750,20 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                               children: [
                                 const Icon(Icons.sim_card_rounded, color: AppTheme.primaryColor, size: 16),
                                 const SizedBox(width: 8),
-                                Text(
-                                  '+254 712 ••• 456',
-                                  style: AppTheme.inter(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: isDark ? Colors.white : Colors.white,
-                                  ),
+                                Builder(
+                                  builder: (context) {
+                                    final authState = ref.watch(passengerAuthProvider);
+                                    final userMap = authState is Authenticated ? authState.user : null;
+                                    final phone = userMap?['phone']?.toString() ?? 'M-Pesa Account';
+                                    return Text(
+                                      phone,
+                                      style: AppTheme.inter(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: isDark ? Colors.white : Colors.white,
+                                      ),
+                                    );
+                                  },
                                 ),
                                 const SizedBox(width: 8),
                                 Text(

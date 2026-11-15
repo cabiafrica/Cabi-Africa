@@ -111,6 +111,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
       state = Authenticated(current.token, updated);
     }
   }
+
+  Future<void> setSession(String token, Map<String, dynamic>? user) async {
+    await _storage.write(key: 'jwt_token', value: token);
+    state = Authenticated(token, user);
+  }
 }
 
 class AuthProvider extends ChangeNotifier {
@@ -144,19 +149,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> tryAutoLogin() async {
-    // TEST BYPASS: Auto-login with mock credentials for testing
-    // _token = 'test_token_12345';
-    // _user = {
-    //   'id': 'test-passenger-001',
-    //   'userId': 'test-passenger-001',
-    //   'email': 'test@passenger.com',
-    //   'firstName': 'Test',
-    //   'lastName': 'Passenger',
-    //   'role': 'PASSENGER'
-    // };
-    // notifyListeners();
-  }
+  Future<void> tryAutoLogin() async {}
 }
 
 // -- Riverpod Providers --

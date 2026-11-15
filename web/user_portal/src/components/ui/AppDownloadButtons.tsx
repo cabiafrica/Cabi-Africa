@@ -1,9 +1,9 @@
 import React from 'react';
-import { FaApple, FaAndroid } from 'react-icons/fa';
+import { FaDownload, FaCheckCircle, FaMobileAlt, FaCarSide } from 'react-icons/fa';
 import { APP_LINKS } from '@/config/appLinks';
 
 interface AppDownloadButtonsProps {
-    role: 'passenger' | 'driver';
+    role?: 'passenger' | 'driver' | 'both';
     caption?: string;
     tone?: 'auto' | 'dark';
     align?: 'center' | 'start';
@@ -11,33 +11,90 @@ interface AppDownloadButtonsProps {
 }
 
 /**
- * Direct iOS Web App & Android APK download links parameterized by app role.
+ * Direct Device Download Market Options for CABI Go (Passenger) & CABI Drive (Driver).
+ * Downloads the full production .apk directly to the gadget's Downloads folder.
  */
 export default function AppDownloadButtons({
-    role,
+    role = 'both',
     caption,
     tone = 'auto',
     align = 'center',
     className = '',
 }: AppDownloadButtonsProps) {
-    const links = APP_LINKS[role];
     const defaultCaption =
         role === 'driver'
-            ? 'Direct Install — CABI Driver App (iOS & Android)'
-            : 'Direct Install — CABI Passenger App (iOS & Android)';
+            ? 'Official Full Release — Direct Device Download'
+            : role === 'passenger'
+                ? 'Official Full Release — Direct Device Download'
+                : 'Select App Edition — Direct Download to Device';
 
     const captionColor =
         tone === 'dark'
             ? 'text-neutral-400'
             : 'text-neutral-500 dark:text-neutral-400';
 
-    const cardSurface =
+    const primarySurface =
+        'bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-black border-[#D4AF37] hover:brightness-110';
+
+    const secondarySurface =
         tone === 'dark'
-            ? 'bg-black/70 text-white border-white/15 hover:border-[#D4AF37]/70'
-            : 'bg-slate-900 dark:bg-card-dark text-white border-slate-800 dark:border-white/15 hover:border-[#D4AF37]/70';
+            ? 'bg-black/80 text-white border-white/20 hover:border-[#D4AF37]/80'
+            : 'bg-slate-900 dark:bg-card-dark text-white border-slate-800 dark:border-white/20 hover:border-[#D4AF37]/80';
 
     const alignOuter = align === 'start' ? 'items-start' : 'items-center';
     const alignRow = align === 'start' ? 'justify-start' : 'justify-center';
+
+    const passengerFirst = role !== 'driver';
+
+    const passengerButton = (isPrimary: boolean) => (
+        <a
+            key="passenger-download"
+            href={APP_LINKS.passenger.apkDirect}
+            download={APP_LINKS.passenger.fileName}
+            aria-label="Download CABI Go Passenger Full Version APK to device"
+            className={`group inline-flex items-center justify-between gap-3.5 px-5 py-3.5 rounded-xl border shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(212,175,55,0.4)] active:scale-95 ${
+                isPrimary ? primarySurface : secondarySurface
+            }`}
+        >
+            <div className="flex items-center gap-3">
+                <FaMobileAlt className={`text-xl shrink-0 ${isPrimary ? 'text-black' : 'text-[#D4AF37]'}`} />
+                <div className="text-left">
+                    <div className={`text-[10px] font-bold uppercase tracking-wider leading-tight flex items-center gap-1 ${isPrimary ? 'text-black/80' : 'text-emerald-400'}`}>
+                        <FaCheckCircle className="text-[9px]" /> Full Version • Passenger
+                    </div>
+                    <div className="text-sm font-black leading-tight">
+                        Download CABI Go
+                    </div>
+                </div>
+            </div>
+            <FaDownload className={`text-sm shrink-0 transition-transform group-hover:translate-y-0.5 ${isPrimary ? 'text-black' : 'text-[#D4AF37]'}`} />
+        </a>
+    );
+
+    const driverButton = (isPrimary: boolean) => (
+        <a
+            key="driver-download"
+            href={APP_LINKS.driver.apkDirect}
+            download={APP_LINKS.driver.fileName}
+            aria-label="Download CABI Drive Driver Full Version APK to device"
+            className={`group inline-flex items-center justify-between gap-3.5 px-5 py-3.5 rounded-xl border shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(212,175,55,0.4)] active:scale-95 ${
+                isPrimary ? primarySurface : secondarySurface
+            }`}
+        >
+            <div className="flex items-center gap-3">
+                <FaCarSide className={`text-xl shrink-0 ${isPrimary ? 'text-black' : 'text-[#D4AF37]'}`} />
+                <div className="text-left">
+                    <div className={`text-[10px] font-bold uppercase tracking-wider leading-tight flex items-center gap-1 ${isPrimary ? 'text-black/80' : 'text-emerald-400'}`}>
+                        <FaCheckCircle className="text-[9px]" /> Full Version • Driver
+                    </div>
+                    <div className="text-sm font-black leading-tight">
+                        Download CABI Drive
+                    </div>
+                </div>
+            </div>
+            <FaDownload className={`text-sm shrink-0 transition-transform group-hover:translate-y-0.5 ${isPrimary ? 'text-black' : 'text-[#D4AF37]'}`} />
+        </a>
+    );
 
     return (
         <div className={`flex flex-col ${alignOuter} ${className}`}>
@@ -45,34 +102,9 @@ export default function AppDownloadButtons({
                 {caption || defaultCaption}
             </p>
             <div className={`flex flex-col sm:flex-row items-stretch sm:items-center ${alignRow} gap-3 w-full sm:w-auto`}>
-                <a
-                    href={links.appStore}
-                    aria-label={`Install CABI ${role === 'driver' ? 'Driver' : 'Passenger'} App on iPhone (iOS)`}
-                    className={`group inline-flex items-center justify-center gap-3 px-5 py-3 rounded-xl border shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(212,175,55,0.35)] active:scale-95 ${cardSurface}`}
-                >
-                    <FaApple className="text-xl text-white group-hover:text-[#ffe088] transition-colors shrink-0" />
-                    <div className="text-left">
-                        <div className="text-[10px] uppercase tracking-wider opacity-70 leading-tight">
-                            Launch & Install on
-                        </div>
-                        <div className="text-sm font-extrabold leading-tight">iPhone / iOS</div>
-                    </div>
-                </a>
-
-                <a
-                    href={links.playStore}
-                    download
-                    aria-label={`Download CABI ${role === 'driver' ? 'Driver' : 'Passenger'} Android APK`}
-                    className={`group inline-flex items-center justify-center gap-3 px-5 py-3 rounded-xl border shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(212,175,55,0.35)] active:scale-95 ${cardSurface}`}
-                >
-                    <FaAndroid className="text-xl text-emerald-400 group-hover:scale-110 transition-transform shrink-0" />
-                    <div className="text-left">
-                        <div className="text-[10px] uppercase tracking-wider opacity-70 leading-tight">
-                            Direct Download
-                        </div>
-                        <div className="text-sm font-extrabold leading-tight">Android APK</div>
-                    </div>
-                </a>
+                {passengerFirst
+                    ? [passengerButton(true), driverButton(false)]
+                    : [driverButton(true), passengerButton(false)]}
             </div>
         </div>
     );

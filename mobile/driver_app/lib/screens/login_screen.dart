@@ -80,6 +80,234 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  void _showDriverRegistrationModal(BuildContext context) {
+    final regFormKey = GlobalKey<FormState>();
+    final firstNameCtrl = TextEditingController();
+    final lastNameCtrl = TextEditingController();
+    final emailCtrl = TextEditingController();
+    final phoneCtrl = TextEditingController();
+    final licenseCtrl = TextEditingController();
+    final passwordCtrl = TextEditingController();
+    bool isSubmitting = false;
+    String? regError;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppTheme.darkSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (modalContext) {
+        return StatefulBuilder(
+          builder: (ctx, setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 24,
+                right: 24,
+                top: 24,
+                bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
+              ),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: regFormKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'DRIVER PARTNER SIGN UP',
+                            style: TextStyle(
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close, color: Colors.white70),
+                            onPressed: () => Navigator.of(ctx).pop(),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: firstNameCtrl,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: const InputDecoration(
+                                labelText: 'First Name',
+                                labelStyle: TextStyle(color: Colors.white70),
+                              ),
+                              validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: lastNameCtrl,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: const InputDecoration(
+                                labelText: 'Last Name',
+                                labelStyle: TextStyle(color: Colors.white70),
+                              ),
+                              validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: emailCtrl,
+                        keyboardType: TextInputType.emailAddress,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: const InputDecoration(
+                          labelText: 'Email Address',
+                          labelStyle: TextStyle(color: Colors.white70),
+                        ),
+                        validator: (v) => (v == null || !v.contains('@')) ? 'Enter a valid email' : null,
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: phoneCtrl,
+                        keyboardType: TextInputType.phone,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: const InputDecoration(
+                          labelText: 'Phone Number (e.g. +2547...)',
+                          labelStyle: TextStyle(color: Colors.white70),
+                        ),
+                        validator: (v) => (v == null || v.trim().length < 9) ? 'Enter a valid phone number' : null,
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: licenseCtrl,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: const InputDecoration(
+                          labelText: 'Driving License Number',
+                          labelStyle: TextStyle(color: Colors.white70),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: passwordCtrl,
+                        obscureText: true,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: const InputDecoration(
+                          labelText: 'Password (min 6 chars)',
+                          labelStyle: TextStyle(color: Colors.white70),
+                        ),
+                        validator: (v) => (v == null || v.length < 6) ? 'Minimum 6 characters' : null,
+                      ),
+                      if (regError != null) ...[
+                        const SizedBox(height: 12),
+                        Text(
+                          regError!,
+                          style: const TextStyle(color: AppTheme.errorRed, fontSize: 12.5),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: isSubmitting
+                            ? null
+                            : () async {
+                                if (!regFormKey.currentState!.validate()) return;
+                                setModalState(() {
+                                  isSubmitting = true;
+                                  regError = null;
+                                });
+                                try {
+                                  final authService = ref.read(authServiceProvider);
+                                  final res = await authService.register(
+                                    firstName: firstNameCtrl.text.trim(),
+                                    lastName: lastNameCtrl.text.trim(),
+                                    email: emailCtrl.text.trim(),
+                                    phone: phoneCtrl.text.trim(),
+                                    password: passwordCtrl.text,
+                                    licenseNumber: licenseCtrl.text.trim().isEmpty
+                                        ? null
+                                        : licenseCtrl.text.trim(),
+                                  );
+                                  if (res.isSignedIn && res.token != null) {
+                                    await ref
+                                        .read(authProvider.notifier)
+                                        .setSession(res.token!, res.user);
+                                    if (ctx.mounted) Navigator.of(ctx).pop();
+                                    if (mounted) {
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(builder: (_) => const MainShell()),
+                                      );
+                                    }
+                                  } else if (res.isSignedIn) {
+                                    await ref.read(authProvider.notifier).login(
+                                          emailCtrl.text.trim(),
+                                          passwordCtrl.text,
+                                        );
+                                    if (ctx.mounted) Navigator.of(ctx).pop();
+                                    if (mounted) {
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(builder: (_) => const MainShell()),
+                                      );
+                                    }
+                                  } else {
+                                    setModalState(() {
+                                      regError = res.error ?? 'Registration failed';
+                                      isSubmitting = false;
+                                    });
+                                  }
+                                } catch (e) {
+                                  setModalState(() {
+                                    regError = _humanizeError(e);
+                                    isSubmitting = false;
+                                  });
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.primaryColor,
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: isSubmitting
+                            ? const SizedBox(
+                                height: 18,
+                                width: 18,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                              )
+                            : const Text(
+                                'CREATE ACCOUNT & SIGN IN',
+                                style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
+                              ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextButton(
+                        onPressed: () async {
+                          final Uri url = Uri.parse('${AppConfig.driverRegistrationUrl}?source=driver_app');
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(url, mode: LaunchMode.externalApplication);
+                          }
+                        },
+                        child: const Text(
+                          'Or complete full document onboarding on Web Portal →',
+                          style: TextStyle(color: Colors.white60, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -302,12 +530,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         const SizedBox(height: 24),
                         
                         OutlinedButton(
-                          onPressed: () async {
-                            final Uri url = Uri.parse('${AppConfig.driverRegistrationUrl}?source=driver_app');
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url, mode: LaunchMode.externalApplication);
-                            }
-                          },
+                          onPressed: () => _showDriverRegistrationModal(context),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.white,
                             side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),

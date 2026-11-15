@@ -36,59 +36,9 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
   final TextEditingController _searchController = TextEditingController();
   bool _morningCommuteEnabled = true;
 
-  final List<SavedPlaceItem> _primarySanctuaries = [
-    const SavedPlaceItem(
-      id: 'home',
-      title: 'Home Sanctuary',
-      address: 'Villa Rosa Kempinski Residences',
-      subAddress: 'Westlands, Nairobi',
-      tag: 'Default',
-      icon: Icons.home_rounded,
-      isPrimary: true,
-    ),
-    const SavedPlaceItem(
-      id: 'hq',
-      title: 'Headquarters',
-      address: 'Delta Corner Tower B',
-      subAddress: 'Chiromo Rd, Nairobi',
-      tag: 'HQ Hub',
-      icon: Icons.corporate_fare_rounded,
-      isPrimary: true,
-    ),
-  ];
+  final List<SavedPlaceItem> _primarySanctuaries = [];
 
-  final List<SavedPlaceItem> _frequentEscapes = [
-    const SavedPlaceItem(
-      id: 'sarit',
-      title: 'Sarit Centre',
-      address: 'Gate 2 Executive Drop',
-      subAddress: 'Westlands, Karuna Road',
-      tag: 'Executive Drop',
-      icon: Icons.shopping_bag_rounded,
-      lastVisited: 'Yesterday',
-      avgFare: 'KES 520 avg',
-    ),
-    const SavedPlaceItem(
-      id: 'muthaiga',
-      title: 'Muthaiga Country Club',
-      address: 'Main Pavilion',
-      subAddress: 'Muthaiga Rd, Nairobi',
-      tag: 'Pavilion',
-      icon: Icons.sports_golf_rounded,
-      lastVisited: '3 days ago',
-      avgFare: 'KES 850 avg',
-    ),
-    const SavedPlaceItem(
-      id: 'jkia',
-      title: 'JKIA VIP Terminal',
-      address: 'Presidential Pavilion',
-      subAddress: 'Jomo Kenyatta Intl Airport, Embakasi',
-      tag: 'Presidential',
-      icon: Icons.flight_takeoff_rounded,
-      lastVisited: 'Last Sunday',
-      avgFare: 'KES 3,200 avg',
-    ),
-  ];
+  final List<SavedPlaceItem> _frequentEscapes = [];
 
   @override
   void dispose() {

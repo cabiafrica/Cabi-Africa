@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:passenger_app/theme/app_theme.dart';
 import 'package:provider/provider.dart' as legacy_provider;
 import 'package:passenger_app/providers/auth_provider.dart';
@@ -131,14 +132,23 @@ class _MenuScreenState extends State<MenuScreen> {
             // ── 1. PRESTIGE PROFILE HEADER CARD ──
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: legacy_provider.Consumer<AuthProvider>(
-                builder: (context, auth, child) {
-                  final user = auth.user;
+              child: Consumer(
+                builder: (context, ref, _) {
+                  final riverpodAuth = ref.watch(passengerAuthProvider);
+                  final legacyAuth = legacy_provider.Provider.of<AuthProvider>(context);
+                  final user = riverpodAuth is Authenticated
+                      ? riverpodAuth.user
+                      : legacyAuth.user;
                   final fullName = user != null
-                      ? "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim()
-                      : 'Elite Member';
-                  final email = user?['email'] ?? 'Welcome to Cabi Africa';
-                  final phone = user?['phone'] ?? '+254 700 000 000';
+                      ? ("${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim().isNotEmpty
+                          ? "${user['firstName'] ?? ''} ${user['lastName'] ?? ''}".trim()
+                          : (user['fullName'] ?? user['name'] ?? '').toString())
+                      : '';
+                  final email = (user?['email'] ?? '').toString();
+                  final phone = (user?['phone'] ?? '').toString();
+                  final tier = (user?['membershipTier'] ?? 'Standard').toString();
+                  final ratingVal = user?['rating'];
+                  final ratingDisplay = ratingVal != null ? '$ratingVal ★' : 'New ★';
 
                   return InkWell(
                     onTap: () => Navigator.push(
@@ -177,14 +187,14 @@ class _MenuScreenState extends State<MenuScreen> {
                               ProfileAvatarWithQr(
                                 user: user,
                                 radius: 32,
-                                qrData: 'passenger:${user?['id'] ?? 'cabi-member'}',
+                                qrData: 'passenger:${user?['id'] ?? 'unassigned'}',
                               ),
                               const SizedBox(width: 16),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Elite Gold Badge
+                                    // Verified Member Badge
                                     Container(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 2.5),
@@ -200,13 +210,13 @@ class _MenuScreenState extends State<MenuScreen> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           const Icon(
-                                            Icons.stars_rounded,
+                                            Icons.verified_user_rounded,
                                             size: 13,
                                             color: Color(0xFFD97706),
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
-                                            'ELITE MEMBER',
+                                            tier.toUpperCase(),
                                             style: TextStyle(
                                               fontSize: 10,
                                               fontWeight: FontWeight.bold,
@@ -221,7 +231,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
-                                      fullName.isNotEmpty ? fullName : 'Cabi Passenger',
+                                      fullName.isNotEmpty ? fullName : (phone.isNotEmpty ? phone : 'My Account'),
                                       style: AppTheme.outfit(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 19,
@@ -232,7 +242,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      email.isNotEmpty ? email : phone,
+                                      email.isNotEmpty ? email : (phone.isNotEmpty ? phone : 'Tap to complete profile'),
                                       style: TextStyle(
                                         color: isDark ? Colors.white60 : Colors.black54,
                                         fontSize: 12.5,
@@ -275,17 +285,17 @@ class _MenuScreenState extends State<MenuScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                _buildMiniStat('RATING', '4.9 ★', const Color(0xFFF59E0B)),
+                                _buildMiniStat('RATING', ratingDisplay, const Color(0xFFF59E0B)),
                                 Container(
                                     width: 1,
                                     height: 20,
                                     color: isDark ? Colors.white12 : const Color(0xFFCBD5E1)),
-                                _buildMiniStat('STATUS', 'Verified ✓', const Color(0xFF10B981)),
+                                _buildMiniStat('STATUS', 'Active ✓', const Color(0xFF10B981)),
                                 Container(
                                     width: 1,
                                     height: 20,
                                     color: isDark ? Colors.white12 : const Color(0xFFCBD5E1)),
-                                _buildMiniStat('PRESTIGE', 'Gold Tier', AppTheme.primaryColor),
+                                _buildMiniStat('TIER', tier, AppTheme.primaryColor),
                               ],
                             ),
                           ),
@@ -444,7 +454,14 @@ class _MenuScreenState extends State<MenuScreen> {
                 subtitle: 'Safely sign out of your Cabi session',
                 badge: 'EXIT',
                 baseColor: const Color(0xFFEF4444), // Crimson
-                onTap: () {
+                onTap: () async {
+                  legacy_provider.Provider.of<AuthProvider>(context, listen: false).logout();
+                  try {
+                    await ProviderScope.containerOf(context, listen: false)
+                        .read(passengerAuthProvider.notifier)
+                        .logout();
+                  } catch (_) {}
+                  if (!context.mounted) return;
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const LoginScreen()),
                     (Route<dynamic> route) => false,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart' as legacy_provider;
 import '../theme/app_theme.dart';
 import '../providers/auth_provider.dart';
 import 'home_screen.dart';
@@ -54,9 +55,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       if (!mounted) return;
       final authState = ref.read(passengerAuthProvider);
 
-      Widget nextScreen = const HomeScreen();
+      Widget nextScreen;
       if (authState is Authenticated) {
-        // Already authenticated, user data is populated
+        legacy_provider.Provider.of<AuthProvider>(context, listen: false)
+            .login(authState.token, authState.user);
+        nextScreen = const HomeScreen();
+      } else {
+        nextScreen = const LoginScreen();
       }
 
       Navigator.pushReplacement(

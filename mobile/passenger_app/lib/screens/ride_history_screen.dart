@@ -24,9 +24,15 @@ class _RideHistoryScreenState extends ConsumerState<RideHistoryScreen> {
 
   void _fetchHistory() {
     final rideService = ref.read(rideServiceProvider);
+    final riverpodAuth = ref.read(passengerAuthProvider);
     final authProvider =
         legacy_provider.Provider.of<AuthProvider>(context, listen: false);
-    final userId = authProvider.userId ?? 'current-user-stub';
+    final userId = (riverpodAuth is Authenticated ? riverpodAuth.userId : null) ??
+        authProvider.userId;
+    if (userId == null || userId.isEmpty) {
+      _historyFuture = Future.value([]);
+      return;
+    }
     _historyFuture = rideService.getRideHistory(userId);
   }
 

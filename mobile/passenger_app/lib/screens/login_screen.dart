@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart' as legacy_provider;
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/primary_button.dart';
@@ -88,6 +89,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             rememberMe: _rememberMe,
           );
       if (mounted) {
+        final authState = ref.read(passengerAuthProvider);
+        if (authState is Authenticated) {
+          legacy_provider.Provider.of<AuthProvider>(context, listen: false)
+              .login(authState.token, authState.user);
+        }
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const HomeScreen()),
         );

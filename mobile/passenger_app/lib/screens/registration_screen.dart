@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart' as legacy_provider;
 import '../providers/auth_provider.dart';
 import '../services/auth_service.dart';
+import 'home_screen.dart';
 import 'otp_verification_screen.dart';
 import 'package:passenger_app/theme/app_theme.dart';
 
@@ -205,10 +207,24 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
               ),
             );
           } else if (result.isSignedIn) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Registration successful!')),
-            );
-            Navigator.of(context).pop();
+            if (result.token != null) {
+              await ref
+                  .read(passengerAuthProvider.notifier)
+                  .setSession(result.token!, result.user);
+              if (mounted) {
+                legacy_provider.Provider.of<AuthProvider>(context, listen: false)
+                    .login(result.token!, result.user);
+              }
+            }
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Registration successful! Welcome to Cabi Africa.')),
+              );
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const HomeScreen()),
+                (route) => false,
+              );
+            }
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Registration Failed: ${result.error}')),

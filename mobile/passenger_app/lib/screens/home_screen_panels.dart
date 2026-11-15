@@ -2010,13 +2010,10 @@ extension _HomeScreenPanels on _HomeScreenState {
               ),
               child: CircleAvatar(
                 backgroundColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF1F5F9),
-                backgroundImage: () {
-                  final authState = ref.watch(passengerAuthProvider);
-                  if (authState is Authenticated) {
-                    return getPassengerAvatarProvider(authState.user);
-                  }
-                  return const AssetImage('assets/images/passenger_avatar.jpg') as ImageProvider;
-                }(),
+                backgroundImage: authState is Authenticated ? getPassengerAvatarProvider(authState.user) : null,
+                child: (authState is! Authenticated || getPassengerAvatarProvider(authState.user) == null)
+                    ? Icon(Icons.person_rounded, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 32)
+                    : null,
               ),
             ),
           ),

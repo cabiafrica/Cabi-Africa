@@ -9,21 +9,7 @@ class VehicleListScreen extends StatefulWidget {
 }
 
 class _VehicleListScreenState extends State<VehicleListScreen> {
-  // Mock data
-  final List<Map<String, dynamic>> _vehicles = [
-    {
-      'id': 'v1',
-      'name': 'Toyota Camry (KBK 123A)',
-      'status': 'VERIFIED',
-      'active': true
-    },
-    {
-      'id': 'v2',
-      'name': 'Honda Civic (KCA 456B)',
-      'status': 'PENDING',
-      'active': false
-    }
-  ];
+  final List<Map<String, dynamic>> _vehicles = [];
 
   void _setActive(String id) {
     final v = _vehicles.firstWhere((element) => element['id'] == id);
@@ -44,7 +30,17 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('My Vehicles')),
-      body: ListView.builder(
+      body: _vehicles.isEmpty
+          ? const Center(
+              child: Padding(
+                padding: EdgeInsets.all(24.0),
+                child: Text(
+                  'No vehicles added yet. Tap + to register your vehicle.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
+          : ListView.builder(
         itemCount: _vehicles.length,
         itemBuilder: (context, index) {
           final v = _vehicles[index];

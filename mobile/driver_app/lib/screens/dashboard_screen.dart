@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:driver_app/providers/auth_provider.dart';
 import 'package:driver_app/widgets/driver_analytics_cards.dart';
 import 'package:driver_app/theme/app_theme.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final authState = ref.watch(authProvider);
+    final user = authState is Authenticated ? authState.user : null;
+    final driverProfile = user?['driverProfile'] as Map<String, dynamic>?;
+    final acceptanceRate = (driverProfile?['acceptanceRate'] ?? user?['acceptanceRate'] ?? '0%').toString();
+    final cancellationRate = (driverProfile?['cancellationRate'] ?? user?['cancellationRate'] ?? '0%').toString();
+    final hoursOnline = (driverProfile?['hoursOnline'] ?? user?['hoursOnline'] ?? '0h').toString();
+    final totalTrips = (driverProfile?['totalTrips'] ?? user?['totalTrips'] ?? '0').toString();
+    final rawRef = (user?['referralCode'] ?? driverProfile?['referralCode'] ?? user?['id'] ?? 'DRIVER').toString();
+    final referralCode = rawRef.length > 10 ? 'DRV-${rawRef.substring(0, 6).toUpperCase()}' : rawRef;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -114,23 +125,23 @@ class DashboardScreen extends StatelessWidget {
                 _buildMetricCard(
                   context,
                   'Acceptance Rate',
-                  '94%',
+                  acceptanceRate.contains('%') ? acceptanceRate : '$acceptanceRate%',
                   AppTheme.successGreen,
                   Icons.task_alt_rounded,
-                  'Top Tier Performance',
+                  'Qualifying Trips',
                 ),
                 _buildMetricCard(
                   context,
                   'Cancellation Rate',
-                  '2%',
+                  cancellationRate.contains('%') ? cancellationRate : '$cancellationRate%',
                   AppTheme.secondaryAmber,
                   Icons.cancel_outlined,
-                  'Well Below 4% Limit',
+                  'Target Below 4%',
                 ),
                 _buildMetricCard(
                   context,
                   'Hours Online',
-                  '32.5h',
+                  hoursOnline,
                   AppTheme.primaryColor,
                   Icons.access_time_filled_rounded,
                   'This Week Total',
@@ -138,7 +149,7 @@ class DashboardScreen extends StatelessWidget {
                 _buildMetricCard(
                   context,
                   'Total Trips',
-                  '1,240',
+                  totalTrips,
                   AppTheme.primaryDark,
                   Icons.local_taxi_rounded,
                   'All-Time Completed',
@@ -234,7 +245,7 @@ class DashboardScreen extends StatelessWidget {
                       ],
                     ),
                     child: QrImageView(
-                      data: 'https://portal.cabiapp.africa/register/driver?ref=DRV-77821',
+                      data: 'https://portal.cabiapp.africa/register/driver?ref=$referralCode',
                       version: QrVersions.auto,
                       size: 160.0,
                     ),
@@ -244,8 +255,8 @@ class DashboardScreen extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       Clipboard.setData(
-                        const ClipboardData(
-                            text: 'https://portal.cabiapp.africa/ref/DRV-77821'),
+                        ClipboardData(
+                            text: 'https://portal.cabiapp.africa/ref/$referralCode'),
                       );
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -274,25 +285,25 @@ class DashboardScreen extends StatelessWidget {
                           color: AppTheme.primaryColor.withValues(alpha: 0.3),
                         ),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.link_rounded,
                             size: 18,
                             color: AppTheme.primaryDark,
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Text(
-                            'portal.cabiapp.africa/ref/DRV-77821',
-                            style: TextStyle(
+                            'portal.cabiapp.africa/ref/$referralCode',
+                            style: const TextStyle(
                               fontFamily: 'monospace',
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          SizedBox(width: 10),
-                          Icon(
+                          const SizedBox(width: 10),
+                          const Icon(
                             Icons.copy_rounded,
                             size: 16,
                             color: AppTheme.primaryDark,

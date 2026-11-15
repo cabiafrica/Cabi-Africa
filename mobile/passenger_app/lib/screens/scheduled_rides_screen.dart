@@ -39,47 +39,9 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  final List<PassengerScheduledRide> _upcomingRides = [
-    PassengerScheduledRide(
-      id: 'SCH-8821',
-      pickupLocation: 'Villa Rosa Kempinski Residences, Westlands',
-      destination: 'JKIA VIP Presidential Terminal, Embakasi',
-      scheduledTime: DateTime.now().add(const Duration(hours: 4, minutes: 30)),
-      tier: 'CABI EXEC',
-      fareKES: 3200.0,
-      assignedChauffeur: 'Samuel Mwangi',
-      vehicleInfo: 'Mercedes-Benz E200 · KDA 482B',
-      rating: 4.98,
-      status: 'CHAUFFEUR ASSIGNED',
-    ),
-    PassengerScheduledRide(
-      id: 'SCH-8902',
-      pickupLocation: 'Delta Corner Tower B, Chiromo Rd',
-      destination: 'Muthaiga Country Club, Main Pavilion',
-      scheduledTime: DateTime.now().add(const Duration(days: 1, hours: 2)),
-      tier: 'CABI COMFORT',
-      fareKES: 950.0,
-      assignedChauffeur: 'Patrick Koech',
-      vehicleInfo: 'Toyota Camry Hybrid · KDD 193A',
-      rating: 4.95,
-      status: 'CONFIRMED',
-    ),
-  ];
+  final List<PassengerScheduledRide> _upcomingRides = [];
 
-  final List<PassengerScheduledRide> _historyRides = [
-    PassengerScheduledRide(
-      id: 'SCH-7719',
-      pickupLocation: 'Nairobi Serena Hotel',
-      destination: 'Sarit Centre Gate 2',
-      scheduledTime: DateTime.now().subtract(const Duration(days: 3)),
-      tier: 'CABI EXEC',
-      fareKES: 1200.0,
-      assignedChauffeur: 'Joseph Ndungu',
-      vehicleInfo: 'BMW 5 Series · KCS 772Z',
-      rating: 5.0,
-      status: 'COMPLETED',
-    ),
-  ];
+  final List<PassengerScheduledRide> _historyRides = [];
 
   @override
   void initState() {

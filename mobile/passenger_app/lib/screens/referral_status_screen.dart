@@ -35,10 +35,9 @@ class _ReferralStatusScreenState extends ConsumerState<ReferralStatusScreen> {
       userId = authState.userId;
     }
 
-    // Fallback for development
-    userId ??= 'passenger-test-id';
-
-    _loadHistory(userId);
+    if (userId != null) {
+      _loadHistory(userId);
+    }
 
     return Scaffold(
       appBar: AppBar(

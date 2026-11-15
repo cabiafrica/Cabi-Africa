@@ -99,9 +99,12 @@ class AuthService {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final token = data['accessToken'] ?? data['token'];
+        final userMap = data['user'] is Map<String, dynamic>
+            ? data['user'] as Map<String, dynamic>
+            : (data is Map<String, dynamic> ? data : null);
         return AuthResult(
           isSignedIn: true,
-          user: data,
+          user: userMap,
           token: token,
         );
       } else {

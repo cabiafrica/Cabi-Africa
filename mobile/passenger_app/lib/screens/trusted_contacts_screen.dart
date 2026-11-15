@@ -12,11 +12,8 @@ class TrustedContact {
 // Mock service. In a real app, this would make HTTP requests.
 class TrustedContactsService {
   Future<List<TrustedContact>> getContacts() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return [
-      TrustedContact(id: 'c1', name: 'Mom', phone: '555-0101'),
-      TrustedContact(id: 'c2', name: "Elite Member", phone: '555-0102'),
-    ];
+    await Future.delayed(const Duration(milliseconds: 200));
+    return [];
   }
 
   Future<void> addContact() async {

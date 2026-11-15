@@ -244,23 +244,16 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
 
   void _verifyOtp() {
     final entered = _otpController.text.trim();
-    if (entered == _generatedOtp || entered == '123456' || entered == '000000') {
+    if (entered == _generatedOtp) {
       _success();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.redAccent,
-          content: Text('Invalid verification code. Enter 123456'),
+          content: Text('Invalid verification code. Please check your SMS and try again.'),
         ),
       );
     }
-  }
-
-  void _pasteDemoOtp() {
-    setState(() {
-      _otpController.text = _generatedOtp;
-    });
-    _verifyOtp();
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -1200,25 +1193,6 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               }
             },
           ),
-        ),
-
-        const SizedBox(height: 16),
-
-        // Quick Paste / Demo PIN Action
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ActionChip(
-              avatar: const Icon(Icons.bolt_rounded, size: 14, color: Colors.amberAccent),
-              label: Text(
-                'Auto-Fill Demo Code (123456)',
-                style: TextStyle(fontSize: 11, color: textHeadline),
-              ),
-              backgroundColor: isDark ? Colors.white.withValues(alpha: 0.08) : AppTheme.porcelainSurfaceContainer,
-              side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.15) : AppTheme.porcelainOutline),
-              onPressed: _pasteDemoOtp,
-            ),
-          ],
         ),
 
         const SizedBox(height: 12),

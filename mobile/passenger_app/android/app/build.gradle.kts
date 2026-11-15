@@ -42,7 +42,9 @@ android {
         versionName = flutter.versionName
         manifestPlaceholders["googleMapsApiKey"] =
             localProperties.getProperty("GOOGLE_MAPS_API_KEY")
+                ?.takeIf { it.isNotBlank() && !it.startsWith("REPLACE_WITH") }
                 ?: System.getenv("GOOGLE_MAPS_API_KEY")
+                    ?.takeIf { it.isNotBlank() && !it.startsWith("REPLACE_WITH") }
                 ?: "AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0"
     }
 
