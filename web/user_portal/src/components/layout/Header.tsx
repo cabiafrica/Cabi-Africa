@@ -20,6 +20,7 @@ import {
     Car,
     Users,
     Building2,
+    Download,
 } from 'lucide-react';
 
 export const GlobalHeaderContext = createContext<boolean>(false);
@@ -89,6 +90,7 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
         { name: 'Home', href: '/', icon: Home },
         { name: 'Intel', href: '/blog', icon: MessageSquare },
         { name: 'About Us', href: '/about', icon: Info },
+        { name: 'Download App', href: '/download', icon: Download },
     ];
 
     const isActiveRoute = (href: string) => {

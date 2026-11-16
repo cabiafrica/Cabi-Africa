@@ -122,7 +122,7 @@ export default async function handler(
         const finalAmount = 0;
 
         // Skip payment intent since registration is 100% free
-        const paymentData = { id: `free-group-${Date.now()}`, clientSecret: 'FREE_ONBOARDING' };
+        const paymentData = { id: `free-group-${Date.now()}`, paymentIntentId: `free-group-${Date.now()}`, clientSecret: 'FREE_ONBOARDING' };
 
         // Create drivers with referral relationships
         const driverIds = [];

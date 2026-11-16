@@ -1,5 +1,7 @@
 import React from 'react';
-import { FaArrowDown, FaMobileAlt, FaCarSide } from 'react-icons/fa';
+import Link from 'next/link';
+import { FaAndroid, FaApple, FaDownload, FaMobileAlt, FaCarSide } from 'react-icons/fa';
+import { APP_LINKS } from '@/config/appLinks';
 
 interface AppDownloadButtonsProps {
     role?: 'passenger' | 'driver' | 'both';
@@ -9,10 +11,6 @@ interface AppDownloadButtonsProps {
     className?: string;
 }
 
-/**
- * Scrolls the user to the Footer Download Menu where all official
- * CABI Go (Passenger) & CABI Drive (Driver) download links reside.
- */
 export default function AppDownloadButtons({
     role = 'both',
     caption,
@@ -20,42 +18,86 @@ export default function AppDownloadButtons({
     align = 'center',
     className = '',
 }: AppDownloadButtonsProps) {
+    const alignOuter = align === 'start' ? 'items-start text-left' : 'items-center text-center';
+
     const defaultCaption =
         role === 'driver'
-            ? 'Official Driver App Available in Footer Menu'
+            ? 'Download Official CABI Drive App'
             : role === 'passenger'
-                ? 'Official Passenger App Available in Footer Menu'
-                : 'Official Mobile Apps Available in Footer Menu';
+                ? 'Download Official CABI Go App'
+                : 'Download Official CABI Mobile Apps';
 
     const captionColor =
         tone === 'dark'
             ? 'text-neutral-400'
             : 'text-neutral-500 dark:text-neutral-400';
 
-    const alignOuter = align === 'start' ? 'items-start' : 'items-center';
-
-    const label =
-        role === 'driver'
-            ? 'Download CABI Drive (Footer Menu)'
-            : role === 'passenger'
-                ? 'Download CABI Go (Footer Menu)'
-                : 'Download Apps in Footer Menu';
-
-    const Icon = role === 'driver' ? FaCarSide : FaMobileAlt;
-
     return (
         <div className={`flex flex-col ${alignOuter} ${className}`}>
-            <p className={`text-[10px] font-black uppercase tracking-[0.22em] mb-3 ${captionColor}`}>
+            <p className={`text-[11px] font-black uppercase tracking-[0.22em] mb-3 ${captionColor}`}>
                 {caption || defaultCaption}
             </p>
-            <a
-                href="#footer-download-menu"
-                className="group inline-flex items-center gap-3 px-5 py-3.5 rounded-xl border border-[#D4AF37] bg-gradient-to-r from-[#D4AF37] to-[#B8860B] text-black font-black text-sm shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 active:scale-95"
-            >
-                <Icon className="text-lg shrink-0" />
-                <span>{label}</span>
-                <FaArrowDown className="text-xs shrink-0 transition-transform group-hover:translate-y-0.5" />
-            </a>
+
+            <div className="flex flex-wrap items-center gap-3">
+                {/* Passenger Apps */}
+                {(role === 'passenger' || role === 'both') && (
+                    <div className="flex items-center gap-2">
+                        <a
+                            href={APP_LINKS.passenger.apkDirect}
+                            download={APP_LINKS.passenger.fileName}
+                            className="inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-[#D4AF37] hover:bg-[#ffe088] text-black font-extrabold text-xs tracking-wide shadow-md transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
+                            title="Download CABI Go APK for Android"
+                        >
+                            <FaAndroid className="text-base text-emerald-950" />
+                            <span>Passenger (.apk)</span>
+                            <FaDownload className="text-xs opacity-75" />
+                        </a>
+                        <a
+                            href={APP_LINKS.passenger.iosWebApp}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-3 py-3 rounded-xl bg-white/10 dark:bg-white/10 hover:bg-white/20 text-slate-800 dark:text-white border border-neutral-300 dark:border-white/15 font-bold text-xs transition-all duration-300 hover:-translate-y-0.5"
+                            title="Install CABI Go iOS PWA"
+                        >
+                            <FaApple className="text-sm" />
+                            <span>iOS App</span>
+                        </a>
+                    </div>
+                )}
+
+                {/* Driver Apps */}
+                {(role === 'driver' || role === 'both') && (
+                    <div className="flex items-center gap-2">
+                        <a
+                            href={APP_LINKS.driver.apkDirect}
+                            download={APP_LINKS.driver.fileName}
+                            className="inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-neutral-900 dark:bg-black hover:bg-neutral-800 text-white border border-[#D4AF37]/60 font-extrabold text-xs tracking-wide shadow-md transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
+                            title="Download CABI Drive APK for Android"
+                        >
+                            <FaCarSide className="text-sm text-[#D4AF37]" />
+                            <span>Driver (.apk)</span>
+                            <FaDownload className="text-xs text-[#D4AF37]" />
+                        </a>
+                        <a
+                            href={APP_LINKS.driver.iosWebApp}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-3 py-3 rounded-xl bg-white/10 dark:bg-white/10 hover:bg-white/20 text-slate-800 dark:text-white border border-neutral-300 dark:border-white/15 font-bold text-xs transition-all duration-300 hover:-translate-y-0.5"
+                            title="Install CABI Drive iOS PWA"
+                        >
+                            <FaApple className="text-sm" />
+                            <span>Driver iOS</span>
+                        </a>
+                    </div>
+                )}
+
+                <Link
+                    href="/download"
+                    className="text-[11px] font-bold text-[#D4AF37] hover:underline underline-offset-4 ml-1"
+                >
+                    All Downloads &rarr;
+                </Link>
+            </div>
         </div>
     );
 }

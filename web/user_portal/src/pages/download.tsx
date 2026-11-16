@@ -1,5 +1,6 @@
 import MainLayout from '../components/layout/MainLayout';
-import { FaAndroid, FaApple, FaCheckCircle, FaArrowDown, FaMobileAlt, FaCarSide, FaShieldAlt } from 'react-icons/fa';
+import { FaAndroid, FaApple, FaCheckCircle, FaDownload, FaMobileAlt, FaCarSide, FaShieldAlt } from 'react-icons/fa';
+import { APP_LINKS } from '@/config/appLinks';
 
 export default function DownloadApp() {
     return (
@@ -33,7 +34,7 @@ export default function DownloadApp() {
                                         <FaMobileAlt /> Passenger Edition
                                     </span>
                                     <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-500">
-                                        <FaCheckCircle /> Full Version • v1.1.0
+                                        <FaCheckCircle /> Full Version • v1.2.1
                                     </span>
                                 </div>
                                 <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
@@ -43,20 +44,24 @@ export default function DownloadApp() {
                                     Create your personal rider account, book Boda, Standard, XL, and Executive rides with live GPS tracking, and pay seamlessly via M-Pesa STK or Wallet.
                                 </p>
                             </div>
-                            <div>
+                            <div className="flex flex-col sm:flex-row gap-3">
                                 <a
-                                    href="#footer-download-menu"
-                                    className="w-full bg-executive-gold text-black font-extrabold px-6 py-4 rounded-xl flex items-center justify-between gap-3 hover:brightness-110 transition-all shadow-md"
+                                    href={APP_LINKS.passenger.apkDirect}
+                                    download={APP_LINKS.passenger.fileName}
+                                    className="flex-1 bg-executive-gold text-black font-extrabold px-5 py-3.5 rounded-xl flex items-center justify-center gap-2 hover:brightness-110 transition-all shadow-md active:scale-95"
                                 >
-                                    <div className="text-left">
-                                        <div className="text-[10px] uppercase tracking-wider opacity-80">
-                                            Android (.apk) &amp; iOS (iPhone / iPad)
-                                        </div>
-                                        <div className="text-base font-black leading-none mt-0.5">
-                                            Download CABI Go in Footer Menu
-                                        </div>
-                                    </div>
-                                    <FaArrowDown className="text-lg" />
+                                    <FaAndroid className="text-lg text-emerald-950" />
+                                    <span>Download .apk</span>
+                                    <FaDownload className="text-xs opacity-75" />
+                                </a>
+                                <a
+                                    href={APP_LINKS.passenger.iosWebApp}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 bg-slate-900 dark:bg-black text-white border border-slate-300 dark:border-white/20 font-bold px-4 py-3.5 rounded-xl flex items-center justify-center gap-2 hover:border-executive-gold transition-all shadow-md"
+                                >
+                                    <FaApple className="text-base" />
+                                    <span>iOS App (PWA)</span>
                                 </a>
                             </div>
                         </div>
@@ -69,7 +74,7 @@ export default function DownloadApp() {
                                         <FaCarSide /> Driver Partner Edition
                                     </span>
                                     <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-500">
-                                        <FaCheckCircle /> Full Version • v1.1.0
+                                        <FaCheckCircle /> Full Version • v1.2.1
                                     </span>
                                 </div>
                                 <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
@@ -79,20 +84,24 @@ export default function DownloadApp() {
                                     Sign up or log in as a verified CABI driver partner, go online to receive real-time trip dispatches, track your live earnings, and withdraw instantly to M-Pesa.
                                 </p>
                             </div>
-                            <div>
+                            <div className="flex flex-col sm:flex-row gap-3">
                                 <a
-                                    href="#footer-download-menu"
-                                    className="w-full bg-slate-900 dark:bg-black text-white border border-executive-gold/50 font-extrabold px-6 py-4 rounded-xl flex items-center justify-between gap-3 hover:border-executive-gold transition-all shadow-md"
+                                    href={APP_LINKS.driver.apkDirect}
+                                    download={APP_LINKS.driver.fileName}
+                                    className="flex-1 bg-neutral-900 dark:bg-black text-white border border-executive-gold/60 font-extrabold px-5 py-3.5 rounded-xl flex items-center justify-center gap-2 hover:border-executive-gold transition-all shadow-md active:scale-95"
                                 >
-                                    <div className="text-left">
-                                        <div className="text-[10px] uppercase tracking-wider text-executive-gold">
-                                            Android (.apk) &amp; iOS (iPhone / iPad)
-                                        </div>
-                                        <div className="text-base font-black leading-none mt-0.5">
-                                            Download CABI Drive in Footer Menu
-                                        </div>
-                                    </div>
-                                    <FaArrowDown className="text-lg text-executive-gold" />
+                                    <FaAndroid className="text-lg text-emerald-400" />
+                                    <span>Download .apk</span>
+                                    <FaDownload className="text-xs text-executive-gold" />
+                                </a>
+                                <a
+                                    href={APP_LINKS.driver.iosWebApp}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 bg-white dark:bg-card-dark text-slate-900 dark:text-white border border-slate-300 dark:border-white/20 font-bold px-4 py-3.5 rounded-xl flex items-center justify-center gap-2 hover:border-executive-gold transition-all shadow-md"
+                                >
+                                    <FaApple className="text-base" />
+                                    <span>iOS App (PWA)</span>
                                 </a>
                             </div>
                         </div>
@@ -105,20 +114,22 @@ export default function DownloadApp() {
                                 <FaAndroid className="text-emerald-500 text-lg" /> Android Installation
                             </h3>
                             <ol className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2 list-decimal list-inside">
-                                <li>Tap <strong>Download CABI Go</strong> or <strong>Download CABI Drive (Android APK)</strong>.</li>
+                                <li>Tap <strong>Download .apk</strong> above for CABI Go or CABI Drive.</li>
                                 <li>Your phone saves <code className="font-bold">Cabi-Go-Official.apk</code> or <code className="font-bold">Cabi-Drive-Official.apk</code> into your <strong>Downloads</strong> folder.</li>
                                 <li>Tap the completed download (or open <strong>Files / Downloads</strong>) and tap <strong>Install</strong>.</li>
+                                <li>If prompted with <em>&quot;Install unknown apps&quot;</em>, allow your browser or Files app to complete installation.</li>
                             </ol>
                         </div>
 
                         <div className="rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 p-6">
                             <h3 className="text-sm font-black uppercase tracking-wider text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                                <FaApple className="text-slate-900 dark:text-white text-lg" /> iPhone &amp; iPad (iOS) Installation
+                                <FaApple className="text-slate-900 dark:text-white text-lg" /> iPhone / iPad (iOS Installation)
                             </h3>
                             <ol className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 space-y-2 list-decimal list-inside">
-                                <li>Open this page in <strong>Safari</strong> and tap <strong>Install CABI Go for iOS</strong> or <strong>Install CABI Drive for iOS</strong>.</li>
-                                <li>Tap the Safari <strong>Share</strong> icon (square with upward arrow) at the bottom of the screen.</li>
-                                <li>Tap <strong>Add to Home Screen</strong> → <strong>Add</strong> to install the full-screen app on your iPhone.</li>
+                                <li>Tap <strong>iOS App (PWA)</strong> above to launch the web edition in Safari.</li>
+                                <li>Tap Safari&apos;s <strong>Share button (⬆️)</strong> at the bottom of the screen.</li>
+                                <li>Scroll down and tap <strong>&quot;Add to Home Screen&quot;</strong>.</li>
+                                <li>Tap <strong>Add</strong> in the top-right corner. The official app icon appears on your home screen and runs in full-screen standalone mode.</li>
                             </ol>
                         </div>
                     </div>
