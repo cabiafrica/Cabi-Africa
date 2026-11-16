@@ -29,13 +29,13 @@ jobs:
         working-directory: ./mobile/passenger_app
         run: |
           flutter pub get
-          flutter build web --release --dart-define=IS_PRODUCTION=true --no-tree-shake-icons --no-wasm-dry-run
+          flutter build web --release --base-href /apps/passenger/ --dart-define=IS_PRODUCTION=true --no-tree-shake-icons --no-wasm-dry-run
 
       - name: Build Driver Flutter Web
         working-directory: ./mobile/driver_app
         run: |
           flutter pub get
-          flutter build web --release --dart-define=IS_PRODUCTION=true --no-tree-shake-icons --no-wasm-dry-run
+          flutter build web --release --base-href /apps/driver/ --dart-define=IS_PRODUCTION=true --no-tree-shake-icons --no-wasm-dry-run
 
       - name: Upload Passenger Web Artifact
         uses: actions/upload-artifact@v4
