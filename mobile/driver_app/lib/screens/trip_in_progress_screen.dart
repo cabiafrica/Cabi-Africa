@@ -451,6 +451,327 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
     );
   }
 
+  // ──────────────────── Passenger Cancellation & Standby Protection ────────────────────
+
+  void _simulatePassengerCancellation() {
+    final bool afterArrival = (_tripPhase == TripPhase.arrivedAtPickup);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppTheme.surfaceContainer,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: const [
+            Icon(Icons.person_remove_rounded, color: Color(0xFFEF4444), size: 20),
+            SizedBox(width: 8),
+            Text(
+              'Simulate Rider Cancel',
+              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: Text(
+          afterArrival
+              ? 'Simulate ${widget.passengerName ?? "Sarah Jenkins"} cancelling while chauffeur is waiting at pickup.\n\nSACCO Standby Protection Fee (KES 100.00) will be credited to driver wallet from passenger escrow.'
+              : 'Simulate ${widget.passengerName ?? "Sarah Jenkins"} cancelling while chauffeur is en route to pickup (within initial grace period).',
+          style: const TextStyle(color: Colors.white70, fontSize: 13),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Back', style: TextStyle(color: Colors.white54)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _handlePassengerCancellation();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFEF4444),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            child: const Text('Simulate Cancel', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handlePassengerCancellation() async {
+    _tripTimer?.cancel();
+    final bool afterArrival = (_tripPhase == TripPhase.arrivedAtPickup);
+    final double compensation = afterArrival ? 100.0 : 0.0;
+    final double driverNet = afterArrival ? 85.0 : 0.0;
+    final double saccoWelfare = afterArrival ? 15.0 : 0.0;
+
+    AudioNotificationService.instance.play('passenger_cancelled');
+
+    if (widget.rideId != null) {
+      await _rideService.processPassengerCancellation(
+        widget.rideId!,
+        afterArrival: afterArrival,
+        waitSeconds: _waitingSeconds,
+      );
+    }
+
+    if (!mounted) return;
+
+    if (!afterArrival) {
+      // Grace period cancellation
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: AppTheme.surfaceContainer,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            children: const [
+              Icon(Icons.info_outline_rounded, color: Color(0xFFD4AF37), size: 22),
+              SizedBox(width: 8),
+              Text('Rider Cancelled', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          content: Text(
+            '${widget.passengerName ?? "Sarah Jenkins"} cancelled the ride while en route within the initial grace window.\n\nNo cancellation fee applies.',
+            style: const TextStyle(color: Colors.white70, fontSize: 13),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFD4AF37),
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text('Return to Radar', style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    // Driver arrived: SACCO Standby Protection Fee Credited!
+    _showCancellationManifestSheet(compensation, driverNet, saccoWelfare);
+  }
+
+  void _showCancellationManifestSheet(double compensation, double driverNet, double saccoWelfare) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = isDark ? const Color(0xFF141416) : AppTheme.porcelainSurface;
+    final cardBg = isDark ? const Color(0xFF1C1B1B) : AppTheme.porcelainSurfaceContainer;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textDim = isDark ? Colors.white54 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.7);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      enableDrag: false,
+      isDismissible: false,
+      builder: (ctx) {
+        return Container(
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.4), width: 1.2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.6),
+                blurRadius: 24,
+                offset: const Offset(0, -4),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Pull indicator handle
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+
+              // Amber / Crimson cancellation banner
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEF4444).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.cancel_rounded, color: Color(0xFFEF4444), size: 22),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'RIDER CANCELLED AFTER ARRIVAL',
+                          style: TextStyle(
+                            color: Color(0xFFEF4444),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                        Text(
+                          'SACCO Chauffeur Standby Protection Active',
+                          style: TextStyle(color: textDim, fontSize: 11),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+
+              // Standby Protection Settlement Hero Card
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: cardBg,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.4)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF10B981).withValues(alpha: 0.08),
+                      blurRadius: 12,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'STANDBY COMPENSATION',
+                              style: TextStyle(
+                                color: textDim,
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.8,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            const Text(
+                              'Credited to M-Pesa Escrow',
+                              style: TextStyle(
+                                color: AppTheme.successGreen,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          '+KES ${compensation.toStringAsFixed(0)}/-',
+                          style: const TextStyle(
+                            color: AppTheme.successGreen,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            fontFamily: 'monospace',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Divider(color: Colors.white10, height: 1),
+                    ),
+                    _buildCancellationDetailRow('Chauffeur Standby Net (85%)', 'KES ${driverNet.toStringAsFixed(2)}', AppTheme.successGreen, isDark),
+                    const SizedBox(height: 6),
+                    _buildCancellationDetailRow('SACCO Welfare & Fuel Pool (15%)', 'KES ${saccoWelfare.toStringAsFixed(2)}', textDim, isDark),
+                    const SizedBox(height: 6),
+                    _buildCancellationDetailRow('Arrival Wait Elapsed', _formatDuration(_waitingSeconds), const Color(0xFFD4AF37), isDark),
+                    const SizedBox(height: 6),
+                    _buildCancellationDetailRow('Passenger', widget.passengerName ?? 'Sarah Jenkins', textPrimary, isDark),
+                    const SizedBox(height: 6),
+                    _buildCancellationDetailRow('Policy Rule', 'SACCO By-Law §14.2 (Arrival Guarantee)', textDim, isDark),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // CTA: Return to Dispatch Radar
+              SizedBox(
+                height: 48,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+                  },
+                  icon: const Icon(Icons.radar_rounded, color: Colors.black, size: 20),
+                  label: const Text(
+                    'ACCEPT COMPENSATION & RETURN ONLINE',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFD4AF37),
+                    foregroundColor: Colors.black,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCancellationDetailRow(String label, String value, Color valueColor, bool isDark) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary,
+            fontSize: 11.5,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            color: valueColor,
+            fontSize: 11.5,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -790,6 +1111,12 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                   icon: Icons.my_location_rounded,
                   isActive: true,
                   onTap: () {},
+                ),
+                const SizedBox(height: 8),
+                _buildMapControlBtn(
+                  icon: Icons.person_remove_rounded,
+                  isActive: false,
+                  onTap: _simulatePassengerCancellation,
                 ),
               ],
             ),
