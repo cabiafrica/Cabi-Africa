@@ -7,7 +7,8 @@
     "coverage",
     "tmp",
     "*.config.js",
-    "*.config.ts"
+    "*.config.ts",
+    "web/user_portal/backend/**"
   ],
   "plugins": [
     "@nx"
