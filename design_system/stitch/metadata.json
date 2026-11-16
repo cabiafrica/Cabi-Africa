@@ -1,0 +1,612 @@
+{
+  "screens": [
+    {
+      "name": "projects/5681992570744779348/screens/a98c5ad283f54abba521d199abde5191",
+      "title": "Passenger App - Service Selection (Lustre Platinum)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/a98c5ad283f54abba521d199abde5191/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b8cf93ce045adde239022a79:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/15934392622396569582",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/15934392622396569582:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2528",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/b8dce4e6b576440ba191eac1bfa83b19",
+      "title": "Passenger App Home - Lustre Platinum",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/b8dce4e6b576440ba191eac1bfa83b19/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b7f38e54044f547acb152907:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/1005270560783461545",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/1005270560783461545:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "3782",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/3230e98310464b44b7cd17d7b5bb9175",
+      "title": "Executive Referral - Obsidian & Aurum Layout",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/3230e98310464b44b7cd17d7b5bb9175/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b91c55bf023be9193f1ed26d:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/5413127582196597855",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/5413127582196597855:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2196",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/1831e1b8048f4f7992db7c9833afc3ad",
+      "title": "Driver Homepage - Obsidian & Aurum Layout",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/1831e1b8048f4f7992db7c9833afc3ad/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b93d22930479c941a0141faa:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/7886372256446121830",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/7886372256446121830:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "1768",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/d4d1b4d7a3274e9299c164b96c0cd888",
+      "title": "Driver App - Rider Pickup & Security PIN",
+      "screenshot": {
+        "name": "projects/5681992570744779348/files/11268011775121318662",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/11268011775121318662:download",
+        "mimeType": "image/jpeg"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/17604863612499148590",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/17604863612499148590:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "1930",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/8b5021b86b024a1abf2c3e714e57ad69",
+      "title": "Passenger App - Service Selection (Lustre Platinum)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/8b5021b86b024a1abf2c3e714e57ad69/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b8b37ffc05f110e0d2009a26:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/13204772501971070558",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/13204772501971070558:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2516",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/f0088a87034f4b948de5c050b319f6e7",
+      "title": "Driver Homepage - Lustre Platinum Dark",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/f0088a87034f4b948de5c050b319f6e7/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e6d133ab043023bde2fff32dc5f:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/screens/f0088a87034f4b948de5c050b319f6e7/fileEntries/html",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/f0088a87034f4b948de5c050b319f6e7:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "1768",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/e5408ffe58c44591be94bab14a89fd33",
+      "title": "Driver Online - Top HUD & Floating Deck (Layout Variant A)",
+      "screenshot": {},
+      "htmlCode": {
+        "name": "projects/5681992570744779348/screens/e5408ffe58c44591be94bab14a89fd33/fileEntries/html",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/e5408ffe58c44591be94bab14a89fd33:download",
+        "mimeType": "text/html"
+      },
+      "width": "390",
+      "height": "884",
+      "deviceType": "MOBILE",
+      "screenType": "PROTOTYPE_V2"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/1c1a0053ead14640921a7c1d4200fd62",
+      "title": "Driver Arrived at Pickup - Waiting for Passenger",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/1c1a0053ead14640921a7c1d4200fd62/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e0339fcaac0023be9193f1ed26d:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/7107615626999670145",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/7107615626999670145:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2288",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/53f584b2fcaf4e61bcb729ddafa8f27e",
+      "title": "Passenger App - Trip Completion & Rating (Lustre Platinum)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/53f584b2fcaf4e61bcb729ddafa8f27e/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b80a9a1905f13f7f8836ea34:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/11683760621338411279",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/11683760621338411279:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2642",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/70f7d577dccd4a8fa30894f97383d541",
+      "title": "Driver Cockpit (Lustre Platinum with Theme Toggle)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/70f7d577dccd4a8fa30894f97383d541/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e033a4dde7f045adde239022a79:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/12385226275798678938",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/12385226275798678938:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2244",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/c8c651cd7c2a4a3892e5e3b54b5eb95c",
+      "title": "Passenger App - Home & Ride Discovery (Obsidian Gold Mobility)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/c8c651cd7c2a4a3892e5e3b54b5eb95c/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065de914a17859044f5293b60cfee0:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/7734001806453156378",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/7734001806453156378:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "1768",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/19a96920bd9646a7988c1c00b8ce4f6e",
+      "title": "Active In-Ride Navigation - Collapsible Passenger Card",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/19a96920bd9646a7988c1c00b8ce4f6e/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e033a7d37a90479c78161090d54:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/3947134262116603967",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/3947134262116603967:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2098",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/f0981503781a47eb9c5cb0f68cf0a4a0",
+      "title": "Executive Referral - Top Telemetry & Split Pass Layout (Variant 1)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/f0981503781a47eb9c5cb0f68cf0a4a0/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e033ae96149045adde239022a79:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/5902104088040793572",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/5902104088040793572:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2146",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/475a41ff915e4b3d9035260840859dbc",
+      "title": "Driver En Route - Heading to Pickup",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/475a41ff915e4b3d9035260840859dbc/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e033a355976044f67fb640fa7a0:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/17970027361509605688",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/17970027361509605688:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2254",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/3d9d6cfe8b4b47e58e88a91e08fd6ec2",
+      "title": "Passenger App Home (Lustre Platinum with Theme Toggle)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/3d9d6cfe8b4b47e58e88a91e08fd6ec2/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b86b35c905f110e0d2009a26:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/5049334676874732188",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/5049334676874732188:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "3018",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/931bbee5af614afaa3cd8abece4cc165",
+      "title": "Driver Online - Top HUD & Floating Deck (Layout Variant A)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/931bbee5af614afaa3cd8abece4cc165/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e6cb88d66a1044f6126bd1d6974:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/16825940930759372293",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/16825940930759372293:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "1768",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/cd79fcdaea6d41039eedd191d6822efa",
+      "title": "Executive Referral - Network Hero & Stacked Pass Layout (Variant 2)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/cd79fcdaea6d41039eedd191d6822efa/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b8847749044f7905d52f15db:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/16750014199915476583",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/16750014199915476583:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2866",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/5f30d232eff548e5a605a16ed469e94e",
+      "title": "Passenger App - Live Chat with Chauffeur (Lustre Platinum)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/5f30d232eff548e5a605a16ed469e94e/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b8fed916044f7905d52f15db:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/1287322996700903830",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/1287322996700903830:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2128",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/c11b93dc13444f6b9f59410171fdd743",
+      "title": "Passenger In-Ride Journey (Lustre Platinum)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/c11b93dc13444f6b9f59410171fdd743/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b83bc5470479c78161090d54:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/13560065841576048908",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/13560065841576048908:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2032",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/5c59c9f162814cd2bd9175f1478d3ca6",
+      "title": "Passenger App Home - Lustre Platinum Dark",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/5c59c9f162814cd2bd9175f1478d3ca6/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e6d0b885790044f6126bd1d6974:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/screens/5c59c9f162814cd2bd9175f1478d3ca6/fileEntries/html",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/5c59c9f162814cd2bd9175f1478d3ca6:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "3022",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/d84a53d3a45642658fbeb4c1b51bd833",
+      "title": "Passenger App - Chauffeur Matched (Lustre Platinum)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/d84a53d3a45642658fbeb4c1b51bd833/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b8e8988405f13f7f8836ea34:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/5902818438383697792",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/5902818438383697792:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2840",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/bb2204ef78f44c36b70d5164d2bcfe26",
+      "title": "Passenger App - M-Pesa & Executive Wallet Top-Up (Lustre Platinum)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/bb2204ef78f44c36b70d5164d2bcfe26/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b825589e05f110e0d2009a26:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/11683760621338412713",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/11683760621338412713:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2638",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/c1bc7fc8e5d5424abdac2a3e82671b4c",
+      "title": "Driver Homepage - Top Cockpit & Split Deck (Variant A)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/files/5433144280758034436",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/5433144280758034436:download",
+        "mimeType": "image/jpeg"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/6641616391590237408",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/6641616391590237408:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "1768",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/87064f283e344291b3fa0659638df923",
+      "title": "Driver Shift Summary - Executive Grid Layout",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/87064f283e344291b3fa0659638df923/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e033aadd940023bf988870b42c7:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/2061309893747473200",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/2061309893747473200:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "4608",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/83c5e27172fa4e4c8aa7a771168f7cbd",
+      "title": "Passenger App - Lost & Found Concierge (Lustre Platinum)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/83c5e27172fa4e4c8aa7a771168f7cbd/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b7ad15ee044f67fb640fa7a0:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/10169850362870775747",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/10169850362870775747:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "3956",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/b665239ca4184fa3825d569209fca51c",
+      "title": "Passenger App - Chauffeur Matched (Lustre Platinum)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/b665239ca4184fa3825d569209fca51c/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b7c7a6f905f110e0d2009a26:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/14636635128956570916",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/14636635128956570916:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2652",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/97eba22e6ab2418badcd60db6e9198d3",
+      "title": "Passenger App - Saved Places & Routes (Lustre Platinum)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/97eba22e6ab2418badcd60db6e9198d3/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b899346e044f547acb152907:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/6513258762056544111",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/6513258762056544111:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "3732",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/07f28496f7dc4d90b78bd8e26982c7d8",
+      "title": "Driver Trip Completion - Passenger Review Centerpiece Layout",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/07f28496f7dc4d90b78bd8e26982c7d8/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e033a9378eb0479f329953d96ae:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/13204772501971066997",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/13204772501971066997:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "2978",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/808cb880d03641e79818683a1a896418",
+      "title": "Cabi Africa - Interactive Dual-App Sync Simulation",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/808cb880d03641e79818683a1a896418/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_0006605ae939744a096896de2d01515c:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/screens/808cb880d03641e79818683a1a896418/fileEntries/html",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/808cb880d03641e79818683a1a896418:download",
+        "mimeType": "text/html"
+      },
+      "width": "2560",
+      "height": "2460",
+      "deviceType": "DESKTOP",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/89ca3305bc9d4e9b8e1b2b4d966739d5",
+      "title": "Driver App - Incoming Ride Offer (Obsidian Imperial)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/files/15987788539210234507",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/15987788539210234507:download",
+        "mimeType": "image/jpeg"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/4446541006509174698",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/4446541006509174698:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "1960",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/06969c8c887341efb2fca8b16b3d5e76",
+      "title": "Passenger Trip Completion (Lustre Platinum)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/06969c8c887341efb2fca8b16b3d5e76/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b7df4ec105f13f7f8836ea34:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/7865076310288984875",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/7865076310288984875:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "3044",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/984b985ae40140159fa337f1e4921a84",
+      "title": "Passenger App - Hourly Chauffeur Hire (Lustre Platinum)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/984b985ae40140159fa337f1e4921a84/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e03b85514bc044f7905d52f15db:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/14299415831728628470",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/14299415831728628470:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "3612",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    },
+    {
+      "name": "projects/5681992570744779348/screens/98ee4d9b0566436594f2e2e1ad7ecd28",
+      "title": "Driver Trip Completion & Rating (Obsidian Imperial)",
+      "screenshot": {
+        "name": "projects/5681992570744779348/screens/98ee4d9b0566436594f2e2e1ad7ecd28/fileEntries/screenshot",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/screenshot_00065e033a66a9570479c941a0141faa:download",
+        "mimeType": "image/png"
+      },
+      "htmlCode": {
+        "name": "projects/5681992570744779348/files/13690035638240352012",
+        "downloadUrl": "https://stitch.googleapis.com/v1/projects/5681992570744779348/files/13690035638240352012:download",
+        "mimeType": "text/html"
+      },
+      "width": "780",
+      "height": "3170",
+      "deviceType": "MOBILE",
+      "screenType": "DESIGN"
+    }
+  ]
+}

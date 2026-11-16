@@ -136,33 +136,6 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
             color: textPrimary,
           ),
         ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 10),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: gold.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: isDark ? AppTheme.outlineGold : AppTheme.aurumBronze),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.verified_user_rounded, color: gold, size: 14),
-                const SizedBox(width: 4),
-                Text(
-                  'Guaranteed Lock',
-                  style: AppTheme.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: gold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 14),
-        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: gold,

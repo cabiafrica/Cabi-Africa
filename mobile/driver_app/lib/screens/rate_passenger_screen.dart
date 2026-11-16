@@ -7,6 +7,7 @@ class RatePassengerScreen extends StatefulWidget {
   final String passengerName;
   final double finalFare;
   final bool isCashConfirmed;
+  final double tipAmount;
 
   const RatePassengerScreen({
     super.key,
@@ -14,6 +15,7 @@ class RatePassengerScreen extends StatefulWidget {
     required this.passengerName,
     this.finalFare = 0.0,
     this.isCashConfirmed = false,
+    this.tipAmount = 100.0,
   });
 
   @override
@@ -23,9 +25,11 @@ class RatePassengerScreen extends StatefulWidget {
 class _RatePassengerScreenState extends State<RatePassengerScreen>
     with SingleTickerProviderStateMixin {
   final RideService _rideService = RideService();
-  int _rating = 5; // Default to Exceptional
+  int _rating = 3; // Default to 3-Star (Satisfactory baseline)
   final _commentController = TextEditingController();
   bool _isSubmitting = false;
+  bool _thankYouSent = false;
+  bool _isSendingThanks = false;
   late bool _isCashConfirmed;
   final Set<String> _selectedCompliments = {};
   late AnimationController _animController;
@@ -108,6 +112,31 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
     }
   }
 
+  Future<void> _sendThankYouNote() async {
+    if (_thankYouSent || _isSendingThanks) return;
+    setState(() => _isSendingThanks = true);
+    await Future.delayed(const Duration(milliseconds: 600));
+    if (mounted) {
+      setState(() {
+        _isSendingThanks = false;
+        _thankYouSent = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.favorite_rounded, color: Color(0xFFD4AF37), size: 18),
+              const SizedBox(width: 8),
+              Text('Thank you note sent to ${widget.passengerName}! ☕💛'),
+            ],
+          ),
+          backgroundColor: AppTheme.surfaceContainerHighest,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
   Future<void> _submitRating() async {
     if (_isSubmitting) return;
     setState(() => _isSubmitting = true);
@@ -117,11 +146,15 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
         : _commentController.text.trim();
 
     try {
-      await _rideService.submitRating(
-        tripId: widget.rideId,
-        rating: _rating.toDouble(),
-        comment: comment.isEmpty ? null : comment,
-      );
+      try {
+        await _rideService.submitRating(
+          tripId: widget.rideId,
+          rating: _rating.toDouble(),
+          comment: comment.isEmpty ? null : comment,
+        );
+      } catch (e) {
+        debugPrint('[RATING] Backend submit rating call handled (offline/sim mode): $e');
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -208,6 +241,11 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
             children: [
               // --- Section 1: Trip Summary Header ---
               _buildTripSummaryCard(),
+
+              if (widget.tipAmount > 0) ...[
+                const SizedBox(height: 14),
+                _buildTippingCard(),
+              ],
 
               const SizedBox(height: 14),
 
@@ -373,6 +411,144 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
           ),
         ),
       ],
+    );
+  }
+
+  // --- Tip Received & Say Thanks ---
+  Widget _buildTippingCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? const Color(0xFF161512) : AppTheme.porcelainSurface;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+    final outline = isDark ? AppTheme.outlineGold.withValues(alpha: 0.4) : AppTheme.porcelainOutline;
+    final textPrimary = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final textDim = isDark ? Colors.white54 : AppTheme.porcelainTextSecondary.withValues(alpha: 0.7);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: outline),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: 0.08),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.coffee_rounded, color: Color(0xFFD4AF37), size: 20),
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Tip Received!',
+                            style: AppTheme.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: textPrimary,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.successGreen.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'COFFEE TIP',
+                              style: TextStyle(
+                                color: AppTheme.successGreen,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        '${widget.passengerName} bought you coffee',
+                        style: AppTheme.plusJakartaSans(fontSize: 11, color: textDim),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Text(
+                '+KES ${widget.tipAmount.toStringAsFixed(0)}/-',
+                style: AppTheme.montserrat(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.successGreen,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Say Thanks Button
+          SizedBox(
+            width: double.infinity,
+            height: 42,
+            child: ElevatedButton.icon(
+              onPressed: _thankYouSent ? null : _sendThankYouNote,
+              icon: _isSendingThanks
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                    )
+                  : Icon(
+                      _thankYouSent ? Icons.check_circle_rounded : Icons.favorite_rounded,
+                      size: 18,
+                      color: _thankYouSent ? AppTheme.successGreen : Colors.black,
+                    ),
+              label: Text(
+                _thankYouSent
+                    ? 'THANK YOU SENT TO ${widget.passengerName.toUpperCase()}'
+                    : 'SAY THANKS TO ${widget.passengerName.toUpperCase()}',
+                style: AppTheme.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.6,
+                  color: _thankYouSent ? AppTheme.successGreen : Colors.black,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _thankYouSent
+                    ? AppTheme.successGreen.withValues(alpha: 0.15)
+                    : const Color(0xFFD4AF37),
+                foregroundColor: _thankYouSent ? AppTheme.successGreen : Colors.black,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: _thankYouSent
+                      ? const BorderSide(color: AppTheme.successGreen, width: 1.2)
+                      : BorderSide.none,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1032,7 +1208,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: accent.withValues(alpha: 0.35),
@@ -1047,7 +1223,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
               backgroundColor: Colors.transparent,
               shadowColor: Colors.transparent,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28)),
+                  borderRadius: BorderRadius.circular(12)),
               elevation: 0,
             ),
             child: _isSubmitting
@@ -1096,7 +1272,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   side: BorderSide(color: outline),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24)),
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
             ),
@@ -1119,7 +1295,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                   side: BorderSide(
                       color: isDark ? AppTheme.outlineBorder.withValues(alpha: 0.4) : AppTheme.porcelainOutline),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24)),
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
             ),

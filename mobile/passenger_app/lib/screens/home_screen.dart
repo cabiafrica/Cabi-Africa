@@ -7,7 +7,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:cabi_maps/cabi_maps.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:passenger_app/theme/app_theme.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:core_ui/core_ui.dart';
 
 // Import Screens for Navigation
@@ -33,8 +32,6 @@ import '../widgets/security_verification_modal.dart';
 import '../widgets/sos_button.dart';
 import '../services/audio_notification_service.dart';
 import '../services/passenger_biometric_service.dart';
-import 'package:provider/provider.dart' as legacy_provider;
-import '../providers/theme_provider.dart';
 part 'home_screen_panels.dart';
 part 'home_screen_logic.dart';
 
@@ -82,9 +79,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String? _currentRideId;
   Map<String, dynamic>? _currentRideData;
   Timer? _rideUpdateTimer;
+  Timer? _autoSimTimer;
   bool _isCancelling = false;
   bool _isFullScreenMap = false;
   bool _isForSomeone = false;
+  String _recipientName = '';
+  String _recipientPhone = '';
+  String _recipientNotes = '';
   String? _intermediateStop;
 
   void _swapLocations() {
@@ -113,46 +114,48 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final List<Map<String, dynamic>> _vehicleTypes = [
     {
       'id': 'boda',
-      'name': 'Boda',
-      'price': 'KES 150',
+      'name': 'Cabi Boda',
+      'color': Color(0xFF10B981),
+      'tag': 'Speedy',
       'time': '3 min',
       'image': 'assets/images/boda.png',
-      'icon': Icons.two_wheeler,
+      'icon': Icons.two_wheeler_rounded,
       'capacity': '1 Pax',
     },
     {
-      'id': 'lite',
-      'name': 'Cabi Lite',
-      'price': 'KES 250',
-      'time': '4 min',
-      'image': 'assets/images/lite.png',
-      'icon': Icons.directions_car,
-      'capacity': '3 Pax',
-    },
-    {
       'id': 'standard',
-      'name': 'Cabi Standard',
-      'price': 'KES 350',
-      'time': '5 min',
+      'name': 'CabiGo',
+      'color': Color(0xFFE5A93C),
+      'tag': 'Affordable',
+      'time': '4 min',
       'image': 'assets/images/standard.png',
-      'icon': Icons.local_taxi,
+      'icon': Icons.directions_car_rounded,
       'capacity': '4 Pax',
     },
     {
-      'id': 'xl',
-      'name': 'Cabi XL',
-      'price': 'KES 550',
-      'time': '8 min',
+      'id': 'comfort',
+      'name': 'CabiX Comfort',
+      'color': Color(0xFF0284C7),
+      'tag': 'Executive',
+      'time': '5 min',
+      'image': 'assets/images/lite.png',
+      'icon': Icons.airline_seat_recline_extra_rounded,
+      'capacity': '4 Pax',
+    },
+    {
+      'id': 'lux',
+      'name': 'Cabi Lux',
+      'color': Color(0xFFD4AF37),
+      'tag': 'VIP Chauffeur',
+      'time': '7 min',
       'image': 'assets/images/xl.png',
-      'icon': Icons.airport_shuttle,
-      'capacity': '7 Pax',
+      'icon': Icons.local_taxi_rounded,
+      'capacity': '4 Pax',
     },
   ];
 
   List<Map<String, dynamic>> _nearbyDrivers = [];
-
   final List<Map<String, dynamic>> _favouriteDestinations = [];
-
   final List<Map<String, dynamic>> _recentPlaces = [];
 
   @override

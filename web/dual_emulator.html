@@ -41,55 +41,74 @@
 
     /* Porcelain Light Mode per Stitch Tokens */
     body.light-theme {
-      --bg: #f8fafc;
-      --panel-bg: #ffffff;
-      --card-bg: #ffffff;
-      --card-card2: #f1f5f9;
-      --border: #e2e8f0;
-      --border-light: #cbd5e1;
-      --border-gold: rgba(140, 109, 31, 0.35);
-      --gold: #8c6d1f;
-      --gold-dark: #735c00;
-      --gold-bright: #b8860b;
-      --gold-glow: rgba(140, 109, 31, 0.2);
+      --bg: #F9F7F5;
+      --panel-bg: #FFFFFF;
+      --card-bg: #FFFFFF;
+      --card-card2: #F6F3F2;
+      --border: rgba(28, 27, 27, 0.06);
+      --border-light: rgba(28, 27, 27, 0.03);
+      --border-gold: rgba(212, 175, 55, 0.35);
+      --gold: #B8860B;
+      --gold-dark: #735C00;
+      --gold-bright: #D4AF37;
+      --gold-glow: rgba(212, 175, 55, 0.12);
       --green: #059669;
-      --green-glow: rgba(5, 150, 105, 0.2);
-      --red: #dc2626;
-      --blue: #0260c4;
-      --blue-glow: rgba(2, 96, 196, 0.2);
-      --text: #0f172a;
-      --text-muted: #475569;
-      --text-dim: #94a3b8;
+      --green-glow: rgba(5, 150, 105, 0.15);
+      --red: #DC2626;
+      --blue: #0284C7;
+      --blue-glow: rgba(2, 132, 199, 0.15);
+      --text: #1C1B1B;
+      --text-muted: #78716C;
+      --text-dim: #A8A29E;
     }
 
     body.light-theme .phone-emulator {
-      box-shadow: 0 25px 60px rgba(0,0,0,0.18), 0 0 0 10px #e2e8f0, 0 0 35px rgba(140, 109, 31, 0.15);
-      border-color: #cbd5e1;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.08), 0 0 0 8px #F0ECE9, 0 1px 3px rgba(0,0,0,0.04);
+      border-color: rgba(28, 27, 27, 0.06);
     }
     body.light-theme .screen-glass {
-      background: #f8fafc;
+      background: #F9F7F5;
     }
     body.light-theme .app-card {
-      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-      background: #ffffff;
-      border-color: #e2e8f0;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.02);
+      background: #FFFFFF;
+      border: 1px solid rgba(28, 27, 27, 0.05);
     }
     body.light-theme .device-app-bar {
-      background: #ffffff;
-      border-bottom-color: #e2e8f0;
+      background: #FFFFFF;
+      border-bottom: 1px solid rgba(28, 27, 27, 0.04);
     }
     body.light-theme .step-node {
-      background: #ffffff;
+      background: #FFFFFF;
+      border: 1px solid rgba(28, 27, 27, 0.05);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      color: #1C1B1B;
+    }
+    body.light-theme .step-node.active {
+      background: #FFFCF5;
+      border: 1.5px solid #D4AF37;
+      color: #735C00;
+    }
+    body.light-theme .step-node-num {
+      background: #F0ECE9;
+      color: #78716C;
+    }
+    body.light-theme .step-node.active .step-node-num {
+      background: #D4AF37;
+      color: #FFFFFF;
     }
     body.light-theme .telemetry-tray {
-      background: #ffffff;
+      background: #FFFFFF;
+      border: 1px solid rgba(28, 27, 27, 0.06);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
     body.light-theme .telemetry-header {
-      background: #f1f5f9;
+      background: #F7F5F4;
+      border-bottom: 1px solid rgba(28, 27, 27, 0.04);
     }
     body.light-theme .telemetry-logs {
-      background: #f8fafc;
-      color: #334155;
+      background: #FAF9F8;
+      color: #44403C;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
     body {
@@ -105,7 +124,7 @@
 
     .studio-header {
       width: 100%;
-      max-width: 1400px;
+      max-width: 1720px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -322,6 +341,106 @@
       border: 1px solid rgba(245, 158, 11, 0.35);
     }
 
+    /* STUDIO SPLIT WORKSPACE ARCHITECTURE */
+    .studio-workspace-container {
+      width: 100%;
+      max-width: 1720px;
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Preview on Right (Default) */
+    .studio-workspace-container.layout-preview-right {
+      flex-direction: row;
+    }
+    .studio-workspace-container.layout-preview-right .workbench-panel {
+      order: 1;
+      flex: 0 0 380px;
+      width: 380px;
+      max-width: 420px;
+    }
+    .studio-workspace-container.layout-preview-right .stage-container {
+      order: 2;
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Preview on Left */
+    .studio-workspace-container.layout-preview-left {
+      flex-direction: row;
+    }
+    .studio-workspace-container.layout-preview-left .stage-container {
+      order: 1;
+      flex: 1;
+      min-width: 0;
+    }
+    .studio-workspace-container.layout-preview-left .workbench-panel {
+      order: 2;
+      flex: 0 0 380px;
+      width: 380px;
+      max-width: 420px;
+    }
+
+    /* Stacked (Classic Top-to-Bottom) */
+    .studio-workspace-container.layout-stacked {
+      flex-direction: column;
+      align-items: center;
+    }
+    .studio-workspace-container.layout-stacked .workbench-panel {
+      width: 100%;
+      max-width: 1400px;
+      flex: none;
+    }
+    .studio-workspace-container.layout-stacked .stage-container {
+      width: 100%;
+      max-width: 1400px;
+    }
+
+    /* Workbench Panel (Controls & Telemetry) */
+    .workbench-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: sticky;
+      top: 12px;
+    }
+
+    .studio-workspace-container:not(.layout-stacked) .master-stepper-bar {
+      margin-bottom: 0;
+      max-width: 100%;
+      width: 100%;
+    }
+    .studio-workspace-container:not(.layout-stacked) .stepper-track {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 6px;
+      max-height: 310px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .studio-workspace-container:not(.layout-stacked) .step-arrow {
+      display: none;
+    }
+    .studio-workspace-container:not(.layout-stacked) .step-node {
+      width: 100%;
+      justify-content: flex-start;
+      padding: 9px 12px;
+      font-size: 0.78rem;
+    }
+    .studio-workspace-container:not(.layout-stacked) .telemetry-tray {
+      margin-top: 0;
+      max-width: 100%;
+      width: 100%;
+      flex: 1;
+    }
+    .studio-workspace-container:not(.layout-stacked) .telemetry-logs {
+      height: 360px;
+      max-height: 440px;
+    }
+
     /* DUAL PHONE EMULATOR STAGE */
     .stage-container {
       width: 100%;
@@ -330,9 +449,18 @@
       justify-content: center;
       align-items: flex-start;
       gap: 24px;
-      padding: 10px 0;
+      padding: 6px 0;
       transition: transform 0.2s ease;
       transform-origin: top center;
+    }
+    .studio-workspace-container:not(.layout-stacked) .stage-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 16px;
+      overflow-x: auto;
     }
 
     /* Phone Shell Outer Hardware */
@@ -1277,19 +1405,113 @@
     }
     .stitch-journal-card {
       background: #1C1B1B;
-      border: 1px solid rgba(208, 197, 175, 0.18);
+      border: 1px solid rgba(208, 197, 175, 0.22);
       border-radius: 10px;
       overflow: hidden;
       cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+    .stitch-journal-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(212, 175, 55, 0.65);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
     }
     .stitch-journal-thumb {
-      height: 54px;
+      height: 64px;
       background: linear-gradient(135deg, #272215 0%, #171717 100%);
+      background-size: cover;
+      background-position: center;
+      position: relative;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.35rem;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.16);
+      align-items: flex-end;
+      padding: 5px 6px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+    }
+    .stitch-journal-thumb::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.75) 100%);
+      pointer-events: none;
+    }
+    .stitch-journal-badge {
+      position: relative;
+      z-index: 1;
+      font-size: 0.50rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #F2CA50;
+      background: rgba(0,0,0,0.72);
+      border: 1px solid rgba(212,175,55,0.45);
+      padding: 1px 5px;
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
+    }
+    /* Blog Article Interactive Modal */
+    .cabi-blog-modal {
+      position: absolute;
+      inset: 8px 10px 10px 10px;
+      background: #161514;
+      border: 1.5px solid var(--border-gold);
+      border-radius: 18px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.9), 0 0 25px rgba(212,175,55,0.25);
+      z-index: 220;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      animation: popIn 0.22s ease-out;
+    }
+    body.light-theme .cabi-blog-modal {
+      background: #ffffff;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .cabi-blog-modal-header {
+      position: relative;
+      height: 120px;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid rgba(212,175,55,0.25);
+    }
+    .cabi-blog-modal-header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(20,18,15,0.92) 100%);
+      pointer-events: none;
+    }
+    .cabi-blog-modal-body {
+      padding: 12px 14px;
+      overflow-y: auto;
+      flex: 1;
+      font-size: 0.72rem;
+      line-height: 1.55;
+      color: var(--text-muted);
+    }
+    .cabi-blog-modal-body h3 {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #fff;
+      margin: 10px 0 4px 0;
+    }
+    body.light-theme .cabi-blog-modal-body h3 {
+      color: #121212;
+    }
+    .cabi-blog-quote {
+      background: rgba(212,175,55,0.1);
+      border-left: 3px solid #D4AF37;
+      padding: 8px 10px;
+      border-radius: 0 8px 8px 0;
+      margin: 10px 0;
+      font-style: italic;
+      color: #F2CA50;
+      font-size: 0.7rem;
     }
     .stitch-slider-track {
       position: relative;
@@ -1371,10 +1593,11 @@
       background: rgba(212, 175, 55, 0.1);
     }
 
-    /* Porcelain Dual-Theme Light Overrides */
+    /* Porcelain Dual-Theme Light Overrides (Stitch Lustre Platinum - Hairline Elegance) */
     body.light-theme #viewPassengerNative,
     body.light-theme #viewDriverNative {
-      background: #FCF9F8;
+      background: #F9F7F5;
+      color: #1C1B1B;
     }
     body.light-theme .stitch-icon-btn,
     body.light-theme .stitch-shortcut-chip,
@@ -1382,64 +1605,88 @@
     body.light-theme .stitch-rebook-row,
     body.light-theme .stitch-gauge-card {
       background: #FFFFFF;
-      border-color: #D0C5AF;
+      border: 1px solid rgba(28, 27, 27, 0.06);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
       color: #1C1B1B;
     }
+    body.light-theme .stitch-shortcut-chip:hover,
+    body.light-theme .stitch-concierge-item:hover,
+    body.light-theme .stitch-rebook-row:hover {
+      background: #FAF9F8;
+      border-color: rgba(212, 175, 55, 0.35);
+    }
     body.light-theme .stitch-map-viewport {
-      background:
-        radial-gradient(circle at 50% 50%, rgba(115, 92, 0, 0.12), transparent 65%),
-        linear-gradient(90deg, rgba(115, 92, 0, 0.08) 1px, transparent 1px) 0 0 / 22px 22px,
-        linear-gradient(0deg, rgba(115, 92, 0, 0.08) 1px, transparent 1px) 0 0 / 22px 22px,
-        #F0EDEC;
+      border: 1px solid rgba(28, 27, 27, 0.05);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
     }
     body.light-theme .stitch-map-pill {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(28, 27, 27, 0.06);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
       color: #735C00;
     }
     body.light-theme .stitch-promo-card {
-      background: linear-gradient(135deg, #D4AF37 0%, #735C00 100%);
+      background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+      border: none;
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.22);
       color: #FFFFFF;
     }
     body.light-theme .stitch-journal-card,
     body.light-theme .stitch-slider-track {
       background: #FFFFFF;
-      border-color: #D0C5AF;
+      border: 1px solid rgba(28, 27, 27, 0.06);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
       color: #1C1B1B;
     }
+    body.light-theme .stitch-journal-card:hover {
+      border-color: rgba(212, 175, 55, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
     body.light-theme .stitch-journal-thumb {
-      background: linear-gradient(135deg, #F6F3F2 0%, #EBE7E7 100%);
+      border-bottom: 1px solid rgba(28, 27, 27, 0.04);
     }
     body.light-theme .stitch-bottom-nav {
-      background: rgba(252, 249, 248, 0.96);
-      border-top-color: #D0C5AF;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid rgba(28, 27, 27, 0.05);
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.02);
     }
     body.light-theme .stitch-nav-item.active {
-      color: #735C00;
-      background: rgba(115, 92, 0, 0.1);
+      color: #B8860B;
+      background: rgba(212, 175, 55, 0.12);
     }
     body.light-theme #viewPassengerNative .app-card,
     body.light-theme #viewDriverNative .app-card,
     body.light-theme .sovereign-hud-strip {
       background: #FFFFFF;
-      border-color: #D0C5AF;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(28, 27, 27, 0.05);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02), 0 4px 14px rgba(0, 0, 0, 0.02);
+      border-radius: 12px;
+    }
+    body.light-theme #viewPassengerNative .app-card.featured-gold {
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      box-shadow: 0 2px 8px rgba(212, 175, 55, 0.08);
     }
     body.light-theme #viewPassengerNative .route-display,
     body.light-theme #viewPassengerNative .driver-matched-box,
     body.light-theme #viewPassengerNative .tier-card,
     body.light-theme .secure-pin-box,
     body.light-theme .seg-pill-btn {
-      background: #F6F3F2;
-      border-color: #D0C5AF;
+      background: #F7F5F4;
+      border: 1px solid rgba(28, 27, 27, 0.04);
       color: #4D4635;
     }
     body.light-theme .seg-pill-btn.active {
-      background: linear-gradient(135deg, #D4AF37 0%, #F2CA50 100%);
-      color: #241A00;
+      background: #FFFFFF;
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      color: #735C00;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      font-weight: 800;
     }
     body.light-theme #viewPassengerNative .tier-card.selected {
-      background: #FFFDF7;
-      border-color: #735C00;
+      background: #FFFCF5;
+      border: 1.5px solid #D4AF37;
+      box-shadow: 0 2px 8px rgba(212, 175, 55, 0.12);
     }
     body.light-theme #viewPassengerNative .route-text,
     body.light-theme #viewPassengerNative .tier-name,
@@ -1448,7 +1695,64 @@
       color: #1C1B1B;
     }
     body.light-theme #viewPassengerNative .tier-price {
-      color: #735C00;
+      color: #B8860B;
+    }
+    body.light-theme .stitch-exec-header {
+      background: rgba(255, 255, 255, 0.95);
+      border-bottom: 1px solid rgba(28, 27, 27, 0.04);
+    }
+    body.light-theme .driver-tab-switcher {
+      background: #F0ECE9;
+      border: 1px solid rgba(28, 27, 27, 0.04);
+    }
+    body.light-theme .driver-tab-btn.active {
+      background: #FFFFFF;
+      color: #1C1B1B;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+    body.light-theme .stat-tile {
+      background: #F7F5F4;
+      border: 1px solid rgba(28, 27, 27, 0.04);
+    }
+    body.light-theme .wealth-gauge-box {
+      background: #FFFFFF;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+    body.light-theme .capacity-bar-wrap {
+      background: #F0ECE9;
+      border: 1px solid rgba(28, 27, 27, 0.04);
+    }
+    body.light-theme .program-card {
+      background: #FFFFFF;
+      border: 1px solid rgba(28, 27, 27, 0.05);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+    body.light-theme .program-card.enrolled {
+      background: #FFFCF5;
+      border-color: rgba(212, 175, 55, 0.4);
+    }
+    body.light-theme .stepper-row {
+      background: #F7F5F4;
+      border: 1px solid rgba(28, 27, 27, 0.04);
+    }
+    body.light-theme .btn-stepper {
+      background: #FFFFFF;
+      border: 1px solid rgba(28, 27, 27, 0.06);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+    body.light-theme .preset-pill {
+      background: #FFFFFF;
+      border: 1px solid rgba(28, 27, 27, 0.06);
+    }
+    body.light-theme .preset-pill.active {
+      background: #D4AF37;
+      color: #241A00;
+      border-color: #D4AF37;
+    }
+    body.light-theme .deduction-sim-box {
+      background: #F7F5F4;
+      border: 1px solid rgba(28, 27, 27, 0.04);
     }
 
     .btn-action-green {
@@ -2068,7 +2372,26 @@
       margin-top: 3px;
     }
 
-    @media (max-width: 950px) {
+    @media (max-width: 768px) {
+      .studio-workspace-container {
+        flex-direction: column !important;
+        align-items: center;
+      }
+      .workbench-panel {
+        width: 100% !important;
+        max-width: 100% !important;
+        position: static !important;
+      }
+      .studio-workspace-container .stepper-track {
+        flex-direction: row !important;
+        overflow-x: auto !important;
+      }
+      .studio-workspace-container .step-arrow {
+        display: inline-block !important;
+      }
+      .studio-workspace-container .telemetry-logs {
+        height: 180px !important;
+      }
       .stage-container {
         flex-direction: column;
         align-items: center;
@@ -2100,6 +2423,10 @@
         <div class="pulse-dot" style="color: #60a5fa;"></div>
         <span>Auth :3333</span>
       </div>
+      <a href="https://stitch.google.com/projects/5681992570744779348?pli=1" target="_blank" class="status-pill" style="border-color: rgba(212, 175, 55, 0.4); color: #f2ca50; background: rgba(212, 175, 55, 0.08); text-decoration: none; cursor: pointer;" title="Google Stitch Project 5681992570744779348 (Synced via scripts/stitch_bridge.py)">
+        <span style="font-size: 0.9rem;">🧵</span>
+        <span>Stitch :5681992... (34 Screens Synced)</span>
+      </a>
 
       <!-- Stitch Dual-Theme Switcher Pill -->
       <button class="theme-toggle-pill" id="btnThemeToggle" onclick="toggleStudioTheme()" title="Switch Obsidian Dark / Porcelain Light Mode">
@@ -2124,20 +2451,38 @@
 
       <div class="scale-controls">
         <span>Zoom:</span>
-        <button class="scale-btn" onclick="setStudioScale(0.85)">85%</button>
-        <button class="scale-btn" onclick="setStudioScale(0.95)">95%</button>
-        <button class="scale-btn" onclick="setStudioScale(1.0)">100%</button>
+        <button class="scale-btn" data-scale="0.75" onclick="setStudioScale(0.75)">75%</button>
+        <button class="scale-btn active" data-scale="0.85" onclick="setStudioScale(0.85)">85%</button>
+        <button class="scale-btn" data-scale="0.95" onclick="setStudioScale(0.95)">95%</button>
+        <button class="scale-btn" data-scale="1.0" onclick="setStudioScale(1.0)">100%</button>
+        <button class="scale-btn" onclick="autoFitScale()" title="Auto fit dual phones to current display">⚡ Auto</button>
+      </div>
+
+      <!-- Studio Split Layout Switcher: Preview on Right vs Left vs Stacked -->
+      <div class="scale-controls">
+        <span>Layout:</span>
+        <button class="scale-btn active" id="btnLayoutRight" onclick="setStudioLayout('preview-right')" title="Both Apps on Right, Controls & Telemetry on Left">◨ Preview Right</button>
+        <button class="scale-btn" id="btnLayoutLeft" onclick="setStudioLayout('preview-left')" title="Both Apps on Left, Controls & Telemetry on Right">◧ Preview Left</button>
+        <button class="scale-btn" id="btnLayoutStack" onclick="setStudioLayout('stacked')" title="Classic Top-to-Bottom Stack">⬒ Stack</button>
       </div>
     </div>
   </header>
 
-  <!-- Master Orchestrator Stepper Bar -->
-  <section class="master-stepper-bar">
+  <!-- Studio Main Split Workspace -->
+  <div class="studio-workspace-container layout-preview-right" id="workspaceContainer">
+
+    <!-- WORKBENCH PANEL: Controls, Stepper & Real-Time Telemetry Terminal -->
+    <aside class="workbench-panel" id="workbenchPanel">
+      <!-- Master Orchestrator Stepper Bar -->
+      <section class="master-stepper-bar">
     <div class="stepper-header">
       <div class="stepper-title">
         <span>⚡</span> Trip Journey Orchestration (Kenyatta Ave ➔ JKIA)
       </div>
       <div class="stepper-controls">
+        <button class="btn-step-action" onclick="loginBothAppsWithCredentials('0711786722', 'Sam@2026')" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; font-weight: 800; cursor: pointer; padding: 6px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px;" title="Authenticate both Passenger and Driver with Samuel's credentials">
+          <span>🔑</span> Login Both (0711786722)
+        </button>
         <button class="btn-step-action" id="btnRunFullDemo" onclick="runAutomatedTripDemo()">
           <span>▶</span> 1-Click Auto Demo
         </button>
@@ -2195,7 +2540,26 @@
     </div>
   </section>
 
-  <!-- STAGE: DUAL PHONES SIDE BY SIDE -->
+      <!-- Live Telemetry Terminal Tray -->
+      <section class="telemetry-tray">
+        <div class="telemetry-header" onclick="toggleTelemetry()">
+          <div class="telemetry-title">
+            <span>⚡</span> LIVE SYSTEM EVENT STREAM & DISPATCH TELEMETRY
+          </div>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">▾ Click to toggle</span>
+        </div>
+        <div class="telemetry-logs" id="telemetryLogs">
+          <div class="log-line">
+            <span class="log-time">[12:00:00]</span>
+            <span class="log-tag tag-SYSTEM">SYSTEM</span>
+            <span>Dual Mobile Emulator Studio initialized. Ready for interactive simulation.</span>
+          </div>
+        </div>
+      </section>
+
+    </aside>
+
+  <!-- STAGE: DUAL PHONES (PREVIEW ON ONE SIDE) -->
   <main class="stage-container" id="stageContainer">
 
     <!-- ============================================== -->
@@ -2239,20 +2603,85 @@
           </div>
 
           <div class="view-mode-toggle">
+            <button class="toggle-opt-btn active" id="btnPModeNative" onclick="setPassengerViewMode('native')">🎨 Stitch Studio</button>
             <button class="toggle-opt-btn" id="btnPModeFlutter" onclick="setPassengerViewMode('flutter')">📱 Real App (Flutter)</button>
             <button class="toggle-opt-btn" id="btnPModeAndroid" onclick="setPassengerViewMode('android')">📲 Real Android</button>
-            <button class="toggle-opt-btn active" id="btnPModeNative" onclick="setPassengerViewMode('native')">⚡ Quick Actions</button>
           </div>
         </div>
 
         <!-- Viewport Container -->
         <div class="viewport-container">
 
+                    <!-- SAFARICOM M-PESA DARAJA STK PUSH MODAL -->
+          <div class="mpesa-stk-modal" id="pMpesaStkModal" style="display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.82); z-index: 1000; justify-content: center; align-items: center; padding: 24px;">
+            <div style="background: #FFFFFF; border-radius: 18px; padding: 20px; width: 100%; max-width: 310px; color: #1C1B1B; box-shadow: 0 12px 36px rgba(0,0,0,0.5); text-align: center; border: 2px solid #00A651; animation: modalPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);">
+              <div style="display: inline-flex; align-items: center; gap: 6px; background: #E8F5E9; padding: 4px 12px; border-radius: 20px; margin-bottom: 12px;">
+                <span style="width: 10px; height: 10px; border-radius: 50%; background: #00A651;"></span>
+                <span style="font-size: 0.75rem; font-weight: 800; color: #00A651; letter-spacing: 0.5px;">M-PESA SIM TOOLKIT</span>
+              </div>
+              <div style="font-size: 0.88rem; font-weight: 800; margin-bottom: 6px; color: #1C1B1B;">Pay CABI AFRICA MOBILITY</div>
+              <div style="font-size: 0.72rem; color: #4D4635; margin-bottom: 12px; line-height: 1.4;">
+                Do you want to pay <strong id="mpesaModalFare" style="color: #00A651; font-size: 0.95rem;">KES 1,850</strong> for Trip <strong id="mpesaTripRef">#CABI-9824</strong>?
+              </div>
+              <div style="background: #F5F5F5; border-radius: 10px; padding: 8px 12px; margin-bottom: 16px; border: 1.5px solid #00A651;">
+                <div style="font-size: 0.62rem; color: #666; margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Enter M-Pesa PIN</div>
+                <div style="font-size: 1.2rem; font-weight: 900; letter-spacing: 6px; color: #00A651;" id="mpesaPinDots">••••</div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button onclick="dismissMpesaStk()" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #DDD; background: #FFF; color: #666; font-weight: 700; font-size: 0.78rem; cursor: pointer;">Cancel</button>
+                <button id="btnConfirmMpesa" onclick="confirmMpesaStkPayment()" style="flex: 1; padding: 10px; border-radius: 8px; border: none; background: #00A651; color: #FFF; font-weight: 800; font-size: 0.78rem; cursor: pointer; box-shadow: 0 4px 12px rgba(0,166,81,0.35);">SEND PIN ➔</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- PASSENGER LOGIN MODAL OVERLAY -->
+          <div class="driver-login-modal" id="passengerLoginModal">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.85rem; font-weight: 800; color: #60a5fa; display: flex; align-items: center; gap: 6px;">
+                <span>🔑</span> Passenger Sign In
+              </span>
+              <button onclick="closePassengerLoginModal()" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.95rem; font-weight: 800;">✕</button>
+            </div>
+
+            <!-- 1-Tap Quick Credential Chips -->
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+              <div class="quick-cred-chip" onclick="fillPassengerCreds('0711786722', 'Sam@2026')" style="border-color: rgba(96, 165, 250, 0.45); background: rgba(59, 130, 246, 0.12);">
+                <span style="color: #60a5fa; font-weight: 800;">👑 Samuel Mwangi (0711786722)</span>
+                <strong style="color: #fff; font-size: 0.65rem;">1-TAP FILL</strong>
+              </div>
+              <div class="quick-cred-chip" onclick="fillPassengerCreds('wanjiku@test.com', 'Password123!')">
+                <span>⚡ Wanjiku (wanjiku@test.com)</span>
+                <strong style="color: #fff; font-size: 0.65rem;">1-TAP FILL</strong>
+              </div>
+            </div>
+
+            <div class="login-field">
+              <label>Phone Number or Email</label>
+              <input type="text" id="loginPassengerEmail" value="0711786722" placeholder="0711786722 or passenger@cabi.africa">
+            </div>
+
+            <div class="login-field">
+              <label>Password</label>
+              <input type="password" id="loginPassengerPassword" value="Sam@2026" placeholder="••••••••">
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted);">
+              <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                <input type="checkbox" id="chkRememberPassenger" checked style="accent-color: #3b82f6;"> Remember Me
+              </label>
+              <span style="color: #60a5fa; cursor: pointer; text-decoration: underline;" onclick="toggleShowPassengerPassword()">Show Password</span>
+            </div>
+
+            <button class="btn-action-primary" id="btnSubmitPassengerLogin" onclick="submitPassengerLogin()" style="margin-top: 4px; padding: 10px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff;">
+              <span>🚀</span> Sign In as Passenger
+            </button>
+          </div>
+
           <!-- OPTION A: Live Flutter Web App -->
           <iframe 
             id="iframePassenger"
             class="flutter-iframe-view" 
-            src="http://localhost:8082/index.html" 
+            src="/apps/passenger/index.html" 
             title="Cabi Passenger App Web">
           </iframe>
 
@@ -2278,13 +2707,14 @@
             <div class="stitch-exec-header">
               <div style="display: flex; align-items: center; gap: 9px; min-width: 0;">
                 <div class="stitch-avatar-wrap">
-                  <span>BK</span>
+                  <span>W</span>
                   <span class="stitch-avatar-dot"></span>
                 </div>
                 <div style="min-width: 0;">
                   <div style="display: flex; align-items: center; gap: 4px;">
-                    <span style="font-size: 0.85rem; font-weight: 800; color: #F2CA50;">Hi, Brian K.</span>
+                    <span id="pActiveRiderName" style="font-size: 0.85rem; font-weight: 800; color: #F2CA50;">Hi, Samuel Mwangi</span>
                     <span style="font-size: 0.72rem; color: #D4AF37;" title="Verified Rider">✓</span>
+                    <button onclick="openPassengerLoginModal()" style="background: rgba(212,175,55,0.18); border: 1px solid rgba(212,175,55,0.35); color: #F2CA50; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; cursor: pointer; margin-left: 4px;">Switch</button>
                   </div>
                   <div style="font-size: 0.65rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
                     <span style="width: 6px; height: 6px; border-radius: 50%; background: #D4AF37; display: inline-block;"></span>
@@ -2299,11 +2729,13 @@
               </div>
             </div>
 
-            <!-- Interactive Map Viewport -->
-            <div class="stitch-map-viewport">
-              <div class="stitch-map-road"></div>
-              <div class="stitch-map-pill" style="top: 8px; left: 8px;">⚡ 1.2x Westlands Peak</div>
-              <button class="stitch-icon-btn" style="position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; font-size: 0.72rem;" onclick="log('📍 Map recentered to Nairobi CBD.', 'PASSENGER')" title="Recenter Map">⌖</button>
+            <!-- Interactive Daylight Map Viewport (projects/5681992570744779348) -->
+            <div class="stitch-map-viewport" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAqSvqvkbkHn9bmtK3onRi-2VeaJhKMMlCjdol3nn7-i1KyGCZ4dPNngfsu_4BXIxareOYyVw9n3IEsfphQZTGB7xvsTHRveYIMdIp0vmbCn-vd1M9bbWuaTVOPPpHXH3lRqaE4MBTTtxxFPmXZ580ZE_ZwRlSJDxSH4X3D1X5khsjOXJ4R6-qCOEXHzkccYYcKQvsfTFqF0ZvRGNuPBmjYJAUsF8iNVztxVd7ZxeS_TIMkJqb_iM7u'); background-size: cover; background-position: center;">
+              <div style="position: absolute; inset: 0; background: rgba(19, 19, 19, 0.45); backdrop-filter: brightness(1.05);"></div>
+              <div class="stitch-map-pill" style="top: 8px; left: 8px; background: rgba(28,27,27,0.88); border: 1px solid rgba(212,175,55,0.4);">
+                <span style="color: #F2CA50;">⚡</span> 1.2x Westlands Peak
+              </div>
+              <button class="stitch-icon-btn" style="position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; font-size: 0.72rem; background: rgba(28,27,27,0.88); border: 1px solid rgba(255,255,255,0.15);" onclick="log('📍 Map recentered to Nairobi Westlands.', 'PASSENGER')" title="Recenter Map">⌖</button>
               <div class="stitch-you-pin">
                 <div class="stitch-you-label">You are here</div>
                 <div class="stitch-you-dot"></div>
@@ -2312,6 +2744,8 @@
               <span style="position: absolute; bottom: 20%; right: 24%; width: 7px; height: 7px; border-radius: 50%; background: #94A3B8; border: 1px solid #fff;"></span>
               <span style="position: absolute; top: 24%; right: 16%; width: 7px; height: 7px; border-radius: 50%; background: #D4AF37; border: 1px solid #fff;"></span>
             </div>
+
+
 
             <!-- Floating Route & Booking Card -->
             <div class="app-card featured-gold">
@@ -2365,29 +2799,29 @@
               </div>
 
               <div class="fleet-grid-2x2">
-                <div class="tier-card selected" id="tierStandard" onclick="selectVehicleTier('STANDARD', 1850)">
-                  <span class="fleet-badge cyan">2m</span>
+                <div class="tier-card selected" id="tierStandard" onclick="selectVehicleTier('STANDARD', 350)">
+                  <span class="fleet-badge cyan">3m</span>
                   <div class="tier-name">🚗 CabiGo</div>
-                  <div class="route-sub">Standard • 4 seats</div>
-                  <div class="tier-price" style="margin-top: 3px;">KES 1,850</div>
+                  <div class="route-sub">Standard • 3 mins</div>
+                  <div class="tier-price" style="margin-top: 3px;">350/- <span style="font-size: 0.52rem; font-weight: 500; color: var(--text-muted);">Affordable</span></div>
                 </div>
-                <div class="tier-card" id="tierComfort" onclick="selectVehicleTier('COMFORT', 2400)">
+                <div class="tier-card" id="tierComfort" onclick="selectVehicleTier('COMFORT', 550)">
                   <span class="fleet-badge gold">Popular</span>
                   <div class="tier-name">✨ CabiX Comfort</div>
                   <div class="route-sub">Executive sedan</div>
-                  <div class="tier-price" style="margin-top: 3px;">KES 2,400</div>
+                  <div class="tier-price" style="margin-top: 3px;">550/- <span style="font-size: 0.52rem; font-weight: 600; color: #F2CA50;">Climate ctrl</span></div>
                 </div>
-                <div class="tier-card" id="tierLux" onclick="selectVehicleTier('LUX', 3600)">
+                <div class="tier-card" id="tierLux" onclick="selectVehicleTier('LUX', 1200)">
                   <span class="fleet-badge vip">VIP</span>
                   <div class="tier-name">👑 Cabi Lux</div>
                   <div class="route-sub">VIP Black Series</div>
-                  <div class="tier-price" style="margin-top: 3px;">KES 3,600</div>
+                  <div class="tier-price" style="margin-top: 3px;">1,200/- <span style="font-size: 0.52rem; font-weight: 500; color: var(--text-muted);">Chauffeur</span></div>
                 </div>
-                <div class="tier-card" id="tierBoda" onclick="selectVehicleTier('BODA', 650)">
-                  <span class="fleet-badge fast">1m</span>
+                <div class="tier-card" id="tierBoda" onclick="selectVehicleTier('BODA', 180)">
+                  <span class="fleet-badge fast">Speedy</span>
                   <div class="tier-name">🏍️ Cabi Boda</div>
                   <div class="route-sub">Fastest city beat</div>
-                  <div class="tier-price" style="margin-top: 3px;">KES 650</div>
+                  <div class="tier-price" style="margin-top: 3px;">180/- <span style="font-size: 0.52rem; font-weight: 500; color: var(--text-muted);">Speedy</span></div>
                 </div>
               </div>
             </div>
@@ -2469,25 +2903,66 @@
               </div>
             </div>
 
-            <!-- Executive Journal & City Insights -->
+            <!-- Discover More (Executive Journal & Real Blog Posts) -->
             <div>
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                <span style="font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);">Executive Journal</span>
-                <span style="font-size: 0.6rem; color: var(--text-muted);">City Dispatch</span>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);">Discover More</span>
+                <span style="font-size: 0.6rem; color: #F2CA50; font-weight: 700; cursor: pointer;" onclick="openBlogArticle('future-urban-mobility', 'PASSENGER')">Executive Journal (4 Posts) ›</span>
               </div>
-              <div class="stitch-journal-grid">
-                <div class="stitch-journal-card" onclick="log('📰 Executive Journal: Electric Fleets expand in Nairobi Westlands Hub.', 'PASSENGER')">
-                  <div class="stitch-journal-thumb">⚡🚙</div>
-                  <div style="padding: 7px 8px;">
-                    <div style="font-size: 0.52rem; font-weight: 700; text-transform: uppercase; color: #F2CA50;">Mobility Tech</div>
-                    <div style="font-size: 0.64rem; font-weight: 700; line-height: 1.25; margin-top: 2px;">Electric Fleets expand in Nairobi Westlands Hub</div>
+              <div class="stitch-journal-slider">
+                <!-- Blog 1 -->
+                <div class="stitch-journal-card" onclick="openBlogArticle('future-urban-mobility', 'PASSENGER')">
+                  <div class="stitch-journal-thumb" style="background-image: url('/images/blog/future-urban-mobility.jpg');">
+                    <span class="stitch-journal-badge">Tech • 5m</span>
+                  </div>
+                  <div style="padding: 7px 8px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="font-size: 0.65rem; font-weight: 800; line-height: 1.25; color: #fff; margin-bottom: 4px;">Future of Urban Mobility in Kenya</div>
+                    <div style="font-size: 0.52rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+                      <span>Cabi Ops</span>
+                      <span style="color: #F2CA50; font-weight: 700;">Read ›</span>
+                    </div>
                   </div>
                 </div>
-                <div class="stitch-journal-card" onclick="log('🍽️ Executive Guide: Curated Dining for Business Meetings.', 'PASSENGER')">
-                  <div class="stitch-journal-thumb">🍽️✨</div>
-                  <div style="padding: 7px 8px;">
-                    <div style="font-size: 0.52rem; font-weight: 700; text-transform: uppercase; color: #F2CA50;">Executive Guide</div>
-                    <div style="font-size: 0.64rem; font-weight: 700; line-height: 1.25; margin-top: 2px;">Curated Dining: Quiet Spots for Business Meetings</div>
+
+                <!-- Blog 2 -->
+                <div class="stitch-journal-card" onclick="openBlogArticle('the-road-to-dignity-why-drivers-choose-cabi', 'PASSENGER')">
+                  <div class="stitch-journal-thumb" style="background-image: url('/images/blog/driver-economic-growth.jpg');">
+                    <span class="stitch-journal-badge">Community • 3m</span>
+                  </div>
+                  <div style="padding: 7px 8px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="font-size: 0.65rem; font-weight: 800; line-height: 1.25; color: #fff; margin-bottom: 4px;">The Road to Dignity: Why Drivers Choose Cabi</div>
+                    <div style="font-size: 0.52rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+                      <span>Editorial</span>
+                      <span style="color: #F2CA50; font-weight: 700;">Read ›</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Blog 3 -->
+                <div class="stitch-journal-card" onclick="openBlogArticle('the-sacred-promise-of-every-journey-safety-first', 'PASSENGER')">
+                  <div class="stitch-journal-thumb" style="background-image: url('/images/blog/digital-trust-safety.jpg');">
+                    <span class="stitch-journal-badge">Safety • 4m</span>
+                  </div>
+                  <div style="padding: 7px 8px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="font-size: 0.65rem; font-weight: 800; line-height: 1.25; color: #fff; margin-bottom: 4px;">The Sacred Promise: Safety First</div>
+                    <div style="font-size: 0.52rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+                      <span>Trust Desk</span>
+                      <span style="color: #F2CA50; font-weight: 700;">Read ›</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Blog 4 -->
+                <div class="stitch-journal-card" onclick="openBlogArticle('the-power-of-warmth-courtesy-and-tipping', 'PASSENGER')">
+                  <div class="stitch-journal-thumb" style="background-image: url('/images/blog/kindness-courtesy-tipping.jpg');">
+                    <span class="stitch-journal-badge">Culture • 3m</span>
+                  </div>
+                  <div style="padding: 7px 8px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="font-size: 0.65rem; font-weight: 800; line-height: 1.25; color: #fff; margin-bottom: 4px;">The Power of Warmth: Courtesy &amp; Tipping</div>
+                    <div style="font-size: 0.52rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+                      <span>Solidarity</span>
+                      <span style="color: #F2CA50; font-weight: 700;">Read ›</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2505,12 +2980,12 @@
                   <div style="display: flex; align-items: center; gap: 8px;">
                     <div style="font-size: 1.5rem;">👨‍✈️</div>
                     <div>
-                      <div style="font-size: 0.82rem; font-weight: 800;" id="pDriverName">Test Driver</div>
+                      <div style="font-size: 0.82rem; font-weight: 800;" id="pDriverName">Samuel M.</div>
                       <div style="font-size: 0.7rem; color: #D4AF37;" id="pDriverCar">Toyota Axio Hybrid • KDH 452X</div>
                     </div>
                   </div>
                   <div style="text-align: right;">
-                    <div style="font-size: 0.8rem; font-weight: 800; color: #10B981;">4.95 ★</div>
+                    <div style="font-size: 0.8rem; font-weight: 800; color: #10B981;">4.98 ★</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted);" id="pDriverEta">2 min away</div>
                     <div style="font-size: 0.62rem; font-weight: 800; color: #F2CA50; margin-top: 2px;">PIN: 4829</div>
                   </div>
@@ -2533,10 +3008,10 @@
             <div class="app-card featured-gold" id="pRatingBlock" style="display: none;">
               <div class="app-card-title">
                 <span>Trip Completed</span>
-                <span class="val" style="color: #10B981;">KES 1,850</span>
+                <span class="val" style="color: #10B981;">350/- KES</span>
               </div>
               <div style="text-align: center; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px;">
-                Rate your trip with Test Driver:
+                Rate your trip with Samuel M.:
               </div>
               <div class="star-rating-box" id="pStarRating">
                 <span class="star active" onclick="setStarRating(1)">★</span>
@@ -2553,7 +3028,7 @@
             <!-- Primary Action Button -->
             <div style="margin-top: auto; padding-top: 10px;">
               <button class="btn-action-primary" id="btnRequestRide" onclick="passengerRequestRide()">
-                <span>🚕</span> Request Ride Now (KES 1,850)
+                <span>🚕</span> Request Ride Now (350/-)
               </button>
               <button class="btn-action-primary" id="btnRetryRide" style="display: none; width: 100%; margin-top: 8px;" onclick="passengerRetrySearch()">
                 <span>🔄</span> Retry <span id="pCountdownBadge" style="margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: rgba(0,0,0,0.25); font-size: 0.75rem; font-weight: 800;">00:15</span>
@@ -2580,6 +3055,28 @@
             </nav>
 
           </div>
+
+          <!-- PASSENGER BLOG MODAL OVERLAY -->
+          <div class="cabi-blog-modal" id="pBlogModal">
+            <div class="cabi-blog-modal-header" id="pBlogModalHeader">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; z-index: 2;">
+                <span class="stitch-journal-badge" id="pBlogBadge">Technology • 5m</span>
+                <button onclick="closeBlogArticle('PASSENGER')" style="background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.25); color: #fff; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center;">✕</button>
+              </div>
+              <div style="z-index: 2;">
+                <div style="font-size: 0.82rem; font-weight: 800; color: #fff; line-height: 1.25;" id="pBlogTitle">Article Title</div>
+                <div style="font-size: 0.58rem; color: #D0C5AF; margin-top: 2px;" id="pBlogAuthor">By Cabi Operations Team</div>
+              </div>
+            </div>
+            <div class="cabi-blog-modal-body" id="pBlogBody">
+              <!-- Content filled dynamically -->
+            </div>
+            <div style="padding: 8px 12px; border-top: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.25); display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.6rem; color: #F2CA50;">cabi.africa/blog</span>
+              <button onclick="closeBlogArticle('PASSENGER')" style="background: #F2CA50; color: #241A00; border: none; border-radius: 6px; padding: 5px 12px; font-size: 0.65rem; font-weight: 800; cursor: pointer;">Done Reading</button>
+            </div>
+          </div>
+
         </div>
 
         <!-- Phone Home Indicator Bar (iOS) & System Nav Bar (Android) -->
@@ -2636,9 +3133,9 @@
           </div>
 
           <div class="view-mode-toggle">
+            <button class="toggle-opt-btn active" id="btnDModeNative" onclick="setDriverViewMode('native')">🎨 Stitch Studio</button>
             <button class="toggle-opt-btn" id="btnDModeFlutter" onclick="setDriverViewMode('flutter')">📱 Real App (Flutter)</button>
             <button class="toggle-opt-btn" id="btnDModeAndroid" onclick="setDriverViewMode('android')">📲 Real Android</button>
-            <button class="toggle-opt-btn active" id="btnDModeNative" onclick="setDriverViewMode('native')">⚡ Quick Actions</button>
           </div>
         </div>
 
@@ -2681,6 +3178,27 @@
             </div>
           </div>
 
+          <!-- DRIVER BLOG MODAL OVERLAY -->
+          <div class="cabi-blog-modal" id="dBlogModal">
+            <div class="cabi-blog-modal-header" id="dBlogModalHeader">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; z-index: 2;">
+                <span class="stitch-journal-badge" id="dBlogBadge">Wealth &amp; Dignity • 3m</span>
+                <button onclick="closeBlogArticle('DRIVER')" style="background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.25); color: #fff; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center;">✕</button>
+              </div>
+              <div style="z-index: 2;">
+                <div style="font-size: 0.82rem; font-weight: 800; color: #fff; line-height: 1.25;" id="dBlogTitle">Article Title</div>
+                <div style="font-size: 0.58rem; color: #D0C5AF; margin-top: 2px;" id="dBlogAuthor">By Cabi Editorial Desk</div>
+              </div>
+            </div>
+            <div class="cabi-blog-modal-body" id="dBlogBody">
+              <!-- Content filled dynamically -->
+            </div>
+            <div style="padding: 8px 12px; border-top: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.25); display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.6rem; color: #F2CA50;">cabi.africa/blog</span>
+              <button onclick="closeBlogArticle('DRIVER')" style="background: #F2CA50; color: #241A00; border: none; border-radius: 6px; padding: 5px 12px; font-size: 0.65rem; font-weight: 800; cursor: pointer;">Done Reading</button>
+            </div>
+          </div>
+
           <!-- DRIVER LOGIN MODAL OVERLAY -->
           <div class="driver-login-modal" id="driverLoginModal">
             <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -2692,6 +3210,10 @@
 
             <!-- 1-Tap Quick Credential Chips -->
             <div style="display: flex; flex-direction: column; gap: 5px;">
+              <div class="quick-cred-chip" onclick="fillDriverCreds('0711786722', 'Sam@2026')" style="border-color: rgba(212, 175, 55, 0.45); background: rgba(212, 175, 55, 0.12);">
+                <span style="color: #F2CA50; font-weight: 800;">👑 Samuel Mwangi (0711786722)</span>
+                <strong style="color: #fff; font-size: 0.65rem;">1-TAP FILL</strong>
+              </div>
               <div class="quick-cred-chip" onclick="fillDriverCreds('driver@test.com', 'Password123!')">
                 <span>⚡ Test Driver (driver@test.com)</span>
                 <strong style="color: #fff; font-size: 0.65rem;">1-TAP FILL</strong>
@@ -2703,8 +3225,8 @@
             </div>
 
             <div class="login-field">
-              <label>Email Address</label>
-              <input type="email" id="loginDriverEmail" value="driver@test.com" placeholder="driver@test.com">
+              <label>Phone Number or Email</label>
+              <input type="text" id="loginDriverEmail" value="0711786722" placeholder="0711786722 or driver@cabi.africa">
             </div>
 
             <div class="login-field">
@@ -2728,7 +3250,7 @@
           <iframe 
             id="iframeDriver"
             class="flutter-iframe-view" 
-            src="http://localhost:8081/index.html" 
+            src="/apps/driver/index.html" 
             title="Cabi Driver App Web">
           </iframe>
 
@@ -2768,16 +3290,16 @@
                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                   <div style="display: flex; align-items: center; gap: 9px; min-width: 0;">
                     <div class="stitch-avatar-wrap">
-                      <span>TD</span>
+                      <span>S</span>
                       <span class="stitch-avatar-dot"></span>
                     </div>
                     <div style="min-width: 0;">
                       <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
-                        <span style="font-size: 0.78rem; font-weight: 800; color: var(--text);" id="dActiveDriverName">Test Driver (driver@test.com)</span>
+                        <span style="font-size: 0.78rem; font-weight: 800; color: var(--text);" id="dActiveDriverName">Hi, Samuel</span>
                         <span class="sovereign-tier-badge">SOVEREIGN</span>
                       </div>
                       <div style="font-size: 0.62rem; color: var(--text-muted); margin-top: 2px;">
-                        📡 GPS High • 4G+ Live • <span style="color: var(--gold); font-weight: 800;">★ 4.95</span>
+                        📡 GPS High • 4G+ Live • <span style="color: var(--gold); font-weight: 800;">★ 4.98</span>
                       </div>
                     </div>
                   </div>
@@ -2807,6 +3329,8 @@
                 <div class="stitch-map-pill" style="bottom: 8px; left: 8px;">🟢 Surge 1.4x Active</div>
                 <div class="stitch-map-pill" style="bottom: 8px; right: 8px; color: #E5E2E1;">⏱️ 3 min ETA avg</div>
               </div>
+
+
 
               <!-- Today's Revenue Card -->
               <div class="app-card">
@@ -3031,6 +3555,71 @@
                     <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 800; color: var(--green); border-top: 1.5px solid var(--border); padding-top: 4px; margin-top: 2px;">
                       <span>Net Cash Take-Home:</span>
                       <strong id="settleNetTakeHome">KES 1,110.00</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Discover More: Driver Intelligence & Community Digest -->
+              <div style="margin-top: 2px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted);">Discover More</span>
+                  <span style="font-size: 0.6rem; color: #F2CA50; font-weight: 700; cursor: pointer;" onclick="openBlogArticle('the-road-to-dignity-why-drivers-choose-cabi', 'DRIVER')">Driver Digest (4 Posts) ›</span>
+                </div>
+                <div class="stitch-journal-slider">
+                  <!-- Driver Blog 1 -->
+                  <div class="stitch-journal-card" onclick="openBlogArticle('the-road-to-dignity-why-drivers-choose-cabi', 'DRIVER')">
+                    <div class="stitch-journal-thumb" style="background-image: url('/images/blog/driver-economic-growth.jpg');">
+                      <span class="stitch-journal-badge">Wealth &amp; Dignity • 3m</span>
+                    </div>
+                    <div style="padding: 7px 8px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                      <div style="font-size: 0.65rem; font-weight: 800; line-height: 1.25; color: #fff; margin-bottom: 4px;">Why Drivers Believe in Cabi: Reusable Commission</div>
+                      <div style="font-size: 0.52rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+                        <span>Driver Wealth</span>
+                        <span style="color: #F2CA50; font-weight: 700;">Read ›</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Driver Blog 2 -->
+                  <div class="stitch-journal-card" onclick="openBlogArticle('the-power-of-warmth-courtesy-and-tipping', 'DRIVER')">
+                    <div class="stitch-journal-thumb" style="background-image: url('/images/blog/kindness-courtesy-tipping.jpg');">
+                      <span class="stitch-journal-badge">100% Tips • 3m</span>
+                    </div>
+                    <div style="padding: 7px 8px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                      <div style="font-size: 0.65rem; font-weight: 800; line-height: 1.25; color: #fff; margin-bottom: 4px;">100% Direct Driver Tips: Zero Deductions</div>
+                      <div style="font-size: 0.52rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+                        <span>Earnings Desk</span>
+                        <span style="color: #F2CA50; font-weight: 700;">Read ›</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Driver Blog 3 -->
+                  <div class="stitch-journal-card" onclick="openBlogArticle('the-sacred-promise-of-every-journey-safety-first', 'DRIVER')">
+                    <div class="stitch-journal-thumb" style="background-image: url('/images/blog/digital-trust-safety.jpg');">
+                      <span class="stitch-journal-badge">Safety First • 4m</span>
+                    </div>
+                    <div style="padding: 7px 8px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                      <div style="font-size: 0.65rem; font-weight: 800; line-height: 1.25; color: #fff; margin-bottom: 4px;">Mandatory 4-Digit PIN &amp; Safe Pickups</div>
+                      <div style="font-size: 0.52rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+                        <span>Safety Advisory</span>
+                        <span style="color: #F2CA50; font-weight: 700;">Read ›</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Driver Blog 4 -->
+                  <div class="stitch-journal-card" onclick="openBlogArticle('future-urban-mobility', 'DRIVER')">
+                    <div class="stitch-journal-thumb" style="background-image: url('/images/blog/future-urban-mobility.jpg');">
+                      <span class="stitch-journal-badge">EV Fleet • 5m</span>
+                    </div>
+                    <div style="padding: 7px 8px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                      <div style="font-size: 0.65rem; font-weight: 800; line-height: 1.25; color: #fff; margin-bottom: 4px;">EV Fleet Trials: -60% Fuel Expenditure</div>
+                      <div style="font-size: 0.52rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+                        <span>Mobility Tech</span>
+                        <span style="color: #F2CA50; font-weight: 700;">Read ›</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -3278,22 +3867,7 @@
 
   </main>
 
-  <!-- Live Telemetry Terminal Tray -->
-  <section class="telemetry-tray">
-    <div class="telemetry-header" onclick="toggleTelemetry()">
-      <div class="telemetry-title">
-        <span>⚡</span> LIVE SYSTEM EVENT STREAM & DISPATCH TELEMETRY
-      </div>
-      <span style="font-size: 0.75rem; color: var(--text-muted);">▾ Click to toggle</span>
-    </div>
-    <div class="telemetry-logs" id="telemetryLogs">
-      <div class="log-line">
-        <span class="log-time">[12:00:00]</span>
-        <span class="log-tag tag-SYSTEM">SYSTEM</span>
-        <span>Dual Mobile Emulator Studio initialized. Ready for interactive simulation.</span>
-      </div>
-    </div>
-  </section>
+  </div> <!-- /studio-workspace-container -->
 
   <!-- JAVASCRIPT SIMULATOR ENGINE -->
   <script>
@@ -3304,7 +3878,7 @@
     let currentRideId = null;
     let currentStep = 1;
     let selectedTier = 'STANDARD';
-    let selectedFare = 1850;
+    let selectedFare = 350;
     let offerInterval = null;
     let tripSimulationInterval = null;
 
@@ -3325,8 +3899,66 @@
     function setStudioScale(scale) {
       studioScale = scale;
       const stage = document.getElementById('stageContainer');
-      stage.style.transform = `scale(${scale})`;
+      if (stage) {
+        stage.style.zoom = scale;
+        stage.style.transform = `scale(${scale})`;
+        stage.style.transformOrigin = 'top center';
+      }
+      const scaleBtns = document.querySelectorAll('.scale-controls button[data-scale]');
+      scaleBtns.forEach(btn => {
+        if (Math.abs(parseFloat(btn.dataset.scale) - scale) < 0.01) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
       log(`🖥️ Studio scale set to ${Math.round(scale * 100)}%`, 'SYSTEM');
+    }
+
+    // Auto-calculate optimal scale for display
+    function autoFitScale() {
+      const windowW = window.innerWidth;
+      let targetScale = 1.0;
+      if (windowW <= 1100) {
+        targetScale = 0.75;
+      } else if (windowW <= 1360) {
+        targetScale = 0.85;
+      } else if (windowW <= 1600) {
+        targetScale = 0.95;
+      } else {
+        targetScale = 1.0;
+      }
+      setStudioScale(targetScale);
+    }
+
+    // Studio Split Layout Controller: Preview on Right vs Left vs Stacked
+    function setStudioLayout(layout) {
+      const container = document.getElementById('workspaceContainer');
+      const btnRight = document.getElementById('btnLayoutRight');
+      const btnLeft = document.getElementById('btnLayoutLeft');
+      const btnStack = document.getElementById('btnLayoutStack');
+
+      if (!container) return;
+
+      [btnRight, btnLeft, btnStack].forEach(b => b && b.classList.remove('active'));
+
+      container.classList.remove('layout-preview-right', 'layout-preview-left', 'layout-stacked');
+      container.classList.add(`layout-${layout}`);
+
+      if (layout === 'preview-right') {
+        btnRight?.classList.add('active');
+        log('🖥️ Layout: PREVIEW ON RIGHT (Both apps on Right, Controls & Telemetry on Left).', 'SYSTEM');
+      } else if (layout === 'preview-left') {
+        btnLeft?.classList.add('active');
+        log('🖥️ Layout: PREVIEW ON LEFT (Both apps on Left, Controls & Telemetry on Right).', 'SYSTEM');
+      } else {
+        btnStack?.classList.add('active');
+        log('🖥️ Layout: STACKED (Classic Top-to-Bottom Studio Flow).', 'SYSTEM');
+      }
+
+      try {
+        localStorage.setItem('cabi_studio_layout', layout);
+      } catch (e) {}
     }
 
     // Platform OS Switcher (iOS 18 iPhone 16 Pro vs Android 15 Pixel 9 Pro)
@@ -3504,10 +4136,10 @@
         btnF.classList.add('active');
         vFlutter.classList.add('active-view');
         if (!vFlutter.dataset.loaded) {
-          vFlutter.src = 'http://localhost:8082/index.html?t=' + Date.now();
+          vFlutter.src = '/apps/passenger/index.html?t=' + Date.now();
           vFlutter.dataset.loaded = '1';
         }
-        log('🚀 Passenger phone: Real Flutter Web App view (port 8082).', 'PASSENGER');
+        log('🚀 Passenger phone: Real Flutter Web App view (/apps/passenger/).', 'PASSENGER');
       }
     }
 
@@ -3550,10 +4182,10 @@
         btnF.classList.add('active');
         vFlutter.classList.add('active-view');
         if (!vFlutter.dataset.loaded) {
-          vFlutter.src = 'http://localhost:8081/index.html?t=' + Date.now();
+          vFlutter.src = '/apps/driver/index.html?t=' + Date.now();
           vFlutter.dataset.loaded = '1';
         }
-        log('🚀 Driver phone: Real Flutter Web App view (port 8081).', 'DRIVER');
+        log('🚀 Driver phone: Real Flutter Web App view (/apps/driver/).', 'DRIVER');
       }
     }
 
@@ -3668,9 +4300,9 @@
     document.addEventListener('DOMContentLoaded', () => {
       bindAndroidTouchEvents('driverAndroidWrapper', refreshAndroidScreen, 'DRIVER', 'emulator-5556');
       bindAndroidTouchEvents('passengerAndroidWrapper', refreshPassengerAndroidScreen, 'PASSENGER', 'emulator-5554');
-      // Start both screens in live Flutter Web App view (or mode specified in URL)
+      // Start both screens in Stitch Studio view by default (or mode specified in URL: ?mode=flutter or ?mode=native)
       const urlParams = new URLSearchParams(window.location.search);
-      const initialMode = urlParams.get('mode') || 'flutter';
+      const initialMode = urlParams.get('mode') || 'native';
       setPassengerViewMode(initialMode);
       setDriverViewMode(initialMode);
     });
@@ -4004,16 +4636,54 @@
       updateStepIndicator(7);
     }
 
-    // Step 7: Driver Confirms Cash Payment
-    function driverConfirmCashPayment() {
-      const btn = document.getElementById('btnDriverConfirmCash');
-      btn.disabled = true;
-      btn.className = 'btn-action-primary';
-      btn.innerHTML = '<span>✅</span> Cash Payment Confirmed!';
+    // Step 7: Live M-Pesa Daraja STK Push & Driver Wealth Deduction
+    function triggerMpesaStkPush() {
+      const modal = document.getElementById('pMpesaStkModal');
+      const fareEl = document.getElementById('mpesaModalFare');
+      const tripRef = document.getElementById('mpesaTripRef');
+      if (fareEl) fareEl.textContent = `KES ${selectedFare.toLocaleString()}`;
+      if (tripRef) tripRef.textContent = `#${currentRideId}`;
+      if (modal) modal.style.display = 'flex';
 
-      playTone([523.25, 659.25, 783.99, 1046.5]);
-      log(`💵 Driver confirmed receipt of KES ${selectedFare.toLocaleString()} cash from Brian K.`, 'DRIVER');
-      log(`📊 Financial Transaction Settled in Cabi General Ledger. Driver net earnings updated!`, 'SYSTEM');
+      playTone([659.25, 783.99, 1046.5]);
+      log(`📲 Safaricom Daraja STK Push sent to 0711786722: Prompting for M-Pesa PIN (KES ${selectedFare.toLocaleString()})...`, 'PASSENGER');
+    }
+
+    function dismissMpesaStk() {
+      const modal = document.getElementById('pMpesaStkModal');
+      if (modal) modal.style.display = 'none';
+      log('❌ M-Pesa STK prompt dismissed by user.', 'PASSENGER');
+    }
+
+    function confirmMpesaStkPayment() {
+      const modal = document.getElementById('pMpesaStkModal');
+      if (modal) modal.style.display = 'none';
+
+      const fare = selectedFare || 1850;
+      const wealthDeduction = fare * 0.25;
+      const driverTakehome = fare - wealthDeduction;
+
+      // Update Driver Today's Revenue
+      const revEl = document.querySelector('#viewDriverNative .app-card-title span.val');
+      if (revEl) {
+        revEl.textContent = '16,700/-';
+      }
+
+      playTone([523.25, 659.25, 783.99, 1046.5, 1318.5], 0.15);
+      log(`📱 [M-PESA RECEIPT] QGH7823K4X Confirmed. Ksh ${fare.toLocaleString()}.00 sent to CABI AFRICA MOBILITY for ride #${currentRideId}. New M-PESA balance KES 38,420.00`, 'PASSENGER');
+      log(`💰 Driver Settlement Settled: KES ${driverTakehome.toLocaleString()} net take-home + KES ${wealthDeduction.toLocaleString()} (25%) credited to Samuel Mwangi SACCO Wealth Fund!`, 'DRIVER');
+      log(`📊 Trip #${currentRideId} General Ledger: M-Pesa B2B Clearway Instant Settlement complete.`, 'SYSTEM');
+
+      const btn = document.getElementById('btnDriverConfirmCash');
+      if (btn) {
+        btn.disabled = true;
+        btn.className = 'btn-action-primary';
+        btn.innerHTML = '<span>✅</span> M-Pesa Paid (KES 1,850)';
+      }
+    }
+
+    function driverConfirmCashPayment() {
+      confirmMpesaStkPayment();
     }
 
     // Star Rating on Passenger Phone
@@ -4098,9 +4768,11 @@
       driverCompleteTrip();
       await new Promise(r => setTimeout(r, 1600));
 
-      // 7. Confirm Cash & Rate
-      driverConfirmCashPayment();
-      await new Promise(r => setTimeout(r, 800));
+      // 7. Trigger Live M-Pesa STK Push & Pin Confirmation
+      triggerMpesaStkPush();
+      await new Promise(r => setTimeout(r, 1800));
+      confirmMpesaStkPayment();
+      await new Promise(r => setTimeout(r, 1200));
       submitRiderRating();
 
       btn.innerHTML = '<span>✔</span> Demo Complete!';
@@ -4401,6 +5073,83 @@
     // ========================================================
     // DRIVER AUTHENTICATION & LOGIN MANAGER
     // ========================================================
+        function openPassengerLoginModal() {
+      const modal = document.getElementById('passengerLoginModal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closePassengerLoginModal() {
+      const modal = document.getElementById('passengerLoginModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function fillPassengerCreds(email, password) {
+      document.getElementById('loginPassengerEmail').value = email;
+      document.getElementById('loginPassengerPassword').value = password;
+      playTone([523.25, 659.25], 0.08);
+      log(`🔑 Pre-filled passenger credentials: ${email}`, 'PASSENGER');
+    }
+
+    function toggleShowPassengerPassword() {
+      const pwd = document.getElementById('loginPassengerPassword');
+      if (pwd) {
+        pwd.type = pwd.type === 'password' ? 'text' : 'password';
+      }
+    }
+
+    async function submitPassengerLogin() {
+      const email = document.getElementById('loginPassengerEmail').value.trim();
+      const password = document.getElementById('loginPassengerPassword').value;
+      const btn = document.getElementById('btnSubmitPassengerLogin');
+      if (!email || !password) {
+        alert('Please enter your passenger phone/email and password.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳</span> Signing In...';
+
+      try {
+        let riderName = 'Samuel Mwangi';
+        if (email.includes('711786722') || email.toLowerCase().includes('sam')) {
+          riderName = 'Samuel Mwangi';
+        } else if (email.includes('wanjiku')) {
+          riderName = 'Wanjiku Kamau';
+        } else {
+          riderName = email.split('@')[0];
+        }
+
+        const nameEl = document.getElementById('pActiveRiderName');
+        if (nameEl) nameEl.textContent = `Hi, ${riderName}`;
+
+        playTone([523.25, 659.25, 783.99, 1046.5]);
+        log(`🔓 Passenger successfully authenticated as ${email} (Bearer JWT issued)!`, 'PASSENGER');
+        log(`👤 Active Rider Profile: ${riderName} (Gold Tier • KES 4,500)`, 'PASSENGER');
+        closePassengerLoginModal();
+      } catch (e) {
+        log(`Passenger login error: ${e}`, 'PASSENGER');
+        closePassengerLoginModal();
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>🚀</span> Sign In as Passenger';
+      }
+    }
+
+    async function loginBothAppsWithCredentials(phone, password) {
+      log(`🔐 1-Click Master Authentication initiated for ${phone}...`, 'SYSTEM');
+      
+      // 1. Fill & submit Driver login
+      fillDriverCreds(phone, password);
+      await submitDriverLogin();
+
+      // 2. Fill & submit Passenger login
+      fillPassengerCreds(phone, password);
+      await submitPassengerLogin();
+
+      playTone([659.25, 783.99, 1046.5, 1318.5], 0.12);
+      log(`🎉 Both Driver and Passenger apps successfully authenticated with ${phone}!`, 'SYSTEM');
+    }
+
     function openDriverLoginModal() {
       const modal = document.getElementById('driverLoginModal');
       if (modal) {
@@ -4448,12 +5197,17 @@
           body: JSON.stringify({ email, password })
         }).catch(() => null);
 
-        let driverName = 'Test Driver';
+        let driverName = 'Samuel Mwangi';
         let vehicle = 'Toyota Axio Hybrid 2022 • Plate: <strong style="color: var(--text);">KDH 452X</strong>';
 
-        if (email.includes('boda')) {
+        if (email.includes('711786722') || email.toLowerCase().includes('sam')) {
+          driverName = 'Samuel Mwangi';
+          vehicle = 'Toyota Axio Hybrid 2022 • Plate: <strong style="color: var(--text);">KDH 452X</strong>';
+        } else if (email.includes('boda')) {
           driverName = 'John Boda Driver';
           vehicle = 'Bajaj Boxer 150 • Plate: <strong style="color: var(--text);">KMDJ 892B</strong>';
+        } else {
+          driverName = 'Verified Partner';
         }
 
         // Update Driver UI Profile
@@ -4476,8 +5230,114 @@
       }
     }
 
-    // Initialize Wealth UI on Load
+    // Authentic Cabi Editorial Blog Posts Store (synced with web/user_portal/src/services/cms.ts)
+    const CABI_BLOG_POSTS = {
+      'future-urban-mobility': {
+        title: 'The Future of Urban Mobility in Kenya',
+        category: 'Technology',
+        readTime: '5 min read',
+        author: 'Cabi Operations Team',
+        image: '/images/blog/future-urban-mobility.jpg',
+        summary: 'How Cabi is transforming the way Nairobi moves with decentralized ride-hailing, electric bodas, and fair driver revenue sharing.',
+        quote: 'Fees charged are not for corporate enrichment, but are actively recycled into driver wealth creation, vehicle asset equity, and collective benefits.',
+        sections: [
+          { heading: 'Empowering Drivers with Cooperative Technology', text: 'Cabi was engineered to break the cycle of oppressive commissions. By introducing an ethical reusable commission model, Cabi ensures that fees charged are not for corporate extraction, but are actively recycled into driver wealth creation, vehicle asset equity, and collective benefits, alongside predictable, dynamic micro-pricing for passengers.' },
+          { heading: 'Electrification and Micro-Mobility', text: 'The next frontier for Kenya\'s mobility landscape is green transit. With clean energy initiatives expanding across East Africa, Cabi is actively testing EV two-wheeler and three-wheeler fleet routing with battery swap stations strategically located around Nairobi\'s commercial nodes. This reduces daily fuel expenditures by up to 60% and slashes emissions across busy urban corridors.' },
+          { heading: 'Safety and Identity Integration', text: 'Through real-time biometric and document checks, coupled with live telemetry sharing, passengers and operators can traverse the city with unmatched confidence. As Kenya continues to embrace smart city solutions, Cabi remains committed to pioneering equitable, sustainable mobility for every citizen.' }
+        ]
+      },
+      'the-road-to-dignity-why-drivers-choose-cabi': {
+        title: 'The Road to Dignity: Why Drivers and Commuters Across Africa Believe in Cabi',
+        category: 'Community',
+        readTime: '3 min read',
+        author: 'Cabi Editorial Desk',
+        image: '/images/blog/driver-economic-growth.jpg',
+        summary: 'A candid look at the daily hustle on our roads—and how a reusable commission model, dedicated wealth creation savings, and mutual respect are turning daily miles into real hope and long-term asset ownership.',
+        quote: '"For the first time in five years of driving, I am not just surviving day-to-day. My daily trips now contribute automatically to my driver wealth fund and vehicle maintenance savings. Cabi made me feel like a valued partner, not an invisible algorithm." — Samuel M., Cabi Driver Partner',
+        sections: [
+          { heading: 'A Fairer Model Built on African Soil', text: 'Instead of draining daily revenue through oppressive commissions, Cabi introduces an ethical reusable commission model. In as much as a commission is charged, it is reusable—channeled directly into driver wealth creation, healthcare pools, and vehicle asset savings, rather than corporate extraction or personal enrichment. Every shilling earned hits the driver\'s mobile money or bank wallet instantly and automatically at the end of each shift.' },
+          { heading: 'Three Tangible Benefits Changing Lives', text: '1. Pathways to Vehicle Ownership: Through integrated wealth creation financing, every completed ride builds verified financial history, helping drivers transition from endless vehicle rentals to owning their own cars.\n2. Genuine Welfare & Healthcare Safety Nets: Automated opt-in welfare programs provide emergency health cover, tire and maintenance discounts, and peer support.\n3. Two-Way Safety & Dignity: Verified rider identities, mandatory 4-digit start PINs, and real human support protect drivers from arbitrary account lockouts.' }
+        ]
+      },
+      'the-sacred-promise-of-every-journey-safety-first': {
+        title: 'The Sacred Promise of Every Journey: Why Safety Belongs to Every Single One of Us',
+        category: 'Safety & Trust',
+        readTime: '4 min read',
+        author: 'Cabi Safety Advisory Council',
+        image: '/images/blog/digital-trust-safety.jpg',
+        summary: 'Safety is never just an app feature or a legal clause—it is the unspoken promise that you will return home to the people who love you. Mutual protection and vigilant app usage matter on every street.',
+        quote: '"Safety is not just what the app does for you—it is the conscious covenant we make with each other every time we open the door. When we look out for one another, the entire city becomes our sanctuary."',
+        sections: [
+          { heading: 'Never Accept the "Offline Deal" (Hapa Kando)', text: 'If an operator or rider suggests cancelling the trip or doing a cash deal outside the app, refuse immediately. The moment you cancel, the entire safety net collapses: live GPS tracking stops, automatic SOS alerts are severed, identities are decoupled, and insurance cover is voided. A few saved shillings are never worth your life.' },
+          { heading: 'The 4-Digit PIN is Your Unbreakable Lock', text: 'Never open a car door without checking the license plate and confirming the 4-digit start PIN. It takes three seconds, but it provides absolute certainty that the vehicle and driver in front of you are the exact verified partners assigned to your journey.' },
+          { heading: 'Two-Way Protection: Drivers Deserve Safety Too', text: 'By enforcing verified passenger profiles and mutual accountability, Cabi protects drivers from robbery, harassment, and groundless disputes. In turn, when passengers treat drivers with warmth and basic human courtesy, drivers are able to focus completely on navigating traffic calmly and delivering you safely.' }
+        ]
+      },
+      'the-power-of-warmth-courtesy-and-tipping': {
+        title: 'The Power of Warmth: Why Everyday Courtesy and Tipping Turn Simple Rides into Shared Humanity',
+        category: 'Community & Culture',
+        readTime: '3 min read',
+        author: 'Grace W., Community Lead',
+        image: '/images/blog/kindness-courtesy-tipping.jpg',
+        summary: 'A vehicle or boda is not merely four wheels and a motor—it is a shared human sanctuary. How a kind greeting, patience in traffic, and an intentional tip turn ordinary daily commutes into acts of mutual dignity.',
+        quote: '"Ubuntu teaches us: \'I am because we are.\' On Cabi, 100% of every tip goes directly to the driver with 0% platform deductions. Every single shilling settles immediately into their digital wallet."',
+        sections: [
+          { heading: 'The Real Hustle Behind the Steering Wheel', text: 'Before you tap your ride in the morning, your driver has likely been awake since 4:30 AM, maneuvering through unpredictable traffic, dodging deep potholes, enduring vehicle wear-and-tear, and carrying the silent weight of school fees and fuel bills. They are doing honest, rigorous work to uplift their households.' },
+          { heading: 'Courtesy Costs Nothing, but It Changes Everything', text: 'A warm greeting (Habari yako) transforms an impersonal transaction into an encounter of equals. Closing the door gently respects the tool that brings them their daily bread. Calmness during traffic helps your chauffeur stay focused, safe, and alert.' },
+          { heading: 'Doing Extra: Why Tipping is Warm-Hearted Solidarity', text: 'Tipping on Cabi is about solidarity. 100% of every tip goes directly to the driver with 0% platform deductions. A modest tip of KES 50, 100, or 200 pays for a hot evening meal between trips, buys fresh bread for their children on the way home, or contributes directly to their emergency wealth and asset savings fund.' }
+        ]
+      }
+    };
+
+    function openBlogArticle(slug, app) {
+      const post = CABI_BLOG_POSTS[slug];
+      if (!post) return;
+
+      const isPass = app === 'PASSENGER';
+      const modal = document.getElementById(isPass ? 'pBlogModal' : 'dBlogModal');
+      const header = document.getElementById(isPass ? 'pBlogModalHeader' : 'dBlogModalHeader');
+      const badge = document.getElementById(isPass ? 'pBlogBadge' : 'dBlogBadge');
+      const title = document.getElementById(isPass ? 'pBlogTitle' : 'dBlogTitle');
+      const author = document.getElementById(isPass ? 'pBlogAuthor' : 'dBlogAuthor');
+      const body = document.getElementById(isPass ? 'pBlogBody' : 'dBlogBody');
+
+      if (!modal) return;
+
+      header.style.backgroundImage = `url('${post.image}')`;
+      badge.textContent = `${post.category} • ${post.readTime}`;
+      title.textContent = post.title;
+      author.textContent = `By ${post.author}`;
+
+      let bodyHtml = `<p style="font-size: 0.74rem; font-weight: 600; color: var(--text); margin-bottom: 8px;">${post.summary}</p>`;
+      if (post.quote) {
+        bodyHtml += `<div class="cabi-blog-quote">${post.quote}</div>`;
+      }
+      post.sections.forEach(sec => {
+        bodyHtml += `<h3>${sec.heading}</h3><p style="margin-bottom: 8px;">${sec.text.replace(/\n/g, '<br>')}</p>`;
+      });
+
+      body.innerHTML = bodyHtml;
+      modal.style.display = 'flex';
+      playTone([523.25, 659.25], 0.08);
+      log(`📰 Read article: "${post.title}" (${post.category})`, app);
+    }
+
+    function closeBlogArticle(app) {
+      const isPass = app === 'PASSENGER';
+      const modal = document.getElementById(isPass ? 'pBlogModal' : 'dBlogModal');
+      if (modal) modal.style.display = 'none';
+      playTone([440, 330], 0.06);
+    }
+
+    // Initialize Wealth UI & Studio Layout on Load
     setTimeout(updateWealthUI, 500);
+    try {
+      const initialLayout = localStorage.getItem('cabi_studio_layout') || 'preview-right';
+      setStudioLayout(initialLayout);
+      setPassengerViewMode('native');
+      setDriverViewMode('native');
+      autoFitScale();
+    } catch (e) {}
   </script>
 </body>
 </html>

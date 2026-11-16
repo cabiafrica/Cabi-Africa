@@ -78,6 +78,7 @@ class CabiMapMarker {
                   child: RadarAnimation(
                     isOnline: true,
                     radiusKm: radiusKm,
+                    showTag: false,
                     label: radarLabel ?? 'SEARCHING FOR DRIVERS',
                   ),
                 ),
@@ -117,6 +118,7 @@ class CabiMapMarker {
               child: RadarAnimation(
                 isOnline: true,
                 radiusKm: radiusKm,
+                showTag: false,
                 label: radarLabel ?? 'SEARCHING FOR DRIVERS',
               ),
             ),

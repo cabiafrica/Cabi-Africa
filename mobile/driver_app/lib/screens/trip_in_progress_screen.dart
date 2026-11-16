@@ -38,7 +38,18 @@ class TripInProgressScreen extends StatefulWidget {
   State<TripInProgressScreen> createState() => _TripInProgressScreenState();
 }
 
+enum TripPhase {
+  headingToPickup,
+  arrivedAtPickup,
+  tripActive,
+  completed,
+}
+
 class _TripInProgressScreenState extends State<TripInProgressScreen> {
+  TripPhase _tripPhase = TripPhase.headingToPickup;
+  int _waitingSeconds = 0;
+  bool _passengerNotified = false;
+
   bool _showOffer = false;
   bool _allowBackToBack = true;
   Timer? _tripTimer;
@@ -136,11 +147,75 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
     _currentFare = (_unroundedFare / step).round() * step.toDouble();
   }
 
-  Future<void> _startBackendTrip() async {
-    if (widget.rideId != null) {
-      await _rideService.startTrip(widget.rideId!);
-      AudioNotificationService.instance.play('trip_started');
+  void _onDriverArrived({bool autoDetected = false}) {
+    if (_tripPhase != TripPhase.headingToPickup) return;
+    setState(() {
+      _tripPhase = TripPhase.arrivedAtPickup;
+      _passengerNotified = true;
+    });
+    AudioNotificationService.instance.play('driver_arrived');
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.notifications_active_rounded, color: Color(0xFFD4AF37), size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  autoDetected
+                      ? 'Arrived at pickup! Passenger automatically notified.'
+                      : 'Arrival confirmed! Passenger notified.',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: const Color(0xFF1C1B1B),
+          duration: const Duration(seconds: 4),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
     }
+  }
+
+  void _startActiveTrip() async {
+    setState(() {
+      _tripPhase = TripPhase.tripActive;
+    });
+    if (widget.rideId != null) {
+      try {
+        await _rideService.startTrip(widget.rideId!);
+      } catch (e) {
+        debugPrint('[Trip] startTrip handled: $e');
+      }
+    }
+    AudioNotificationService.instance.play('trip_started');
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.play_circle_fill_rounded, color: Color(0xFF10B981), size: 18),
+              SizedBox(width: 8),
+              Text(
+                'Passenger onboard! Taximeter activated.',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+            ],
+          ),
+          backgroundColor: const Color(0xFF1C1B1B),
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
+  }
+
+  Future<void> _startBackendTrip() async {
+    // Backend trip is started once the passenger is onboard via _startActiveTrip()
   }
 
   @override
@@ -157,27 +232,38 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
       }
       if (mounted) {
         setState(() {
-          _durationSeconds++;
+          if (_tripPhase == TripPhase.headingToPickup) {
+            _durationSeconds++;
+            // Auto-trigger arrival after 5 seconds if driver hasn't tapped arrived
+            if (_durationSeconds >= 5) {
+              _onDriverArrived(autoDetected: true);
+            }
+          } else if (_tripPhase == TripPhase.arrivedAtPickup) {
+            // Arrival wait timer ticks
+            _waitingSeconds++;
+          } else if (_tripPhase == TripPhase.tripActive) {
+            _durationSeconds++;
 
-          // Every 3 seconds in simulation, driver moves ~60 meters (0.06 km)
-          if (_durationSeconds % 3 == 0) {
-            _distanceKm += 0.06;
-          }
+            // Every 3 seconds in simulation, driver moves ~60 meters (0.06 km)
+            if (_durationSeconds % 3 == 0) {
+              _distanceKm += 0.06;
+            }
 
-          // Realtime fare update
-          _recalculateFare();
+            // Realtime fare update
+            _recalculateFare();
 
-          final double latDiff =
-              _passengerLocation.latitude - _driverLocation.latitude;
-          final double lngDiff =
-              _passengerLocation.longitude - _driverLocation.longitude;
-          if (latDiff.abs() > 0.0001 || lngDiff.abs() > 0.0001) {
-            _driverLocation = LatLng(_driverLocation.latitude + (latDiff * 0.02),
-                _driverLocation.longitude + (lngDiff * 0.02));
+            final double latDiff =
+                _passengerLocation.latitude - _driverLocation.latitude;
+            final double lngDiff =
+                _passengerLocation.longitude - _driverLocation.longitude;
+            if (latDiff.abs() > 0.0001 || lngDiff.abs() > 0.0001) {
+              _driverLocation = LatLng(_driverLocation.latitude + (latDiff * 0.02),
+                  _driverLocation.longitude + (lngDiff * 0.02));
 
-            if (widget.driverId != null) {
-              _rideService.updateDriverLocation(widget.driverId!,
-                  _driverLocation.latitude, _driverLocation.longitude);
+              if (widget.driverId != null) {
+                _rideService.updateDriverLocation(widget.driverId!,
+                    _driverLocation.latitude, _driverLocation.longitude);
+              }
             }
           }
         });
@@ -279,7 +365,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
               _buildBillRow('Minimum Fare Floor', 'KES ${_minimumFare.toStringAsFixed(2)}'),
               _buildBillRow('Raw Meter Subtotal', 'KES ${_unroundedFare.toStringAsFixed(2)}'),
               _buildBillRow(
-                'Admin Rounding Rule',
+                'Round Off',
                 'Nearest KES $_roundingStep (${_currentFare >= _unroundedFare ? "+KES " : "-KES "}${(_currentFare - _unroundedFare).abs().toStringAsFixed(2)})',
               ),
               const Padding(
@@ -295,7 +381,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12),
                   gradient: AppTheme.goldGradient,
                 ),
                 child: ElevatedButton(
@@ -308,6 +394,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                             rideId: widget.rideId!,
                             passengerName: widget.passengerName ?? 'Passenger',
                             finalFare: _currentFare,
+                            tipAmount: 100.0,
                           ),
                         ),
                       );
@@ -320,7 +407,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                     foregroundColor: Colors.black,
                     shadowColor: Colors.transparent,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: Text(
                     _isTripEnded ? 'COLLECT FARE & RATE' : 'CLOSE WAYBILL',
@@ -422,7 +509,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
                         color: overlayBg,
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: isDark ? const Color(0xFFD4AF37).withValues(alpha: 0.3) : outline),
                         boxShadow: [
                           BoxShadow(
@@ -439,10 +526,18 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                             width: 38,
                             height: 38,
                             decoration: BoxDecoration(
-                              color: accent,
+                              color: _tripPhase == TripPhase.arrivedAtPickup ? AppTheme.successGreen : accent,
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Icon(Icons.turn_right_rounded, color: isDark ? Colors.black : Colors.white, size: 24),
+                            child: Icon(
+                              _tripPhase == TripPhase.arrivedAtPickup
+                                  ? Icons.pin_drop_rounded
+                                  : (_tripPhase == TripPhase.headingToPickup
+                                      ? Icons.near_me_rounded
+                                      : Icons.turn_right_rounded),
+                              color: isDark ? Colors.black : Colors.white,
+                              size: 24,
+                            ),
                           ),
                           const SizedBox(width: 12),
                           // Next instruction
@@ -453,19 +548,25 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                 Row(
                                   children: [
                                     Text(
-                                      '350m',
+                                      _tripPhase == TripPhase.arrivedAtPickup
+                                          ? 'AT PICKUP'
+                                          : (_tripPhase == TripPhase.headingToPickup ? '150m' : '350m'),
                                       style: TextStyle(
                                         color: textPrimary,
-                                        fontSize: 16,
+                                        fontSize: 15,
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: -0.5,
                                       ),
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
-                                      'TURN RIGHT',
+                                      _tripPhase == TripPhase.arrivedAtPickup
+                                          ? 'WAITING'
+                                          : (_tripPhase == TripPhase.headingToPickup
+                                              ? 'PICKUP EN ROUTE'
+                                              : 'TURN RIGHT'),
                                       style: TextStyle(
-                                        color: accent,
+                                        color: _tripPhase == TripPhase.arrivedAtPickup ? AppTheme.successGreen : accent,
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.8,
@@ -475,7 +576,11 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  'Ring Road Kilimani • Heading to Destination',
+                                  _tripPhase == TripPhase.arrivedAtPickup
+                                      ? 'Passenger Notified • Wait: ${_formatDuration(_waitingSeconds)}'
+                                      : (_tripPhase == TripPhase.headingToPickup
+                                          ? 'Westlands Commercial Centre • ${widget.passengerName ?? "Sarah Jenkins"}'
+                                          : 'Ring Road Kilimani • Heading to Destination'),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -980,14 +1085,22 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.location_on_rounded, color: Color(0xFF10B981), size: 16),
+                          Icon(
+                            _tripPhase == TripPhase.tripActive
+                                ? Icons.location_on_rounded
+                                : Icons.near_me_rounded,
+                            color: const Color(0xFF10B981),
+                            size: 16,
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'DROP-OFF LOCATION',
+                                  _tripPhase == TripPhase.tripActive
+                                      ? 'DROP-OFF LOCATION'
+                                      : 'PICKUP LOCATION',
                                   style: TextStyle(
                                     color: textDim,
                                     fontSize: 8.5,
@@ -996,7 +1109,9 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                   ),
                                 ),
                                 Text(
-                                  'Kilimani, Argwings Kodhek Rd',
+                                  _tripPhase == TripPhase.tripActive
+                                      ? 'Kilimani, Argwings Kodhek Rd'
+                                      : 'Westlands Commercial Centre, Ring Rd',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -1011,6 +1126,46 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                         ],
                       ),
                     ),
+
+                    if (_tripPhase == TripPhase.arrivedAtPickup) ...[
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.35)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.timer_outlined, size: 16, color: Color(0xFF10B981)),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Passenger Notified • Waiting at Pickup',
+                                  style: TextStyle(
+                                    color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              _formatDuration(_waitingSeconds),
+                              style: const TextStyle(
+                                color: Color(0xFF10B981),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w900,
+                                fontFamily: 'monospace',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
 
                     // Extended pickup fuel subsidy notification
                     if (widget.isExtendedPickup) ...[
@@ -1091,58 +1246,159 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                     const SizedBox(height: 14),
                   ],
 
-                  // Actions Row: Waybill & Slide to Complete
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: _showWaybill,
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: textPrimary,
-                            side: BorderSide(color: outline),
-                            backgroundColor: isDark ? Colors.white.withValues(alpha: 0.04) : AppTheme.porcelainSurfaceHigh,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
+                  // Actions Row: Waybill & Dynamic Action Button
+                  SizedBox(
+                    height: 48,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 48,
+                            child: OutlinedButton(
+                              onPressed: _showWaybill,
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: textPrimary,
+                                side: BorderSide(color: outline),
+                                backgroundColor: isDark ? Colors.white.withValues(alpha: 0.04) : AppTheme.porcelainSurfaceHigh,
+                                padding: EdgeInsets.zero,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Text(
+                                'WAYBILL',
+                                style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.8, fontSize: 11),
+                              ),
                             ),
                           ),
-                          child: const Text(
-                            'WAYBILL',
-                            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.8, fontSize: 11),
+                        ),
+                        const SizedBox(width: 10),
+                        if (_tripPhase == TripPhase.headingToPickup)
+                          Expanded(
+                            flex: 2,
+                            child: SizedBox(
+                              height: 48,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFFD4AF37), Color(0xFFFFDF00)],
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFD4AF37).withValues(alpha: 0.35),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: ElevatedButton.icon(
+                                  onPressed: () => _onDriverArrived(autoDetected: false),
+                                  icon: const Icon(Icons.pin_drop_rounded, color: Colors.black, size: 18),
+                                  label: const Text(
+                                    'ARRIVED AT PICKUP',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 12,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    padding: EdgeInsets.zero,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        else if (_tripPhase == TripPhase.arrivedAtPickup)
+                          Expanded(
+                            flex: 2,
+                            child: SizedBox(
+                              height: 48,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFF10B981), Color(0xFF059669)],
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF10B981).withValues(alpha: 0.35),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: ElevatedButton.icon(
+                                  onPressed: _startActiveTrip,
+                                  icon: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
+                                  label: const Text(
+                                    'START TRIP',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 13,
+                                      letterSpacing: 0.6,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    padding: EdgeInsets.zero,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        else
+                          Expanded(
+                            flex: 2,
+                            child: SizedBox(
+                              height: 48,
+                              child: SwipeableActionButton(
+                                label: 'SLIDE TO COMPLETE',
+                                color: const Color(0xFFEF4444),
+                                icon: Icons.flag_rounded,
+                                onAction: () async {
+                                  if (widget.rideId != null) {
+                                    try {
+                                      final finalSettledFare = await _rideService.completeTrip(
+                                        widget.rideId!,
+                                        distanceKm: _distanceKm,
+                                        durationMinutes: _durationSeconds / 60.0,
+                                      );
+                                      if (finalSettledFare > 0 && mounted) {
+                                        setState(() => _currentFare = finalSettledFare);
+                                      }
+                                    } catch (e) {
+                                      debugPrint('Error completing trip: $e');
+                                    }
+                                  }
+                                  AudioNotificationService.instance.play('trip_ended');
+                                  if (mounted) {
+                                    setState(() {
+                                      _isTripEnded = true;
+                                      _tripPhase = TripPhase.completed;
+                                    });
+                                    _showWaybill();
+                                  }
+                                },
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        flex: 2,
-                        child: SwipeableActionButton(
-                          label: 'SLIDE TO COMPLETE',
-                          color: const Color(0xFFEF4444),
-                          icon: Icons.flag_rounded,
-                          onAction: () async {
-                            if (widget.rideId != null) {
-                              try {
-                                final finalSettledFare = await _rideService.completeTrip(
-                                  widget.rideId!,
-                                  distanceKm: _distanceKm,
-                                  durationMinutes: _durationSeconds / 60.0,
-                                );
-                                if (finalSettledFare > 0 && mounted) {
-                                  setState(() => _currentFare = finalSettledFare);
-                                }
-                              } catch (e) {
-                                debugPrint('Error completing trip: $e');
-                              }
-                            }
-                            AudioNotificationService.instance.play('trip_ended');
-                            if (mounted) {
-                              setState(() => _isTripEnded = true);
-                              _showWaybill();
-                            }
-                          },
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),

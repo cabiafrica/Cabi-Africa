@@ -102,50 +102,16 @@ class _CabiMapState extends State<CabiMap> {
         ),
       ),
       children: [
-        // Map tile layer based on selected map source
-        if (widget.mapSource == CabiMapSource.googleMaps)
-          TileLayer(
-            key: const ValueKey('google_maps_layer'),
-            urlTemplate: (widget.apiKey != null && widget.apiKey!.isNotEmpty)
-                ? 'https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&key=${widget.apiKey}'
-                : 'https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&key=AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0',
-            subdomains: const ['0', '1', '2', '3'],
-            userAgentPackageName: 'com.cabi.app',
-            maxZoom: 20,
-            tileBuilder: widget.theme == CabiMapTheme.dark
-                ? (context, tileWidget, tile) {
-                    return ColorFiltered(
-                      colorFilter: const ColorFilter.matrix([
-                        -0.85, 0.0, 0.0, 0.0, 240.0,
-                        0.0, -0.85, 0.0, 0.0, 240.0,
-                        0.0, 0.0, -0.85, 0.0, 240.0,
-                        0.0, 0.0, 0.0, 1.0, 0.0,
-                      ]),
-                      child: tileWidget,
-                    );
-                  }
-                : null,
-          )
-        else
-          TileLayer(
-            key: const ValueKey('cabi_africa_maps_layer'),
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            userAgentPackageName: 'com.cabi.app',
-            maxZoom: 19,
-            tileBuilder: widget.theme == CabiMapTheme.dark
-                ? (context, tileWidget, tile) {
-                    return ColorFiltered(
-                      colorFilter: const ColorFilter.matrix([
-                        -0.85, 0.0, 0.0, 0.0, 240.0,
-                        0.0, -0.85, 0.0, 0.0, 240.0,
-                        0.0, 0.0, -0.85, 0.0, 240.0,
-                        0.0, 0.0, 0.0, 1.0, 0.0,
-                      ]),
-                      child: tileWidget,
-                    );
-                  }
-                : null,
-          ),
+        // Universal clean basemap tile layer (CartoDB Positron for light, Dark Matter for dark)
+        TileLayer(
+          key: ValueKey('cabi_clean_map_${widget.theme.name}'),
+          urlTemplate: widget.theme == CabiMapTheme.dark
+              ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
+              : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+          subdomains: const ['a', 'b', 'c', 'd'],
+          userAgentPackageName: 'com.cabi.app',
+          maxZoom: 20,
+        ),
 
         // Route polyline if provided
         if (widget.routePoints != null && widget.routePoints!.isNotEmpty)
@@ -153,10 +119,12 @@ class _CabiMapState extends State<CabiMap> {
             polylines: [
               Polyline(
                 points: widget.routePoints!,
-                strokeWidth: 4.0,
-                color: Colors.blue,
+                strokeWidth: 4.5,
+                color: const Color(0xFFE5A93C),
                 borderStrokeWidth: 2.0,
-                borderColor: Colors.blue.shade900,
+                borderColor: widget.theme == CabiMapTheme.dark
+                    ? const Color(0xFF141414)
+                    : Colors.white,
               ),
             ],
           ),

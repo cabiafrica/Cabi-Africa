@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/ride_service.dart';
 import '../theme/app_theme.dart';
+import '../utils/pdf_receipt_generator.dart';
+import '../utils/receipt_downloader.dart';
 
 class RateDriverScreen extends StatefulWidget {
   final String rideId;
@@ -24,9 +26,9 @@ class RateDriverScreen extends StatefulWidget {
 
 class _RateDriverScreenState extends State<RateDriverScreen> {
   final RideService _rideService = RideService();
-  int _rating = 5;
+  int _rating = 3;
   int? _selectedTipAmount = 100;
-  final Set<String> _selectedCompliments = {'Smooth Driving', 'Exceptional Hospitality'};
+  final Set<String> _selectedCompliments = {};
   final TextEditingController _commentController = TextEditingController();
   final TextEditingController _customTipController = TextEditingController();
   bool _isSubmitting = false;
@@ -45,7 +47,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
   final List<String> _ratingLabels = [
     'POOR EXPERIENCE',
     'COULD BE BETTER',
-    'SATISFACTORY TRIP',
+    'NOTHING MUCH OBSERVED',
     'GREAT SERVICE',
     'EXCEPTIONAL EXPERIENCE',
   ];
@@ -55,6 +57,53 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
     _commentController.dispose();
     _customTipController.dispose();
     super.dispose();
+  }
+
+  void _downloadReceipt() {
+    try {
+      final pdfBytes = PdfReceiptGenerator.generateBytes(
+        tripId: widget.rideId,
+        driverName: widget.driverName.isNotEmpty ? widget.driverName : 'James Mwangi',
+        fare: widget.fare ?? 350.0,
+        pickup: 'Epitome Lane 25, Nairobi',
+        destination: widget.destination ?? 'JKIA Terminal 1A',
+        vehicleInfo: widget.vehicleInfo ?? 'Toyota Axio • KDA 892J',
+        tipAmount: _selectedTipAmount,
+      );
+
+      final cleanRef = widget.rideId.length > 8 ? widget.rideId.substring(0, 8).toUpperCase() : widget.rideId.toUpperCase();
+      downloadReceiptPdf(pdfBytes, 'Cabi_Receipt_$cleanRef.pdf');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFF1E1E24),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: AppTheme.outlineGold),
+          ),
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle_rounded, color: AppTheme.primaryColor),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Receipt downloaded as Cabi_Receipt_$cleanRef.pdf',
+                  style: AppTheme.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error downloading receipt: ')),
+      );
+    }
   }
 
   Future<void> _submit() async {
@@ -407,24 +456,25 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                   ),
                   const SizedBox(height: 12),
 
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Official Tax Waybill (PDF) sent to registered email')),
-                      );
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: headlineColor,
-                      side: BorderSide(color: chipBorder),
+                  ElevatedButton.icon(
+                    onPressed: _downloadReceipt,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryColor,
+                      foregroundColor: const Color(0xFF241A00),
+                      elevation: 2,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      minimumSize: const Size(double.infinity, 42),
+                      minimumSize: const Size(double.infinity, 44),
                     ),
-                    icon: const Icon(Icons.receipt_long_rounded, color: AppTheme.primaryColor, size: 16),
+                    icon: const Icon(Icons.download_rounded, color: Color(0xFF241A00), size: 18),
                     label: Text(
-                      'Download Official Tax Waybill (PDF)',
-                      style: AppTheme.inter(fontSize: 12, fontWeight: FontWeight.w600),
+                      'Download Receipt as PDF',
+                      style: AppTheme.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: const Color(0xFF241A00),
+                      ),
                     ),
                   ),
                 ],
@@ -549,6 +599,18 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                       letterSpacing: 1.1,
                     ),
                   ),
+                  if (_rating == 3)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        'Default rating: Nothing much was observed',
+                        style: AppTheme.inter(
+                          fontSize: 11,
+                          color: subColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
                   const SizedBox(height: 18),
 
                   // Compliment Pills
@@ -593,20 +655,27 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Tip Driver Section
+                  // Tip Driver Section - Buy {driverName} coffee
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Add a tip for chauffeur',
-                        style: AppTheme.outfit(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: headlineColor,
-                        ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.coffee_rounded, size: 18, color: AppTheme.primaryColor),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Buy ${widget.driverName.isEmpty ? 'driver' : widget.driverName.split(' ').first} coffee',
+                            style: AppTheme.outfit(
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w700,
+                              color: headlineColor,
+                            ),
+                          ),
+                        ],
                       ),
                       Text(
-                        '100% goes to driver',
+                        '100% goes directly to chauffeur',
                         style: AppTheme.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,

@@ -1152,6 +1152,177 @@ class _SearchScreenState extends State<SearchScreen> {
               color: isDark ? Colors.white12 : const Color(0xFFE2E8F0),
             ),
 
+            // ── SAVED PLACES (Home & Work) ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: Row(
+                children: [
+                  // Home Shortcut
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        _onPlaceSelected({
+                          'name': 'Home',
+                          'subtitle': 'Kilimani, Nairobi',
+                          'location': const LatLng(-1.2921, 36.7856),
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF1E1E1E)
+                              : const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white12
+                                : const Color(0xFFE2E8F0),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(7),
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryColor
+                                    .withValues(alpha: 0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.home_rounded,
+                                  size: 18, color: AppTheme.primaryColor),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Home',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                      color: isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0F172A),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Kilimani',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: isDark
+                                          ? Colors.white54
+                                          : const Color(0xFF64748B),
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  // Work Shortcut
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        _onPlaceSelected({
+                          'name': 'Work',
+                          'subtitle': 'Westlands, Nairobi',
+                          'location': const LatLng(-1.2635, 36.8028),
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF1E1E1E)
+                              : const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white12
+                                : const Color(0xFFE2E8F0),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(7),
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryColor
+                                    .withValues(alpha: 0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.work_rounded,
+                                  size: 18, color: AppTheme.primaryColor),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Work',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                      color: isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0F172A),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Westlands',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: isDark
+                                          ? Colors.white54
+                                          : const Color(0xFF64748B),
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 6, 18, 4),
+              child: Row(
+                children: [
+                  Text(
+                    'RECENT DESTINATIONS',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.8,
+                      color: isDark ? Colors.white38 : const Color(0xFF64748B),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
             if (_activeField == 0) ...[
               InkWell(
                 onTap: _autoDetectCurrentLocationForPickup,

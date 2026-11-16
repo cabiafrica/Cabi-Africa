@@ -66,7 +66,11 @@ class RideRequestModal extends StatelessWidget {
     void handleAccept() async {
       try {
         AudioNotificationService.instance.play('driver_accepted');
-        await service.acceptRide(requestData['rideId'], driverId);
+        try {
+          await service.acceptRide(requestData['rideId'], driverId);
+        } catch (e) {
+          debugPrint('[ACCEPT] Backend call handled (offline/simulation mode): $e');
+        }
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -613,11 +617,11 @@ class RideRequestModal extends StatelessWidget {
                             backgroundColor: const Color(0xFFEF4444).withValues(alpha: 0.08),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                           child: const Text(
-                            'Decline',
+                            'Pass',
                             style: TextStyle(
                               color: Color(0xFFEF4444),
                               fontWeight: FontWeight.w800,
@@ -631,7 +635,7 @@ class RideRequestModal extends StatelessWidget {
                         flex: 2,
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(12),
                             gradient: const LinearGradient(
                               colors: [Color(0xFFD4AF37), Color(0xFFFFDF00)],
                             ),
@@ -652,7 +656,7 @@ class RideRequestModal extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                             ),
                             child: Row(

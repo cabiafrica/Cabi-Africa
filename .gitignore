@@ -230,4 +230,9 @@ web/screenshots/
 .yarnrc
 *.xml
 
+# Local development symlinks
+/apps
+/web/apps
+/web/images
+
 nul

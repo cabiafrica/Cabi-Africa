@@ -90,9 +90,82 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> with Single
   Widget _buildArticleList() {
     final articles = [
       {
+        'title': 'The Road to Dignity: Why Drivers and Commuters Across Africa Believe in Cabi',
+        'readTime': '3 min read',
+        'category': 'Community',
+        'image': 'assets/images/driver-economic-growth.jpg',
+        'content': '''
+Anyone who has sat behind the wheel in Nairobi, Mombasa, Kampala, or Lagos knows the honest, exhausting reality of the road: fourteen hours in gridlock, unpredictable fuel prices, and apps that take oppressive commissions before you have even paid for lunch, let alone your vehicle lease.
+
+A Fairer Model Built on African Soil:
+Cabi was engineered right here, in partnership with driver cooperatives, fleet owners, and wealth creation partners who asked a simple question: What if the platform worked for the driver, instead of the driver working for the platform?
+
+Instead of draining daily revenue through oppressive commissions, Cabi introduces an ethical reusable commission model. In as much as a commission is charged, it is reusable—channeled directly into driver wealth creation, healthcare pools, and vehicle asset savings, rather than corporate extraction. Every shilling earned hits the driver's mobile money or bank wallet automatically.
+
+Three Tangible Benefits Changing Lives:
+• Pathways to Vehicle Ownership: Through integrated wealth creation financing, every completed ride builds verified financial history, helping drivers transition from endless vehicle rentals to owning their own cars.
+• Genuine Welfare & Healthcare Safety Nets: Automated opt-in welfare programs provide emergency health cover, tire and maintenance discounts, and peer support.
+• Two-Way Safety & Dignity: Verified rider identities, mandatory 4-digit start PINs, and real human support protect drivers from arbitrary account lockouts.
+        ''',
+      },
+      {
+        'title': 'The Sacred Promise of Every Journey: Why Safety Belongs to Every Single One of Us',
+        'readTime': '4 min read',
+        'category': 'Safety & Trust',
+        'image': 'assets/images/digital-trust-safety.jpg',
+        'content': '''
+Every single night across our bustling cities, thousands of quiet journeys take place. Behind every trip request is a precious, deeply personal human story. When you step behind the wheel or mount a boda, you are holding another human life in your hands. That trust is sacred.
+
+Why Secure Usage of the App is Your Living Lifeline:
+Technology can only protect you when you keep the safety shield active:
+
+1. Never Accept the "Offline Deal" (Hapa Kando):
+If an operator or rider suggests cancelling the trip or doing a cash deal outside the app, refuse immediately. The moment you cancel, the entire safety net collapses: live GPS tracking stops, automatic SOS alerts are severed, identities are decoupled, and insurance cover is voided. A few saved shillings are never worth your life.
+
+2. The 4-Digit PIN is Your Unbreakable Lock:
+Confirm the 4-digit start PIN before setting off. It provides absolute certainty that you and the passenger are the exact verified partners assigned to the journey.
+
+3. Two-Way Protection:
+Drivers face late-night uncertainty and vulnerable interactions on every shift. They are sons, mothers, and fathers who deserve to return home unharmed just as much as riders do. Cabi enforces verified passenger profiles and mutual accountability.
+        ''',
+      },
+      {
+        'title': 'The Power of Warmth: Why Everyday Courtesy and Tipping Turn Simple Rides into Shared Humanity',
+        'readTime': '3 min read',
+        'category': 'Community & Culture',
+        'image': 'assets/images/kindness-courtesy-tipping.jpg',
+        'content': '''
+A vehicle or boda is never just metal, rubber, and an algorithm. For twenty minutes or an hour, it is a shared sanctuary. In that small space, two human beings journey together across the city.
+
+The Real Hustle Behind the Steering Wheel:
+It takes extraordinary resilience to drive professionally in Africa's major urban centers. Drivers are awake from 4:30 AM, maneuvering through unpredictable traffic and carrying family bills. They are doing rigorous work to uplift their households.
+
+Doing Extra: Why Tipping is Warm-Hearted Solidarity:
+On Cabi, 100% of every tip goes directly to the driver with 0% platform deductions. Every single shilling settles immediately into their mobile money or digital wallet.
+
+Ubuntu teaches us: "I am because we are." When passengers and drivers treat each other with warmth, mutual dignity, and basic human courtesy, every street across Africa becomes safer.
+        ''',
+      },
+      {
+        'title': 'The Future of Urban Mobility in Kenya',
+        'readTime': '5 min read',
+        'category': 'Technology',
+        'image': 'assets/images/future-urban-mobility.jpg',
+        'content': '''
+Urban transportation across major African metropolises is undergoing a profound digital transformation. In cities like Nairobi, Mombasa, and Kisumu, traditional transport ecosystems often grapple with unpredictable pricing, congested corridors, and oppressive commissions.
+
+Empowering Drivers with Cooperative Technology:
+Cabi ensures that fees charged are actively recycled into driver wealth creation, vehicle asset equity, and collective benefits, alongside predictable dynamic micro-pricing.
+
+Electrification and Micro-Mobility:
+With clean energy initiatives expanding across East Africa, Cabi is actively testing EV two-wheeler and three-wheeler fleet routing with battery swap stations strategically located around Nairobi's commercial nodes. This reduces daily fuel expenditures by up to 60% and slashes emissions across busy urban corridors.
+        ''',
+      },
+      {
         'title': 'Tax Guide for Independent Contractors',
         'readTime': '5 min read',
         'category': 'Finance & Compliance',
+        'image': 'assets/images/blog_1.png',
         'content': '''
 As an independent driver on the Cabi platform in Kenya, understanding your tax obligations and business deductions helps you maximize your take-home earnings.
 
@@ -114,6 +187,7 @@ If you are registered through an affiliated SACCO, your capital contributions an
         'title': 'Vehicle Maintenance Checklist',
         'readTime': '3 min read',
         'category': 'Vehicle Care',
+        'image': 'assets/images/blog_2.png',
         'content': '''
 Routine preventive maintenance reduces unexpected breakdowns and ensures you qualify for Cabi's seasonal Vehicle Maintenance Benefit credits.
 
@@ -135,6 +209,7 @@ Keeping your vehicle in top condition directly correlates with higher tips, repe
         'title': 'Providing Great Customer Service',
         'readTime': '4 min read',
         'category': 'Customer Experience',
+        'image': 'assets/images/blog_3.png',
         'content': '''
 Exceptional customer service is the quickest path to top-tier driver status and premium trip allocations on Cabi.
 
@@ -150,6 +225,7 @@ Key Practices for 5-Star Trips:
         'title': 'Community Guidelines & Safety Update',
         'readTime': '2 min read',
         'category': 'Safety & Policy',
+        'image': 'assets/images/blog_1.png',
         'content': '''
 Cabi maintains a zero-tolerance policy towards harassment, discrimination, or unsafe vehicle operation.
 

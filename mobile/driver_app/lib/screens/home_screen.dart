@@ -21,6 +21,7 @@ import '../providers/providers.dart';
 import '../services/audio_notification_service.dart';
 import '../services/floating_bubble_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -521,6 +522,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     }
   }
 
+  void _triggerSimulatedRideRequest() {
+    AudioNotificationService.instance.play('ride_request');
+    setState(() {
+      _isOnline = true;
+    });
+
+    final mockRequest = {
+      'rideId': 'sim-trip-${DateTime.now().millisecondsSinceEpoch}',
+      'tripCode': 'CABI-982',
+      'passengerName': 'Sarah Jenkins',
+      'pickupAddress': 'Westlands Commercial Centre, Nairobi',
+      'destination': 'KICC, Harambee Avenue, Nairobi',
+      'dropoffAddress': 'KICC, Harambee Avenue, Nairobi',
+      'fare': 350.0,
+      'amount': 350.0,
+      'estimatedFare': 350.0,
+      'distanceKm': 4.2,
+      'vehicleType': 'EXECUTIVE',
+      'serviceCategory': 'EXECUTIVE',
+      'paymentMethod': 'CASH',
+      'isExtendedPickup': false,
+      'passenger': {
+        'fullName': 'Sarah Jenkins',
+        'nickname': 'Sarah',
+        'rating': 4.95,
+        'passportPhotoUrl': 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150',
+      },
+    };
+
+    legacy_provider.Provider.of<RideRequestProvider>(context, listen: false)
+        .setRideRequest(mockRequest);
+  }
+
   Future<void> _showFaceVerificationModal() async {
     final authState = ref.read(authProvider);
     final driverId = (authState is Authenticated) ? authState.userId : 'unknown';
@@ -868,37 +902,63 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: (isDark ? AppTheme.surfaceContainer : Colors.white).withValues(alpha: 0.92),
+                color: (isDark ? AppTheme.surfaceContainer : Colors.white).withValues(alpha: 0.94),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.4) : AppTheme.porcelainOutline,
+                  color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.35) : AppTheme.porcelainOutline,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    width: 8,
+                    height: 8,
                     decoration: BoxDecoration(
-                      gradient: AppTheme.goldGradient,
-                      borderRadius: BorderRadius.circular(6),
+                      color: _isOnline ? const Color(0xFF10B981) : const Color(0xFF9E9E9E),
+                      shape: BoxShape.circle,
+                      boxShadow: _isOnline
+                          ? [
+                              BoxShadow(
+                                color: const Color(0xFF10B981).withValues(alpha: 0.6),
+                                blurRadius: 6,
+                                spreadRadius: 1,
+                              ),
+                            ]
+                          : null,
                     ),
-                    child: Text(
-                      'SOVEREIGN',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF241A00),
-                        fontSize: 9,
-                        fontWeight: FontWeight.w800,
-                      ),
+                  ),
+                  const SizedBox(width: 7),
+                  Text(
+                    _isOnline ? 'ONLINE' : 'STANDBY',
+                    style: GoogleFonts.inter(
+                      color: _isOnline ? const Color(0xFF10B981) : (isDark ? Colors.white70 : AppTheme.porcelainTextSecondary),
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.8,
                     ),
                   ),
                   const SizedBox(width: 6),
+                  Container(
+                    width: 1,
+                    height: 10,
+                    color: isDark ? Colors.white24 : Colors.black12,
+                  ),
+                  const SizedBox(width: 6),
                   Text(
-                    'GPS High • 4G+',
+                    '2NK SACCO',
                     style: GoogleFonts.inter(
-                      color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
-                      fontSize: 10.5,
+                      color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
+                      fontSize: 9.5,
                       fontWeight: FontWeight.w700,
+                      letterSpacing: 0.4,
                     ),
                   ),
                 ],
@@ -906,11 +966,98 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
           ),
 
+          // Top-Most Right: User Avatar & "Hi, {username}"
           Positioned(
             top: MediaQuery.of(context).padding.top + 12,
             right: 16,
-            child: Row(
+            child: Consumer(
+              builder: (context, ref, _) {
+                final authState = ref.watch(authProvider);
+                final user = (authState is Authenticated) ? authState.user : null;
+                final rawName = (user?['preferredPublicName'] ?? user?['nickname'] ?? user?['firstName'] ?? user?['name'] ?? 'Driver').toString();
+                final username = rawName.trim().isNotEmpty ? rawName.trim().split(' ').first : 'Driver';
+                final profilePic = (user?['profilePicture'] ?? user?['avatarUrl'] ?? user?['avatar'])?.toString() ??
+                    'https://i.pravatar.cc/150?u=${user?['id'] ?? 'driver'}';
+
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(10, 4, 4, 4),
+                    decoration: BoxDecoration(
+                      color: (isDark ? AppTheme.surfaceContainer : Colors.white).withValues(alpha: 0.94),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.35) : AppTheme.porcelainOutline,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Hi, $username',
+                          style: GoogleFonts.inter(
+                            color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: _isOnline ? const Color(0xFF10B981) : (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: ClipOval(
+                            child: Image.network(
+                              profilePic,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  username.isNotEmpty ? username[0].toUpperCase() : 'D',
+                                  style: TextStyle(
+                                    color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // Main Map Right-Hand Side Options (Vertical Dock)
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 54,
+            right: 16,
+            child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 _MapButton(
                   icon: isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
@@ -918,16 +1065,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   tooltip: isDark ? 'Switch to Lustre Platinum (Light)' : 'Switch to Obsidian Gold (Dark)',
                   onTap: () => ref.read(themeProvider.notifier).toggleTheme(),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(height: 7),
                 _MapButton(
                   icon: Icons.layers_outlined,
                   tooltip: 'Change Map Provider',
                   onTap: () => _showMapSelectionSheet(context, mapType),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(height: 7),
                 _MapButton(
-                  icon: Icons.local_fire_department,
-                  iconColor: _showDemandHotspots ? const Color(0xFFFF5722) : (isDark ? Colors.white54 : AppTheme.porcelainTextSecondary),
+                  icon: Icons.my_location,
+                  tooltip: 'Recenter GPS',
+                  onTap: () {
+                    _mapController?.animateCamera(
+                      _driverLocation,
+                      zoom: _calculateZoomForRadius(_tripRadiusKm),
+                    );
+                  },
+                ),
+                const SizedBox(height: 7),
+                // Right-hand shift options: simple intuitive icons
+                _MapButton(
+                  icon: Icons.radar_rounded,
+                  iconColor: _isRadiusSliderOpen
+                      ? AppTheme.primaryColor
+                      : (isDark ? Colors.white70 : Colors.black87),
+                  badgeText: '${_tripRadiusKm.toStringAsFixed(1)}k',
+                  tooltip: 'Pick-up Radius (${_tripRadiusKm.toStringAsFixed(1)} km)',
+                  onTap: () {
+                    setState(() {
+                      _isRadiusSliderOpen = !_isRadiusSliderOpen;
+                    });
+                  },
+                ),
+                const SizedBox(height: 7),
+                _MapButton(
+                  icon: Icons.local_fire_department_rounded,
+                  iconColor: _showDemandHotspots
+                      ? const Color(0xFFFF5722)
+                      : (isDark ? Colors.white54 : AppTheme.porcelainTextSecondary),
                   tooltip: _showDemandHotspots ? 'Demand Hotspots Active' : 'Demand Hotspots Off',
                   onTap: () {
                     setState(() {
@@ -943,14 +1118,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     );
                   },
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(height: 7),
                 _MapButton(
                   icon: Icons.queue_play_next_rounded,
-                  iconColor: _allowBackToBack ? const Color(0xFF10B981) : (isDark ? Colors.white54 : AppTheme.porcelainTextSecondary),
+                  iconColor: _allowBackToBack
+                      ? const Color(0xFF10B981)
+                      : (isDark ? Colors.white54 : AppTheme.porcelainTextSecondary),
                   tooltip: _allowBackToBack ? 'Back-to-Back Trips: ON' : 'Back-to-Back Trips: OFF',
                   onTap: _toggleBackToBack,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(height: 7),
                 _MapButton(
                   icon: Icons.alt_route_rounded,
                   iconColor: (_isDestinationModeActive || _excludedZones.isNotEmpty)
@@ -959,28 +1136,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   tooltip: 'Route Preferences (Destination & Avoid Zones)',
                   onTap: () => _showRoutePreferencesSheet(context),
                 ),
-                const SizedBox(width: 8),
-                _MapButton(
-                  icon: _isFullScreenMap ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
-                  iconColor: _isFullScreenMap ? (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze) : (isDark ? Colors.white54 : AppTheme.porcelainTextSecondary),
-                  tooltip: _isFullScreenMap ? 'Exit Full Screen' : 'Full Screen Map',
-                  onTap: () {
-                    setState(() {
-                      _isFullScreenMap = !_isFullScreenMap;
-                    });
-                  },
-                ),
-                const SizedBox(width: 8),
-                _MapButton(
-                  icon: Icons.my_location,
-                  tooltip: 'Recenter',
-                  onTap: () {
-                    _mapController?.animateCamera(
-                      _driverLocation,
-                      zoom: _calculateZoomForRadius(_tripRadiusKm),
-                    );
-                  },
-                ),
+                const SizedBox(height: 10),
+                const SosButton(size: 42),
               ],
             ),
           ),
@@ -1024,23 +1181,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
             ),
 
-          // Mid-Top Right Corner: Emergency SOS Button
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 70,
-            right: 16,
-            child: const SosButton(size: 46),
-          ),
-
           if (_isFullScreenMap)
             _buildFullScreenMapOverlay(context, theme, isDark)
           else
-            Positioned(
+          Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(
               padding: EdgeInsets.fromLTRB(
-                  24, 24, 24, MediaQuery.of(context).padding.bottom + 24),
+                  20, 16, 20, MediaQuery.of(context).padding.bottom + 16),
               decoration: BoxDecoration(
                 color: theme.scaffoldBackgroundColor,
                 borderRadius:
@@ -1056,414 +1206,288 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Drag Handle
                   Container(
-                    width: 40,
+                    width: 38,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withValues(alpha: 0.1) : AppTheme.porcelainOutline,
+                      color: isDark ? Colors.white.withValues(alpha: 0.18) : AppTheme.porcelainOutline,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                   const SizedBox(height: 12),
 
-                  // Stitch Today's Revenue & Shift Goal Card
-                  Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isDark ? AppTheme.surfaceContainer : Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.35) : AppTheme.porcelainOutline,
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "TODAY'S REVENUE",
-                              style: GoogleFonts.inter(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.8,
-                                color: isDark ? AppTheme.warmStone : AppTheme.porcelainTextSecondary,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: AppTheme.primaryColor.withValues(alpha: 0.16),
-                                borderRadius: BorderRadius.circular(999),
-                              ),
-                              child: Text(
-                                _isOnline ? 'Live' : 'Standby',
-                                style: GoogleFonts.inter(
-                                  fontSize: 9.5,
-                                  fontWeight: FontWeight.w800,
-                                  color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Builder(
-                          builder: (context) {
-                            final authUser = ref.watch(authProvider).user;
-                            final driverProf = authUser?['driverProfile'] as Map<String, dynamic>?;
-                            final rawToday = double.tryParse(
-                                  (driverProf?['todayEarnings'] ??
-                                          authUser?['todayEarnings'] ??
-                                          0)
-                                      .toString(),
-                                ) ??
-                                0.0;
-                            final dailyGoal = double.tryParse(
-                                  (driverProf?['dailyGoal'] ?? 10000).toString(),
-                                ) ??
-                                10000.0;
-                            final progress = dailyGoal > 0
-                                ? (rawToday / dailyGoal).clamp(0.0, 1.0)
-                                : 0.0;
-                            final formattedToday = rawToday.toStringAsFixed(2);
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'KES $formattedToday',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w800,
-                                        color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Goal: KES ${dailyGoal.toStringAsFixed(0)}',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 10.5,
-                                        fontWeight: FontWeight.w700,
-                                        color: isDark ? AppTheme.warmStone : AppTheme.porcelainTextSecondary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(999),
-                                  child: LinearProgressIndicator(
-                                    value: progress,
-                                    minHeight: 5,
-                                    backgroundColor: isDark ? Colors.white10 : Colors.black12,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-
+                  // Chauffeur Vehicle & Trust Dignity Banner (Zero Earnings)
                   Consumer(
                     builder: (context, ref, child) {
                       final authState = ref.watch(authProvider);
-                      final driverProfile = authState.user?['driverProfile'];
-                      final vehicle = driverProfile?['vehicles'];
-                      
-                      if (vehicle == null) return const SizedBox.shrink();
-
-                      final service = _getServiceDetails(vehicle['type']);
-                      
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 14),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.04),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.3) : Colors.black12,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.directions_car, color: AppTheme.primaryColor, size: 16),
-                            const SizedBox(width: 8),
-                            Text(
-                              "${vehicle['make']} ${vehicle['model']} • ${vehicle['plateNumber']}",
-                              style: GoogleFonts.inter(
-                                color: theme.textTheme.bodyLarge?.color?.withValues(alpha: 0.9),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: AppTheme.primaryColor.withValues(alpha: 0.18),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.45)),
-                              ),
-                              child: Text(
-                                service['badge'] as String,
-                                style: GoogleFonts.inter(
-                                  color: AppTheme.primaryColor,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-
-                  Text(
-                    _isOnline ? 'You are online' : 'Ready to drive?',
-                    style: GoogleFonts.inter(
-                      color: theme.textTheme.bodyLarge?.color,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Consumer(
-                    builder: (context, ref, child) {
-                      final authState = ref.watch(authProvider);
-                      final driverProfile = authState.user?['driverProfile'];
+                      final user = (authState is Authenticated) ? authState.user : null;
+                      final driverProfile = user?['driverProfile'];
                       final vehicle = driverProfile?['vehicles'];
                       final service = _getServiceDetails(vehicle?['type']);
+                      final rating = (user?['rating'] ?? 4.95).toDouble();
+                      final trips = (user?['tripsCount'] ?? 2410).toInt();
 
-                      return Text(
-                        _isOnline
-                            ? 'Looking for passenger trips near you (${service['name']})...'
-                            : 'Go online to start receiving ride requests in your area.',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(
-                          color: theme.textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary,
-                          fontSize: 13,
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 24),
+                      final vehicleTitle = vehicle != null
+                          ? "${vehicle['make']} ${vehicle['model']} • ${vehicle['plateNumber']}"
+                          : "Toyota Axio • KDA 892J";
 
-                  if (_isOnline) ...[
-                    Consumer(
-                      builder: (context, ref, child) {
-                        final authState = ref.watch(authProvider);
-                        final user = (authState is Authenticated) ? authState.user : null;
-                        
-                        final rating = user?['rating']?.toDouble() ?? 5.0;
-                        final trips = user?['tripsCount']?.toInt() ?? 0;
-                        
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const _StatCard(label: 'Today', value: 'KES 0'),
-                            _StatCard(label: 'Trips', value: trips.toString()),
-                            // Distance number between Trips and Rating, clickable to toggle slider
-                            _StatCard(
-                              label: 'Radius',
-                              value: '${_tripRadiusKm.toStringAsFixed(1)} km',
-                              valueColor: _isRadiusSliderOpen ? AppTheme.primaryLight : AppTheme.primaryColor,
-                              onTap: () {
-                                setState(() {
-                                  _isRadiusSliderOpen = !_isRadiusSliderOpen;
-                                });
-                              },
-                            ),
-                            _StatCard(label: 'Rating', value: '${rating.toStringAsFixed(1)} ★'),
-                          ],
-                        );
-                      },
-                    ),
-
-                    // Active Pick-up Radius Controller (Only shown when expanded by driver)
-                    if (_isRadiusSliderOpen) ...[
-                      const SizedBox(height: 14),
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF1A1916) : AppTheme.porcelainSurfaceContainer,
+                          color: isDark ? Colors.white.withValues(alpha: 0.05) : AppTheme.porcelainSurfaceContainer,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.25) : AppTheme.porcelainOutline,
                           ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Row(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(Icons.radar_rounded, color: AppTheme.primaryColor, size: 16),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Active Pick-up Radius',
-                                      style: GoogleFonts.inter(
-                                        color: theme.textTheme.bodyLarge?.color,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.primaryColor.withValues(alpha: 0.15),
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.35)),
-                                      ),
-                                      child: Text(
-                                        '${_tripRadiusKm.toStringAsFixed(1)} km (Max 5 km)',
-                                        style: GoogleFonts.inter(
-                                          color: AppTheme.primaryColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 11.5,
+                            Container(
+                              width: 38,
+                              height: 38,
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.35)),
+                              ),
+                              child: const Icon(Icons.directions_car_rounded, color: AppTheme.primaryColor, size: 20),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          vehicleTitle,
+                                          style: GoogleFonts.inter(
+                                            color: theme.textTheme.bodyLarge?.color,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    // Close button to collapse slider
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          _isRadiusSliderOpen = false;
-                                        });
-                                      },
-                                      borderRadius: BorderRadius.circular(16),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(4),
+                                      const SizedBox(width: 6),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                         decoration: BoxDecoration(
                                           color: AppTheme.primaryColor.withValues(alpha: 0.15),
-                                          shape: BoxShape.circle,
+                                          borderRadius: BorderRadius.circular(6),
+                                          border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.4)),
                                         ),
-                                        child: const Icon(
-                                          Icons.close_rounded,
-                                          size: 16,
-                                          color: AppTheme.primaryColor,
+                                        child: Text(
+                                          service['badge'] as String,
+                                          style: GoogleFonts.inter(
+                                            color: AppTheme.primaryColor,
+                                            fontSize: 9.5,
+                                            fontWeight: FontWeight.w800,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            SliderTheme(
-                              data: SliderTheme.of(context).copyWith(
-                                activeTrackColor: AppTheme.primaryColor,
-                                inactiveTrackColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
-                                thumbColor: AppTheme.primaryColor,
-                                overlayColor: AppTheme.primaryColor.withValues(alpha: 0.2),
-                                trackHeight: 3.5,
-                                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                              ),
-                              child: Slider(
-                                value: _tripRadiusKm,
-                                min: 1.0,
-                                max: 5.0,
-                                divisions: 8,
-                                onChanged: (val) {
-                                  _onRadiusChanged(val);
-                                },
+                                    ],
+                                  ),
+                                  const SizedBox(height: 3),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.star_rounded, color: Color(0xFFD4AF37), size: 14),
+                                      const SizedBox(width: 3),
+                                      Text(
+                                        rating.toStringAsFixed(2),
+                                        style: GoogleFonts.inter(
+                                          color: theme.textTheme.bodyMedium?.color,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        "•",
+                                        style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5)),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      const Icon(Icons.verified_outlined, color: Color(0xFF10B981), size: 13),
+                                      const SizedBox(width: 3),
+                                      Text(
+                                        "$trips Trips",
+                                        style: GoogleFonts.inter(
+                                          color: theme.textTheme.bodyMedium?.color,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ] else ...[
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1A1916) : AppTheme.porcelainSurfaceContainer,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.2) : AppTheme.porcelainOutline,
-                        ),
-                      ),
-                      child: Column(
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Dispatch Console Status Headline
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                children: [
-                                  const Icon(Icons.radar_rounded, color: AppTheme.primaryColor, size: 18),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'Trip Radius Filter',
-                                    style: GoogleFonts.inter(
-                                      color: theme.textTheme.bodyLarge?.color,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                width: 8,
+                                height: 8,
                                 decoration: BoxDecoration(
-                                  color: AppTheme.primaryColor.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.35)),
+                                  shape: BoxShape.circle,
+                                  color: _isOnline ? const Color(0xFF10B981) : const Color(0xFF9E9E9E),
+                                  boxShadow: _isOnline
+                                      ? [
+                                          BoxShadow(
+                                            color: const Color(0xFF10B981).withValues(alpha: 0.6),
+                                            blurRadius: 6,
+                                            spreadRadius: 1,
+                                          ),
+                                        ]
+                                      : null,
                                 ),
-                                child: Text(
-                                  '${_tripRadiusKm.toStringAsFixed(1)} km (Max 5 km)',
-                                  style: GoogleFonts.inter(
-                                    color: AppTheme.primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12.5,
-                                  ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _isOnline ? 'Dispatch Active • Available' : 'Shift Inactive',
+                                style: GoogleFonts.inter(
+                                  color: theme.textTheme.bodyLarge?.color,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 2),
+                          Text(
+                            _isOnline
+                                ? 'Scanning ${_tripRadiusKm.toStringAsFixed(1)} km radius for trips'
+                                : 'Slide below to start receiving passenger requests',
+                            style: GoogleFonts.inter(
+                              color: theme.textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _isFullScreenMap = !_isFullScreenMap;
+                          });
+                        },
+                        icon: Icon(
+                          _isFullScreenMap ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
+                          color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
+                        ),
+                        tooltip: 'Expand Map',
+                      ),
+                    ],
+                  ),
+
+                  // Simulation Quick Action Bar
+                  Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    width: double.infinity,
+                    height: 44,
+                    child: ElevatedButton.icon(
+                      onPressed: _triggerSimulatedRideRequest,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isDark ? AppTheme.primaryColor : const Color(0xFFD4AF37),
+                        foregroundColor: const Color(0xFF1E1602),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      icon: const Icon(Icons.flash_on_rounded, size: 20, color: Color(0xFF1E1602)),
+                      label: Text(
+                        "Simulate Incoming Ride Dispatch",
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.4,
+                          color: const Color(0xFF1E1602),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Expandable Radius Range Controller
+                  if (_isRadiusSliderOpen) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF1A1916) : AppTheme.porcelainSurfaceContainer,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: isDark ? AppTheme.primaryColor.withValues(alpha: 0.25) : AppTheme.porcelainOutline,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Dispatch Radius Range',
+                                style: GoogleFonts.inter(
+                                  color: theme.textTheme.bodyMedium?.color,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                '${_tripRadiusKm.toStringAsFixed(1)} km (Max 5.0 km)',
+                                style: GoogleFonts.inter(
+                                  color: AppTheme.primaryColor,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
                           SliderTheme(
                             data: SliderTheme.of(context).copyWith(
                               activeTrackColor: AppTheme.primaryColor,
                               inactiveTrackColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
                               thumbColor: AppTheme.primaryColor,
                               overlayColor: AppTheme.primaryColor.withValues(alpha: 0.2),
-                              trackHeight: 4.0,
+                              trackHeight: 3.5,
+                              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
                             ),
                             child: Slider(
                               value: _tripRadiusKm,
                               min: 1.0,
-                              max: 5.0, 
-                              divisions: 8, 
+                              max: 5.0,
+                              divisions: 8,
                               onChanged: _onRadiusChanged,
                             ),
                           ),
                         ],
                       ),
                     ),
+                  ],
 
-                    // ──── Favourite Places Quick-Access ────
+                  if (!_isOnline) ...[
+                    const SizedBox(height: 12),
                     _buildFavouritePlacesRow(isDark, theme),
                   ],
+
+                  const SizedBox(height: 16),
 
                   // Swipeable Luxury Slider Button
                   SwipeableOnlineButton(
@@ -1782,7 +1806,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 backgroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                 foregroundColor: isDark ? Colors.black : Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ],
@@ -1907,7 +1931,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                     foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
               ),
@@ -2160,7 +2184,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           backgroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                           foregroundColor: isDark ? Colors.black : Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         child: const Text('Save Route Preferences', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                       ),
@@ -2181,12 +2205,14 @@ class _MapButton extends StatelessWidget {
   final VoidCallback onTap;
   final Color? iconColor;
   final String? tooltip;
+  final String? badgeText;
 
   const _MapButton({
     required this.icon,
     required this.onTap,
     this.iconColor,
     this.tooltip,
+    this.badgeText,
   });
 
   @override
@@ -2194,26 +2220,66 @@ class _MapButton extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     Widget btn = GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: isDark ? Colors.black.withValues(alpha: 0.8) : AppTheme.porcelainSurface.withValues(alpha: 0.95),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: iconColor != null
-                ? iconColor!.withValues(alpha: 0.5)
-                : (isDark ? Colors.white.withValues(alpha: 0.1) : AppTheme.porcelainOutline),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: isDark
-                  ? (iconColor ?? Colors.black).withValues(alpha: 0.35)
-                  : Colors.black.withValues(alpha: 0.08),
-              blurRadius: 8,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          ClipOval(
+            child: Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1C1A17) : Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: iconColor != null
+                      ? iconColor!.withValues(alpha: 0.5)
+                      : (isDark ? Colors.white.withValues(alpha: 0.14) : AppTheme.porcelainOutline),
+                  width: 1.2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Icon(
+                  icon,
+                  color: iconColor ?? (isDark ? Colors.white70 : AppTheme.porcelainTextSecondary),
+                  size: 19,
+                ),
+              ),
             ),
-          ],
-        ),
-        child: Icon(icon, color: iconColor ?? (isDark ? Colors.white70 : AppTheme.porcelainTextSecondary), size: 20),
+          ),
+          if (badgeText != null)
+            Positioned(
+              top: -3,
+              right: -3,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1.5),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+                child: Text(
+                  badgeText!,
+                  style: const TextStyle(
+                    color: Color(0xFF1E1602),
+                    fontSize: 8.5,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
 
@@ -2221,57 +2287,6 @@ class _MapButton extends StatelessWidget {
       return Tooltip(message: tooltip!, child: btn);
     }
     return btn;
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final String label;
-  final String value;
-  final VoidCallback? onTap;
-  final Color? valueColor;
-
-  const _StatCard({
-    required this.label,
-    required this.value,
-    this.onTap,
-    this.valueColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    Widget content = Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          value,
-          style: GoogleFonts.inter(
-            color: valueColor ?? AppTheme.primaryColor,
-            fontWeight: FontWeight.w700,
-            fontSize: 15,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            color: Theme.of(context).textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary,
-            fontSize: 11,
-          ),
-        ),
-      ],
-    );
-
-    if (onTap != null) {
-      return InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-          child: content,
-        ),
-      );
-    }
-    return content;
   }
 }
 

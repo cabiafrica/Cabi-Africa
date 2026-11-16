@@ -29,7 +29,7 @@ class RadarAnimation extends StatefulWidget {
     this.primaryColor = const Color(0xFFD4AF37),
     this.secondaryColor = const Color(0xFFF3E5AB),
     this.label,
-    this.showTag = true,
+    this.showTag = false,
   });
 
   @override
@@ -207,70 +207,86 @@ class RadarPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
 
-    // Outer boundary ring representing the exact driver pick-up perimeter
-    final perimeterPaint = Paint()
-      ..color = color.withValues(alpha: 0.5)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-    canvas.drawCircle(center, radius, perimeterPaint);
-
-    // Subtle golden fill inside pick-up zone
-    final zoneFillPaint = Paint()
-      ..color = color.withValues(alpha: 0.04)
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(center, radius, zoneFillPaint);
-
-    // Concentric intermediate range rings (e.g. 1/3, 2/3)
-    final ringPaint = Paint()
-      ..color = color.withValues(alpha: 0.15)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
-    for (int i = 1; i <= 2; i++) {
-      canvas.drawCircle(center, radius * (i / 3), ringPaint);
-    }
-
-    // Expanding active radar wave
-    final movingPaint = Paint()
-      ..color = color.withValues(alpha: 0.8 * (1.0 - progress))
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-    canvas.drawCircle(center, radius * progress, movingPaint);
-
-    // Radar scanning sweep
-    final sweepShader = SweepGradient(
-      center: Alignment.center,
-      startAngle: 0.0,
-      endAngle: math.pi * 2,
+    // Soft radial fade-out with NO outer border - smoothly dissolves into the map
+    final zoneFadeShader = RadialGradient(
       colors: [
-        color.withValues(alpha: 0.0),
-        color.withValues(alpha: 0.35),
+        color.withValues(alpha: 0.16),
+        color.withValues(alpha: 0.09),
+        color.withValues(alpha: 0.03),
         color.withValues(alpha: 0.0),
       ],
-      stops: const [0.0, 0.5, 1.0],
-      transform: GradientRotation(progress * math.pi * 2),
+      stops: const [0.0, 0.40, 0.75, 1.0],
     ).createShader(Rect.fromCircle(center: center, radius: radius));
 
     canvas.drawCircle(
       center,
       radius,
       Paint()
+        ..shader = zoneFadeShader
+        ..style = PaintingStyle.fill,
+    );
+
+    // Subtle inner concentric range rings (fade towards outer)
+    final ringPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+    canvas.drawCircle(
+        center, radius * 0.33, ringPaint..color = color.withValues(alpha: 0.12));
+    canvas.drawCircle(
+        center, radius * 0.66, ringPaint..color = color.withValues(alpha: 0.06));
+
+    // Expanding active radar wave that naturally dissolves as it reaches the edge
+    final fadeFactor = math.pow(1.0 - progress, 1.8).toDouble();
+    final movingPaint = Paint()
+      ..color = color.withValues(alpha: 0.60 * fadeFactor)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8;
+    canvas.drawCircle(center, radius * progress, movingPaint);
+
+    // Second softer expanding wave for smooth continuity
+    final secondProgress = (progress + 0.5) % 1.0;
+    final secondFade = math.pow(1.0 - secondProgress, 1.8).toDouble();
+    final secondMovingPaint = Paint()
+      ..color = color.withValues(alpha: 0.30 * secondFade)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    canvas.drawCircle(center, radius * secondProgress, secondMovingPaint);
+
+    // Radar scanning sweep (contained softly within fading zone)
+    final sweepShader = SweepGradient(
+      center: Alignment.center,
+      startAngle: 0.0,
+      endAngle: math.pi * 2,
+      colors: [
+        color.withValues(alpha: 0.0),
+        color.withValues(alpha: 0.22),
+        color.withValues(alpha: 0.0),
+      ],
+      stops: const [0.0, 0.45, 1.0],
+      transform: GradientRotation(progress * math.pi * 2),
+    ).createShader(Rect.fromCircle(center: center, radius: radius));
+
+    canvas.drawCircle(
+      center,
+      radius * 0.88,
+      Paint()
         ..shader = sweepShader
         ..style = PaintingStyle.fill,
     );
 
-    // Radar dynamic pings
+    // Radar dynamic pings that gently blink
     final pingPaint = Paint()..style = PaintingStyle.fill;
     for (var ping in pings) {
       final op = ping.opacity;
       if (op > 0) {
         final point = Offset(
-          center.dx + ping.position.dx * radius,
-          center.dy + ping.position.dy * radius,
+          center.dx + ping.position.dx * radius * 0.85,
+          center.dy + ping.position.dy * radius * 0.85,
         );
         canvas.drawCircle(
-            point, 4 * op + 2, pingPaint..color = color.withValues(alpha: op));
+            point, 4 * op + 2, pingPaint..color = color.withValues(alpha: op * 0.8));
         canvas.drawCircle(
-            point, 2, pingPaint..color = Colors.white.withValues(alpha: op));
+            point, 2, pingPaint..color = Colors.white.withValues(alpha: op * 0.9));
       }
     }
   }

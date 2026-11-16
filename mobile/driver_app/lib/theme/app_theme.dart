@@ -47,7 +47,7 @@ class AppTheme {
   static const Color lightSurface = Colors.white;
   static const Color lightTextPrimary = Color(0xFF1C1B1B);
   static const Color lightTextSecondary = Color(0xFF4D4635);
-  static const Color lightDivider = Color(0xFFD0C5AF);
+  static const Color lightDivider = Color(0x0F1C1B1B); // Ultra-soft hairline divider
 
   // Dark Mode Colors (Lustre Platinum Gold Obsidian)
   static const Color darkBackground = Color(0xFF131313); // Deep Obsidian Canvas
@@ -61,7 +61,7 @@ class AppTheme {
   static const Color porcelainSurface = Colors.white;
   static const Color porcelainSurfaceContainer = Color(0xFFF6F3F2);
   static const Color porcelainSurfaceHigh = Color(0xFFEBE7E7);
-  static const Color porcelainOutline = Color(0xFFD0C5AF);
+  static const Color porcelainOutline = Color(0x141C1B1B); // Subtle hairline matching Stitch Lustre Platinum
   static const Color porcelainTextPrimary = Color(0xFF1C1B1B);
   static const Color porcelainTextSecondary = Color(0xFF4D4635);
   static const Color aurumBronze = Color(0xFF735C00);
@@ -93,7 +93,7 @@ class AppTheme {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Color(0xFFE5E7EB), width: 1),
+        side: const BorderSide(color: porcelainOutline, width: 1),
       ),
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
     ),

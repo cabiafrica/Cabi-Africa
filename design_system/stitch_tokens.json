@@ -1,0 +1,74 @@
+{
+  "project_id": "5681992570744779348",
+  "design_system": "Lustre Platinum & Obsidian Imperial Dual-Theme",
+  "updated_at": "2026-11-16T05:00:00Z",
+  "themes": {
+    "lustre_platinum_light": {
+      "name": "Daytime Porcelain / Lustre Platinum",
+      "canvas": "#FCF9F8",
+      "surface": "#FFFFFF",
+      "surface_container": "#F6F3F2",
+      "surface_high": "#EBE7E7",
+      "hairline_outline": "rgba(28, 27, 27, 0.05)",
+      "hairline_outline_flutter": "0x141C1B1B",
+      "text_primary": "#1C1B1B",
+      "text_secondary": "#4D4635",
+      "aurum_bronze": "#735C00",
+      "royal_blue": "#0260C4",
+      "elevation_sm": "0 1px 3px rgba(0, 0, 0, 0.02)",
+      "elevation_md": "0 4px 14px rgba(0, 0, 0, 0.03)"
+    },
+    "obsidian_imperial_dark": {
+      "name": "Obsidian Imperial Gold",
+      "canvas": "#131313",
+      "surface": "#1C1B1B",
+      "surface_container": "#242323",
+      "surface_high": "#2C2B2B",
+      "hairline_outline": "rgba(255, 255, 255, 0.08)",
+      "hairline_outline_flutter": "0x1AFFFFFF",
+      "text_primary": "#E5E2E1",
+      "text_secondary": "#D0C5AF",
+      "executive_gold": "#D4AF37",
+      "gold_accent": "#F2CA50",
+      "elevation_sm": "0 2px 8px rgba(0, 0, 0, 0.4)",
+      "elevation_md": "0 8px 24px rgba(0, 0, 0, 0.6)"
+    }
+  },
+  "typography": {
+    "primary_font": "Inter",
+    "display_font": "Plus Jakarta Sans",
+    "scales": {
+      "display": {
+        "size": 28,
+        "weight": 800,
+        "letter_spacing": -0.8
+      },
+      "title_large": {
+        "size": 20,
+        "weight": 700,
+        "letter_spacing": -0.5
+      },
+      "title_medium": {
+        "size": 16,
+        "weight": 600,
+        "letter_spacing": -0.3
+      },
+      "body": {
+        "size": 14,
+        "weight": 400,
+        "letter_spacing": 0.0
+      },
+      "micro_telemetry": {
+        "size": 10.5,
+        "weight": 700,
+        "letter_spacing": 0.5
+      }
+    }
+  },
+  "shape": {
+    "corner_radius_card": 16,
+    "corner_radius_button": 12,
+    "corner_radius_chip": 8,
+    "hairline_width": 0.8
+  }
+}

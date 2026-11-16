@@ -55,34 +55,6 @@ class _RideHistoryScreenState extends ConsumerState<RideHistoryScreen> {
         backgroundColor: isDark ? AppTheme.surfaceDim : Colors.white,
         foregroundColor: isDark ? Colors.white : Colors.black87,
         iconTheme: IconThemeData(color: isDark ? AppTheme.primaryColor : Colors.black87),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: isDark ? AppTheme.surfaceBright : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? AppTheme.outlineGold.withValues(alpha: 0.3) : AppTheme.lightDivider,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.shield_outlined, color: AppTheme.primaryColor, size: 14),
-                const SizedBox(width: 4),
-                Text(
-                  'SACCO Insured',
-                  style: AppTheme.inter(
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? AppTheme.primaryLight : Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
       body: FutureBuilder<List<RideHistoryItem>>(
         future: _historyFuture,

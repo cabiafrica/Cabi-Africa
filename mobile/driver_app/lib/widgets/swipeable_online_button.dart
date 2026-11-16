@@ -114,53 +114,48 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
           height: _thumbHeight + (_padding * 2),
           width: double.infinity,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100),
+            borderRadius: BorderRadius.circular(16),
             gradient: isOnline
                 ? LinearGradient(
                     colors: isDark
-                        ? const [Color(0xFF221111), Color(0xFF160E0E)]
-                        : const [Color(0xFFFEE2E2), AppTheme.porcelainSurface],
+                        ? const [Color(0xFF0F1E16), Color(0xFF08150E)]
+                        : const [Color(0xFFECFDF5), Color(0xFFE1F9ED)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   )
                 : LinearGradient(
                     colors: isDark
-                        ? const [Color(0xFF211D14), Color(0xFF141310)]
-                        : const [AppTheme.porcelainSurfaceContainer, AppTheme.porcelainSurface],
+                        ? const [Color(0xFF1C1A17), Color(0xFF131210)]
+                        : const [Color(0xFFF7F5F0), Color(0xFFEFECE6)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
             border: Border.all(
               color: isOnline
-                  ? const Color(0xFFEF4444).withValues(alpha: isDark ? 0.45 : 0.6)
-                  : (isDark ? AppTheme.primaryColor.withValues(alpha: 0.4) : AppTheme.aurumBronze.withValues(alpha: 0.6)),
+                  ? const Color(0xFF10B981).withValues(alpha: isDark ? 0.5 : 0.6)
+                  : (isDark ? AppTheme.primaryColor.withValues(alpha: 0.35) : AppTheme.porcelainOutline),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
                 color: isOnline
-                    ? const Color(0xFFEF4444).withValues(alpha: 0.15)
-                    : (isDark ? AppTheme.primaryColor.withValues(alpha: 0.18) : AppTheme.aurumBronze.withValues(alpha: 0.15)),
-                blurRadius: 18,
+                    ? const Color(0xFF10B981).withValues(alpha: 0.16)
+                    : Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
+                blurRadius: 14,
                 spreadRadius: 1,
-                offset: const Offset(0, 4),
-              ),
-              BoxShadow(
-                color: isDark ? Colors.black.withValues(alpha: 0.6) : Colors.black.withValues(alpha: 0.06),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                offset: const Offset(0, 3),
               ),
             ],
           ),
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Shimmer / track indicator fill
+              // Track reveal fill during drag
               Positioned.fill(
                 child: Padding(
                   padding: const EdgeInsets.all(_padding),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(12),
                     child: Align(
                       alignment: isOnline ? Alignment.centerRight : Alignment.centerLeft,
                       child: Container(
@@ -170,11 +165,11 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
                             colors: isOnline
                                 ? [
                                     const Color(0xFFEF4444).withValues(alpha: 0.05),
-                                    const Color(0xFFEF4444).withValues(alpha: isDark ? 0.25 : 0.18),
+                                    const Color(0xFFEF4444).withValues(alpha: isDark ? 0.22 : 0.16),
                                   ]
                                 : [
-                                    (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: 0.05),
-                                    (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: isDark ? 0.25 : 0.2),
+                                    const Color(0xFF10B981).withValues(alpha: 0.05),
+                                    const Color(0xFF10B981).withValues(alpha: isDark ? 0.22 : 0.16),
                                   ],
                             begin: isOnline ? Alignment.centerRight : Alignment.centerLeft,
                             end: isOnline ? Alignment.centerLeft : Alignment.centerRight,
@@ -193,46 +188,66 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (!isOnline) ...[
-                      Icon(
-                        Icons.power_settings_new_rounded,
-                        color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
-                        size: 16,
+                      Container(
+                        width: 7,
+                        height: 7,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF10B981),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ] else ...[
+                      Container(
+                        width: 7,
+                        height: 7,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF10B981).withValues(alpha: 0.8),
+                              blurRadius: 6,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(width: 8),
                     ],
                     Text(
                       isLoading
                           ? "UPDATING STATUS..."
-                          : (isOnline ? "SLIDE TO GO OFFLINE" : "SLIDE TO GO ONLINE"),
+                          : (isOnline ? "DISPATCH ACTIVE • SLIDE TO PAUSE" : "SLIDE TO GO ONLINE"),
                       style: GoogleFonts.inter(
                         color: isOnline
-                            ? (isDark ? const Color(0xFFFCA5A5) : const Color(0xFFB91C1C))
-                            : (isDark ? AppTheme.primaryLight : AppTheme.aurumBronze),
+                            ? (isDark ? const Color(0xFF6EE7B7) : const Color(0xFF047857))
+                            : (isDark ? Colors.white : AppTheme.porcelainTextPrimary),
                         fontWeight: FontWeight.w800,
-                        fontSize: 13.5,
-                        letterSpacing: 1.4,
+                        fontSize: 12.5,
+                        letterSpacing: 1.2,
                       ),
                     ),
                     if (!isOnline) ...[
                       const SizedBox(width: 8),
                       Icon(
                         Icons.double_arrow_rounded,
-                        color: (isDark ? AppTheme.primaryColor : AppTheme.aurumBronze).withValues(alpha: 0.6),
+                        color: const Color(0xFF10B981).withValues(alpha: 0.7),
                         size: 16,
                       ),
                     ] else ...[
                       const SizedBox(width: 8),
                       Icon(
                         Icons.arrow_back_ios_new_rounded,
-                        color: const Color(0xFFEF4444).withValues(alpha: 0.6),
-                        size: 14,
+                        color: const Color(0xFFEF4444).withValues(alpha: 0.7),
+                        size: 13,
                       ),
                     ],
                   ],
                 ),
               ),
 
-              // Sliding Thumb
+              // Sliding Thumb (Green GO when offline, Red PAUSE when online)
               Positioned(
                 left: !isOnline ? _padding + _dragValue : null,
                 right: isOnline ? _padding + _dragValue : null,
@@ -245,25 +260,23 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
                     width: _thumbWidth,
                     height: _thumbHeight,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
+                      borderRadius: BorderRadius.circular(12),
                       gradient: isOnline
                           ? const LinearGradient(
                               colors: [Color(0xFFF87171), Color(0xFFDC2626), Color(0xFF991B1B)],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             )
-                          : LinearGradient(
-                              colors: isDark
-                                  ? const [Color(0xFFFDF0CD), Color(0xFFE5B84A), Color(0xFFB8860B)]
-                                  : const [Color(0xFFE2B755), AppTheme.aurumBronze, Color(0xFF705514)],
+                          : const LinearGradient(
+                              colors: [Color(0xFF34D399), Color(0xFF10B981), Color(0xFF047857)],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
                       boxShadow: [
                         BoxShadow(
                           color: isOnline
-                              ? const Color(0xFFEF4444).withValues(alpha: 0.4)
-                              : (isDark ? AppTheme.primaryColor.withValues(alpha: 0.45) : AppTheme.aurumBronze.withValues(alpha: 0.35)),
+                              ? const Color(0xFFDC2626).withValues(alpha: 0.4)
+                              : const Color(0xFF10B981).withValues(alpha: 0.4),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
@@ -276,12 +289,12 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
                     ),
                     child: Center(
                       child: isLoading
-                          ? SizedBox(
+                          ? const SizedBox(
                               width: 22,
                               height: 22,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2.5,
-                                color: isOnline ? Colors.white : (isDark ? Colors.black87 : Colors.white),
+                                color: Colors.white,
                               ),
                             )
                           : Row(
@@ -291,13 +304,13 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
                                   isOnline
                                       ? Icons.power_settings_new_rounded
                                       : Icons.chevron_right_rounded,
-                                  color: isOnline ? Colors.white : (isDark ? const Color(0xFF1E1602) : Colors.white),
+                                  color: Colors.white,
                                   size: isOnline ? 24 : 28,
                                 ),
                                 if (!isOnline)
-                                  Icon(
+                                  const Icon(
                                     Icons.chevron_right_rounded,
-                                    color: isDark ? const Color(0xFF1E1602) : Colors.white,
+                                    color: Colors.white,
                                     size: 20,
                                   ),
                               ],

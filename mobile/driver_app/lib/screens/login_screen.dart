@@ -540,6 +540,50 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           child: const Text('CREATE ACCOUNT', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2, fontSize: 12)),
                         ),
 
+                        const SizedBox(height: 12),
+                        TextButton.icon(
+                          onPressed: () async {
+                            final demoUser = {
+                              'id': 'drv-001',
+                              'fullName': 'James Mwangi',
+                              'firstName': 'James',
+                              'lastName': 'Mwangi',
+                              'phone': '+254 712 345 678',
+                              'email': 'james.mwangi@cabi.africa',
+                              'role': 'DRIVER',
+                              'driverProfile': {
+                                'id': 'dp-001',
+                                'licenseNumber': 'DL-8921-KE',
+                                'sacco': '2NK SACCO',
+                                'isOnline': true,
+                                'rating': 4.95,
+                                'completedTrips': 2410,
+                                'vehicle': {
+                                  'model': 'Toyota Axio',
+                                  'plate': 'KDA 892J',
+                                  'color': 'Silver',
+                                }
+                              }
+                            };
+                            await ref.read(authProvider.notifier).setSession('demo-jwt-token', demoUser);
+                            if (mounted) {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(builder: (_) => const MainShell()),
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.flash_on_rounded, color: AppTheme.primaryColor, size: 18),
+                          label: const Text(
+                            'EXPLORE AS DEMO CHAUFFEUR',
+                            style: TextStyle(
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.2,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+
                         if (_errorMessage != null) ...[
                           const SizedBox(height: 24),
                           Container(

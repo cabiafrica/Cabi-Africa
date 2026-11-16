@@ -11,9 +11,9 @@ class SwipeableActionButton extends StatefulWidget {
     super.key,
     required this.label,
     required this.onAction,
-    this.color = Colors.red,
+    this.color = const Color(0xFFEF4444),
     this.iconColor = Colors.white,
-    this.icon = Icons.navigate_next,
+    this.icon = Icons.flag_rounded,
   });
 
   @override
@@ -25,7 +25,7 @@ class _SwipeableActionButtonState extends State<SwipeableActionButton>
   late AnimationController _controller;
   double _dragValue = 0.0;
   double _maxWidth = 0.0;
-  static const double _thumbSize = 56.0;
+  static const double _thumbSize = 40.0;
   static const double _padding = 4.0;
   bool _isCompleted = false;
 
@@ -80,29 +80,64 @@ class _SwipeableActionButtonState extends State<SwipeableActionButton>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final chassisBg = isDark ? const Color(0xFF1B1A1A) : const Color(0xFFF7F5F0);
+    final borderOutline = isDark
+        ? widget.color.withValues(alpha: 0.28)
+        : widget.color.withValues(alpha: 0.4);
+
     return LayoutBuilder(
       builder: (context, constraints) {
         _maxWidth = constraints.maxWidth;
         return Container(
-          height: _thumbSize + (_padding * 2),
+          height: _thumbSize + (_padding * 2), // 48.0 px
           decoration: BoxDecoration(
-            color: widget.color.withValues(alpha: 0.2), // Light background
-            borderRadius: BorderRadius.circular(100),
+            color: chassisBg,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: borderOutline, width: 1.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Stack(
+            alignment: Alignment.center,
             children: [
-              // Label
-              Center(
-                child: Text(
-                  widget.label.toUpperCase(),
-                  style: TextStyle(
-                    color: widget.color,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
+              // Label with trailing hint arrows
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 36, right: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          widget.label.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: widget.color,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 11.5,
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.keyboard_double_arrow_right_rounded,
+                        size: 14,
+                        color: widget.color.withValues(alpha: 0.5),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              // Slider
+
+              // Draggable Slider Thumb
               Positioned(
                 left: _padding + _dragValue,
                 top: _padding,
@@ -114,20 +149,33 @@ class _SwipeableActionButtonState extends State<SwipeableActionButton>
                     width: _thumbSize,
                     height: _thumbSize,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: widget.color,
+                      borderRadius: BorderRadius.circular(8),
+                      gradient: LinearGradient(
+                        colors: [
+                          widget.color,
+                          widget.color.withRed((widget.color.r * 255 * 0.85).round()),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.3),
+                        width: 1.0,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        )
+                          color: widget.color.withValues(alpha: 0.4),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
                       ],
                     ),
-                    child: Icon(
-                      widget.icon,
-                      color: widget.iconColor,
-                      size: 32,
+                    child: Center(
+                      child: Icon(
+                        widget.icon,
+                        color: widget.iconColor,
+                        size: 19,
+                      ),
                     ),
                   ),
                 ),
@@ -139,4 +187,3 @@ class _SwipeableActionButtonState extends State<SwipeableActionButton>
     );
   }
 }
-

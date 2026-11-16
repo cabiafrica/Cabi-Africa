@@ -434,6 +434,9 @@ extension _HomeScreenLogic on _HomeScreenState {
                   builder: (_) => RateDriverScreen(
                     rideId: completedRideId,
                     driverName: driverName,
+                    fare: (ride['fare'] as num?)?.toDouble() ?? 350.0,
+                    destination: _destination,
+                    vehicleInfo: (ride['driver']?['vehicle']?['model'] ?? 'Toyota Axio • KDA 892J').toString(),
                   ),
                 ),
               ).then((_) {
@@ -849,4 +852,73 @@ extension _HomeScreenLogic on _HomeScreenState {
       _mapController?.moveCamera(LatLng(lat, lng));
     }
   }
+
+  void simulateTripFlowStep(String nextStep) {
+    final mockRide = {
+      'id': _currentRideId ?? 'ride-sim-101',
+      'status': nextStep,
+      'securityPin': '4892',
+      'tripCode': 'CABI-982',
+      'fare': 350.0,
+      'driver': {
+        'driverId': 'drv-001',
+        'fullName': 'James Mwangi',
+        'preferredPublicName': 'James Mwangi',
+        'rating': '4.95',
+        'totalTrips': 2410,
+        'sacco': '2NK SACCO Verified',
+        'phone': '+254 712 345 678',
+        'profilePicture': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+        'vehicle': {
+          'model': 'Toyota Axio • Silver',
+          'licensePlate': 'KDA 892J',
+          'color': 'Silver',
+        },
+        'user': {
+          'fullName': 'James Mwangi',
+          'nickname': 'James',
+        }
+      }
+    };
+    _updateState(() {
+      _updateTripStatusFromBackend(mockRide);
+    });
+  }
+
+  void startAutoE2ESimulation() {
+    _autoSimTimer?.cancel();
+    _currentRideId = 'ride-sim-101';
+    _updateState(() {
+      _destination = "KICC, Harambee Avenue, Nairobi";
+      _pickupAddress = "Westlands Commercial Centre";
+      _tripStatus = TripStatus.searching;
+      _searchCountdownSeconds = 30;
+    });
+    AudioNotificationService.instance.play('passenger_ready');
+
+    int stage = 0;
+    _autoSimTimer = Timer.periodic(const Duration(milliseconds: 3200), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      stage++;
+
+      if (stage == 1) {
+        // Stage 1: Driver Assigned (James Mwangi in Toyota Axio)
+        simulateTripFlowStep('DRIVER_ASSIGNED');
+      } else if (stage == 2) {
+        // Stage 2: Driver Arrived at Pickup
+        simulateTripFlowStep('DRIVER_ARRIVED');
+      } else if (stage == 3) {
+        // Stage 3: Trip In Progress (En Route to KICC)
+        simulateTripFlowStep('IN_PROGRESS');
+      } else if (stage == 4) {
+        // Stage 4: Trip Completed -> Opens Rating Screen & PDF receipt
+        timer.cancel();
+        simulateTripFlowStep('COMPLETED');
+      }
+    });
+  }
+
 }
