@@ -98,17 +98,3 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 🔑 Authenticate to GCP for Portal & APK Production Rollout
-        if: ${{ secrets.GCP_SA_KEY != '' }}
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: ☁️ Set up gcloud CLI
-        if: ${{ secrets.GCP_SA_KEY != '' }}
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: 🚀 Deploy Fresh Portal & Downloads to Production
-        if: ${{ secrets.GCP_SA_KEY != '' }}
-        run: gcloud builds submit --config=cloudbuild.yaml --project=${{ secrets.GCP_PROJECT_ID }} --timeout=3600s
