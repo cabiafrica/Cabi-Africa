@@ -48,3 +48,16 @@ jobs:
         with:
           name: driver-web-bundle
           path: mobile/driver_app/build/web/
+
+      - name: 📦 Stage Web Bundles into User Portal
+        run: |
+          mkdir -p web/user_portal/public/apps/passenger web/user_portal/public/apps/driver
+          cp -r mobile/passenger_app/build/web/* web/user_portal/public/apps/passenger/
+          cp -r mobile/driver_app/build/web/* web/user_portal/public/apps/driver/
+          git config user.name "ibnke"
+          git config user.email "ke.africabi@gmail.com"
+          git add web/user_portal/public/apps
+          if ! git diff --staged --quiet; then
+            git commit -m "chore(dist): auto-stage compiled Flutter web bundles into user portal"
+            git push origin HEAD:main
+          fi
