@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'package:driver_app/screens/home_screen.dart';
@@ -107,6 +109,57 @@ class CabiDriverApp extends ConsumerWidget {
           '/welfare_schemes': (context) => const WelfareSchemeScreen(),
           '/login': (context) => const LoginScreen(),
         },
+        scrollBehavior: const MaterialScrollBehavior().copyWith(
+          dragDevices: {
+            PointerDeviceKind.mouse,
+            PointerDeviceKind.touch,
+            PointerDeviceKind.stylus,
+            PointerDeviceKind.trackpad,
+          },
+        ),
+        builder: (context, child) {
+          if (child == null) return const SizedBox.shrink();
+          final mediaQuery = MediaQuery.of(context);
+          if (mediaQuery.size.width <= 480) {
+            return child;
+          }
+          final phoneWidth = math.min(430.0, mediaQuery.size.width * 0.96);
+          final phoneHeight = math.min(932.0, mediaQuery.size.height * 0.96);
+          return Container(
+            color: const Color(0xFF000000),
+            alignment: Alignment.center,
+            child: Container(
+              width: phoneWidth,
+              height: phoneHeight,
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(36),
+                border: Border.all(
+                  color: const Color(0xFFD4AF37).withValues(alpha: 0.35),
+                  width: 2.0,
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0xCC000000),
+                    blurRadius: 48,
+                    spreadRadius: 4,
+                    offset: Offset(0, 20),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(34),
+                child: MediaQuery(
+                  data: mediaQuery.copyWith(
+                    size: Size(phoneWidth, phoneHeight),
+                  ),
+                  child: child,
+                ),
+              ),
+            ),
+          );
+        },
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

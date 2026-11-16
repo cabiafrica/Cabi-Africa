@@ -1,8 +1,7 @@
 {
     "name": "CABI Drive — Driver App",
     "short_name": "CABI Drive",
-    "start_url": "/apps/driver/",
-    "scope": "/apps/driver/",
+    "start_url": "index.html",
     "display": "standalone",
     "background_color": "#0A0A0A",
     "theme_color": "#D4AF37",
@@ -11,13 +10,13 @@
     "prefer_related_applications": false,
     "icons": [
         {
-            "src": "/apps/driver/icons/Icon-192.png",
+            "src": "icons/Icon-192.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any maskable"
         },
         {
-            "src": "/apps/driver/icons/Icon-512.png",
+            "src": "icons/Icon-512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any maskable"
