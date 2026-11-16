@@ -1471,7 +1471,9 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                 const Icon(Icons.timer_outlined, size: 16, color: Color(0xFF10B981)),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'Passenger Notified • Waiting at Pickup',
+                                  _passengerNotified
+                                      ? 'Passenger Notified • Waiting at Pickup'
+                                      : 'Waiting at Pickup',
                                   style: TextStyle(
                                     color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
                                     fontSize: 11,

@@ -366,6 +366,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildSwitchTile({
     required BuildContext context,
     required String title,
