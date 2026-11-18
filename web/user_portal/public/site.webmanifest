@@ -1,6 +1,15 @@
 {
   "name": "CABI Africa — Premium Ride-Hailing & Driver Wealth Creation",
-  "short_name": "CABI",
+  "short_name": "CABI Africa",
+  "description": "Request safe rides, track drivers live, manage vehicles, and build driver wealth across Africa.",
+  "id": "/",
+  "scope": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#D4AF37",
+  "background_color": "#0A0A0C",
+  "categories": ["travel", "navigation", "business"],
   "icons": [
     {
       "src": "/favicon-32x32.png",
@@ -10,16 +19,31 @@
     {
       "src": "/apple-touch-icon.png",
       "sizes": "180x180",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/favicon.svg",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ],
-  "theme_color": "#D4AF37",
-  "background_color": "#0A0A0C",
-  "display": "standalone",
-  "start_url": "/"
+  "shortcuts": [
+    {
+      "name": "Request a Ride",
+      "short_name": "Book Ride",
+      "url": "/#booking-section"
+    },
+    {
+      "name": "Book Appointment",
+      "short_name": "Appointments",
+      "url": "/appointments"
+    },
+    {
+      "name": "Register Vehicle",
+      "short_name": "Vehicles",
+      "url": "/vehicles/register"
+    }
+  ]
 }

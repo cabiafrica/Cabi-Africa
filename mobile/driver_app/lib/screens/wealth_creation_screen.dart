@@ -47,7 +47,7 @@ class WealthProgramItem {
     return WealthProgramItem(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
-      serviceCategory: json['serviceCategory'] ?? 'SACCO',
+      serviceCategory: json['serviceCategory'] ?? 'Sacco',
       description: json['description'] ?? '',
       logoUrl: json['logoUrl'],
       minPct: (json['minPct'] as num?)?.toDouble() ?? 0.02,
@@ -164,9 +164,9 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
     return [
       WealthProgramItem(
         id: 'sacco-capital-stima',
-        name: 'Stima DT / Boda PSV SACCO',
-        serviceCategory: 'SACCO',
-        description: 'Cooperative savings earning 11.2% annual dividend. Remitted directly to your SACCO ledger per trip.',
+        name: 'Stima DT / Boda PSV Sacco',
+        serviceCategory: 'Sacco',
+        description: 'Cooperative savings earning 11.2% annual dividend. Remitted directly to your Sacco ledger per trip.',
         minPct: 0.02,
         maxPct: 0.20,
         defaultPct: 0.10,
@@ -621,7 +621,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                 label: 'Balanced Builder',
                 pct: '20%',
                 onTap: () => _applyPreset('Balanced Builder', {
-                  'SACCO': 0.10,
+                  'Sacco': 0.10,
                   'INSURANCE_HEALTH': 0.05,
                   'INVESTMENT_MMF': 0.05,
                 }),
@@ -632,7 +632,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                 pct: '30%',
                 isAccent: true,
                 onTap: () => _applyPreset('Max Growth', {
-                  'SACCO': 0.15,
+                  'Sacco': 0.15,
                   'INSURANCE_HEALTH': 0.05,
                   'INVESTMENT_MMF': 0.05,
                   'PENSION': 0.05,
@@ -643,7 +643,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                 label: 'Starter Safe',
                 pct: '10%',
                 onTap: () => _applyPreset('Starter Safe', {
-                  'SACCO': 0.05,
+                  'Sacco': 0.05,
                   'INSURANCE_HEALTH': 0.05,
                 }),
               ),
@@ -720,7 +720,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
     Color categoryColor;
     IconData categoryIcon;
     switch (program.serviceCategory) {
-      case 'SACCO':
+      case 'Sacco':
         categoryColor = const Color(0xFFFFB300);
         categoryIcon = Icons.account_balance_rounded;
         break;

@@ -59,12 +59,12 @@ BT
 /F1 10 Tf
 0.15 0.15 0.15 rg
 330 725 Td
-(CHAUFFEUR: $cleanDriver) Tj
+(CAPTAIN: $cleanDriver) Tj
 0 -16 Td
 /F2 9.5 Tf
 (VEHICLE: $cleanVehicle) Tj
 0 -16 Td
-(AFFILIATION: 2NK SACCO VERIFIED) Tj
+(AFFILIATION: 2NK Sacco VERIFIED) Tj
 ET
 
 % Route Box
@@ -121,7 +121,7 @@ BT
 370 0 Td
 ($fareStr) Tj
 0 -22 Td
-(SACCO Passenger Safety & Accident Cover Levy) Tj
+(Sacco Passenger Safety & Accident Cover Levy) Tj
 370 0 Td
 (Included) Tj
 0 -22 Td
@@ -166,7 +166,7 @@ BT
 0 -16 Td
 (Cabi Mobility Africa Ltd | PIN: P051982736Z | Nairobi, Kenya) Tj
 0 -14 Td
-(Driver coffee gratuity remitted 100% directly to chauffeur M-Pesa account.) Tj
+(Driver coffee gratuity remitted 100% directly to captain M-Pesa account.) Tj
 0 -14 Td
 (Thank you for choosing Cabi Africa. Official Support: support@cabi.africa) Tj
 ET

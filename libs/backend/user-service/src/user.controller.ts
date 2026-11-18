@@ -1,4 +1,4 @@
-import { Controller, Post, Put, Patch, Body, Param, Get, Req, ForbiddenException, UnauthorizedException, HttpException, HttpStatus, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Post, Put, Patch, Delete, Body, Param, Get, Req, ForbiddenException, UnauthorizedException, HttpException, HttpStatus, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from './user.service';
 
@@ -91,5 +91,16 @@ export class UserController {
     async verifyBiometric(@Req() req: any, @Param('id') id: string) {
         this.assertSelfOrAdmin(req, id);
         return this.userService.verifyBiometric(id);
+    }
+
+    @Delete(':id')
+    async deleteUser(@Req() req: any, @Param('id') id: string, @Body() body?: any) {
+        const callerId = req?.user?.id || req?.user?.sub || req?.user?.userId;
+        const targetId = id === 'me' ? callerId : id;
+        if (!targetId) {
+            throw new UnauthorizedException('Authentication required.');
+        }
+        this.assertSelfOrAdmin(req, targetId);
+        return this.userService.deleteAccount(targetId, body?.reason);
     }
 }

@@ -554,7 +554,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               'driverProfile': {
                                 'id': 'dp-001',
                                 'licenseNumber': 'DL-8921-KE',
-                                'sacco': '2NK SACCO',
+                                'sacco': '2NK Sacco',
                                 'isOnline': true,
                                 'rating': 4.95,
                                 'completedTrips': 2410,
@@ -574,7 +574,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           },
                           icon: const Icon(Icons.flash_on_rounded, color: AppTheme.primaryColor, size: 18),
                           label: const Text(
-                            'EXPLORE AS DEMO CHAUFFEUR',
+                            'EXPLORE AS DEMO CAPTAIN',
                             style: TextStyle(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.w700,

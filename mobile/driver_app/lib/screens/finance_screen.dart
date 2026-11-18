@@ -18,9 +18,9 @@ class _FinanceScreenState extends State<FinanceScreen> {
   final List<Map<String, dynamic>> _services = [
     {
       'id': 'sacco_shares',
-      'title': 'SACCO Capital Savings & Shares',
+      'title': 'Sacco Capital Savings & Shares',
       'category': 'COOPERATIVE BANKING',
-      'partner': 'Stima DT SACCO / Boda PSV Sacco',
+      'partner': 'Stima DT Sacco / Boda PSV Sacco',
       'isSubscribed': false,
       'statsLabel': 'Accumulated Shares',
       'statsValue': 'KES 0.00',
@@ -59,7 +59,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
       'id': 'asset_financing',
       'title': 'Vehicle Asset Financing & Refinancing',
       'category': 'ASSET ACQUISITION',
-      'partner': 'Harambee SACCO & Equity Bank',
+      'partner': 'Harambee Sacco & Equity Bank',
       'isSubscribed': false,
       'statsLabel': 'Financing Limit',
       'statsValue': 'Up to KES 1,200,000',
@@ -311,7 +311,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                               ),
                               const SizedBox(height: 3),
                               Text(
-                                'Select SACCO, Insurance & MMF per trip',
+                                'Select Sacco, Insurance & MMF per trip',
                                 style: GoogleFonts.inter(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,

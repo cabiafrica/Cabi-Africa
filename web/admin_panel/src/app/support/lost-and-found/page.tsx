@@ -74,7 +74,7 @@ export default function LostAndFoundPage() {
                         { label: 'New', count: tickets.filter(t => t.status === 'New').length, color: 'blue' },
                         { label: 'In Progress', count: tickets.filter(t => t.status === 'Contacting Driver').length, color: 'yellow' },
                         { label: 'Found', count: tickets.filter(t => t.status === 'Item Found').length, color: 'green' },
-                        { label: 'Returned', count: tickets.filter(t => t.status === 'Item Returned').length, color: 'purple' },
+                        { label: 'Returned', count: tickets.filter(t => t.status === 'Item Returned').length, color: 'teal' },
                         { label: 'Closed', count: tickets.filter(t => t.status === 'Closed').length, color: 'gray' },
                     ].map((stat) => (
                         <div key={stat.label} className="bg-white rounded-lg shadow p-4">

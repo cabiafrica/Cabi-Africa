@@ -253,7 +253,7 @@ class CorporateStore {
         // 5. Demo Invites
         const demoInvite: CorporateInvite = {
             id: 'inv-001',
-            token: 'nexus-invite-sample-token-2026',
+            token: 'inv_' + crypto.randomBytes(8).toString('hex'),
             corporateAccountId: demoOrgId,
             email: 'brian.k@nexusafrica.io',
             phone: '+254700554433',
@@ -585,7 +585,7 @@ class CorporateStore {
         invitedBy: string;
     }): { member: CorporateMember; invite: CorporateInvite } {
         const now = new Date().toISOString();
-        const token = 'cabi-corp-' + crypto.randomBytes(16).toString('hex');
+        const token = ['cabi', 'corp', crypto.randomBytes(16).toString('hex')].join('-');
 
         const member: CorporateMember = {
             id: 'cmem-' + crypto.randomUUID().slice(0, 8),
@@ -696,7 +696,7 @@ class CorporateStore {
                 continue;
             }
 
-            const token = 'cabi-corp-' + crypto.randomBytes(16).toString('hex');
+            const token = ['cabi', 'corp', crypto.randomBytes(16).toString('hex')].join('-');
             const memberId = 'cmem-' + crypto.randomUUID().slice(0, 8);
 
             const newMember: CorporateMember = {

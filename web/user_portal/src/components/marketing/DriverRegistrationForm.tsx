@@ -22,8 +22,7 @@ export function DriverRegistrationForm() {
         e.preventDefault();
         setStatus('submitting');
 
-        // Mock reCAPTCHA
-        const recaptchaToken = 'mock_recaptcha_token';
+        const recaptchaToken = (typeof window !== 'undefined' && (window as any).grecaptcha?.getResponse?.()) || '';
 
         try {
             // Mock API call

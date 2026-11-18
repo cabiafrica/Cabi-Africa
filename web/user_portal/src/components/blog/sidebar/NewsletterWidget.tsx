@@ -26,11 +26,13 @@ export default function NewsletterWidget() {
 
             <form className="space-y-3" onSubmit={handleSubmit}>
                 <input
+                    id="newsletter-email-input"
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Your email address"
+                    aria-label="Your email address"
                     className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/15 text-white placeholder-neutral-400 text-sm focus:outline-none focus:border-[#D4AF37] transition-colors"
                 />
                 <button

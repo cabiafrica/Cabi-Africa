@@ -136,7 +136,7 @@ const MOCK_POSTS: BlogPost[] = [
       </ul>
 
       <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-8 mb-4">Why Everyone Wins—From Passengers to Global Observers</h3>
-      <p class="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed">When a driver is financially secure and genuinely respected, the passenger experiences the difference immediately: vehicles are impeccably maintained, rides arrive faster, chauffeurs are patient and courteous, and fares remain honest without manipulative surge gouging.</p>
+      <p class="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed">When a driver is financially secure and genuinely respected, the passenger experiences the difference immediately: vehicles are impeccably maintained, rides arrive faster, captains are patient and courteous, and fares remain honest without manipulative surge gouging.</p>
 
       <p class="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed">To our community, passengers, and international partners watching Africa's mobility landscape: Cabi proves that economic fairness and commercial excellence are not opposites. By investing in human dignity on our roads, we build a safer, more reliable transit network that every African can take pride in.</p>
 
@@ -224,7 +224,7 @@ const MOCK_POSTS: BlogPost[] = [
         </li>
         <li class="flex items-start gap-3">
           <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-500/20 text-amber-500 font-bold text-xs shrink-0 mt-0.5">✦</span>
-          <span><strong>Patience in Traffic Snarls:</strong> Remember, gridlock frustrates the driver just as much as you. Calmness inside the cabin helps your chauffeur stay focused, safe, and alert.</span>
+          <span><strong>Patience in Traffic Snarls:</strong> Remember, gridlock frustrates the driver just as much as you. Calmness inside the cabin helps your captain stay focused, safe, and alert.</span>
         </li>
       </ul>
 
@@ -248,4 +248,4 @@ const MOCK_POSTS: BlogPost[] = [
     slug: 'the-power-of-warmth-courtesy-and-tipping',
     readTime: '3 min read'
   }
-];
+];

@@ -25,13 +25,27 @@ const securityHeaders = [
   },
   {
     key: 'Content-Security-Policy',
-    value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://www.google.com https://www.gstatic.com https://maps.googleapis.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://images.unsplash.com https://www.gstatic.com https://maps.gstatic.com https://maps.googleapis.com https://*.tile.openstreetmap.org https://cdnjs.cloudflare.com https://placehold.co; font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com; frame-src 'self' https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://www.google.com https://www.gstatic.com https://maps.googleapis.com https://fonts.gstatic.com https://fonts.googleapis.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org https://*.cabi.africa https://*.run.app wss://*.run.app;"
+    value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://www.google.com https://www.gstatic.com https://maps.googleapis.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://images.unsplash.com https://www.gstatic.com https://maps.gstatic.com https://maps.googleapis.com https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://i.pravatar.cc https://cdnjs.cloudflare.com https://placehold.co; font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com; frame-src 'self' https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://www.google.com https://www.gstatic.com https://maps.googleapis.com https://fonts.gstatic.com https://fonts.googleapis.com https://nominatim.openstreetmap.org https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://i.pravatar.cc https://*.cabi.africa https://*.run.app wss://*.run.app;"
   }
 ];
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: '/driver',
+        destination: '/drivers',
+        permanent: true,
+      },
+      {
+        source: '/passenger',
+        destination: '/passengers',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

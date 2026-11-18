@@ -62,7 +62,7 @@ export const BlogManagement: React.FC = () => {
                     <div className="w-16 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 border border-slate-200">
                       <img 
                         src={post.imageUrl || 'https://placehold.co/160x100?text=No+Image'} 
-                        alt="" 
+                        alt={post.title || "Post thumbnail"} 
                         className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all"
                       />
                     </div>

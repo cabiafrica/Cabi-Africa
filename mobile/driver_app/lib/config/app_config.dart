@@ -38,6 +38,8 @@ class AppConfig {
       ? 'https://www.cabi.africa/api'
       : '$protocol://$host:3333/api';
 
+  static String get apiUrl => authApiUrl;
+
   static String get referralApiUrl => isProduction && customHost.isEmpty
       ? 'https://www.cabi.africa/api'
       : '$protocol://$host:3337/api';

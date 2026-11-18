@@ -60,7 +60,7 @@ export interface DriverApplicationDetails extends DriverApplication {
 }
 
 export interface ReferralConfig {
-    signup: {
+    signup?: {
         totalFee: number;
         allocations: {
             sacco: number;
@@ -68,17 +68,44 @@ export interface ReferralConfig {
             indirectReferrer: number;
         }
     };
-    registrationFee: {
-        total: number;
-        systemCut: number;
-        upline1Cut: number;
-        upline2Cut: number;
+    driverProgram: {
+        enabled: boolean;
+        l1Percentage: number;
+        l2Percentage: number;
+        maxL1Drivers: number;
+        maxL2Drivers: number;
     };
-    driverPromo: {
+    passengerProgram: {
+        enabled: boolean;
+        l1Percentage: number;
+        l2Percentage: number;
+        paxReferDriverFirstWeekPercent: number;
+        firstWeekDurationDays: number;
+        startDate?: string;
+        endDate?: string;
+    };
+    qualifiers: {
+        requiredBadgeCode: string;
+        grandfatherExisting: boolean;
+        disqualifyingFareThreshold: number;
+        maxPlatformFeeDeductionPercent: number;
+        escrowHoldingHours: number;
+    };
+    fraudDetection: {
+        deviceFingerprintBlock: boolean;
+        maxReferrerTripDensity: number;
+        minTripsForDensityCheck: number;
+        immediateSuspension: boolean;
+    };
+    saccoMatchingPool: {
+        enabled: boolean;
+        defaultSavingsPercent: number;
+    };
+    driverPromo?: {
         enabled: boolean;
         rules: { recipient: string; percentage: number }[];
     };
-    passengerPromo: {
+    passengerPromo?: {
         enabled: boolean;
         rules: { recipient: string; percentage: number }[];
     };

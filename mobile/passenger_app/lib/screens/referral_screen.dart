@@ -657,7 +657,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        'Refer Chauffeur Fleet',
+                        'Refer Captain Fleet',
                         style: AppTheme.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,

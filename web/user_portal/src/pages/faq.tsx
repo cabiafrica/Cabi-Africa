@@ -123,7 +123,7 @@ const faqData: FAQItem[] = [
   {
     category: 'Safety & Support',
     q: 'How does Cabi ensure safety for both drivers and passengers?',
-    a: 'Safety is built into every trip: verified 4-digit safety PINs, real-time GPS telemetry, an in-app emergency SOS alert button with 24/7 security dispatch, strictly vetted chauffeurs, and mutual two-way ratings.',
+    a: 'Safety is built into every trip: verified 4-digit safety PINs, real-time GPS telemetry, an in-app emergency SOS alert button with 24/7 security dispatch, strictly vetted captains, and mutual two-way ratings.',
   },
   {
     category: 'Safety & Support',

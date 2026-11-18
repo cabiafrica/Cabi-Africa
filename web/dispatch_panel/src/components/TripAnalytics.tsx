@@ -62,7 +62,7 @@ const TripAnalytics = ({ analytics: rawAnalytics, onUndock, isUndocked }: TripAn
         { name: 'Cancelled', value: analytics.cancelledTrips, color: '#ef4444' },
     ];
 
-    // Data for Cancellation Source Pie Chart (avoiding purple, using cyan)
+    // Data for Cancellation Source Pie Chart (using cyan)
     const cancellationSourceData = [
         { name: 'Passenger', value: analytics.cancellationsByPassenger, color: '#f59e0b', source: 'passenger' as const },
         { name: 'Driver', value: analytics.cancellationsByDriver, color: '#22D3EE', source: 'driver' as const },

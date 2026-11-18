@@ -17,12 +17,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[999] focus:px-4 focus:py-2 focus:bg-[#D4AF37] focus:text-black focus:font-bold focus:rounded-lg focus:shadow-xl focus:outline-none"
+        >
+          Skip to main content
+        </a>
         <header className="bg-black text-white p-4">
           <nav className="container mx-auto flex justify-between">
             <h1 className="text-xl font-bold">Cabi</h1>
           </nav>
         </header>
-        <main>{children}</main>
+        <main id="main-content">{children}</main>
       </body>
     </html>
   );

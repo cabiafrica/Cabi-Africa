@@ -20,35 +20,7 @@ class SOSButton extends StatefulWidget {
 
 typedef SosButton = SOSButton;
 
-class _SOSButtonState extends State<SOSButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _pulseController;
-  late Animation<double> _pulseAnimation;
-  late Animation<double> _fadeAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1600),
-    )..repeat();
-
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.35).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeOutQuad),
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.5, end: 0.0).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeOutQuad),
-    );
-  }
-
-  @override
-  void dispose() {
-    _pulseController.dispose();
-    super.dispose();
-  }
-
+class _SOSButtonState extends State<SOSButton> {
   void _handleTap() {
     if (widget.onTriggered != null) {
       widget.onTriggered!();
@@ -306,98 +278,59 @@ class _SOSButtonState extends State<SOSButton>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _pulseController,
-      builder: (context, child) {
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            // Pulse wave ring
-            Transform.scale(
-              scale: _pulseAnimation.value,
-              child: Container(
-                width: widget.size,
-                height: widget.size,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppTheme.errorRed.withValues(
-                    alpha: _fadeAnimation.value,
-                  ),
-                  border: Border.all(
-                    color: AppTheme.errorRed.withValues(
-                      alpha: _fadeAnimation.value * 1.5,
-                    ),
-                    width: 1.5,
+    return GestureDetector(
+      onTap: _handleTap,
+      child: ClipOval(
+        child: Container(
+          width: widget.size,
+          height: widget.size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xFFEF4444),
+                Color(0xFF991B1B),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.95),
+              width: 1.8,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFDC2626).withValues(alpha: 0.45),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.shield_rounded,
+                  color: Colors.white,
+                  size: 14,
+                ),
+                SizedBox(height: 1),
+                Text(
+                  'SOS',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.8,
+                    height: 1.0,
                   ),
                 ),
-              ),
+              ],
             ),
-            // Main SOS Button
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: _handleTap,
-                customBorder: const CircleBorder(),
-                child: Ink(
-                  width: widget.size,
-                  height: widget.size,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFFEF4444),
-                        Color(0xFF991B1B),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.95),
-                      width: 1.8,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFFDC2626).withValues(alpha: 0.45),
-                        blurRadius: 10,
-                        spreadRadius: 1,
-                        offset: const Offset(0, 3),
-                      ),
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.35),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.shield_rounded,
-                          color: Colors.white,
-                          size: 15,
-                        ),
-                        SizedBox(height: 1),
-                        Text(
-                          'SOS',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 0.8,
-                            height: 1.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
+          ),
+        ),
+      ),
     );
   }
 }

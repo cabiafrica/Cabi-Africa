@@ -119,7 +119,7 @@ export default function OrganizationsList() {
                     </span>
                   </div>
                   <div className="flex items-center text-sm text-gray-300">
-                    <Star className="w-4 h-4 mr-3 text-brand-purple" />
+                    <Star className="w-4 h-4 mr-3 text-brand-yellow" />
                     <span>{(org.subgroups || []).length} Subgroups</span>
                   </div>
                 </div>

@@ -60,5 +60,28 @@ export class ReferralService {
     async updateReferralRules(rules: any[]): Promise<void> {
         await apiClient.put('/admin/referral/rules', { rules });
     }
+
+    async getFraudAlerts(): Promise<any[]> {
+        const res = await apiClient.get('/admin/referral/fraud-alerts');
+        return res.data;
+    }
+
+    async resolveFraudAlert(alertId: string, resolutionAction: 'UNFREEZE' | 'CONFIRM_FRAUD'): Promise<any> {
+        const res = await apiClient.post(`/admin/referral/fraud-alerts/${alertId}/resolve`, {
+            alertId,
+            resolutionAction,
+        });
+        return res.data;
+    }
+
+    async getNotificationLogs(userId: string): Promise<any[]> {
+        const res = await apiClient.get('/admin/referral/notifications', { params: { userId } });
+        return res.data;
+    }
+
+    async releaseMaturedEscrow(): Promise<any> {
+        const res = await apiClient.post('/admin/referral/escrow/release', {});
+        return res.data;
+    }
 }
 

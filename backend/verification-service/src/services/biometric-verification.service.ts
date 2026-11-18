@@ -95,11 +95,20 @@ export class BiometricVerificationService {
       // Generate unique ID
       const verificationId = crypto.randomUUID();
 
-      // Save file to disk
-      const fileName = `${verificationId}-${Date.now()}.${
-        file.mimetype.split('/')[1]
-      }`;
-      const filePath = path.join(this.uploadDir, fileName);
+      // Save file to disk with strict path sanitization
+      const extMap: Record<string, string> = {
+        'image/jpeg': 'jpg',
+        'image/jpg': 'jpg',
+        'image/png': 'png',
+        'image/webp': 'webp',
+      };
+      const safeExt = extMap[file.mimetype] || 'jpg';
+      const fileName = `${verificationId}-${Date.now()}.${safeExt}`;
+      const resolvedUploadDir = path.resolve(this.uploadDir);
+      const filePath = path.resolve(resolvedUploadDir, fileName);
+      if (!filePath.startsWith(resolvedUploadDir)) {
+        throw new Error('Invalid file path detected');
+      }
       await fs.writeFile(filePath, file.buffer);
 
       // Perform basic liveness checks

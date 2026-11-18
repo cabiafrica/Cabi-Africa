@@ -13,6 +13,9 @@ function resolveJwtSecret(): string {
     }
     return 'dev-only-jwt-secret-do-not-use-in-prod';
   }
+  if (process.env.NODE_ENV === 'production' && secret.length < 32) {
+    throw new Error('CRITICAL SECURITY ERROR: JWT_SECRET in production must be at least 32 characters long.');
+  }
   return secret;
 }
 

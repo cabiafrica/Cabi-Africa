@@ -109,38 +109,72 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
         _maxWidth = constraints.maxWidth;
         final double maxDrag = (_maxWidth - _thumbWidth - (_padding * 2)).clamp(0.0, 1000.0);
         final double progress = maxDrag > 0 ? (_dragValue / maxDrag).clamp(0.0, 1.0) : 0.0;
+        // 0.0 = offline (red), 1.0 = online (green); smoothly fades as user slides
+        final double colorT = isOnline ? (1.0 - progress) : progress;
+
+        final Color trackStart = Color.lerp(
+          isDark ? const Color(0xFF2B0E0E) : const Color(0xFFFEF2F2),
+          isDark ? const Color(0xFF0F1E16) : const Color(0xFFECFDF5),
+          colorT,
+        )!;
+        final Color trackEnd = Color.lerp(
+          isDark ? const Color(0xFF1A0808) : const Color(0xFFFEE2E2),
+          isDark ? const Color(0xFF08150E) : const Color(0xFFE1F9ED),
+          colorT,
+        )!;
+        final Color borderColor = Color.lerp(
+          const Color(0xFFEF4444).withValues(alpha: isDark ? 0.55 : 0.65),
+          const Color(0xFF10B981).withValues(alpha: isDark ? 0.55 : 0.65),
+          colorT,
+        )!;
+        final Color glowColor = Color.lerp(
+          const Color(0xFFEF4444).withValues(alpha: 0.18),
+          const Color(0xFF10B981).withValues(alpha: 0.18),
+          colorT,
+        )!;
+        final Color accentColor = Color.lerp(
+          const Color(0xFFEF4444),
+          const Color(0xFF10B981),
+          colorT,
+        )!;
+        final Color labelColor = Color.lerp(
+          isDark ? const Color(0xFFFCA5A5) : const Color(0xFFB91C1C),
+          isDark ? const Color(0xFF6EE7B7) : const Color(0xFF047857),
+          colorT,
+        )!;
+        final Color thumbStart = Color.lerp(
+          const Color(0xFFF87171),
+          const Color(0xFF34D399),
+          colorT,
+        )!;
+        final Color thumbMid = Color.lerp(
+          const Color(0xFFDC2626),
+          const Color(0xFF10B981),
+          colorT,
+        )!;
+        final Color thumbEnd = Color.lerp(
+          const Color(0xFF991B1B),
+          const Color(0xFF047857),
+          colorT,
+        )!;
 
         return Container(
           height: _thumbHeight + (_padding * 2),
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            gradient: isOnline
-                ? LinearGradient(
-                    colors: isDark
-                        ? const [Color(0xFF0F1E16), Color(0xFF08150E)]
-                        : const [Color(0xFFECFDF5), Color(0xFFE1F9ED)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  )
-                : LinearGradient(
-                    colors: isDark
-                        ? const [Color(0xFF1C1A17), Color(0xFF131210)]
-                        : const [Color(0xFFF7F5F0), Color(0xFFEFECE6)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+            gradient: LinearGradient(
+              colors: [trackStart, trackEnd],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             border: Border.all(
-              color: isOnline
-                  ? const Color(0xFF10B981).withValues(alpha: isDark ? 0.5 : 0.6)
-                  : (isDark ? AppTheme.primaryColor.withValues(alpha: 0.35) : AppTheme.porcelainOutline),
+              color: borderColor,
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: isOnline
-                    ? const Color(0xFF10B981).withValues(alpha: 0.16)
-                    : Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
+                color: glowColor,
                 blurRadius: 14,
                 spreadRadius: 1,
                 offset: const Offset(0, 3),
@@ -165,11 +199,11 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
                             colors: isOnline
                                 ? [
                                     const Color(0xFFEF4444).withValues(alpha: 0.05),
-                                    const Color(0xFFEF4444).withValues(alpha: isDark ? 0.22 : 0.16),
+                                    const Color(0xFFEF4444).withValues(alpha: isDark ? 0.24 : 0.18),
                                   ]
                                 : [
                                     const Color(0xFF10B981).withValues(alpha: 0.05),
-                                    const Color(0xFF10B981).withValues(alpha: isDark ? 0.22 : 0.16),
+                                    const Color(0xFF10B981).withValues(alpha: isDark ? 0.24 : 0.18),
                                   ],
                             begin: isOnline ? Alignment.centerRight : Alignment.centerLeft,
                             end: isOnline ? Alignment.centerLeft : Alignment.centerRight,
@@ -187,42 +221,28 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (!isOnline) ...[
-                      Container(
-                        width: 7,
-                        height: 7,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF10B981),
-                          shape: BoxShape.circle,
-                        ),
+                    Container(
+                      width: 7,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: accentColor,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: accentColor.withValues(alpha: 0.8),
+                            blurRadius: 6,
+                            spreadRadius: 1,
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                    ] else ...[
-                      Container(
-                        width: 7,
-                        height: 7,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF10B981),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF10B981).withValues(alpha: 0.8),
-                              blurRadius: 6,
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                    ],
+                    ),
+                    const SizedBox(width: 8),
                     Text(
                       isLoading
                           ? "UPDATING STATUS..."
-                          : (isOnline ? "DISPATCH ACTIVE • SLIDE TO PAUSE" : "SLIDE TO GO ONLINE"),
+                          : (isOnline ? "DISPATCH ACTIVE • SLIDE TO PAUSE" : "OFFLINE • SLIDE TO GO ONLINE"),
                       style: GoogleFonts.inter(
-                        color: isOnline
-                            ? (isDark ? const Color(0xFF6EE7B7) : const Color(0xFF047857))
-                            : (isDark ? Colors.white : AppTheme.porcelainTextPrimary),
+                        color: labelColor,
                         fontWeight: FontWeight.w800,
                         fontSize: 12.5,
                         letterSpacing: 1.2,
@@ -232,14 +252,14 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
                       const SizedBox(width: 8),
                       Icon(
                         Icons.double_arrow_rounded,
-                        color: const Color(0xFF10B981).withValues(alpha: 0.7),
+                        color: accentColor.withValues(alpha: 0.85),
                         size: 16,
                       ),
                     ] else ...[
                       const SizedBox(width: 8),
                       Icon(
                         Icons.arrow_back_ios_new_rounded,
-                        color: const Color(0xFFEF4444).withValues(alpha: 0.7),
+                        color: accentColor.withValues(alpha: 0.85),
                         size: 13,
                       ),
                     ],
@@ -247,7 +267,7 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
                 ),
               ),
 
-              // Sliding Thumb (Green GO when offline, Red PAUSE when online)
+              // Sliding Thumb (Red when offline, Green when online, smoothly fading during slide)
               Positioned(
                 left: !isOnline ? _padding + _dragValue : null,
                 right: isOnline ? _padding + _dragValue : null,
@@ -261,22 +281,14 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
                     height: _thumbHeight,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      gradient: isOnline
-                          ? const LinearGradient(
-                              colors: [Color(0xFFF87171), Color(0xFFDC2626), Color(0xFF991B1B)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            )
-                          : const LinearGradient(
-                              colors: [Color(0xFF34D399), Color(0xFF10B981), Color(0xFF047857)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
+                      gradient: LinearGradient(
+                        colors: [thumbStart, thumbMid, thumbEnd],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: isOnline
-                              ? const Color(0xFFDC2626).withValues(alpha: 0.4)
-                              : const Color(0xFF10B981).withValues(alpha: 0.4),
+                          color: thumbMid.withValues(alpha: 0.4),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),

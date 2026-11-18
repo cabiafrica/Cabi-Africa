@@ -8,8 +8,10 @@ const inter = Inter({ subsets: ['latin'] });
 
 import { ThemeProvider } from '../context/ThemeContext';
 import { AuthProvider } from '../context/AuthContext';
+import { LanguageProvider } from '../context/LanguageContext';
 import Header, { GlobalHeaderContext } from '../components/layout/Header';
 import FloatingTripWidget from '../components/ui/FloatingTripWidget';
+import PwaManager from '../components/ui/PwaManager';
 
 // Routes that render without MainLayout and without built-in pt-16/pt-20 top offset
 const STANDALONE_ROUTES_NEEDING_OFFSET = [
@@ -30,7 +32,8 @@ function App({ Component, pageProps }: AppProps) {
 
   return (
     <ThemeProvider>
-      <AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
         <GlobalHeaderContext.Provider value={true}>
           <div className={inter.className}>
             <Header isGlobalRoot />
@@ -38,9 +41,11 @@ function App({ Component, pageProps }: AppProps) {
               <Component {...pageProps} />
             </div>
             <FloatingTripWidget />
+            <PwaManager />
           </div>
         </GlobalHeaderContext.Provider>
       </AuthProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

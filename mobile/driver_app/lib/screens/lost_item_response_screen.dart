@@ -1,41 +1,6 @@
 import 'package:flutter/material.dart';
-
-// Mock data models. In a real app, these would be generated from JSON.
-class LostItemReport {
-  final String ticketId;
-  final String tripId;
-  final String itemDescription;
-  final String passengerName;
-  final DateTime tripDate;
-
-  LostItemReport({
-    required this.ticketId,
-    required this.tripId,
-    required this.itemDescription,
-    required this.passengerName,
-    required this.tripDate,
-  });
-}
-
-// Mock service. In a real app, this would make HTTP requests.
-class LostItemService {
-  Future<LostItemReport> getReportDetails(String ticketId) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return LostItemReport(
-      ticketId: ticketId,
-      tripId: 'trip-abc-123',
-      itemDescription: 'A black leather wallet with my ID and credit cards.',
-      passengerName: 'John P.',
-      tripDate: DateTime.now().subtract(const Duration(days: 1)),
-    );
-  }
-
-  Future<void> respondToReport(String ticketId, bool found) async {
-    await Future.delayed(const Duration(milliseconds: 800));
-    debugPrint('Driver responded for ticket $ticketId. Found: $found');
-    // In a real app, this would be a POST request to the support-service
-  }
-}
+import 'package:dio/dio.dart';
+import 'package:driver_app/config/app_config.dart';
 
 class LostItemResponseScreen extends StatefulWidget {
   final String ticketId;
@@ -47,72 +12,94 @@ class LostItemResponseScreen extends StatefulWidget {
 }
 
 class _LostItemResponseScreenState extends State<LostItemResponseScreen> {
-  final LostItemService _service = LostItemService();
-  late Future<LostItemReport> _reportFuture;
+  final _descriptionController = TextEditingController();
+  bool _droppedAtOffice = true;
+  bool _submitting = false;
 
   @override
-  void initState() {
-    super.initState();
-    _reportFuture = _service.getReportDetails(widget.ticketId);
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
   }
 
-  Future<void> _submitResponse(bool found) async {
-    await _service.respondToReport(widget.ticketId, found);
+  Future<void> _submitLostAndFound() async {
+    final desc = _descriptionController.text.trim();
+    if (desc.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a short description of the item.')),
+      );
+      return;
+    }
 
-    if (!mounted) return;
-
-    Navigator.of(context).pop(); // Go back after responding
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Thank you for your response.')),
-    );
+    setState(() => _submitting = true);
+    try {
+      await Dio().post(
+        '${AppConfig.apiUrl}/lost-and-found',
+        data: {
+          'description': desc,
+          'reporterRole': 'DRIVER',
+          'tripCode': widget.ticketId,
+          'droppedAtOffice': _droppedAtOffice,
+        },
+      );
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Logged! Passenger has 7 days to collect from the CABI office.'),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to submit Lost & Found right now.')),
+      );
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Lost Item Report')),
-      body: FutureBuilder<LostItemReport>(
-        future: _reportFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(child: Text('Failed to load report details.'));
-          }
-          final report = snapshot.data!;
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Passenger ${report.passengerName} reported a lost item from your trip on ${report.tripDate.toLocal().toString().split(' ')[0]}.',
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Item Description:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(report.itemDescription),
-                const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => _submitResponse(false),
-                      child: const Text("I did not find it"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => _submitResponse(true),
-                      child: const Text("I found the item"),
-                    ),
-                  ],
-                ),
-              ],
+      appBar: AppBar(title: const Text('Lost & Found — Office Drop-off')),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Describe the found item and confirm if you have dropped it at the CABI Africa office for passenger collection within 7 days.',
+              style: TextStyle(fontSize: 14),
             ),
-          );
-        },
+            const SizedBox(height: 16),
+            TextField(
+              controller: _descriptionController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: 'Short Description',
+                hintText: 'e.g., Black wallet found in back seat...',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SwitchListTile(
+              value: _droppedAtOffice,
+              onChanged: (v) => setState(() => _droppedAtOffice = v),
+              title: const Text('Dropped at CABI Office (7-day collection window)'),
+            ),
+            const Spacer(),
+            SizedBox(
+              height: 52,
+              child: ElevatedButton(
+                onPressed: _submitting ? null : _submitLostAndFound,
+                child: _submitting
+                    ? const CircularProgressIndicator()
+                    : const Text('Submit Found Item'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

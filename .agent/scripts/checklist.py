@@ -194,9 +194,12 @@ Examples:
     results = []
     
     # Run core checks
+    repo_root = Path(__file__).resolve().parent.parent.parent
     print_header("[CORE] CORE CHECKS")
     for name, script_path, required in CORE_CHECKS:
         script = project_path / script_path
+        if not script.exists() and (repo_root / script_path).exists():
+            script = repo_root / script_path
         result = run_script(name, script, str(project_path))
         results.append(result)
         
@@ -211,6 +214,8 @@ Examples:
         print_header("[PERF] PERFORMANCE CHECKS")
         for name, script_path, required in PERFORMANCE_CHECKS:
             script = project_path / script_path
+            if not script.exists() and (repo_root / script_path).exists():
+                script = repo_root / script_path
             result = run_script(name, script, str(project_path), args.url)
             results.append(result)
     

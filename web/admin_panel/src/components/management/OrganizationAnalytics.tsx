@@ -67,7 +67,7 @@ export const OrganizationAnalytics: React.FC = () => {
                                 data={typeData}
                                 category="value"
                                 index="name"
-                                colors={["slate", "violet", "indigo", "rose", "cyan", "amber"]}
+                                colors={["slate", "teal", "indigo", "rose", "cyan", "amber"]}
                             />
                         </div>
                         <div className="w-1/2 pl-4 border-l border-gray-200">

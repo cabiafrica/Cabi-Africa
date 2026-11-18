@@ -137,6 +137,7 @@ export const PayoutProcessing: React.FC = () => {
                 <th className="px-6 py-3 text-left w-10">
                   <input
                     type="checkbox"
+                    aria-label="Select all pending payouts"
                     checked={selectedDriverIds.size === pendingPayouts.length && pendingPayouts.length > 0}
                     onChange={toggleSelectAll}
                     disabled={loading || pendingPayouts.length === 0}
@@ -168,6 +169,7 @@ export const PayoutProcessing: React.FC = () => {
                   <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                     <input
                       type="checkbox"
+                      aria-label={`Select payout for ${payout.driverName}`}
                       checked={selectedDriverIds.has(payout.driverId)}
                       onChange={() => toggleSelection(payout.driverId)}
                       className="rounded border-slate-300 dark:border-slate-600 text-amber-600 focus:ring-amber-500 bg-white dark:bg-slate-700 cursor-pointer"

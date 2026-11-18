@@ -21,7 +21,7 @@ export default function HomePage({ posts }: HomePageProps) {
   return (
     <div className="min-h-screen flex flex-col font-sans bg-slate-50 dark:bg-surface-dark text-slate-900 dark:text-white transition-colors duration-300">
       <Head>
-        <title>CABI Africa | Precision Chauffeur &amp; Urban Transit</title>
+        <title>CABI Africa | Precision Captain &amp; Urban Transit</title>
         <meta
           name="description"
           content="Ultra-premium African mobility ecosystem with seamless ride booking, mobile money instant settlement, and executive concierge."
@@ -29,7 +29,7 @@ export default function HomePage({ posts }: HomePageProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         {/* OpenGraph Image SEO */}
-        <meta property="og:title" content="CABI Africa | Precision Chauffeur &amp; Urban Transit" />
+        <meta property="og:title" content="CABI Africa | Precision Captain &amp; Urban Transit" />
         <meta property="og:description" content="Ultra-premium African mobility ecosystem with seamless ride booking, mobile money instant settlement, and executive concierge." />
         <meta property="og:image" content="https://cabi.africa/images/hero-fleet.jpg" />
         <meta property="og:image:alt" content="CABI Africa multi-tier mobility fleet including electric Boda, CabiGo compact, Executive Sedan, and Diplomatic XL Van across Nairobi" />
@@ -39,15 +39,22 @@ export default function HomePage({ posts }: HomePageProps) {
 
         {/* Twitter Card Image SEO */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="CABI Africa | Precision Chauffeur &amp; Urban Transit" />
+        <meta name="twitter:title" content="CABI Africa | Precision Captain &amp; Urban Transit" />
         <meta name="twitter:description" content="Ultra-premium African mobility ecosystem with seamless ride booking, mobile money instant settlement, and executive concierge." />
         <meta name="twitter:image" content="https://cabi.africa/images/hero-fleet.jpg" />
         <meta name="twitter:image:alt" content="CABI Africa multi-tier mobility fleet including electric Boda, CabiGo compact, Executive Sedan, and Diplomatic XL Van across Nairobi" />
       </Head>
 
+      {/* Accessible Skip Link (Reveals on Tab focus) */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2.5 focus:bg-brand-yellow focus:text-black focus:font-black focus:text-xs focus:uppercase focus:tracking-wider focus:rounded-xl focus:shadow-2xl focus:outline-none focus:ring-2 focus:ring-black"
+      >
+        Skip to main content &darr;
+      </a>
       <Header />
 
-      <main className="flex-grow pt-16 md:pt-20">
+      <main id="main-content" className="flex-grow pt-16 md:pt-20">
         {/* 1. Hero Section */}
         <ExecutiveHero />
 

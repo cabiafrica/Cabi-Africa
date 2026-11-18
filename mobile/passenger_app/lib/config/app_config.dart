@@ -27,6 +27,8 @@ class AppConfig {
       ? 'https://www.cabi.africa/api'
       : '$protocol://$host:3333/api';
 
+  static String get apiUrl => authApiUrl;
+
   static String get verificationApiUrl => isProduction && customHost.isEmpty
       ? 'https://www.cabi.africa/api/verification'
       : '$protocol://$host:3003/api/v1/verification';

@@ -7,11 +7,16 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { RateLimitMiddleware } from '@cabi/backend/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
+
+  // Security: Global Rate Limiting
+  const rateLimiter = new RateLimitMiddleware();
+  app.use((req: any, res: any, next: any) => rateLimiter.use(req, res, next));
 
   // Security: Global Validation
   app.useGlobalPipes(new ValidationPipe({

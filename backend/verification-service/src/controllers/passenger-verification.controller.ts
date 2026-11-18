@@ -5,6 +5,7 @@ import {
   Put,
   Body,
   Param,
+  Req,
   UseInterceptors,
   UploadedFile,
   HttpException,
@@ -14,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as crypto from 'crypto';
+import * as jwt from 'jsonwebtoken';
 import { DocumentVerificationService } from '../services/document-verification.service';
 import { BiometricVerificationService } from '../services/biometric-verification.service';
 import {
@@ -48,6 +50,61 @@ interface PassengerVerificationConfig {
 @Controller('api/v1/verification/passenger')
 export class PassengerVerificationController {
   private readonly logger = new Logger(PassengerVerificationController.name);
+
+  private extractUser(req: any): any {
+    if (req?.user) return req.user;
+    const internalKey = process.env.INTERNAL_API_KEY;
+    const providedKey = req?.headers?.['x-internal-api-key'];
+    if (internalKey && providedKey && typeof providedKey === 'string') {
+      try {
+        const a = Buffer.from(internalKey);
+        const b = Buffer.from(providedKey);
+        if (a.length === b.length && crypto.timingSafeEqual(a, b)) {
+          return { role: 'SUPER_ADMIN', permissions: ['SUPER_ADMIN'] };
+        }
+      } catch {
+        // continue
+      }
+    }
+    const authHeader = req?.headers?.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      const secret = process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'dev-only-jwt-secret-do-not-use-in-prod' : '');
+      if (secret) {
+        try {
+          return jwt.verify(token, secret);
+        } catch {
+          return null;
+        }
+      }
+    }
+    return null;
+  }
+
+  private assertAdmin(req: any): void {
+    const user = this.extractUser(req);
+    if (!user) {
+      throw new HttpException('Authentication required for administrative passenger verification.', HttpStatus.UNAUTHORIZED);
+    }
+    const perms: string[] = Array.isArray(user.permissions) ? user.permissions : [];
+    const isAdmin = user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' || perms.some((p: string) => p.startsWith('VERIFICATION_') || p === 'SUPER_ADMIN');
+    if (!isAdmin) {
+      throw new HttpException('Administrative privileges required.', HttpStatus.FORBIDDEN);
+    }
+  }
+
+  private assertSelfOrAdmin(req: any, targetUserId: string): void {
+    const user = this.extractUser(req);
+    if (!user) {
+      throw new HttpException('Authentication required to access passenger verification resources.', HttpStatus.UNAUTHORIZED);
+    }
+    const callerId = user.id || user.sub || user.userId;
+    const perms: string[] = Array.isArray(user.permissions) ? user.permissions : [];
+    const isAdmin = user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' || perms.some((p: string) => p.startsWith('VERIFICATION_') || p === 'SUPER_ADMIN');
+    if (callerId !== targetUserId && !isAdmin) {
+      throw new HttpException('You are not authorized to access another passenger verification state.', HttpStatus.FORBIDDEN);
+    }
+  }
   private verificationConfig: PassengerVerificationConfig = {
     requireNationalId: true,
     requirePassengerPhoto: true,
@@ -76,9 +133,11 @@ export class PassengerVerificationController {
   @Post('id')
   @UseInterceptors(FileInterceptor('document'))
   async uploadPassengerId(
+    @Req() req: any,
     @UploadedFile() file: Express.Multer.File,
     @Body() uploadDto: UploadPassengerIdDto,
   ): Promise<any> {
+    this.assertSelfOrAdmin(req, uploadDto.userId);
     try {
       if (!file) {
         throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
@@ -208,9 +267,11 @@ export class PassengerVerificationController {
   @Post('certificate')
   @UseInterceptors(FileInterceptor('document'))
   async uploadCertificateOfGoodConduct(
+    @Req() req: any,
     @UploadedFile() file: Express.Multer.File,
     @Body() uploadDto: UploadCertificateOfGoodConductDto,
   ): Promise<any> {
+    this.assertSelfOrAdmin(req, uploadDto.userId);
     try {
       if (!file) {
         throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
@@ -291,9 +352,11 @@ export class PassengerVerificationController {
   @Post('photo')
   @UseInterceptors(FileInterceptor('photo'))
   async uploadPassengerPhoto(
+    @Req() req: any,
     @UploadedFile() file: Express.Multer.File,
     @Body() uploadDto: UploadPassengerPhotoDto,
   ): Promise<any> {
+    this.assertSelfOrAdmin(req, uploadDto.userId);
     try {
       if (!file) {
         throw new HttpException('No photo uploaded', HttpStatus.BAD_REQUEST);
@@ -351,9 +414,11 @@ export class PassengerVerificationController {
   @Post('selfie')
   @UseInterceptors(FileInterceptor('selfie'))
   async uploadSelfie(
+    @Req() req: any,
     @UploadedFile() file: Express.Multer.File,
     @Body() uploadDto: UploadPassengerSelfieDto,
   ): Promise<any> {
+    this.assertSelfOrAdmin(req, uploadDto.userId);
     try {
       if (!file) {
         throw new HttpException('No selfie uploaded', HttpStatus.BAD_REQUEST);
@@ -411,8 +476,10 @@ export class PassengerVerificationController {
    */
   @Post('fingerprint')
   async verifyFingerprint(
+    @Req() req: any,
     @Body() body: { userId: string; fingerprintData: string },
   ): Promise<any> {
+    this.assertSelfOrAdmin(req, body.userId);
     try {
       this.logger.log(`Verifying fingerprint for user ${body.userId}`);
 
@@ -451,8 +518,10 @@ export class PassengerVerificationController {
    */
   @Get('status/:userId')
   async getPassengerVerificationStatus(
+    @Req() req: any,
     @Param('userId') userId: string,
   ): Promise<PassengerVerificationStatusDto> {
+    this.assertSelfOrAdmin(req, userId);
     const state = this.passengerStates.get(userId);
 
     const hasId = state?.idVerification?.status === 'VERIFIED';
@@ -509,8 +578,12 @@ export class PassengerVerificationController {
    * GET /api/v1/verification/passenger/can-request/:userId
    */
   @Get('can-request/:userId')
-  async canRequestTrip(@Param('userId') userId: string): Promise<any> {
-    const status = await this.getPassengerVerificationStatus(userId);
+  async canRequestTrip(
+    @Req() req: any,
+    @Param('userId') userId: string,
+  ): Promise<any> {
+    this.assertSelfOrAdmin(req, userId);
+    const status = await this.getPassengerVerificationStatus(req, userId);
 
     const state = this.getOrCreatePassengerState(userId);
 
@@ -532,11 +605,15 @@ export class PassengerVerificationController {
    * POST /api/v1/verification/passenger/trip-completed/:userId
    */
   @Post('trip-completed/:userId')
-  async recordTripCompleted(@Param('userId') userId: string): Promise<any> {
+  async recordTripCompleted(
+    @Req() req: any,
+    @Param('userId') userId: string,
+  ): Promise<any> {
+    this.assertSelfOrAdmin(req, userId);
     const state = this.getOrCreatePassengerState(userId);
     state.tripCount = (state.tripCount || 0) + 1;
 
-    const status = await this.getPassengerVerificationStatus(userId);
+    const status = await this.getPassengerVerificationStatus(req, userId);
 
     return {
       tripRecorded: true,
@@ -552,8 +629,10 @@ export class PassengerVerificationController {
    */
   @Put('config')
   async updateVerificationConfig(
+    @Req() req: any,
     @Body() config: AdminVerificationConfigDto,
   ): Promise<any> {
+    this.assertAdmin(req);
     this.verificationConfig = {
       ...this.verificationConfig,
       ...config,
@@ -571,7 +650,8 @@ export class PassengerVerificationController {
    * GET /api/v1/verification/config
    */
   @Get('config')
-  async getVerificationConfig(): Promise<PassengerVerificationConfig> {
+  async getVerificationConfig(@Req() req: any): Promise<PassengerVerificationConfig> {
+    this.assertAdmin(req);
     return this.verificationConfig;
   }
 
@@ -581,12 +661,14 @@ export class PassengerVerificationController {
    */
   @Get('passengers')
   async searchVerifiedPassengers(
+    @Req() req: any,
     @Query('searchTerm') searchTerm?: string,
     @Query('verificationLevel')
     verificationLevel?: 'BASIC' | 'SELFIE' | 'BIOMETRIC',
     @Query('page') page = 1,
     @Query('limit') limit = 20,
   ): Promise<any> {
+    this.assertAdmin(req);
     const passengers = Array.from(this.passengerStates.entries())
       .filter(([_, state]) => {
         if (
@@ -651,7 +733,11 @@ export class PassengerVerificationController {
    * PUT /api/v1/verification/passenger/verify/:userId
    */
   @Put('verify/:userId')
-  async manuallyVerifyPassenger(@Param('userId') userId: string): Promise<any> {
+  async manuallyVerifyPassenger(
+    @Req() req: any,
+    @Param('userId') userId: string,
+  ): Promise<any> {
+    this.assertAdmin(req);
     const state = this.getOrCreatePassengerState(userId);
 
     if (state.idVerification) {

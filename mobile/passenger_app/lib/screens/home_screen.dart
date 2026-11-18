@@ -30,6 +30,9 @@ import '../providers/auth_provider.dart';
 import '../providers/providers.dart';
 import '../widgets/security_verification_modal.dart';
 import '../widgets/sos_button.dart';
+import '../widgets/in_app_call_modal.dart';
+import '../widgets/trip_chat_modal.dart';
+import '../services/trip_communication_service.dart';
 import '../services/audio_notification_service.dart';
 import '../services/passenger_biometric_service.dart';
 part 'home_screen_panels.dart';
@@ -146,7 +149,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'id': 'lux',
       'name': 'Cabi Lux',
       'color': Color(0xFFD4AF37),
-      'tag': 'VIP Chauffeur',
+      'tag': 'VIP Captain',
       'time': '7 min',
       'image': 'assets/images/xl.png',
       'icon': Icons.local_taxi_rounded,
@@ -163,6 +166,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     _selectedVehicleId = 'standard'; // 'standard' is default
     _selectedVehicleType = 'STANDARD'; // Default vehicle type
+    TripCommunicationService.instance.init(
+      tripId: 'CABI-982',
+      role: MessageRole.passenger,
+      myName: 'Sarah Jenkins',
+      peerName: 'James Mwangi',
+      peerVehicle: 'Toyota Axio • KDA 892J',
+    );
+    TripCommunicationService.instance.addListener(_handlePassengerCommUpdates);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkActiveRide();
       _initLocationTracking();
@@ -170,8 +181,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
+  void _handlePassengerCommUpdates() {
+    if (TripCommunicationService.instance.callState == VoipCallState.incomingRinging) {
+      InAppCallModal.show(
+        context,
+        peerName: TripCommunicationService.instance.peerName,
+        peerRole: 'DRIVER',
+        peerVehicle: TripCommunicationService.instance.peerVehicle,
+        isIncoming: true,
+      );
+    }
+  }
+
   @override
   void dispose() {
+    TripCommunicationService.instance.removeListener(_handlePassengerCommUpdates);
     _searchCountdownTimer?.cancel();
     _rideUpdateTimer?.cancel();
     _arrivalTimer?.cancel();
@@ -431,7 +455,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           : Colors.white)
                       .withValues(alpha: 0.92),
                   borderRadius: BorderRadius.circular(999),
-                  border: Border.all(color: AppTheme.outlineGold),
+                  border: Border.all(color: AppTheme.outlineGold.withValues(alpha: 0.5), width: 0.8),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

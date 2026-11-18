@@ -1000,7 +1000,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
             false,
           ),
           _buildFareRow(
-            'SACCO Welfare Levy (5%)',
+            'Sacco Welfare Levy (5%)',
             '-KES ${_saccoLevy.toStringAsFixed(0)}/-',
             AppTheme.errorRed,
             false,

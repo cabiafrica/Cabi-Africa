@@ -97,7 +97,7 @@ export class WealthService {
         select: { badgeTier: true },
       }),
       this.prisma.driverWealthEnrollment.findMany({
-        where: { driverProfileId, status: 'ACTIVE' },
+        where: { driverProfileId, status: { in: ['ACTIVE', 'PENDING_CANCELLATION'] } },
       }),
     ]);
 
@@ -128,6 +128,10 @@ export class WealthService {
       );
 
       const enrollment = enrollmentByProgram.get(program.id) ?? null;
+      const isPendingCancellation = enrollment?.status === 'PENDING_CANCELLATION';
+      const daysRemaining = enrollment?.cancellationEffectiveDate
+        ? Math.max(0, Math.ceil((new Date(enrollment.cancellationEffectiveDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+        : null;
 
       return {
         ...program,
@@ -135,6 +139,9 @@ export class WealthService {
         canSelect: program.isDriverSelectable && (hasRequiredBadge || unlockedByIncentive),
         effectiveBonusPct: Math.max(program.platformBonusPct || 0, incentiveBonusPct),
         isEnrolled: Boolean(enrollment),
+        isPendingCancellation,
+        cancellationEffectiveDate: enrollment?.cancellationEffectiveDate ?? null,
+        cancellationDaysRemaining: daysRemaining,
         enrollment,
       };
     });
@@ -165,7 +172,7 @@ export class WealthService {
         code,
         name: dto.name.trim(),
         description: dto.description?.trim() || '',
-        category: dto.category ?? 'SACCO',
+        category: dto.category ?? 'Sacco',
         providerName: dto.providerName?.trim() || null,
         logoUrl: dto.logoUrl?.trim() || null,
         minPct,
@@ -306,10 +313,24 @@ export class WealthService {
       if (!program) continue;
 
       if (!alloc.isEnrolled) {
-        await this.prisma.driverWealthEnrollment.updateMany({
-          where: { driverProfileId, programId: alloc.programId },
-          data: { status: 'OPTED_OUT' },
+        // Enforce 60-day policy: transition to PENDING_CANCELLATION rather than immediate termination.
+        // In accordance with policy, per-trip deductions continue normally until staff effects termination.
+        const existing = await this.prisma.driverWealthEnrollment.findUnique({
+          where: { driverProfileId_programId: { driverProfileId, programId: alloc.programId } },
         });
+        if (existing && existing.status === 'ACTIVE') {
+          const now = new Date();
+          const effectiveDate = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+          await this.prisma.driverWealthEnrollment.update({
+            where: { id: existing.id },
+            data: {
+              status: 'PENDING_CANCELLATION',
+              cancellationRequestedAt: now,
+              cancellationEffectiveDate: effectiveDate,
+              cancellationReason: 'Cancellation requested via driver program selection update',
+            },
+          });
+        }
         continue;
       }
 
@@ -335,11 +356,181 @@ export class WealthService {
           deductionPct: clampedPct,
           platformBonusPct: program.effectiveBonusPct,
           status: 'ACTIVE',
+          cancellationRequestedAt: null,
+          cancellationEffectiveDate: null,
+          cancellationReason: null,
         },
       });
+
+      // If program is Sacco, ensure driverProfile.saccoEnrolled is synchronized
+      if (program.category === 'Sacco') {
+        await this.prisma.driverProfile.update({
+          where: { id: driverProfileId },
+          data: { saccoEnrolled: true, saccoEnrolledAt: new Date() },
+        }).catch(() => {});
+      }
     }
 
     return this.getAvailableForDriver(driverProfileId);
+  }
+
+  /**
+   * Driver initiates a formal cancellation request for a wealth program.
+   * Under the 60-day policy, per-trip deductions continue normally while staff
+   * audits liabilities, share capital, and effects termination within 60 days.
+   */
+  async requestCancellation(driverProfileId: string, programId: string, reason?: string) {
+    const enrollment = await this.prisma.driverWealthEnrollment.findUnique({
+      where: { driverProfileId_programId: { driverProfileId, programId } },
+      include: { program: true },
+    });
+    if (!enrollment || enrollment.status === 'CANCELLED' || enrollment.status === 'OPTED_OUT') {
+      throw new NotFoundException('Active wealth enrollment not found');
+    }
+
+    if (enrollment.status === 'PENDING_CANCELLATION') {
+      const daysRemaining = enrollment.cancellationEffectiveDate
+        ? Math.max(0, Math.ceil((new Date(enrollment.cancellationEffectiveDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+        : 60;
+      return {
+        success: true,
+        message: 'Cancellation is already pending and under the 60-day staff review period',
+        cancellationRequestedAt: enrollment.cancellationRequestedAt,
+        cancellationEffectiveDate: enrollment.cancellationEffectiveDate,
+        daysRemaining,
+        enrollment,
+      };
+    }
+
+    const now = new Date();
+    const effectiveDate = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000); // 60 days
+    const updated = await this.prisma.driverWealthEnrollment.update({
+      where: { id: enrollment.id },
+      data: {
+        status: 'PENDING_CANCELLATION',
+        cancellationRequestedAt: now,
+        cancellationEffectiveDate: effectiveDate,
+        cancellationReason: reason ?? 'Driver requested program cancellation',
+      },
+      include: { program: true },
+    });
+
+    return {
+      success: true,
+      message: 'Cancellation requested. In accordance with policy, per-trip deductions continue for up to 60 days while staff audits and effects the termination.',
+      cancellationRequestedAt: now,
+      cancellationEffectiveDate: effectiveDate,
+      daysRemaining: 60,
+      enrollment: updated,
+    };
+  }
+
+  /**
+   * Driver changes their mind and aborts / retracts the deduction stoppage within the 60-day notice window.
+   * Program is restored to ACTIVE status and deductions continue smoothly.
+   */
+  async abortCancellation(driverProfileId: string, programId: string) {
+    const enrollment = await this.prisma.driverWealthEnrollment.findUnique({
+      where: { driverProfileId_programId: { driverProfileId, programId } },
+    });
+    if (!enrollment || enrollment.status !== 'PENDING_CANCELLATION') {
+      throw new BadRequestException('No pending cancellation request found to abort');
+    }
+
+    const updated = await this.prisma.driverWealthEnrollment.update({
+      where: { id: enrollment.id },
+      data: {
+        status: 'ACTIVE',
+        cancellationRequestedAt: null,
+        cancellationEffectiveDate: null,
+        cancellationReason: null,
+      },
+      include: { program: true },
+    });
+
+    return {
+      success: true,
+      message: 'Deduction stoppage aborted by driver. Program remains fully active and enrolled.',
+      enrollment: updated,
+    };
+  }
+
+  /**
+   * Alias for abortCancellation
+   */
+  async retractCancellation(driverProfileId: string, programId: string) {
+    return this.abortCancellation(driverProfileId, programId);
+  }
+
+  /**
+   * Staff/Admin lists all cancellation requests, sorted by urgency.
+   */
+  async listCancellationRequests(status = 'PENDING_CANCELLATION') {
+    const requests = await this.prisma.driverWealthEnrollment.findMany({
+      where: { status },
+      include: {
+        program: true,
+        driverProfile: {
+          include: {
+            user: { select: { fullName: true, phone: true, email: true } },
+          },
+        },
+      },
+      orderBy: { cancellationRequestedAt: 'asc' },
+    });
+
+    return requests.map((req) => {
+      const daysRemaining = req.cancellationEffectiveDate
+        ? Math.max(0, Math.ceil((new Date(req.cancellationEffectiveDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+        : 0;
+
+      return {
+        ...req,
+        daysRemaining,
+        isUrgent: daysRemaining <= 10,
+      };
+    });
+  }
+
+  /**
+   * Staff effects the program cancellation within the 60-day window.
+   * Deductions cease immediately once status becomes CANCELLED.
+   */
+  async effectCancellation(enrollmentId: string, staffUserId: string, notes?: string) {
+    const enrollment = await this.prisma.driverWealthEnrollment.findUnique({
+      where: { id: enrollmentId },
+      include: { program: true, driverProfile: true },
+    });
+    if (!enrollment) {
+      throw new NotFoundException('Enrollment not found');
+    }
+
+    const updated = await this.prisma.driverWealthEnrollment.update({
+      where: { id: enrollmentId },
+      data: {
+        status: 'CANCELLED',
+        cancellationProcessedBy: staffUserId,
+        cancellationProcessedAt: new Date(),
+        cancellationReason: notes
+          ? `${enrollment.cancellationReason ?? ''} | Staff Clearance: ${notes}`
+          : enrollment.cancellationReason,
+      },
+      include: { program: true },
+    });
+
+    // If Sacco program, unenroll driver from Sacco
+    if (enrollment.program?.category === 'Sacco') {
+      await this.prisma.driverProfile.update({
+        where: { id: enrollment.driverProfileId },
+        data: { saccoEnrolled: false, saccoEnrolledAt: null },
+      }).catch(() => {});
+    }
+
+    return {
+      success: true,
+      message: 'Program cancellation successfully effected by staff. Per-trip deductions have ceased.',
+      enrollment: updated,
+    };
   }
 
   async applyBadgeIncentivesForUser(userId: string, badgeId: string) {

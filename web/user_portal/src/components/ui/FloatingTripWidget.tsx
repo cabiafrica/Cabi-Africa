@@ -76,6 +76,12 @@ export default function FloatingTripWidget() {
                     <button
                         type="button"
                         onClick={() => setIsOpen(true)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                setIsOpen(true);
+                            }
+                        }}
                         aria-label="Open quick ride booking"
                         className={`pointer-events-auto w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-[#F59E0B] rounded-full shadow-lg flex items-center justify-center text-black transition-all duration-500 transform hover:scale-110 active:scale-95 group relative ${!isScrolled ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
                     >

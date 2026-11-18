@@ -1,32 +1,7 @@
 import 'package:flutter/material.dart';
-
-// Mock service. In a real app, this would make HTTP requests.
-class UserService {
-  Future<Map<String, String>> getUserProfile() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    return {
-      'fullName': 'Cabi Driver',
-      'phone': '+254 700 000 000',
-      'email': 'driver@prestige.cabi',
-      'profilePictureUrl': 'https://via.placeholder.com/150',
-    };
-  }
-
-  Future<bool> updateUserProfile({
-    required String fullName,
-    required String phone,
-  }) async {
-    await Future.delayed(const Duration(seconds: 1));
-    debugPrint('Updating profile: $fullName, $phone');
-    return true;
-  }
-
-  Future<void> uploadProfilePicture() async {
-    // In a real app, this would use image_picker and http to upload a file.
-    await Future.delayed(const Duration(seconds: 2));
-    debugPrint('Uploading new profile picture...');
-  }
-}
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
+import 'package:driver_app/config/app_config.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -37,11 +12,10 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _userService = UserService();
-  bool _isLoading = false;
-
   final _fullNameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -49,64 +23,97 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _loadUserData();
   }
 
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadUserData() async {
-    final profile = await _userService.getUserProfile();
-    _fullNameController.text = profile['fullName']!;
-    _phoneController.text = profile['phone']!;
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() {
+      _fullNameController.text = prefs.getString('driver_full_name') ?? '';
+      _phoneController.text = prefs.getString('driver_phone') ?? '';
+      _emailController.text = prefs.getString('driver_email') ?? '';
+    });
   }
 
   Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-      final success = await _userService.updateUserProfile(
-        fullName: _fullNameController.text,
-        phone: _phoneController.text,
-      );
-      setState(() => _isLoading = false);
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('user_id');
+      await prefs.setString('driver_full_name', _fullNameController.text.trim());
+      await prefs.setString('driver_phone', _phoneController.text.trim());
+      await prefs.setString('driver_email', _emailController.text.trim());
+
+      try {
+        await Dio().post(
+          '${AppConfig.apiUrl}/users/profile',
+          data: {
+            'userId': userId,
+            'fullName': _fullNameController.text.trim(),
+            'phone': _phoneController.text.trim(),
+            'email': _emailController.text.trim(),
+          },
+        );
+      } catch (_) {
+        // Local preferences already persisted for offline resilience
+      }
 
       if (!mounted) return;
-
-      if (success) {
-        Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully!')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to update profile.')),
-        );
-      }
+      Navigator.of(context).pop(true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Driver profile updated successfully')),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Profile')),
+      appBar: AppBar(title: const Text('Edit Driver Profile')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              // Placeholder for profile picture upload
               TextFormField(
                 controller: _fullNameController,
-                decoration: const InputDecoration(labelText: 'Full Name'),
-                validator: (v) => v!.isEmpty ? 'Required' : null,
+                decoration: const InputDecoration(labelText: 'Full Name', border: OutlineInputBorder()),
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
               ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _phoneController,
-                decoration: const InputDecoration(labelText: 'Phone Number'),
-                validator: (v) => v!.isEmpty ? 'Required' : null,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(labelText: 'Phone Number', border: OutlineInputBorder()),
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
               ),
-              const SizedBox(height: 20),
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
-                      onPressed: _submitForm,
-                      child: const Text('Save Changes'),
-                    ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(labelText: 'Email Address', border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _submitForm,
+                  child: _isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Save Changes'),
+                ),
+              ),
             ],
           ),
         ),

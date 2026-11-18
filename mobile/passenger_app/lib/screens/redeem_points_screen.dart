@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_theme.dart';
+import '../services/badge_service.dart';
 
 class RedeemPointsScreen extends StatefulWidget {
   const RedeemPointsScreen({super.key});
@@ -9,8 +11,9 @@ class RedeemPointsScreen extends StatefulWidget {
 }
 
 class _RedeemPointsScreenState extends State<RedeemPointsScreen> {
-  // Syncing with backend in future iterations
   int _currentPoints = 0;
+  bool _isLoading = true;
+  String _userId = '';
 
   final List<Map<String, dynamic>> _rewards = [
     {'id': '1', 'title': '100 KES Off Next Ride', 'cost': 500},
@@ -19,12 +22,76 @@ class _RedeemPointsScreenState extends State<RedeemPointsScreen> {
     {'id': '4', 'title': '50% Off Next 3 Rides', 'cost': 5000},
   ];
 
-  void _redeemReward(Map<String, dynamic> reward) {
+  @override
+  void initState() {
+    super.initState();
+    _loadPoints();
+  }
+
+  Future<void> _loadPoints() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _userId = prefs.getString('user_id') ?? '';
+      if (_userId.isNotEmpty) {
+        final data = await BadgeService().getPassengerPoints(_userId);
+        if (data != null && mounted) {
+          setState(() {
+            _currentPoints = data.points;
+            _isLoading = false;
+          });
+          return;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading points in redeem screen: $e');
+    }
+    if (mounted) setState(() => _isLoading = false);
+  }
+
+  Future<void> _redeemReward(Map<String, dynamic> reward) async {
     final int cost = reward['cost'];
-    if (_currentPoints >= cost) {
-      setState(() {
-        _currentPoints -= cost;
-      });
+    if (_currentPoints < cost) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Insufficient points to redeem this reward.'),
+          backgroundColor: AppTheme.errorRed,
+        ),
+      );
+      return;
+    }
+
+    if (_userId.isNotEmpty) {
+      final res = await BadgeService().redeemPassengerPoints(
+        userId: _userId,
+        couponId: reward['id'].toString(),
+        cost: cost,
+        title: reward['title'].toString(),
+      );
+
+      if (res != null && res['success'] == true) {
+        final couponCode = res['data']?['couponCode'] ?? 'CABI-VIP';
+        setState(() {
+          _currentPoints = res['data']?['remainingPoints'] ?? (_currentPoints - cost);
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Redeemed "${reward['title']}"! Code: $couponCode (added to wallet)',
+                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: AppTheme.primaryColor,
+            ),
+          );
+        }
+        return;
+      }
+    }
+
+    setState(() {
+      _currentPoints -= cost;
+    });
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -32,13 +99,6 @@ class _RedeemPointsScreenState extends State<RedeemPointsScreen> {
             style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
           backgroundColor: AppTheme.primaryColor,
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Insufficient points to redeem this reward.'),
-          backgroundColor: AppTheme.errorRed,
         ),
       );
     }
@@ -178,4 +238,3 @@ class _RedeemPointsScreenState extends State<RedeemPointsScreen> {
     );
   }
 }
-

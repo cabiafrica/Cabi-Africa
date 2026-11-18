@@ -54,8 +54,15 @@ export default function MainLayout({
                 <meta name="twitter:image:alt" content={imageAlt} />
             </Head>
             <div className={`min-h-screen flex flex-col bg-slate-50 dark:bg-[#0a0a0a] text-slate-900 dark:text-white transition-colors duration-300 ${inter.className}`}>
+                {/* Accessible Skip Link (Reveals on Tab focus) */}
+                <a
+                    href="#main-content"
+                    className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2.5 focus:bg-brand-yellow focus:text-black focus:font-black focus:text-xs focus:uppercase focus:tracking-wider focus:rounded-xl focus:shadow-2xl focus:outline-none focus:ring-2 focus:ring-black"
+                >
+                    Skip to main content &darr;
+                </a>
                 <Header />
-                <main className="flex-grow pt-16 md:pt-20">
+                <main id="main-content" className="flex-grow pt-16 md:pt-20">
                     {children}
                 </main>
                 <Footer />

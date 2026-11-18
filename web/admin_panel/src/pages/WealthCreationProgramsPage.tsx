@@ -21,7 +21,7 @@ const DISPATCH_API_BASE =
   import.meta.env.VITE_DISPATCH_API_URL || 'http://localhost:3334/api';
 
 type WealthCategory =
-  | 'SACCO'
+  | 'Sacco'
   | 'INVESTMENT_MMF'
   | 'PENSION'
   | 'INSURANCE_HEALTH'
@@ -96,7 +96,7 @@ const INITIAL_FORM: ProgramFormState = {
   name: '',
   code: '',
   providerName: '',
-  category: 'SACCO',
+  category: 'Sacco',
   dividendOrYield: '',
   description: '',
   minPct: '2',
@@ -112,7 +112,7 @@ const INITIAL_FORM: ProgramFormState = {
 };
 
 const CATEGORY_LABELS: Record<WealthCategory, string> = {
-  SACCO: 'SACCO Shares / Capital',
+  Sacco: 'Sacco Shares / Capital',
   INVESTMENT_MMF: 'Money Market Fund (MMF)',
   PENSION: 'Pension & Retirement',
   INSURANCE_HEALTH: 'Health & Life Cover',
@@ -384,7 +384,7 @@ export function WealthCreationProgramsPage() {
             Wealth Creation Programs
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Configure driver-selectable SACCO, MMF, and pension programs or attach them as badge incentives.
+            Configure driver-selectable Sacco, MMF, and pension programs or attach them as badge incentives.
           </p>
         </div>
 
@@ -490,7 +490,7 @@ export function WealthCreationProgramsPage() {
             No wealth creation programs yet
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-md mx-auto">
-            Create your first SACCO, MMF, or retirement program for drivers to choose or earn via driver badges.
+            Create your first Sacco, MMF, or retirement program for drivers to choose or earn via driver badges.
           </p>
           <button
             onClick={openCreateModal}
@@ -672,7 +672,7 @@ export function WealthCreationProgramsPage() {
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="e.g. Cabi Gold Drivers SACCO"
+                    placeholder="e.g. Cabi Gold Drivers Sacco"
                     className="w-full px-3.5 py-2 rounded-xl bg-gray-50 dark:bg-card-dark border border-gray-200 dark:border-white/10 text-sm text-gray-900 dark:text-white"
                   />
                 </div>
@@ -702,7 +702,7 @@ export function WealthCreationProgramsPage() {
                   <input
                     value={form.providerName}
                     onChange={(e) => setForm({ ...form, providerName: e.target.value })}
-                    placeholder="e.g. Stima DT SACCO"
+                    placeholder="e.g. Stima DT Sacco"
                     className="w-full px-3.5 py-2 rounded-xl bg-gray-50 dark:bg-card-dark border border-gray-200 dark:border-white/10 text-sm text-gray-900 dark:text-white"
                   />
                 </div>

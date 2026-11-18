@@ -64,6 +64,7 @@ export default function CorporateJoinPage() {
             <Head>
                 <title>Join Corporate Travel | Cabi for Business</title>
                 <meta name="description" content="Accept your corporate travel invitation and link your Cabi Go passenger account to your company billing." />
+                <meta property="og:title" content="Join Corporate Travel | Cabi for Business" />
             </Head>
 
             <Header />

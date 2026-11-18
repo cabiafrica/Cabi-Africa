@@ -4,6 +4,7 @@ import {
   Get,
   Body,
   Param,
+  Req,
   UseInterceptors,
   UploadedFile,
   HttpException,
@@ -11,6 +12,8 @@ import {
   Logger,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import * as jwt from 'jsonwebtoken';
+import * as crypto from 'crypto';
 import { DocumentVerificationService } from '../services/document-verification.service';
 import {
   UploadDocumentDto,
@@ -28,6 +31,61 @@ export class DocumentVerificationController {
     private readonly documentVerificationService: DocumentVerificationService,
   ) {}
 
+  private extractUser(req: any): any {
+    if (req?.user) return req.user;
+    const internalKey = process.env.INTERNAL_API_KEY;
+    const providedKey = req?.headers?.['x-internal-api-key'];
+    if (internalKey && providedKey && typeof providedKey === 'string') {
+      try {
+        const a = Buffer.from(internalKey);
+        const b = Buffer.from(providedKey);
+        if (a.length === b.length && crypto.timingSafeEqual(a, b)) {
+          return { role: 'SUPER_ADMIN', permissions: ['SUPER_ADMIN'] };
+        }
+      } catch {
+        // continue to token check
+      }
+    }
+    const authHeader = req?.headers?.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      const secret = process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'dev-only-jwt-secret-do-not-use-in-prod' : '');
+      if (secret) {
+        try {
+          return jwt.verify(token, secret);
+        } catch {
+          return null;
+        }
+      }
+    }
+    return null;
+  }
+
+  private assertAdmin(req: any): void {
+    const user = this.extractUser(req);
+    if (!user) {
+      throw new HttpException('Authentication required for administrative verification operations.', HttpStatus.UNAUTHORIZED);
+    }
+    const perms: string[] = Array.isArray(user.permissions) ? user.permissions : [];
+    const isAdmin = user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' || perms.some((p: string) => p.startsWith('VERIFICATION_') || p === 'SUPER_ADMIN');
+    if (!isAdmin) {
+      throw new HttpException('Administrative verification privileges required.', HttpStatus.FORBIDDEN);
+    }
+  }
+
+  private assertSelfOrAdmin(req: any, targetUserId: string): void {
+    const user = this.extractUser(req);
+    if (!user) {
+      throw new HttpException('Authentication required to access verification resources.', HttpStatus.UNAUTHORIZED);
+    }
+    const callerId = user.id || user.sub || user.userId;
+    const perms: string[] = Array.isArray(user.permissions) ? user.permissions : [];
+    const isAdmin = user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' || perms.some((p: string) => p.startsWith('VERIFICATION_') || p === 'SUPER_ADMIN');
+    if (callerId !== targetUserId && !isAdmin) {
+      throw new HttpException('You are not authorized to access another user verification documents.', HttpStatus.FORBIDDEN);
+    }
+  }
+
   /**
    * Upload document for verification
    * POST /api/v1/verification/document/upload
@@ -35,9 +93,11 @@ export class DocumentVerificationController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('document'))
   async uploadDocument(
+    @Req() req: any,
     @UploadedFile() file: Express.Multer.File,
     @Body() uploadDto: UploadDocumentDto,
   ): Promise<DocumentVerificationResponseDto> {
+    this.assertSelfOrAdmin(req, uploadDto.userId);
     try {
       if (!file) {
         throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
@@ -95,6 +155,7 @@ export class DocumentVerificationController {
    */
   @Post('review')
   async adminReview(
+    @Req() req: any,
     @Body()
     reviewDto: {
       verificationId: string;
@@ -103,6 +164,7 @@ export class DocumentVerificationController {
       categories?: string[];
     },
   ): Promise<any> {
+    this.assertAdmin(req);
     try {
       return await this.documentVerificationService.adminReview(
         reviewDto.verificationId,
@@ -125,6 +187,7 @@ export class DocumentVerificationController {
    */
   @Get(':id')
   async getVerification(
+    @Req() req: any,
     @Param('id') id: string,
   ): Promise<DocumentVerificationResponseDto> {
     try {
@@ -134,6 +197,8 @@ export class DocumentVerificationController {
       if (!verification) {
         throw new HttpException('Verification not found', HttpStatus.NOT_FOUND);
       }
+
+      this.assertSelfOrAdmin(req, verification.userId);
 
       return {
         id: verification.id,
@@ -147,7 +212,7 @@ export class DocumentVerificationController {
       this.logger.error('Error getting verification:', error);
       throw new HttpException(
         error.message || 'Verification not found',
-        HttpStatus.NOT_FOUND,
+        error.status || HttpStatus.NOT_FOUND,
       );
     }
   }
@@ -158,8 +223,10 @@ export class DocumentVerificationController {
    */
   @Get('user/:userId')
   async getUserVerifications(
+    @Req() req: any,
     @Param('userId') userId: string,
   ): Promise<DocumentVerificationResponseDto[]> {
+    this.assertSelfOrAdmin(req, userId);
     try {
       const verifications =
         await this.documentVerificationService.getUserVerifications(userId);
@@ -176,7 +243,7 @@ export class DocumentVerificationController {
       this.logger.error('Error getting user verifications:', error);
       throw new HttpException(
         error.message || 'Failed to get verifications',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

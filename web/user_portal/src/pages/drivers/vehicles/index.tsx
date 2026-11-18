@@ -98,6 +98,33 @@ export default function MyVehiclesPage() {
         }
     };
 
+    const handleReleaseVehicle = async (vehicleId: string, plateNumber: string) => {
+        if (!confirm(`Release vehicle ${plateNumber}? This will free the number plate so another owner or driver can register it.`)) {
+            return;
+        }
+        setActionLoading(vehicleId);
+        setError(null);
+        setSuccessMessage(null);
+        try {
+            const res = await fetch('/api/vehicles/release', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ vehicleId, plateNumber }),
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                setSuccessMessage(data.message);
+                fetchVehicles();
+            } else {
+                setError(data.message || 'Failed to release vehicle');
+            }
+        } catch (err: any) {
+            setError(err.message || 'Network error releasing vehicle');
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
     return (
         <MainLayout title="My Vehicles & Shifts | Cabi Driver Portal" description="Manage your registered vehicles, start shifts, and report benefit claims.">
             <div className="min-h-screen bg-brand-black text-white py-12 px-4 sm:px-6 lg:px-8">
@@ -261,6 +288,15 @@ export default function MyVehiclesPage() {
                                             >
                                                 Account Details <ArrowRight className="w-4 h-4" />
                                             </Link>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => handleReleaseVehicle(vehicle.id, vehicle.plateNumber)}
+                                                disabled={actionLoading === vehicle.id}
+                                                className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-bold text-xs uppercase tracking-widest transition-all border border-amber-500/25 disabled:opacity-50"
+                                            >
+                                                Release Vehicle for Transfer
+                                            </button>
                                         </div>
                                     </div>
                                 );

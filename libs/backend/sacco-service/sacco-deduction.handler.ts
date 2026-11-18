@@ -12,11 +12,11 @@ interface TripPaidEvent {
 
 /**
  * This is the main handler for the Lambda function that processes
- * the SACCO savings deduction.
+ * the Sacco savings deduction.
  * It's triggered by an SQS message originating from the `TripPaid` SNS topic.
  */
 export async function handleSaccoDeduction(event: TripPaidEvent): Promise<void> {
-  console.log(`Processing SACCO deduction for trip: ${event.tripId}`);
+  console.log(`Processing Sacco deduction for trip: ${event.tripId}`);
 
   const adminClient = new AdminServiceClient();
   const transactionRepo = new TransactionRepository();
@@ -30,13 +30,12 @@ export async function handleSaccoDeduction(event: TripPaidEvent): Promise<void> 
 
     // 2. Check if savings rate is zero
     if (saccoConfig.savingsRate <= 0) {
-      console.log('SACCO savings rate is zero. No deduction will be made.');
+      console.log('Sacco savings rate is zero. No deduction will be made.');
       return;
     }
 
-    // 3. Calculate the deduction amount
-    const totalCommission = event.finalFare * commissionConfig.totalCommission;
-    const savingsAmount = totalCommission * saccoConfig.savingsRate;
+    // 3. Calculate the deduction amount (2% savings directly on final fare)
+    const savingsAmount = event.finalFare * saccoConfig.savingsRate;
 
     if (savingsAmount <= 0) {
       console.log('Calculated savings amount is zero. No deduction will be made.');
@@ -47,13 +46,13 @@ export async function handleSaccoDeduction(event: TripPaidEvent): Promise<void> 
     await transactionRepo.create({
       userId: event.driverId,
       amount: savingsAmount,
-      type: 'SACCO_SAVING',
+      type: 'Sacco_SAVING',
       relatedTripId: event.tripId,
     });
 
-    console.log(`Successfully processed SACCO deduction of ${savingsAmount} for driver: ${event.driverId}`);
+    console.log(`Successfully processed Sacco deduction of ${savingsAmount} for driver: ${event.driverId}`);
   } catch (error) {
-    console.error('Failed to process SACCO deduction:', error);
+    console.error('Failed to process Sacco deduction:', error);
     throw error;
   }
 }

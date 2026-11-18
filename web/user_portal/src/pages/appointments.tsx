@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
 import {
     Calendar,
@@ -9,13 +9,19 @@ import {
     Phone,
     Mail,
     Briefcase,
+    Download,
 } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 import {
     APPOINTMENT_PURPOSES,
-    APPOINTMENT_TIME_SLOTS,
     CONTACT_INFO,
 } from '@/config/contactConfig';
+
+interface SlotOption {
+    value: string;
+    label: string;
+    available: boolean;
+}
 
 interface ConfirmedAppointment {
     reference: string;
@@ -26,29 +32,76 @@ interface ConfirmedAppointment {
     phone: string;
     email: string;
     officeLocation: string;
+    icsContent?: string;
 }
 
 function getDefaultDate(): string {
-    const tomorrow = new Date(Date.now() + 86400000);
-    return tomorrow.toISOString().split('T')[0];
+    const d = new Date(Date.now() + 86400000);
+    if (d.getDay() === 0) {
+        d.setDate(d.getDate() + 1); // Skip Sunday
+    }
+    return d.toISOString().split('T')[0];
 }
 
 export default function AppointmentsPage() {
     const [formData, setFormData] = useState({
         purpose: APPOINTMENT_PURPOSES[0] as string,
         date: getDefaultDate(),
-        timeSlot: APPOINTMENT_TIME_SLOTS[1] as string,
+        timeSlot: '',
         fullName: '',
         phone: '',
         email: '',
         notes: '',
     });
+    const [slots, setSlots] = useState<SlotOption[]>([]);
+    const [isClosed, setIsClosed] = useState(false);
+    const [closedReason, setClosedReason] = useState<string | null>(null);
+    const [slotsLoading, setSlotsLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [confirmed, setConfirmed] = useState<ConfirmedAppointment | null>(null);
 
+    useEffect(() => {
+        if (!formData.date) return;
+        setSlotsLoading(true);
+        fetch(`/api/appointments?date=${encodeURIComponent(formData.date)}`)
+            .then((r) => r.json())
+            .then((data) => {
+                setIsClosed(Boolean(data.isClosed));
+                setClosedReason(data.reason || null);
+                const list: SlotOption[] = Array.isArray(data.slots) ? data.slots : [];
+                setSlots(list);
+                const firstAvailable = list.find((s) => s.available);
+                setFormData((prev) => ({
+                    ...prev,
+                    timeSlot: list.some((s) => s.value === prev.timeSlot && s.available)
+                        ? prev.timeSlot
+                        : firstAvailable?.value || '',
+                }));
+            })
+            .catch(() => {
+                setSlots([]);
+            })
+            .finally(() => setSlotsLoading(false));
+    }, [formData.date]);
+
+    const handleDownloadIcs = () => {
+        if (!confirmed?.icsContent) return;
+        const blob = new Blob([confirmed.icsContent], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `cabi-appointment-${confirmed.reference}.ics`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        if (!formData.timeSlot) {
+            setError('Please select an available 30-minute time slot.');
+            return;
+        }
         setSubmitting(true);
         setError(null);
 
@@ -64,7 +117,7 @@ export default function AppointmentsPage() {
                 throw new Error(payload?.message || 'Unable to book your office appointment.');
             }
 
-            setConfirmed(payload.appointment);
+            setConfirmed({ ...payload.appointment, icsContent: payload.icsContent });
         } catch (err: any) {
             setError(err?.message || 'An unexpected error occurred while scheduling.');
         } finally {
@@ -179,6 +232,16 @@ export default function AppointmentsPage() {
                             </div>
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                                {confirmed.icsContent && (
+                                    <button
+                                        type="button"
+                                        onClick={handleDownloadIcs}
+                                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs uppercase tracking-widest shadow-md"
+                                    >
+                                        <Download className="w-4 h-4" />
+                                        Add to Calendar (.ics)
+                                    </button>
+                                )}
                                 <button
                                     type="button"
                                     onClick={() => setConfirmed(null)}
@@ -193,6 +256,9 @@ export default function AppointmentsPage() {
                                     Return Home
                                 </Link>
                             </div>
+                            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                                A confirmation email with your calendar invite has been sent to {confirmed.email}.
+                            </p>
                         </div>
                     ) : (
                         <form
@@ -245,24 +311,35 @@ export default function AppointmentsPage() {
 
                                 <div>
                                     <label className="block text-xs font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400 mb-2">
-                                        Preferred Time Slot *
+                                        Available 30-Min Slots (Mon–Fri 8am–4pm, Sat 8am–12:30pm) *
                                     </label>
-                                    <div className="grid grid-cols-3 gap-2">
-                                        {APPOINTMENT_TIME_SLOTS.map((slot) => (
-                                            <button
-                                                key={slot}
-                                                type="button"
-                                                onClick={() => setFormData({ ...formData, timeSlot: slot })}
-                                                className={`py-2.5 px-2 rounded-xl text-xs font-bold border transition-all ${
-                                                    formData.timeSlot === slot
-                                                        ? 'bg-[#D4AF37] text-black border-[#D4AF37] shadow-sm'
-                                                        : 'bg-slate-50 dark:bg-surface-dark text-slate-700 dark:text-neutral-300 border-slate-200 dark:border-white/10 hover:border-[#D4AF37]/50'
-                                                }`}
-                                            >
-                                                {slot}
-                                            </button>
-                                        ))}
-                                    </div>
+                                    {slotsLoading ? (
+                                        <p className="text-xs text-neutral-500 py-3">Loading available slots...</p>
+                                    ) : isClosed ? (
+                                        <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-semibold">
+                                            {closedReason || 'Office is closed on this date.'}
+                                        </div>
+                                    ) : (
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-56 overflow-y-auto pr-1">
+                                            {slots.map((slot) => (
+                                                <button
+                                                    key={slot.value}
+                                                    type="button"
+                                                    disabled={!slot.available}
+                                                    onClick={() => setFormData({ ...formData, timeSlot: slot.value })}
+                                                    className={`py-2 px-2 rounded-xl text-[11px] font-bold border transition-all ${
+                                                        !slot.available
+                                                            ? 'bg-slate-100 dark:bg-white/5 text-neutral-400 border-slate-200 dark:border-white/5 line-through cursor-not-allowed opacity-50'
+                                                            : formData.timeSlot === slot.value
+                                                            ? 'bg-[#D4AF37] text-black border-[#D4AF37] shadow-sm'
+                                                            : 'bg-slate-50 dark:bg-surface-dark text-slate-700 dark:text-neutral-300 border-slate-200 dark:border-white/10 hover:border-[#D4AF37]/50'
+                                                    }`}
+                                                >
+                                                    {slot.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 

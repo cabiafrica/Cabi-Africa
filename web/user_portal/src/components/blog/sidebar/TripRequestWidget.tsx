@@ -12,20 +12,24 @@ export default function TripRequestWidget() {
                 <div className="relative">
                     <FaMapMarkerAlt className="absolute left-3 top-3 text-neutral-400" />
                     <input
+                        id="trip-request-pickup"
                         type="text"
                         placeholder="Pickup Location"
+                        aria-label="Pickup Location"
                         className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
                     />
                 </div>
                 <div className="relative">
                     <FaMapMarkerAlt className="absolute left-3 top-3 text-[#D4AF37]" />
                     <input
+                        id="trip-request-destination"
                         type="text"
                         placeholder="Destination"
+                        aria-label="Destination"
                         className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37]"
                     />
                 </div>
-                <button className="w-full bg-[#D4AF37] hover:bg-[#ffe088] text-black font-extrabold py-2.5 rounded-xl text-sm transition-colors">
+                <button type="submit" className="w-full bg-[#D4AF37] hover:bg-[#ffe088] text-black font-extrabold py-2.5 rounded-xl text-sm transition-colors">
                     Request Now
                 </button>
             </form>

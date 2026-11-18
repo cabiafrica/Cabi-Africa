@@ -34,10 +34,10 @@ export default function ApplicationDashboard() {
         // If newly registered (simulated by query param), show Documents Pending state immediately
         if (router.query.new_applicant === 'true') {
             setStatus({
-                id: 'new-driver-123',
-                firstName: 'Driver',
-                email: 'driver@cabi.com',
-                phone: '+254700000000',
+                id: user?.id || 'new-driver-123',
+                firstName: user?.firstName || 'Driver',
+                email: user?.email || 'driver@cabi.africa',
+                phone: user?.phone || '+254700000000',
                 status: 'DOCUMENTS_PENDING',
                 submittedDate: new Date().toISOString(),
                 nextAction: 'Upload necessary documents to proceed.',
@@ -47,23 +47,34 @@ export default function ApplicationDashboard() {
             return;
         }
 
-        // Otherwise simulate fetching for the currently logged in user
-        driverLeadService.getProspectStatus('driver@example.com')
+        // If unauthenticated, redirect to login
+        if (!user && typeof window !== 'undefined') {
+            const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+            if (!token) {
+                router.replace('/login?redirect=/drivers/dashboard');
+                return;
+            }
+        }
+
+        const targetEmail = user?.email || (typeof router.query.email === 'string' ? router.query.email : 'driver@cabi.africa');
+
+        driverLeadService.getProspectStatus(targetEmail)
             .then(data => {
                 setStatus(data);
                 setLoading(false);
             })
             .catch(err => {
-                console.error(err);
+                console.error('Failed to load driver prospect status:', err);
                 setLoading(false);
             });
-    }, [router.isReady, router.query]);
+    }, [router.isReady, router.query, user]);
 
     return (
         <div className="min-h-screen bg-neutral-950 font-sans text-white">
             <Head>
                 <title>My Application | Cabi Driver</title>
                 <meta name="description" content="Track your Cabi driver application status." />
+                <meta property="og:title" content="My Application | Cabi Driver" />
             </Head>
 
             {/* Header / Navbar */}

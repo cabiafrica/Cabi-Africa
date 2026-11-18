@@ -5,6 +5,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
+import DOMPurify from 'isomorphic-dompurify';
 import MainLayout from '../../components/layout/MainLayout';
 import Sidebar from '../../components/blog/sidebar/Sidebar';
 import AppSidebar from '../../components/blog/sidebar/AppSidebar';
@@ -12,11 +13,15 @@ import { getPostBySlug, getAllPosts, getAllCategories, BlogPost, BlogPostSummary
 
 function sanitizeHtml(html: string): string {
     if (!html) return '';
-    return html
-        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-        .replace(/<(iframe|object|embed|form)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
-        .replace(/\son\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-        .replace(/href\s*=\s*(?:"javascript:[^"]*"|'javascript:[^']*')/gi, 'href="#"');
+    return DOMPurify.sanitize(html, {
+        USE_PROFILES: { html: true },
+        ALLOWED_TAGS: [
+            'p', 'b', 'i', 'em', 'strong', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+            'ul', 'ol', 'li', 'blockquote', 'code', 'pre', 'hr', 'br', 'table',
+            'thead', 'tbody', 'tr', 'th', 'td', 'img', 'span', 'figure', 'figcaption'
+        ],
+        ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'target', 'rel', 'width', 'height'],
+    });
 }
 
 interface BlogPostPageProps {
@@ -83,7 +88,7 @@ export default function BlogPostPage({ post, recentPosts, categories }: BlogPost
                                 '@type': 'WebPage',
                                 '@id': `https://cabi.africa/blog/${post.slug || post.id}`,
                             },
-                        }),
+                        }).replace(/</g, '\\u003c'),
                     }}
                 />
             </Head>

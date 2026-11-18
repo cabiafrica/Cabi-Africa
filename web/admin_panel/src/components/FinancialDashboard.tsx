@@ -125,7 +125,7 @@ export const FinancialDashboard: React.FC = () => {
         <KpiCard title={`Total Revenue (${rangeLabel})`} value={formatCurrency(stats.totalRevenue)} isLoading={loading} />
         <KpiCard title="System Commission" value={formatCurrency(stats.systemCommission)} isLoading={loading} />
         <KpiCard title="Driver Payouts" value={formatCurrency(stats.driverPayouts)} isLoading={loading} />
-        <KpiCard title="SACCO Savings" value={formatCurrency(stats.saccoSavings)} isLoading={loading} />
+        <KpiCard title="Sacco Savings" value={formatCurrency(stats.saccoSavings)} isLoading={loading} />
       </div>
 
       {/* Revenue Chart */}
@@ -152,4 +152,4 @@ export const FinancialDashboard: React.FC = () => {
       </div>
     </div>
   );
-};
+};

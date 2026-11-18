@@ -2,11 +2,29 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { RateLimitMiddleware } from '@cabi/backend/common';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const globalPrefix = 'api';
     app.setGlobalPrefix(globalPrefix);
+
+    // Security Headers & Rate Limiting
+    const httpAdapter = app.getHttpAdapter();
+    if (httpAdapter && typeof httpAdapter.getInstance === 'function') {
+        const expressInstance = httpAdapter.getInstance();
+        expressInstance.disable('x-powered-by');
+    }
+
+    app.use((req: any, res: any, next: any) => {
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+        res.setHeader('X-XSS-Protection', '1; mode=block');
+        res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        next();
+    });
+
+    app.use(new RateLimitMiddleware().use.bind(new RateLimitMiddleware()));
 
     // Global Validation Pipe
     app.useGlobalPipes(new ValidationPipe({
@@ -47,3 +65,4 @@ async function bootstrap() {
 }
 
 bootstrap();
+

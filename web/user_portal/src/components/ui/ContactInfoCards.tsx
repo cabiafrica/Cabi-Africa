@@ -40,6 +40,11 @@ export default function ContactInfoCards({
             <a
                 href={`tel:${CONTACT_INFO.phoneDial}`}
                 onClick={handlePhoneClick}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        handlePhoneClick();
+                    }
+                }}
                 aria-label={`Call and copy ${CONTACT_INFO.phoneDisplay}`}
                 className="flex items-center justify-between gap-3 p-4 rounded-2xl bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 hover:border-[#D4AF37]/60 transition-all group shadow-sm"
             >

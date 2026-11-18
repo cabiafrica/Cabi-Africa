@@ -101,6 +101,34 @@ class AudioNotificationService {
     if (_enabledEvents[eventKey] == false) return;
 
     try {
+      if (_preset == 'bell') {
+        // Soft Bell: Resonant harmonic alert tones with lingering feedback
+        await SystemSound.play(SystemSoundType.alert);
+        await HapticFeedback.heavyImpact();
+        if (eventKey == 'driver_matched' || eventKey == 'driver_request_incoming' || eventKey == 'trip_ended') {
+          await Future.delayed(const Duration(milliseconds: 220));
+          await SystemSound.play(SystemSoundType.alert);
+          await HapticFeedback.mediumImpact();
+        }
+        return;
+      }
+
+      if (_preset == 'digital') {
+        // Digital Pulse: Fast rhythmic tactical pulses
+        await SystemSound.play(SystemSoundType.click);
+        await HapticFeedback.selectionClick();
+        await Future.delayed(const Duration(milliseconds: 80));
+        await SystemSound.play(SystemSoundType.click);
+        await HapticFeedback.lightImpact();
+        if (eventKey == 'driver_request_incoming' || eventKey == 'driver_matched') {
+          await Future.delayed(const Duration(milliseconds: 80));
+          await SystemSound.play(SystemSoundType.click);
+          await HapticFeedback.heavyImpact();
+        }
+        return;
+      }
+
+      // Default: Modern Chime
       switch (eventKey) {
         case 'driver_online':
         case 'driver_accepted':

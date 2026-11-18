@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cabi Africa — Occurrence Book (Admin Command)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0B0F17;
+      --panel-bg: #111827;
+      --card-bg: rgba(17, 24, 39, 0.7);
+      --card-card2: #1F2937;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-light: rgba(255, 255, 255, 0.15);
+      --border-gold: rgba(212, 175, 55, 0.35);
+      --gold: #d4af37;
+      --gold-dark: #b8860b;
+      --gold-bright: #ffd700;
+      --gold-glow: rgba(212, 175, 55, 0.25);
+      --green: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.25);
+      --red: #ef4444;
+      --red-glow: rgba(239, 68, 68, 0.25);
+      --blue: #067ff9;
+      --amber: #f59e0b;
+      --text: #ffffff;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --font-headline: 'Montserrat', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #172554 0%, #0B0F17 65%);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Executive Top Bar */
+    header {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+      color: #000;
+      font-weight: 900;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-title {
+      font-family: var(--font-headline);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: #fff;
+    }
+
+    .brand-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .admin-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .admin-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.7rem;
+    }
+
+    .btn-return {
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--border-gold);
+      color: var(--gold-bright);
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-return:hover {
+      background: var(--gold);
+      color: #000;
+      box-shadow: 0 0 15px var(--gold-glow);
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 1560px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 24px 60px;
+    }
+
+    /* Page Header */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .title-h1 {
+      font-family: var(--font-headline);
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #FFD700 0%, #FFF 50%, #B8860B 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .subtitle-p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    /* Notice Banner for Clean OB Architecture */
+    .ob-architecture-banner {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 14px 20px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .banner-content {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .banner-icon {
+      font-size: 1.6rem;
+    }
+
+    .banner-text h4 {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--green);
+      margin-bottom: 2px;
+    }
+
+    .banner-text p {
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    /* Metric Stat Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-family: var(--font-headline);
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .stat-indicator {
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Filter & Search Bar */
+    .filter-toolbar {
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 280px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 16px 10px 38px;
+      color: #fff;
+      font-size: 0.88rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 12px var(--gold-glow);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 0.95rem;
+    }
+
+    .select-filter {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      color: #cbd5e1;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .select-filter:focus {
+      border-color: var(--gold);
+    }
+
+    /* Status Filter Chips */
+    .status-chips-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .status-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .status-chip:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .status-chip.active {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--gold);
+      color: var(--gold-bright);
+    }
+
+    .status-chip.chip-urgent.active {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--red);
+      color: #fca5a5;
+    }
+
+    .status-chip.chip-disputed.active {
+      background: rgba(212, 175, 55, 0.2);
+      border-color: var(--gold);
+      color: #ffd700;
+    }
+
+    .status-chip.chip-investigating.active {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--amber);
+      color: #fcd34d;
+    }
+
+    .status-chip.chip-resolved.active {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--green);
+      color: #86efac;
+    }
+
+    .chip-count {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+    }
+
+    /* Occurrence Table */
+    .table-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    thead th {
+      background: rgba(0, 0, 0, 0.35);
+      padding: 14px 18px;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      font-weight: 800;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      transition: background 0.15s;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 215, 0, 0.03);
+    }
+
+    tbody td {
+      padding: 16px 18px;
+      font-size: 0.85rem;
+      vertical-align: middle;
+    }
+
+    .ob-number {
+      font-family: var(--font-mono);
+      font-weight: 800;
+      color: var(--gold-bright);
+      font-size: 0.88rem;
+      letter-spacing: 0.5px;
+    }
+
+    .timestamp-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .time-date {
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+
+    .time-clock {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    .incident-title {
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .category-tag {
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cat-dispute { background: rgba(212, 175, 55, 0.15); color: #ffd700; border: 1px solid rgba(212, 175, 55, 0.3); }
+    .cat-safety { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .cat-traffic { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .cat-fraud { background: rgba(139, 92, 246, 0.15); color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.3); }
+    .cat-property { background: rgba(6, 127, 249, 0.15); color: #93c5fd; border: 1px solid rgba(6, 127, 249, 0.3); }
+
+    .party-card {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .party-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+    }
+
+    .party-badge {
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    .badge-driver { background: rgba(212, 175, 55, 0.2); color: var(--gold-bright); }
+    .badge-pax { background: rgba(6, 127, 249, 0.2); color: #60a5fa; }
+
+    .severity-chip {
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .sev-critical { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .sev-high { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .sev-medium { background: rgba(212, 175, 55, 0.2); color: #d4af37; border: 1px solid rgba(212, 175, 55, 0.4); }
+    .sev-low { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+      font-size: 0.75rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .dot-open { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+    .dot-investigating { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+    .dot-disputed { background: #ffd700; box-shadow: 0 0 8px #ffd700; }
+    .dot-resolved { background: #10b981; box-shadow: 0 0 8px #10b981; }
+
+    .btn-action-view {
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      color: var(--gold-bright);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+
+    .btn-action-view:hover {
+      background: var(--gold);
+      color: #000;
+    }
+
+    /* Detail Modal Drawer */
+    .drawer-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      justify-content: flex-end;
+    }
+
+    .drawer-panel {
+      width: 100%;
+      max-width: 620px;
+      height: 100%;
+      background: #0f172a;
+      border-left: 1px solid var(--border);
+      padding: 32px 28px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -15px 0 40px rgba(0, 0, 0, 0.6);
+      animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .drawer-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .evidence-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .evidence-title {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .statement-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .statement-author {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #60a5fa;
+      margin-bottom: 4px;
+    }
+
+    .statement-text {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+    }
+
+    .drawer-actions {
+      margin-top: auto;
+      display: flex;
+      gap: 12px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-resolve {
+      flex: 1;
+      background: var(--green);
+      color: #000;
+      font-weight: 800;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .btn-adjudicate {
+      flex: 1;
+      background: var(--gold);
+      color: #000;
+      font-weight: 800;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" style="position:absolute;left:-9999px;">Skip to main content</a>
+
+  <!-- Top Executive Header -->
+  <header>
+    <div class="brand-wrap">
+      <div class="brand-badge">CABI COMMAND</div>
+      <div>
+        <div class="brand-title">Occurrence Book (OB)</div>
+        <div class="brand-subtitle">Security Command, Evidence Audit &amp; Incident Resolution</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="admin-pill">
+        <div class="admin-avatar">CI</div>
+        <span>Chief Inspector (ADM-84192)</span>
+      </div>
+      <a href="/dual_emulator.html" class="btn-return">
+        <span>🚕</span> Dual Mobile Studio
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main id="main-content">
+
+    <!-- Page Title Row -->
+    <div class="page-header">
+      <div>
+        <h1 class="title-h1">Occurrence Book</h1>
+        <p class="subtitle-p">Real-Time Security Command, Dispute Adjudication &amp; Legal Audit Trail</p>
+      </div>
+    </div>
+
+    <!-- Notice Banner for Architectural Separation -->
+    <div class="ob-architecture-banner">
+      <div class="banner-content">
+        <div class="banner-icon">🛡️</div>
+        <div class="banner-text">
+          <h4>Occurrence Book Integrity &amp; Noise Isolation Active</h4>
+          <p>
+            Standard 4–5★ trip ratings are routed strictly to the <strong>Captain Ratings Ledger</strong> to prevent police log pollution. The Occurrence Book exclusively maintains legal records for Safety Alerts, Telemetry Violations, and Disputed Wait-Fee Cancellations.
+          </p>
+        </div>
+      </div>
+      <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--green); font-weight: 700; white-space: nowrap;">
+        LEGAL GRADE SECURE
+      </div>
+    </div>
+
+    <!-- Metric Stat Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Recorded Incidents</div>
+        <div class="stat-value" id="statTotal">5</div>
+        <div class="stat-indicator" style="color: var(--text-muted);">Last 24 Hours</div>
+      </div>
+      <div class="stat-card" style="border-color: rgba(239, 68, 68, 0.3);">
+        <div class="stat-label">Open / Urgent (SOS)</div>
+        <div class="stat-value" style="color: var(--red);" id="statOpen">1</div>
+        <div class="stat-indicator" style="color: var(--red);">Immediate Police Action</div>
+      </div>
+      <div class="stat-card" style="border-color: rgba(212, 175, 55, 0.3);">
+        <div class="stat-label">Disputed Cancellations</div>
+        <div class="stat-value" style="color: var(--gold-bright);" id="statDisputed">1</div>
+        <div class="stat-indicator" style="color: var(--gold);">Wait Fee Reviews (KES 50)</div>
+      </div>
+      <div class="stat-card" style="border-color: rgba(245, 158, 11, 0.3);">
+        <div class="stat-label">Under Investigation</div>
+        <div class="stat-value" style="color: var(--amber);" id="statInvestigating">1</div>
+        <div class="stat-indicator" style="color: var(--amber);">Expressway Radar Audit</div>
+      </div>
+      <div class="stat-card" style="border-color: rgba(16, 185, 129, 0.3);">
+        <div class="stat-label">Resolved &amp; Closed</div>
+        <div class="stat-value" style="color: var(--green);" id="statResolved">2</div>
+        <div class="stat-indicator" style="color: var(--green);">Settled with Evidence</div>
+      </div>
+    </div>
+
+    <!-- Filter & Search Toolbar -->
+    <div class="filter-toolbar">
+      <div class="search-row">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Search by OB#, Title, Driver, Passenger..." oninput="handleSearch()">
+        </div>
+
+        <select class="select-filter" id="severityFilter" onchange="handleFilterChange()">
+          <option value="ALL">All Severities</option>
+          <option value="CRITICAL">Critical</option>
+          <option value="HIGH">High</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="LOW">Low</option>
+        </select>
+
+        <select class="select-filter" id="categoryFilter" onchange="handleFilterChange()">
+          <option value="ALL">All Categories</option>
+          <option value="DISPUTE">Dispute / Wait Fee</option>
+          <option value="SAFETY_VIOLATION">Safety Violation / SOS</option>
+          <option value="TRAFFIC_OFFENSE">Traffic Offense</option>
+          <option value="FRAUD">Fraud / Overcharge</option>
+          <option value="PROPERTY_DAMAGE">Property / Lost Item</option>
+        </select>
+      </div>
+
+      <!-- Quick Status Filter Chips -->
+      <div class="status-chips-row">
+        <div class="status-chip active" id="chip-ALL" onclick="setStatusFilter('ALL')">
+          <span>All Incidents</span>
+          <span class="chip-count" id="count-ALL">5</span>
+        </div>
+        <div class="status-chip chip-urgent" id="chip-OPEN" onclick="setStatusFilter('OPEN')">
+          <span>🚨 Open (Urgent)</span>
+          <span class="chip-count" id="count-OPEN">1</span>
+        </div>
+        <div class="status-chip chip-investigating" id="chip-UNDER_INVESTIGATION" onclick="setStatusFilter('UNDER_INVESTIGATION')">
+          <span>🔍 Investigating</span>
+          <span class="chip-count" id="count-UNDER_INVESTIGATION">1</span>
+        </div>
+        <div class="status-chip chip-disputed" id="chip-DISPUTED" onclick="setStatusFilter('DISPUTED')">
+          <span>⚖️ Disputed</span>
+          <span class="chip-count" id="count-DISPUTED">1</span>
+        </div>
+        <div class="status-chip chip-resolved" id="chip-RESOLVED" onclick="setStatusFilter('RESOLVED')">
+          <span>✅ Resolved</span>
+          <span class="chip-count" id="count-RESOLVED">2</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>OB Reference</th>
+            <th>Timestamp</th>
+            <th>Category / Incident Title</th>
+            <th>Involved Parties</th>
+            <th>Priority</th>
+            <th>Current Status</th>
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody id="occurrencesTableBody">
+          <!-- Rows injected dynamically via JS -->
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- Interactive Case Resolution Drawer Modal -->
+  <div class="drawer-overlay" id="resolutionDrawer">
+    <div class="drawer-panel">
+      <div class="drawer-header">
+        <div>
+          <span class="category-tag cat-dispute" id="drawerCategoryTag">DISPUTE</span>
+          <h2 style="font-size: 1.3rem; font-weight: 800; margin: 8px 0 4px;" id="drawerObTitle">OB-CAN-48192</h2>
+          <div style="font-size: 0.75rem; color: var(--text-dim);" id="drawerTimestamp">Recorded: Today, 21:52 EAT</div>
+        </div>
+        <button class="drawer-close" onclick="closeDrawer()">✕</button>
+      </div>
+
+      <div class="evidence-box">
+        <div class="evidence-title">📋 Incident Summary &amp; Telemetry</div>
+        <div style="font-size: 0.82rem; line-height: 1.5; color: #cbd5e1;" id="drawerDescription">
+          Passenger cancelled ride request 5 minutes after Captain marked arrived outside Kenyatta Ave (GPO). Standard 3-minute grace period expired. Wait fee of KES 50 billed to passenger next trip ledger; KES 50 instant credit paid to Captain Cabi Wallet.
+        </div>
+      </div>
+
+      <div class="evidence-box">
+        <div class="evidence-title">👥 Involved Parties (Verified IDs)</div>
+        <div class="party-card" id="drawerParties">
+          <div class="party-row">
+            <span class="party-badge badge-driver">CAPTAIN</span>
+            <strong>Samuel Mwangi (DRV-84192)</strong> • Toyota Axio Hybrid KDH 452X
+          </div>
+          <div class="party-row">
+            <span class="party-badge badge-pax">PASSENGER</span>
+            <strong>Brian K. (PAX-84192)</strong> • Rating: 4.90★
+          </div>
+        </div>
+      </div>
+
+      <div class="evidence-box">
+        <div class="evidence-title">🗣️ Witness &amp; Party Statements</div>
+        <div id="drawerStatements">
+          <div class="statement-item">
+            <div class="statement-author">👨‍✈️ Captain Samuel M. (DRV-84192) — 21:54:12</div>
+            <div class="statement-text">"I arrived at Kenyatta Ave outside GPO at 21:47. I waited the full 3-minute grace period plus an extra 2 minutes. Rider called stating they had left their briefcase in office and cancelled."</div>
+          </div>
+          <div class="statement-item">
+            <div class="statement-author">🧍 Passenger Brian K. (PAX-84192) — 21:55:04</div>
+            <div class="statement-text">"I acknowledge cancellation but was only 1 minute late. Requesting waiver of the KES 50 surcharge."</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOS Distress Fee & Pardon Card (Shown on Safety / SOS Incidents) -->
+      <div class="evidence-box" id="drawerDistressFeeBox" style="display: none; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05);">
+        <div class="evidence-title" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>🚨 SOS Distress Dispatch Surcharge (KES 500)</span>
+          <span id="distressFeeBadge" style="font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 4px;"></span>
+        </div>
+        <div style="font-size: 0.78rem; line-height: 1.4; color: #cbd5e1; margin-bottom: 8px;" id="distressFeeDetails"></div>
+        <div id="pardonActionsBar" style="display: none; gap: 8px; margin-top: 10px;">
+          <button class="btn-resolve" onclick="executePardon(true)" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); font-size: 0.75rem; padding: 6px 12px; border-radius: 6px; border: none; color: #fff; cursor: pointer; font-weight: 700;">
+            🛡️ Grant Distress Pardon (Senior Authority)
+          </button>
+          <button class="btn-action-view" onclick="executePardon(false)" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 0.75rem; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 700;">
+            ❌ Decline Pardon
+          </button>
+        </div>
+      </div>
+
+      <!-- Sacco Escalation Hearing Bond Card (Option A: Loser Pays Escrow) -->
+      <div class="evidence-box" id="drawerEscalationBondBox" style="display: none; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.05);">
+        <div class="evidence-title" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>⚖️ Sacco Escalation Hearing Bond (KES 500)</span>
+          <span id="escalationBondBadge" style="font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: rgba(245, 158, 11, 0.2); color: #fcd34d;">HELD IN ESCROW</span>
+        </div>
+        <div style="font-size: 0.78rem; line-height: 1.4; color: #cbd5e1;" id="escalationBondDetails">
+          KES 500 escalation fee collected from the escalating party. Held as an escrow bond under the <strong>Loser-Pays Rule</strong>: 100% refunded to the winner if their claim is upheld; forfeited to the Sacco Hearing Desk if rejected as frivolous.
+        </div>
+      </div>
+
+      <!-- Multi-Track Adjudication Controls -->
+      <div class="evidence-box" style="border-color: rgba(212, 175, 55, 0.4); background: rgba(212, 175, 55, 0.05);">
+        <div class="evidence-title" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>⚖️ Multi-Track Adjudication Decision</span>
+          <span style="font-size: 0.65rem; color: #10b981; font-weight: 700; background: rgba(16, 185, 129, 0.15); padding: 2px 8px; border-radius: 4px;" id="drawerAutonomyBadge">
+            ⚡ Autonomy Cap: KES 500 Max
+          </span>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">Resolution Action</label>
+          <select id="adjudicationActionSelect" class="select-filter" style="width: 100%;" onchange="handleAdjudicationActionChange()">
+            <option value="UPHOLD_CAPTAIN_FEE">1. Uphold Captain Fee (KES 50.00 Credit to Captain)</option>
+            <option value="FULL_PASSENGER_REFUND">2. Full Refund to Passenger (KES 50.00 Wallet Reversal)</option>
+            <option value="SPLIT_50_50">3. 50/50 Split Compromise (KES 25 Sacco Welfare Buffer)</option>
+            <option value="EXPUNGE_RATING_STRIKE">4. Expunge 1★ Rating Strike &amp; Restore Captain Score</option>
+            <option value="ESCALATE_SACCO_COMMITTEE">5. Escalate to Sacco Disciplinary Committee</option>
+            <option value="POLICE_LEGAL_HANDOVER">6. Formal Police Incident Handover (Export OB Docket)</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">Financial Adjustment Amount (KES)</label>
+          <input type="number" id="adjudicationAmountInput" value="50" min="0" max="5000" style="width: 100%; background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 0.85rem;" oninput="handleAmountCheck()">
+          <div style="font-size: 0.68rem; margin-top: 4px;" id="amountWarningHint">
+            <span style="color: #10b981;">✓ Within Support Tier 1 Autonomy (&le; KES 500). Instant execution.</span>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">Adjudication Comment / Legal Audit Finding</label>
+          <textarea id="adjudicatorCommentInput" placeholder="Enter findings, policy rationale, and instructions for involved parties..." style="width: 100%; height: 65px; background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 0.8rem; resize: none;"></textarea>
+        </div>
+      </div>
+
+      <div class="drawer-actions">
+        <button class="btn-resolve" onclick="executeAdjudication()">
+          ✓ Execute Adjudication &amp; Log
+        </button>
+        <button class="btn-adjudicate" onclick="closeDrawer()" style="background: rgba(255,255,255,0.08); color: #fff;">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Live Occurrence Dataset
+    const INCIDENTS = [
+      {
+        id: 'occ-001',
+        obNumber: 'OB-CAN-48192',
+        title: 'Disputed Wait Fee Cancellation (Wait: 5m, KES 50 charged)',
+        category: 'DISPUTE',
+        severity: 'MEDIUM',
+        status: 'DISPUTED',
+        createdAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+        driverName: 'Samuel Mwangi (DRV-84192)',
+        passengerName: 'Brian K. (PAX-84192)',
+        description: 'Passenger cancelled ride request 5 minutes after Captain marked arrived outside Kenyatta Ave (GPO). Standard 3-minute grace period expired. Wait fee of KES 50 billed to passenger next trip ledger; KES 50 instant credit paid to Captain Cabi Wallet.',
+        driverStatement: '"I arrived at Kenyatta Ave outside GPO at 21:47. I waited the full 3-minute grace period plus an extra 2 minutes. Rider called stating they had left their briefcase in office and cancelled."',
+        passengerStatement: '"I acknowledge cancellation but was only 1 minute late. Requesting waiver of the KES 50 surcharge."'
+      },
+      {
+        id: 'occ-002',
+        obNumber: 'OB-SOS-10492',
+        title: 'Panic SOS Trigger: Off-Route Telemetry Alert',
+        category: 'SAFETY_VIOLATION',
+        severity: 'CRITICAL',
+        status: 'OPEN',
+        createdAt: new Date(Date.now() - 42 * 60 * 1000).toISOString(),
+        driverName: 'John O. (DRV-39102)',
+        passengerName: 'Faith N. (PAX-55104)',
+        description: 'Passenger activated the emergency SOS red-alert inside vehicle along Uhuru Highway. Telemetry stream locked, Group Distress Patron alerted, Universal Proximity Mesh dispatched to 8 nearby Captains (500 Good Samaritan Points award active).',
+        driverStatement: '"Captain took lower bypass due to temporary traffic obstruction at Museum Hill roundabout."',
+        passengerStatement: '"Vehicle turned unexpectedly off the mapped route without communication."',
+        distressFee: 500,
+        distressFeeStatus: 'PARDON_REQUESTED',
+        pardonReason: 'Armed robbery ambush reported near Museum Hill roundabout. Captain made emergency defensive detour to protect passenger safety. Formal police statement recorded OB/14/04/2026.',
+        pardonRequestedAt: '22:25 EAT'
+      },
+      {
+        id: 'occ-003',
+        obNumber: 'OB-TRAF-88219',
+        title: 'Expressway Speed Infraction (Radar: 118 km/h)',
+        category: 'TRAFFIC_OFFENSE',
+        severity: 'HIGH',
+        status: 'UNDER_INVESTIGATION',
+        createdAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
+        driverName: 'David K. (DRV-78190)',
+        passengerName: 'Dispatch Radar Telemetry',
+        description: 'Automated GPS telematics detected continuous vehicle speed of 118 km/h exceeding the 80 km/h Nairobi Expressway legal limit between Capital Centre and Cabanas interchange.',
+        driverStatement: '"Passing an overtaking heavy commercial vehicle on the left lane."',
+        passengerStatement: 'Automated telemetry violation flagged by system.'
+      },
+      {
+        id: 'occ-004',
+        obNumber: 'OB-FRD-44102',
+        title: 'Off-App Fare Solicitation Dispute',
+        category: 'FRAUD',
+        severity: 'MEDIUM',
+        status: 'RESOLVED',
+        createdAt: new Date(Date.now() - 5 * 3600 * 1000).toISOString(),
+        driverName: 'Kevin M. (DRV-11029)',
+        passengerName: 'Alice W. (PAX-90124)',
+        description: 'Captain requested passenger cancel in-app trip and pay KES 1,200 in cash. Passenger reported via support center; audio snippet and chat logs audited by security controller.',
+        driverStatement: '"Misunderstanding regarding toll fee reimbursement."',
+        passengerStatement: '"Driver explicitly asked me to cancel to avoid the 15% platform commission."'
+      },
+      {
+        id: 'occ-005',
+        obNumber: 'OB-PROP-33190',
+        title: 'Left Item Report: Black Leather Bag in Trunk',
+        category: 'PROPERTY_DAMAGE',
+        severity: 'LOW',
+        status: 'RESOLVED',
+        createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
+        driverName: 'Peter N. (DRV-44910)',
+        passengerName: 'James O. (PAX-23910)',
+        description: 'Passenger left 15-inch laptop bag in trunk after drop-off at Sarit Centre. Captain delivered item to Westlands Police Station within 45 minutes.',
+        driverStatement: '"Item verified intact and handed over to Officer on Duty OB/22/04/2026."',
+        passengerStatement: '"Retrieved bag from station. Excellent honesty from Captain Peter."'
+      }
+    ];
+
+    let currentStatusFilter = 'ALL';
+    let currentSeverityFilter = 'ALL';
+    let currentCategoryFilter = 'ALL';
+    let currentSearchTerm = '';
+    let activeDrawerIncident = null;
+
+    function renderTable() {
+      const tbody = document.getElementById('occurrencesTableBody');
+      tbody.innerHTML = '';
+
+      const filtered = INCIDENTS.filter(item => {
+        if (currentStatusFilter !== 'ALL' && item.status !== currentStatusFilter) return false;
+        if (currentSeverityFilter !== 'ALL' && item.severity !== currentSeverityFilter) return false;
+        if (currentCategoryFilter !== 'ALL' && item.category !== currentCategoryFilter) return false;
+        if (currentSearchTerm) {
+          const term = currentSearchTerm.toLowerCase();
+          const match = item.obNumber.toLowerCase().includes(term) ||
+                        item.title.toLowerCase().includes(term) ||
+                        item.driverName.toLowerCase().includes(term) ||
+                        item.passengerName.toLowerCase().includes(term);
+          if (!match) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 48px; color: var(--text-dim);">
+              <div style="font-size: 2rem; margin-bottom: 8px;">🛡️</div>
+              <div style="font-size: 0.95rem; font-weight: 700; color: #fff;">No occurrence records found</div>
+              <div style="font-size: 0.78rem;">Try clearing your search query or adjusting your filters</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const tr = document.createElement('tr');
+        const dt = new Date(item.createdAt);
+        const dateStr = dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        const timeStr = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        const catClassMap = {
+          DISPUTE: 'cat-dispute',
+          SAFETY_VIOLATION: 'cat-safety',
+          TRAFFIC_OFFENSE: 'cat-traffic',
+          FRAUD: 'cat-fraud',
+          PROPERTY_DAMAGE: 'cat-property'
+        };
+
+        const sevClassMap = {
+          CRITICAL: 'sev-critical',
+          HIGH: 'sev-high',
+          MEDIUM: 'sev-medium',
+          LOW: 'sev-low'
+        };
+
+        const dotClassMap = {
+          OPEN: 'dot-open',
+          UNDER_INVESTIGATION: 'dot-investigating',
+          DISPUTED: 'dot-disputed',
+          RESOLVED: 'dot-resolved'
+        };
+
+        const statusLabelMap = {
+          OPEN: 'OPEN (URGENT)',
+          UNDER_INVESTIGATION: 'INVESTIGATING',
+          DISPUTED: 'DISPUTED',
+          RESOLVED: 'RESOLVED'
+        };
+
+        tr.innerHTML = `
+          <td><span class="ob-number">${item.obNumber}</span></td>
+          <td>
+            <div class="timestamp-box">
+              <span class="time-date">${dateStr}</span>
+              <span class="time-clock">${timeStr} EAT</span>
+            </div>
+          </td>
+          <td>
+            <div class="incident-title">${item.title}</div>
+            <span class="category-tag ${catClassMap[item.category] || 'cat-dispute'}">${item.category}</span>
+          </td>
+          <td>
+            <div class="party-card">
+              <div class="party-row">
+                <span class="party-badge badge-driver">CAPTAIN</span>
+                <span>${item.driverName}</span>
+              </div>
+              <div class="party-row">
+                <span class="party-badge badge-pax">PAX</span>
+                <span>${item.passengerName}</span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="severity-chip ${sevClassMap[item.severity]}">${item.severity}</span>
+          </td>
+          <td>
+            <div class="status-badge">
+              <span class="status-dot ${dotClassMap[item.status]}"></span>
+              <span style="color: ${item.status === 'OPEN' ? 'var(--red)' : item.status === 'RESOLVED' ? 'var(--green)' : 'var(--gold)'};">${statusLabelMap[item.status]}</span>
+            </div>
+          </td>
+          <td style="text-align: right;">
+            <button class="btn-action-view" onclick="openDrawer('${item.id}')">
+              <span>⚖️</span> Adjudicate
+            </button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function setStatusFilter(status) {
+      currentStatusFilter = status;
+      document.querySelectorAll('.status-chip').forEach(c => c.classList.remove('active'));
+      const activeEl = document.getElementById(`chip-${status}`);
+      if (activeEl) activeEl.classList.add('active');
+      renderTable();
+    }
+
+    function handleFilterChange() {
+      currentSeverityFilter = document.getElementById('severityFilter').value;
+      currentCategoryFilter = document.getElementById('categoryFilter').value;
+      renderTable();
+    }
+
+    function handleSearch() {
+      currentSearchTerm = document.getElementById('searchInput').value.trim();
+      renderTable();
+    }
+
+    function handleAmountCheck() {
+      const val = parseFloat(document.getElementById('adjudicationAmountInput').value) || 0;
+      const hint = document.getElementById('amountWarningHint');
+      const badge = document.getElementById('drawerAutonomyBadge');
+      if (val <= 500) {
+        hint.innerHTML = `<span style="color: #10b981;">✓ Within Support Tier 1 Autonomy (&le; KES 500). Instant execution.</span>`;
+        badge.textContent = `⚡ Autonomy Cap: KES 500 Max`;
+        badge.style.color = '#10b981';
+        badge.style.background = 'rgba(16, 185, 129, 0.15)';
+      } else {
+        hint.innerHTML = `<span style="color: #f59e0b;">⚠️ Exceeds Support Autonomy (&gt; KES 500). Requires Finance Controller dual-signoff.</span>`;
+        badge.textContent = `⚠️ Requires Finance Dual-Signoff`;
+        badge.style.color = '#f59e0b';
+        badge.style.background = 'rgba(245, 158, 11, 0.15)';
+      }
+    }
+
+    function handleAdjudicationActionChange() {
+      const act = document.getElementById('adjudicationActionSelect').value;
+      const comment = document.getElementById('adjudicatorCommentInput');
+      const amtInput = document.getElementById('adjudicationAmountInput');
+
+      const defaults = {
+        UPHOLD_CAPTAIN_FEE: { amt: 50, note: 'Verified via GPS telemetry: Captain waited 5 minutes outside pickup (3-min grace exceeded). KES 50 wait fee upheld per Cabi Policy Section 4B.' },
+        FULL_PASSENGER_REFUND: { amt: 50, note: 'Passenger experienced technical location inaccuracy; GPS pin was 150m off. Waiving wait fee of KES 50 as one-time customer goodwill credit.' },
+        SPLIT_50_50: { amt: 25, note: 'Mutual compromise: KES 25 credited to Captain from Sacco Welfare Buffer; KES 25 refunded to Passenger.' },
+        EXPUNGE_RATING_STRIKE: { amt: 0, note: 'Review confirmed 1-star rating was retaliatory following legitimate wait fee charge. Rating strike expunged from Captain ledger and dispatch fitness score restored.' },
+        ESCALATE_SACCO_COMMITTEE: { amt: 0, note: 'Case escalated to Sacco Disciplinary Committee for formal hearing regarding route conduct.' },
+        POLICE_LEGAL_HANDOVER: { amt: 0, note: 'Formal OB docket extracted and transmitted to National Police Service for criminal investigation.' }
+      };
+
+      const d = defaults[act] || { amt: 0, note: '' };
+      if (amtInput) amtInput.value = d.amt;
+      if (comment) comment.value = d.note;
+
+      const escBox = document.getElementById('drawerEscalationBondBox');
+      if (escBox) {
+        if (act === 'ESCALATE_SACCO_COMMITTEE' || (activeDrawerIncident && activeDrawerIncident.category === 'DISPUTE')) {
+          escBox.style.display = 'block';
+        } else {
+          escBox.style.display = 'none';
+        }
+      }
+
+      handleAmountCheck();
+    }
+
+    function executeAdjudication() {
+      const act = document.getElementById('adjudicationActionSelect').value;
+      const amt = parseFloat(document.getElementById('adjudicationAmountInput').value) || 0;
+      const comment = document.getElementById('adjudicatorCommentInput').value.trim();
+
+      if (!comment) {
+        alert('Please enter an Adjudication Comment / Legal Audit Finding before proceeding.');
+        return;
+      }
+
+      if (act === 'ESCALATE_SACCO_COMMITTEE') {
+        alert(`[ESCALATION HEARING BOND COLLECTED]\n\nKES 500 Escalation Hearing Bond collected from the escalating party under Loser-Pays policy.\n\nCase transferred to Sacco Disciplinary Committee. Bond held in escrow until formal hearing ruling.`);
+      } else if (amt > 500) {
+        alert(`[TIERED AUTONOMY TRIGGERED]\n\nAmount KES ${amt.toLocaleString()} exceeds Support Tier 1 Autonomy (KES 500 limit).\n\nCase queued with status: UNDER_INVESTIGATION (Pending Finance Dual-Approval).\nNotification dispatched to Senior Finance Controller.`);
+      } else {
+        alert(`[DISPUTE RESOLUTION EXECUTED]\n\nAction: ${act}\nFinancial Adjustment: KES ${amt.toLocaleString()}\nAdjudicator Comment: "${comment}"\n\nIncident updated to RESOLVED and recorded in legal Occurrence Book ledger!`);
+      }
+
+      if (activeDrawerIncident) {
+        activeDrawerIncident.status = (act === 'ESCALATE_SACCO_COMMITTEE' || amt > 500) ? 'UNDER_INVESTIGATION' : 'RESOLVED';
+        renderTable();
+      }
+      closeDrawer();
+    }
+
+    function executePardon(approved) {
+      if (!activeDrawerIncident) return;
+      if (approved) {
+        activeDrawerIncident.distressFeeStatus = 'PARDONED';
+        alert(`[DISTRESS PARDON APPROVED]\n\nSenior Cabi Distress Official verified legitimate emergency circumstances.\n\n• Captain Ledger: KES 500.00 100% credited back to driver wallet.\n• Sacco Emergency Buffer: Absorbed 500 Good Samaritan responder points.\n• Legal Finding: Emergency verified; incident logged as legitimate distress.`);
+      } else {
+        activeDrawerIncident.distressFeeStatus = 'SETTLED';
+        alert(`[DISTRESS PARDON DECLINED]\n\nSenior Cabi Distress Official declined pardon request. KES 500.00 distress fee finalized on driver ledger.`);
+      }
+      openDrawer(activeDrawerIncident.id);
+      renderTable();
+    }
+
+    // Modal Drawer
+    function openDrawer(incidentId) {
+      const item = INCIDENTS.find(i => i.id === incidentId);
+      if (!item) return;
+
+      activeDrawerIncident = item;
+      document.getElementById('drawerObTitle').textContent = `${item.obNumber} — ${item.title}`;
+      document.getElementById('drawerCategoryTag').textContent = item.category;
+      document.getElementById('drawerDescription').textContent = item.description;
+
+      const partiesEl = document.getElementById('drawerParties');
+      partiesEl.innerHTML = `
+        <div class="party-row">
+          <span class="party-badge badge-driver">CAPTAIN</span>
+          <strong>${item.driverName}</strong>
+        </div>
+        <div class="party-row">
+          <span class="party-badge badge-pax">PASSENGER</span>
+          <strong>${item.passengerName}</strong>
+        </div>
+      `;
+
+      const statementsEl = document.getElementById('drawerStatements');
+      statementsEl.innerHTML = `
+        <div class="statement-item">
+          <div class="statement-author">👨‍✈️ Captain Statement</div>
+          <div class="statement-text">${item.driverStatement}</div>
+        </div>
+        <div class="statement-item">
+          <div class="statement-author">🧍 Passenger Statement</div>
+          <div class="statement-text">${item.passengerStatement}</div>
+        </div>
+      `;
+
+      // Distress Fee Card handling
+      const distressBox = document.getElementById('drawerDistressFeeBox');
+      const distressBadge = document.getElementById('distressFeeBadge');
+      const distressDetails = document.getElementById('distressFeeDetails');
+      const pardonBar = document.getElementById('pardonActionsBar');
+
+      if (distressBox && (item.category === 'SAFETY_VIOLATION' || item.distressFee)) {
+        distressBox.style.display = 'block';
+        const feeStatus = item.distressFeeStatus || 'BILLED';
+        if (feeStatus === 'PARDON_REQUESTED') {
+          distressBadge.textContent = 'PARDON REQUESTED (PENDING SENIOR OFFICIAL)';
+          distressBadge.style.background = 'rgba(245, 158, 11, 0.2)';
+          distressBadge.style.color = '#fcd34d';
+          distressDetails.innerHTML = `
+            <strong>Distress Dispatch Surcharge:</strong> KES 500.00 billed to Captain.<br>
+            <strong>Pardon Reason:</strong> "${item.pardonReason || 'Legitimate emergency circumstances.'}"<br>
+            <span style="color: #94a3b8; font-size: 0.72rem;">* Senior Cabi Distress Official authority required. Full waiver credits KES 500 to Captain; responder points backstopped by Sacco Emergency Welfare Buffer.</span>
+          `;
+          pardonBar.style.display = 'flex';
+        } else if (feeStatus === 'PARDONED') {
+          distressBadge.textContent = 'PARDON GRANTED (100% WAIVED)';
+          distressBadge.style.background = 'rgba(16, 185, 129, 0.2)';
+          distressBadge.style.color = '#86efac';
+          distressDetails.innerHTML = `
+            <strong>Status:</strong> Full waiver granted by Senior Cabi Distress Official.<br>
+            <strong>Ledger Adjustment:</strong> KES 500.00 credited back to Captain Cabi Wallet.<br>
+            <strong>Buffer Backstop:</strong> 500 Good Samaritan responder points absorbed by Sacco Emergency Welfare Buffer.
+          `;
+          pardonBar.style.display = 'none';
+        } else {
+          distressBadge.textContent = 'BILLED: KES 500.00';
+          distressBadge.style.background = 'rgba(239, 68, 68, 0.2)';
+          distressBadge.style.color = '#fca5a5';
+          distressDetails.innerHTML = `Emergency SOS trigger fee of KES 500.00 debited to driver account. Driver may file a pardon request for review by Senior Distress Official.`;
+          pardonBar.style.display = 'flex';
+        }
+      } else if (distressBox) {
+        distressBox.style.display = 'none';
+      }
+
+      // Sacco Escalation Bond Card handling
+      const escBox = document.getElementById('drawerEscalationBondBox');
+      if (escBox) {
+        if (item.category === 'DISPUTE') {
+          escBox.style.display = 'block';
+        } else {
+          escBox.style.display = 'none';
+        }
+      }
+
+      handleAdjudicationActionChange();
+      document.getElementById('resolutionDrawer').style.display = 'flex';
+    }
+
+    function closeDrawer() {
+      document.getElementById('resolutionDrawer').style.display = 'none';
+      activeDrawerIncident = null;
+    }
+
+    // Initial render on load
+    document.addEventListener('DOMContentLoaded', () => {
+      renderTable();
+    });
+  </script>
+</body>
+</html>

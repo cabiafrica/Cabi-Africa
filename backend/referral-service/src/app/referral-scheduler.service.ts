@@ -39,4 +39,16 @@ export class ReferralSchedulerService {
 
         this.logger.log(`Completed weekly commission summary job. Processed ${weeklyStats.length} drivers.`);
     }
+
+    // Cron: Release matured escrow commissions (runs every hour)
+    @Cron(CronExpression.EVERY_HOUR)
+    async handleEscrowRelease() {
+        this.logger.log('Starting automated escrow release check for matured referral commissions...');
+        try {
+            const result = await this.referralService.releaseMaturedEscrow();
+            this.logger.log(`Escrow release completed: ${result.releasedCount} entries released (KES ${result.totalReleased.toFixed(2)})`);
+        } catch (error: any) {
+            this.logger.error(`Error processing escrow release: ${error?.message}`);
+        }
+    }
 }

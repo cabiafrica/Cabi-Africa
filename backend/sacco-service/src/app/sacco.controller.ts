@@ -14,12 +14,15 @@ import {
     ForbiddenException,
 } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
+import * as crypto from 'crypto';
 import {
     SaccoService,
     CreateSaccoPartnerDto,
     UpdateSaccoPartnerDto,
     SaccoFinancialConfigDto,
     VoluntaryDeductionInput,
+    DriverSaccoSummary,
+    UpdateDriverSavingsSettingsDto,
 } from './sacco.service';
 import { SaccoIntegrationService } from './sacco-integration.service';
 import { FinancialConsentService, RequestOtpDto, VerifyOtpDto } from './financial-consent.service';
@@ -36,10 +39,20 @@ export class SaccoController {
         private readonly financialPartnerService: FinancialPartnerService,
     ) {}
 
-    private assertSaccoAdmin(req: any): void {
+    private extractUser(req: any): any {
+        if (req?.user) return req.user;
         const internalKey = process.env.INTERNAL_API_KEY;
-        if (internalKey && req?.headers?.['x-internal-api-key'] === internalKey) {
-            return;
+        const providedKey = req?.headers?.['x-internal-api-key'];
+        if (internalKey && providedKey && typeof providedKey === 'string') {
+            try {
+                const a = Buffer.from(internalKey);
+                const b = Buffer.from(providedKey);
+                if (a.length === b.length && crypto.timingSafeEqual(a, b)) {
+                    return { role: 'SUPER_ADMIN', permissions: ['SUPER_ADMIN'] };
+                }
+            } catch {
+                // continue
+            }
         }
         let user = req?.user;
         if (!user && req?.headers?.authorization?.startsWith('Bearer ')) {
@@ -55,15 +68,39 @@ export class SaccoController {
                 }
             }
         }
+        return user;
+    }
+
+    private assertSaccoAdmin(req: any): void {
+        const user = this.extractUser(req);
         if (!user) {
-            throw new UnauthorizedException('Authentication required for administrative SACCO operations.');
+            throw new UnauthorizedException('Authentication required for administrative Sacco operations.');
         }
         const perms: string[] = Array.isArray(user.permissions) ? user.permissions : [];
         const isAdmin =
             user.role === 'ADMIN' ||
-            perms.some((p) => p.startsWith('SACCO_') || p.startsWith('FINANCE_') || p === 'SUPER_ADMIN');
+            user.role === 'SUPER_ADMIN' ||
+            perms.some((p) => p.startsWith('Sacco_') || p.startsWith('FINANCE_') || p === 'SUPER_ADMIN');
         if (!isAdmin) {
-            throw new ForbiddenException('Admin privileges required for this SACCO operation.');
+            throw new ForbiddenException('Admin privileges required for this Sacco operation.');
+        }
+    }
+
+    private assertSelfOrAdmin(req: any, targetUserId?: string): void {
+        const user = this.extractUser(req);
+        if (!user) {
+            throw new UnauthorizedException('Authentication required.');
+        }
+        const perms: string[] = Array.isArray(user.permissions) ? user.permissions : [];
+        const isAdmin =
+            user.role === 'ADMIN' ||
+            user.role === 'SUPER_ADMIN' ||
+            perms.some((p) => p.startsWith('Sacco_') || p.startsWith('FINANCE_') || p === 'SUPER_ADMIN');
+        if (isAdmin) return;
+
+        const callerId = user.id || user.userId || user.sub;
+        if (targetUserId && callerId !== targetUserId) {
+            throw new ForbiddenException('Access denied: Cannot access another driver\'s financial records.');
         }
     }
 
@@ -153,7 +190,7 @@ export class SaccoController {
 
     // ─── Driver Wealth Programs & Allocations (30% Max Limit) ──────────────────
 
-    /** List all active admin-provided wealth programs (SACCO, Insurance, MMF, Pension) */
+    /** List all active admin-provided wealth programs (Sacco, Insurance, MMF, Pension) */
     @Get('wealth-programs')
     async getWealthPrograms() {
         return this.financialPartnerService.getDriverWealthPrograms();
@@ -161,10 +198,11 @@ export class SaccoController {
 
     /** Get a driver's active enrolled wealth allocations & remaining capacity */
     @Get('wealth-programs/my-allocations')
-    async getDriverAllocations(@Query('driverProfileId') driverProfileId: string) {
+    async getDriverAllocations(@Query('driverProfileId') driverProfileId: string, @Req() req: any) {
         if (!driverProfileId) {
             throw new HttpException('driverProfileId is required', HttpStatus.BAD_REQUEST);
         }
+        this.assertSelfOrAdmin(req, driverProfileId);
         return this.financialPartnerService.getDriverAllocations(driverProfileId);
     }
 
@@ -179,15 +217,39 @@ export class SaccoController {
                 deductionPct: number;
                 isConsented: boolean;
             }>;
-        }
+        },
+        @Req() req: any,
     ) {
         if (!body.driverProfileId || !Array.isArray(body.allocations)) {
             throw new HttpException('driverProfileId and allocations array are required', HttpStatus.BAD_REQUEST);
         }
+        this.assertSelfOrAdmin(req, body.driverProfileId);
         try {
             return await this.financialPartnerService.updateDriverAllocations(
                 body.driverProfileId,
                 body.allocations
+            );
+        } catch (error: any) {
+            throw new HttpException(error.message, error.getStatus ? error.getStatus() : HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Driver aborts/retracts a deduction stoppage within the 60-day notice window.
+     */
+    @Post('wealth-programs/cancel-abort')
+    async abortDriverCancellation(
+        @Body() body: { driverProfileId: string; partnerId: string },
+        @Req() req: any,
+    ) {
+        if (!body.driverProfileId || !body.partnerId) {
+            throw new HttpException('driverProfileId and partnerId are required', HttpStatus.BAD_REQUEST);
+        }
+        this.assertSelfOrAdmin(req, body.driverProfileId);
+        try {
+            return await this.financialPartnerService.abortCancellation(
+                body.driverProfileId,
+                body.partnerId
             );
         } catch (error: any) {
             throw new HttpException(error.message, error.getStatus ? error.getStatus() : HttpStatus.BAD_REQUEST);
@@ -215,7 +277,7 @@ export class SaccoController {
 
     /**
      * Preview trip split breakdown for a given fare.
-     * Supports voluntary deductions across Insurance, Investment, and SACCO
+     * Supports voluntary deductions across Insurance, Investment, and Sacco
      * Enforces the 15% maximum cap and 4-tier waterfall.
      */
     @Post('split-preview')
@@ -247,10 +309,12 @@ export class SaccoController {
     async evaluateIncentive(
         @Query('driverId') driverId: string,
         @Query('completedTrips') completedTrips?: string,
+        @Req() req?: any,
     ) {
         if (!driverId) {
             throw new HttpException('driverId is required', HttpStatus.BAD_REQUEST);
         }
+        this.assertSelfOrAdmin(req, driverId);
         return this.saccoService.evaluateStackableIncentives(driverId, {
             completedTrips: completedTrips ? parseInt(completedTrips) : undefined
         });
@@ -260,7 +324,8 @@ export class SaccoController {
 
     /** Request an SMS OTP for consenting to a product deduction (enforces 15% cap) */
     @Post('consent/request-otp')
-    async requestConsentOtp(@Body() dto: RequestOtpDto) {
+    async requestConsentOtp(@Body() dto: RequestOtpDto, @Req() req: any) {
+        this.assertSelfOrAdmin(req, dto.driverProfileId);
         try {
             return await this.financialConsentService.requestEnrollmentOtp(dto);
         } catch (error: any) {
@@ -270,7 +335,8 @@ export class SaccoController {
 
     /** Verify SMS OTP and activate driver consent record */
     @Post('consent/verify-otp')
-    async verifyConsentOtp(@Body() dto: VerifyOtpDto) {
+    async verifyConsentOtp(@Body() dto: VerifyOtpDto, @Req() req: any) {
+        this.assertSelfOrAdmin(req, dto.driverProfileId);
         try {
             return await this.financialConsentService.verifyEnrollmentOtp(dto);
         } catch (error: any) {
@@ -281,13 +347,14 @@ export class SaccoController {
     /**
      * Driver requests opt-out of a financial product.
      * - Voluntary products take effect on the 1st day of the next calendar month cycle.
-     * - SACCO and Insurance are exempt and reject instant cancellation.
+     * - Sacco and Insurance are exempt and reject instant cancellation.
      */
     @Post('consent/opt-out')
-    async requestOptOut(@Body() body: { driverProfileId: string; partnerId: string }) {
+    async requestOptOut(@Body() body: { driverProfileId: string; partnerId: string }, @Req() req: any) {
         if (!body.driverProfileId || !body.partnerId) {
             throw new HttpException('driverProfileId and partnerId are required', HttpStatus.BAD_REQUEST);
         }
+        this.assertSelfOrAdmin(req, body.driverProfileId);
         try {
             return await this.financialConsentService.requestOptOut(body.driverProfileId, body.partnerId);
         } catch (error: any) {
@@ -297,10 +364,11 @@ export class SaccoController {
 
     /** Get active consented financial products for a driver */
     @Get('consent/active')
-    async getActiveConsents(@Query('driverProfileId') driverProfileId: string) {
+    async getActiveConsents(@Query('driverProfileId') driverProfileId: string, @Req() req: any) {
         if (!driverProfileId) {
             throw new HttpException('driverProfileId is required', HttpStatus.BAD_REQUEST);
         }
+        this.assertSelfOrAdmin(req, driverProfileId);
         return this.financialConsentService.getActiveConsents(driverProfileId);
     }
 
@@ -308,10 +376,11 @@ export class SaccoController {
 
     /** Opt a driver into the external Sacco */
     @Post('enroll')
-    async enrollDriver(@Body() body: { driverId: string; partnerId: string }) {
+    async enrollDriver(@Body() body: { driverId: string; partnerId: string }, @Req() req: any) {
         if (!body.driverId || !body.partnerId) {
             throw new HttpException('driverId and partnerId are required', HttpStatus.BAD_REQUEST);
         }
+        this.assertSelfOrAdmin(req, body.driverId);
         try {
             return await this.saccoService.enrollDriver(body.driverId, body.partnerId);
         } catch (error: any) {
@@ -321,10 +390,11 @@ export class SaccoController {
 
     /** Opt a driver out of the external Sacco */
     @Post('unenroll')
-    async unenrollDriver(@Body() body: { driverId: string }) {
+    async unenrollDriver(@Body() body: { driverId: string }, @Req() req: any) {
         if (!body.driverId) {
             throw new HttpException('driverId is required', HttpStatus.BAD_REQUEST);
         }
+        this.assertSelfOrAdmin(req, body.driverId);
         try {
             return await this.saccoService.unenrollDriver(body.driverId);
         } catch (error: any) {
@@ -334,10 +404,11 @@ export class SaccoController {
 
     /** Get enrollment status for a driver */
     @Get('enrollment-status')
-    async getEnrollmentStatus(@Query('driverId') driverId: string) {
+    async getEnrollmentStatus(@Query('driverId') driverId: string, @Req() req: any) {
         if (!driverId) {
             throw new HttpException('driverId is required', HttpStatus.BAD_REQUEST);
         }
+        this.assertSelfOrAdmin(req, driverId);
         return this.saccoService.getDriverEnrollmentStatus(driverId);
     }
 
@@ -352,19 +423,55 @@ export class SaccoController {
 
     /** Get total remitted by a driver to the Sacco */
     @Get('balance')
-    async getBalance(@Query('driverId') driverId: string) {
+    async getBalance(@Query('driverId') driverId: string, @Req() req: any) {
         if (!driverId) {
             throw new HttpException('driverId is required', HttpStatus.BAD_REQUEST);
         }
+        this.assertSelfOrAdmin(req, driverId);
         return this.saccoService.getTotalRemitted(driverId);
     }
 
     /** Get remittance transaction history for a driver */
     @Get('transactions')
-    async getTransactions(@Query('driverId') driverId: string) {
+    async getTransactions(@Query('driverId') driverId: string, @Req() req: any) {
         if (!driverId) {
             throw new HttpException('driverId is required', HttpStatus.BAD_REQUEST);
         }
+        this.assertSelfOrAdmin(req, driverId);
         return this.saccoService.getRemittanceHistory(driverId);
     }
+
+    /** Get comprehensive Sacco summary, accumulated balance, and remittance percentage settings */
+    @Get('driver/summary')
+    async getDriverSummary(@Query('driverId') driverId: string, @Req() req: any) {
+        const user = this.extractUser(req);
+        const resolvedDriverId = driverId || user?.id || user?.userId || user?.sub;
+        if (!resolvedDriverId) {
+            throw new HttpException('driverId is required', HttpStatus.BAD_REQUEST);
+        }
+        this.assertSelfOrAdmin(req, resolvedDriverId);
+        return this.saccoService.getDriverSaccoSummary(resolvedDriverId);
+    }
+
+    /** Update driver's per-trip percentage savings rate and welfare contributions */
+    @Post('driver/settings')
+    async updateDriverSettings(
+        @Body() body: {
+            driverId?: string;
+            savingsRate?: number;
+            isAutoSavingsEnabled?: boolean;
+            isWelfareEnabled?: boolean;
+            dailyWelfareAmount?: number;
+        },
+        @Req() req: any
+    ) {
+        const user = this.extractUser(req);
+        const resolvedDriverId = body.driverId || user?.id || user?.userId || user?.sub;
+        if (!resolvedDriverId) {
+            throw new HttpException('driverId is required', HttpStatus.BAD_REQUEST);
+        }
+        this.assertSelfOrAdmin(req, resolvedDriverId);
+        return this.saccoService.updateDriverSavingsSettings(resolvedDriverId, body);
+    }
 }
+

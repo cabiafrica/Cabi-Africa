@@ -136,7 +136,7 @@ class MenuScreen extends ConsumerWidget {
               [
                 _MenuGridItem(
                     icon: Icons.auto_awesome_rounded,
-                    label: 'WEALTH & SACCO',
+                    label: 'WEALTH & Sacco',
                     color: AppTheme.primaryColor.withValues(alpha: 0.15),
                     iconColor: AppTheme.primaryColor,
                     onTap: () => Navigator.push(

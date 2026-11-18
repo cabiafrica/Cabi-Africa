@@ -56,5 +56,53 @@ export class SafetyService {
     async adjudicateStatement(incidentId: string, statementId: string, status: 'Verified' | 'Dismissed' | 'UnderReview', notes?: string): Promise<void> {
         await apiClient.post(`/admin/sos-incidents/${incidentId}/adjudicate-statement`, { statementId, status, notes });
     }
+
+    async adjudicateDispute(
+        incidentId: string,
+        payload: {
+            action: string;
+            adjudicatorComment: string;
+            refundOrCreditAmount?: number;
+            adminId?: string;
+            adminName?: string;
+            escalationRuling?: 'UPHOLD_ESCALATOR' | 'REJECT_ESCALATOR' | 'MUTUAL_SETTLEMENT';
+        }
+    ): Promise<any> {
+        const res = await apiClient.post(`/admin/sos-incidents/${incidentId}/adjudicate`, payload);
+        return res.data;
+    }
+
+    async requestDistressPardon(incidentId: string, driverUserId: string, reason: string): Promise<any> {
+        const res = await apiClient.post(`/admin/sos-incidents/${incidentId}/pardon-request`, { driverUserId, reason });
+        return res.data;
+    }
+
+    async pardonDistressFee(
+        incidentId: string,
+        payload: {
+            officialId: string;
+            officialName: string;
+            approved: boolean;
+            notes: string;
+        }
+    ): Promise<any> {
+        const res = await apiClient.post(`/admin/sos-incidents/${incidentId}/pardon`, payload);
+        return res.data;
+    }
+
+    async escalateDispute(
+        incidentId: string,
+        payload: {
+            escalatedById: string;
+            escalatorRole: 'DRIVER' | 'PASSENGER';
+            escalatorName?: string;
+            reason: string;
+            paymentMethod?: 'WALLET' | 'MPESA' | 'AIRTEL';
+            paymentReference?: string;
+        }
+    ): Promise<any> {
+        const res = await apiClient.post(`/admin/sos-incidents/${incidentId}/escalate`, payload);
+        return res.data;
+    }
 }
 

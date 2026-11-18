@@ -229,7 +229,7 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
                 Icon(Icons.verified_rounded, color: goldAccent, size: 14),
                 const SizedBox(width: 4),
                 Text(
-                  'SACCO Standard',
+                  'Sacco Standard',
                   style: AppTheme.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -291,7 +291,7 @@ class _PreShiftInspectionScreenState extends State<PreShiftInspectionScreen> {
                                 ),
                               ),
                               Text(
-                                'Executive Chauffeur Fleet',
+                                'Executive Captain Fleet',
                                 style: AppTheme.inter(
                                   fontSize: 11,
                                   color: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary,

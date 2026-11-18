@@ -136,7 +136,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Thank you! Chauffeur rating & feedback logged.',
+                    'Thank you! Captain rating & feedback logged.',
                     style: AppTheme.outfit(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -482,7 +482,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Chauffeur Rating & Feedback Card
+            // Captain Rating & Feedback Card
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
@@ -557,7 +557,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                   const SizedBox(height: 18),
 
                   Text(
-                    'How was your journey with ${widget.driverName.isEmpty ? 'your chauffeur' : widget.driverName}?',
+                    'How was your journey with ${widget.driverName.isEmpty ? 'your captain' : widget.driverName}?',
                     style: AppTheme.outfit(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -675,7 +675,7 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                         ],
                       ),
                       Text(
-                        '100% goes directly to chauffeur',
+                        '100% goes directly to captain',
                         style: AppTheme.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,

@@ -32,18 +32,32 @@ export default function AuthWidget() {
 
     return (
         <div className="glass p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/10 relative overflow-hidden backdrop-blur-xl">
-            <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-l from-brand-purple to-brand-accent"></div>
+            <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-l from-brand-yellow to-brand-accent"></div>
 
             {/* Header / Tabs */}
             <div className="flex justify-center mb-8 border-b border-white/10 pb-4">
                 <button
+                    type="button"
                     onClick={() => setMode('login')}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setMode('login');
+                        }
+                    }}
                     className={`px-6 py-2 text-lg font-bold transition-colors ${mode === 'login' ? 'text-white border-b-2 border-brand-yellow' : 'text-gray-500 hover:text-gray-300'}`}
                 >
                     Log In
                 </button>
                 <button
+                    type="button"
                     onClick={() => setMode('register')}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setMode('register');
+                        }
+                    }}
                     className={`px-6 py-2 text-lg font-bold transition-colors ${mode === 'register' ? 'text-white border-b-2 border-brand-yellow' : 'text-gray-500 hover:text-gray-300'}`}
                 >
                     Sign Up
@@ -83,9 +97,11 @@ export default function AuthWidget() {
                 {/* Common Fields */}
                 <div className="space-y-4">
                     <div>
-                        <label className="block text-gray-400 text-xs uppercase font-bold tracking-wider mb-2">Email Address</label>
+                        <label htmlFor="auth-email" className="block text-gray-400 text-xs uppercase font-bold tracking-wider mb-2">Email Address</label>
                         <input
+                            id="auth-email"
                             type="email"
+                            aria-label="Email Address"
                             required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -94,10 +110,12 @@ export default function AuthWidget() {
                         />
                     </div>
                     <div>
-                        <label className="block text-gray-400 text-xs uppercase font-bold tracking-wider mb-2">Password</label>
+                        <label htmlFor="auth-password" className="block text-gray-400 text-xs uppercase font-bold tracking-wider mb-2">Password</label>
                         <div className="relative">
                             <input
+                                id="auth-password"
                                 type={showPassword ? "text" : "password"}
+                                aria-label="Password"
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -106,6 +124,7 @@ export default function AuthWidget() {
                             />
                             <button
                                 type="button"
+                                aria-label={showPassword ? "Hide password" : "Show password"}
                                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-white"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
@@ -121,9 +140,11 @@ export default function AuthWidget() {
                     {/* Driver Specifics */}
                     {mode === 'register' && role === 'driver' && (
                         <div className="animate-fade-in">
-                            <label className="block text-brand-accent text-xs uppercase font-bold tracking-wider mb-2">Referral Code (Optional)</label>
+                            <label htmlFor="auth-referral-code" className="block text-brand-accent text-xs uppercase font-bold tracking-wider mb-2">Referral Code (Optional)</label>
                             <input
+                                id="auth-referral-code"
                                 type="text"
+                                aria-label="Referral Code (Optional)"
                                 value={referralCode}
                                 onChange={(e) => setReferralCode(e.target.value)}
                                 className="w-full px-4 py-3 bg-brand-dark/50 border border-brand-accent/30 focus:border-brand-accent rounded-xl outline-none text-white transition-all focus:ring-1 focus:ring-brand-accent/20 placeholder-gray-600"

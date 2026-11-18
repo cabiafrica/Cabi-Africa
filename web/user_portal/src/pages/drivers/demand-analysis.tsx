@@ -192,6 +192,7 @@ export default function DemandAnalysisPage() {
           name="description"
           content="Analyze high-demand areas, peak hours, and peak days in Nairobi to maximize your driving earnings on Cabi."
         />
+        <meta property="og:title" content="Demand Intelligence & Peak Trip Analysis | Cabi Driver" />
       </Head>
 
       {/* Navigation Header */}

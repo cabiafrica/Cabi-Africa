@@ -1,10 +1,10 @@
 /**
- * Represents the data for a new SACCO transaction.
+ * Represents the data for a new Sacco transaction.
  */
 interface SaccoTransactionData {
   userId: string; // The driver whose savings are being recorded
   amount: number;
-  type: 'SACCO_SAVING';
+  type: 'Sacco_SAVING';
   relatedTripId: string;
 }
 
@@ -14,8 +14,8 @@ interface SaccoTransactionData {
  */
 export class TransactionRepository {
   async create(data: SaccoTransactionData): Promise<void> {
-    console.log(`Logging SACCO transaction:`, data);
+    console.log(`Logging Sacco transaction:`, data);
     await new Promise(resolve => setTimeout(resolve, 50));
-    console.log(`SACCO transaction for ${data.userId} of amount ${data.amount} logged.`);
+    console.log(`Sacco transaction for ${data.userId} of amount ${data.amount} logged.`);
   }
 }

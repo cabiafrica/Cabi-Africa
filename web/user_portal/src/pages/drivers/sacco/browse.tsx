@@ -1,7 +1,7 @@
 /**
  * browse.tsx — Redirects to /drivers/sacco/manage
  *
- * Previously listed internal SACCOs. Now that Cabi Africa integrates with
+ * Previously listed internal Saccos. Now that Cabi Africa integrates with
  * a single external Sacco partner (configured by Super Admin), drivers
  * should go directly to the manage/opt-in page.
  */

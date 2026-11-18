@@ -1,7 +1,7 @@
 import { computeTripSplit, TripSplitInput } from './sacco.service';
 import { FinancialConsentService } from './financial-consent.service';
 
-describe('Financial Services & SACCO Engine', () => {
+describe('Financial Services & Sacco Engine', () => {
     describe('computeTripSplit - Mathematical & Priority Waterfall Tests', () => {
         it('should correctly calculate non-enrolled driver split (82% driver, 18% cabi, 0% sacco)', () => {
             const result = computeTripSplit({
@@ -98,7 +98,7 @@ describe('Financial Services & SACCO Engine', () => {
         });
 
         it('should strictly enforce the 15% voluntary cap using the priority waterfall and guarantee min 65% take-home', () => {
-            // Driver requests: SACCO 2%, Vehicle Insurance 4%, Health Insurance 3%, MMF 10%
+            // Driver requests: Sacco 2%, Vehicle Insurance 4%, Health Insurance 3%, MMF 10%
             // Total requested = 2% + 4% + 3% + 10% = 19% (exceeds 15% cap!)
             const result = computeTripSplit({
                 fare: 1000,
@@ -115,7 +115,7 @@ describe('Financial Services & SACCO Engine', () => {
                 ]
             });
 
-            // Priority 2: SACCO gets 2% (remains 13%)
+            // Priority 2: Sacco gets 2% (remains 13%)
             // Priority 3: Vehicle Ins gets 4% (remains 9%), Health Ins gets 3% (remains 6%)
             // Priority 4: MMF requested 10%, but only 6% remains -> capped to 6%
             expect(result.breakdown.isDeductionCapped).toBe(true);

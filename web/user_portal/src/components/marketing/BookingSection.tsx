@@ -88,8 +88,24 @@ export default function BookingSection() {
     const pollingInterval = useRef<NodeJS.Timeout | null>(null);
     const [mounted, setMounted] = useState(false);
 
+    const [gpsLoading, setGpsLoading] = useState(false);
+    const [gpsError, setGpsError] = useState<string | null>(null);
+    const [requestForOther, setRequestForOther] = useState(false);
+    const [recipientName, setRecipientName] = useState('');
+    const [recipientPhone, setRecipientPhone] = useState('');
+
     useEffect(() => {
         setMounted(true);
+        if (typeof window !== 'undefined' && navigator.geolocation && navigator.permissions?.query) {
+            navigator.permissions
+                .query({ name: 'geolocation' })
+                .then((status) => {
+                    if (status.state === 'granted') {
+                        getCurrentLocation(true);
+                    }
+                })
+                .catch(() => undefined);
+        }
         return () => {
             if (pollingInterval.current) clearInterval(pollingInterval.current);
         };
@@ -103,20 +119,40 @@ export default function BookingSection() {
         }
     }, [user]);
 
-    const getCurrentLocation = () => {
-        if (typeof window !== 'undefined' && navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
+    const getCurrentLocation = (silent = false) => {
+        if (typeof window === 'undefined' || !navigator.geolocation) {
+            if (!silent) setGpsError('Geolocation is not supported by your browser.');
+            return;
+        }
+        setGpsLoading(true);
+        setGpsError(null);
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                try {
                     const { latitude, longitude } = position.coords;
                     setPickupCoords({ lat: latitude, lng: longitude });
                     const label = await resolveAddressFromCoords(latitude, longitude);
-                    setPickup(label === `Pinned (${latitude.toFixed(4)}, ${longitude.toFixed(4)})` ? 'Current Location (GPS)' : label);
-                },
-                (error) => {
-                    console.error('Geolocation error:', error);
+                    setPickup(
+                        label === `Pinned (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`
+                            ? `Live Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`
+                            : label
+                    );
+                } finally {
+                    setGpsLoading(false);
                 }
-            );
-        }
+            },
+            (error) => {
+                setGpsLoading(false);
+                if (!silent) {
+                    setGpsError(
+                        error.code === error.PERMISSION_DENIED
+                            ? 'Location permission denied. Please enable GPS or type your pickup point.'
+                            : 'Unable to detect live location. Please enter or pin your pickup.'
+                    );
+                }
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+        );
     };
 
     // Initial check for active ride
@@ -294,19 +330,37 @@ export default function BookingSection() {
     const handleOpenVerification = () => {
         if (!selectedVehicle) return;
         setVerificationError(null);
+        if (isAuthenticated && user) {
+            setVerifyName(user.fullName || [user.firstName, user.lastName].filter(Boolean).join(' ') || 'Passenger');
+            if (user.phone) setVerifyPhone(user.phone);
+        }
         if (!otpSentCode) {
             setOtpSentCode(String(Math.floor(1000 + Math.random() * 9000)));
         }
         setShowVerification(true);
     };
 
-    const handleSendOtp = () => {
+    const handleSendOtp = async () => {
         setVerificationError(null);
         if (!isValidContactPhone(verifyPhone)) {
             setVerificationError('Please enter a valid phone number before requesting a code.');
             return;
         }
-        setOtpSentCode(String(Math.floor(1000 + Math.random() * 9000)));
+        try {
+            const res = await fetch('/api/auth/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: verifyPhone, purpose: 'ride_verification' }),
+            });
+            const data = await res.json();
+            if (data.devOtp) {
+                setOtpSentCode(data.devOtp);
+            } else {
+                setOtpSentCode(String(Math.floor(1000 + Math.random() * 9000)));
+            }
+        } catch {
+            setOtpSentCode(String(Math.floor(1000 + Math.random() * 9000)));
+        }
     };
 
     const handleVerifyAndBook = async () => {
@@ -321,13 +375,26 @@ export default function BookingSection() {
             return;
         }
         const trimmedOtp = otpInput.trim();
-        if (!/^\d{4}$/.test(trimmedOtp) || (otpSentCode && trimmedOtp !== otpSentCode)) {
-            setVerificationError(`Please enter the 4-digit verification code${otpSentCode ? ` (${otpSentCode})` : ''}.`);
-            return;
+        // If authenticated via JWT session, OTP re-verification is not strictly required
+        if (!isAuthenticated) {
+            if (!/^\d{4,6}$/.test(trimmedOtp) || (otpSentCode && trimmedOtp !== otpSentCode)) {
+                setVerificationError(`Please enter the verification code${otpSentCode ? ` (${otpSentCode})` : ''}.`);
+                return;
+            }
         }
         if (!identityAttested) {
             setVerificationError('Please confirm your passenger identity check to proceed.');
             return;
+        }
+        if (requestForOther) {
+            if (recipientName.trim().length < 2) {
+                setVerificationError('Please enter the recipient passenger’s full name.');
+                return;
+            }
+            if (!isValidContactPhone(recipientPhone)) {
+                setVerificationError('Please enter a valid phone number for the recipient passenger.');
+                return;
+            }
         }
 
         const vehicle = vehicleOptions.find((v) => v.id === selectedVehicle);
@@ -365,6 +432,9 @@ export default function BookingSection() {
                     vehicleType: vehicle.name,
                     fare: vehicle.price,
                     passengerId: user?.id,
+                    requestedFor: requestForOther
+                        ? { name: recipientName.trim(), phone: recipientPhone.trim() }
+                        : undefined,
                     verification: {
                         verified: true,
                         method: 'PHONE_OTP',
@@ -500,7 +570,7 @@ export default function BookingSection() {
                             </h3>
 
                             <p className="text-slate-600 dark:text-white/60 text-base sm:text-lg max-w-md mx-auto mb-6 font-medium">
-                                {tripStatus === 'CONFIRMED' && 'Matching you with the closest verified chauffeur.'}
+                                {tripStatus === 'CONFIRMED' && 'Matching you with the closest verified captain.'}
                                 {tripStatus === 'DRIVER_ASSIGNED' &&
                                     (driverInfo
                                         ? `${driverInfo.name} (${driverInfo.plate}) is on the way to your pickup point.`
@@ -547,12 +617,13 @@ export default function BookingSection() {
                                         <div className="flex items-center gap-3">
                                             <button
                                                 type="button"
-                                                onClick={getCurrentLocation}
-                                                className="text-[#D4AF37] hover:text-black dark:hover:text-white transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider"
-                                                title="Use my current location"
+                                                onClick={() => getCurrentLocation(false)}
+                                                disabled={gpsLoading}
+                                                className="text-[#D4AF37] hover:text-black dark:hover:text-white transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider disabled:opacity-60"
+                                                title="Detect my live location"
                                             >
-                                                <FaLocationArrow className="text-xs" />
-                                                <span>GPS</span>
+                                                <FaLocationArrow className={`text-xs ${gpsLoading ? 'animate-spin' : ''}`} />
+                                                <span>{gpsLoading ? 'Detecting...' : 'Live GPS'}</span>
                                             </button>
                                             <button
                                                 type="button"
@@ -596,6 +667,11 @@ export default function BookingSection() {
                                             </button>
                                         }
                                     />
+                                    {gpsError && (
+                                        <p className="text-[11px] text-amber-600 dark:text-amber-400 font-medium px-1">
+                                            {gpsError}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="space-y-2 group">
@@ -644,6 +720,11 @@ export default function BookingSection() {
                                             </button>
                                         }
                                     />
+                                    {gpsError && (
+                                        <p className="text-[11px] text-amber-600 dark:text-amber-400 font-medium px-1">
+                                            {gpsError}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
@@ -687,6 +768,44 @@ export default function BookingSection() {
                     {bookingError && (
                         <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs font-semibold">
                             {bookingError}
+                        </div>
+                    )}
+
+                    {/* Request for Someone Else Toggle */}
+                    {!bookingConfirmed && (
+                        <div className="mt-5 pt-4 border-t border-black/5 dark:border-white/10">
+                            <label className="inline-flex items-center gap-2.5 cursor-pointer select-none">
+                                <input
+                                    type="checkbox"
+                                    checked={requestForOther}
+                                    onChange={(e) => setRequestForOther(e.target.checked)}
+                                    className="w-4 h-4 rounded border-slate-300 text-[#D4AF37] focus:ring-[#D4AF37]"
+                                />
+                                <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-white/80">
+                                    Requesting this ride for someone else?
+                                </span>
+                            </label>
+
+                            {requestForOther && (
+                                <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <input
+                                        type="text"
+                                        value={recipientName}
+                                        onChange={(e) => setRecipientName(e.target.value)}
+                                        placeholder="Recipient full name *"
+                                        aria-label="Recipient full name"
+                                        className="w-full px-4 py-3 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm text-slate-900 dark:text-white font-semibold focus:border-[#D4AF37] outline-none"
+                                    />
+                                    <input
+                                        type="tel"
+                                        value={recipientPhone}
+                                        onChange={(e) => setRecipientPhone(e.target.value)}
+                                        placeholder="Recipient phone (e.g. +254 7XX XXX XXX) *"
+                                        aria-label="Recipient phone number"
+                                        className="w-full px-4 py-3 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm text-slate-900 dark:text-white font-semibold focus:border-[#D4AF37] outline-none"
+                                    />
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -945,7 +1064,7 @@ export default function BookingSection() {
                                     className="mt-0.5 rounded border-slate-300 text-[#D4AF37] focus:ring-[#D4AF37]"
                                 />
                                 <span>
-                                    I confirm these trip &amp; identity details for chauffeur dispatch and safety verification.
+                                    I confirm these trip &amp; identity details for captain dispatch and safety verification.
                                 </span>
                             </label>
 

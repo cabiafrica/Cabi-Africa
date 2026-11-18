@@ -195,6 +195,20 @@ class CabiLocalizations {
   String get mapProvider => get('mapProvider');
   String get aboutApp => get('aboutApp');
   String get version => get('version');
+  String get externalNavigation => get('externalNavigation');
+  String get safetyCommandCenter => get('safetyCommandCenter');
+  String get deleteAccount => get('deleteAccount');
+  String get tripAudioChimes => get('tripAudioChimes');
+  String get biometricIdentity => get('biometricIdentity');
+  String get dataPrivacy => get('dataPrivacy');
+  String get soundPresetCharacter => get('soundPresetCharacter');
+  String get saccoSavings => get('saccoSavings');
+  String get savingsRate => get('savingsRate');
+  String get dailyWelfare => get('dailyWelfare');
+  String get accumulatedSavings => get('accumulatedSavings');
+  String get saccoRemittanceLedger => get('saccoRemittanceLedger');
+  String get emergencyLiquidity => get('emergencyLiquidity');
+  String get perTripDeduction => get('perTripDeduction');
 
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
@@ -270,6 +284,20 @@ class CabiLocalizations {
       'mapProvider': 'Map Provider',
       'aboutApp': 'About Cabi',
       'version': 'Version',
+      'externalNavigation': 'Navigation App',
+      'safetyCommandCenter': 'Safety Command Center',
+      'deleteAccount': 'Delete Account',
+      'tripAudioChimes': 'Trip Audio Chimes',
+      'biometricIdentity': 'Biometric & Identity',
+      'dataPrivacy': 'Privacy & Data',
+      'soundPresetCharacter': 'Sound Preset Character',
+      'saccoSavings': 'SACCO Savings & Deductions',
+      'savingsRate': 'Per-Trip Savings Rate',
+      'dailyWelfare': 'Daily Welfare Contribution',
+      'accumulatedSavings': 'Total Accumulated Savings',
+      'saccoRemittanceLedger': 'Remittance Ledger',
+      'emergencyLiquidity': 'Emergency Liquidity',
+      'perTripDeduction': 'Per-Trip Deductions',
     },
     'sw': {
       'appName': 'Cabi Africa',
@@ -344,6 +372,20 @@ class CabiLocalizations {
       'mapProvider': 'Ramani',
       'aboutApp': 'Kuhusu Cabi',
       'version': 'Toleo',
+      'externalNavigation': 'Programu ya Uelekezaji',
+      'safetyCommandCenter': 'Kituo cha Usalama',
+      'deleteAccount': 'Futa Akaunti',
+      'tripAudioChimes': 'Milio ya Safari',
+      'biometricIdentity': 'Kibayometriki na Utambulisho',
+      'dataPrivacy': 'Faragha na Data',
+      'soundPresetCharacter': 'Tabia ya Mlio',
+      'saccoSavings': 'Akiba na Makato ya SACCO',
+      'savingsRate': 'Kiwango cha Akiba kwa Safari',
+      'dailyWelfare': 'Mchango wa Ustawi wa Kila Siku',
+      'accumulatedSavings': 'Jumla ya Akiba Iliyokusanywa',
+      'saccoRemittanceLedger': 'Daftari la Makato',
+      'emergencyLiquidity': 'Akiba ya Dharura Papo Hapo',
+      'perTripDeduction': 'Makato ya Safari',
     },
     'fr': {
       'appName': 'Cabi Africa',
@@ -418,6 +460,20 @@ class CabiLocalizations {
       'mapProvider': 'Fournisseur de carte',
       'aboutApp': 'À propos de Cabi',
       'version': 'Version',
+      'externalNavigation': 'Application de Navigation',
+      'safetyCommandCenter': 'Centre de Sécurité',
+      'deleteAccount': 'Supprimer le Compte',
+      'tripAudioChimes': 'Sons de Course',
+      'biometricIdentity': 'Biométrie et Identité',
+      'dataPrivacy': 'Confidentialité et Données',
+      'soundPresetCharacter': 'Caractère Sonore',
+      'saccoSavings': 'Épargne et Déductions SACCO',
+      'savingsRate': 'Taux d’épargne par trajet',
+      'dailyWelfare': 'Contribution d’aide quotidienne',
+      'accumulatedSavings': 'Épargne totale accumulée',
+      'saccoRemittanceLedger': 'Grand livre des retenues',
+      'emergencyLiquidity': 'Liquidité d’urgence instantanée',
+      'perTripDeduction': 'Déductions par trajet',
     },
     'ar': {
       'appName': 'كابي أفريقيا',
@@ -492,6 +548,20 @@ class CabiLocalizations {
       'mapProvider': 'مزود الخرائط',
       'aboutApp': 'عن كابي',
       'version': 'الإصدار',
+      'externalNavigation': 'تطبيق الملاحة',
+      'safetyCommandCenter': 'مركز الأمان',
+      'deleteAccount': 'حذف الحساب',
+      'tripAudioChimes': 'نغمات الرحلة',
+      'biometricIdentity': 'الهوية البيومترية',
+      'dataPrivacy': 'الخصوصية والبيانات',
+      'soundPresetCharacter': 'طابع الصوت',
+      'saccoSavings': 'مدخرات وخصومات ساكو',
+      'savingsRate': 'معدل الادخار لكل رحلة',
+      'dailyWelfare': 'مساهمة الرعاية اليومية',
+      'accumulatedSavings': 'إجمالي المدخرات المتراكمة',
+      'saccoRemittanceLedger': 'سجل التحويلات المالية',
+      'emergencyLiquidity': 'سيولة الطوارئ الفورية',
+      'perTripDeduction': 'خصومات كل رحلة',
     },
     'pt': {
       'appName': 'Cabi África',
@@ -566,6 +636,20 @@ class CabiLocalizations {
       'mapProvider': 'Fornecedor de Mapas',
       'aboutApp': 'Sobre a Cabi',
       'version': 'Versão',
+      'externalNavigation': 'Aplicativo de Navegação',
+      'safetyCommandCenter': 'Centro de Segurança',
+      'deleteAccount': 'Excluir Conta',
+      'tripAudioChimes': 'Toques de Viagem',
+      'biometricIdentity': 'Biometria e Identidade',
+      'dataPrivacy': 'Privacidade e Dados',
+      'soundPresetCharacter': 'Caractere de Som',
+      'saccoSavings': 'Poupança e Deduções SACCO',
+      'savingsRate': 'Taxa de poupança por viagem',
+      'dailyWelfare': 'Contribuição diária de bem-estar',
+      'accumulatedSavings': 'Poupança total acumulada',
+      'saccoRemittanceLedger': 'Livro de remessas',
+      'emergencyLiquidity': 'Liquidez imediata de emergência',
+      'perTripDeduction': 'Deduções por viagem',
     },
     'am': {
       'appName': 'ካቢ አፍሪካ',
@@ -640,6 +724,20 @@ class CabiLocalizations {
       'mapProvider': 'የካርታ አቅራቢ',
       'aboutApp': 'ስለ ካቢ',
       'version': 'ስሪት',
+      'externalNavigation': 'የአሰሳ መተግበሪያ',
+      'safetyCommandCenter': 'የደህንነት ማዕከል',
+      'deleteAccount': 'መለያ ሰርዝ',
+      'tripAudioChimes': 'የጉዞ ድምፅ',
+      'biometricIdentity': 'ባዮሜትሪክ መታወቂያ',
+      'dataPrivacy': 'ግላዊነት እና ውሂብ',
+      'soundPresetCharacter': 'የድምፅ ባህሪ',
+      'saccoSavings': 'የሳኮ ቁጠባ እና ቅነሳዎች',
+      'savingsRate': 'በእያንዳንዱ ጉዞ የቁጠባ ምጣኔ',
+      'dailyWelfare': 'የእለት ደህንነት መዋጮ',
+      'accumulatedSavings': 'አጠቃላይ የተጠራቀመ ቁጠባ',
+      'saccoRemittanceLedger': 'የቅነሳዎች መዝገብ',
+      'emergencyLiquidity': 'የአደጋ ጊዜ ፈጣን ገንዘብ',
+      'perTripDeduction': 'የጉዞ ቅነሳዎች',
     },
     'yo': {
       'appName': 'Cabi Africa',
@@ -714,6 +812,20 @@ class CabiLocalizations {
       'mapProvider': 'Olupese Maapu',
       'aboutApp': 'Nipa Cabi',
       'version': 'Ẹya',
+      'externalNavigation': 'Eto Itọsọna Opopona',
+      'safetyCommandCenter': 'Ile-iṣẹ Aabo',
+      'deleteAccount': 'Pa Account Rẹ Rẹ',
+      'tripAudioChimes': 'Ohùn Irin-ajo',
+      'biometricIdentity': 'Idanimọ Biometric',
+      'dataPrivacy': 'Aṣiri ati Data',
+      'soundPresetCharacter': 'Irú Ohùn',
+      'saccoSavings': 'Ifowopamọ ati Awọn Iyọkuro SACCO',
+      'savingsRate': 'Oṣuwọn Ifowopamọ fun Irin-ajo kọọkan',
+      'dailyWelfare': 'Idasi Idagbasoke Ojoojumọ',
+      'accumulatedSavings': 'Lapapọ Ifowopamọ ti a Kojọpọ',
+      'saccoRemittanceLedger': 'Iwe Akọsilẹ Iyọkuro',
+      'emergencyLiquidity': 'Owo Pajawiri Lẹsẹkẹsẹ',
+      'perTripDeduction': 'Awọn Iyọkuro Irin-ajo',
     },
     'ha': {
       'appName': 'Cabi Africa',
@@ -788,6 +900,20 @@ class CabiLocalizations {
       'mapProvider': 'Taswira',
       'aboutApp': 'Game da Cabi',
       'version': 'Sigar',
+      'externalNavigation': 'Manhajar Kewayawa',
+      'safetyCommandCenter': 'Cibiyar Tsaro',
+      'deleteAccount': 'Share Asusu',
+      'tripAudioChimes': 'Sautin Tafiya',
+      'biometricIdentity': 'Shaidar Halitta',
+      'dataPrivacy': 'Sirri da Bayanai',
+      'soundPresetCharacter': 'Yanayin Sauti',
+      'saccoSavings': 'Adana da Rage-rage na SACCO',
+      'savingsRate': 'Kason Adana na Kowane Tafiya',
+      'dailyWelfare': 'Gudunmawar Jin Dadin Jama\'a na Kullum',
+      'accumulatedSavings': 'Jimillar Adana da Aka Tara',
+      'saccoRemittanceLedger': 'Littafin Rage-rage',
+      'emergencyLiquidity': 'Kudin Gaggawa na Nan Take',
+      'perTripDeduction': 'Rage-rage na Kowane Tafiya',
     },
   };
 }

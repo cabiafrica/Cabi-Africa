@@ -7,6 +7,7 @@ import 'privacy_settings_screen.dart';
 import 'trusted_contacts_screen.dart';
 import 'safety_center_screen.dart';
 import 'qr_test_screen.dart';
+import 'account_deletion_screen.dart';
 import 'package:passenger_app/theme/app_theme.dart';
 import 'package:core_ui/core_ui.dart';
 import '../services/audio_notification_service.dart';
@@ -23,6 +24,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   String _biometricStatus = 'Loading...';
   String _activeMethod = 'FACE_RECOGNITION';
+  int _devTapCount = 0;
 
   @override
   void initState() {
@@ -80,7 +82,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           _buildSettingsSection(l10n.appearance.toUpperCase(), isDark: theme.brightness == Brightness.dark),
           const SizedBox(height: 12),
-          _buildThemeSelector(context, themeProvider, theme.brightness == Brightness.dark),
+          _buildThemeSelector(context, themeProvider, theme.brightness == Brightness.dark, l10n),
           const SizedBox(height: 12),
           _buildNavigationTile(
             context: context,
@@ -95,21 +97,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 32),
-          _buildSettingsSection('NOTIFICATION SOUNDS & CHIMES', isDark: theme.brightness == Brightness.dark),
+          _buildSettingsSection(l10n.soundSettings.toUpperCase(), isDark: theme.brightness == Brightness.dark),
           const SizedBox(height: 12),
           _buildNavigationTile(
             context: context,
-            title: 'Trip Audio Chimes',
+            title: l10n.tripAudioChimes,
             subtitle: 'Customize tones for requests, arrivals & trip milestones',
             icon: Icons.music_note_outlined,
             onTap: () => _showAudioSettingsModal(context),
           ),
           const SizedBox(height: 32),
-          _buildSettingsSection('PRIVACY & SECURITY', isDark: theme.brightness == Brightness.dark),
+          _buildSettingsSection(l10n.privacySecurity.toUpperCase(), isDark: theme.brightness == Brightness.dark),
           const SizedBox(height: 12),
           _buildNavigationTile(
             context: context,
-            title: 'Biometric & Identity Verification',
+            title: l10n.biometricIdentity,
             subtitle: _biometricStatus,
             icon: Icons.fingerprint_rounded,
             onTap: () => _showBiometricSettingsModal(context),
@@ -117,7 +119,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 12),
           _buildNavigationTile(
             context: context,
-            title: 'Privacy & Data',
+            title: l10n.dataPrivacy,
             subtitle: 'Control your prestige data footprint',
             icon: Icons.shield_moon_outlined,
             onTap: () => Navigator.push(
@@ -126,12 +128,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   builder: (context) => const PrivacySettingsScreen()),
             ),
           ),
-          const SizedBox(height: 32),
-          _buildSettingsSection('SAFETY', isDark: theme.brightness == Brightness.dark),
           const SizedBox(height: 12),
           _buildNavigationTile(
             context: context,
-            title: 'Safety Command Center',
+            title: l10n.deleteAccount,
+            subtitle: 'GDPR / Kenya DPA compliant data erasure',
+            icon: Icons.delete_outline_rounded,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const AccountDeletionScreen()),
+            ),
+          ),
+          const SizedBox(height: 32),
+          _buildSettingsSection(l10n.safetyCommandCenter.toUpperCase(), isDark: theme.brightness == Brightness.dark),
+          const SizedBox(height: 12),
+          _buildNavigationTile(
+            context: context,
+            title: l10n.safetyCommandCenter,
             subtitle: '24/7 patrol, 3s tactical SOS & in-transit telemetry',
             icon: Icons.shield_rounded,
             onTap: () => Navigator.push(
@@ -143,7 +157,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 8),
           _buildNavigationTile(
             context: context,
-            title: 'Trusted Contacts',
+            title: l10n.trustedContacts,
             subtitle: 'Share your prestige trips with loved ones',
             icon: Icons.people_outline_rounded,
             onTap: () => Navigator.push(
@@ -152,30 +166,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   builder: (context) => const TrustedContactsScreen()),
             ),
           ),
-          const SizedBox(height: 32),
-          _buildSettingsSection('DIAGNOSTICS', isDark: theme.brightness == Brightness.dark),
-          const SizedBox(height: 12),
-          _buildNavigationTile(
-            context: context,
-            title: 'QR Integration Test',
-            subtitle: 'Verify identity & referral QR systems',
-            icon: Icons.qr_code_2_rounded,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const QrTestScreen()),
-            ),
-          ),
           const SizedBox(height: 40),
           Center(
-            child: Text(
-              'CABI AFRICA v1.1.0+6\nPRESTIGE EDITION',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.3) ?? Colors.white12,
-                fontSize: 10,
-                letterSpacing: 2,
-                fontWeight: FontWeight.bold,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: () {
+                _devTapCount++;
+                if (_devTapCount >= 7) {
+                  _devTapCount = 0;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('🛠️ Developer Diagnostics Unlocked!'),
+                      backgroundColor: Colors.amber,
+                    ),
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const QrTestScreen()),
+                  );
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Text(
+                  'CABI AFRICA v1.1.0+6\nPRESTIGE EDITION',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.3) ?? Colors.white12,
+                    fontSize: 10,
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ),
@@ -199,7 +222,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildThemeSelector(BuildContext context, ThemeProvider themeProvider, bool isDark) {
+  Widget _buildThemeSelector(BuildContext context, ThemeProvider themeProvider, bool isDark, CabiLocalizations l10n) {
     final activeBorder = AppTheme.primaryColor;
     final inactiveBorder = isDark ? AppTheme.outlineGold.withValues(alpha: 0.3) : AppTheme.porcelainOutline;
 
@@ -220,7 +243,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Icon(Icons.palette_outlined, color: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze, size: 20),
               const SizedBox(width: 8),
               Text(
-                'THEME MODE',
+                l10n.appearance.toUpperCase(),
                 style: TextStyle(
                   color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                   fontWeight: FontWeight.bold,
@@ -258,7 +281,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Light Mode',
+                          l10n.lightMode,
                           style: TextStyle(
                             color: !isDark ? (isDark ? Colors.white : AppTheme.porcelainTextPrimary) : Colors.white70,
                             fontWeight: !isDark ? FontWeight.bold : FontWeight.w500,
@@ -305,7 +328,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Dark Mode',
+                          l10n.darkMode,
                           style: TextStyle(
                             color: isDark ? Colors.white : AppTheme.porcelainTextPrimary,
                             fontWeight: isDark ? FontWeight.bold : FontWeight.w500,
@@ -348,7 +371,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Match device system settings',
+                    l10n.systemMode,
                     style: TextStyle(
                       color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
                       fontSize: 12,

@@ -284,7 +284,7 @@ class EarningsScreen extends StatelessWidget {
                   child: _buildMetricTile(
                     title: 'Acceptance',
                     value: '78.5%',
-                    subtext: 'SACCO VIP Benchmark',
+                    subtext: 'Sacco VIP Benchmark',
                     icon: Icons.thumb_up_rounded,
                     accentColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
                     isDark: isDark,

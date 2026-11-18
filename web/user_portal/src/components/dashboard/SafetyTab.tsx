@@ -386,12 +386,19 @@ function OrganizationDelegation({ userId }: { userId: string }) {
                 <p className="font-bold text-white">{r.name}</p>
                 <p className="text-sm text-gray-400">{r.position}</p>
               </div>
-              <label className="flex items-center cursor-pointer">
+              <label className="flex items-center cursor-pointer" htmlFor={`responder-toggle-${r.id}`}>
                 <div className="relative">
-                  <input type="checkbox" className="sr-only" checked={r.isDistressResponder} onChange={() => {
-                     setResponders(responders.map(x => x.id === r.id ? { ...x, isDistressResponder: !x.isDistressResponder } : x));
-                  }} />
-                  <div className={`block w-10 h-6 rounded-full transition-colors ${r.isDistressResponder ? 'bg-brand-purple' : 'bg-gray-600'}`}></div>
+                  <input
+                    id={`responder-toggle-${r.id}`}
+                    aria-label={`Toggle distress responder for ${r.name}`}
+                    type="checkbox"
+                    className="sr-only"
+                    checked={r.isDistressResponder}
+                    onChange={() => {
+                      setResponders(responders.map(x => x.id === r.id ? { ...x, isDistressResponder: !x.isDistressResponder } : x));
+                    }}
+                  />
+                  <div className={`block w-10 h-6 rounded-full transition-colors ${r.isDistressResponder ? 'bg-brand-yellow' : 'bg-gray-600'}`}></div>
                   <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${r.isDistressResponder ? 'transform translate-x-4' : ''}`}></div>
                 </div>
                 <span className="ml-3 text-sm font-medium text-gray-300 min-w-[120px]">
@@ -412,7 +419,7 @@ function OrganizationDelegation({ userId }: { userId: string }) {
               <p className="font-bold text-white mb-2">{sg.name}</p>
               <div className="flex gap-2">
                 {sg.features.map(f => (
-                  <span key={f} className="px-2 py-1 bg-brand-purple/20 border border-brand-purple/30 text-brand-purple text-[10px] font-bold rounded uppercase tracking-wider">{f}</span>
+                  <span key={f} className="px-2 py-1 bg-brand-yellow/20 border border-brand-yellow/30 text-brand-yellow text-[10px] font-bold rounded uppercase tracking-wider">{f}</span>
                 ))}
                 {sg.features.length === 0 && <span className="text-xs text-gray-500 italic">No features enabled</span>}
               </div>
@@ -492,7 +499,7 @@ export default function SafetyTab({ userId }: SafetyTabProps) {
           </button>
           <button
             onClick={() => setActiveTab('ORGANIZATION')}
-            className={`px-4 py-2 flex items-center gap-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'ORGANIZATION' ? 'bg-brand-purple text-white' : 'text-gray-400 hover:text-white'}`}
+            className={`px-4 py-2 flex items-center gap-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'ORGANIZATION' ? 'bg-brand-yellow text-black' : 'text-gray-400 hover:text-white'}`}
           >
             <Building className="w-4 h-4" />
             Organization

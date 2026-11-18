@@ -1,22 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import * as jwt from 'jsonwebtoken';
 import { prisma } from '@/lib/prisma';
 import { isValidContactPhone } from '@/config/contactConfig';
-
-function extractCallerUser(req: NextApiRequest): { sub?: string; id?: string; role?: string } | null {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return null;
-    }
-    const token = authHeader.substring(7);
-    const secret = process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'dev-only-jwt-secret-do-not-use-in-prod' : '');
-    if (!secret) return null;
-    try {
-        return jwt.verify(token, secret) as { sub?: string; id?: string; role?: string };
-    } catch {
-        return null;
-    }
-}
+import { extractCallerUser } from '@/lib/serverAuth';
 
 function normalizeVehicleType(vehicleType?: string): 'STANDARD' | 'PREMIUM' | 'XL' | 'BODA' {
     const raw = (vehicleType || 'STANDARD').toUpperCase();
@@ -31,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
-    const { pickupLocation, dropoffLocation, vehicleType, fare, passengerId, verification } = req.body ?? {};
+    const { pickupLocation, dropoffLocation, vehicleType, fare, passengerId, verification, requestedFor } = req.body ?? {};
     const caller = extractCallerUser(req);
 
     const hasValidVerification =
@@ -42,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         typeof verification.phone === 'string' &&
         isValidContactPhone(verification.phone) &&
         typeof verification.code === 'string' &&
-        /^\d{4}$/.test(verification.code.trim());
+        /^\d{4,6}$/.test(verification.code.trim());
 
     if (!caller && !hasValidVerification) {
         return res.status(401).json({
@@ -140,10 +125,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (resolvedPassengerId) {
         try {
             const tripCode = `CB-${Math.floor(1000 + Math.random() * 9000)}`;
+            const normalizedRequestedFor =
+                requestedFor &&
+                typeof requestedFor.name === 'string' &&
+                requestedFor.name.trim().length >= 2 &&
+                typeof requestedFor.phone === 'string' &&
+                isValidContactPhone(requestedFor.phone)
+                    ? { name: requestedFor.name.trim(), phone: requestedFor.phone.trim() }
+                    : undefined;
+
             const pickupPayload =
                 typeof pickupLocation === 'string'
-                    ? { address: pickupLocation, tripCode }
-                    : { ...pickupLocation, tripCode };
+                    ? { address: pickupLocation, tripCode, ...(normalizedRequestedFor ? { requestedFor: normalizedRequestedFor } : {}) }
+                    : { ...pickupLocation, tripCode, ...(normalizedRequestedFor ? { requestedFor: normalizedRequestedFor } : {}) };
             const dropoffPayload =
                 typeof dropoffLocation === 'string'
                     ? { address: dropoffLocation }

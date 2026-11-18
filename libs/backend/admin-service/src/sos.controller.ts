@@ -57,6 +57,77 @@ export class SOSController {
     return { data: res, success: true, status: 'RESOLVED' };
   }
 
+  @Post(':id/adjudicate')
+  @Permissions('OCCURRENCE_RESOLVE')
+  async adjudicateDispute(
+    @Param('id') id: string,
+    @Body('action') action: any,
+    @Body('adjudicatorComment') adjudicatorComment: string,
+    @Body('refundOrCreditAmount') refundOrCreditAmount?: number,
+    @Body('adminId') adminId?: string,
+    @Body('adminName') adminName?: string,
+  ) {
+    const res = await this.sosService.adjudicateDispute(id, {
+      action,
+      adjudicatorComment,
+      refundOrCreditAmount,
+      adminId,
+      adminName,
+    });
+    return { data: res, success: true };
+  }
+
+  @Post(':id/pardon-request')
+  @Permissions('OCCURRENCE_VIEW')
+  async requestDistressPardon(
+    @Param('id') id: string,
+    @Body('driverUserId') driverUserId: string,
+    @Body('reason') reason: string,
+  ) {
+    const res = await this.sosService.requestDistressPardon(id, { driverUserId, reason });
+    return { data: res, success: true };
+  }
+
+  @Post(':id/pardon')
+  @Permissions('OCCURRENCE_RESOLVE')
+  async pardonDistressFee(
+    @Param('id') id: string,
+    @Body('officialId') officialId: string,
+    @Body('officialName') officialName: string,
+    @Body('approved') approved: boolean,
+    @Body('notes') notes: string,
+  ) {
+    const res = await this.sosService.pardonDistressFee(id, {
+      officialId,
+      officialName,
+      approved,
+      notes,
+    });
+    return { data: res, success: true };
+  }
+
+  @Post(':id/escalate')
+  @Permissions('OCCURRENCE_RESOLVE')
+  async escalateDispute(
+    @Param('id') id: string,
+    @Body('escalatedById') escalatedById: string,
+    @Body('escalatorRole') escalatorRole: 'DRIVER' | 'PASSENGER',
+    @Body('escalatorName') escalatorName: string,
+    @Body('reason') reason: string,
+    @Body('paymentMethod') paymentMethod?: 'WALLET' | 'MPESA' | 'AIRTEL',
+    @Body('paymentReference') paymentReference?: string,
+  ) {
+    const res = await this.sosService.escalateDispute(id, {
+      escalatedById,
+      escalatorRole,
+      escalatorName,
+      reason,
+      paymentMethod,
+      paymentReference,
+    });
+    return { data: res, success: true };
+  }
+
   @Post(':id/log')
   @Permissions('OCCURRENCE_VIEW')
   async logAction(@Param('id') id: string, @Body('notes') notes: string) {

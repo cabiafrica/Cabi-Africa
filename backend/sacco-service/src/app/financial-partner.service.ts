@@ -4,7 +4,7 @@ import { PrismaService } from '@cabi/backend/database';
 export interface CreatePartnerDto {
     name: string;
     contactEmail: string;
-    serviceCategory: 'SACCO' | 'INSURANCE_HEALTH' | 'INSURANCE_VEHICLE' | 'INSURANCE_LIFE' | 'INVESTMENT_MMF' | 'PENSION' | 'CUSTOM';
+    serviceCategory: 'Sacco' | 'INSURANCE_HEALTH' | 'INSURANCE_VEHICLE' | 'INSURANCE_LIFE' | 'INVESTMENT_MMF' | 'PENSION' | 'CUSTOM';
     apiBaseUrl?: string;
     apiKey?: string;
     connectorType: 'REST_API' | 'WEBHOOK' | 'LEDGER_EXPORT';
@@ -18,7 +18,7 @@ export interface CreatePartnerDto {
 export interface UpdatePartnerDto {
     name?: string;
     contactEmail?: string;
-    serviceCategory?: 'SACCO' | 'INSURANCE_HEALTH' | 'INSURANCE_VEHICLE' | 'INSURANCE_LIFE' | 'INVESTMENT_MMF' | 'PENSION' | 'CUSTOM';
+    serviceCategory?: 'Sacco' | 'INSURANCE_HEALTH' | 'INSURANCE_VEHICLE' | 'INSURANCE_LIFE' | 'INVESTMENT_MMF' | 'PENSION' | 'CUSTOM';
     apiBaseUrl?: string;
     apiKey?: string;
     connectorType?: 'REST_API' | 'WEBHOOK' | 'LEDGER_EXPORT';
@@ -75,7 +75,7 @@ export class FinancialPartnerService {
             data: {
                 name: dto.name,
                 contactEmail: dto.contactEmail,
-                serviceCategory: (dto.serviceCategory as any) ?? 'SACCO',
+                serviceCategory: (dto.serviceCategory as any) ?? 'Sacco',
                 apiBaseUrl: dto.apiBaseUrl ?? null,
                 apiKey: dto.apiKey ?? null,
                 connectorType: dto.connectorType ?? 'REST_API',
@@ -174,9 +174,9 @@ export class FinancialPartnerService {
                 description: p.description ?? '',
                 logoUrl: p.logoUrl,
                 minPct: 0.02,
-                maxPct: p.serviceCategory === 'SACCO' ? 0.20 : 0.15,
-                defaultPct: p.serviceCategory === 'SACCO' ? 0.10 : 0.05,
-                dividendOrYield: p.serviceCategory === 'SACCO' ? '11.2% Projected Annual Dividend' :
+                maxPct: p.serviceCategory === 'Sacco' ? 0.20 : 0.15,
+                defaultPct: p.serviceCategory === 'Sacco' ? 0.10 : 0.05,
+                dividendOrYield: p.serviceCategory === 'Sacco' ? '11.2% Projected Annual Dividend' :
                                  p.serviceCategory === 'INVESTMENT_MMF' ? '13.5% Daily Compound Yield' :
                                  p.serviceCategory === 'PENSION' ? 'Government Tax-Exempt Retirement Scheme' :
                                  'KES 500,000 Comprehensive Medical & Accident Cover',
@@ -189,8 +189,8 @@ export class FinancialPartnerService {
         return [
             {
                 id: 'sacco-capital-stima',
-                name: 'Stima DT / Boda PSV SACCO',
-                serviceCategory: 'SACCO',
+                name: 'Stima DT / Boda PSV Sacco',
+                serviceCategory: 'Sacco',
                 description: 'Build capital shares, qualify for 3x loan multiples, and earn up to 11.2% annual dividend.',
                 minPct: 0.02,
                 maxPct: 0.20,
@@ -241,7 +241,7 @@ export class FinancialPartnerService {
             consents = await (this.prisma as any).driverFinancialConsent?.findMany({
                 where: {
                     driverProfileId,
-                    status: 'ACTIVE',
+                    status: { in: ['ACTIVE', 'PENDING_CANCELLATION', 'PENDING_OPT_OUT'] },
                 },
                 include: { partner: true }
             }) ?? [];
@@ -318,6 +318,9 @@ export class FinancialPartnerService {
                             deductionPct: item.deductionPct,
                             isConsented: true,
                             status: 'ACTIVE',
+                            optOutRequestedAt: null,
+                            optOutEffectiveAt: null,
+                            cancellationReason: null,
                             updatedAt: new Date(),
                         },
                         create: {
@@ -333,11 +336,22 @@ export class FinancialPartnerService {
                         }
                     });
                 } else {
-                    // Deactivate or remove consent
-                    await (this.prisma as any).driverFinancialConsent?.deleteMany({
+                    // Enforce 60-day policy: Transition to PENDING_CANCELLATION rather than immediate deletion.
+                    // Per policy, per-trip deductions continue normally until staff effects termination.
+                    const now = new Date();
+                    const effectiveDate = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+                    await (this.prisma as any).driverFinancialConsent?.updateMany({
                         where: {
                             driverProfileId,
                             partnerId: item.partnerId,
+                            status: 'ACTIVE',
+                        },
+                        data: {
+                            status: 'PENDING_CANCELLATION',
+                            optOutRequestedAt: now,
+                            optOutEffectiveAt: effectiveDate,
+                            cancellationReason: 'Driver requested cancellation via allocation update',
+                            updatedAt: now,
                         }
                     });
                 }
@@ -346,6 +360,29 @@ export class FinancialPartnerService {
             }
         }
 
+        return this.getDriverAllocations(driverProfileId);
+    }
+
+    /**
+     * Driver aborts/retracts a pending deduction stoppage within the 60 days.
+     * Restores the consent to ACTIVE.
+     */
+    async abortCancellation(driverProfileId: string, partnerId: string): Promise<any> {
+        this.logger.log(`Driver ${driverProfileId} aborting deduction stoppage for partner ${partnerId}`);
+        await (this.prisma as any).driverFinancialConsent?.updateMany({
+            where: {
+                driverProfileId,
+                partnerId,
+                status: 'PENDING_CANCELLATION',
+            },
+            data: {
+                status: 'ACTIVE',
+                optOutRequestedAt: null,
+                optOutEffectiveAt: null,
+                cancellationReason: null,
+                updatedAt: new Date(),
+            }
+        });
         return this.getDriverAllocations(driverProfileId);
     }
 }

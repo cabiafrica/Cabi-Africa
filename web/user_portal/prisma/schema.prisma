@@ -63,6 +63,8 @@ model User {
   organization_members   organization_members?
   ridePreference         RidePreference?
   ridesAsPassenger       Ride[]                     @relation("PassengerRides")
+  loyaltyPoints          Int                        @default(0)
+  loyaltyTransactions    LoyaltyTransaction[]
   badges                 UserBadge[]
   assignedPermissions    UserPermission[]           @relation("AssignedPermissions")
   userPermissions        UserPermission[]
@@ -70,6 +72,16 @@ model User {
   userRoles              UserRole[]
   referredBy             User?                      @relation("UserReferrals", fields: [referredById], references: [id])
   referrals              User[]                     @relation("UserReferrals")
+  deviceId               String?
+  imeiHash               String?
+  registrationIp         String?
+  referralRelationships ReferralRelationship[]     @relation("ReferrerRelationships")
+  referredRelationships ReferralRelationship[]     @relation("RefereeRelationships")
+  referralCommissions    ReferralCommissionLedger[] @relation("UserReferralCommissions")
+  sourceReferralCommissions ReferralCommissionLedger[] @relation("SourceReferralCommissions")
+  notificationLogs       NotificationLog[]
+  referralFraudAlerts    ReferralFraudAlert[]       @relation("UserFraudAlerts")
+  relatedFraudAlerts     ReferralFraudAlert[]       @relation("RelatedFraudAlerts")
   fleetManagerProfile    FleetManager?
 
   @@index([role])
@@ -110,6 +122,8 @@ model DriverProfile {
   referrerId          String?
   commissionLedger    CommissionLedger[]
   commissionSource    CommissionLedger[]       @relation("CommissionSource")
+  referralCommissions ReferralCommissionLedger[] @relation("DriverReferralCommissions")
+  sourceReferralCommissions ReferralCommissionLedger[] @relation("SourceDriverReferralCommissions")
   documents           Document[]
   badgeStatus         DriverBadgeStatus[]
   driver_groups       driver_groups?           @relation(fields: [driverGroupId], references: [id])
@@ -760,6 +774,101 @@ model SaccoLedger {
   @@map("sacco_ledger")
 }
 
+model ReferralRelationship {
+  id                            String       @id @default(uuid())
+  referrerId                    String
+  refereeId                     String       @unique
+  referrerDriverProfileId       String?
+  refereeDriverProfileId        String?
+  type                          ReferralType
+  isActive                      Boolean      @default(true)
+  isGrandfathered               Boolean      @default(false)
+  qualifiedBadgeId              String?
+  firstWeekExpiresAt            DateTime?
+  driverMilestoneTripsRequired  Int          @default(10)
+  driverMilestoneTripsCompleted Int          @default(0)
+  isMilestoneAwarded            Boolean      @default(false)
+  createdAt                     DateTime     @default(now())
+  updatedAt                     DateTime     @updatedAt
+
+  referrer                      User         @relation("ReferrerRelationships", fields: [referrerId], references: [id])
+  referee                       User         @relation("RefereeRelationships", fields: [refereeId], references: [id])
+
+  @@index([referrerId])
+  @@index([refereeId])
+  @@index([type])
+  @@map("referral_relationships")
+}
+
+model ReferralCommissionLedger {
+  id                     String         @id @default(uuid())
+  userId                 String
+  driverProfileId        String?
+  sourceUserId           String
+  sourceDriverProfileId  String?
+  relatedTripId          String?
+  amount                 Decimal        @db.Decimal(10, 2)
+  level                  Int            @default(1)
+  basisAmount            Decimal        @db.Decimal(10, 2)
+  percentage             Decimal        @db.Decimal(5, 2)
+  status                 ReferralStatus @default(PENDING_REVIEW)
+  escrowReleaseAt        DateTime
+  disqualificationReason String?
+  isFraudSuspended       Boolean        @default(false)
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+
+  user                   User           @relation("UserReferralCommissions", fields: [userId], references: [id])
+  driverProfile          DriverProfile? @relation("DriverReferralCommissions", fields: [driverProfileId], references: [id])
+  sourceUser             User           @relation("SourceReferralCommissions", fields: [sourceUserId], references: [id])
+  sourceDriverProfile    DriverProfile? @relation("SourceDriverReferralCommissions", fields: [sourceDriverProfileId], references: [id])
+
+  @@index([userId])
+  @@index([driverProfileId])
+  @@index([sourceUserId])
+  @@index([status])
+  @@index([escrowReleaseAt])
+  @@index([relatedTripId])
+  @@map("referral_commission_ledger")
+}
+
+model NotificationLog {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  body      String   @db.Text
+  type      String
+  channel   String   @default("IN_APP")
+  isRead    Boolean  @default(false)
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("notification_logs")
+}
+
+model ReferralFraudAlert {
+  id            String    @id @default(uuid())
+  userId        String
+  relatedUserId String?
+  ruleViolated  FraudRule
+  severity      String    @default("HIGH")
+  evidence      Json?
+  isResolved    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation("UserFraudAlerts", fields: [userId], references: [id])
+  relatedUser   User?     @relation("RelatedFraudAlerts", fields: [relatedUserId], references: [id])
+
+  @@index([userId])
+  @@index([relatedUserId])
+  @@index([isResolved])
+  @@map("referral_fraud_alerts")
+}
+
 model driver_groups {
   id                  String          @id
   name                String
@@ -1242,4 +1351,53 @@ enum ClaimStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+// ─── Referral Program & Fraud Detection ───────────────────────────────────────
+
+enum ReferralStatus {
+  PENDING_REVIEW
+  AVAILABLE
+  DISQUALIFIED
+  CANCELLED
+  FROZEN_FRAUD
+}
+
+enum ReferralType {
+  DRIVER_TO_DRIVER
+  PASSENGER_TO_PASSENGER
+  PASSENGER_TO_DRIVER
+}
+
+enum FraudRule {
+  DEVICE_FINGERPRINT_MATCH
+  COLLUSIVE_TRIP_DENSITY
+  CYCLIC_REFERRAL
+  MULTI_ACCOUNT
+}
+
+// ─── Passenger Loyalty Points & Ledger ──────────────────────────────────────────
+
+enum LoyaltyTransactionType {
+  EARNED_RIDE_SPEND
+  EARNED_RATING_BONUS
+  EARNED_CHALLENGE
+  REDEEMED_COUPON
+  ADJUSTMENT
+}
+
+model LoyaltyTransaction {
+  id           String                 @id @default(uuid())
+  userId       String
+  user         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  points       Int
+  balanceAfter Int
+  type         LoyaltyTransactionType
+  description  String
+  metadata     Json?
+  createdAt    DateTime               @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("loyalty_transactions")
 }

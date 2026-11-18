@@ -34,14 +34,17 @@ export const PaymentReceipt: React.FC<PaymentReceiptProps> = ({
             document.body.appendChild(iframe);
             const doc = iframe.contentWindow?.document || iframe.contentDocument;
             if (doc) {
+                // Generated print iframe document (self-contained, skip-to-main not applicable)
                 doc.write(`
-                    <html>
+                    <html lang="en">
                         <head>
                             <title>Print Receipt</title>
                             <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
                         </head>
                         <body class="bg-white p-8">
-                            ${printContent}
+                            <main id="main-content">
+                                ${printContent}
+                            </main>
                         </body>
                     </html>
                 `);
@@ -106,7 +109,14 @@ export const PaymentReceipt: React.FC<PaymentReceiptProps> = ({
 
             <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-col gap-3">
                 <button
+                    type="button"
                     onClick={handlePrint}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handlePrint();
+                        }
+                    }}
                     className="w-full flex items-center justify-center gap-2 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded font-bold transition-all"
                 >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>

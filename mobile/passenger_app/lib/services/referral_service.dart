@@ -27,13 +27,18 @@ class PassengerReferralService {
 
   // Apply a referral code from someone else
   Future<Map<String, dynamic>> applyReferralCode(
-      String userId, String code) async {
+      String userId, String code, {String? deviceId, String? imeiHash}) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/admin/referral/apply'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(
-            {'userId': userId, 'code': code, 'userType': 'passenger'}),
+        body: jsonEncode({
+          'userId': userId,
+          'code': code,
+          'userType': 'passenger',
+          if (deviceId != null) 'deviceId': deviceId,
+          if (imeiHash != null) 'imeiHash': imeiHash,
+        }),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -53,14 +58,21 @@ class PassengerReferralService {
   Future<Map<String, dynamic>> getReferralHistory(String userId) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/admin/referral/my-commissions?driverId=$userId'),
+        Uri.parse('$baseUrl/admin/referral/passenger/commissions?userId=$userId'),
       );
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        final data = jsonDecode(response.body);
+        return {
+          'totalEarned': data['availableBalance'] ?? 0.0,
+          'pendingEscrow': data['pendingEscrowBalance'] ?? 0.0,
+          'referredPassengers': data['referredPassengersCount'] ?? 0,
+          'referredDrivers': data['referredDriversCount'] ?? 0,
+          'history': data['history'] ?? [],
+        };
       }
-      return {'totalEarned': 0, 'history': []};
+      return {'totalEarned': 0, 'pendingEscrow': 0, 'history': []};
     } catch (e) {
-      return {'totalEarned': 0, 'history': [], 'error': e.toString()};
+      return {'totalEarned': 0, 'pendingEscrow': 0, 'history': [], 'error': e.toString()};
     }
   }
 }

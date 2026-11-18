@@ -1,25 +1,27 @@
-import MainLayout from '@/components/layout/MainLayout';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import Head from 'next/head';
 
-export default function PassengerAppDownloadPage() {
+export default function PassengerRedirectPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace('/passengers');
+  }, [router]);
+
   return (
-    <MainLayout
-      title="Download the CABI Passenger App | CABI"
-      description="Download the CABI Go passenger app from the footer download menu to start riding."
-    >
-      <div className="container mx-auto px-4 py-20 text-center">
-        <h1 className="text-3xl sm:text-4xl font-black mb-4">Download the CABI Go App</h1>
-        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 mb-8">
-          All official Android &amp; iOS downloads are available in the footer download menu below.
+    <>
+      <Head>
+        <title>Redirecting to CABI Passengers...</title>
+        <meta name="description" content="Ride with CABI Africa — East Africa's premier transport network." />
+        <meta property="og:title" content="Ride with CABI Africa" />
+        <meta httpEquiv="refresh" content="0;url=/passengers" />
+      </Head>
+      <div className="min-h-screen bg-slate-50 dark:bg-surface-dark flex items-center justify-center p-4">
+        <p className="text-sm font-bold text-slate-600 dark:text-gray-300">
+          Redirecting to Passenger Portal...
         </p>
-        <div className="flex justify-center">
-          <a
-            href="#footer-download-menu"
-            className="bg-primary-container text-black font-bold py-3.5 px-6 rounded-xl hover:bg-primary-highlight transition-all"
-          >
-            Go to Footer Download Menu ↓
-          </a>
-        </div>
       </div>
-    </MainLayout>
+    </>
   );
 }

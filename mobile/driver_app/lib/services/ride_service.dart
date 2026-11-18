@@ -239,7 +239,7 @@ class RideService {
     }
   }
 
-  // Process passenger cancellation with SACCO standby protection compensation
+  // Process passenger cancellation with Sacco standby protection compensation
   Future<Map<String, dynamic>> processPassengerCancellation(
     String tripId, {
     required bool afterArrival,
@@ -277,7 +277,7 @@ class RideService {
       'driverShare': driverShare,
       'saccoWelfare': saccoWelfare,
       'reason': afterArrival
-          ? 'Passenger cancelled after chauffeur arrival at pickup'
+          ? 'Passenger cancelled after captain arrival at pickup'
           : 'Passenger cancelled within initial grace window',
       'creditedTo': 'M-PESA ESCROW WALLET',
     };

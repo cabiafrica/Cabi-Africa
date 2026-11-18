@@ -67,7 +67,7 @@ def check_accessibility(file_path: Path) -> list:
                     break
         
         # Check for missing lang attribute
-        if '<html' in content.lower() and 'lang=' not in content.lower():
+        if re.search(r'<html[\s>]', content, re.IGNORECASE) and 'lang=' not in content.lower():
             issues.append("Missing lang attribute on <html>")
         
         # Check for missing skip link

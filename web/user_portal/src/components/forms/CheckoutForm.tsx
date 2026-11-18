@@ -45,7 +45,8 @@ export function CheckoutForm() {
   };
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
+    <form id="payment-form" onSubmit={handleSubmit} aria-label="Payment form">
+      <label htmlFor="payment-element" className="sr-only">Payment Details</label>
       <PaymentElement id="payment-element" />
       <button disabled={isLoading || !stripe || !elements} id="submit" className="mt-6 flex w-full justify-center rounded-xl border border-transparent bg-[#D4AF37] py-3 px-4 text-sm font-extrabold text-black shadow-lg hover:bg-[#ffe088] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-offset-2 disabled:opacity-50">
         <span id="button-text">

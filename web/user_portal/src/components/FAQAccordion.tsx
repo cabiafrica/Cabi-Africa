@@ -54,6 +54,12 @@ export default function FAQAccordion({ categories }: FAQAccordionProps) {
                                 >
                                     <button
                                         onClick={() => toggleItem(categoryIndex, itemIndex)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                e.preventDefault();
+                                                toggleItem(categoryIndex, itemIndex);
+                                            }
+                                        }}
                                         className="w-full px-6 py-4 text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:ring-inset"
                                         aria-expanded={isItemOpen}
                                     >

@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../context/AuthContext';
 import { User, Car, Key, ArrowRight, CheckCircle, Building, ShieldCheck, Loader2, Mail, Phone, Lock } from 'lucide-react';
 import FileUpload from '../components/forms/FileUpload';
-import VideoEmbed from '../components/VideoEmbed';
+import PassportPhotoUploader from '../components/ui/PassportPhotoUploader';
 import BrandLogo from '@/components/ui/BrandLogo';
 
 type UserRole = 'passenger' | 'driver' | 'vehicle_owner';
@@ -35,6 +35,13 @@ export default function Register() {
     const [driverStep, setDriverStep] = useState(1);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [primaryLanguage, setPrimaryLanguage] = useState<'en' | 'sw' | 'fr' | 'ar'>('en');
+    const [otpSent, setOtpSent] = useState(false);
+    const [otpCode, setOtpCode] = useState('');
+    const [otpVerified, setOtpVerified] = useState(false);
+    const [otpLoading, setOtpLoading] = useState(false);
+    const [otpMessage, setOtpMessage] = useState<string | null>(null);
+    const [otpError, setOtpError] = useState<string | null>(null);
 
     // Validation Helpers
     const validateName = (val: string, fieldName = 'Name') => {
@@ -95,7 +102,67 @@ export default function Register() {
         }
     };
 
+    const handleSendOtp = async () => {
+        const phone = watch('phone');
+        const email = watch('email');
+        if (!phone && !email) {
+            setOtpError('Enter your email and phone number first.');
+            return;
+        }
+        setOtpLoading(true);
+        setOtpError(null);
+        setOtpMessage(null);
+        try {
+            const res = await fetch('/api/auth/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone, email, purpose: 'registration' }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to send OTP');
+            setOtpSent(true);
+            setOtpMessage(
+                data.devOtp
+                    ? `${data.message} (Sandbox OTP: ${data.devOtp})`
+                    : data.message
+            );
+        } catch (err: any) {
+            setOtpError(err.message || 'Could not send OTP.');
+        } finally {
+            setOtpLoading(false);
+        }
+    };
+
+    const handleVerifyOtp = async () => {
+        const identifier = watch('phone') || watch('email');
+        if (!identifier || !otpCode.trim()) {
+            setOtpError('Enter the 6-digit OTP code.');
+            return;
+        }
+        setOtpLoading(true);
+        setOtpError(null);
+        try {
+            const res = await fetch('/api/auth/verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ identifier, code: otpCode.trim(), purpose: 'registration' }),
+            });
+            const data = await res.json();
+            if (!res.ok || !data.verified) throw new Error(data.message || 'Invalid OTP');
+            setOtpVerified(true);
+            setOtpMessage('Phone & Email verified via OTP.');
+        } catch (err: any) {
+            setOtpError(err.message || 'OTP verification failed.');
+        } finally {
+            setOtpLoading(false);
+        }
+    };
+
     const onSubmit = async (data: any) => {
+        if (!otpVerified) {
+            setOtpError('Please complete OTP verification before creating your account.');
+            return;
+        }
         setIsLoading(true);
         try {
             // Create FormData for multipart upload
@@ -108,8 +175,13 @@ export default function Register() {
                 }
             });
 
-            // Add role
+            // Add role & primary language
             formData.append('role', role || '');
+            formData.append('preferredLanguage', primaryLanguage);
+            formData.append('otpCode', otpCode.trim());
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('cabi_language', primaryLanguage);
+            }
 
             // Add files
             Object.entries(files).forEach(([key, file]) => {
@@ -151,6 +223,8 @@ export default function Register() {
         <div className="min-h-screen bg-slate-50 dark:bg-brand-black text-slate-900 dark:text-white selection:bg-brand-yellow selection:text-black overflow-hidden relative font-sans transition-colors duration-300">
             <Head>
                 <title>Join Cabi - The Future of Mobility</title>
+                <meta name="description" content="Register as a driver or rider with CABI Africa. Fast, secure, and rewarding mobility." />
+                <meta property="og:title" content="Join Cabi - The Future of Mobility" />
             </Head>
 
             {/* Background Ambience */}
@@ -233,16 +307,6 @@ export default function Register() {
                                 ← Back to roles
                             </button>
 
-                            {/* Video Embed for Selected Role */}
-                            <div className="mb-8">
-                                <VideoEmbed
-                                    videoId={role === 'driver' ? 'dQw4w9WgXcQ' : role === 'passenger' ? 'dQw4w9WgXcQ' : 'dQw4w9WgXcQ'} // TODO: Update video IDs per role
-                                    title={`${role === 'vehicle_owner' ? 'Vehicle Owner' : role} Registration Guide`}
-                                    showChannelLink={false}
-                                    className="mb-6 rounded-xl overflow-hidden shadow-2xl"
-                                />
-                            </div>
-
                             <h2 className="text-3xl font-bold mb-2 capitalize text-slate-900 dark:text-white">
                                 Join as {role === 'vehicle_owner' ? 'Vehicle Owner' : role}
                             </h2>
@@ -301,6 +365,14 @@ export default function Register() {
                                         <div className="space-y-2">
                                             <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Email Address</label>
                                             <input type="email" {...register('email', { required: true })} className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600" placeholder="john@example.com" />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Official Passport Photo</label>
+                                            <PassportPhotoUploader
+                                                label="Upload Official Passport Photo"
+                                                onFileSelect={(file) => handleFileChange('passengerPhoto', file)}
+                                            />
                                         </div>
                                     </div>
                                 )}
@@ -442,16 +514,13 @@ export default function Register() {
                                             helperText="Upload your police clearance certificate (PDF only)"
                                         />
 
-                                        <FileUpload
-                                            label="Professional Passport Photo"
-                                            name="driverPhoto"
-                                            accept="image/*"
-                                            maxSize={2}
-                                            required={true}
-                                            onChange={(file) => handleFileChange('driverPhoto', file)}
-                                            value={files.driverPhoto}
-                                            helperText="Upload a professional passport-sized photo"
-                                        />
+                                        <div className="space-y-2">
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Official Passport Photo *</label>
+                                            <PassportPhotoUploader
+                                                label="Upload Official Driver Passport Photo"
+                                                onFileSelect={(file) => handleFileChange('driverPhoto', file)}
+                                            />
+                                        </div>
 
                                         {/* Back Button forStep 2 */}
                                         <button
@@ -565,10 +634,73 @@ export default function Register() {
                                             {errors.confirmPassword && <span className="text-red-500 text-xs">{errors.confirmPassword.message as string}</span>}
                                         </div>
 
+                                        {/* Primary Language Selection */}
+                                        <div className="space-y-2 animate-fade-in">
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Primary Language</label>
+                                            <select
+                                                value={primaryLanguage}
+                                                onChange={(e) => setPrimaryLanguage(e.target.value as any)}
+                                                className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow text-slate-900 dark:text-white"
+                                            >
+                                                <option value="en">English (EN)</option>
+                                                <option value="sw">Kiswahili (SW)</option>
+                                                <option value="fr">Français (FR)</option>
+                                                <option value="ar">العربية (AR)</option>
+                                            </select>
+                                        </div>
+
+                                        {/* OTP Verification Box */}
+                                        <div className="p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-3">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-gray-300">
+                                                    OTP Verification (Email &amp; SMS)
+                                                </span>
+                                                {otpVerified && (
+                                                    <span className="text-xs font-bold text-emerald-500 flex items-center gap-1">
+                                                        <CheckCircle className="w-3.5 h-3.5" /> Verified
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {!otpVerified && (
+                                                <div className="flex flex-col sm:flex-row gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleSendOtp}
+                                                        disabled={otpLoading}
+                                                        className="px-4 py-2.5 rounded-lg bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#B48A14] dark:text-[#D4AF37] text-xs font-bold uppercase tracking-wider hover:bg-[#D4AF37]/30 disabled:opacity-50"
+                                                    >
+                                                        {otpSent ? 'Resend OTP' : 'Send OTP'}
+                                                    </button>
+                                                    {otpSent && (
+                                                        <>
+                                                            <input
+                                                                type="text"
+                                                                value={otpCode}
+                                                                onChange={(e) => setOtpCode(e.target.value)}
+                                                                maxLength={6}
+                                                                placeholder="6-digit OTP"
+                                                                className="flex-1 px-3 py-2 rounded-lg bg-white dark:bg-brand-dark border border-slate-300 dark:border-gray-700 text-sm font-mono tracking-widest text-slate-900 dark:text-white"
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                onClick={handleVerifyOtp}
+                                                                disabled={otpLoading}
+                                                                className="px-4 py-2.5 rounded-lg bg-emerald-500 text-black text-xs font-bold uppercase tracking-wider hover:bg-emerald-400 disabled:opacity-50"
+                                                            >
+                                                                Verify
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            )}
+                                            {otpMessage && <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">{otpMessage}</p>}
+                                            {otpError && <p className="text-xs text-red-500 font-medium">{otpError}</p>}
+                                        </div>
+
                                         <button
                                             type="submit"
-                                            disabled={isLoading}
-                                            className={`w-full py-4 rounded-xl font-bold text-black text-lg transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1 shadow-lg
+                                            disabled={isLoading || !otpVerified}
+                                            className={`w-full py-4 rounded-xl font-bold text-black text-lg transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed
                                             ${role === 'vehicle_owner' ? 'bg-brand-yellow hover:bg-yellow-400' : role === 'driver' ? 'bg-gradient-to-r from-[#D4AF37] to-[#FACC15] hover:brightness-110' : 'bg-brand-yellow hover:bg-yellow-400'}
                                             `}
                                         >

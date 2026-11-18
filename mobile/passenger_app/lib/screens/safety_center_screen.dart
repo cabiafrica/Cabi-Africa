@@ -746,7 +746,7 @@ class _SafetyCenterScreenState extends State<SafetyCenterScreen>
               children: [
                 _buildComplianceCard('NTSA Vetted', Icons.verified_rounded, isDark),
                 const SizedBox(width: 8),
-                _buildComplianceCard('SACCO Protocol', Icons.rule_rounded, isDark),
+                _buildComplianceCard('Sacco Protocol', Icons.rule_rounded, isDark),
                 const SizedBox(width: 8),
                 _buildComplianceCard('Zero Surcharge', Icons.price_check_rounded, isDark),
               ],

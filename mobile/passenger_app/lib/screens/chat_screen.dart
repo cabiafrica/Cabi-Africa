@@ -127,7 +127,7 @@ class _ChatScreenState extends State<ChatScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Connecting encrypted call to ${widget.driverName ?? "Chauffeur"}...',
+                'Connecting encrypted call to ${widget.driverName ?? "Captain"}...',
                 style: AppTheme.outfit(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -200,7 +200,7 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: Column(
         children: [
-          // Chauffeur Card & Live ETA Sub-Banner
+          // Captain Card & Live ETA Sub-Banner
           Container(
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(14),
@@ -481,7 +481,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         fontSize: 13,
                       ),
                       decoration: InputDecoration(
-                        hintText: 'Message your executive chauffeur...',
+                        hintText: 'Message your executive captain...',
                         hintStyle: TextStyle(
                           color: isDark ? Colors.white30 : AppTheme.porcelainTextSecondary,
                           fontSize: 12,
@@ -639,7 +639,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  msg.role ?? 'Chauffeur',
+                  msg.role ?? 'Captain',
                   style: AppTheme.inter(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,

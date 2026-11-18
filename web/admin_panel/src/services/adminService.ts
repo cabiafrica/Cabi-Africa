@@ -48,6 +48,10 @@ class AdminService {
   getDriverDownline = this.referralService.getDriverDownline.bind(this.referralService);
   getReferralRules = this.referralService.getReferralRules.bind(this.referralService);
   updateReferralRules = this.referralService.updateReferralRules.bind(this.referralService);
+  getFraudAlerts = this.referralService.getFraudAlerts.bind(this.referralService);
+  resolveFraudAlert = this.referralService.resolveFraudAlert.bind(this.referralService);
+  getNotificationLogs = this.referralService.getNotificationLogs.bind(this.referralService);
+  releaseMaturedEscrow = this.referralService.releaseMaturedEscrow.bind(this.referralService);
 
   // --- Safety Service Delegation ---
   getIncidents = this.safetyService.getIncidents.bind(this.safetyService);

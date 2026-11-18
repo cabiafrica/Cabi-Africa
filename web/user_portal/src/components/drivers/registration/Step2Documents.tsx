@@ -83,6 +83,13 @@ export const Step2Documents: React.FC<Props> = ({ data, onChange, errors }) => {
                     onChange({ [field]: '' });
                     setFiles(prev => ({ ...prev, [field]: undefined }));
                 }}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onChange({ [field]: '' });
+                        setFiles(prev => ({ ...prev, [field]: undefined }));
+                    }
+                }}
                 className="text-sm text-red-500 hover:underline flex items-center gap-1"
               >
                 <X className="w-4 h-4" /> Remove
@@ -100,6 +107,7 @@ export const Step2Documents: React.FC<Props> = ({ data, onChange, errors }) => {
               <input 
                 type="file" 
                 id={`file-${field}`}
+                aria-label={title}
                 className="hidden"
                 accept="image/*"
                 onChange={(e) => {
@@ -110,6 +118,12 @@ export const Step2Documents: React.FC<Props> = ({ data, onChange, errors }) => {
               <button
                 type="button"
                 onClick={() => document.getElementById(`file-${field}`)?.click()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    document.getElementById(`file-${field}`)?.click();
+                  }
+                }}
                 className="px-4 py-2 mt-2 text-sm bg-white dark:bg-surface-dark border border-slate-300 dark:border-white/15 rounded-xl shadow-sm hover:border-[#D4AF37] font-semibold"
               >
                 Browse File

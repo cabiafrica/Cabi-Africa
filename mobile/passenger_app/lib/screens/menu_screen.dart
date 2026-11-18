@@ -347,7 +347,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 MenuGridItem(
                   icon: Icons.calendar_month_rounded,
                   title: 'Scheduled Rides',
-                  subtitle: 'Reserved chauffeurs',
+                  subtitle: 'Reserved captains',
                   badge: 'VIP',
                   baseColor: const Color(0xFFD4AF37), // Classic Gold
                   onTap: () => Navigator.push(

@@ -143,6 +143,55 @@ export class DispatchService {
         });
     }
 
+    async getDriverPreferences(driverId: string) {
+        const driver = await this.prisma.driverProfile.findFirst({
+            where: {
+                OR: [{ id: driverId }, { userId: driverId }]
+            },
+            include: { user: { select: { privacySettings: true } } }
+        });
+        if (!driver) {
+            return { allowBackToBack: true };
+        }
+        const settings = (driver.user?.privacySettings as any) || {};
+        return {
+            allowBackToBack: settings.allowBackToBack ?? true,
+            preferredDestination: driver.preferredDestination,
+            excludedZones: driver.excludedZones,
+        };
+    }
+
+    async updateDriverPreferences(driverId: string, data: { allowBackToBack?: boolean; destinationMode?: any }) {
+        const driver = await this.prisma.driverProfile.findFirst({
+            where: {
+                OR: [{ id: driverId }, { userId: driverId }]
+            },
+            include: { user: { select: { id: true, privacySettings: true } } }
+        });
+        if (!driver) {
+            return { success: false, message: 'Driver profile not found' };
+        }
+        const currentSettings = (driver.user?.privacySettings as any) || {};
+        const updatedSettings = {
+            ...currentSettings,
+            ...(data.allowBackToBack !== undefined && { allowBackToBack: data.allowBackToBack }),
+        };
+        await this.prisma.user.update({
+            where: { id: driver.user.id },
+            data: { privacySettings: updatedSettings }
+        });
+        if (data.destinationMode !== undefined) {
+            await this.prisma.driverProfile.update({
+                where: { id: driver.id },
+                data: { preferredDestination: data.destinationMode }
+            });
+        }
+        return {
+            success: true,
+            allowBackToBack: updatedSettings.allowBackToBack ?? true,
+        };
+    }
+
     async getCurrentRide(userId: string, role: 'PASSENGER' | 'DRIVER') {
         const whereClause: any = {
             status: { in: [RideStatus.REQUESTED, RideStatus.MATCHING, RideStatus.DRIVER_ASSIGNED, RideStatus.DRIVER_ARRIVED, RideStatus.IN_PROGRESS] }

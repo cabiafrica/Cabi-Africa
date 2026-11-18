@@ -216,7 +216,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                       'Assigned')
                   .toString();
               final vehicleColor = (vehicleMap?['color'] ?? 'Verified').toString();
-              final vehicleModel = (vehicleMap?['model'] ?? 'Chauffeur Vehicle').toString();
+              final vehicleModel = (vehicleMap?['model'] ?? 'Captain Vehicle').toString();
 
               return Row(
                 children: [
@@ -305,7 +305,18 @@ extension _HomeScreenPanels on _HomeScreenState {
                         color: isDark ? Colors.grey[900] : AppTheme.porcelainSurfaceContainer, shape: BoxShape.circle),
                     child: IconButton(
                         icon: Icon(Icons.phone, color: successGreen, size: 18),
-                        onPressed: () {}),
+                        tooltip: 'Call Captain (VoIP)',
+                        onPressed: () {
+                          InAppCallModal.show(
+                            context,
+                            peerName: driverPreferredName,
+                            peerRole: 'DRIVER',
+                            peerVehicle: '$vehiclePlate ($vehicleColor $vehicleModel)',
+                            peerAvatar: driverPhoto,
+                            isIncoming: false,
+                          );
+                          TripCommunicationService.instance.startCall();
+                        }),
                   ),
                   const SizedBox(width: 6),
                   Container(
@@ -313,7 +324,16 @@ extension _HomeScreenPanels on _HomeScreenState {
                         color: isDark ? Colors.grey[900] : AppTheme.porcelainSurfaceContainer, shape: BoxShape.circle),
                     child: IconButton(
                         icon: Icon(Icons.message, color: isDark ? Colors.blueAccent : const Color(0xFF0260C4), size: 18),
-                        onPressed: () {}),
+                        tooltip: 'Message Captain',
+                        onPressed: () {
+                          TripChatModal.show(
+                            context,
+                            peerName: driverPreferredName,
+                            peerRole: 'DRIVER',
+                            peerVehicle: '$vehiclePlate ($vehicleColor $vehicleModel)',
+                            peerAvatar: driverPhoto,
+                          );
+                        }),
                   ),
                 ],
               );
@@ -1062,12 +1082,12 @@ extension _HomeScreenPanels on _HomeScreenState {
           decoration: BoxDecoration(
             color: isDark ? AppTheme.surfaceContainer : surfaceColor.withValues(alpha: 0.98),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-            border: Border.all(color: isDark ? AppTheme.outlineGold : dividerColor, width: 1.0),
+            border: Border.all(color: (isDark ? AppTheme.outlineGold : dividerColor).withValues(alpha: 0.20), width: 0.8),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.1),
-                blurRadius: 28,
-                offset: const Offset(0, -4),
+                color: Colors.black.withValues(alpha: isDark ? 0.65 : 0.12),
+                blurRadius: 32,
+                offset: const Offset(0, -6),
               )
             ],
           ),
@@ -1104,7 +1124,14 @@ extension _HomeScreenPanels on _HomeScreenState {
                             decoration: BoxDecoration(
                               color: isDark ? AppTheme.surfaceDim : const Color(0xFFF0EDEC),
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: isDark ? AppTheme.outlineBorder : dividerColor),
+                              border: Border.all(color: (isDark ? AppTheme.outlineBorder : dividerColor).withValues(alpha: 0.20), width: 0.8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
                             child: Row(
                               children: [
@@ -1175,7 +1202,14 @@ extension _HomeScreenPanels on _HomeScreenState {
                               decoration: BoxDecoration(
                                 color: isDark ? AppTheme.surfaceContainerHigh : const Color(0xFFF6F3F2),
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: isDark ? AppTheme.outlineGold : dividerColor),
+                                border: Border.all(color: (isDark ? AppTheme.outlineGold : dividerColor).withValues(alpha: 0.20), width: 0.8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -1235,13 +1269,14 @@ extension _HomeScreenPanels on _HomeScreenState {
                           color: isDark ? AppTheme.surfaceContainer : Colors.white,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: isDark ? AppTheme.outlineGold : dividerColor,
-                            width: 1.1,
+                            color: (isDark ? AppTheme.outlineGold : dividerColor).withValues(alpha: 0.20),
+                            width: 0.8,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
-                              blurRadius: 16,
+                              color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.08),
+                              blurRadius: 20,
+                              spreadRadius: 1,
                               offset: const Offset(0, 6),
                             )
                           ],
@@ -1263,8 +1298,16 @@ extension _HomeScreenPanels on _HomeScreenState {
                                           color: isDark ? AppTheme.obsidianCanvas : const Color(0xFFF6F3F2),
                                           borderRadius: BorderRadius.circular(10),
                                           border: Border.all(
-                                            color: isDark ? AppTheme.outlineGold : dividerColor,
+                                            color: (isDark ? AppTheme.outlineGold : dividerColor).withValues(alpha: 0.20),
+                                            width: 0.8,
                                           ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
                                         ),
                                         child: Row(
                                           children: [
@@ -1356,7 +1399,14 @@ extension _HomeScreenPanels on _HomeScreenState {
                                         decoration: BoxDecoration(
                                           color: isDark ? AppTheme.surfaceContainerHigh : const Color(0xFFF6F3F2),
                                           borderRadius: BorderRadius.circular(10),
-                                          border: Border.all(color: AppTheme.outlineGold),
+                                          border: Border.all(color: AppTheme.outlineGold.withValues(alpha: 0.20), width: 0.8),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
+                                              blurRadius: 6,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
                                         ),
                                         child: Row(
                                           children: [
@@ -1396,8 +1446,16 @@ extension _HomeScreenPanels on _HomeScreenState {
                                           color: isDark ? AppTheme.obsidianCanvas : const Color(0xFFF6F3F2),
                                           borderRadius: BorderRadius.circular(10),
                                           border: Border.all(
-                                            color: isDark ? AppTheme.outlineGold : dividerColor,
+                                            color: (isDark ? AppTheme.outlineGold : dividerColor).withValues(alpha: 0.20),
+                                            width: 0.8,
                                           ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
                                         ),
                                         child: Row(
                                           children: [
@@ -1456,7 +1514,14 @@ extension _HomeScreenPanels on _HomeScreenState {
                                                 decoration: BoxDecoration(
                                                   color: isDark ? AppTheme.surfaceContainerHigh : Colors.white,
                                                   borderRadius: BorderRadius.circular(6),
-                                                  border: Border.all(color: AppTheme.outlineGold),
+                                                  border: Border.all(color: AppTheme.outlineGold.withValues(alpha: 0.20), width: 0.8),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.05),
+                                                      blurRadius: 4,
+                                                      offset: const Offset(0, 1),
+                                                    ),
+                                                  ],
                                                 ),
                                                 child: Text(
                                                   _intermediateStop == null ? "+ Stop" : "− Stop",
@@ -1493,11 +1558,12 @@ extension _HomeScreenPanels on _HomeScreenState {
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: isDark ? AppTheme.surfaceContainer : Colors.white,
-                                        border: Border.all(color: AppTheme.outlineGold, width: 1.2),
+                                        border: Border.all(color: AppTheme.outlineGold.withValues(alpha: 0.20), width: 0.8),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withValues(alpha: 0.35),
-                                            blurRadius: 6,
+                                            color: Colors.black.withValues(alpha: isDark ? 0.40 : 0.15),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
                                           ),
                                         ],
                                       ),
@@ -1624,7 +1690,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                           _buildStitchFleetCard(
                             title: 'Cabi Lux',
                             subtitle: 'VIP Black Series',
-                            tag: 'VIP Chauffeur',
+                            tag: 'VIP Captain',
                             icon: Icons.local_taxi_rounded,
                             accentColor: const Color(0xFFD4AF37),
                             isDark: isDark,
@@ -1728,12 +1794,9 @@ extension _HomeScreenPanels on _HomeScreenState {
                                   ),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: isDark
-                                        ? const Color(0xFFEA580C)
-                                            .withValues(alpha: 0.3)
-                                        : const Color(0xFFEA580C)
-                                            .withValues(alpha: 0.45),
-                                    width: 1.2,
+                                    color: const Color(0xFFEA580C)
+                                        .withValues(alpha: isDark ? 0.15 : 0.22),
+                                    width: 0.8,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
@@ -1906,12 +1969,9 @@ extension _HomeScreenPanels on _HomeScreenState {
                                   ),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: isDark
-                                        ? const Color(0xFF2DD4BF)
-                                            .withValues(alpha: 0.3)
-                                        : const Color(0xFF0D9488)
-                                            .withValues(alpha: 0.35),
-                                    width: 1.2,
+                                    color: (isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488))
+                                        .withValues(alpha: isDark ? 0.15 : 0.18),
+                                    width: 0.8,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
@@ -3300,7 +3360,14 @@ extension _HomeScreenPanels on _HomeScreenState {
           decoration: BoxDecoration(
             color: isDark ? AppTheme.surfaceContainerHigh : const Color(0xFFF2F4F7),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: isDark ? AppTheme.outlineBorder : const Color(0xFFE5E7EB)),
+            border: Border.all(color: (isDark ? AppTheme.outlineBorder : const Color(0xFFE5E7EB)).withValues(alpha: 0.20), width: 0.8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
+                blurRadius: 5,
+                offset: const Offset(0, 1.5),
+              ),
+            ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -3409,13 +3476,14 @@ extension _HomeScreenPanels on _HomeScreenState {
             border: Border.all(
               color: isSelected
                   ? accentColor
-                  : accentColor.withValues(alpha: isDark ? 0.5 : 0.35),
-              width: isSelected ? 2.0 : 1.2,
+                  : accentColor.withValues(alpha: isDark ? 0.20 : 0.15),
+              width: isSelected ? 1.6 : 0.8,
             ),
             boxShadow: [
               BoxShadow(
-                color: accentColor.withValues(
-                    alpha: isSelected ? (isDark ? 0.35 : 0.22) : (isDark ? 0.08 : 0.05)),
+                color: isSelected
+                    ? accentColor.withValues(alpha: isDark ? 0.35 : 0.22)
+                    : Colors.black.withValues(alpha: isDark ? 0.20 : 0.05),
                 blurRadius: isSelected ? 14 : 8,
                 offset: const Offset(0, 3),
               ),

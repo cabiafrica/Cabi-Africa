@@ -138,6 +138,7 @@ export default function DocumentUpload({
                 <input
                     type="file"
                     id="document-upload"
+                    aria-label={`Upload ${getDocumentTypeLabel()}`}
                     className="hidden"
                     accept="image/jpeg,image/jpg,image/png"
                     onChange={handleChange}
@@ -167,7 +168,14 @@ export default function DocumentUpload({
                                 Change Image
                             </label>
                             <button
+                                type="button"
                                 onClick={handleUpload}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        handleUpload();
+                                    }
+                                }}
                                 disabled={uploading}
                                 className="flex-1 px-4 py-2 bg-brand-yellow hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
                             >

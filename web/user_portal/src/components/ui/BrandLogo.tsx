@@ -22,7 +22,7 @@ const SIZE_CLASSES: Record<BrandLogoSize, string> = {
 export default function BrandLogo({
     size = 'header',
     className = '',
-    alt = 'CABI Africa — Premium Ride Booking and Chauffeur Mobility Platform Logo',
+    alt = 'CABI Africa — Premium Ride Booking and Captain Mobility Platform Logo',
 }: BrandLogoProps) {
     const sizeClass = SIZE_CLASSES[size];
 

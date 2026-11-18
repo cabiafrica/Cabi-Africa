@@ -4,6 +4,7 @@ import React, { useState, useEffect, useContext, createContext, useRef } from 'r
 import { ThemeToggle } from '../ThemeToggle';
 import BrandLogo from '../ui/BrandLogo';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 import {
     ChevronDown,
     Menu,
@@ -37,6 +38,7 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
     const [mounted, setMounted] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
     const { isAuthenticated, user, logout } = useAuth();
+    const { language, setLanguage, t } = useLanguage();
 
     useEffect(() => {
         setMounted(true);
@@ -87,10 +89,10 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
     }
 
     const navLinks = [
-        { name: 'Home', href: '/', icon: Home },
-        { name: 'Intel', href: '/blog', icon: MessageSquare },
-        { name: 'About Us', href: '/about', icon: Info },
-        { name: 'Download App', href: '/download', icon: Download },
+        { name: t('nav.home', 'Home'), href: '/', icon: Home },
+        { name: t('nav.intel', 'Intel'), href: '/blog', icon: MessageSquare },
+        { name: t('nav.about', 'About Us'), href: '/about', icon: Info },
+        { name: t('nav.download', 'Download App'), href: '/download', icon: Download },
     ];
 
     const isActiveRoute = (href: string) => {
@@ -135,8 +137,19 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                             })}
                         </div>
 
-                        {/* Right: Theme Toggle, Avatar Profile Menu & Mobile Hamburger */}
-                        <div className="flex items-center gap-2.5 sm:gap-3">
+                        {/* Right: Language Selector, Theme Toggle, Avatar Profile Menu & Mobile Hamburger */}
+                        <div className="flex items-center gap-2 sm:gap-3">
+                            <select
+                                aria-label="Select Language"
+                                value={language}
+                                onChange={(e) => setLanguage(e.target.value as any)}
+                                className="h-9 px-2 rounded-xl border border-slate-200 dark:border-white/15 bg-slate-100/80 dark:bg-white/5 text-[11px] font-black uppercase text-slate-800 dark:text-white focus:outline-none focus:border-[#D4AF37]"
+                            >
+                                <option value="en">EN</option>
+                                <option value="sw">SW</option>
+                                <option value="fr">FR</option>
+                                <option value="ar">AR</option>
+                            </select>
                             <ThemeToggle />
 
                             {/* Top-Right Avatar & Profile Dropdown Menu (Visible on both Desktop & Mobile) */}
@@ -146,6 +159,13 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                     onClick={() => {
                                         setIsProfileOpen(!isProfileOpen);
                                         if (!isProfileOpen) setIsMenuOpen(false);
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            setIsProfileOpen(!isProfileOpen);
+                                            if (!isProfileOpen) setIsMenuOpen(false);
+                                        }
                                     }}
                                     aria-expanded={isProfileOpen}
                                     aria-haspopup="true"

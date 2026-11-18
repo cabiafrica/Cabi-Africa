@@ -288,7 +288,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
               child: Column(
                 children: [
                   Text(
-                    'Need Help? Contact Cabi Driver Support & SACCO Marshall Desk',
+                    'Need Help? Contact Cabi Driver Support & Sacco Marshall Desk',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: textPrimary, fontSize: 12, fontWeight: FontWeight.bold),
                   ),
@@ -312,7 +312,7 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
                         child: OutlinedButton.icon(
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Opening Driver SACCO Help Desk...')),
+                              const SnackBar(content: Text('Opening Driver Sacco Help Desk...')),
                             );
                           },
                           icon: const Icon(Icons.chat, size: 14, color: Colors.greenAccent),

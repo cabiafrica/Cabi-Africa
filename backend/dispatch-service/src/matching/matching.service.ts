@@ -17,6 +17,16 @@ export interface DriverMatch {
     extendedPickupSubsidy?: number;
     driverPreferredRadiusKm?: number;
     passengerConsentRequired?: boolean;
+    fitnessScore?: number;
+    scoreBreakdown?: {
+        distanceScore: number;
+        ratingScore: number;
+        acceptanceScore: number;
+        idleScore: number;
+        badgeScore: number;
+        saccoScore: number;
+        penaltyDeduction: number;
+    };
 }
 
 export interface FindNearbyDriversParams {
@@ -27,6 +37,7 @@ export interface FindNearbyDriversParams {
     maxDrivers?: number;
     useBadgePriority?: boolean; // Whether to use badge-based priority
     maxDistancePenalty?: number; // Max km penalty for prioritizing high-badge drivers
+    useFormulaScoring?: boolean; // Multi-factor fitness scoring formula
 }
 
 const BADGE_TIER_WEIGHTS: Record<string, number> = {
@@ -81,6 +92,75 @@ export class MatchingService {
 
     private toRadians(degrees: number): number {
         return degrees * (Math.PI / 180);
+    }
+
+    /**
+     * Cabi Captain Selection Formula
+     * Calculates the multi-factor Fitness Score S_dispatch in [0, 100]:
+     * S = 0.35 * S_dist + 0.20 * S_rating + 0.15 * S_accept + 0.15 * S_idle + 0.10 * S_badge + 0.05 * S_sacco - Penalties
+     */
+    calculateDriverFitnessScore(
+        driver: any,
+        distanceKm: number,
+        maxDistanceKm: number,
+        badgePriority = 0
+    ): { fitnessScore: number; breakdown: any } {
+        // 1. Proximity Score (35% weight): Inversely decaying with road distance
+        const safeMax = Math.max(0.5, maxDistanceKm);
+        const distanceScore = Math.max(0, 100 * (1 - distanceKm / safeMax));
+
+        // 2. Captain Quality / Rating Score (20% weight): Scale 3.5 -> 5.0 to 0 -> 100
+        const rawRating = typeof driver.averageRating === 'number' && driver.averageRating > 0
+            ? driver.averageRating
+            : 4.85; // Default favorable starting score for unrated captains
+        const ratingScore = Math.max(0, Math.min(100, ((rawRating - 3.5) / 1.5) * 100));
+
+        // 3. Reliability / Acceptance Rate Score (15% weight): 0 - 100%
+        let acceptanceScore = 90;
+        if (typeof driver.acceptanceRate === 'number') {
+            acceptanceScore = driver.acceptanceRate <= 1.0
+                ? Math.round(driver.acceptanceRate * 100)
+                : Math.min(100, Math.round(driver.acceptanceRate));
+        }
+
+        // 4. FIFO Waiting / Anti-Starvation Queue Score (15% weight):
+        // Captains waiting idle in the zone accumulate points (60 mins wait = 100 pts)
+        const lastActive = driver.updatedAt ? new Date(driver.updatedAt).getTime() : Date.now();
+        const minutesIdle = Math.max(0, (Date.now() - lastActive) / 60000);
+        const idleScore = Math.min(100, (minutesIdle / 60) * 100);
+
+        // 5. Tier Badge Honors (10% weight): Rookie (25), Star (50), Road Master (75), Elite (100)
+        const badgeScore = Math.min(100, Math.max(0, badgePriority));
+
+        // 6. Sacco Partner Affiliation (5% weight):
+        const saccoScore = driver.saccoEnrolled ? 100 : 0;
+
+        // 7. Penalty Deductions (e.g. captain cancellations in last 24h):
+        const penaltyDeduction = 0;
+
+        const weightedTotal =
+            0.35 * distanceScore +
+            0.20 * ratingScore +
+            0.15 * acceptanceScore +
+            0.15 * idleScore +
+            0.10 * badgeScore +
+            0.05 * saccoScore -
+            penaltyDeduction;
+
+        const fitnessScore = Math.max(0, Math.min(100, Math.round(weightedTotal * 10) / 10));
+
+        return {
+            fitnessScore,
+            breakdown: {
+                distanceScore: Math.round(distanceScore),
+                ratingScore: Math.round(ratingScore),
+                acceptanceScore: Math.round(acceptanceScore),
+                idleScore: Math.round(idleScore),
+                badgeScore: Math.round(badgeScore),
+                saccoScore: Math.round(saccoScore),
+                penaltyDeduction,
+            },
+        };
     }
 
     /**
@@ -210,6 +290,14 @@ export class MatchingService {
                     driver.vehicleDrivers?.[0]?.vehicle?.type ||
                     VehicleType.STANDARD;
 
+                // Multi-Factor Driver Selection Formula (35% Dist, 20% Rating, 15% Accept, 15% FIFO Idle, 10% Badge, 5% Sacco)
+                const { fitnessScore, breakdown } = this.calculateDriverFitnessScore(
+                    driver,
+                    distance,
+                    maxDistanceKm,
+                    badgePriority
+                );
+
                 driversWithDistance.push({
                     driverId: driver.id,
                     distance,
@@ -224,6 +312,8 @@ export class MatchingService {
                     extendedPickupSubsidy,
                     driverPreferredRadiusKm: driverPreferredRadius,
                     passengerConsentRequired: isExtendedPickup,
+                    fitnessScore,
+                    scoreBreakdown: breakdown,
                 });
             }
         }
@@ -232,43 +322,25 @@ export class MatchingService {
             return [];
         }
 
-        // Sort based on badge priority if enabled
-        if (useBadgePriority) {
-            driversWithDistance.sort((a, b) => {
-                // If no badge priority difference, sort by distance
-                if (!a.badgePriority || !b.badgePriority || a.badgePriority === b.badgePriority) {
-                    return a.distance - b.distance;
-                }
-
-                // Apply distance penalty logic:
-                // Only prioritize higher-badge driver if they're within maxDistancePenalty of the closest
-                const distanceThreshold = minDistance + maxDistancePenalty;
-
-                const aWithinThreshold = a.distance <= distanceThreshold;
-                const bWithinThreshold = b.distance <= distanceThreshold;
-
-                if (aWithinThreshold && bWithinThreshold) {
-                    // Both within threshold - prioritize by badge, then distance
-                    if (b.badgePriority !== a.badgePriority) {
-                        return b.badgePriority - a.badgePriority;
-                    }
-                    return a.distance - b.distance;
-                } else if (aWithinThreshold) {
-                    return -1; // a is prioritized
-                } else if (bWithinThreshold) {
-                    return 1; // b is prioritized
-                }
-
-                // Default to distance-based
-                return a.distance - b.distance;
-            });
-        } else {
-            // Sort by distance (nearest first)
-            driversWithDistance.sort((a, b) => a.distance - b.distance);
-        }
+        // Sort candidates: prioritize multi-factor fitness score (highest fitness first)
+        driversWithDistance.sort((a, b) => {
+            const scoreDiff = (b.fitnessScore ?? 0) - (a.fitnessScore ?? 0);
+            if (Math.abs(scoreDiff) > 0.1) {
+                return scoreDiff;
+            }
+            // Tie-breaker: closest road distance
+            return a.distance - b.distance;
+        });
 
         // Return top N drivers
         const nearbyDrivers = driversWithDistance.slice(0, maxDrivers);
+
+        if (nearbyDrivers.length > 0) {
+            const top = nearbyDrivers[0];
+            this.logger.log(
+                `Top candidate driver ${top.driverId}: Fitness Score ${top.fitnessScore}/100 (Dist: ${top.distance}km, Rating: ${top.rating})`
+            );
+        }
 
         this.logger.log(
             `Found ${nearbyDrivers.length} drivers within ${maxDistanceKm}km`
@@ -285,7 +357,7 @@ export class MatchingService {
         rideId: string,
         options?: { useBadgePriority?: boolean; maxDistancePenalty?: number }
     ): Promise<string | null> {
-        const useBadgePriority = options?.useBadgePriority ?? false;
+        const useBadgePriority = options?.useBadgePriority ?? true;
         const maxDistancePenalty = options?.maxDistancePenalty ?? 2.0;
 
         const ride = await this.prisma.ride.findUnique({

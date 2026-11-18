@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_theme.dart';
 import '../screens/redeem_points_screen.dart';
+import '../services/badge_service.dart';
 
 class LoyaltyDashboardScreen extends StatefulWidget {
   const LoyaltyDashboardScreen({super.key});
@@ -10,11 +12,40 @@ class LoyaltyDashboardScreen extends StatefulWidget {
 }
 
 class _LoyaltyDashboardScreenState extends State<LoyaltyDashboardScreen> {
-  // These will be fetched from a service in the next iteration
-  final int cabiPoints = 0;
-  final String currentTier = "ELITE";
-  final int pointsToNextTier = 5000;
-  final List<Map<String, String>> recentActivity = [];
+  int cabiPoints = 0;
+  String currentTier = "BRONZE";
+  int pointsToNextTier = 500;
+  List<Map<String, String>> recentActivity = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLoyaltyData();
+  }
+
+  Future<void> _loadLoyaltyData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('user_id') ?? '';
+      if (userId.isNotEmpty) {
+        final data = await BadgeService().getPassengerPoints(userId);
+        if (data != null && mounted) {
+          setState(() {
+            cabiPoints = data.points;
+            currentTier = data.currentTier;
+            pointsToNextTier = data.pointsToNextTier;
+            recentActivity = data.recentActivity;
+            isLoading = false;
+          });
+          return;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading loyalty data: $e');
+    }
+    if (mounted) setState(() => isLoading = false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +87,7 @@ class _LoyaltyDashboardScreenState extends State<LoyaltyDashboardScreen> {
                   MaterialPageRoute(
                     builder: (context) => const RedeemPointsScreen(),
                   ),
-                );
+                ).then((_) => _loadLoyaltyData());
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,

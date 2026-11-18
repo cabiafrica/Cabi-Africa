@@ -387,4 +387,39 @@ class AuthService {
       return AuthResult(isSignedIn: false, error: 'Connection error: $e');
     }
   }
+
+  Future<AuthResult> deleteAccount({String? reason}) async {
+    try {
+      final token = await _storage.read(key: 'jwt_token');
+      if (token == null) {
+        return AuthResult(isSignedIn: false, error: 'Not authenticated');
+      }
+
+      final payload = _decodeJwt(token);
+      final userId = payload?['sub'] ?? payload?['userId'] ?? 'me';
+
+      final response = await http.delete(
+        Uri.parse('$baseUrl/users/$userId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'reason': reason ?? 'Self-service account deletion'}),
+      ).timeout(const Duration(seconds: 12));
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        await signOut();
+        return AuthResult(isSignedIn: false);
+      } else {
+        String msg = 'Failed to delete account';
+        try {
+          final data = jsonDecode(response.body);
+          if (data['message'] != null) msg = data['message'].toString();
+        } catch (_) {}
+        return AuthResult(isSignedIn: true, error: msg);
+      }
+    } catch (e) {
+      return AuthResult(isSignedIn: true, error: 'Connection error: $e');
+    }
+  }
 }

@@ -50,9 +50,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const insuranceExpiry = getValue('insuranceExpiry');
         const vehicleUse = getValue('vehicleUse');
         const insuranceType = getValue('insuranceType');
-        const ownerName = getValue('ownerName');
-        const ownerPhone = getValue('ownerPhone');
+        const ownerName = getValue('ownerName') || getValue('primaryContactName');
+        const ownerPhone = getValue('ownerPhone') || getValue('primaryContactPhone');
         const capacity = getValue('capacity');
+        const taxiTier = (getValue('taxiTier') || 'STANDARD').toUpperCase();
+        const vehicleCategory = getValue('vehicleCategory') || 'Sedan';
+        const isPsvCab = getValue('isPsvCab') !== 'false';
+        const validType = ['STANDARD', 'COMFORT', 'PREMIUM', 'XL', 'BODA'].includes(taxiTier) ? taxiTier : 'STANDARD';
 
         // Determine Capacity Unit
         let capacityUnit = 'PASSENGERS';
@@ -100,12 +104,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     year: parseInt(year),
                     color,
                     plateNumber: licensePlate,
+                    type: validType as any,
                     logbookNumber,
                     insurancePolicyNumber,
                     insuranceExpiry: insuranceExpiry ? new Date(insuranceExpiry) : null,
-                    usage: vehicleUse,
-                    insuranceType: insuranceType,
-                    ownerName,
+                    usage: (vehicleUse || (isPsvCab ? 'TAXI' : 'PRIVATE')) as any,
+                    insuranceType: (insuranceType || (isPsvCab ? 'PSV' : 'PRIVATE')) as any,
+                    ownerName: ownerName ? `${ownerName} (${vehicleCategory})` : vehicleCategory,
                     ownerPhone,
                     capacity: capacity ? parseFloat(capacity) : null,
                     capacityUnit,

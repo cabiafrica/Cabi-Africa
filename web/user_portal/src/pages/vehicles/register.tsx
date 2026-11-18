@@ -17,6 +17,9 @@ interface VehicleFormData {
     insuranceExpiry: string;
     vehicleUse: 'TAXI' | 'COMMERCIAL' | 'PRIVATE' | 'INSTITUTIONAL';
     insuranceType: 'PSV' | 'COMMERCIAL' | 'PRIVATE';
+    taxiTier: 'STANDARD' | 'COMFORT' | 'PREMIUM' | 'XL' | 'BODA';
+    vehicleCategory: string;
+    isPsvCab: boolean;
     ownerName: string;
     ownerPhone: string;
     capacity: string;
@@ -44,6 +47,9 @@ export default function VehicleRegistrationPage() {
         insuranceExpiry: '',
         vehicleUse: 'TAXI',
         insuranceType: 'PSV',
+        taxiTier: 'STANDARD',
+        vehicleCategory: 'Sedan',
+        isPsvCab: true,
         ownerName: '',
         ownerPhone: '',
         capacity: '',
@@ -125,7 +131,7 @@ export default function VehicleRegistrationPage() {
 
             // Append text fields
             Object.entries(formData).forEach(([key, value]) => {
-                submitData.append(key, value);
+                submitData.append(key, String(value));
             });
 
             // Append files
@@ -160,12 +166,18 @@ export default function VehicleRegistrationPage() {
     const [step, setStep] = useState<'lookup' | 'register'>('lookup');
     const [lookupData, setLookupData] = useState({ query: '', type: 'plate' as 'plate' | 'logbook' });
     const [isChecking, setIsChecking] = useState(false);
+    const [existingConflict, setExistingConflict] = useState<{ plateNumber: string; make: string; model: string } | null>(null);
+    const [transferForm, setTransferForm] = useState({ name: '', phone: '', reason: '' });
+    const [transferStatus, setTransferStatus] = useState<string | null>(null);
+    const [transferLoading, setTransferLoading] = useState(false);
 
     const checkVehicle = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!lookupData.query.trim()) return;
 
         setIsChecking(true);
+        setExistingConflict(null);
+        setTransferStatus(null);
         try {
             const params = new URLSearchParams();
             if (lookupData.type === 'plate') params.append('plateNumber', lookupData.query);
@@ -175,7 +187,7 @@ export default function VehicleRegistrationPage() {
             const data = await res.json();
 
             if (data.exists) {
-                alert(`Cannot register: Vehicle ${data.vehicle.plateNumber} (${data.vehicle.make} ${data.vehicle.model}) is already registered.`);
+                setExistingConflict(data.vehicle);
                 return;
             }
 
@@ -191,6 +203,32 @@ export default function VehicleRegistrationPage() {
             alert("Error checking vehicle. Please try again.");
         } finally {
             setIsChecking(false);
+        }
+    };
+
+    const handleRequestTransfer = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!existingConflict) return;
+        setTransferLoading(true);
+        setTransferStatus(null);
+        try {
+            const res = await fetch('/api/vehicles/transfer-request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    plateNumber: existingConflict.plateNumber,
+                    requesterName: transferForm.name,
+                    requesterPhone: transferForm.phone,
+                    reason: transferForm.reason,
+                }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Transfer request failed');
+            setTransferStatus(data.message);
+        } catch (err: any) {
+            setTransferStatus(err.message || 'Could not submit transfer request.');
+        } finally {
+            setTransferLoading(false);
         }
     };
 
@@ -270,6 +308,54 @@ export default function VehicleRegistrationPage() {
                                         )}
                                     </button>
                                 </form>
+
+                                {existingConflict && (
+                                    <div className="mt-6 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-4 text-left">
+                                        <div>
+                                            <h3 className="text-sm font-black uppercase tracking-wider text-amber-400">
+                                                Number Plate Already Registered
+                                            </h3>
+                                            <p className="text-xs text-gray-300 mt-1">
+                                                <strong>{existingConflict.plateNumber}</strong> ({existingConflict.make} {existingConflict.model}) is currently registered to another account. You can request an ownership/driver transfer below, or ask the current owner to release the vehicle from their dashboard.
+                                            </p>
+                                        </div>
+                                        <form onSubmit={handleRequestTransfer} className="space-y-3">
+                                            <input
+                                                type="text"
+                                                required
+                                                value={transferForm.name}
+                                                onChange={(e) => setTransferForm({ ...transferForm, name: e.target.value })}
+                                                placeholder="Your Full Name *"
+                                                className="w-full bg-brand-dark border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white"
+                                            />
+                                            <input
+                                                type="tel"
+                                                required
+                                                value={transferForm.phone}
+                                                onChange={(e) => setTransferForm({ ...transferForm, phone: e.target.value })}
+                                                placeholder="Your Phone Number (+254...) *"
+                                                className="w-full bg-brand-dark border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={transferForm.reason}
+                                                onChange={(e) => setTransferForm({ ...transferForm, reason: e.target.value })}
+                                                placeholder="Reason for transfer (optional)"
+                                                className="w-full bg-brand-dark border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white"
+                                            />
+                                            <button
+                                                type="submit"
+                                                disabled={transferLoading}
+                                                className="w-full py-3 rounded-xl bg-brand-yellow text-black font-black text-xs uppercase tracking-wider hover:bg-yellow-400 disabled:opacity-50"
+                                            >
+                                                {transferLoading ? 'Sending Transfer Request...' : 'Request Vehicle Transfer'}
+                                            </button>
+                                            {transferStatus && (
+                                                <p className="text-xs text-emerald-400 font-semibold">{transferStatus}</p>
+                                            )}
+                                        </form>
+                                    </div>
+                                )}
                                 <div className="mt-8 text-center">
                                     <p className="text-xs text-gray-500">
                                         This helps us prevent duplicate registrations and ensures compliance with NTSA regulations.
@@ -294,6 +380,57 @@ export default function VehicleRegistrationPage() {
                                     <div className="flex items-center gap-3 mb-6 text-brand-yellow">
                                         <FaCar className="text-xl" />
                                         <h2 className="text-xl font-bold uppercase tracking-widest text-sm">Vehicle Specifications</h2>
+                                    </div>
+
+                                    {/* PSV Cab Registration Banner & Taxi Tier First */}
+                                    <div className="mb-6 p-4 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                        <div>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37]">PSV Cab Registration</span>
+                                            <p className="text-xs text-gray-300 mt-0.5">You are registering this vehicle as a licensed PSV Cab on CABI Africa.</p>
+                                        </div>
+                                        <label className="inline-flex items-center gap-2 text-xs font-bold text-white cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.isPsvCab}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, isPsvCab: e.target.checked, vehicleUse: e.target.checked ? 'TAXI' : prev.vehicleUse, insuranceType: e.target.checked ? 'PSV' : prev.insuranceType }))}
+                                                className="w-4 h-4 accent-[#D4AF37]"
+                                            />
+                                            Confirm PSV Cab
+                                        </label>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                        <div>
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold block mb-2">Taxi Tier (Register First) *</label>
+                                            <select
+                                                name="taxiTier"
+                                                value={formData.taxiTier}
+                                                onChange={handleInputChange}
+                                                className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow transition-all text-white"
+                                            >
+                                                <option value="STANDARD">Cabi Standard Taxi</option>
+                                                <option value="COMFORT">Cabi Comfort Taxi</option>
+                                                <option value="PREMIUM">Cabi Executive Taxi</option>
+                                                <option value="XL">Cabi XL Taxi (7-Seater)</option>
+                                                <option value="BODA">Cabi Boda</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold block mb-2">Vehicle Category *</label>
+                                            <select
+                                                name="vehicleCategory"
+                                                value={formData.vehicleCategory}
+                                                onChange={handleInputChange}
+                                                className="w-full bg-brand-dark border border-gray-800 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow transition-all text-white"
+                                            >
+                                                <option value="Sedan">Sedan / Saloon</option>
+                                                <option value="Hatchback">Hatchback</option>
+                                                <option value="Station Wagon">Station Wagon</option>
+                                                <option value="SUV">SUV / Crossover</option>
+                                                <option value="Van / MPV">Van / MPV (7+ Seats)</option>
+                                                <option value="Motorcycle">Motorcycle (Boda)</option>
+                                            </select>
+                                        </div>
                                     </div>
 
                                     <div className="col-span-1 md:col-span-2 mb-6">

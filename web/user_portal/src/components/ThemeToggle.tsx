@@ -13,6 +13,12 @@ export const ThemeToggle: React.FC = () => {
     return (
         <button
             onClick={toggleTheme}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleTheme();
+                }
+            }}
             className="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-300 focus:outline-none"
             title="Toggle theme"
             aria-label="Toggle theme"

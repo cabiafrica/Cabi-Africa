@@ -142,7 +142,7 @@ export default function ForPassengersPage(
                   Whether you are heading across Westlands for an early board meeting, catching a flight at JKIA, or commuting home in the evening, CABI delivers quiet consistency on every corridor.
                 </p>
                 <p>
-                  Choose from agile Boda rides, Economy sedans, or Diplomatic-grade SUVs—backed by transparent fare estimates, mobile money instant checkout, and vetted professional chauffeurs.
+                  Choose from agile Boda rides, Economy sedans, or Diplomatic-grade SUVs—backed by transparent fare estimates, mobile money instant checkout, and vetted professional captains.
                 </p>
               </div>
             </div>

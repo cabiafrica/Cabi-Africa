@@ -148,10 +148,16 @@ export default function MapPinModal({
             role="dialog"
             aria-modal="true"
             aria-label="Interactive Pin Selector"
+            onKeyDown={(e) => {
+                if (e.key === 'Escape') onModeChange(null);
+            }}
         >
             <div
                 className="absolute inset-0 bg-black/75 backdrop-blur-sm"
                 onClick={() => onModeChange(null)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Escape') onModeChange(null);
+                }}
             />
             <div className="relative bg-white dark:bg-card-dark border border-slate-200 dark:border-[#D4AF37]/30 rounded-3xl max-w-3xl w-full p-5 sm:p-6 shadow-2xl animate-reveal z-10">
                 <div className="flex items-center justify-between gap-4 mb-4">

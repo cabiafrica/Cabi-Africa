@@ -8,6 +8,9 @@ import 'package:driver_app/providers/map_provider.dart';
 import 'package:driver_app/widgets/back_to_back_offer_widget.dart';
 import 'package:driver_app/widgets/swipeable_action_button.dart';
 import 'package:driver_app/services/ride_service.dart';
+import 'package:driver_app/services/trip_communication_service.dart';
+import 'package:driver_app/widgets/in_app_call_modal.dart';
+import 'package:driver_app/widgets/trip_chat_modal.dart';
 import 'rate_passenger_screen.dart';
 import '../services/audio_notification_service.dart';
 import '../theme/app_theme.dart';
@@ -76,6 +79,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
 
   bool _isTripEnded = false;
   late final RideService _rideService;
+  StreamSubscription<VoipCallState>? _callStateSubscription;
 
   LatLng _driverLocation = const LatLng(-1.286389, 36.817223); 
   final LatLng _passengerLocation = const LatLng(-1.2921, 36.8219); 
@@ -88,6 +92,29 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
     _loadCategoryPricing();
     _startBackendTrip();
     _startTripSimulation();
+
+    // Init cross-app communication channel
+    final tripId = widget.tripCode ?? 'CABI-982';
+    final pName = widget.passengerName ?? 'Passenger';
+    TripCommunicationService.instance.init(
+      tripId: tripId,
+      role: MessageRole.driver,
+      myName: 'James Mwangi',
+      peerName: pName,
+      peerVehicle: widget.serviceCategory ?? 'Standard',
+    );
+
+    // Auto-show incoming call modal when passenger initiates a call
+    _callStateSubscription = TripCommunicationService.instance.callStateStream.listen((state) {
+      if (state == VoipCallState.incomingRinging && mounted) {
+        InAppCallModal.show(
+          context,
+          peerName: pName,
+          peerRole: 'PASSENGER',
+          peerVehicle: widget.serviceCategory ?? 'Standard',
+        );
+      }
+    });
   }
 
   Future<void> _loadBackToBackPreference() async {
@@ -221,6 +248,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
   @override
   void dispose() {
     _tripTimer?.cancel();
+    _callStateSubscription?.cancel();
     super.dispose();
   }
   
@@ -472,8 +500,8 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
         ),
         content: Text(
           afterArrival
-              ? 'Simulate ${widget.passengerName ?? "Sarah Jenkins"} cancelling while chauffeur is waiting at pickup.\n\nSACCO Standby Protection Fee (KES 100.00) will be credited to driver wallet from passenger escrow.'
-              : 'Simulate ${widget.passengerName ?? "Sarah Jenkins"} cancelling while chauffeur is en route to pickup (within initial grace period).',
+              ? 'Simulate ${widget.passengerName ?? "Sarah Jenkins"} cancelling while captain is waiting at pickup.\n\nSacco Standby Protection Fee (KES 100.00) will be credited to driver wallet from passenger escrow.'
+              : 'Simulate ${widget.passengerName ?? "Sarah Jenkins"} cancelling while captain is en route to pickup (within initial grace period).',
           style: const TextStyle(color: Colors.white70, fontSize: 13),
         ),
         actions: [
@@ -555,7 +583,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
       return;
     }
 
-    // Driver arrived: SACCO Standby Protection Fee Credited!
+    // Driver arrived: Sacco Standby Protection Fee Credited!
     _showCancellationManifestSheet(compensation, driverNet, saccoWelfare);
   }
 
@@ -630,7 +658,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                           ),
                         ),
                         Text(
-                          'SACCO Chauffeur Standby Protection Active',
+                          'Sacco Captain Standby Protection Active',
                           style: TextStyle(color: textDim, fontSize: 11),
                         ),
                       ],
@@ -699,15 +727,15 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                       padding: EdgeInsets.symmetric(vertical: 12),
                       child: Divider(color: Colors.white10, height: 1),
                     ),
-                    _buildCancellationDetailRow('Chauffeur Standby Net (85%)', 'KES ${driverNet.toStringAsFixed(2)}', AppTheme.successGreen, isDark),
+                    _buildCancellationDetailRow('Captain Standby Net (85%)', 'KES ${driverNet.toStringAsFixed(2)}', AppTheme.successGreen, isDark),
                     const SizedBox(height: 6),
-                    _buildCancellationDetailRow('SACCO Welfare & Fuel Pool (15%)', 'KES ${saccoWelfare.toStringAsFixed(2)}', textDim, isDark),
+                    _buildCancellationDetailRow('Sacco Welfare & Fuel Pool (15%)', 'KES ${saccoWelfare.toStringAsFixed(2)}', textDim, isDark),
                     const SizedBox(height: 6),
                     _buildCancellationDetailRow('Arrival Wait Elapsed', _formatDuration(_waitingSeconds), const Color(0xFFD4AF37), isDark),
                     const SizedBox(height: 6),
                     _buildCancellationDetailRow('Passenger', widget.passengerName ?? 'Sarah Jenkins', textPrimary, isDark),
                     const SizedBox(height: 6),
-                    _buildCancellationDetailRow('Policy Rule', 'SACCO By-Law §14.2 (Arrival Guarantee)', textDim, isDark),
+                    _buildCancellationDetailRow('Policy Rule', 'Sacco By-Law §14.2 (Arrival Guarantee)', textDim, isDark),
                   ],
                 ),
               ),
@@ -1534,8 +1562,13 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                           icon: Icons.phone_rounded,
                           label: 'Call',
                           onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Calling passenger...')),
+                            final pName = widget.passengerName ?? 'Passenger';
+                            TripCommunicationService.instance.startCall();
+                            InAppCallModal.show(
+                              context,
+                              peerName: pName,
+                              peerRole: 'PASSENGER',
+                              peerVehicle: widget.serviceCategory ?? 'Standard',
                             );
                           },
                         ),
@@ -1544,8 +1577,12 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                           icon: Icons.chat_bubble_rounded,
                           label: 'Text',
                           onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Opening live chat with passenger...')),
+                            final pName = widget.passengerName ?? 'Passenger';
+                            TripChatModal.show(
+                              context,
+                              peerName: pName,
+                              peerRole: 'PASSENGER',
+                              peerVehicle: widget.serviceCategory ?? 'Standard',
                             );
                           },
                         ),

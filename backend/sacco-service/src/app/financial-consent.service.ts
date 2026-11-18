@@ -221,8 +221,8 @@ export class FinancialConsentService {
             this.logger.warn(`Could not persist to driverFinancialConsent table: ${dbErr?.message}`);
         }
 
-        // Maintain backward compatibility for SACCO
-        if (record.serviceType === 'SACCO') {
+        // Maintain backward compatibility for Sacco
+        if (record.serviceType === 'Sacco') {
             await this.prisma.driverProfile.update({
                 where: { id: dto.driverProfileId },
                 data: {
@@ -284,7 +284,7 @@ export class FinancialConsentService {
         }
 
         const partner = consent?.partner ?? await this.prisma.saccoPartner.findUnique({ where: { id: partnerId } });
-        const serviceType = consent?.serviceType ?? partner?.serviceCategory ?? 'SACCO';
+        const serviceType = consent?.serviceType ?? partner?.serviceCategory ?? 'Sacco';
 
         // 2. Determine admin-configured notice duration (per partner or system-wide)
         let noticeMonths = overrideNoticeMonths;
@@ -372,7 +372,7 @@ export class FinancialConsentService {
                 return [{
                     driverProfileId,
                     partnerId: profile.saccoPartnerId,
-                    serviceType: 'SACCO',
+                    serviceType: 'Sacco',
                     deductionPct: 0.02,
                     status: 'ACTIVE',
                     partner: profile.saccoPartner,

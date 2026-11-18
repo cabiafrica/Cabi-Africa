@@ -70,7 +70,7 @@ export const DriverPerformanceReport: React.FC = () => {
             label: "Acceptance Rate",
             value: `${report.acceptanceRate}%`,
             icon: ThumbUp,
-            color: "purple",
+            color: "cyan",
             growth: report.acceptanceGrowth,
             bgClass: "bg-cyan-50 dark:bg-cyan-900/20",
             textClass: "text-cyan-600 dark:text-cyan-400"

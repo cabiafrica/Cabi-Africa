@@ -8,7 +8,7 @@ export default function AboutUsManagementPage() {
     useEffect(() => {
         // Mock fetch from ContentService
         setTimeout(() => {
-            setContent('<h1>About Cabi</h1>\n<p>Our mission is to revolutionize ride-sharing.</p>');
+            setContent('<h2>About Cabi</h2>\n<p>Our mission is to revolutionize ride-sharing.</p>');
         }, 500);
     }, []);
 

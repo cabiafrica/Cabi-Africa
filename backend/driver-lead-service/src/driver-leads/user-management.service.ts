@@ -1,4 +1,5 @@
 import { Injectable, UnauthorizedException, BadRequestException, Logger } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { PrismaService } from '../prisma.service';
 import { NotificationService } from '../notification.service';
 import { AuthTokenService } from '../auth-token.service';
@@ -108,10 +109,8 @@ export class UserManagementService {
             return; // Do nothing to prevent enumeration
         }
 
-        const otp = speakeasy.totp({
-            secret: speakeasy.generateSecret().base32,
-            encoding: 'base32'
-        });
+        // Cryptographically secure 6-digit OTP
+        const otp = crypto.randomInt(100000, 999999).toString();
 
         await this.prisma.user.update({
             where: { id: driver.userId },
@@ -130,11 +129,34 @@ export class UserManagementService {
             include: { user: true },
         });
 
-        if (!driver || (driver as any).user.forgotEmailOtp !== otp || ((driver as any).user.forgotEmailOtpExpires && (driver as any).user.forgotEmailOtpExpires < new Date())) {
+        const userObj = driver?.user as any;
+        const storedOtp = userObj?.forgotEmailOtp;
+        const expiresAt = userObj?.forgotEmailOtpExpires;
+
+        if (!driver || !storedOtp || typeof storedOtp !== 'string' || !otp || typeof otp !== 'string') {
             throw new BadRequestException('Invalid or expired OTP.');
         }
 
-        const email = (driver as any).user.email;
+        if (expiresAt && new Date(expiresAt) < new Date()) {
+            throw new BadRequestException('Invalid or expired OTP.');
+        }
+
+        const bufA = Buffer.from(storedOtp);
+        const bufB = Buffer.from(otp);
+        if (bufA.length !== bufB.length || !crypto.timingSafeEqual(bufA, bufB)) {
+            throw new BadRequestException('Invalid or expired OTP.');
+        }
+
+        // Invalidate OTP immediately to prevent replay attacks
+        await this.prisma.user.update({
+            where: { id: driver.userId },
+            data: {
+                forgotEmailOtp: null,
+                forgotEmailOtpExpires: null,
+            },
+        });
+
+        const email = userObj.email;
         const [name, domain] = email.split('@');
         const maskedEmail = `${name[0]}***${name[name.length - 1]}@${domain}`;
 

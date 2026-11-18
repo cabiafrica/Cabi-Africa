@@ -144,9 +144,17 @@ export default function VerificationFlow({
 
                         <div className="space-y-3">
                             <button
+                                type="button"
                                 onClick={() => {
                                     setDocumentType('NATIONAL_ID');
                                     setCurrentStep('document-upload');
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        setDocumentType('NATIONAL_ID');
+                                        setCurrentStep('document-upload');
+                                    }
                                 }}
                                 className="w-full p-4 bg-brand-dark hover:bg-gray-800 border border-gray-700 hover:border-brand-yellow rounded-lg transition-all text-left"
                             >
@@ -156,9 +164,17 @@ export default function VerificationFlow({
 
                             {userRole === 'driver' && (
                                 <button
+                                    type="button"
                                     onClick={() => {
                                         setDocumentType('DRIVERS_LICENSE');
                                         setCurrentStep('document-upload');
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            setDocumentType('DRIVERS_LICENSE');
+                                            setCurrentStep('document-upload');
+                                        }
                                     }}
                                     className="w-full p-4 bg-brand-dark hover:bg-gray-800 border border-gray-700 hover:border-brand-yellow rounded-lg transition-all text-left"
                                 >
@@ -168,9 +184,17 @@ export default function VerificationFlow({
                             )}
 
                             <button
+                                type="button"
                                 onClick={() => {
                                     setDocumentType('PASSPORT');
                                     setCurrentStep('document-upload');
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        setDocumentType('PASSPORT');
+                                        setCurrentStep('document-upload');
+                                    }
                                 }}
                                 className="w-full p-4 bg-brand-dark hover:bg-gray-800 border border-gray-700 hover:border-brand-yellow rounded-lg transition-all text-left"
                             >
@@ -201,7 +225,14 @@ export default function VerificationFlow({
 
                         {matchResults.length === 0 ? (
                             <button
+                                type="button"
                                 onClick={handleValidateFields}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        handleValidateFields();
+                                    }
+                                }}
                                 disabled={validating}
                                 className="w-full py-4 bg-brand-yellow hover:bg-yellow-400 text-black font-bold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
@@ -222,7 +253,14 @@ export default function VerificationFlow({
                             </div>
                         ) : (
                             <button
+                                type="button"
                                 onClick={() => setCurrentStep('document-upload')}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        setCurrentStep('document-upload');
+                                    }
+                                }}
                                 className="w-full py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-colors"
                             >
                                 Re-upload Document

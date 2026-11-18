@@ -29,7 +29,7 @@ class _SupportScreenState extends State<SupportScreen> {
     final Uri launchUri = Uri(
       scheme: 'mailto',
       path: email,
-      query: 'subject=VIP Chauffeur Concierge Inquiry&body=Hi Concierge Team,',
+      query: 'subject=VIP Captain Concierge Inquiry&body=Hi Concierge Team,',
     );
     if (!await launchUrl(launchUri)) {
       if (mounted) {
@@ -168,7 +168,7 @@ class _SupportScreenState extends State<SupportScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Dedicated SACCO-backed support for prompt recoveries, dispatch coordination, and executive inquiries.',
+                    'Dedicated Sacco-backed support for prompt recoveries, dispatch coordination, and executive inquiries.',
                     style: AppTheme.inter(
                       fontSize: 13,
                       color: textSecondary,
@@ -211,7 +211,7 @@ class _SupportScreenState extends State<SupportScreen> {
               isDark: isDark,
               gold: gold,
               icon: Icons.phone_in_talk_rounded,
-              title: 'Chauffeur VIP Hotline',
+              title: 'Captain VIP Hotline',
               subtitle: 'Speak directly with senior dispatch (+254 700 000 000)',
               badge: 'PRIORITY',
               badgeColor: gold,
@@ -235,13 +235,13 @@ class _SupportScreenState extends State<SupportScreen> {
               isDark: isDark,
               gold: gold,
               icon: Icons.shield_rounded,
-              title: 'SACCO Safety & Compliance',
+              title: 'Sacco Safety & Compliance',
               subtitle: 'Independent occurrence book log & vehicle audit',
               badge: 'AUDITED',
               badgeColor: AppTheme.successGreen,
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Connected to SACCO Safety & Compliance desk')),
+                  const SnackBar(content: Text('Connected to Sacco Safety & Compliance desk')),
                 );
               },
             ),
@@ -277,8 +277,8 @@ class _SupportScreenState extends State<SupportScreen> {
               isDark: isDark,
               gold: gold,
               textPrimary: textPrimary,
-              question: 'How are Cabi Chauffeurs vetted?',
-              answer: 'All drivers undergo formal SACCO accreditation, biometric verification, comprehensive background checks, and advanced defensive driving certification.',
+              question: 'How are Cabi Captains vetted?',
+              answer: 'All drivers undergo formal Sacco accreditation, biometric verification, comprehensive background checks, and advanced defensive driving certification.',
             ),
           ],
         ),
@@ -355,7 +355,7 @@ class _SupportScreenState extends State<SupportScreen> {
                   MaterialPageRoute(
                     builder: (_) => const ReportLostItemScreen(
                       rideId: 'TRIP-LATEST',
-                      driverId: 'CHAUFFEUR-01',
+                      driverId: 'CAPTAIN-01',
                     ),
                   ),
                 );

@@ -6,7 +6,7 @@ import 'slick-carousel/slick/slick-theme.css';
 
 const testimonials = [
     {
-        content: "The chauffeurs are suddenly so calm, courteous, and respectful. It proved the driver was never the problem—oppressive commissions on legacy apps were. Treated with dignity and fair pay, you get an executive experience no other app can touch.",
+        content: "The captains are suddenly so calm, courteous, and respectful. It proved the driver was never the problem—oppressive commissions on legacy apps were. Treated with dignity and fair pay, you get an executive experience no other app can touch.",
         author: "Amina N.",
         role: "Corporate Commuter, Nairobi",
         seal: "Dignity & Courtesy Crest",
@@ -71,22 +71,33 @@ export default function TestimonialsWidget() {
     const settings = {
         dots: true,
         infinite: true,
-        speed: 800,
+        speed: 700,
         slidesToShow: 3,
         slidesToScroll: 1,
         autoplay: true,
-        autoplaySpeed: 5500,
+        autoplaySpeed: 4500,
         pauseOnHover: true,
         nextArrow: <NextArrow />,
         prevArrow: <PrevArrow />,
         responsive: [
             {
                 breakpoint: 1280,
-                settings: { slidesToShow: 2, infinite: true, autoplay: true, autoplaySpeed: 5000 },
+                settings: { slidesToShow: 2, slidesToScroll: 1, infinite: true, autoplay: true, autoplaySpeed: 4500 },
             },
             {
                 breakpoint: 768,
-                settings: { slidesToShow: 1, infinite: true, autoplay: true, autoplaySpeed: 5000, arrows: false },
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    centerMode: false,
+                    variableWidth: false,
+                    infinite: true,
+                    autoplay: true,
+                    autoplaySpeed: 4000,
+                    pauseOnHover: false,
+                    swipeToSlide: true,
+                    arrows: false,
+                },
             },
         ],
         customPaging: () => (

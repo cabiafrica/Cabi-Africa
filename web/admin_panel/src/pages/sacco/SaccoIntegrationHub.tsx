@@ -26,7 +26,7 @@ interface SaccoPartner {
   id: string;
   name: string;
   contactEmail: string;
-  serviceCategory?: 'SACCO' | 'INSURANCE_HEALTH' | 'INSURANCE_VEHICLE' | 'INVESTMENT_MMF' | 'PENSION' | string;
+  serviceCategory?: 'Sacco' | 'INSURANCE_HEALTH' | 'INSURANCE_VEHICLE' | 'INVESTMENT_MMF' | 'PENSION' | string;
   apiBaseUrl?: string;
   apiKey?: string;
   connectorType: 'REST_API' | 'WEBHOOK' | 'LEDGER_EXPORT';
@@ -345,10 +345,10 @@ function PartnerTab() {
                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Service Category</label>
                 <select
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-yellow/50"
-                  value={editing.serviceCategory || 'SACCO'}
+                  value={editing.serviceCategory || 'Sacco'}
                   onChange={e => setEditing(p => ({ ...p, serviceCategory: e.target.value }))}
                 >
-                  <option value="SACCO">SACCO (Savings & Credit Cooperative)</option>
+                  <option value="Sacco">Sacco (Savings & Credit Cooperative)</option>
                   <option value="INSURANCE_HEALTH">Health & Medical Insurance</option>
                   <option value="INSURANCE_VEHICLE">Vehicle & PSV Insurance</option>
                   <option value="INVESTMENT_MMF">Investment / Money Market Fund (MMF)</option>
@@ -986,10 +986,10 @@ export default function SaccoIntegrationHub() {
       <div className="border-b border-white/10 pb-6">
         <h2 className="text-3xl font-black text-white tracking-tighter flex items-center gap-3">
           <Building2 className="w-8 h-8 text-brand-yellow" />
-          Financial Services & SACCO Integration Hub
+          Financial Services & Sacco Integration Hub
         </h2>
         <p className="text-gray-400 mt-2 text-sm max-w-3xl">
-          Connect Cabi Africa to independent external SACCOs, Insurance carriers, and Investment funds. 
+          Connect Cabi Africa to independent external Saccos, Insurance carriers, and Investment funds. 
           Orchestrate driver consent, stackable incentives, and 15% capped trip earnings remittances with guaranteed minimum 65% driver take-home.
         </p>
       </div>

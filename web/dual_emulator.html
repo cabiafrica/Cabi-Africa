@@ -2815,7 +2815,7 @@
                   <span class="fleet-badge vip">VIP</span>
                   <div class="tier-name">👑 Cabi Lux</div>
                   <div class="route-sub">VIP Black Series</div>
-                  <div class="tier-price" style="margin-top: 3px;">1,200/- <span style="font-size: 0.52rem; font-weight: 500; color: var(--text-muted);">Chauffeur</span></div>
+                  <div class="tier-price" style="margin-top: 3px;">1,200/- <span style="font-size: 0.52rem; font-weight: 500; color: var(--text-muted);">Captain</span></div>
                 </div>
                 <div class="tier-card" id="tierBoda" onclick="selectVehicleTier('BODA', 180)">
                   <span class="fleet-badge fast">Speedy</span>
@@ -2830,7 +2830,7 @@
             <div>
               <div style="font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px;">Concierge &amp; Specialized</div>
               <div class="stitch-concierge-grid">
-                <div class="stitch-concierge-item" onclick="log('⏱️ Concierge: Hourly Chauffeur Hire (800/- hr) opened.', 'PASSENGER')">
+                <div class="stitch-concierge-item" onclick="log('⏱️ Concierge: Hourly Captain Hire (800/- hr) opened.', 'PASSENGER')">
                   <div class="stitch-concierge-icon">⏱️</div>
                   <div style="font-size: 0.62rem; font-weight: 700;">Hourly Hire</div>
                   <div style="font-size: 0.55rem; color: var(--text-muted);">800/- hr</div>
@@ -3549,7 +3549,7 @@
                       <strong id="settleWealthAmount">-KES 370.00</strong>
                     </div>
                     <div style="font-size: 0.65rem; color: var(--text-dim); padding-left: 8px;">
-                      • SACCO: <span id="settleSacco">KES 148.00</span> | Health: <span id="settleHealth">KES 74.00</span><br>
+                      • Sacco: <span id="settleSacco">KES 148.00</span> | Health: <span id="settleHealth">KES 74.00</span><br>
                       • MMF: <span id="settleMmf">KES 74.00</span> | Pension: <span id="settlePension">KES 74.00</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 800; color: var(--green); border-top: 1.5px solid var(--border); padding-top: 4px; margin-top: 2px;">
@@ -3699,20 +3699,20 @@
                 </div>
               </div>
 
-              <!-- PROGRAM 1: SACCO -->
+              <!-- PROGRAM 1: Sacco -->
               <div class="program-card enrolled" id="cardProgramSacco">
                 <div class="program-header">
                   <div class="program-title-group">
                     <div class="program-icon-badge">🏛️</div>
                     <div>
-                      <div class="program-name">Stima DT / PSV SACCO</div>
+                      <div class="program-name">Stima DT / PSV Sacco</div>
                       <span class="program-yield-badge">11.2% Projected Annual Dividend</span>
                     </div>
                   </div>
                   <input type="checkbox" id="chkSacco" checked onchange="toggleProgramEnroll('sacco')" style="accent-color: var(--gold); transform: scale(1.2); cursor: pointer;">
                 </div>
                 <div class="program-desc">
-                  Cooperative share capital & personal savings remitted directly to your SACCO ledger per trip.
+                  Cooperative share capital & personal savings remitted directly to your Sacco ledger per trip.
                 </div>
                 <div class="stepper-row">
                   <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Trip Deduction:</span>
@@ -4671,7 +4671,7 @@
 
       playTone([523.25, 659.25, 783.99, 1046.5, 1318.5], 0.15);
       log(`📱 [M-PESA RECEIPT] QGH7823K4X Confirmed. Ksh ${fare.toLocaleString()}.00 sent to CABI AFRICA MOBILITY for ride #${currentRideId}. New M-PESA balance KES 38,420.00`, 'PASSENGER');
-      log(`💰 Driver Settlement Settled: KES ${driverTakehome.toLocaleString()} net take-home + KES ${wealthDeduction.toLocaleString()} (25%) credited to Samuel Mwangi SACCO Wealth Fund!`, 'DRIVER');
+      log(`💰 Driver Settlement Settled: KES ${driverTakehome.toLocaleString()} net take-home + KES ${wealthDeduction.toLocaleString()} (25%) credited to Samuel Mwangi Sacco Wealth Fund!`, 'DRIVER');
       log(`📊 Trip #${currentRideId} General Ledger: M-Pesa B2B Clearway Instant Settlement complete.`, 'SYSTEM');
 
       const btn = document.getElementById('btnDriverConfirmCash');
@@ -4889,7 +4889,7 @@
     const MAX_DEDUCTION_CAP = 30; // 30% Hard limit
 
     const driverPrograms = {
-      sacco: { name: 'Stima DT SACCO', pct: 10, min: 2, max: 20, enrolled: true },
+      sacco: { name: 'Stima DT Sacco', pct: 10, min: 2, max: 20, enrolled: true },
       health: { name: 'CIC Health', pct: 5, min: 2, max: 10, enrolled: true },
       mmf: { name: 'Britam MMF', pct: 5, min: 2, max: 15, enrolled: true },
       pension: { name: 'Octagon Pension', pct: 5, min: 2, max: 10, enrolled: true }
@@ -4972,19 +4972,19 @@
         driverPrograms.health = { ...driverPrograms.health, pct: 0, enrolled: false };
         driverPrograms.mmf = { ...driverPrograms.mmf, pct: 0, enrolled: false };
         driverPrograms.pension = { ...driverPrograms.pension, pct: 0, enrolled: false };
-        log('🛡️ Applied Conservative Preset: 10% SACCO only.', 'DRIVER');
+        log('🛡️ Applied Conservative Preset: 10% Sacco only.', 'DRIVER');
       } else if (preset === 'balanced') {
         driverPrograms.sacco = { ...driverPrograms.sacco, pct: 10, enrolled: true };
         driverPrograms.health = { ...driverPrograms.health, pct: 5, enrolled: true };
         driverPrograms.mmf = { ...driverPrograms.mmf, pct: 5, enrolled: true };
         driverPrograms.pension = { ...driverPrograms.pension, pct: 0, enrolled: false };
-        log('⚖️ Applied Balanced Builder Preset: 10% SACCO + 5% Health + 5% MMF = 20%.', 'DRIVER');
+        log('⚖️ Applied Balanced Builder Preset: 10% Sacco + 5% Health + 5% MMF = 20%.', 'DRIVER');
       } else if (preset === 'max') {
         driverPrograms.sacco = { ...driverPrograms.sacco, pct: 10, enrolled: true };
         driverPrograms.health = { ...driverPrograms.health, pct: 5, enrolled: true };
         driverPrograms.mmf = { ...driverPrograms.mmf, pct: 10, enrolled: true };
         driverPrograms.pension = { ...driverPrograms.pension, pct: 5, enrolled: true };
-        log('🚀 Applied Maximum Security Preset: 10% SACCO + 5% Health + 10% MMF + 5% Pension = 30%.', 'DRIVER');
+        log('🚀 Applied Maximum Security Preset: 10% Sacco + 5% Health + 10% MMF + 5% Pension = 30%.', 'DRIVER');
       }
 
       // Sync checkboxes
@@ -5055,7 +5055,7 @@
       const total = getCommittedWealthPct();
       playTone([523.25, 659.25, 783.99, 1046.5]);
       log(`💾 Saved Driver Wealth Program Allocations (${total}% total deduction per trip).`, 'DRIVER');
-      log(`🏛️ Active allocations: SACCO ${driverPrograms.sacco.enrolled ? driverPrograms.sacco.pct : 0}% | Health ${driverPrograms.health.enrolled ? driverPrograms.health.pct : 0}% | MMF ${driverPrograms.mmf.enrolled ? driverPrograms.mmf.pct : 0}% | Pension ${driverPrograms.pension.enrolled ? driverPrograms.pension.pct : 0}%.`, 'DRIVER');
+      log(`🏛️ Active allocations: Sacco ${driverPrograms.sacco.enrolled ? driverPrograms.sacco.pct : 0}% | Health ${driverPrograms.health.enrolled ? driverPrograms.health.pct : 0}% | MMF ${driverPrograms.mmf.enrolled ? driverPrograms.mmf.pct : 0}% | Pension ${driverPrograms.pension.enrolled ? driverPrograms.pension.pct : 0}%.`, 'DRIVER');
 
       // Feedback toast
       const btn = event?.currentTarget;
@@ -5283,7 +5283,7 @@
         quote: '"Ubuntu teaches us: \'I am because we are.\' On Cabi, 100% of every tip goes directly to the driver with 0% platform deductions. Every single shilling settles immediately into their digital wallet."',
         sections: [
           { heading: 'The Real Hustle Behind the Steering Wheel', text: 'Before you tap your ride in the morning, your driver has likely been awake since 4:30 AM, maneuvering through unpredictable traffic, dodging deep potholes, enduring vehicle wear-and-tear, and carrying the silent weight of school fees and fuel bills. They are doing honest, rigorous work to uplift their households.' },
-          { heading: 'Courtesy Costs Nothing, but It Changes Everything', text: 'A warm greeting (Habari yako) transforms an impersonal transaction into an encounter of equals. Closing the door gently respects the tool that brings them their daily bread. Calmness during traffic helps your chauffeur stay focused, safe, and alert.' },
+          { heading: 'Courtesy Costs Nothing, but It Changes Everything', text: 'A warm greeting (Habari yako) transforms an impersonal transaction into an encounter of equals. Closing the door gently respects the tool that brings them their daily bread. Calmness during traffic helps your captain stay focused, safe, and alert.' },
           { heading: 'Doing Extra: Why Tipping is Warm-Hearted Solidarity', text: 'Tipping on Cabi is about solidarity. 100% of every tip goes directly to the driver with 0% platform deductions. A modest tip of KES 50, 100, or 200 pays for a hot evening meal between trips, buys fresh bread for their children on the way home, or contributes directly to their emergency wealth and asset savings fund.' }
         ]
       }

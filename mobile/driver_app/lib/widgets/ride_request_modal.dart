@@ -394,7 +394,7 @@ class RideRequestModal extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Total Fare: KES ${fare > 0 ? fare.toStringAsFixed(0) : "650"} • SACCO Welfare: -KES 30 • Platform: 15%',
+                          'Total Fare: KES ${fare > 0 ? fare.toStringAsFixed(0) : "650"} • Sacco Welfare: -KES 30 • Platform: 15%',
                           style: TextStyle(
                             color: isDark ? Colors.white54 : AppTheme.porcelainTextSecondary,
                             fontSize: 10.5,

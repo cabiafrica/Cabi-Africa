@@ -866,7 +866,7 @@ extension _HomeScreenLogic on _HomeScreenState {
         'preferredPublicName': 'James Mwangi',
         'rating': '4.95',
         'totalTrips': 2410,
-        'sacco': '2NK SACCO Verified',
+        'sacco': '2NK Sacco Verified',
         'phone': '+254 712 345 678',
         'profilePicture': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
         'vehicle': {

@@ -471,6 +471,7 @@ export default function CorporateDashboardPage() {
             <Head>
                 <title>{account?.companyName || 'Corporate'} | Cabi for Business Portal</title>
                 <meta name="description" content="Manage corporate travel, employee allowances, travel policies, and unified billing." />
+                <meta property="og:title" content="Cabi for Business Portal" />
             </Head>
 
             <Header />

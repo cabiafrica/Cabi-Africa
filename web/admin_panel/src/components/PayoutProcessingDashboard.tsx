@@ -88,6 +88,7 @@ export const PayoutProcessingDashboard: React.FC = () => {
               <th className="px-6 py-3 text-left">
                 <input 
                   type="checkbox" 
+                  aria-label="Select all pending payouts"
                   checked={pendingPayouts.length > 0 && selectedIds.size === pendingPayouts.length}
                   onChange={toggleSelectAll}
                 />
@@ -105,6 +106,7 @@ export const PayoutProcessingDashboard: React.FC = () => {
                   {p.status === 'PENDING' && (
                     <input 
                       type="checkbox" 
+                      aria-label={`Select payout for ${p.driverName}`}
                       checked={selectedIds.has(p.driverId)}
                       onChange={() => toggleSelection(p.driverId)}
                     />

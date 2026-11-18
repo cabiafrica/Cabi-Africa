@@ -128,16 +128,25 @@ export default function FileUpload({
 
   return (
     <div className="space-y-2">
-      <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">
+      <label htmlFor={`file-upload-${name}`} className="text-xs uppercase tracking-wider text-gray-500 font-bold">
         {label} {required && <span className="text-brand-yellow">*</span>}
       </label>
 
       <div
+        role="button"
+        tabIndex={0}
+        aria-label={`Upload ${label}`}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            fileInputRef.current?.click();
+          }
+        }}
         className={`
           relative border-2 border-dashed rounded-lg p-6 transition-all cursor-pointer
           ${isDragging ? 'border-brand-yellow bg-brand-yellow/10' : 'border-gray-700 hover:border-gray-600'}
@@ -147,9 +156,11 @@ export default function FileUpload({
       >
         <input
           ref={fileInputRef}
+          id={`file-upload-${name}`}
           type="file"
           name={name}
           accept={accept}
+          aria-label={label}
           onChange={handleFileChange}
           className="hidden"
           required={required}
@@ -190,9 +201,17 @@ export default function FileUpload({
             </div>
             <button
               type="button"
+              aria-label={`Remove uploaded ${label}`}
               onClick={(e) => {
                 e.stopPropagation();
                 handleRemove();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleRemove();
+                }
               }}
               className="text-red-400 hover:text-red-300 transition-colors"
             >

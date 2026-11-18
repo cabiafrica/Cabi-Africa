@@ -7,6 +7,12 @@ interface DriverLayoutProps {
 const DriverLayout: React.FC<DriverLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-neutral-950 text-white flex flex-col">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[999] focus:px-4 focus:py-2 focus:bg-[#D4AF37] focus:text-black focus:font-bold focus:rounded-lg focus:shadow-xl focus:outline-none"
+      >
+        Skip to main content
+      </a>
       <header className="bg-black border-b border-neutral-800 p-4">
         <nav className="container mx-auto flex justify-between items-center">
           <a href="/drivers" className="text-xl font-black tracking-tight text-white">
@@ -19,7 +25,7 @@ const DriverLayout: React.FC<DriverLayoutProps> = ({ children }) => {
           </div>
         </nav>
       </header>
-      <main className="container mx-auto p-4 flex-grow">
+      <main id="main-content" className="container mx-auto p-4 flex-grow">
         {children}
       </main>
       <footer className="bg-black border-t border-neutral-900 text-neutral-400 p-6 text-center mt-auto">

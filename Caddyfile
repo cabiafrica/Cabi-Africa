@@ -1,0 +1,58 @@
+# ==============================================================================
+# CABI AFRICA - PRODUCTION CADDY CONFIGURATION (AUTO-SSL)
+# ==============================================================================
+
+(cors_headers) {
+    header Access-Control-Allow-Origin *
+    header Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    header Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Origin, Accept"
+}
+
+cabi.africa, www.cabi.africa, api.cabi.africa {
+    # WebSocket and Socket.io for Real-Time Dispatch Service
+    @websockets {
+        header Connection *Upgrade*
+        header Upgrade websocket
+    }
+    reverse_proxy @websockets dispatch-service:3334
+
+    @socketio {
+        path /socket.io/*
+    }
+    reverse_proxy @socketio dispatch-service:3334
+
+    # Verification Service
+    handle_path /api/verification/* {
+        reverse_proxy verification-service:3003
+    }
+
+    # Referral Service
+    handle_path /api/referrals/* {
+        reverse_proxy referral-service:3337
+    }
+
+    # SACCO Service
+    handle_path /api/sacco/* {
+        reverse_proxy sacco-service:3338
+    }
+
+    # Dispatch REST API
+    handle_path /api/dispatch/* {
+        reverse_proxy dispatch-service:3334
+    }
+
+    # Core Security & Authentication Gateway (Default API Route)
+    handle /api/* {
+        reverse_proxy auth-gateway:3030
+    }
+
+    # Platform Health Check
+    handle /health {
+        respond "Cabi Africa Production API Gateway Operational" 200
+    }
+
+    # Root fallback
+    handle {
+        respond "Cabi Africa Production Platform - All Systems Operational" 200
+    }
+}

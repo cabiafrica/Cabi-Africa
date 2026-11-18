@@ -299,9 +299,9 @@ export const SosIncidentDashboard = () => {
                 </CrisisCard>
 
                 {/* Passenger Intel */}
-                <CrisisCard title="Passenger Intelligence" icon={<LaunchIcon fontSize="small" />} color="#A855F7">
+                <CrisisCard title="Passenger Intelligence" icon={<LaunchIcon fontSize="small" />} color="#06B6D4">
                   <Stack direction="row" spacing={2} alignItems="center">
-                    <Avatar src={incident.passenger.photoUrl} sx={{ width: 64, height: 64, border: `2px solid #A855F7` }}>{incident.passenger.name[0]}</Avatar>
+                    <Avatar src={incident.passenger.photoUrl} sx={{ width: 64, height: 64, border: `2px solid #06B6D4` }}>{incident.passenger.name[0]}</Avatar>
                     <Box>
                       <Typography variant="h6" sx={{ fontWeight: 800 }}>{incident.passenger.name}</Typography>
                       <Rating value={incident.passenger.rating} readOnly size="small" />
@@ -421,7 +421,7 @@ export const SosIncidentDashboard = () => {
                         }}>
                           <Box sx={{ 
                             position: 'absolute', top: 0, left: 0, width: 3, height: '100%', 
-                            bgcolor: log.actorRole === 'Driver' ? '#22D3EE' : log.actorRole === 'Passenger' ? '#A855F7' : '#FFD700' 
+                            bgcolor: log.actorRole === 'Driver' ? '#22D3EE' : log.actorRole === 'Passenger' ? '#06B6D4' : '#FFD700' 
                           }} />
                           <Box display="flex" justifyContent="space-between" mb={1} alignItems="center">
                             <Stack direction="row" spacing={1} alignItems="center">

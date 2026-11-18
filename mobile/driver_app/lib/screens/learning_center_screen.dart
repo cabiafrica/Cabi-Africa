@@ -179,8 +179,8 @@ Drivers operating as sole proprietors with gross turnover under KES 25 million q
 • Mobile data bundles used for dispatch navigation
 • PSV insurance and inspection fees
 
-3. SACCO Benefits & Withholding:
-If you are registered through an affiliated SACCO, your capital contributions and dividend shares enjoy preferential tax treatment under Kenyan SACCO regulations.
+3. Sacco Benefits & Withholding:
+If you are registered through an affiliated Sacco, your capital contributions and dividend shares enjoy preferential tax treatment under Kenyan Sacco regulations.
         ''',
       },
       {

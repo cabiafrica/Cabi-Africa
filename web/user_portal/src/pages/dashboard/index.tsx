@@ -42,7 +42,7 @@ import {
 
 export default function Dashboard() {
     const router = useRouter();
-    const [userRole, setUserRole] = React.useState<'passenger' | 'driver'>('driver');
+    const [userRole, setUserRole] = React.useState<'passenger' | 'driver'>('passenger');
     const [hasOrganization, setHasOrganization] = React.useState(true); // Default to true for detail view
     const [activeTab, setActiveTab] = React.useState<'overview' | 'analytics' | 'network' | 'wallet' | 'vehicles' | 'safety'>('overview');
     const [referralCode, setReferralCode] = React.useState('REF-INVITE');
@@ -65,6 +65,15 @@ export default function Dashboard() {
     const { user, logout } = useAuth();
 
     React.useEffect(() => {
+        if (mounted && !user) {
+            const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') || localStorage.getItem('token') : null;
+            if (!token) {
+                router.replace('/login?redirect=/dashboard');
+            }
+        }
+    }, [mounted, user, router]);
+
+    React.useEffect(() => {
         if (router.isReady && router.query.tab) {
             const tab = router.query.tab as string;
             if (['overview', 'analytics', 'network', 'wallet', 'vehicles', 'safety'].includes(tab)) {
@@ -75,10 +84,29 @@ export default function Dashboard() {
 
     React.useEffect(() => {
         if (user) {
-            if (user.role) setUserRole(user.role as any);
+            if (user.role === 'driver' || user.driverProfileId) {
+                // If user is a driver and came explicitly with driver query, set driver role
+                if (router.query.role === 'driver') {
+                    setUserRole('driver');
+                }
+            }
             if (user.referralCode) setReferralCode(user.referralCode);
         }
-    }, [user]);
+    }, [user, router.query.role]);
+
+    const sidebarItems = userRole === 'driver' ? [
+        { id: 'overview' as const, label: 'Overview', icon: LayoutDashboard },
+        { id: 'analytics' as const, label: 'Analytics', icon: BarChart3 },
+        { id: 'network' as const, label: 'My Network', icon: Users },
+        { id: 'vehicles' as const, label: 'My Vehicles', icon: Car },
+        { id: 'wallet' as const, label: 'Wallet', icon: Wallet },
+        { id: 'safety' as const, label: 'Safety & Incidents', icon: Shield },
+    ] : [
+        { id: 'overview' as const, label: 'Overview & Rides', icon: LayoutDashboard },
+        { id: 'wallet' as const, label: 'Ride Wallet', icon: Wallet },
+        { id: 'network' as const, label: 'Referral Rewards', icon: Users },
+        { id: 'safety' as const, label: 'Safety & SOS', icon: Shield },
+    ];
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-brand-black text-slate-900 dark:text-white flex font-sans text-sm md:text-base transition-colors duration-300">
@@ -100,42 +128,23 @@ export default function Dashboard() {
 
                         <div className="py-4">
                             <div className="text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest px-3 mb-2">Menu</div>
-                            <button
-                                onClick={() => setActiveTab('overview')}
-                                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'overview' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
-                            >
-                                <LayoutDashboard className="w-4 h-4" /> Overview
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('analytics')}
-                                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'analytics' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
-                            >
-                                <BarChart3 className="w-4 h-4" /> Analytics
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('network')}
-                                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'network' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
-                            >
-                                <Users className="w-4 h-4" /> My Network
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('vehicles')}
-                                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'vehicles' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
-                            >
-                                <Car className="w-4 h-4" /> My Vehicles
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('wallet')}
-                                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'wallet' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
-                            >
-                                <Wallet className="w-4 h-4" /> Wallet
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('safety')}
-                                className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${activeTab === 'safety' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20' : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}
-                            >
-                                <Shield className="w-4 h-4" /> Safety &amp; Incidents
-                            </button>
+                            {sidebarItems.map((item) => {
+                                const Icon = item.icon;
+                                const active = activeTab === item.id;
+                                return (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => setActiveTab(item.id)}
+                                        className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${
+                                            active
+                                                ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20'
+                                                : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'
+                                        }`}
+                                    >
+                                        <Icon className="w-4 h-4" /> {item.label}
+                                    </button>
+                                );
+                            })}
                         </div>
 
                         <div className="pt-4 border-t border-slate-200 dark:border-white/5">
@@ -156,14 +165,7 @@ export default function Dashboard() {
             <main className="flex-1 p-4 sm:p-6 md:p-10 overflow-y-auto relative min-w-0">
                 {/* Mobile Navigation Tabs (Visible below md) */}
                 <div className="md:hidden flex items-center gap-2 overflow-x-auto pb-4 mb-4 border-b border-slate-200 dark:border-white/10">
-                    {([
-                        { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-                        { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-                        { id: 'network', label: 'Network', icon: Users },
-                        { id: 'vehicles', label: 'Vehicles', icon: Car },
-                        { id: 'wallet', label: 'Wallet', icon: Wallet },
-                        { id: 'safety', label: 'Safety', icon: Shield },
-                    ] as const).map((tab) => {
+                    {sidebarItems.map((tab) => {
                         const Icon = tab.icon;
                         const active = activeTab === tab.id;
                         return (
@@ -198,11 +200,41 @@ export default function Dashboard() {
                         </h1>
                         <p className="text-slate-500 dark:text-gray-400 mt-2 flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                            Active as <span className="capitalize font-bold text-slate-700 dark:text-slate-200">{userRole}</span>
+                            Active as <span className="capitalize font-bold text-slate-700 dark:text-slate-200">{userRole === 'driver' ? 'Captain (Driver)' : 'Rider (Passenger)'}</span>
                             {userRole === 'driver' && <span className="opacity-50 text-sm">({hasOrganization ? 'Organization Member' : 'Independent'})</span>}
                         </p>
                     </div>
-                    <div className="relative">
+                    <div className="flex items-center gap-4 flex-wrap">
+                        {/* Contextual Role Switcher Pill */}
+                        <div className="inline-flex p-1 rounded-xl bg-slate-200/80 dark:bg-white/10 border border-slate-300/80 dark:border-white/15 shadow-sm">
+                            <button
+                                onClick={() => {
+                                    setUserRole('passenger');
+                                    if (activeTab === 'vehicles' || activeTab === 'analytics') setActiveTab('overview');
+                                }}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1.5 ${
+                                    userRole === 'passenger'
+                                        ? 'bg-brand-yellow text-black shadow-sm'
+                                        : 'text-slate-600 dark:text-gray-300 hover:text-black dark:hover:text-white'
+                                }`}
+                            >
+                                <User className="w-3.5 h-3.5" />
+                                <span>Rider View</span>
+                            </button>
+                            <button
+                                onClick={() => setUserRole('driver')}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1.5 ${
+                                    userRole === 'driver'
+                                        ? 'bg-brand-yellow text-black shadow-sm'
+                                        : 'text-slate-600 dark:text-gray-300 hover:text-black dark:hover:text-white'
+                                }`}
+                            >
+                                <Car className="w-3.5 h-3.5" />
+                                <span>Captain View</span>
+                            </button>
+                        </div>
+
+                        <div className="relative">
                         <button
                             onClick={() => setShowProfileMenu(!showProfileMenu)}
                             className="flex items-center gap-4 group focus:outline-none"
@@ -260,6 +292,28 @@ export default function Dashboard() {
                 {/* Dynamic Content Based on Tab */}
                 {activeTab === 'overview' && (
                     <div className="animate-fade-in">
+                        {/* 1-Tap Passenger Booking Callout */}
+                        {userRole === 'passenger' && (
+                            <div className="relative group overflow-hidden bg-gradient-to-r from-brand-yellow/15 via-[#D4AF37]/10 to-transparent p-6 rounded-2xl border border-brand-yellow/30 backdrop-blur-md mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg shadow-brand-yellow/5">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-xl bg-brand-yellow text-black flex items-center justify-center font-black text-xl shadow-md shrink-0">
+                                        <Car className="w-6 h-6" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Need a Ride Right Now?</h3>
+                                        <p className="text-xs text-slate-600 dark:text-gray-300 mt-0.5">Instant booking across Nairobi with precision ETA, verified captains, and M-Pesa / Airtel Money settlement.</p>
+                                    </div>
+                                </div>
+                                <Link
+                                    href="/#booking-section"
+                                    className="px-6 py-3 bg-brand-yellow text-black font-extrabold rounded-xl text-xs uppercase tracking-wider shadow-lg hover:brightness-110 active:scale-95 transition-all whitespace-nowrap flex items-center gap-2"
+                                >
+                                    <span>Book Precision Ride</span>
+                                    <span>&rarr;</span>
+                                </Link>
+                            </div>
+                        )}
+
                         {/* Referral Section - Modern Glassmorphism */}
                         <div className="relative group overflow-hidden bg-gradient-to-r from-brand-yellow/10 to-transparent p-8 rounded-[1.25rem] border border-brand-yellow/20 backdrop-blur-sm mb-10">
                             <div className="absolute top-0 right-0 w-64 h-full bg-brand-yellow/5 skew-x-[-20deg] translate-x-32 group-hover:translate-x-12 transition-transform duration-1000"></div>
@@ -305,7 +359,7 @@ export default function Dashboard() {
                                     label: userRole === 'driver' ? 'Driver Rating' : 'Loyalty Points',
                                     value: userRole === 'driver' ? '4.95' : '850',
                                     trend: 'Top 1%',
-                                    color: 'brand-purple',
+                                    color: 'brand-accent',
                                     icon: <Star className="w-5 h-5 text-[#ffe088]" />
                                 }
                             ].map((stat, idx) => (
@@ -490,13 +544,13 @@ export default function Dashboard() {
                                     </div>
                                 ) : (
                                     // Has Organization View
-                                    <div className="bg-gradient-to-r from-brand-purple/20 to-brand-black p-8 rounded-3xl border border-brand-purple/30 relative overflow-hidden">
-                                        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-purple/10 rounded-full blur-[80px]"></div>
+                                    <div className="bg-gradient-to-r from-amber-500/20 to-brand-black p-8 rounded-3xl border border-amber-500/30 relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-[80px]"></div>
 
                                         <div className="relative z-10">
                                             <div className="flex justify-between items-start mb-6">
                                                 <div>
-                                                    <div className="inline-block px-3 py-1 rounded-full bg-brand-purple/20 text-brand-purple text-xs font-bold mb-3">My Organization</div>
+                                                    <div className="inline-block px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold mb-3">My Organization</div>
                                                     <h2 className="text-2xl font-bold">Nairobi Wealth &amp; Asset Cooperative</h2>
                                                     <p className="text-gray-400 text-sm">Member since Dec 2024</p>
                                                 </div>
@@ -506,16 +560,16 @@ export default function Dashboard() {
                                             </div>
 
                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                                <div className="p-4 bg-black/40 rounded-xl border border-white/5 hover:border-brand-purple/50 transition-colors cursor-pointer group">
-                                                    <div className="text-xs text-gray-500 uppercase font-bold mb-1 group-hover:text-brand-purple">Welfare</div>
+                                                <div className="p-4 bg-black/40 rounded-xl border border-white/5 hover:border-amber-500/50 transition-colors cursor-pointer group">
+                                                    <div className="text-xs text-gray-500 uppercase font-bold mb-1 group-hover:text-amber-400">Welfare</div>
                                                     <div className="text-lg font-bold">Active</div>
                                                 </div>
-                                                <div className="p-4 bg-black/40 rounded-xl border border-white/5 hover:border-brand-purple/50 transition-colors cursor-pointer group">
-                                                    <div className="text-xs text-gray-500 uppercase font-bold mb-1 group-hover:text-brand-purple">Investments</div>
+                                                <div className="p-4 bg-black/40 rounded-xl border border-white/5 hover:border-amber-500/50 transition-colors cursor-pointer group">
+                                                    <div className="text-xs text-gray-500 uppercase font-bold mb-1 group-hover:text-amber-400">Investments</div>
                                                     <div className="text-lg font-bold">KES 50k</div>
                                                 </div>
-                                                <div className="p-4 bg-black/40 rounded-xl border border-white/5 hover:border-brand-purple/50 transition-colors cursor-pointer group">
-                                                    <div className="text-xs text-gray-500 uppercase font-bold mb-1 group-hover:text-brand-purple">Fleet Size</div>
+                                                <div className="p-4 bg-black/40 rounded-xl border border-white/5 hover:border-amber-500/50 transition-colors cursor-pointer group">
+                                                    <div className="text-xs text-gray-500 uppercase font-bold mb-1 group-hover:text-amber-400">Fleet Size</div>
                                                     <div className="text-lg font-bold">14 Cars</div>
                                                 </div>
                                             </div>

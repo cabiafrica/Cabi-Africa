@@ -52,8 +52,8 @@ const AVAILABLE_PRIVILEGES = [
     { id: 'PRIORITY_DISPATCH', label: 'Priority Dispatch', type: 'driver' },
     { id: 'ZONE_SELECTION', label: 'Zone Selection', type: 'driver' },
     { id: 'COMMISSION_REBATE', label: 'Commission Rebate', type: 'driver' },
-    { id: 'SACCO_BONUS', label: '3% Sacco Bonus', type: 'driver' },
-    { id: 'SACCO_MATCH', label: 'Sacco Savings Match', type: 'driver' },
+    { id: 'Sacco_BONUS', label: '3% Sacco Bonus', type: 'driver' },
+    { id: 'Sacco_MATCH', label: 'Sacco Savings Match', type: 'driver' },
     { id: 'CREDIT_LIMIT_BOOST', label: 'Credit Limit Boost', type: 'driver' },
     { id: 'LOAN_RATE_REDUCTION', label: 'Loan Rate Reduction', type: 'driver' },
 ];
@@ -419,7 +419,7 @@ export const GamificationManagement: React.FC = () => {
                         </div>
                     </TabPanel>
 
-                    {/* SACCO SYSTEM */}
+                    {/* Sacco SYSTEM */}
                     <TabPanel>
                         <div className="space-y-6">
                             <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl p-6 text-white">

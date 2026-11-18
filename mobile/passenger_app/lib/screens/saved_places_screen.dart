@@ -46,7 +46,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
     super.dispose();
   }
 
-  void _triggerChauffeurBooking(String destination) {
+  void _triggerCaptainBooking(String destination) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -62,7 +62,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Chauffeur booking initiated for $destination',
+                'Captain booking initiated for $destination',
                 style: AppTheme.outfit(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -400,7 +400,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              'Instant one-touch chauffeur dispatches for your everyday sanctuaries.',
+              'Instant one-touch captain dispatches for your everyday sanctuaries.',
               style: AppTheme.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w400,
@@ -693,7 +693,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Auto-prompt chauffeur 10 mins prior',
+                          'Auto-prompt captain 10 mins prior',
                           style: AppTheme.inter(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -896,7 +896,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
             width: double.infinity,
             height: 44,
             child: ElevatedButton.icon(
-              onPressed: () => _triggerChauffeurBooking(item.title),
+              onPressed: () => _triggerCaptainBooking(item.title),
               style: ElevatedButton.styleFrom(
                 backgroundColor: isDark ? const Color(0xFF1F1F26) : AppTheme.porcelainSurfaceContainer,
                 foregroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
@@ -908,7 +908,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
               ),
               icon: const Icon(Icons.directions_car_rounded, size: 18),
               label: Text(
-                'REQUEST CHAUFFEUR',
+                'REQUEST CAPTAIN',
                 style: AppTheme.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
@@ -1020,7 +1020,7 @@ class _SavedPlacesScreenState extends State<SavedPlacesScreen> {
           ),
           const SizedBox(width: 8),
           ElevatedButton(
-            onPressed: () => _triggerChauffeurBooking(item.title),
+            onPressed: () => _triggerCaptainBooking(item.title),
             style: ElevatedButton.styleFrom(
               backgroundColor: isDark ? AppTheme.primaryColor : AppTheme.aurumBronze,
               foregroundColor: isDark ? Colors.black : Colors.white,

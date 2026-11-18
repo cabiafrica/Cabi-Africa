@@ -14,7 +14,15 @@ export default function Accordion({ title, children }: AccordionProps) {
     return (
         <div className="border-b border-gray-200 dark:border-gray-700 last:border-b-0">
             <button
+                type="button"
+                aria-expanded={isOpen}
                 onClick={() => setIsOpen(!isOpen)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setIsOpen(!isOpen);
+                    }
+                }}
                 className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">

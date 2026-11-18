@@ -43,6 +43,7 @@ export const HeatMapAnalytics: React.FC = () => {
                 <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative">
                         <select
+                            aria-label="Filter service type"
                             value={serviceId}
                             onChange={(e) => setServiceId(e.target.value)}
                             className="appearance-none pl-4 pr-10 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none shadow-sm min-w-[160px]"

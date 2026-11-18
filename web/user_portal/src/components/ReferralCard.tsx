@@ -71,7 +71,7 @@ export default function ReferralCard({
             case 'driver':
                 return 'brand-accent';
             case 'organization':
-                return 'brand-purple';
+                return 'brand-yellow';
             default:
                 return 'brand-yellow';
         }
@@ -102,7 +102,14 @@ export default function ReferralCard({
                         <p className={`text-2xl font-bold text-${roleColor} tracking-wider`}>{referralCode}</p>
                     </div>
                     <button
+                        type="button"
                         onClick={copyToClipboard}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                copyToClipboard();
+                            }
+                        }}
                         className={`px-4 py-2 rounded-lg transition-all ${copied
                                 ? 'bg-green-600 text-white'
                                 : `bg-${roleColor}/20 text-${roleColor} hover:bg-${roleColor}/30`

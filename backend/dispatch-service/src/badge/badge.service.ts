@@ -1,4 +1,4 @@
-import { Injectable, Logger, Optional } from '@nestjs/common';
+import { Injectable, Logger, Optional, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
 import { Badge, BadgeCategory, BadgeTier } from '@prisma/client';
 import { WealthService } from '../wealth/wealth.service';
@@ -360,17 +360,17 @@ export class BadgeService {
                 value: { percentage: 3 },
             },
             {
-                code: 'SACCO_BONUS',
+                code: 'Sacco_BONUS',
                 name: 'Sacco Bonus',
                 description: '3% additional Sacco contribution from platform',
-                type: 'SACCO_BONUS' as any,
+                type: 'Sacco_BONUS' as any,
                 value: { percentage: 3 },
             },
             {
-                code: 'SACCO_MATCH',
+                code: 'Sacco_MATCH',
                 name: 'Sacco Match',
                 description: 'Platform matches a percentage of voluntary savings',
-                type: 'SACCO_MATCH' as any,
+                type: 'Sacco_MATCH' as any,
                 value: { percentage: 30 },
             },
             {
@@ -411,13 +411,13 @@ export class BadgeService {
         this.logger.log('Seeding badge-reward mappings...');
 
         const rookierewardMappings = [
-            { rewardCode: 'SACCO_BONUS', isActive: true },
+            { rewardCode: 'Sacco_BONUS', isActive: true },
         ];
 
         const starDriverMappings = [
             { rewardCode: 'COMMISSION_REBATE', isActive: true },
-            { rewardCode: 'SACCO_BONUS', isActive: true },
-            { rewardCode: 'SACCO_MATCH', isActive: true },
+            { rewardCode: 'Sacco_BONUS', isActive: true },
+            { rewardCode: 'Sacco_MATCH', isActive: true },
             { rewardCode: 'CREDIT_LIMIT_BOOST', isActive: true },
             { rewardCode: 'LOAN_RATE_REDUCTION', isActive: true },
         ];
@@ -426,8 +426,8 @@ export class BadgeService {
             { rewardCode: 'PRIORITY_DISPATCH', isActive: true },
             { rewardCode: 'ZONE_SELECTION', isActive: true },
             { rewardCode: 'COMMISSION_REBATE', isActive: true },
-            { rewardCode: 'SACCO_BONUS', isActive: true },
-            { rewardCode: 'SACCO_MATCH', isActive: true },
+            { rewardCode: 'Sacco_BONUS', isActive: true },
+            { rewardCode: 'Sacco_MATCH', isActive: true },
             { rewardCode: 'CREDIT_LIMIT_BOOST', isActive: true },
             { rewardCode: 'LOAN_RATE_REDUCTION', isActive: true },
         ];
@@ -436,8 +436,8 @@ export class BadgeService {
             { rewardCode: 'PRIORITY_DISPATCH', isActive: true },
             { rewardCode: 'ZONE_SELECTION', isActive: true },
             { rewardCode: 'COMMISSION_REBATE', isActive: true },
-            { rewardCode: 'SACCO_BONUS', isActive: true },
-            { rewardCode: 'SACCO_MATCH', isActive: true },
+            { rewardCode: 'Sacco_BONUS', isActive: true },
+            { rewardCode: 'Sacco_MATCH', isActive: true },
             { rewardCode: 'CREDIT_LIMIT_BOOST', isActive: true },
             { rewardCode: 'LOAN_RATE_REDUCTION', isActive: true },
         ];
@@ -679,5 +679,172 @@ export class BadgeService {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Get passenger points, current tier, and recent activity ledger
+     */
+    async getPassengerPoints(userId: string) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                id: true,
+                loyaltyPoints: true,
+                totalRidesAsPassenger: true,
+                loyaltyTransactions: {
+                    take: 10,
+                    orderBy: { createdAt: 'desc' },
+                },
+            } as any,
+        });
+
+        if (!user) {
+            return {
+                points: 0,
+                currentTier: 'BRONZE',
+                pointsToNextTier: 500,
+                recentActivity: [],
+            };
+        }
+
+        const points = (user as any).loyaltyPoints || 0;
+        let currentTier = 'BRONZE';
+        let pointsToNextTier = 500 - points;
+
+        if (points >= 5000) {
+            currentTier = 'DIAMOND';
+            pointsToNextTier = 0;
+        } else if (points >= 3000) {
+            currentTier = 'PLATINUM';
+            pointsToNextTier = 5000 - points;
+        } else if (points >= 1500) {
+            currentTier = 'GOLD';
+            pointsToNextTier = 3000 - points;
+        } else if (points >= 500) {
+            currentTier = 'SILVER';
+            pointsToNextTier = 1500 - points;
+        }
+
+        const txs: any[] = (user as any).loyaltyTransactions || [];
+        const recentActivity = txs.map((t) => ({
+            id: t.id,
+            description: t.description,
+            points: `${t.points > 0 ? '+' : ''}${t.points} Pts`,
+            type: t.type,
+            date: t.createdAt ? new Date(t.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : 'Today',
+        }));
+
+        return {
+            points,
+            currentTier,
+            pointsToNextTier: Math.max(0, pointsToNextTier),
+            recentActivity,
+        };
+    }
+
+    /**
+     * Redeem passenger points for a voucher coupon
+     */
+    async redeemPassengerPoints(
+        userId: string,
+        couponId: string,
+        cost: number,
+        title: string
+    ) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { loyaltyPoints: true } as any,
+        });
+
+        if (!user) {
+            throw new BadRequestException('User not found');
+        }
+
+        const currentPoints = (user as any).loyaltyPoints || 0;
+        if (currentPoints < cost) {
+            throw new BadRequestException('Insufficient points to redeem this reward.');
+        }
+
+        const newBalance = currentPoints - cost;
+
+        const updatedUser = await this.prisma.user.update({
+            where: { id: userId },
+            data: { loyaltyPoints: newBalance } as any,
+        });
+
+        try {
+            await (this.prisma as any).loyaltyTransaction.create({
+                data: {
+                    userId,
+                    points: -cost,
+                    balanceAfter: newBalance,
+                    type: 'REDEEMED_COUPON',
+                    description: `Redeemed: ${title}`,
+                    metadata: { couponId, cost, title },
+                },
+            });
+        } catch (e) {
+            this.logger.warn(`Could not log loyalty transaction: ${e}`);
+        }
+
+        return {
+            success: true,
+            remainingPoints: (updatedUser as any).loyaltyPoints,
+            couponCode: `CABI-${couponId}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+            message: `Redeemed "${title}" successfully! Coupon added to wallet.`,
+        };
+    }
+
+    /**
+     * Credit ride points (1 pt per 100 KES spent + rating adjustments)
+     */
+    async creditRidePoints(
+        userId: string,
+        fareAmountKes: number,
+        rating?: number,
+        rideId?: string
+    ) {
+        const spendPoints = Math.floor(fareAmountKes / 100);
+        let ratingPoints = 0;
+        if (rating !== undefined && rating !== null) {
+            if (rating === 5) ratingPoints = 2;
+            else if (rating === 4) ratingPoints = 1;
+            else if (rating === 2) ratingPoints = -1;
+            else if (rating === 1) ratingPoints = -3;
+        }
+
+        const totalEarned = spendPoints + ratingPoints;
+        if (totalEarned === 0) return null;
+
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { loyaltyPoints: true } as any,
+        });
+        if (!user) return null;
+
+        const currentPoints = (user as any).loyaltyPoints || 0;
+        const newBalance = Math.max(0, currentPoints + totalEarned);
+
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: { loyaltyPoints: newBalance } as any,
+        });
+
+        try {
+            await (this.prisma as any).loyaltyTransaction.create({
+                data: {
+                    userId,
+                    points: totalEarned,
+                    balanceAfter: newBalance,
+                    type: ratingPoints !== 0 ? 'EARNED_RATING_BONUS' : 'EARNED_RIDE_SPEND',
+                    description: `Earned from trip fare KES ${fareAmountKes}${ratingPoints !== 0 ? ` with ${rating}★ rating` : ''}`,
+                    metadata: { fareAmountKes, rating, rideId },
+                },
+            });
+        } catch (e) {
+            this.logger.warn(`Could not log loyalty transaction: ${e}`);
+        }
+
+        return { earnedPoints: totalEarned, newBalance };
     }
 }

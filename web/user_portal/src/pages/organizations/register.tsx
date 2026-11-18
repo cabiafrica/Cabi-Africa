@@ -247,6 +247,8 @@ export default function RegisterOrganization() {
         <div className="min-h-screen bg-brand-black text-white font-sans selection:bg-[#D4AF37] selection:text-black">
             <Head>
                 <title>Register Organization - Cabi</title>
+                <meta name="description" content="Register your organization, SACCO, or fleet partner account with CABI Africa." />
+                <meta property="og:title" content="Register Organization - Cabi" />
             </Head>
 
             <div className="container mx-auto px-6 py-12">

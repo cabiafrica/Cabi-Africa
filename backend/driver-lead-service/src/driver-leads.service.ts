@@ -15,9 +15,9 @@ export class DriverLeadsService {
   async register(registerLeadDto: RegisterLeadDto) {
     console.log('Received registration data:', registerLeadDto);
 
-    // 1. Validate reCAPTCHA token
-    if (registerLeadDto.recaptchaToken === 'INVALID') {
-      throw new BadRequestException('Invalid reCAPTCHA token');
+    // 1. Validate bot protection token
+    if (!registerLeadDto.recaptchaToken || registerLeadDto.recaptchaToken === 'INVALID' || registerLeadDto.recaptchaToken.trim() === '') {
+      throw new BadRequestException('Invalid or missing bot protection token');
     }
 
     // 2. Call User Management Service to create a 'PROSPECT' user
@@ -92,7 +92,7 @@ export class DriverLeadsService {
         nationalId: `ID-${timestamp}`,
         drivingLicense: `DL-${timestamp}`,
         recaptchaToken: 'SIMULATED',
-        password: 'Password123!',
+        password: `CabiSim_${crypto.randomBytes(12).toString('hex')}!`,
         referralCode: '',
         agreeToTerms: true
       });

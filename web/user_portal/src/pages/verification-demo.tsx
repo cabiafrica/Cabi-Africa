@@ -33,6 +33,8 @@ export default function VerificationDemo() {
         <div className="min-h-screen bg-brand-black text-white">
             <Head>
                 <title>Verification Demo - Cabi Africa</title>
+                <meta name="description" content="AI Biometric and Document Verification interactive demo for CABI Africa." />
+                <meta property="og:title" content="Verification Demo - Cabi Africa" />
             </Head>
 
             {/* Random Check Component (Hidden unless triggered) */}

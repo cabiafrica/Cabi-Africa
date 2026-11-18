@@ -1,21 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import * as jwt from 'jsonwebtoken';
 import { prisma } from '@/lib/prisma';
-
-function resolveUserIdFromToken(authHeader?: string): string | null {
-    if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
-    const token = authHeader.substring(7).trim();
-    const sessionMatch = token.match(/^cabi-session-([0-9a-fA-F-]{36})-\d+$/);
-    if (sessionMatch) {
-        return sessionMatch[1];
-    }
-    try {
-        const decoded = jwt.decode(token) as { sub?: string; id?: string } | null;
-        return decoded?.sub || decoded?.id || null;
-    } catch {
-        return null;
-    }
-}
+import { extractCallerUser } from '@/lib/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -25,10 +10,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(200).end();
     }
 
-    const userId = resolveUserIdFromToken(req.headers.authorization);
-    if (!userId) {
-        return res.status(401).json({ message: 'Unauthorized' });
+    const caller = extractCallerUser(req);
+    if (!caller) {
+        return res.status(401).json({ message: 'Unauthorized: Invalid, unverified, or expired session token.' });
     }
+
+    const userId = caller.sub || caller.id;
 
     try {
         const user = await prisma.user.findUnique({

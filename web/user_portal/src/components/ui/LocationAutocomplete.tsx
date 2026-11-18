@@ -158,6 +158,7 @@ export default function LocationAutocomplete({
                         readOnly
                         tabIndex={-1}
                         aria-hidden="true"
+                        aria-label="Location autocomplete inline suggestion"
                         value={inlineCompletion}
                         className={`${inputClassName} pointer-events-none select-none !bg-transparent !border-transparent !ring-0 !shadow-none !text-neutral-400/65 dark:!text-white/30 absolute inset-0 z-[1]`}
                     />
@@ -169,7 +170,7 @@ export default function LocationAutocomplete({
                     role="combobox"
                     aria-expanded={open}
                     aria-autocomplete="both"
-                    aria-label={ariaLabel}
+                    aria-label={ariaLabel || placeholder || 'Location search'}
                     autoComplete="off"
                     value={value}
                     onFocus={() => setOpen(true)}

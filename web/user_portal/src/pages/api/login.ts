@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 import * as bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
+import { signUserToken } from '@/lib/serverAuth';
 
 const BACKEND_URL =
     process.env.BACKEND_URL ||
@@ -65,7 +66,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (isMatch) {
                 const nameParts = (dbUser.fullName || 'Cabi User').split(' ');
                 const role = dbUser.driverProfile ? 'driver' : 'passenger';
-                const token = `cabi-session-${dbUser.id}-${Date.now()}`;
+                const token = signUserToken({
+                    sub: dbUser.id,
+                    id: dbUser.id,
+                    email: dbUser.email,
+                    role,
+                    phone: dbUser.phone || undefined,
+                });
 
                 return res.status(200).json({
                     success: true,

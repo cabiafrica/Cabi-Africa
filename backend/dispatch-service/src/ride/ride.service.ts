@@ -3,12 +3,12 @@ import { PrismaService } from '@cabi/backend/database';
 import { MatchingService } from '../matching/matching.service';
 import { BadgeService } from '../badge/badge.service';
 import { CommissionService } from '../commission/commission.service';
-// import { PaymentService } from '@cabi/backend/payment-service'; 
-// import { VehicleService } from '@cabi/backend/vehicle-service'; 
-// import { UserService } from '@cabi/backend/user-service';
 import { SettingsService } from '@cabi/backend/settings';
 import { NotificationService } from '@cabi/backend/notification-service';
 import { PricingService } from '../pricing/pricing.service';
+import { generateUserCode, resolveUserCategory } from '../utils/user-code.util';
+
+export type MobileMoneyProvider = 'MPESA' | 'AIRTEL' | 'TKASH' | 'MTN_MOMO' | 'PESALINK' | 'CASH';
 
 class PaymentService {
   private readonly logger = new Logger(PaymentService.name);
@@ -16,8 +16,9 @@ class PaymentService {
   async createCharge(
     uid: string,
     amount: number,
-    rideId?: string
-  ): Promise<{ success: boolean; transactionId?: string; message: string }> {
+    rideId?: string,
+    provider: MobileMoneyProvider = 'MPESA'
+  ): Promise<{ success: boolean; transactionId?: string; provider: string; message: string }> {
     const paymentServiceUrl = process.env.PAYMENT_SERVICE_URL;
     if (paymentServiceUrl) {
       try {
@@ -26,17 +27,28 @@ class PaymentService {
         const response = await fetch(targetUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ passengerId: uid, amount, rideId }),
+          body: JSON.stringify({ passengerId: uid, amount, rideId, provider }),
         });
         if (response.ok) {
           const data = await response.json();
-          return { success: true, transactionId: data.transactionId, message: 'Digital payment processed' };
+          return {
+            success: true,
+            transactionId: data.transactionId || `${provider}_${Date.now()}`,
+            provider,
+            message: `${provider} payment processed successfully`,
+          };
         }
       } catch (err: any) {
-        this.logger.warn(`Payment gateway call failed: ${err.message}. Recording as cash/direct settlement.`);
+        this.logger.warn(`Payment gateway call failed: ${err.message}. Recording as ${provider}/direct settlement.`);
       }
     }
-    return { success: true, transactionId: `settled_${Date.now()}`, message: 'Cash/Direct settlement confirmed' };
+    const prefix = provider === 'AIRTEL' ? 'AIR' : provider === 'TKASH' ? 'TK' : provider === 'MTN_MOMO' ? 'MTN' : 'CAB';
+    return {
+      success: true,
+      transactionId: `${prefix}_${Date.now().toString().slice(-6)}_${Math.floor(1000 + Math.random() * 9000)}`,
+      provider,
+      message: `${provider} settlement confirmed`,
+    };
   }
 }
 class VehicleService { getActiveVehicleForDriver(id: string): any { return { id: 'v1', model: 'Standard' }; } }
@@ -127,7 +139,7 @@ export class RideService implements OnModuleInit {
 
     for (const ride of expiredRides) {
       if (ride.driverId) {
-        const configuredTimeout = process.env.DISPATCH_TIMEOUT_SECONDS || '120';
+        const configuredTimeout = process.env.DISPATCH_TIMEOUT_SECONDS || '25';
         this.logger.warn(`Ride ${ride.id} assignment timed out after ${configuredTimeout}s for driver ${ride.driverId}. Escalating to next driver.`);
         await this.passRide(ride.id, ride.driverId, `${configuredTimeout}-second acceptance timeout`);
       }
@@ -231,22 +243,27 @@ export class RideService implements OnModuleInit {
       resolvedVehicleType = 'STANDARD';
     }
 
-    // Generate unique human-readable Trip Code (format: CB-XXXX)
-    const tripCodeNum = Math.floor(1000 + Math.random() * 9000);
-    const tripCode = `CB-${tripCodeNum}`;
+    // Generate collision-free human-readable Trip Code (format: TRP-26B-48192) & 4-digit Boarding PIN
+    const now = new Date();
+    const yearSuffix = now.getFullYear().toString().slice(-2);
+    const monthHex = (now.getMonth() + 1).toString(16).toUpperCase();
+    const randomSequence = Math.floor(10000 + Math.random() * 90000);
+    const tripCode = `TRP-${yearSuffix}${monthHex}-${randomSequence}`;
+    const boardingPin = randomSequence.toString().slice(-4);
 
     // Check for pending wait fee from previous cancelled ride
     const pendingKey = `PENDING_WAIT_FEE_${passengerId}`;
     let finalFare = Number(fare);
+    let pendingAmount = 0;
     try {
       const pendingData = await this.settingsService.getSystemSetting(pendingKey);
       if (pendingData && pendingData.amount && Number(pendingData.amount) > 0) {
-        const pendingAmount = Number(pendingData.amount);
+        pendingAmount = Number(pendingData.amount);
         finalFare = Number((finalFare + pendingAmount).toFixed(2));
         this.logger.log(`Applied pending wait fee of KES ${pendingAmount} to ride fare for passenger ${passengerId}. New total fare: ${finalFare}`);
 
-        // Clear pending fee once attached to this new ride
-        await this.settingsService.updateSystemSetting(pendingKey, null);
+        // Mark pending fee as locked for this ride request
+        await this.settingsService.updateSystemSetting(pendingKey, { amount: pendingAmount, status: 'ATTACHED_TO_ACTIVE_RIDE' });
 
         this.notificationService.sendNotification({
           userId: passengerId,
@@ -273,6 +290,24 @@ export class RideService implements OnModuleInit {
       }
     });
 
+    // Record locked wait fee linked explicitly to this ride
+    if (pendingAmount > 0) {
+      try {
+        await this.settingsService.updateSystemSetting(`LOCKED_WAIT_FEE_${ride.id}`, {
+          passengerId,
+          amount: pendingAmount,
+          lockedAt: new Date().toISOString(),
+        });
+        await this.settingsService.updateSystemSetting(pendingKey, {
+          amount: pendingAmount,
+          status: 'LOCKED',
+          lockedRideId: ride.id,
+        });
+      } catch (lockErr: any) {
+        this.logger.warn(`Could not record LOCKED_WAIT_FEE_${ride.id}: ${lockErr.message}`);
+      }
+    }
+
     // Increment trip count for tracking
     const currentCount = passengerTripCounts.get(passengerId) || 0;
     passengerTripCounts.set(passengerId, currentCount + 1);
@@ -284,6 +319,9 @@ export class RideService implements OnModuleInit {
 
     return {
       ...ride,
+      tripCode,
+      boardingPin,
+      userCode: generateUserCode('PASSENGER', passengerId),
       isVerifiedPassenger: isVerifiedPassenger ?? verificationCheck.isVerified ?? false,
       verificationMethod: verificationMethod || 'BIOMETRIC',
       remainingTrips: verificationCheck.remainingTrips,
@@ -293,12 +331,12 @@ export class RideService implements OnModuleInit {
   }
 
   private async startMatching(rideId: string): Promise<void> {
-    const driverId = await this.matchingService.matchRideToDriver(rideId);
+    const driverId = await this.matchingService.matchRideToDriver(rideId, { useBadgePriority: true });
 
     if (driverId) {
       const matchingCompletedAt = new Date();
-      const timeoutSec = parseInt(process.env.DISPATCH_TIMEOUT_SECONDS || '120', 10);
-      const assignmentExpiresAt = new Date(Date.now() + timeoutSec * 1000); // Configurable (default 120s) for real device testing
+      const timeoutSec = parseInt(process.env.DISPATCH_TIMEOUT_SECONDS || '25', 10);
+      const assignmentExpiresAt = new Date(Date.now() + timeoutSec * 1000); // 25s window for driver acceptance
       const ride = await this.prisma.ride.findUnique({ where: { id: rideId } });
       const matchingDurationMs = matchingCompletedAt.getTime() - new Date(ride.matchingStartedAt).getTime();
 
@@ -715,12 +753,49 @@ export class RideService implements OnModuleInit {
     };
   }
 
-  async arriveDriver(rideId: string) {
+  async arriveDriver(
+    rideId: string,
+    driverLocation?: { lat: number; lng: number; accuracyMeters?: number }
+  ) {
     const ride = await this.prisma.ride.findUnique({ where: { id: rideId } });
     if (!ride) throw new NotFoundException('Ride not found');
 
     if (!['DRIVER_ASSIGNED', 'ACCEPTED', 'MATCHING'].includes(ride.status)) {
       throw new BadRequestException(`Cannot mark arrived for ride in status: ${ride.status}`);
+    }
+
+    // Geofence validation against pickup location (300m threshold)
+    const pickup = ride.pickupLocation as any;
+    if (driverLocation?.lat && driverLocation?.lng && pickup?.lat && pickup?.lng) {
+      const R = 6371000; // Earth radius in meters
+      const dLat = ((pickup.lat - driverLocation.lat) * Math.PI) / 180;
+      const dLon = ((pickup.lng - driverLocation.lng) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos((driverLocation.lat * Math.PI) / 180) *
+          Math.cos((pickup.lat * Math.PI) / 180) *
+          Math.sin(dLon / 2) ** 2;
+      const distanceMeters = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+      const MAX_ARRIVAL_DISTANCE_METERS = 300;
+      const accuracy = driverLocation.accuracyMeters || 0;
+
+      if (distanceMeters > MAX_ARRIVAL_DISTANCE_METERS) {
+        // Option B: Allow arrival if GPS drift/accuracy radius is high (> 100m) with audit log
+        if (accuracy > 100) {
+          this.logger.warn(
+            `Driver arrived with high GPS inaccuracy (${accuracy}m radius). Distance to pickup: ${Math.round(distanceMeters)}m. Allowing arrival under GEOFENCE_BYPASS flag.`
+          );
+        } else {
+          throw new BadRequestException(
+            `You must be within 300m of the pickup location to mark arrived. Current distance: ${Math.round(distanceMeters)}m.`
+          );
+        }
+      } else {
+        this.logger.log(`Driver arrival geofence validated: ${Math.round(distanceMeters)}m from pickup.`);
+      }
+    } else if (!driverLocation) {
+      this.logger.warn(`Driver arrived for ride ${rideId} without GPS telemetry. Allowing legacy client bypass.`);
     }
 
     const arrivedAt = new Date();
@@ -732,7 +807,7 @@ export class RideService implements OnModuleInit {
       } as any
     });
 
-    const activeTripCode = (ride as any).tripCode || 'CB-RIDE';
+    const activeTripCode = (ride as any).tripCode || 'TRP-RIDE';
     this.logger.log(`Driver arrived at pickup for ride ${rideId} [${activeTripCode}] at ${arrivedAt.toISOString()}`);
 
     this.notificationService.sendNotification({
@@ -759,8 +834,14 @@ export class RideService implements OnModuleInit {
       const cleanExpected = ((ride as any).tripCode || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
       const digitsInput = tripCode.replace(/\D/g, '');
       const digitsExpected = ((ride as any).tripCode || '').replace(/\D/g, '');
-      if (cleanInput !== cleanExpected && digitsInput !== digitsExpected) {
-        throw new BadRequestException(`Invalid Trip Code (${tripCode}). Please verify with passenger.`);
+      const pinExpected = digitsExpected.slice(-4);
+      const isMatch = cleanInput === cleanExpected ||
+                      digitsInput === digitsExpected ||
+                      digitsInput === pinExpected ||
+                      cleanExpected.endsWith(cleanInput);
+
+      if (!isMatch) {
+        throw new BadRequestException(`Invalid Trip Code or Boarding PIN (${tripCode}). Please verify with passenger.`);
       }
     }
 
@@ -769,7 +850,7 @@ export class RideService implements OnModuleInit {
       data: { status: 'IN_PROGRESS' }
     });
 
-    const activeTripCode = (ride as any).tripCode || 'CB-RIDE';
+    const activeTripCode = (ride as any).tripCode || 'TRP-RIDE';
     this.logger.log(`Ride ${rideId} started (IN_PROGRESS). Trip Code: ${activeTripCode}`);
 
     // Notify passenger
@@ -845,16 +926,32 @@ export class RideService implements OnModuleInit {
       this.logger.warn(`Could not compute dynamic fare: ${err.message}. Defaulting to existing fare.`);
     }
 
+    // Ensure any previously locked wait fee attached to this ride is collected
+    try {
+      const lockedFee = await this.settingsService.getSystemSetting(`LOCKED_WAIT_FEE_${rideId}`);
+      if (lockedFee && lockedFee.amount && Number(lockedFee.amount) > 0) {
+        finalFare = Number((finalFare + Number(lockedFee.amount)).toFixed(2));
+        this.logger.log(`Included locked wait fee of KES ${lockedFee.amount} into final completed fare: KES ${finalFare}`);
+      }
+    } catch (e: any) {
+      this.logger.warn(`Could not check locked wait fee in completeRide: ${e.message}`);
+    }
+
     // Trigger payment processing
     const chargeResult = await this.paymentService.createCharge(ride.passengerId, finalFare);
 
     const status: 'COMPLETED' | 'CANCELLED' = 'COMPLETED';
 
     if (chargeResult.success) {
-      this.logger.log(`Ride ${rideId} completed and paid.`);
+      this.logger.log(`Ride ${rideId} completed and paid via ${chargeResult.provider || 'gateway'}. Transaction: ${chargeResult.transactionId}`);
+      // Clear pending & locked wait fee now that trip has been completed and paid
+      this.settingsService.updateSystemSetting(`PENDING_WAIT_FEE_${ride.passengerId}`, null).catch(e =>
+        this.logger.warn(`Could not clear pending wait fee on completion: ${e.message}`)
+      );
+      this.settingsService.updateSystemSetting(`LOCKED_WAIT_FEE_${rideId}`, null).catch(() => {});
       this.notificationService.sendNotification({
         userId: ride.passengerId,
-        title: `Trip Completed [${(ride as any).tripCode || 'CB-RIDE'}]`,
+        title: `Trip Completed [${(ride as any).tripCode || 'TRP-RIDE'}]`,
         body: `Your trip is completed. Total fare: KES ${finalFare} (${finalDistanceKm.toFixed(2)} km, ${finalDurationMinutes.toFixed(1)} mins). Thank you for riding with CABI!`,
       });
     } else {
@@ -871,16 +968,49 @@ export class RideService implements OnModuleInit {
       }
     });
 
-    // Award badges to passenger and driver
-    this.awardRideCompletionBadges(updatedRide.passengerId, updatedRide.driverId);
+    // Award badges and loyalty points to passenger and driver
+    this.awardRideCompletionBadges(updatedRide.passengerId, updatedRide.driverId, Number(finalFare), rideId);
 
     // Calculate payouts and commissions if ride is successful and driver exists
     if (status === 'COMPLETED' && updatedRide.driverId) {
       try {
-        await this.commissionService.calculateTripPayout({
+        const payoutResult = await this.commissionService.calculateTripPayout({
           baseFare: Number(finalFare),
           driverProfileId: updatedRide.driverId,
           tripId: updatedRide.id
+        });
+
+        // ── Referral Incentive Distribution ─────────────────────────────────
+        // Calculate multi-tier referral commissions from trip activities
+        // Deducted from platform net commission (driver take-home untouched).
+        const referralServiceUrl =
+          process.env.REFERRAL_SERVICE_URL ||
+          (process.env.NODE_ENV === 'production'
+            ? 'https://referral-service-746659778850.us-central1.run.app'
+            : 'http://localhost:3337');
+
+        fetch(`${referralServiceUrl}/api/admin/referral/trip-completed`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-internal-api-key': process.env.INTERNAL_API_KEY || 'cabi-internal-dev-key',
+          },
+          body: JSON.stringify({
+            tripId: updatedRide.id,
+            passengerId: updatedRide.passengerId,
+            driverProfileId: updatedRide.driverId,
+            baseFare: Number(finalFare),
+            platformCommission: payoutResult.platformCommission,
+            driverEarnings: payoutResult.driverNetTakeHome,
+          }),
+        }).then(res => {
+          if (!res.ok) {
+            this.logger.warn(`Referral distribution skipped or returned ${res.status} for ride ${rideId}`);
+          } else {
+            this.logger.log(`Referral distribution recorded for ride ${rideId}`);
+          }
+        }).catch(err => {
+          this.logger.error(`Failed to invoke referral service: ${err.message}`);
         });
 
         // ── Sacco Remittance (External Partner Integration) ──────────────────
@@ -888,7 +1018,7 @@ export class RideService implements OnModuleInit {
         // The sacco-service handles the split computation (mandatory% + incentive%),
         // records the ledger entry, and forwards funds to the partner via REST/CSV.
         const saccoServiceUrl =
-          process.env.SACCO_SERVICE_URL ||
+          process.env.Sacco_SERVICE_URL ||
           (process.env.NODE_ENV === 'production'
             ? 'https://sacco-service-746659778850.us-central1.run.app'
             : 'http://localhost:3338');
@@ -1065,12 +1195,17 @@ export class RideService implements OnModuleInit {
     return results;
   }
 
-  private async awardRideCompletionBadges(passengerId: string, driverId: string | null): Promise<void> {
+  private async awardRideCompletionBadges(passengerId: string, driverId: string | null, fareAmount?: number, rideId?: string): Promise<void> {
     try {
       // Award badges to passenger
       const passengerBadges = await this.badgeService.checkAndAwardBadges(passengerId, 'RIDE_COMPLETED');
       if (passengerBadges.length > 0) {
         this.logger.log(`Awarded ${passengerBadges.length} badge(s) to passenger ${passengerId}`);
+      }
+
+      // Credit spend points to passenger (1 pt per 100 KES spent)
+      if (fareAmount && fareAmount > 0) {
+        await this.badgeService.creditRidePoints(passengerId, fareAmount, undefined, rideId);
       }
 
       // Award badges to driver if exists
@@ -1151,39 +1286,87 @@ export class RideService implements OnModuleInit {
     const safeRating = Math.max(1, Math.min(5, Math.round(rating || 5)));
     const cleanComment = (comment || '').trim();
 
-    // 1. Register rating and comment in the official Occurrence Book
-    const obNumber = `OB-RIDE-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
-    const category = safeRating <= 2 ? 'POLICY_VIOLATION' : 'POLICY_VIOLATION';
-    const severity = safeRating <= 1 ? 'HIGH' : safeRating <= 2 ? 'MEDIUM' : 'LOW';
-    const title = `Trip Rating & Feedback: ${raterRole} -> ${targetRole} (${safeRating}/5)`;
-    const description = `Trip ${rideId} feedback from ${raterRole} (${safeRating} stars): "${cleanComment || 'No additional comment provided.'}"`;
+    // 1. Intelligent Category & Severity Classification for Occurrence Book
+    // Per Option A: Routine 4- and 5-star ratings update metrics directly without creating an incident record.
+    // Ratings <= 3 trigger automated Occurrence Book incident creation with smart keyword classification.
+    const lowerComment = cleanComment.toLowerCase();
+    let category = 'POLICY_VIOLATION';
+    let severity = safeRating <= 1 ? 'HIGH' : safeRating <= 2 ? 'MEDIUM' : 'LOW';
+    let isSignificantIncident = false;
 
-    let occurrence = null;
-    try {
-      const pickup = ride.pickupLocation as any;
-      occurrence = await this.prisma.occurrence.create({
-        data: {
-          obNumber,
-          category,
-          severity,
-          title,
-          description,
-          driverId: ride.driverId,
-          passengerId: ride.passengerId,
-          rideId: ride.id,
-          occurrenceDate: new Date(),
-          occurrenceTime: new Date(),
-          occurredAt: new Date(),
-          locationLat: pickup?.lat ? pickup.lat : null,
-          locationLng: pickup?.lng ? pickup.lng : null,
-          source: `${raterRole}_RATING`,
-          registeredById,
-          status: safeRating <= 2 ? 'OPEN' : 'RESOLVED',
-        },
-      });
-      this.logger.log(`Occurrence entry ${obNumber} created for ride ${rideId} rating by ${raterRole}`);
-    } catch (occErr: any) {
-      this.logger.error(`Failed to record occurrence booking for rating: ${occErr.message}`, occErr.stack);
+    if (safeRating <= 3) {
+      isSignificantIncident = true;
+
+      if (/theft|steal|stole|rob|assault|weapon|fight|gun|knife|violence/i.test(lowerComment)) {
+        category = 'CRIME';
+        severity = 'CRITICAL';
+      } else if (/harass|sexual|touch|inappropriate|abuse|insult|threat|intimidation/i.test(lowerComment)) {
+        category = 'HARASSMENT';
+        severity = 'HIGH';
+      } else if (/speed|speeding|reckless|drunk|alcohol|dui|rash|red light/i.test(lowerComment)) {
+        category = 'TRAFFIC_OFFENSE';
+        severity = 'HIGH';
+      } else if (/seatbelt|seat belt|brake|mechanical|unsafe|overload|danger/i.test(lowerComment)) {
+        category = 'SAFETY_VIOLATION';
+        severity = 'HIGH';
+      } else if (/scam|overcharge|meter|cheat|extra cash|offline|extortion/i.test(lowerComment)) {
+        category = 'FRAUD';
+        severity = 'HIGH';
+      } else if (/damage|broke|spill|lost|forgot|luggage|property/i.test(lowerComment)) {
+        category = 'PROPERTY_DAMAGE';
+        severity = 'MEDIUM';
+      } else if (/sick|vomit|bleed|hospital|medical|emergency|faint/i.test(lowerComment)) {
+        category = 'MEDICAL_EMERGENCY';
+        severity = 'HIGH';
+      } else if (/dispute|argument|argue|rude|refuse|refused|yell|route/i.test(lowerComment)) {
+        category = 'DISPUTE';
+        severity = 'MEDIUM';
+      } else if (/dirty|smell|ac|air condition|smoke|flat tire|breakdown/i.test(lowerComment)) {
+        category = 'VEHICLE_ISSUE';
+        severity = 'LOW';
+      } else {
+        category = safeRating <= 2 ? 'POLICY_VIOLATION' : 'DISPUTE';
+        severity = safeRating === 1 ? 'HIGH' : safeRating === 2 ? 'MEDIUM' : 'LOW';
+      }
+    }
+
+    // Only create an official Occurrence Book entry for genuine incidents / low ratings / safety issues
+    let occurrence: any = null;
+    let obNumber: string | undefined = undefined;
+
+    if (isSignificantIncident) {
+      obNumber = `OB-RIDE-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const title = `Trip Issue: ${raterRole} -> ${targetRole} (${safeRating}/5 - ${category})`;
+      const description = `Trip ${rideId} feedback from ${raterRole} (${safeRating} stars): "${cleanComment || 'No additional comment provided.'}"`;
+
+      try {
+        const pickup = ride.pickupLocation as any;
+        occurrence = await this.prisma.occurrence.create({
+          data: {
+            obNumber,
+            category: category as any,
+            severity: severity as any,
+            title,
+            description,
+            driverId: ride.driverId,
+            passengerId: ride.passengerId,
+            rideId: ride.id,
+            occurrenceDate: new Date(),
+            occurrenceTime: new Date(),
+            occurredAt: new Date(),
+            locationLat: pickup?.lat ? pickup.lat : null,
+            locationLng: pickup?.lng ? pickup.lng : null,
+            source: `${raterRole}_RATING`,
+            registeredById,
+            status: safeRating <= 2 || severity === 'HIGH' || severity === 'CRITICAL' ? 'OPEN' : 'RESOLVED',
+          },
+        });
+        this.logger.log(`Occurrence entry ${obNumber} created for ride ${rideId} rating by ${raterRole} (${category}, ${severity})`);
+      } catch (occErr: any) {
+        this.logger.error(`Failed to record occurrence booking for rating: ${occErr.message}`, occErr.stack);
+      }
+    } else {
+      this.logger.log(`Routine rating ${safeRating}/5 for ride ${rideId} recorded in ratings ledger without Occurrence incident.`);
     }
 
     // 2. Recalculate average rating & stats
@@ -1204,6 +1387,13 @@ export class RideService implements OnModuleInit {
           where: { id: ride.passengerId },
           data: { averageRating: newAvg },
         });
+      }
+
+      // Credit rating bonus points to passenger
+      if (isPassengerRater && ride.passengerId) {
+        this.badgeService.creditRidePoints(ride.passengerId, 0, safeRating, rideId).catch(e =>
+          this.logger.warn(`Could not credit rating bonus points: ${e.message}`)
+        );
       }
     } catch (ratingErr: any) {
       this.logger.warn(`Could not update average rating: ${ratingErr.message}`);
@@ -1232,19 +1422,48 @@ export class RideService implements OnModuleInit {
 
     this.logger.log(`Ride ${rideId} cancelled. Reason: ${reason}`);
 
-    // --- Wait Fee Logic ---
+    // --- Restore any locked wait fee that was attached to this cancelled ride ---
+    try {
+      const lockedKey = `LOCKED_WAIT_FEE_${rideId}`;
+      const lockedFee = await this.settingsService.getSystemSetting(lockedKey);
+      if (lockedFee && lockedFee.amount && Number(lockedFee.amount) > 0) {
+        const pendingKey = `PENDING_WAIT_FEE_${ride.passengerId}`;
+        const existing = await this.settingsService.getSystemSetting(pendingKey);
+        const existingAmount = existing?.amount ? Number(existing.amount) : 0;
+        await this.settingsService.updateSystemSetting(pendingKey, {
+          amount: Math.max(existingAmount, Number(lockedFee.amount)),
+          status: 'PENDING',
+          restoredFromRideId: rideId,
+          restoredAt: new Date().toISOString(),
+        });
+        await this.settingsService.updateSystemSetting(lockedKey, null);
+        this.logger.log(`Restored locked wait fee of KES ${lockedFee.amount} for passenger ${ride.passengerId} following ride cancellation.`);
+      }
+    } catch (lockErr: any) {
+      this.logger.warn(`Could not restore locked wait fee for ride ${rideId}: ${lockErr.message}`);
+    }
+
+    // --- Wait Fee Assessment Logic ---
+    let assessedWaitFee = 0;
+    let chargeableMinutes = 0;
+    let feePerMinute = 10;
+    let waitMinutes = 0;
+    let gracePeriodMinutes = 3;
+
     const driverArrivedAt = (ride as any).driverArrivedAt as Date | null;
     if (driverArrivedAt && ride.driverId) {
-      const { feePerMinute, gracePeriodMinutes } = await this.getWaitTimeConfig();
+      const config = await this.getWaitTimeConfig();
+      feePerMinute = config.feePerMinute;
+      gracePeriodMinutes = config.gracePeriodMinutes;
       const now = new Date();
-      const waitMinutes = (now.getTime() - new Date(driverArrivedAt).getTime()) / 60000;
+      waitMinutes = (now.getTime() - new Date(driverArrivedAt).getTime()) / 60000;
 
       if (waitMinutes > gracePeriodMinutes) {
-        const chargeableMinutes = waitMinutes - gracePeriodMinutes;
-        const waitFee = Number((chargeableMinutes * feePerMinute).toFixed(2));
+        chargeableMinutes = waitMinutes - gracePeriodMinutes;
+        assessedWaitFee = Number((chargeableMinutes * feePerMinute).toFixed(2));
 
         this.logger.log(
-          `Wait fee applied: KES ${waitFee} (${chargeableMinutes.toFixed(1)} mins charged @ KES ${feePerMinute}/min) for passenger ${ride.passengerId}`
+          `Wait fee applied: KES ${assessedWaitFee} (${chargeableMinutes.toFixed(1)} mins charged @ KES ${feePerMinute}/min) for passenger ${ride.passengerId}`
         );
 
         // Store as pending fee to be charged on the passenger's next ride
@@ -1252,7 +1471,7 @@ export class RideService implements OnModuleInit {
         const existing = await this.settingsService.getSystemSetting(pendingKey);
         const existingAmount = existing?.amount ? Number(existing.amount) : 0;
         await this.settingsService.updateSystemSetting(pendingKey, {
-          amount: existingAmount + waitFee,
+          amount: existingAmount + assessedWaitFee,
           rideId,
           chargedAt: now.toISOString(),
           minutesCharged: Number(chargeableMinutes.toFixed(1)),
@@ -1262,7 +1481,7 @@ export class RideService implements OnModuleInit {
         this.notificationService.sendNotification({
           userId: ride.passengerId,
           title: 'Wait Fee Applied',
-          body: `KES ${waitFee} will be added to your next ride for driver wait time (${chargeableMinutes.toFixed(0)} mins @ KES ${feePerMinute}/min).`
+          body: `KES ${assessedWaitFee} will be added to your next ride for driver wait time (${chargeableMinutes.toFixed(0)} mins @ KES ${feePerMinute}/min).`
         });
 
         // Credit driver's system wallet
@@ -1270,7 +1489,7 @@ export class RideService implements OnModuleInit {
         const driverWallet = await this.settingsService.getSystemSetting(driverWalletKey);
         const currentBalance = driverWallet?.balance ? Number(driverWallet.balance) : 0;
         await this.settingsService.updateSystemSetting(driverWalletKey, {
-          balance: Number((currentBalance + waitFee).toFixed(2)),
+          balance: Number((currentBalance + assessedWaitFee).toFixed(2)),
           lastCreditedAt: now.toISOString(),
           lastCreditReason: `Wait fee compensation for ride ${rideId}`,
         });
@@ -1279,10 +1498,68 @@ export class RideService implements OnModuleInit {
         this.notificationService.sendNotification({
           userId: ride.driverId,
           title: 'Wait Fee Compensation',
-          body: `KES ${waitFee} has been credited to your wallet for waiting (${chargeableMinutes.toFixed(0)} mins).`
+          body: `KES ${assessedWaitFee} has been credited to your wallet for waiting (${chargeableMinutes.toFixed(0)} mins).`
         });
       } else {
         this.logger.log(`Ride ${rideId} cancelled within grace period (${waitMinutes.toFixed(1)} mins). No wait fee.`);
+      }
+    }
+
+    // Log cancellation to Occurrence Book if wait fee was assessed OR cancellation reason indicates conflict/safety
+    const lowerReason = (reason || '').toLowerCase();
+    const isConflictReason = /refuse|cash|unsafe|plate|scam|harass|rude|fight|threat|drunk|cheat|overcharge/.test(lowerReason);
+
+    if (assessedWaitFee > 0 || isConflictReason) {
+      const obNumber = `OB-CAN-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
+      let category: any = 'DISPUTE';
+      let severity: any = 'LOW';
+
+      if (/cash|scam|cheat|overcharge/.test(lowerReason)) {
+        category = 'FRAUD';
+        severity = 'HIGH';
+      } else if (/unsafe|harass|fight|threat|drunk/.test(lowerReason)) {
+        category = 'SAFETY_VIOLATION';
+        severity = 'HIGH';
+      } else if (assessedWaitFee > 200) {
+        severity = 'MEDIUM';
+      }
+
+      const title = assessedWaitFee > 0
+        ? `Trip Cancellation: Wait Fee Assessed (KES ${assessedWaitFee})`
+        : `Trip Cancellation Flagged: ${category}`;
+
+      const description = `Ride ${rideId} cancelled by passenger. Reason: "${reason || 'Not specified'}". ${
+        assessedWaitFee > 0
+          ? `Driver waited ${chargeableMinutes.toFixed(1)} chargeable mins (@ KES ${feePerMinute}/min = KES ${assessedWaitFee}). Fee credited to driver wallet.`
+          : 'Cancellation flagged due to dispute or safety concern.'
+      } Passenger: ${ride.passengerId}, Driver: ${ride.driverId || 'None assigned'}.`;
+
+      try {
+        const pickup = ride.pickupLocation as any;
+        await this.prisma.occurrence.create({
+          data: {
+            obNumber,
+            category,
+            severity,
+            title,
+            description,
+            driverId: ride.driverId,
+            passengerId: ride.passengerId,
+            rideId: ride.id,
+            occurrenceDate: new Date(),
+            occurrenceTime: new Date(),
+            occurredAt: new Date(),
+            locationLat: pickup?.lat ? pickup.lat : null,
+            locationLng: pickup?.lng ? pickup.lng : null,
+            source: 'RIDE_CANCELLATION',
+            registeredById: ride.passengerId,
+            status: isConflictReason ? 'OPEN' : 'RESOLVED',
+            tags: ['CANCELLATION', assessedWaitFee > 0 ? 'WAIT_FEE_ASSESSMENT' : 'SAFETY_DISPUTE'],
+          }
+        });
+        this.logger.log(`Cancellation Occurrence entry ${obNumber} created for ride ${rideId}`);
+      } catch (occErr: any) {
+        this.logger.error(`Failed to record cancellation occurrence: ${occErr.message}`);
       }
     }
 
@@ -1290,7 +1567,7 @@ export class RideService implements OnModuleInit {
     if (ride.driverId) {
       this.notificationService.sendNotification({
         userId: ride.driverId,
-        title: `Ride Cancelled [${(ride as any).tripCode || 'CB-RIDE'}]`,
+        title: `Ride Cancelled [${(ride as any).tripCode || 'TRP-RIDE'}]`,
         body: `The ride was cancelled by passenger. Reason: ${reason || 'Not specified'}`
       });
     }

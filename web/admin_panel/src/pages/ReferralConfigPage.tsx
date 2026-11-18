@@ -258,7 +258,7 @@ export const ReferralConfigPage = () => {
             </ConfigCard>
           </Grid>
 
-          {/* SACCO & Badges Section */}
+          {/* Sacco & Badges Section */}
           <Grid item xs={12}>
             <ConfigCard title="Operational Overlays" icon={<SaccoIcon />}>
               <Grid container spacing={4}>
@@ -306,4 +306,4 @@ export const ReferralConfigPage = () => {
       </Box>
     </Fade>
   );
-};
+};

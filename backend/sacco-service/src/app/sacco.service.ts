@@ -4,7 +4,7 @@ import { PrismaService } from '@cabi/backend/database';
 // ─── Trip Split & Waterfall Engine ────────────────────────────────────────────
 
 export interface VoluntaryDeductionInput {
-    serviceType: string; // 'SACCO' | 'INSURANCE_HEALTH' | 'INSURANCE_VEHICLE' | 'INSURANCE_LIFE' | 'INVESTMENT_MMF' | 'PENSION' | string;
+    serviceType: string; // 'Sacco' | 'INSURANCE_HEALTH' | 'INSURANCE_VEHICLE' | 'INSURANCE_LIFE' | 'INVESTMENT_MMF' | 'PENSION' | string;
     partnerId?: string;
     partnerName?: string;
     requestedPct: number; // e.g. 0.02 = 2%
@@ -19,6 +19,30 @@ export interface ItemizedDeduction {
     appliedPct: number;
     amount: number;
     isCapped: boolean;
+}
+
+export interface DriverSaccoSummary {
+    driverProfileId: string;
+    enrolled: boolean;
+    saccoName: string;
+    membershipNumber: string;
+    totalSavings: number;
+    availableWithdrawal: number;
+    currentSavingsRate: number; // e.g. 2.0 (2%)
+    isAutoSavingsEnabled: boolean;
+    dailyWelfareContribution: number;
+    isWelfareEnabled: boolean;
+    walletBufferThreshold: number; // -5000 KES (Option A)
+    joiningIncentiveActive: boolean;
+    incentivePct: number; // 3.0 (3%)
+    recentTransactionsCount: number;
+}
+
+export interface UpdateDriverSavingsSettingsDto {
+    savingsRate?: number;
+    isAutoSavingsEnabled?: boolean;
+    isWelfareEnabled?: boolean;
+    dailyWelfareAmount?: number;
 }
 
 export interface TripSplitInput {
@@ -53,7 +77,7 @@ export interface TripSplitResult {
 /**
  * Pure function — computes how a trip fare is split based on:
  * 1. Priority 1: Cabi Commission (18% - active 3% stackable incentive when qualified).
- * 2. Priority 2: Core SACCO Contribution (2% driver contribution + 3% Cabi incentive -> SACCO gets 5%).
+ * 2. Priority 2: Core Sacco Contribution (2% driver contribution + 3% Cabi incentive -> Sacco gets 5%).
  * 3. Priority 3: Essential Protection (Insurance: Health, Vehicle, Personal Accident).
  * 4. Priority 4: Voluntary Wealth & Savings (Investments, MMF, Pension).
  * 
@@ -74,7 +98,7 @@ export function computeTripSplit(input: TripSplitInput): TripSplitResult {
     } = input;
 
     // 1. Cabi Commission Calculation (Priority 1)
-    // If incentive is active and driver is in SACCO, the 3% incentive is deducted from Cabi's 18% share (Cabi gets 15%)
+    // If incentive is active and driver is in Sacco, the 3% incentive is deducted from Cabi's 18% share (Cabi gets 15%)
     let effectiveCabiPct = cabiCommissionPct;
     let appliedIncentivePct = 0;
 
@@ -90,14 +114,14 @@ export function computeTripSplit(input: TripSplitInput): TripSplitResult {
     let anyDeductionCapped = false;
     const itemized: ItemizedDeduction[] = [];
 
-    // 3. Priority 2: Core SACCO Contribution (2% driver deduction)
+    // 3. Priority 2: Core Sacco Contribution (2% driver deduction)
     let saccoDriverDeductionPct = 0;
     if (driverEnrolled) {
         saccoDriverDeductionPct = Math.min(mandatoryRemittancePct, remainingDeductionCapacity);
         remainingDeductionCapacity -= saccoDriverDeductionPct;
 
         itemized.push({
-            serviceType: 'SACCO',
+            serviceType: 'Sacco',
             priorityTier: 2,
             requestedPct: mandatoryRemittancePct,
             appliedPct: saccoDriverDeductionPct,
@@ -111,8 +135,8 @@ export function computeTripSplit(input: TripSplitInput): TripSplitResult {
     const investmentDeductions: VoluntaryDeductionInput[] = [];
 
     for (const vd of voluntaryDeductions) {
-        if (vd.serviceType === 'SACCO') {
-            // Already handled via core SACCO enrollment
+        if (vd.serviceType === 'Sacco') {
+            // Already handled via core Sacco enrollment
             continue;
         }
         if (vd.serviceType.toUpperCase().startsWith('INSURANCE')) {
@@ -294,11 +318,11 @@ export class SaccoService {
 
     async getFinancialConfig(): Promise<SaccoFinancialConfigDto> {
         const keys = [
-            'SACCO_MANDATORY_REMITTANCE_PCT',
+            'Sacco_MANDATORY_REMITTANCE_PCT',
             'CABI_COMMISSION_PCT',
-            'SACCO_JOINING_INCENTIVE_ENABLED',
-            'SACCO_JOINING_INCENTIVE_PCT',
-            'SACCO_JOINING_INCENTIVE_DURATION_DAYS',
+            'Sacco_JOINING_INCENTIVE_ENABLED',
+            'Sacco_JOINING_INCENTIVE_PCT',
+            'Sacco_JOINING_INCENTIVE_DURATION_DAYS',
             'MAX_VOLUNTARY_DEDUCTION_PCT',
             'MIN_DRIVER_TAKE_HOME_PCT',
             'FINANCIAL_OPTOUT_NOTICE_MONTHS',
@@ -308,11 +332,11 @@ export class SaccoService {
         const get = (k: string, def: string) => settings.find(s => s.key === k)?.value ?? def;
 
         return {
-            mandatoryRemittancePct: parseFloat(get('SACCO_MANDATORY_REMITTANCE_PCT', '0.02')),
+            mandatoryRemittancePct: parseFloat(get('Sacco_MANDATORY_REMITTANCE_PCT', '0.02')),
             cabiCommissionPct: parseFloat(get('CABI_COMMISSION_PCT', '0.18')),
-            joiningIncentiveEnabled: get('SACCO_JOINING_INCENTIVE_ENABLED', 'true') === 'true',
-            joiningIncentivePct: parseFloat(get('SACCO_JOINING_INCENTIVE_PCT', '0.03')),
-            joiningIncentiveDurationDays: parseInt(get('SACCO_JOINING_INCENTIVE_DURATION_DAYS', '365')),
+            joiningIncentiveEnabled: get('Sacco_JOINING_INCENTIVE_ENABLED', 'true') === 'true',
+            joiningIncentivePct: parseFloat(get('Sacco_JOINING_INCENTIVE_PCT', '0.03')),
+            joiningIncentiveDurationDays: parseInt(get('Sacco_JOINING_INCENTIVE_DURATION_DAYS', '365')),
             maxVoluntaryDeductionPct: parseFloat(get('MAX_VOLUNTARY_DEDUCTION_PCT', '0.15')),
             minDriverTakeHomePct: parseFloat(get('MIN_DRIVER_TAKE_HOME_PCT', '0.65')),
             optOutNoticeMonths: parseInt(get('FINANCIAL_OPTOUT_NOTICE_MONTHS', '1')),
@@ -331,11 +355,11 @@ export class SaccoService {
         };
 
         await Promise.all([
-            upsert('SACCO_MANDATORY_REMITTANCE_PCT', String(dto.mandatoryRemittancePct)),
+            upsert('Sacco_MANDATORY_REMITTANCE_PCT', String(dto.mandatoryRemittancePct)),
             upsert('CABI_COMMISSION_PCT', String(dto.cabiCommissionPct)),
-            upsert('SACCO_JOINING_INCENTIVE_ENABLED', String(dto.joiningIncentiveEnabled)),
-            upsert('SACCO_JOINING_INCENTIVE_PCT', String(dto.joiningIncentivePct)),
-            upsert('SACCO_JOINING_INCENTIVE_DURATION_DAYS', String(dto.joiningIncentiveDurationDays)),
+            upsert('Sacco_JOINING_INCENTIVE_ENABLED', String(dto.joiningIncentiveEnabled)),
+            upsert('Sacco_JOINING_INCENTIVE_PCT', String(dto.joiningIncentivePct)),
+            upsert('Sacco_JOINING_INCENTIVE_DURATION_DAYS', String(dto.joiningIncentiveDurationDays)),
             upsert('MAX_VOLUNTARY_DEDUCTION_PCT', String(dto.maxVoluntaryDeductionPct ?? 0.15)),
             upsert('MIN_DRIVER_TAKE_HOME_PCT', String(dto.minDriverTakeHomePct ?? 0.65)),
             upsert('FINANCIAL_OPTOUT_NOTICE_MONTHS', String(dto.optOutNoticeMonths ?? 1)),
@@ -442,26 +466,161 @@ export class SaccoService {
             data: {
                 driverId,
                 amount,
-                type: 'SACCO_REMITTANCE',
+                type: 'Sacco_REMITTANCE',
                 relatedTripId: tripId,
             }
         });
     }
 
     async getRemittanceHistory(driverId: string): Promise<any[]> {
+        const profile = await this.prisma.driverProfile.findFirst({
+            where: {
+                OR: [{ id: driverId }, { userId: driverId }],
+            },
+        });
+        const targetId = profile ? profile.id : driverId;
         return this.prisma.saccoLedger.findMany({
-            where: { driverId },
+            where: { driverId: targetId },
             orderBy: { createdAt: 'desc' },
             take: 50,
         });
     }
 
     async getTotalRemitted(driverId: string): Promise<number> {
+        const profile = await this.prisma.driverProfile.findFirst({
+            where: {
+                OR: [{ id: driverId }, { userId: driverId }],
+            },
+        });
+        const targetId = profile ? profile.id : driverId;
         const result = await this.prisma.saccoLedger.aggregate({
             _sum: { amount: true },
-            where: { driverId }
+            where: { driverId: targetId }
         });
         return result._sum.amount ? Number(result._sum.amount) : 0;
+    }
+
+    async getDriverSaccoSummary(idOrUserId: string): Promise<DriverSaccoSummary> {
+        const profile = await this.prisma.driverProfile.findFirst({
+            where: {
+                OR: [{ id: idOrUserId }, { userId: idOrUserId }],
+            },
+            include: {
+                saccoPartner: true,
+                savingsPreference: true,
+                user: true,
+                welfareEnrollments: {
+                    where: { isActive: true },
+                    include: { scheme: true },
+                },
+            },
+        });
+
+        if (!profile) {
+            return {
+                driverProfileId: idOrUserId,
+                enrolled: false,
+                saccoName: 'CABI Sacco',
+                membershipNumber: 'SACCO-PENDING',
+                totalSavings: 0,
+                availableWithdrawal: 0,
+                currentSavingsRate: 2.0,
+                isAutoSavingsEnabled: true,
+                dailyWelfareContribution: 50,
+                isWelfareEnabled: true,
+                walletBufferThreshold: -5000,
+                joiningIncentiveActive: true,
+                incentivePct: 3.0,
+                recentTransactionsCount: 0,
+            };
+        }
+
+        const totalRemitted = await this.getTotalRemitted(profile.id);
+        const count = await this.prisma.saccoLedger.count({
+            where: { driverId: profile.id },
+        });
+
+        const activeWelfare = profile.welfareEnrollments?.[0];
+        const isWelfare = Boolean(activeWelfare && activeWelfare.isActive);
+        const welfareAmount = activeWelfare?.customAmount ? Number(activeWelfare.customAmount) : 50;
+
+        let rateFraction = profile.savingsPreference?.personalSavingRate ?? 0;
+        if (rateFraction === 0 && profile.saccoEnrolled) {
+            rateFraction = 0.02;
+        } else if (rateFraction === 0 && !profile.savingsPreference) {
+            rateFraction = 0.02; // default 2%
+        }
+        const currentRatePct = Math.round(rateFraction * 1000) / 10;
+
+        const incentiveEval = await this.evaluateStackableIncentives(profile.id);
+
+        const partnerName = profile.saccoPartner?.name || 'CABI Sacco';
+        const partnerCode = (profile.saccoPartner?.name ?? 'CABI').replace(/\s+/g, '').substring(0, 4).toUpperCase();
+        const memberNum = `SACCO-${partnerCode}-${profile.id.substring(0, 6).toUpperCase()}`;
+
+        return {
+            driverProfileId: profile.id,
+            enrolled: Boolean(profile.saccoEnrolled),
+            saccoName: partnerName,
+            membershipNumber: memberNum,
+            totalSavings: totalRemitted,
+            availableWithdrawal: Math.round(totalRemitted * 0.3 * 100) / 100,
+            currentSavingsRate: currentRatePct,
+            isAutoSavingsEnabled: profile.savingsPreference?.isAutoSavingsEnabled ?? true,
+            dailyWelfareContribution: welfareAmount,
+            isWelfareEnabled: isWelfare,
+            walletBufferThreshold: -5000, // Option A: negative wallet balance permitted up to 5,000 KES
+            joiningIncentiveActive: incentiveEval.incentiveActive,
+            incentivePct: Math.round(incentiveEval.totalIncentivePct * 1000) / 10,
+            recentTransactionsCount: count,
+        };
+    }
+
+    async updateDriverSavingsSettings(
+        idOrUserId: string,
+        dto: UpdateDriverSavingsSettingsDto
+    ): Promise<DriverSaccoSummary> {
+        const profile = await this.prisma.driverProfile.findFirst({
+            where: {
+                OR: [{ id: idOrUserId }, { userId: idOrUserId }],
+            },
+        });
+
+        if (!profile) {
+            throw new Error(`Driver profile not found: ${idOrUserId}`);
+        }
+
+        let rateFraction = dto.savingsRate !== undefined ? dto.savingsRate : 0.02;
+        if (rateFraction > 1) {
+            rateFraction = rateFraction / 100;
+        }
+        if (rateFraction < 0) rateFraction = 0;
+        if (rateFraction > 0.30) rateFraction = 0.30;
+
+        await this.prisma.driverSavingsPreference.upsert({
+            where: { driverProfileId: profile.id },
+            create: {
+                driverProfileId: profile.id,
+                personalSavingRate: rateFraction,
+                isAutoSavingsEnabled: dto.isAutoSavingsEnabled ?? true,
+            },
+            update: {
+                personalSavingRate: rateFraction,
+                isAutoSavingsEnabled: dto.isAutoSavingsEnabled ?? true,
+            },
+        });
+
+        if (rateFraction > 0 && !profile.saccoEnrolled) {
+            await this.prisma.driverProfile.update({
+                where: { id: profile.id },
+                data: {
+                    saccoEnrolled: true,
+                    saccoEnrolledAt: profile.saccoEnrolledAt ?? new Date(),
+                },
+            });
+        }
+
+        return this.getDriverSaccoSummary(profile.id);
     }
 
     // ── Stackable Incentive Rule Evaluator ─────────────────────────────────────

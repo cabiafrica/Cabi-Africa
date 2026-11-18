@@ -81,6 +81,7 @@ export const SimulationDashboard: React.FC = () => {
                             </Flex>
                             <input
                                 type="range"
+                                aria-label="Base Fare Adjustment"
                                 min="-50"
                                 max="50"
                                 value={fareIncrease}
@@ -101,6 +102,7 @@ export const SimulationDashboard: React.FC = () => {
                             </Flex>
                             <input
                                 type="range"
+                                aria-label="Surge Cap Multiplier"
                                 min="1.0"
                                 max="5.0"
                                 step="0.1"
@@ -122,6 +124,7 @@ export const SimulationDashboard: React.FC = () => {
                             </Flex>
                             <input
                                 type="range"
+                                aria-label="Driver Incentive Boost"
                                 min="0"
                                 max="100"
                                 value={incentiveBoost}

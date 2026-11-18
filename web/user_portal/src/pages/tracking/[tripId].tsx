@@ -111,7 +111,7 @@ export default function TrackingPage() {
                                 </div>
                             ) : (
                                 <div className="mb-8 p-4 rounded-xl bg-brand-yellow/10 border border-brand-yellow/20 text-xs font-bold text-slate-700 dark:text-neutral-300">
-                                    Matching your trip with the nearest verified chauffeur...
+                                    Matching your trip with the nearest verified captain...
                                 </div>
                             )}
 

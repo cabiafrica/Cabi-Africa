@@ -23,7 +23,7 @@ export default function ExecutiveHero() {
                 <div className="lg:col-span-6 flex flex-col gap-5 sm:gap-6">
                     {/* Headline */}
                     <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.12]">
-                        Precision Chauffeur &amp;{' '}
+                        Precision Captain &amp;{' '}
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffe088] via-[#FACC15] to-[#D4AF37]">
                             Urban Transit
                         </span>{' '}

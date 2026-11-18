@@ -6,6 +6,8 @@
     <meta charset="UTF-8">
     <meta content="IE=Edge" http-equiv="X-UA-Compatible">
     <meta name="description" content="CABI Drive — Official CABI Africa Driver Partner App">
+    <meta property="og:title" content="CABI Drive — Driver App">
+    <meta property="og:description" content="CABI Drive — Official CABI Africa Driver Partner App">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -84,7 +86,21 @@
         }
     </style>
     <script>
-        const serviceWorkerVersion = "1533241068" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */;
+        // Ensure stale service workers & caches are cleared for live updates
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for (var registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                for (var name of names) {
+                    caches.delete(name);
+                }
+            });
+        }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0&libraries=places"></script>
     <script src="flutter.js" defer></script>
@@ -117,9 +133,7 @@
 
         window.addEventListener('load', function () {
             _flutter.loader.loadEntrypoint({
-                serviceWorker: {
-                    serviceWorkerVersion: serviceWorkerVersion,
-                }
+                serviceWorker: null
             }).then(function (engineInitializer) {
                 return engineInitializer.initializeEngine();
             }).then(function (appRunner) {

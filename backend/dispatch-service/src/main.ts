@@ -2,10 +2,14 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { LoggingInterceptor } from '@cabi/backend/common';
+import { LoggingInterceptor, RateLimitMiddleware } from '@cabi/backend/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Security: Global Rate Limiting
+  const rateLimiter = new RateLimitMiddleware();
+  app.use((req: any, res: any, next: any) => rateLimiter.use(req, res, next));
 
   // Global Validation Pipe
   app.useGlobalPipes(
@@ -29,6 +33,21 @@ async function bootstrap() {
         ]
       : true,
     credentials: true,
+  });
+
+  // Security: Standard OWASP Headers
+  app.use((req: any, res: any, next: any) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    if (isProduction) {
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
+    if (res.removeHeader) {
+      res.removeHeader('X-Powered-By');
+    }
+    next();
   });
 
   app.useGlobalInterceptors(new LoggingInterceptor());

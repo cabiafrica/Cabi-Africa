@@ -1155,4 +1155,68 @@ export class UserService {
       data: { isBiometricVerified: true }
     });
   }
+
+  async deleteAccount(userId: string, reason?: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        driverProfile: true,
+        ridesAsPassenger: {
+          where: {
+            status: { in: ['DRIVER_ASSIGNED', 'DRIVER_ARRIVED', 'IN_PROGRESS', 'MATCHING'] }
+          },
+          take: 1,
+        },
+      }
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.ridesAsPassenger && user.ridesAsPassenger.length > 0) {
+      throw new BadRequestException('Cannot delete account while you have an active ride in progress. Please complete or cancel the ride first.');
+    }
+
+    if (user.driverProfile) {
+      const activeDriverRides = await this.prisma.ride.findFirst({
+        where: {
+          driverId: user.driverProfile.id,
+          status: { in: ['DRIVER_ASSIGNED', 'DRIVER_ARRIVED', 'IN_PROGRESS', 'MATCHING'] },
+        }
+      });
+      if (activeDriverRides) {
+        throw new BadRequestException('Cannot delete account while an active trip is in progress. Please complete your trip first.');
+      }
+      await this.prisma.driverProfile.update({
+        where: { id: user.driverProfile.id },
+        data: { isOnline: false }
+      });
+    }
+
+    const shortId = userId.substring(0, 8);
+    const timestamp = Date.now();
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        status: 'SUSPENDED',
+        fullName: 'Deleted User',
+        nickname: null,
+        email: `deleted_${shortId}_${timestamp}@cabi.africa`,
+        phone: `del_${shortId}_${timestamp}`,
+        passportPhotoUrl: null,
+        privacySettings: {
+          deleted: true,
+          deletedAt: new Date().toISOString(),
+          reason: reason || 'Self-service account deletion',
+        },
+      }
+    });
+
+    return {
+      success: true,
+      message: 'Account successfully deactivated and personal data anonymized.'
+    };
+  }
 }

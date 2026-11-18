@@ -37,7 +37,7 @@ export default function SafetyPage() {
                             </p>
                         </div>
                         <div className="bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 hover:border-[#D4AF37]/40 p-8 rounded-2xl transition-colors">
-                            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Vetted Chauffeurs</h3>
+                            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Vetted Captains</h3>
                             <p className="text-neutral-600 dark:text-neutral-300">
                                 All drivers undergo rigorous background checks and vehicle inspections before joining CABI.
                             </p>

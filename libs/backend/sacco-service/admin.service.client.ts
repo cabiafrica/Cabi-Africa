@@ -3,10 +3,10 @@
  */
 export class AdminServiceClient {
   /**
-   * Fetches the current SACCO savings rate.
+   * Fetches the current Sacco savings rate.
    */
   async getSaccoConfig(): Promise<{ savingsRate: number }> {
-    console.log('Fetching SACCO config from Admin Service...');
+    console.log('Fetching Sacco config from Admin Service...');
     await new Promise(resolve => setTimeout(resolve, 100));
     // Simulate a 5% savings rate on commission
     return { savingsRate: 0.05 };

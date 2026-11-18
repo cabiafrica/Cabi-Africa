@@ -108,7 +108,7 @@ export default function OrganizationDetails() {
           </button>
           <button
             onClick={() => setActiveTab('SUBGROUPS')}
-            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'SUBGROUPS' ? 'bg-brand-purple text-white' : 'text-gray-400 hover:text-white'}`}
+            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'SUBGROUPS' ? 'bg-amber-600 text-white' : 'text-gray-400 hover:text-white'}`}
           >
             Subgroups
           </button>
@@ -215,7 +215,7 @@ export default function OrganizationDetails() {
             </div>
             <button
               onClick={() => setShowSubgroupModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-brand-purple hover:bg-brand-purple/90 text-white rounded-xl font-bold transition-all"
+              className="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl font-bold transition-all"
             >
               <Plus className="w-4 h-4" />
               Add Subgroup
@@ -240,7 +240,7 @@ export default function OrganizationDetails() {
                     <span className="text-xs text-gray-500 font-bold uppercase tracking-wider block mb-2">Features</span>
                     <div className="flex flex-wrap gap-2">
                       {sg.features && sg.features.length > 0 ? sg.features.map(f => (
-                        <span key={f} className="px-2 py-1 bg-brand-purple/20 border border-brand-purple/30 text-brand-purple text-[10px] font-bold rounded uppercase tracking-wider">
+                        <span key={f} className="px-2 py-1 bg-amber-500/20 border border-amber-500/30 text-amber-400 text-[10px] font-bold rounded uppercase tracking-wider">
                           {f}
                         </span>
                       )) : (
@@ -260,7 +260,7 @@ export default function OrganizationDetails() {
             {(org.subgroups || []).length === 0 && (
               <div className="col-span-full py-12 text-center text-gray-500 bg-white/5 rounded-2xl border border-white/10 border-dashed">
                 <p>No subgroups configured yet.</p>
-                <button onClick={() => setShowSubgroupModal(true)} className="text-brand-purple hover:underline mt-2">
+                <button onClick={() => setShowSubgroupModal(true)} className="text-amber-400 hover:underline mt-2">
                   Create the first subgroup
                 </button>
               </div>
@@ -282,7 +282,7 @@ export default function OrganizationDetails() {
                   placeholder="e.g. Welfare Committee"
                   value={newSubgroup.name}
                   onChange={e => setNewSubgroup({ ...newSubgroup, name: e.target.value })}
-                  className="w-full bg-black/50 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-brand-purple"
+                  className="w-full bg-black/50 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
               <div>
@@ -292,7 +292,7 @@ export default function OrganizationDetails() {
                   placeholder="e.g. WELFARE, INVESTMENT"
                   value={newSubgroup.features}
                   onChange={e => setNewSubgroup({ ...newSubgroup, features: e.target.value })}
-                  className="w-full bg-black/50 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-brand-purple"
+                  className="w-full bg-black/50 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
             </div>
@@ -306,7 +306,7 @@ export default function OrganizationDetails() {
               <button
                 onClick={handleCreateSubgroup}
                 disabled={!newSubgroup.name}
-                className="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-brand-purple hover:bg-brand-purple/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-3 px-4 rounded-xl font-bold text-white bg-amber-600 hover:bg-amber-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Create Subgroup
               </button>

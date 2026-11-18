@@ -5,20 +5,35 @@ import '../config/app_config.dart';
 
 class ReferralCommission {
   final double totalCommission;
+  final double pendingEscrow;
+  final int level1Count;
+  final int level1Cap;
+  final int level2Count;
+  final int level2Cap;
   final String status;
   final String date;
 
   ReferralCommission({
     required this.totalCommission,
+    this.pendingEscrow = 0.0,
+    this.level1Count = 0,
+    this.level1Cap = 10,
+    this.level2Count = 0,
+    this.level2Cap = 100,
     required this.status,
     required this.date,
   });
 
   factory ReferralCommission.fromJson(Map<String, dynamic> json) {
     return ReferralCommission(
-      totalCommission: double.tryParse(json['amount'].toString()) ?? 0.0,
-      status: json['status'] ?? 'PENDING',
-      date: json['date'] ?? '',
+      totalCommission: double.tryParse((json['availableBalance'] ?? json['amount'] ?? 0).toString()) ?? 0.0,
+      pendingEscrow: double.tryParse((json['pendingEscrowBalance'] ?? 0).toString()) ?? 0.0,
+      level1Count: int.tryParse((json['level1DriversCount'] ?? 0).toString()) ?? 0,
+      level1Cap: int.tryParse((json['level1DriversCap'] ?? 10).toString()) ?? 10,
+      level2Count: int.tryParse((json['level2DriversCount'] ?? 0).toString()) ?? 0,
+      level2Cap: int.tryParse((json['level2DriversCap'] ?? 100).toString()) ?? 100,
+      status: json['status'] ?? 'PENDING_REVIEW',
+      date: json['date'] ?? json['createdAt'] ?? '',
     );
   }
 }

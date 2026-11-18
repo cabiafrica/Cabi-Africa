@@ -49,7 +49,7 @@ interface Transaction {
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const token = localStorage.getItem('token');
+  const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') || localStorage.getItem('token') : null;
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
     headers: {

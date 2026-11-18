@@ -231,7 +231,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
             const SizedBox(height: 14),
             Text(
-              'Your dedicated ${vehicle.name} chauffeur has been locked for ${duration.durationStr} (${duration.includedKm} km included). SACCO VIP occurrence log initialized.',
+              'Your dedicated ${vehicle.name} captain has been locked for ${duration.durationStr} (${duration.includedKm} km included). Sacco VIP occurrence log initialized.',
               style: AppTheme.inter(
                 fontSize: 13,
                 color: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
@@ -276,7 +276,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   Navigator.pop(ctx);
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Chauffeur mission dispatched.')),
+                    const SnackBar(content: Text('Captain mission dispatched.')),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -318,7 +318,7 @@ class _BookingScreenState extends State<BookingScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Hourly Chauffeur Hire',
+          'Hourly Captain Hire',
           style: AppTheme.outfit(
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -393,7 +393,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Dedicated Chauffeur by the Hour',
+                    'Dedicated Captain by the Hour',
                     style: AppTheme.outfit(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
@@ -770,7 +770,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   _buildAmenity(Icons.local_drink_rounded, 'Mineral Water', gold, isDark),
                   _buildAmenity(Icons.wifi_rounded, '5G Onboard', gold, isDark),
                   _buildAmenity(Icons.battery_charging_full_rounded, 'USB Fast-Charge', gold, isDark),
-                  _buildAmenity(Icons.verified_rounded, 'SACCO Vetted', gold, isDark),
+                  _buildAmenity(Icons.verified_rounded, 'Sacco Vetted', gold, isDark),
                 ],
               ),
             ),
@@ -820,7 +820,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     elevation: 4,
                   ),
                   child: Text(
-                    'Confirm Chauffeur',
+                    'Confirm Captain',
                     style: AppTheme.outfit(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,

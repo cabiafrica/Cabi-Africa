@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../theme/app_theme.dart';
 
 class DriverSupportScreen extends StatelessWidget {
   const DriverSupportScreen({super.key});
 
-  // Example Logic for Drivers under an organziation
   final bool isUnderOrganization = true;
 
   Future<void> _makePhoneCall(String phoneNumber) async {
@@ -30,218 +31,259 @@ class DriverSupportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xFFFFBE0B); // Amber
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? AppTheme.obsidianCanvas : AppTheme.porcelainCanvas;
+    final surfaceColor = isDark ? AppTheme.surfaceContainer : AppTheme.porcelainSurface;
+    final textColor = isDark ? Colors.white : AppTheme.porcelainTextPrimary;
+    final subtextColor = isDark ? Colors.white60 : AppTheme.porcelainTextSecondary;
+    final accent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: bgColor,
       appBar: AppBar(
-        title: const Text('Driver Support'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        title: Text(
+          'CAPTAIN SUPPORT & WELFARE',
+          style: GoogleFonts.inter(
+            color: accent,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.5,
+            fontSize: 13,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: accent),
       ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Column(
           children: [
-            // Header
+            // Header Banner
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(24),
-              color: Colors.grey[50],
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDark ? AppTheme.outlineBorder : AppTheme.porcelainOutline,
+                ),
+              ),
               child: Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    width: 54,
+                    height: 54,
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.05),
-                              blurRadius: 10)
-                        ]),
-                    child: const Icon(Icons.headset_mic,
-                        size: 48, color: Colors.black),
+                      color: accent.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.headset_mic_rounded, size: 28, color: accent),
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "Need Assistance?",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 14),
                   Text(
-                    "Select an option below to get help.",
-                    style: TextStyle(color: Colors.grey[600]),
+                    "Captain Dispatch Care",
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: textColor,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "24/7 dedicated assistance for road patrol, vehicle issues & SACCO queries.",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      color: subtextColor,
+                      fontSize: 12,
+                      height: 1.35,
+                    ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
-            // Organization Team Leader (Conditional)
+            // Organization Team Leader
             if (isUnderOrganization) ...[
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("Your Organization",
-                      style: TextStyle(
-                          color: Colors.grey[800],
-                          fontWeight: FontWeight.bold)),
-                ),
-              ),
+              _buildSectionHeader("SACCO / FLEET PATROL", isDark, accent),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                    color: primaryColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border:
-                        Border.all(color: primaryColor.withValues(alpha: 0.3))),
+                  color: surfaceColor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: isDark ? AppTheme.outlineBorder : AppTheme.porcelainOutline,
+                  ),
+                ),
                 child: Row(
                   children: [
-                    const CircleAvatar(
-                      backgroundColor: Colors.black,
-                      child: Icon(Icons.person, color: primaryColor),
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.green.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.shield_outlined, color: Colors.green, size: 22),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 14),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("Team Leader",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          Text("Contact your fleet manager",
-                              style: TextStyle(
-                                  fontSize: 12, color: Colors.grey[700])),
+                          Text(
+                            "2NK SACCO Fleet Manager",
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13.5,
+                              color: textColor,
+                            ),
+                          ),
+                          Text(
+                            "Direct route marshal & welfare desk",
+                            style: GoogleFonts.inter(fontSize: 11, color: subtextColor),
+                          ),
                         ],
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.call, color: Colors.green),
+                      icon: const Icon(Icons.phone_in_talk_rounded, color: Colors.green),
                       onPressed: () => _makePhoneCall("+254711111111"),
-                    )
+                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
             ],
 
-            // General Support
-            _buildSectionHeader("Contact Support"),
+            // General Channels
+            _buildSectionHeader("COMMUNICATION CHANNELS", isDark, accent),
             _buildContactOption(
               context,
-              icon: Icons.phone_in_talk,
-              title: "Call Helpline",
-              subtitle: "Emergency & General queries",
+              icon: Icons.phone_in_talk_rounded,
+              title: "Toll-Free Dispatch Helpline",
+              subtitle: "Immediate emergency & accident escalation",
               iconColor: Colors.green,
+              isDark: isDark,
+              textColor: textColor,
+              subtextColor: subtextColor,
               onTap: () => _makePhoneCall("+254700000000"),
             ),
             _buildContactOption(
               context,
-              icon: Icons.admin_panel_settings,
-              title: "System Admin Request",
-              subtitle: "Request admin intervention",
-              iconColor: Colors.red,
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Opening Admin Support Ticket Form...")));
-                // Navigate to ticket form
-              },
-            ),
-            _buildContactOption(
-              context,
-              icon: Icons.email_outlined,
-              title: "Email Support",
-              subtitle: "For document submissions & reports",
-              iconColor: Colors.blue,
-              onTap: () => _sendEmail("drivers@cabiapp.com"),
-            ),
-            _buildContactOption(
-              context,
-              icon: Icons.chat_bubble_outline,
-              title: "Driver Chatbot",
-              subtitle: "Instant automated assistance",
-              iconColor: const Color(0xFFD4AF37),
-              onTap: () {
-                // Open Chat
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Connecting to Driver Bot...")));
-              },
-            ),
-            _buildContactOption(
-              context,
-              icon: Icons.phone_callback,
-              title: "Request Callback",
-              subtitle: "Queue for a callback from admin",
-              iconColor: Colors.orange,
+              icon: Icons.chat_bubble_outline_rounded,
+              title: "Live Chat with Dispatch",
+              subtitle: "Average response time: < 2 minutes",
+              iconColor: Colors.blueAccent,
+              isDark: isDark,
+              textColor: textColor,
+              subtextColor: subtextColor,
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Callback request queued.")));
+                  const SnackBar(
+                    content: Text("Connecting to real-time dispatch radio..."),
+                    backgroundColor: Colors.blueAccent,
+                  ),
+                );
               },
             ),
-
-            const SizedBox(height: 30),
-
-            // Helpful Links
-            _buildSectionHeader("Resources"),
-            ListTile(
-              leading: const Icon(Icons.book, color: Colors.grey),
-              title: const Text("Driver Handbook"),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () {},
+            _buildContactOption(
+              context,
+              icon: Icons.mail_outline_rounded,
+              title: "Driver Welfare & Disputes",
+              subtitle: "welfare@cabi.africa • 24hr ticket SLA",
+              iconColor: accent,
+              isDark: isDark,
+              textColor: textColor,
+              subtextColor: subtextColor,
+              onTap: () => _sendEmail("welfare@cabi.africa"),
             ),
-            ListTile(
-              leading: const Icon(Icons.policy, color: Colors.grey),
-              title: const Text("Privacy & Policy"),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () {},
-            ),
-
-            const SizedBox(height: 40),
+            const SizedBox(height: 32),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title, bool isDark, Color accent) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+      padding: const EdgeInsets.only(left: 4, bottom: 8),
       child: Align(
         alignment: Alignment.centerLeft,
-        child: Text(title,
-            style: const TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey)),
+        child: Text(
+          title,
+          style: GoogleFonts.inter(
+            fontSize: 10.5,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.5,
+            color: accent,
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildContactOption(BuildContext context,
-      {required IconData icon,
-      required String title,
-      required String subtitle,
-      required Color iconColor,
-      required VoidCallback onTap}) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      leading: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: iconColor.withValues(alpha: 0.1),
-          shape: BoxShape.circle,
+  Widget _buildContactOption(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color iconColor,
+    required bool isDark,
+    required Color textColor,
+    required Color subtextColor,
+    required VoidCallback onTap,
+  }) {
+    final surfaceColor = isDark ? AppTheme.surfaceContainer : AppTheme.porcelainSurface;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDark ? AppTheme.outlineBorder : AppTheme.porcelainOutline,
         ),
-        child: Icon(icon, color: iconColor),
       ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text(subtitle,
-          style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-      trailing:
-          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-      onTap: onTap,
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+        onTap: onTap,
+        leading: Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: iconColor.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: iconColor, size: 20),
+        ),
+        title: Text(
+          title,
+          style: GoogleFonts.inter(
+            color: textColor,
+            fontWeight: FontWeight.w700,
+            fontSize: 13.5,
+          ),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(
+            subtitle,
+            style: GoogleFonts.inter(
+              color: subtextColor,
+              fontSize: 11,
+            ),
+          ),
+        ),
+        trailing: Icon(
+          Icons.chevron_right_rounded,
+          color: subtextColor.withValues(alpha: 0.6),
+          size: 20,
+        ),
+      ),
     );
   }
 }
-

@@ -40,7 +40,7 @@ describe('handleSaccoDeduction', () => {
     expect(mockTransactionRepo.create).toHaveBeenCalledWith({
       userId: 'driver-abc',
       amount: 10,
-      type: 'SACCO_SAVING',
+      type: 'Sacco_SAVING',
       relatedTripId: 'trip-xyz-789',
     });
   });

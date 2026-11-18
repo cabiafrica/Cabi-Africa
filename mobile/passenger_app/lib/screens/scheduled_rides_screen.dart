@@ -9,7 +9,7 @@ class PassengerScheduledRide {
   final DateTime scheduledTime;
   final String tier;
   final double fareKES;
-  final String? assignedChauffeur;
+  final String? assignedCaptain;
   final String? vehicleInfo;
   final double? rating;
   final String status;
@@ -21,7 +21,7 @@ class PassengerScheduledRide {
     required this.scheduledTime,
     required this.tier,
     required this.fareKES,
-    this.assignedChauffeur,
+    this.assignedCaptain,
     this.vehicleInfo,
     this.rating,
     this.status = 'CONFIRMED',
@@ -129,7 +129,7 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Scheduled Chauffeurs',
+          'Scheduled Captains',
           style: AppTheme.outfit(
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -208,7 +208,7 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
             ),
             const SizedBox(height: 6),
             Text(
-              'Reserve an executive chauffeur in advance',
+              'Reserve an executive captain in advance',
               style: AppTheme.inter(fontSize: 12, color: isDark ? Colors.white38 : AppTheme.porcelainOutline),
             ),
           ],
@@ -236,19 +236,19 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
     final cardBorderColor = isDark ? AppTheme.outlineGold : AppTheme.aurumBronze;
     final textSecondary = isDark ? Colors.white70 : AppTheme.porcelainTextSecondary;
     final dividerColor = isDark ? Colors.white24 : AppTheme.porcelainOutline;
-    final chauffeurCardColor = isDark ? const Color(0xFF1B1B22) : AppTheme.porcelainSurfaceContainer;
-    final chauffeurBorderColor = isDark ? Colors.white10 : AppTheme.porcelainOutline;
-    final chauffeurAvatarBg = isDark ? const Color(0xFF26262E) : AppTheme.porcelainSurfaceContainer;
+    final captainCardColor = isDark ? const Color(0xFF1B1B22) : AppTheme.porcelainSurfaceContainer;
+    final captainBorderColor = isDark ? Colors.white10 : AppTheme.porcelainOutline;
+    final captainAvatarBg = isDark ? const Color(0xFF26262E) : AppTheme.porcelainSurfaceContainer;
     final fareLabel = isDark ? Colors.white38 : AppTheme.porcelainTextSecondary;
     final calendarBg = isDark ? const Color(0xFF22222A) : AppTheme.porcelainSurfaceContainer;
     final calendarBorder = isDark ? AppTheme.outlineGold : AppTheme.aurumBronze;
-    final statusAssignedBg = ride.status == 'CHAUFFEUR ASSIGNED'
+    final statusAssignedBg = ride.status == 'CAPTAIN ASSIGNED'
         ? AppTheme.successGreen.withValues(alpha: 0.15)
         : (isDark ? Colors.white.withValues(alpha: 0.08) : AppTheme.porcelainSurfaceContainer);
-    final statusAssignedBorder = ride.status == 'CHAUFFEUR ASSIGNED'
+    final statusAssignedBorder = ride.status == 'CAPTAIN ASSIGNED'
         ? AppTheme.successGreen.withValues(alpha: 0.4)
         : (isDark ? Colors.white12 : AppTheme.porcelainOutline);
-    final statusAssignedText = ride.status == 'CHAUFFEUR ASSIGNED'
+    final statusAssignedText = ride.status == 'CAPTAIN ASSIGNED'
         ? AppTheme.successGreen
         : (isDark ? Colors.white70 : AppTheme.porcelainTextSecondary);
 
@@ -383,14 +383,14 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
           ),
           const SizedBox(height: 14),
 
-          // Chauffeur Allocation Info
-          if (ride.assignedChauffeur != null) ...[
+          // Captain Allocation Info
+          if (ride.assignedCaptain != null) ...[
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: chauffeurCardColor,
+                color: captainCardColor,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: chauffeurBorderColor),
+                border: Border.all(color: captainBorderColor),
               ),
               child: Row(
                 children: [
@@ -400,7 +400,7 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(color: gold),
-                      color: chauffeurAvatarBg,
+                      color: captainAvatarBg,
                     ),
                     child: Icon(Icons.person_rounded, color: gold, size: 20),
                   ),
@@ -410,7 +410,7 @@ class _ScheduledRidesScreenState extends ConsumerState<ScheduledRidesScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          ride.assignedChauffeur!,
+                          ride.assignedCaptain!,
                           style: AppTheme.outfit(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,

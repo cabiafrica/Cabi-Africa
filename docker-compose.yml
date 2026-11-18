@@ -116,6 +116,46 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  # Dispatch Service (WebSockets & Real-Time Driver Tracking)
+  dispatch-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      args:
+        SERVICE_NAME: dispatch-service
+    container_name: cabi_dispatch
+    ports:
+      - "3334:3334"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      PORT: 3334
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Caddy Reverse Proxy (Auto-SSL for cabi.africa & WebSockets)
+  caddy:
+    image: caddy:2.7-alpine
+    container_name: cabi_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - auth-gateway
+      - dispatch-service
+      - verification-service
+
 networks:
   default:
     name: cabi_network
@@ -123,3 +163,5 @@ networks:
 volumes:
   postgres_data:
   redis_data:
+  caddy_data:
+  caddy_config:

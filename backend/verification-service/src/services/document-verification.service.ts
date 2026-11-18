@@ -56,11 +56,22 @@ export class DocumentVerificationService {
       );
       this.logger.debug(`AI Analysis Result: ${JSON.stringify(analysis)}`);
 
-      // 2. Save file to disk
-      const fileName = `${userId}-${documentType}-${Date.now()}.${
-        file.mimetype.split('/')[1]
-      }`;
-      const filePath = path.join(this.uploadDir, fileName);
+      // 2. Save file to disk with strict path sanitization
+      const extMap: Record<string, string> = {
+        'image/jpeg': 'jpg',
+        'image/jpg': 'jpg',
+        'image/png': 'png',
+        'image/webp': 'webp',
+      };
+      const safeExt = extMap[file.mimetype] || 'jpg';
+      const safeUserId = String(userId).replace(/[^a-zA-Z0-9_-]/g, '');
+      const safeDocType = String(documentType).replace(/[^a-zA-Z0-9_-]/g, '');
+      const fileName = `${safeUserId}-${safeDocType}-${Date.now()}.${safeExt}`;
+      const resolvedUploadDir = path.resolve(this.uploadDir);
+      const filePath = path.resolve(resolvedUploadDir, fileName);
+      if (!filePath.startsWith(resolvedUploadDir)) {
+        throw new Error('Invalid file path detected');
+      }
       await fs.writeFile(filePath, file.buffer);
 
       // 3. Determine initial status based on AI result

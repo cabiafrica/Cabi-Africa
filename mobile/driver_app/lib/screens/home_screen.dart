@@ -22,6 +22,7 @@ import '../services/audio_notification_service.dart';
 import '../services/floating_bubble_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'profile_screen.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -953,7 +954,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    '2NK SACCO',
+                    '2NK Sacco',
                     style: GoogleFonts.inter(
                       color: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
                       fontSize: 9.5,
@@ -1136,6 +1137,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   tooltip: 'Route Preferences (Destination & Avoid Zones)',
                   onTap: () => _showRoutePreferencesSheet(context),
                 ),
+                const SizedBox(height: 7),
+                _MapButton(
+                  icon: Icons.settings_rounded,
+                  iconColor: isDark ? Colors.white70 : AppTheme.porcelainTextSecondary,
+                  tooltip: 'Settings',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                  ),
+                ),
                 const SizedBox(height: 10),
                 const SosButton(size: 42),
               ],
@@ -1217,7 +1228,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   ),
                   const SizedBox(height: 12),
 
-                  // Chauffeur Vehicle & Trust Dignity Banner (Zero Earnings)
+                  // Captain Vehicle & Trust Dignity Banner (Zero Earnings)
                   Consumer(
                     builder: (context, ref, child) {
                       final authState = ref.watch(authProvider);

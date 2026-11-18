@@ -29,8 +29,7 @@ export function RegistrationForm() {
     setError(null);
     setSuccess(null);
 
-    // TODO: Integrate Google reCAPTCHA and get the token.
-    const recaptchaToken = "mock-recaptcha-token";
+    const recaptchaToken = (typeof window !== 'undefined' && (window as any).grecaptcha?.getResponse?.()) || '';
 
     try {
       const response = await fetch("/api/v1/driver-leads/register", {

@@ -143,6 +143,7 @@ export default function CorporateRegisterPage() {
             <Head>
                 <title>Register Corporate Account | Cabi for Business</title>
                 <meta name="description" content="Set up your enterprise corporate travel account on Cabi Africa. Manage employee rides, ride policies, and unified billing." />
+                <meta property="og:title" content="Register Corporate Account | Cabi for Business" />
             </Head>
 
             <Header />

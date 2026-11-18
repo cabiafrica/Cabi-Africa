@@ -13,6 +13,7 @@ import {
   UnauthorizedException,
   ForbiddenException,
 } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { MpesaService } from './mpesa.service';
 import {
   StkPushRequest,
@@ -50,6 +51,7 @@ export class MpesaController {
     const perms: string[] = Array.isArray(user.permissions) ? user.permissions : [];
     const isAdmin =
       user.role === 'ADMIN' ||
+      user.role === 'SUPER_ADMIN' ||
       perms.some((p) => p.startsWith('FINANCE_') || p === 'SUPER_ADMIN');
     if (!isAdmin) {
       throw new ForbiddenException('Finance or Admin privileges required for M-Pesa administrative operations.');
@@ -60,22 +62,31 @@ export class MpesaController {
     const expectedSecret = process.env.MPESA_WEBHOOK_SECRET;
     if (expectedSecret) {
       const provided = headers?.['x-mpesa-webhook-secret'] || req?.query?.secret;
-      if (provided !== expectedSecret) {
+      if (!provided || typeof provided !== 'string') {
+        this.logger.warn('Rejected M-Pesa callback: missing webhook secret');
+        throw new UnauthorizedException('Invalid M-Pesa webhook signature');
+      }
+      const bufExpected = Buffer.from(expectedSecret);
+      const bufProvided = Buffer.from(provided);
+      if (bufExpected.length !== bufProvided.length || !crypto.timingSafeEqual(bufExpected, bufProvided)) {
         this.logger.warn('Rejected M-Pesa callback with invalid webhook secret');
         throw new UnauthorizedException('Invalid M-Pesa webhook signature');
       }
       return;
     }
 
-    if (process.env.NODE_ENV === 'production' && process.env.MPESA_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production') {
       const forwardedFor = headers?.['x-forwarded-for']?.split(',')[0]?.trim();
       const remoteIp = forwardedFor || req?.ip || req?.socket?.remoteAddress || '';
       const normalizedIp = remoteIp.replace(/^::ffff:/, '');
       if (!SAFARICOM_ALLOWED_IPS.has(normalizedIp)) {
-        this.logger.warn(`Rejected M-Pesa callback from untrusted IP: ${normalizedIp}`);
+        this.logger.warn(`Rejected M-Pesa callback from untrusted IP in production: ${normalizedIp}`);
         throw new ForbiddenException('Untrusted M-Pesa callback origin');
       }
+      return;
     }
+
+    this.logger.warn('[SECURITY WARNING] M-Pesa callback received without MPESA_WEBHOOK_SECRET configured.');
   }
 
   @Post('stk-push')
@@ -86,12 +97,21 @@ export class MpesaController {
     if (!request.phoneNumber || !request.amount || !request.accountReference) {
       throw new BadRequestException('Missing required fields: phoneNumber, amount, accountReference');
     }
-    if (!Number.isFinite(Number(request.amount)) || Number(request.amount) <= 0) {
-      throw new BadRequestException('Amount must be a positive number');
+    const cleanPhone = String(request.phoneNumber).replace(/[\s-]/g, '');
+    const phoneRegex = /^(?:\+254|254|0)?[17]\d{8}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+      throw new BadRequestException('Invalid Kenyan mobile phone number format');
+    }
+
+    const numAmount = Number(request.amount);
+    if (!Number.isFinite(numAmount) || numAmount < 1 || numAmount > 250000) {
+      throw new BadRequestException('Amount must be between KES 1 and 250,000');
     }
 
     const response = await this.mpesaService.initiateStkPush({
       ...request,
+      phoneNumber: cleanPhone,
+      amount: numAmount,
       transactionDesc: request.transactionDesc || 'Cabi Africa Payment',
     });
 

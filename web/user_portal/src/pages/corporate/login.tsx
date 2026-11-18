@@ -58,6 +58,7 @@ export default function CorporateLoginPage() {
             <Head>
                 <title>Corporate Login | Cabi for Business</title>
                 <meta name="description" content="Sign in to your Cabi for Business Corporate Admin Portal to manage company rides, employee allowances, and travel policies." />
+                <meta property="og:title" content="Corporate Login | Cabi for Business" />
             </Head>
 
             <Header />

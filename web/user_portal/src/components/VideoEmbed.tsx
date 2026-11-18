@@ -21,8 +21,8 @@ export default function VideoEmbed({
     const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
 
-    // Use privacy-enhanced mode (youtube-nocookie.com)
-    const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=${autoplay ? 1 : 0}&rel=0`;
+    // Use privacy-enhanced mode (youtube-nocookie.com) with muted autoplay for WCAG compliance
+    const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=${autoplay ? 1 : 0}&mute=${autoplay ? 1 : 0}&rel=0`;
 
     const handleLoad = () => {
         setIsLoading(false);

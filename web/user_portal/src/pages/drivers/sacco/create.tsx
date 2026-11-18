@@ -1,7 +1,7 @@
 /**
  * create.tsx — Redirects to /drivers/sacco/manage
  *
- * Drivers no longer create internal SACCOs on the platform.
+ * Drivers no longer create internal Saccos on the platform.
  * The Super Admin configures a single external Sacco partner.
  * Drivers opt in/out from the manage page.
  */

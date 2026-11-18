@@ -128,9 +128,9 @@ export default function BlogManagementPage() {
                 <div className="max-w-5xl mx-auto">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900">
+                        <h2 className="text-3xl font-bold text-gray-900">
                             {currentPost.id ? 'Edit Post' : 'Create New Post'}
-                        </h1>
+                        </h2>
                         <button
                             onClick={() => setIsEditing(false)}
                             className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"

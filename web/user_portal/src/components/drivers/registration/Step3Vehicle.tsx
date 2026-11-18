@@ -26,57 +26,45 @@ interface Props {
 
 export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
   const [isSearching, setIsSearching] = useState(false);
+  const [transferFeedback, setTransferFeedback] = useState<string | null>(null);
 
-  const handleSearch = () => {
-    if (!data.searchQuery) return;
+  const handleSearch = async () => {
+    if (!data.searchQuery.trim()) return;
     setIsSearching(true);
-    
-    // Simulate API call to check if vehicle exists
-    setTimeout(() => {
-      setIsSearching(false);
-      // Let's simulate that 'KDA' plates exist, others don't
-      const plate = data.searchQuery.toUpperCase();
-      if (plate.startsWith('KDA')) {
+    setTransferFeedback(null);
+    const plate = data.searchQuery.trim().toUpperCase();
+
+    try {
+      const res = await fetch(`/api/vehicles/check?plateNumber=${encodeURIComponent(plate)}`);
+      const result = await res.json();
+
+      if (result.exists && result.vehicle) {
         onChange({
           isVehicleFound: true,
           foundVehicleInfo: {
-            make: 'Toyota',
-            model: 'Corolla',
-            plate: plate,
+            make: result.vehicle.make || 'Registered',
+            model: result.vehicle.model || 'Vehicle',
+            plate: result.vehicle.plateNumber || plate,
             currentDriverCount: 1,
             ownerAllowsCoDriver: true,
-          }
+          },
         });
-      } else if (plate.startsWith('FULL')) {
-        onChange({
-          isVehicleFound: true,
-          foundVehicleInfo: {
-            make: 'Nissan',
-            model: 'Note',
-            plate: plate,
-            currentDriverCount: 2,
-            ownerAllowsCoDriver: true,
-          }
-        });
-      } else if (plate.startsWith('NO')) {
-        onChange({
-          isVehicleFound: true,
-          foundVehicleInfo: {
-            make: 'Honda',
-            model: 'Fit',
-            plate: plate,
-            currentDriverCount: 1,
-            ownerAllowsCoDriver: false,
-          }
-        });
-      }
-      else {
+      } else {
         onChange({
           isVehicleFound: false,
-          licensePlate: plate // Pre-fill the form
+          foundVehicleInfo: null,
+          licensePlate: plate,
         });
       }
-    }, 1500);
+    } catch {
+      onChange({
+        isVehicleFound: false,
+        foundVehicleInfo: null,
+        licensePlate: plate,
+      });
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -173,8 +161,10 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">License Plate *</label>
+            <label htmlFor="vehicle-license-plate" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">License Plate *</label>
             <input
+              id="vehicle-license-plate"
+              aria-label="License Plate"
               type="text"
               name="licensePlate"
               value={data.licensePlate}
@@ -186,8 +176,10 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Make *</label>
+            <label htmlFor="vehicle-make" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Make *</label>
             <input
+              id="vehicle-make"
+              aria-label="Vehicle Make"
               type="text"
               name="vehicleMake"
               value={data.vehicleMake}
@@ -197,8 +189,10 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Model *</label>
+            <label htmlFor="vehicle-model" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Model *</label>
             <input
+              id="vehicle-model"
+              aria-label="Vehicle Model"
               type="text"
               name="vehicleModel"
               value={data.vehicleModel}
@@ -211,8 +205,10 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Year *</label>
+              <label htmlFor="vehicle-year" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Year *</label>
               <input
+                id="vehicle-year"
+                aria-label="Vehicle Year"
                 type="number"
                 name="vehicleYear"
                 value={data.vehicleYear}
@@ -242,8 +238,10 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
         </div>
 
         <div className="bg-[#D4AF37]/10 p-5 rounded-xl border border-[#D4AF37]/30 mt-6">
-          <label className="flex items-start gap-3 cursor-pointer">
+          <label className="flex items-start gap-3 cursor-pointer" htmlFor="vehicle-allow-co-driver">
             <input
+              id="vehicle-allow-co-driver"
+              aria-label="Allow Co-Driver (Shift Sharing)"
               type="checkbox"
               name="allowCoDriver"
               checked={data.allowCoDriver}
@@ -284,6 +282,8 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
               <Search className="text-neutral-400 w-5 h-5" />
             </div>
             <input
+              id="vehicle-search-query"
+              aria-label="Search Number Plate"
               type="text"
               name="searchQuery"
               value={data.searchQuery}
@@ -295,6 +295,12 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
           <button
             type="button"
             onClick={handleSearch}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSearch();
+              }
+            }}
             disabled={isSearching || !data.searchQuery}
             className="px-8 py-4 bg-[#D4AF37] hover:bg-[#ffe088] text-black font-extrabold rounded-xl disabled:opacity-50 transition-colors shadow-lg"
           >
