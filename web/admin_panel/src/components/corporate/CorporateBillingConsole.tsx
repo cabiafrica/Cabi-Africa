@@ -154,7 +154,12 @@ export const CorporateBillingConsole: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          <label htmlFor="corporate-client-select" className="sr-only">
+            Select Corporate Client
+          </label>
           <select
+            id="corporate-client-select"
+            aria-label="Select Corporate Client"
             value={selectedCompanyId}
             onChange={(e) => setSelectedCompanyId(e.target.value)}
             className="px-3 py-2 text-xs font-semibold rounded-lg bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
