@@ -63,6 +63,13 @@ export class SettingsController {
         return this.settingsService.updateDriverSavingsPreference(driverProfileId, dto);
     }
 
+    @Get('system')
+    @ApiOperation({ summary: 'Get all system settings' })
+    @ApiResponse({ status: 200, description: 'All system settings retrieved successfully.' })
+    async getAllSystemSettings() {
+        return this.settingsService.getAllSystemSettings();
+    }
+
     @Get('system/:key')
     @ApiOperation({ summary: 'Get system setting by key' })
     async getSystemSetting(@Param('key') key: string) {

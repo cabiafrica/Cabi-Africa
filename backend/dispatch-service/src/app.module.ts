@@ -12,6 +12,12 @@ import { AdminBadgeController } from './badge/admin-badge.controller';
 import { CommissionModule } from './commission/commission.module';
 import { CommissionController } from './commission/commission.controller';
 import { SafetyModule } from './safety/safety.module';
+import { ChatModule } from './chat/chat.module';
+import { VoiceModule } from './voice/voice.module';
+import { UssdModule } from './ussd/ussd.module';
+import { CorporateModule } from './corporate/corporate.module';
+import { LostAndFoundModule } from './lost-and-found/lost-and-found.module';
+import { DisputeModule } from './dispute/dispute.module';
 import { WelfareModule } from './welfare/welfare.module';
 import { WealthModule } from './wealth/wealth.module';
 import { PricingModule } from './pricing/pricing.module';
@@ -28,6 +34,12 @@ import { MockTripService } from './mock-trip.service';
         CommissionModule,
         UserModule,
         SafetyModule,
+        ChatModule,
+        VoiceModule,
+        UssdModule,
+        CorporateModule,
+        LostAndFoundModule,
+        DisputeModule,
         SettingsModule,
         WelfareModule,
         WealthModule,

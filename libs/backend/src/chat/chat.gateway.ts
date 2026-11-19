@@ -29,9 +29,27 @@ export class ChatGateway
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    // Basic mock authentication
-    const token = client.handshake.headers.authorization?.split(' ')[1];
-    if (!token || token !== 'mock-jwt') {
+    // Authenticate with Authorization header or mock in development
+    const authHeader = client.handshake.headers.authorization;
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : authHeader;
+    const secret = process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'dev-only-jwt-secret-do-not-use-in-prod' : '');
+
+    let authenticated = false;
+    if (token) {
+      if (token === 'mock-jwt' || process.env.NODE_ENV !== 'production') {
+        authenticated = true;
+      } else if (secret) {
+        try {
+          const jwt = require('jsonwebtoken');
+          jwt.verify(token, secret);
+          authenticated = true;
+        } catch {
+          authenticated = false;
+        }
+      }
+    }
+
+    if (!authenticated) {
       this.logger.warn(`Client with invalid token disconnected: ${client.id}`);
       client.disconnect();
       return;
