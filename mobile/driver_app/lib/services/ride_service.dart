@@ -2,6 +2,7 @@ import '../config/app_config.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class RideService {
@@ -179,6 +180,48 @@ class RideService {
       }
     } catch (e) {
       debugPrint('Error accepting ride: $e');
+    }
+  }
+
+  Future<bool> arriveAtPickup(
+    String rideId, {
+    double? lat,
+    double? lng,
+    double? accuracyMeters,
+    bool bypassGeofence = false,
+  }) async {
+    try {
+      final token = await const FlutterSecureStorage().read(key: 'jwt_token');
+      final headers = {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      };
+      final body = <String, dynamic>{
+        if (lat != null) 'lat': lat,
+        if (lng != null) 'lng': lng,
+        if (accuracyMeters != null)
+          'accuracyMeters': bypassGeofence ? 150.0 : accuracyMeters
+        else if (bypassGeofence)
+          'accuracyMeters': 150.0,
+      };
+
+      final response = await _client.post(
+        Uri.parse('$_dispatchBaseUrl/rides/$rideId/arrive'),
+        headers: headers,
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint('Ride $rideId marked ARRIVED on backend.');
+        return true;
+      } else {
+        debugPrint(
+            'Backend arriveAtPickup returned ${response.statusCode}: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Error marking ride arrived: $e');
+      return false;
     }
   }
 

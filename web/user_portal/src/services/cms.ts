@@ -89,7 +89,7 @@ const MOCK_POSTS: BlogPost[] = [
     content: `
       <p class="lead text-lg text-slate-300 mb-6">Urban transportation across major African metropolises is undergoing a profound digital transformation. In cities like Nairobi, Mombasa, and Kisumu, traditional transport ecosystems often grapple with unpredictable pricing, congested corridors, and oppressive commissions deducted from drivers.</p>
       <h3 class="text-2xl font-bold text-white mt-8 mb-4">Empowering Drivers with Cooperative Technology</h3>
-      <p class="text-slate-300 mb-4 leading-relaxed">Cabi was engineered to break the cycle of oppressive commissions. By introducing an ethical reusable commission model, Cabi ensures that fees charged are not for corporate enrichment, but are actively recycled into driver wealth creation, vehicle asset equity, and collective benefits, alongside predictable, dynamic micro-pricing for passengers.</p>
+      <p class="text-slate-300 mb-4 leading-relaxed">Cabi was engineered to break the cycle of oppressive commissions. By introducing an ethical reusable commission model, Cabi ensures that fees charged are not for corporate enrichment, but are actively recycled into Cabi Legacy programs, vehicle asset equity, and collective benefits, alongside predictable, dynamic micro-pricing for passengers.</p>
       <h3 class="text-2xl font-bold text-white mt-8 mb-4">Electrification and Micro-Mobility</h3>
       <p class="text-slate-300 mb-4 leading-relaxed">The next frontier for Kenya's mobility landscape is green transit. With clean energy initiatives expanding across East Africa, Cabi is actively testing EV two-wheeler and three-wheeler fleet routing with battery swap stations strategically located around Nairobi's commercial nodes. This reduces daily fuel expenditures by up to 60% and slashes emissions across busy urban corridors.</p>
       <h3 class="text-2xl font-bold text-white mt-8 mb-4">Safety and Identity Integration</h3>
@@ -102,7 +102,7 @@ const MOCK_POSTS: BlogPost[] = [
   {
     id: '2',
     title: 'The Road to Dignity: Why Drivers and Commuters Across Africa Believe in Cabi',
-    summary: 'A candid look at the daily hustle on our roads—and how a reusable commission model, dedicated wealth creation savings, and mutual respect are turning daily miles into real hope and long-term asset ownership.',
+    summary: 'A candid look at the daily hustle on our roads—and how a reusable commission model, dedicated Cabi Legacy savings, and mutual respect are turning daily miles into real hope and long-term asset ownership.',
     imageUrl: '/images/blog/driver-economic-growth.jpg',
     publishedDate: new Date(Date.now() - 86400000).toISOString(),
     authorName: 'Cabi Editorial Desk',
@@ -110,20 +110,20 @@ const MOCK_POSTS: BlogPost[] = [
       <p class="lead text-lg text-slate-700 dark:text-slate-200 mb-6 font-medium">Anyone who has sat behind the wheel in Nairobi, Mombasa, Kampala, or Lagos knows the honest, exhausting reality of the road: fourteen hours in gridlock, unpredictable fuel prices, and apps that take very high and oppressive commissions before you have even paid for lunch, let alone your vehicle lease. For years, the men and women who keep our cities breathing have shouldered the greatest risk for the smallest reward.</p>
 
       <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-8 mb-4">A Fairer Model Built on African Soil</h3>
-      <p class="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed">Cabi was not designed in a boardroom thousands of miles away. It was engineered right here, in partnership with driver cooperatives, fleet owners, and wealth creation partners who asked a simple question: <em>What if the platform worked for the driver, instead of the driver working for the platform?</em></p>
+      <p class="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed">Cabi was not designed in a boardroom thousands of miles away. It was engineered right here, in partnership with driver cooperatives, fleet owners, and Cabi Legacy partners who asked a simple question: <em>What if the platform worked for the driver, instead of the driver working for the platform?</em></p>
       
-      <p class="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed">Instead of draining daily revenue through oppressive commissions, Cabi introduces an ethical reusable commission model. In as much as a commission is charged, it is reusable—channeled directly into driver wealth creation, healthcare pools, and vehicle asset savings, rather than corporate extraction or personal enrichment. Every shilling earned hits the driver's mobile money or bank wallet instantly and automatically at the end of each shift. No delays. No opaque accounting. No guessing whether you will make rent at the end of the month.</p>
+      <p class="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed">Instead of draining daily revenue through oppressive commissions, Cabi introduces an ethical reusable commission model. In as much as a commission is charged, it is reusable—channeled directly into Cabi Legacy funds, healthcare pools, and vehicle asset savings, rather than corporate extraction or personal enrichment. Every shilling earned hits the driver's mobile money or bank wallet instantly and automatically at the end of each shift. No delays. No opaque accounting. No guessing whether you will make rent at the end of the month.</p>
 
       <div class="my-8 p-6 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-slate-900 dark:text-white">
-        <p class="text-base font-semibold italic mb-2">"For the first time in five years of driving, I am not just surviving day-to-day. My daily trips now contribute automatically to my driver wealth fund and vehicle maintenance savings. Cabi made me feel like a valued partner, not an invisible algorithm."</p>
-        <span class="text-xs uppercase tracking-wider font-bold text-amber-600 dark:text-amber-400">— Samuel M., Cabi Driver Partner & Wealth Creation Advocate, Nairobi</span>
+        <p class="text-base font-semibold italic mb-2">"For the first time in five years of driving, I am not just surviving day-to-day. My daily trips now contribute automatically to my Cabi Legacy fund and vehicle maintenance savings. Cabi made me feel like a valued partner, not an invisible algorithm."</p>
+        <span class="text-xs uppercase tracking-wider font-bold text-amber-600 dark:text-amber-400">— Samuel M., Cabi Driver Partner & Legacy Advocate, Nairobi</span>
       </div>
 
       <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-8 mb-4">Three Tangible Benefits Changing Lives</h3>
       <ul class="space-y-3 text-slate-700 dark:text-slate-300 mb-6 list-none pl-0">
         <li class="flex items-start gap-3">
           <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-500 font-bold text-xs shrink-0 mt-0.5">✓</span>
-          <span><strong>Pathways to Vehicle Ownership:</strong> Through integrated wealth creation financing, every completed ride builds verified financial history, helping drivers transition from endless vehicle rentals to owning their own cars.</span>
+          <span><strong>Pathways to Vehicle Ownership:</strong> Through integrated Cabi Legacy asset financing, every completed ride builds verified financial history, helping drivers transition from endless vehicle rentals to owning their own cars.</span>
         </li>
         <li class="flex items-start gap-3">
           <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-500 font-bold text-xs shrink-0 mt-0.5">✓</span>

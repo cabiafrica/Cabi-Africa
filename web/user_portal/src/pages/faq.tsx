@@ -40,7 +40,7 @@ const faqData: FAQItem[] = [
   {
     category: 'Earnings & Payouts',
     q: 'How much can I earn as a Cabi driver partner?',
-    a: 'Cabi operates on an ethical reusable commission model. In as much as a commission is charged, it is a reusable commission designed purely for driver wealth creation, vehicle equity, and community welfare—never for corporate extraction or personal enrichment. Active drivers in Nairobi and major Kenyan urban corridors take home between Ksh 3,000 to Ksh 7,000+ per day after expenses. Because drivers are not subjected to the oppressive commissions of legacy apps, your take-home pay and asset growth are significantly higher. You can also earn passive rewards through our 2-level referral program.',
+    a: 'Cabi operates on an ethical reusable commission model. In as much as a commission is charged, it is a reusable commission designed purely for Cabi Legacy programs, vehicle equity, and community welfare—never for corporate extraction or personal enrichment. Active drivers in Nairobi and major Kenyan urban corridors take home between Ksh 3,000 to Ksh 7,000+ per day after expenses. Because drivers are not subjected to the oppressive commissions of legacy apps, your take-home pay and asset growth are significantly higher. You can also earn passive rewards through our 2-level referral program.',
   },
   {
     category: 'Earnings & Payouts',
@@ -50,7 +50,7 @@ const faqData: FAQItem[] = [
   {
     category: 'Earnings & Payouts',
     q: 'How do I track my earnings and vehicle upkeep reserves?',
-    a: 'The Cabi Driver app features a comprehensive earnings telemetry dashboard showing real-time earnings per trip, daily totals, tip bonuses, and your automated wealth creation and vehicle maintenance reserves in Ksh. Statements can be exported anytime.',
+    a: 'The Cabi Driver app features a comprehensive earnings telemetry dashboard showing real-time earnings per trip, daily totals, tip bonuses, and your automated Cabi Legacy and vehicle maintenance reserves in Ksh. Statements can be exported anytime.',
   },
 
   // Referral Program (2-Level Incentive)
@@ -99,7 +99,7 @@ const faqData: FAQItem[] = [
   {
     category: 'Driving & Operations',
     q: 'How does Cabi support vehicle repair and routine maintenance?',
-    a: 'Through Cabi\'s reusable commission model, funds collected are channeled directly into driver wealth creation and vehicle maintenance pools rather than company profit extraction. Vehicle repair and servicing become effortless, allowing drivers to routinely acquire genuine spare parts, fresh oil, and brake checks without stress, ensuring cars remain safe, smooth, and well-maintained.',
+    a: 'Through Cabi\'s reusable commission model, funds collected are channeled directly into Cabi Legacy equity and vehicle maintenance pools rather than company profit extraction. Vehicle repair and servicing become effortless, allowing drivers to routinely acquire genuine spare parts, fresh oil, and brake checks without stress, ensuring cars remain safe, smooth, and well-maintained.',
   },
 
   // Passengers & Booking

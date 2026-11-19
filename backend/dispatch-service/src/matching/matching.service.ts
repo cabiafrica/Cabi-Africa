@@ -215,6 +215,11 @@ export class MatchingService {
                             in: ['DRIVER_ASSIGNED', 'DRIVER_ARRIVED', 'IN_PROGRESS', 'MATCHING']
                         }
                     }
+                },
+                user: {
+                    status: {
+                        notIn: ['BLOCKED', 'SUSPENDED']
+                    }
                 }
             },
             include: {

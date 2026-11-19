@@ -1,4 +1,4 @@
-import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, Logger, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
 
 export interface CreatePartnerDto {
@@ -336,6 +336,24 @@ export class FinancialPartnerService {
                         }
                     });
                 } else {
+                    // Check if Sacco enrollment has met the 6-month lock-in requirement
+                    if (item.serviceType === 'Sacco') {
+                        const existing = await (this.prisma as any).driverFinancialConsent?.findFirst({
+                            where: { driverProfileId, serviceType: 'Sacco', status: 'ACTIVE' },
+                        });
+                        if (existing?.createdAt) {
+                            const sixMonthsMs = 180 * 24 * 60 * 60 * 1000;
+                            const timeElapsed = Date.now() - new Date(existing.createdAt).getTime();
+                            if (timeElapsed < sixMonthsMs) {
+                                const unlockDate = new Date(new Date(existing.createdAt).getTime() + sixMonthsMs);
+                                const daysLeft = Math.ceil((sixMonthsMs - timeElapsed) / (1000 * 60 * 60 * 24));
+                                throw new BadRequestException(
+                                    `Sacco 2% + 3% match incentive requires a mandatory 6-month minimum lock-in period. You can opt out in ${daysLeft} days (after ${unlockDate.toLocaleDateString('en-KE', { dateStyle: 'medium' })}).`
+                                );
+                            }
+                        }
+                    }
+
                     // Enforce 60-day policy: Transition to PENDING_CANCELLATION rather than immediate deletion.
                     // Per policy, per-trip deductions continue normally until staff effects termination.
                     const now = new Date();

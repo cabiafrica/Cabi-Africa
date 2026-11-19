@@ -98,12 +98,12 @@ class _LearningCenterScreenState extends State<LearningCenterScreen> with Single
 Anyone who has sat behind the wheel in Nairobi, Mombasa, Kampala, or Lagos knows the honest, exhausting reality of the road: fourteen hours in gridlock, unpredictable fuel prices, and apps that take oppressive commissions before you have even paid for lunch, let alone your vehicle lease.
 
 A Fairer Model Built on African Soil:
-Cabi was engineered right here, in partnership with driver cooperatives, fleet owners, and wealth creation partners who asked a simple question: What if the platform worked for the driver, instead of the driver working for the platform?
+Cabi was engineered right here, in partnership with driver cooperatives, fleet owners, and Cabi Legacy wealth creation partners who asked a simple question: What if the platform worked for the driver, instead of the driver working for the platform?
 
-Instead of draining daily revenue through oppressive commissions, Cabi introduces an ethical reusable commission model. In as much as a commission is charged, it is reusable—channeled directly into driver wealth creation, healthcare pools, and vehicle asset savings, rather than corporate extraction. Every shilling earned hits the driver's mobile money or bank wallet automatically.
+Instead of draining daily revenue through oppressive commissions, Cabi introduces an ethical reusable commission model. In as much as a commission is charged, it is reusable—channeled directly into Cabi Legacy programs (driver wealth accumulation, healthcare pools, and vehicle asset savings), rather than corporate extraction. Every shilling earned hits the driver's mobile money or bank wallet automatically.
 
 Three Tangible Benefits Changing Lives:
-• Pathways to Vehicle Ownership: Through integrated wealth creation financing, every completed ride builds verified financial history, helping drivers transition from endless vehicle rentals to owning their own cars.
+• Pathways to Vehicle Ownership: Through integrated Cabi Legacy asset financing, every completed ride builds verified financial history, helping drivers transition from endless vehicle rentals to owning their own cars.
 • Genuine Welfare & Healthcare Safety Nets: Automated opt-in welfare programs provide emergency health cover, tire and maintenance discounts, and peer support.
 • Two-Way Safety & Dignity: Verified rider identities, mandatory 4-digit start PINs, and real human support protect drivers from arbitrary account lockouts.
         ''',
@@ -155,7 +155,7 @@ Ubuntu teaches us: "I am because we are." When passengers and drivers treat each
 Urban transportation across major African metropolises is undergoing a profound digital transformation. In cities like Nairobi, Mombasa, and Kisumu, traditional transport ecosystems often grapple with unpredictable pricing, congested corridors, and oppressive commissions.
 
 Empowering Drivers with Cooperative Technology:
-Cabi ensures that fees charged are actively recycled into driver wealth creation, vehicle asset equity, and collective benefits, alongside predictable dynamic micro-pricing.
+Cabi ensures that fees charged are actively recycled into Cabi Legacy equity (driver wealth accumulation, vehicle asset equity, and collective benefits), alongside predictable dynamic micro-pricing.
 
 Electrification and Micro-Mobility:
 With clean energy initiatives expanding across East Africa, Cabi is actively testing EV two-wheeler and three-wheeler fleet routing with battery swap stations strategically located around Nairobi's commercial nodes. This reduces daily fuel expenditures by up to 60% and slashes emissions across busy urban corridors.

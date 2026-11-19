@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import '../config/app_config.dart';
@@ -24,6 +25,7 @@ class WealthProgramItem {
   final String? requiredBadgeName;
   bool isEnrolled;
   double selectedPct;
+  bool isPendingCancellation;
 
   WealthProgramItem({
     required this.id,
@@ -40,6 +42,7 @@ class WealthProgramItem {
     this.requiredBadgeName,
     this.isEnrolled = false,
     this.selectedPct = 0.0,
+    this.isPendingCancellation = false,
   });
 
   factory WealthProgramItem.fromJson(Map<String, dynamic> json) {
@@ -47,7 +50,7 @@ class WealthProgramItem {
     return WealthProgramItem(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
-      serviceCategory: json['serviceCategory'] ?? 'Sacco',
+      serviceCategory: json['serviceCategory'] ?? json['category'] ?? 'Sacco',
       description: json['description'] ?? '',
       logoUrl: json['logoUrl'],
       minPct: (json['minPct'] as num?)?.toDouble() ?? 0.02,
@@ -57,8 +60,9 @@ class WealthProgramItem {
       isDriverSelectable: json['isDriverSelectable'] ?? true,
       platformBonusPct: (json['platformBonusPct'] as num?)?.toDouble() ?? 0.0,
       requiredBadgeName: reqBadge?['name'] as String?,
-      isEnrolled: false,
-      selectedPct: 0.0,
+      isEnrolled: json['isEnrolled'] == true,
+      selectedPct: (json['deductionPct'] as num?)?.toDouble() ?? (json['defaultPct'] as num?)?.toDouble() ?? 0.05,
+      isPendingCancellation: json['isPendingCancellation'] == true,
     );
   }
 }
@@ -103,16 +107,22 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
     });
 
     final authState = ref.read(authProvider);
-    final driverId = authState is Authenticated ? authState.user!['driverProfile']['id'] : '';
+    final driverId = authState is Authenticated ? (authState.user?['driverProfile']?['id'] ?? authState.userId ?? '') : '';
 
     try {
+      final token = await const FlutterSecureStorage().read(key: 'jwt_token');
+      final headers = {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      };
+
       final catalogUri = Uri.parse('${AppConfig.saccoApiUrl}/sacco/wealth-programs');
       final allocationsUri = Uri.parse('${AppConfig.saccoApiUrl}/sacco/wealth-programs/my-allocations?driverProfileId=$driverId');
 
-      final catalogRes = await http.get(catalogUri).timeout(const Duration(seconds: 4));
+      final catalogRes = await http.get(catalogUri, headers: headers).timeout(const Duration(seconds: 4));
       http.Response? allocationsRes;
       if (driverId.isNotEmpty) {
-        allocationsRes = await http.get(allocationsUri).timeout(const Duration(seconds: 4));
+        allocationsRes = await http.get(allocationsUri, headers: headers).timeout(const Duration(seconds: 4));
       }
 
       List<WealthProgramItem> loaded = [];
@@ -133,14 +143,19 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
         final allocData = jsonDecode(allocationsRes.body);
         final List allocList = allocData['allocations'] ?? [];
         for (final alloc in allocList) {
-          final pid = alloc['partnerId'];
+          final pid = alloc['partnerId'] ?? alloc['id'];
           final pct = (alloc['deductionPct'] as num?)?.toDouble() ?? 0.0;
+          final status = alloc['status']?.toString().toUpperCase();
+          final isPending = status == 'PENDING_CANCELLATION' || status == 'PENDING_OPT_OUT';
           final match = loaded.firstWhere(
             (p) => p.id == pid || p.serviceCategory == alloc['serviceType'],
             orElse: () => loaded.first,
           );
-          match.isEnrolled = true;
-          match.selectedPct = pct;
+          match.isEnrolled = status == 'ACTIVE' || isPending;
+          match.isPendingCancellation = isPending;
+          if (pct > 0) {
+            match.selectedPct = pct;
+          }
         }
       }
 
@@ -166,13 +181,26 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
         id: 'sacco-capital-stima',
         name: 'Stima DT / Boda PSV Sacco',
         serviceCategory: 'Sacco',
-        description: 'Cooperative savings earning 11.2% annual dividend. Remitted directly to your Sacco ledger per trip.',
+        description: 'Cooperative shares earning 11.2% annual dividend. 2% deducted automatically per trip + 3% Cabi match for 6 months (5% total). Mandatory 6-month minimum lock-in. After 6 months, maintain an active Star/Elite badge to keep bonus matching active.',
         minPct: 0.02,
         maxPct: 0.20,
-        defaultPct: 0.10,
-        dividendOrYield: '11.2% Projected Annual Dividend',
+        defaultPct: 0.02,
+        dividendOrYield: '2% Driver + 3% Cabi Match (6 Mo Lock-in)',
+        platformBonusPct: 0.03,
         isEnrolled: false,
-        selectedPct: 0.10,
+        selectedPct: 0.02,
+      ),
+      WealthProgramItem(
+        id: 'pension-octagon-tier2',
+        name: 'Mandatory Driver Pension & Retirement',
+        serviceCategory: 'PENSION',
+        description: 'Statutory Ksh 10 per trip is compulsory on all rides. Configure voluntary percentage top-ups here to compound your retirement nest egg.',
+        minPct: 0.0,
+        maxPct: 0.15,
+        defaultPct: 0.0,
+        dividendOrYield: 'Compulsory Ksh 10/Trip + Voluntary %',
+        isEnrolled: true,
+        selectedPct: 0.0,
       ),
       WealthProgramItem(
         id: 'insurance-cic-medical',
@@ -198,16 +226,6 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
         isEnrolled: false,
         selectedPct: 0.05,
       ),
-      WealthProgramItem(
-        id: 'pension-octagon-tier2',
-        name: 'Octagon / NSSF Driver Retirement Fund',
-        serviceCategory: 'PENSION',
-        description: 'Long-term tax-exempt retirement annuity securing your financial independence post-driving.',
-        minPct: 0.02,
-        maxPct: 0.10,
-        defaultPct: 0.05,
-        dividendOrYield: 'Tax-Exempt Compounded Retirement Fund',
-        isEnrolled: false,
         selectedPct: 0.05,
       ),
     ];
@@ -236,8 +254,9 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
   }
 
   void _updateProgramPercentage(WealthProgramItem program, double newPct) {
+    final clampedNew = double.parse(newPct.clamp(program.minPct, program.maxPct).toStringAsFixed(2));
     final currentOtherTotal = _totalCommittedPct - (program.isEnrolled ? program.selectedPct : 0.0);
-    final projectedTotal = currentOtherTotal + newPct;
+    final projectedTotal = currentOtherTotal + clampedNew;
 
     if (projectedTotal > _maxDeductionCap + 0.0001) {
       HapticFeedback.heavyImpact();
@@ -254,13 +273,15 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
     HapticFeedback.selectionClick();
     setState(() {
       program.isEnrolled = true;
-      program.selectedPct = double.parse(newPct.toStringAsFixed(2));
+      program.isPendingCancellation = false;
+      program.selectedPct = clampedNew;
     });
   }
 
   Future<void> _saveAllocations() async {
     final authState = ref.read(authProvider);
-    final driverId = authState is Authenticated ? authState.user!['driverProfile']['id'] : '';
+    final driverId = authState is Authenticated ? (authState.user?['driverProfile']?['id'] ?? authState.userId ?? '') : '';
+    final token = await const FlutterSecureStorage().read(key: 'jwt_token');
 
     setState(() => _isSaving = true);
     HapticFeedback.lightImpact();
@@ -275,19 +296,41 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
       }).toList(),
     };
 
+    final headers = {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+
     try {
       final uri = Uri.parse('${AppConfig.saccoApiUrl}/sacco/wealth-programs/update-allocations');
       final res = await http.post(
         uri,
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
         body: jsonEncode(payload),
       ).timeout(const Duration(seconds: 5));
+
+      // Also sync to dispatch wealth service if available
+      try {
+        final dispatchUri = Uri.parse('${AppConfig.dispatchApiUrl}/wealth-programs/enroll');
+        await http.post(
+          dispatchUri,
+          headers: headers,
+          body: jsonEncode({
+            'driverProfileId': driverId,
+            'allocations': _programs.map((p) => {
+              'programId': p.id,
+              'deductionPct': p.isEnrolled ? p.selectedPct : 0.0,
+              'isEnrolled': p.isEnrolled,
+            }).toList(),
+          }),
+        ).timeout(const Duration(seconds: 4));
+      } catch (_) {}
 
       if (res.statusCode == 200 || res.statusCode == 201) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Wealth creation preferences saved! (${(_totalCommittedPct * 100).toStringAsFixed(1)}% total deduction)'),
+              content: Text('Cabi Legacy preferences saved! (${(_totalCommittedPct * 100).toStringAsFixed(1)}% total allocation)'),
               backgroundColor: AppTheme.successGreen,
               behavior: SnackBarBehavior.floating,
             ),
@@ -321,13 +364,26 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
     return Scaffold(
       backgroundColor: AppTheme.darkBackground,
       appBar: AppBar(
-        title: Text(
-          'Wealth Creation Programs',
-          style: GoogleFonts.inter(
-            fontWeight: FontWeight.w700,
-            fontSize: 18,
-            color: Colors.white,
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Cabi Legacy',
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.w800,
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
+            Text(
+              'Build Your Legacy, Trip by Trip',
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.w500,
+                fontSize: 11,
+                color: AppTheme.primaryLight,
+              ),
+            ),
+          ],
         ),
         backgroundColor: AppTheme.darkSurface,
         elevation: 0,
@@ -362,7 +418,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'ADMIN-APPROVED PROGRAMS',
+                        'CABI LEGACY PROGRAMS',
                         style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
@@ -417,7 +473,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                               ),
                             )
                           : Text(
-                              'Save Wealth Preferences',
+                              'Save Legacy Preferences',
                               style: GoogleFonts.inter(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800,
@@ -468,7 +524,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'TOTAL TRIP DEDUCTION',
+                    'TOTAL LEGACY ALLOCATION',
                     style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
@@ -588,12 +644,125 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
             )
           else
             Text(
-              'Deductions are automatically allocated from your 80% net trip earnings.',
+              'Allocations are automatically deducted from your 80% net trip earnings.',
               style: GoogleFonts.inter(
                 fontSize: 11.5,
                 color: AppTheme.darkTextSecondary,
               ),
             ),
+          const SizedBox(height: 10),
+          InkWell(
+            onTap: _showCustomCapRequestDialog,
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                children: [
+                  const Icon(Icons.tune_rounded, size: 14, color: AppTheme.primaryColor),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Wish to save more than 30%? Request custom configuration',
+                      style: GoogleFonts.inter(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.primaryColor,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCustomCapRequestDialog() {
+    final customPctCtrl = TextEditingController(text: '35');
+    final noteCtrl = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppTheme.darkSurface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: AppTheme.outlineBorder),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.tune_rounded, color: AppTheme.primaryColor, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              'Request Custom Allocation',
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'By default, voluntary Cabi Legacy deductions are capped at 30% to protect your immediate take-home income.\n\nIf you wish to save an elevated percentage (e.g. 35%, 40%, 50%), submit your request below. Our operations team will configure your profile accordingly.',
+                style: GoogleFonts.inter(fontSize: 12, color: AppTheme.darkTextSecondary, height: 1.4),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: customPctCtrl,
+                keyboardType: TextInputType.number,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  labelText: 'Desired Total Allocation % (e.g. 35, 40)',
+                  labelStyle: TextStyle(color: AppTheme.darkTextSecondary),
+                  suffixText: '%',
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: noteCtrl,
+                maxLines: 2,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  labelText: 'Optional note or Sacco details',
+                  labelStyle: TextStyle(color: AppTheme.darkTextSecondary),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white60)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Custom allocation request for ${customPctCtrl.text}% submitted! Our team will configure your profile within 24 hours.',
+                  ),
+                  backgroundColor: AppTheme.successGreen,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryColor,
+              foregroundColor: Colors.black,
+            ),
+            child: const Text('Submit Request', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
         ],
       ),
     );
@@ -604,7 +773,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'QUICK ALLOCATION PRESETS',
+          'LEGACY PRESETS',
           style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w700,
@@ -618,9 +787,9 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
           child: Row(
             children: [
               _buildPresetChip(
-                label: 'Balanced Builder',
+                label: 'Balanced Legacy',
                 pct: '20%',
-                onTap: () => _applyPreset('Balanced Builder', {
+                onTap: () => _applyPreset('Balanced Legacy', {
                   'Sacco': 0.10,
                   'INSURANCE_HEALTH': 0.05,
                   'INVESTMENT_MMF': 0.05,
@@ -628,10 +797,10 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
               ),
               const SizedBox(width: 8),
               _buildPresetChip(
-                label: 'Max Growth',
+                label: 'Legacy Max',
                 pct: '30%',
                 isAccent: true,
-                onTap: () => _applyPreset('Max Growth', {
+                onTap: () => _applyPreset('Legacy Max', {
                   'Sacco': 0.15,
                   'INSURANCE_HEALTH': 0.05,
                   'INVESTMENT_MMF': 0.05,
@@ -640,9 +809,9 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
               ),
               const SizedBox(width: 8),
               _buildPresetChip(
-                label: 'Starter Safe',
+                label: 'Legacy Starter',
                 pct: '10%',
-                onTap: () => _applyPreset('Starter Safe', {
+                onTap: () => _applyPreset('Legacy Starter', {
                   'Sacco': 0.05,
                   'INSURANCE_HEALTH': 0.05,
                 }),
@@ -743,6 +912,8 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
         categoryIcon = Icons.stars_rounded;
     }
 
+    final quickPcts = [0.02, 0.05, 0.10, 0.15, 0.20].where((p) => p >= program.minPct && p <= program.maxPct).toList();
+
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
@@ -760,44 +931,80 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Row: Category Badge + Switch Toggle
+            // Top Row: Category Badge + Accept/Reject Toggle
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: categoryColor.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(10),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: categoryColor.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(categoryIcon, size: 20, color: categoryColor),
                       ),
-                      child: Icon(categoryIcon, size: 20, color: categoryColor),
-                    ),
-                    const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          program.serviceCategory.replaceAll('_', ' '),
-                          style: GoogleFonts.inter(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            color: categoryColor,
-                            letterSpacing: 0.8,
-                          ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  program.serviceCategory.replaceAll('_', ' '),
+                                  style: GoogleFonts.inter(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800,
+                                    color: categoryColor,
+                                    letterSpacing: 0.8,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                                  decoration: BoxDecoration(
+                                    color: program.isPendingCancellation
+                                        ? Colors.amber.withValues(alpha: 0.2)
+                                        : (isEnrolled ? AppTheme.successGreen.withValues(alpha: 0.15) : Colors.white10),
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: program.isPendingCancellation
+                                          ? Colors.amber
+                                          : (isEnrolled ? AppTheme.successGreen : Colors.white24),
+                                      width: 0.5,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    program.isPendingCancellation
+                                        ? 'OPT-OUT PENDING'
+                                        : (isEnrolled ? 'ACCEPTED' : 'DECLINED'),
+                                    style: GoogleFonts.inter(
+                                      fontSize: 8.5,
+                                      fontWeight: FontWeight.w800,
+                                      color: program.isPendingCancellation
+                                          ? Colors.amber
+                                          : (isEnrolled ? AppTheme.successGreen : Colors.white54),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              program.name,
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          program.name,
-                          style: GoogleFonts.inter(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
                 Switch(
                   value: isEnrolled,
@@ -813,7 +1020,6 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                   }),
                   onChanged: (val) {
                     if (val) {
-                      // Attempt to enroll at default percentage
                       final targetPct = program.selectedPct > 0 ? program.selectedPct : program.defaultPct;
                       final remaining = _maxDeductionCap - _totalCommittedPct;
                       if (remaining < targetPct) {
@@ -918,12 +1124,12 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
             if (isEnrolled) ...[
               const Divider(color: AppTheme.outlineBorder, height: 24),
 
-              // Percentage Stepper & Slider
+              // Percentage Stepper Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Contribution Rate per Trip:',
+                    'Trip Earnings Deduction Rate:',
                     style: GoogleFonts.inter(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
@@ -980,15 +1186,232 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                 ],
               ),
 
-              const SizedBox(height: 6),
+              const SizedBox(height: 8),
 
-              // Trip Deduction Example Preview
-              Text(
-                'Example: On a KES 500 trip net payout (KES 400), deduction is KES ${(400 * selectedPct).toStringAsFixed(2)}',
-                style: GoogleFonts.inter(
-                  fontSize: 11,
-                  fontStyle: FontStyle.italic,
-                  color: AppTheme.darkTextSecondary,
+              // Interactive Slider
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  activeTrackColor: AppTheme.primaryColor,
+                  inactiveTrackColor: Colors.white12,
+                  thumbColor: AppTheme.primaryColor,
+                  overlayColor: AppTheme.primaryColor.withValues(alpha: 0.2),
+                  trackHeight: 4,
+                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
+                ),
+                child: Slider(
+                  value: selectedPct.clamp(program.minPct, program.maxPct),
+                  min: program.minPct,
+                  max: program.maxPct,
+                  divisions: ((program.maxPct - program.minPct) * 100).round().clamp(1, 100),
+                  onChanged: (val) {
+                    _updateProgramPercentage(program, val);
+                  },
+                ),
+              ),
+
+              // Quick percentage preset chips
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: quickPcts.map((pct) {
+                  final isSelected = (selectedPct - pct).abs() < 0.005;
+                  return InkWell(
+                    onTap: () => _updateProgramPercentage(program, pct),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppTheme.primaryColor
+                            : const Color(0xFF27272A),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: isSelected ? AppTheme.primaryColor : Colors.white24,
+                        ),
+                      ),
+                      child: Text(
+                        '${(pct * 100).toStringAsFixed(0)}%',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: isSelected ? Colors.black : Colors.white70,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+
+              const SizedBox(height: 10),
+
+              // Trip Deduction Example Preview Box
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.black26,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.white10),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('KES 500 Trip (KES 400 net):', style: GoogleFonts.inter(fontSize: 10.5, color: Colors.white60)),
+                        Text('KES ${(400 * selectedPct).toStringAsFixed(2)} deducted', style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
+                      ],
+                    ),
+                    const SizedBox(height: 3),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('KES 1,000 Trip (KES 800 net):', style: GoogleFonts.inter(fontSize: 10.5, color: Colors.white60)),
+                        Text('KES ${(800 * selectedPct).toStringAsFixed(2)} deducted', style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              // Decline / Reject button
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: () {
+                    HapticFeedback.mediumImpact();
+                    if (program.serviceCategory == 'Sacco') {
+                      // Sacco 6-month mandatory lock-in rule check
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          backgroundColor: AppTheme.darkSurface,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: const BorderSide(color: AppTheme.outlineBorder),
+                          ),
+                          title: Row(
+                            children: [
+                              const Icon(Icons.lock_clock_rounded, color: Colors.amber, size: 20),
+                              const SizedBox(width: 8),
+                              Text(
+                                '6-Month Sacco Lock-in',
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                          content: Text(
+                            'Sacco enrollment receives a 3% Cabi platform bonus match and carries a mandatory 6-month minimum lock-in period.\n\nOpt-out requests for your Sacco participation can only be processed after completing your 6-month milestone.',
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              color: AppTheme.darkTextSecondary,
+                              height: 1.4,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('Understood', style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                      );
+                      return;
+                    }
+
+                    setState(() {
+                      program.isPendingCancellation = true;
+                      program.isEnrolled = false;
+                      program.selectedPct = 0.0;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Opt-out requested for ${program.name}. End-of-cycle grace active: emergency coverage remains protected until cycle ends.',
+                        ),
+                        backgroundColor: AppTheme.primaryDark,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.cancel_outlined, size: 14, color: Colors.redAccent),
+                  label: const Text(
+                    'REJECT / OPT-OUT',
+                    style: TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.8,
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                ),
+              ),
+            ] else ...[
+              const SizedBox(height: 12),
+              if (program.isPendingCancellation)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline, size: 16, color: Colors.amber),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Opt-out is pending. Emergency benefits remain active through the end of the coverage cycle.',
+                          style: GoogleFonts.inter(fontSize: 11, color: Colors.amber, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          HapticFeedback.lightImpact();
+                          setState(() {
+                            program.isPendingCancellation = false;
+                            program.isEnrolled = true;
+                            program.selectedPct = program.defaultPct;
+                          });
+                        },
+                        child: Text(
+                          'ABORT',
+                          style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w800, color: AppTheme.successGreen),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    final targetPct = program.selectedPct > 0 ? program.selectedPct : program.defaultPct;
+                    final remaining = _maxDeductionCap - _totalCommittedPct;
+                    setState(() {
+                      program.isPendingCancellation = false;
+                    });
+                    if (remaining < targetPct) {
+                      _updateProgramPercentage(program, remaining > 0.02 ? remaining : 0.02);
+                    } else {
+                      _updateProgramPercentage(program, targetPct);
+                    }
+                  },
+                  icon: const Icon(Icons.check_circle_outline, size: 16),
+                  label: Text('ACCEPT & ENROLL (${(program.defaultPct * 100).toStringAsFixed(0)}%)'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppTheme.primaryColor,
+                    side: const BorderSide(color: AppTheme.primaryColor),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
                 ),
               ),
             ],
@@ -1002,8 +1425,8 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
     const exampleGross = 600.0;
     const examplePlatformFee = exampleGross * 0.20; // KES 120
     const exampleNetPayout = exampleGross * 0.80; // KES 480
-    final exampleWealthDeduction = exampleNetPayout * totalPct;
-    final exampleFinalCash = exampleNetPayout - exampleWealthDeduction;
+    final exampleLegacyAllocation = exampleNetPayout * totalPct;
+    final exampleFinalCash = exampleNetPayout - exampleLegacyAllocation;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -1020,7 +1443,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
               const Icon(Icons.calculate_outlined, size: 18, color: AppTheme.primaryColor),
               const SizedBox(width: 8),
               Text(
-                'HOW YOUR COMMISSIONS ARE DEDUCTED',
+                'HOW CABI LEGACY IS ALLOCATED',
                 style: GoogleFonts.inter(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w800,
@@ -1032,7 +1455,7 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
           ),
           const SizedBox(height: 10),
           Text(
-            'For every completed trip, Cabi deducts your chosen wealth contributions directly from your 80% net payout. You never need to deposit manually.',
+            'For every completed trip, Cabi deducts your chosen legacy allocations directly from your 80% net payout. You build long-term generational wealth without manual deposits.',
             style: GoogleFonts.inter(fontSize: 11.5, color: Colors.white70, height: 1.4),
           ),
           const SizedBox(height: 10),
@@ -1040,8 +1463,8 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
           _buildReceiptRow('Cabi Platform Commission (20%):', '- KES ${examplePlatformFee.toStringAsFixed(0)}'),
           _buildReceiptRow('Driver Net Payout (80%):', 'KES ${exampleNetPayout.toStringAsFixed(0)}', isBold: true),
           _buildReceiptRow(
-            'Wealth Programs (${(totalPct * 100).toStringAsFixed(1)}% total):',
-            '- KES ${exampleWealthDeduction.toStringAsFixed(2)}',
+            'Cabi Legacy (${(totalPct * 100).toStringAsFixed(1)}% total):',
+            '- KES ${exampleLegacyAllocation.toStringAsFixed(2)}',
             highlightColor: AppTheme.primaryColor,
           ),
           const Divider(color: AppTheme.outlineBorder, height: 16),

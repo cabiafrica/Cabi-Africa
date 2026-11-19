@@ -61,11 +61,24 @@
 *   **Android Direct APK (Verified 48.47 MB)**: `https://www.cabi.africa/downloads/Cabi-Drive-Official.apk`
 *   **iOS / iPhone PWA**: `https://www.cabi.africa/apps/driver/index.html` (Safari → Share → Add to Home Screen)
 *   **Sockets**: Use `wss://` for secure production WebSocket communication.
+*   **Cabi Legacy Engine**:
+    *   **Sacco 2% + 3% Match**: Driver's 2% deduction is matched with an additional 3% platform bonus for the first 6 months (5% total Sacco shares deposit).
+    *   **6-Month Lock-In**: Early Sacco opt-out is restricted for 180 days to protect cooperative underwriting.
+    *   **Post 6-Month Badge Rule**: After 6 months, drivers maintain an active badge (`Star Driver`, `Road Master`, or `Elite`) to keep platform matching perks active.
+    *   **Mandatory Pension**: Compulsory Ksh 10 per trip enforced across all rides.
+    *   **Voluntary Cap**: Standard 30% cap on net earnings (80% base), with an in-app request flow for elevated custom driver caps (> 30%).
+*   **Driver Operations Hardening**:
+    *   **Geofence Arrival Bypass (`GEOFENCE_BYPASS`)**: Allows drivers to manually confirm arrival in degraded GPS or basement structures with audited telemetry logging.
+    *   **Pending Verification Gate**: Unapproved drivers can access the document submission dashboard but are blocked from toggling online.
+    *   **Logout Offline Toggle**: Automatically sets driver status to offline in PostgreSQL upon logout to prevent phantom dispatches.
 
 ### **Passenger App (`africa.cabi.passenger`)**
 *   **Base API URL**: `https://www.cabi.africa/api` (with automatic Cloud Run proxy + Supabase Prisma fallback)
 *   **Android Direct APK (Verified 56.76 MB)**: `https://www.cabi.africa/downloads/Cabi-Go-Official.apk`
 *   **iOS / iPhone PWA**: `https://www.cabi.africa/apps/passenger/index.html` (Safari → Share → Add to Home Screen)
+*   **Cabi Legacy Social Impact Badge**:
+    *   Configurable impact card on the post-trip rating receipt screen (`rate_driver_screen.dart`).
+    *   Admin controls message (`PASSENGER_LEGACY_IMPACT_MESSAGE`) and visibility (`PASSENGER_LEGACY_IMPACT_ENABLED`) via Admin Panel Platform Settings.
 
 ---
 

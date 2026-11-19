@@ -124,7 +124,7 @@ const INCENTIVE_MODE_LABELS: Record<IncentiveMode, string> = {
   UNLOCK_ACCESS: 'Unlock Program Access Only',
 };
 
-export function WealthCreationProgramsPage() {
+export function LegacyPrograms() {
   const [programs, setPrograms] = useState<WealthProgram[]>([]);
   const [badges, setBadges] = useState<BadgeRef[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -369,13 +369,13 @@ export function WealthCreationProgramsPage() {
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand-yellow mb-1">
             <Landmark className="w-4 h-4" />
-            <span>Finance &amp; Sacco Wealth Engine</span>
+            <span>Finance &amp; Cabi Legacy Engine</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-            Wealth Creation Programs
+            Cabi Legacy Programs
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Configure driver-selectable Sacco, MMF, and pension programs or attach them as badge incentives.
+            Configure driver-selectable Sacco, MMF, and pension programs or attach them as badge incentives under Cabi Legacy.
           </p>
         </div>
 
@@ -1016,4 +1016,7 @@ export function WealthCreationProgramsPage() {
     </div>
   );
 }
+
+export const WealthCreationProgramsPage = LegacyPrograms;
+export default LegacyPrograms;
 

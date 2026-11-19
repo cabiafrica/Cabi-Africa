@@ -253,7 +253,7 @@ export default function DriverRegistrationPage() {
   );
 
   return (
-    <MainLayout title="Driver Registration | CABI" description="Join CABI as an executive driver partner. Transparent onboarding, direct Ksh payouts, and community wealth creation.">
+    <MainLayout title="Driver Registration | CABI" description="Join CABI as an executive driver partner. Transparent onboarding, direct Ksh payouts, and Cabi Legacy asset equity.">
       <div className="min-h-screen bg-slate-50 dark:bg-surface-dark py-12 relative overflow-hidden">
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[420px] rounded-full bg-[#D4AF37]/10 blur-[140px] pointer-events-none" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

@@ -167,10 +167,10 @@ export default function DriverSaccoManage() {
         <div>
           <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
             <Building2 className="w-7 h-7 text-yellow-400" />
-            Wealth Creation &amp; Equity Services
+            Cabi Legacy &amp; Equity Services
           </h1>
           <p className="text-gray-400 text-sm mt-1">
-            Opt into our wealth creation and asset ownership programs to grow your financial security — voluntary, transparent, yours.
+            Opt into our Cabi Legacy and asset ownership programs to grow your financial security — voluntary, transparent, yours.
           </p>
         </div>
 
@@ -193,7 +193,7 @@ export default function DriverSaccoManage() {
           <div className="p-6 bg-white/5 border border-white/10 rounded-2xl text-center">
             <Building2 className="w-10 h-10 mx-auto mb-3 text-gray-500 opacity-50" />
             <p className="text-gray-400 text-sm">
-              No wealth creation partner is currently active. Check back soon.
+              No Cabi Legacy partner is currently active. Check back soon.
             </p>
           </div>
         )}
@@ -308,7 +308,7 @@ export default function DriverSaccoManage() {
             {status.enrolled && (
               <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
                 <p className="text-xs text-gray-500">
-                  You can opt out at any time. Existing remittances remain in your wealth creation account.
+                  You can opt out at any time. Existing remittances remain in your Cabi Legacy account.
                 </p>
                 <button
                   onClick={() => setConfirmUnenroll(true)}

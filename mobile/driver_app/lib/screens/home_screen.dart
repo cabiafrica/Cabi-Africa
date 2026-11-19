@@ -23,6 +23,7 @@ import '../services/floating_bubble_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
+import 'document_submission_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -453,6 +454,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       return;
     }
     final driverId = driverProfile['id'];
+
+    final status = (driverProfile['status'] ?? authState.user?['status'])?.toString().toUpperCase();
+    if (!_isOnline && (status == 'PENDING' || status == 'PENDING_APPROVAL')) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: const Color(0xFF1C1B1B),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: const Row(
+              children: [
+                Icon(Icons.hourglass_top_rounded, color: Color(0xFFD4AF37), size: 24),
+                SizedBox(width: 10),
+                Text('Verification Pending', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              ],
+            ),
+            content: const Text(
+              'Your PSV license and verification documents are currently being audited by the Cabi operations team. You cannot go online until your credentials have been verified.',
+              style: TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('DISMISS', style: TextStyle(color: Colors.white38)),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const DocumentSubmissionScreen()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFD4AF37),
+                  foregroundColor: Colors.black,
+                ),
+                child: const Text('REVIEW DOCUMENTS', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+        );
+      }
+      return;
+    }
     
     final rideService = ref.read(rideServiceProvider);
 
@@ -1050,6 +1095,87 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 );
               },
             ),
+          ),
+
+          // Restricted Mode Banner for Pending Drivers
+          Consumer(
+            builder: (context, ref, _) {
+              final authState = ref.watch(authProvider);
+              final user = (authState is Authenticated) ? authState.user : null;
+              final driverProfile = user?['driverProfile'];
+              final status = (driverProfile?['status'] ?? user?['status'])?.toString().toUpperCase();
+              if (status != 'PENDING' && status != 'PENDING_APPROVAL') {
+                return const SizedBox.shrink();
+              }
+              return Positioned(
+                top: MediaQuery.of(context).padding.top + 54,
+                left: 16,
+                right: 16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E1708),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.6)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.4),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.shield_outlined, color: Color(0xFFD4AF37), size: 20),
+                      const SizedBox(width: 10),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'VERIFICATION IN PROGRESS',
+                              style: TextStyle(
+                                color: Color(0xFFD4AF37),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            Text(
+                              'PSV credentials under review. Going online is restricted.',
+                              style: TextStyle(color: Colors.white70, fontSize: 10),
+                            ),
+                          ],
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const DocumentSubmissionScreen()),
+                          );
+                        },
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: const Text(
+                          'DOCS',
+                          style: TextStyle(
+                            color: Color(0xFFD4AF37),
+                            fontWeight: FontWeight.w900,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
 
           // Main Map Right-Hand Side Options (Vertical Dock)

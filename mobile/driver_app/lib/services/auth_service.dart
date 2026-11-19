@@ -99,13 +99,27 @@ class AuthService {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final token = data['accessToken'] ?? data['token'];
-        final userMap = data['user'] is Map<String, dynamic>
-            ? data['user'] as Map<String, dynamic>
-            : (data is Map<String, dynamic> ? data : null);
+        if (token != null) {
+          final userMap = data['user'] is Map<String, dynamic>
+              ? data['user'] as Map<String, dynamic>
+              : (data is Map<String, dynamic> ? data : null);
+          return AuthResult(
+            isSignedIn: true,
+            user: userMap,
+            token: token,
+          );
+        }
+
+        // Backend created driver profile; auto sign-in to grant immediate access to pending approval dashboard
+        final loginRes = await signIn(email, password);
+        if (loginRes.isSignedIn) {
+          return loginRes;
+        }
+
         return AuthResult(
           isSignedIn: true,
-          user: userMap,
-          token: token,
+          user: data is Map<String, dynamic> ? data : null,
+          token: null,
         );
       } else {
         String errorMessage = 'Registration failed';
@@ -126,6 +140,22 @@ class AuthService {
         isSignedIn: false,
         error: 'Connection error: $e',
       );
+    }
+  }
+
+  Future<void> setDriverOffline(String driverId) async {
+    try {
+      final token = await _storage.read(key: 'jwt_token');
+      await http.post(
+        Uri.parse('${AppConfig.dispatchApiUrl}/dispatch/drivers/$driverId/toggle-status'),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'isOnline': false}),
+      ).timeout(const Duration(seconds: 4));
+    } catch (e) {
+      // Non-blocking cleanup
     }
   }
 

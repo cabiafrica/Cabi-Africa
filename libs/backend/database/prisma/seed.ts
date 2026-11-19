@@ -1,4 +1,4 @@
-import { PrismaClient, LegacyRole, RoleType, Platform } from '@prisma/client';
+import { PrismaClient, LegacyRole, RoleType, Platform, WealthProgramCategory } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -150,6 +150,117 @@ async function main() {
     },
   });
   console.log('✅ Created Test Driver:', testDriver.email);
+
+  // 6. Seed Canonical Cabi Legacy Programs
+  const legacyPrograms = [
+    {
+      code: 'sacco-capital-stima',
+      name: 'Stima DT / Boda PSV Sacco',
+      description: 'Cooperative shares earning 11.2% annual dividend. 2% deducted automatically per trip + 3% Cabi match for 6 months (5% total). Mandatory 6-month minimum lock-in. After 6 months, maintain an active Star/Elite badge to keep bonus matching active.',
+      category: WealthProgramCategory.SACCO,
+      providerName: 'Stima DT Sacco Society Ltd',
+      minPct: 0.02,
+      maxPct: 0.20,
+      defaultPct: 0.02,
+      platformBonusPct: 0.03,
+      dividendOrYield: '2% Driver + 3% Cabi Match (6 Mo Lock-in)',
+      isDriverSelectable: true,
+      isActive: true,
+    },
+    {
+      code: 'pension-mandatory-nssf',
+      name: 'Mandatory Driver Pension & Retirement Scheme',
+      description: 'Statutory Ksh 10 per trip is compulsory on all rides. Configure voluntary percentage top-ups here to compound your retirement nest egg.',
+      category: WealthProgramCategory.PENSION,
+      providerName: 'Octagon / NSSF Tier 2 Retirement Scheme',
+      minPct: 0.0,
+      maxPct: 0.15,
+      defaultPct: 0.0,
+      platformBonusPct: 0.0,
+      dividendOrYield: 'Compulsory Ksh 10/Trip + Voluntary %',
+      isDriverSelectable: true,
+      isActive: true,
+    },
+    {
+      code: 'insurance-cic-medical',
+      name: 'CIC / Jubilee PSV & Family Health',
+      description: 'Comprehensive outpatient & inpatient medical underwriting covering driver, spouse, and family.',
+      category: WealthProgramCategory.INSURANCE_HEALTH,
+      providerName: 'CIC General Insurance',
+      minPct: 0.02,
+      maxPct: 0.10,
+      defaultPct: 0.05,
+      platformBonusPct: 0.0,
+      dividendOrYield: 'KES 500,000 Medical & Accident Cover',
+      isDriverSelectable: true,
+      isActive: true,
+    },
+    {
+      code: 'mmf-britam-yield',
+      name: 'Britam High-Yield Money Market Fund',
+      description: 'Liquid wealth preservation with daily compound yields and instant emergency withdrawal.',
+      category: WealthProgramCategory.INVESTMENT_MMF,
+      providerName: 'Britam Asset Managers (Kenya) Ltd',
+      minPct: 0.02,
+      maxPct: 0.15,
+      defaultPct: 0.05,
+      platformBonusPct: 0.0,
+      dividendOrYield: '13.5% Daily Compound Yield',
+      isDriverSelectable: true,
+      isActive: true,
+    },
+    {
+      code: 'asset-equity-vehicle',
+      name: 'Driver Vehicle Ownership & Asset Financing Equity',
+      description: 'Build verified equity from every trip to transition from rental fleet operator to outright owner in 18-36 months.',
+      category: WealthProgramCategory.ASSET_FINANCING,
+      providerName: 'Cabi Mobility Asset Pool',
+      minPct: 0.05,
+      maxPct: 0.20,
+      defaultPct: 0.10,
+      platformBonusPct: 0.0,
+      dividendOrYield: '18-36 Mo Vehicle Ownership Transition',
+      isDriverSelectable: true,
+      isActive: true,
+    },
+  ];
+
+  for (const prog of legacyPrograms) {
+    await prisma.wealthProgram.upsert({
+      where: { code: prog.code },
+      update: {
+        name: prog.name,
+        description: prog.description,
+        minPct: prog.minPct,
+        maxPct: prog.maxPct,
+        defaultPct: prog.defaultPct,
+        platformBonusPct: prog.platformBonusPct,
+        dividendOrYield: prog.dividendOrYield,
+      },
+      create: prog,
+    });
+  }
+  console.log('✅ Seeded Canonical Cabi Legacy Programs.');
+
+  // 7. Seed System Settings for Passenger Legacy Impact
+  await prisma.setting.upsert({
+    where: { key: 'PASSENGER_LEGACY_IMPACT_MESSAGE' },
+    update: {},
+    create: {
+      key: 'PASSENGER_LEGACY_IMPACT_MESSAGE',
+      value: '🌱 Cabi Legacy Impact: Your trip helped fund this driver\'s Sacco savings and vehicle equity through our ethical reusable commission.',
+    },
+  });
+
+  await prisma.setting.upsert({
+    where: { key: 'PASSENGER_LEGACY_IMPACT_ENABLED' },
+    update: {},
+    create: {
+      key: 'PASSENGER_LEGACY_IMPACT_ENABLED',
+      value: 'true',
+    },
+  });
+  console.log('✅ Seeded Passenger Legacy Impact System Settings.');
 
   console.log('✨ Seeding completed successfully!');
 }

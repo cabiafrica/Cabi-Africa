@@ -240,7 +240,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
 
                 const SizedBox(height: 20),
 
-                // Interactive Wealth Creation Programs Banner
+                // Interactive Cabi Legacy Programs Banner
                 InkWell(
                   onTap: () => Navigator.push(
                     context,
@@ -283,7 +283,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    'WEALTH CREATION',
+                                    'CABI LEGACY',
                                     style: GoogleFonts.inter(
                                       color: AppTheme.primaryColor,
                                       fontWeight: FontWeight.w800,
@@ -311,7 +311,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                               ),
                               const SizedBox(height: 3),
                               Text(
-                                'Select Sacco, Insurance & MMF per trip',
+                                'Build your legacy: Sacco, Pension & MMF',
                                 style: GoogleFonts.inter(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
@@ -319,7 +319,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                                 ),
                               ),
                               Text(
-                                'Deducted directly from 80% net payouts',
+                                'Automated allocations from 80% net payouts',
                                 style: GoogleFonts.inter(
                                   color: AppTheme.darkTextSecondary,
                                   fontSize: 11,

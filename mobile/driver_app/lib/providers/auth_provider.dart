@@ -117,6 +117,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> logout() async {
+    try {
+      final current = state;
+      if (current is Authenticated && current.user != null) {
+        final driverId = current.user!['driverProfile']?['id'] ?? current.userId;
+        if (driverId != null) {
+          await _authService.setDriverOffline(driverId.toString());
+        }
+      }
+    } catch (_) {}
     await _storage.delete(key: 'jwt_token');
     state = const Unauthenticated();
   }

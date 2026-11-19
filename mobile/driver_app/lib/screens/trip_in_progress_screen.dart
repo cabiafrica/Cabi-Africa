@@ -174,8 +174,62 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
     _currentFare = (_unroundedFare / step).round() * step.toDouble();
   }
 
-  void _onDriverArrived({bool autoDetected = false}) {
+  void _showArrivalOverrideDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1C1B1B),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.gps_fixed_rounded, color: Color(0xFFD4AF37), size: 22),
+            SizedBox(width: 10),
+            Text('Degraded GPS Signal', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: const Text(
+          'Your GPS reading appears distant or degraded (e.g. basement or high-rise reflection). Are you physically at the passenger pickup spot?',
+          style: TextStyle(color: Colors.white70, fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('CANCEL', style: TextStyle(color: Colors.white38)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              _onDriverArrived(bypassGeofence: true);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFD4AF37),
+              foregroundColor: Colors.black,
+            ),
+            child: const Text('CONFIRM ARRIVAL (AUDITED)', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onDriverArrived({bool autoDetected = false, bool bypassGeofence = false}) async {
     if (_tripPhase != TripPhase.headingToPickup) return;
+
+    if (widget.rideId != null) {
+      final success = await _rideService.arriveAtPickup(
+        widget.rideId!,
+        lat: _driverLocation.latitude,
+        lng: _driverLocation.longitude,
+        accuracyMeters: bypassGeofence ? 150.0 : 10.0,
+        bypassGeofence: bypassGeofence,
+      );
+      if (!success && !bypassGeofence && mounted) {
+        _showArrivalOverrideDialog();
+        return;
+      }
+    }
+
+    if (!mounted) return;
     setState(() {
       _tripPhase = TripPhase.arrivedAtPickup;
       _passengerNotified = true;
@@ -192,7 +246,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                 child: Text(
                   autoDetected
                       ? 'Arrived at pickup! Passenger automatically notified.'
-                      : 'Arrival confirmed! Passenger notified.',
+                      : (bypassGeofence ? 'Arrival recorded (audited geofence bypass).' : 'Arrival confirmed! Passenger notified.'),
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 ),
               ),

@@ -17,10 +17,10 @@ import AppDownloadButtons from '@/components/ui/AppDownloadButtons';
 
 const WEALTH_INCENTIVES = [
     {
-        title: 'Driver Wealth Equity Deposits',
+        title: 'Cabi Legacy Equity Deposits',
         tag: 'Asset & Credit Growth',
         description:
-            'Qualifying drivers receive promotional top-up deposits directly into their partnered wealth creation accounts—accelerating share capital, dividend earnings, and access to low-interest vehicle or personal financing.',
+            'Qualifying drivers receive promotional top-up deposits directly into their partnered Cabi Legacy accounts—accelerating share capital, dividend earnings, and access to low-interest vehicle or personal financing.',
         icon: Landmark,
     },
     {
@@ -97,7 +97,7 @@ export default function ReferralDetailsPage() {
                         <p className="text-sm sm:text-lg text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto leading-relaxed">
                             CABI runs ongoing promotional programs designed to help qualifying drivers and fleet partners create lasting wealth—combining 2-level referral incentives with rewards such as{' '}
                             <span className="font-bold text-slate-900 dark:text-white">
-                                additional wealth creation deposits, insurance support, and pension contributions
+                                additional Cabi Legacy deposits, insurance support, and pension contributions
                             </span>.
                         </p>
 
@@ -201,10 +201,10 @@ export default function ReferralDetailsPage() {
                             </span>
                         </div>
                         <h2 className="text-2xl sm:text-3xl font-black mb-4 text-slate-900 dark:text-white">
-                            How Drivers Qualify for Promotions &amp; Wealth Incentives
+                            How Drivers Qualify for Promotions &amp; Legacy Incentives
                         </h2>
                         <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed mb-6">
-                            Every CABI promotion announces clear qualification criteria in advance inside the Driver App so every operator knows how to unlock extra wealth creation deposits, insurance subsidies, pension top-ups, and referral bonuses:
+                            Every CABI promotion announces clear qualification criteria in advance inside the Driver App so every operator knows how to unlock extra Cabi Legacy deposits, insurance subsidies, pension top-ups, and referral bonuses:
                         </p>
                         <ul className="space-y-3.5">
                             {QUALIFICATION_PILLARS.map((item) => (
@@ -223,11 +223,11 @@ export default function ReferralDetailsPage() {
                             <h2 className="text-3xl sm:text-4xl font-black mb-4">
                                 Ready to Build{' '}
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffe088] via-[#FACC15] to-[#D4AF37]">
-                                    Wealth With CABI?
+                                    Your Legacy With CABI?
                                 </span>
                             </h2>
                             <p className="text-sm sm:text-lg text-neutral-300 mb-8 leading-relaxed">
-                                Join CABI as a verified driver or wealth creation partner to qualify for upcoming promotions, wealth deposit matches, insurance &amp; pension incentives, and referral earnings.
+                                Join CABI as a verified driver or Cabi Legacy partner to qualify for upcoming promotions, wealth deposit matches, insurance &amp; pension incentives, and referral earnings.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <Link

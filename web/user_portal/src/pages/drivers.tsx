@@ -214,7 +214,7 @@ export default function ForDriversPage(
           },
           {
             quote:
-              'With Cabi\'s reusable commission model and automated servicing reserves dedicated to wealth creation, repairing and maintaining my vehicle has become completely effortless. Fresh brake pads, genuine oil, and zero breakdown anxiety. Passengers always compliment how clean, smooth, and well-maintained the car is.',
+              'With Cabi\'s reusable commission model and automated servicing reserves dedicated to Cabi Legacy equity, repairing and maintaining my vehicle has become completely effortless. Fresh brake pads, genuine oil, and zero breakdown anxiety. Passengers always compliment how clean, smooth, and well-maintained the car is.',
             name: 'Josphat K.',
             role: 'Veteran Driver Partner, Nairobi',
             avatarUrl: '/avatars/driver3.png',
@@ -243,7 +243,7 @@ export default function ForDriversPage(
               </h2>
 
               <p className="text-sm sm:text-lg text-neutral-300 mb-8 leading-relaxed">
-                Complete digital verification individually or onboard your fleet &amp; wealth creation partners directly through the portal.
+                Complete digital verification individually or onboard your fleet &amp; Cabi Legacy partners directly through the portal.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

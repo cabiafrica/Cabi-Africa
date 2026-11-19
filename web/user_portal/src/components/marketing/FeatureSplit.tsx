@@ -27,7 +27,7 @@ export default function FeatureSplit({ type }: FeatureSplitProps) {
               buttonText: 'Learn More',
               buttonLink: '/drivers',
               image: '/images/driver-partner-ecosystem.jpg',
-              imageAlt: 'CABI Africa driver-partner mobility platform — reusable commission model, vehicle wealth creation, and instant mobile money settlement illustration',
+              imageAlt: 'CABI Africa driver-partner mobility platform — reusable commission model, Cabi Legacy equity, and instant mobile money settlement illustration',
           }
         : {
               eyebrow: 'For Passengers',

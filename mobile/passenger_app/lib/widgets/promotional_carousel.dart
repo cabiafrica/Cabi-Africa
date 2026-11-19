@@ -15,7 +15,7 @@ class PromotionalCarousel extends StatelessWidget {
       'summary':
           'How Cabi is transforming the way Nairobi moves with decentralized ride-hailing, electric bodas, and fair driver revenue sharing.',
       'quote':
-          'Fees charged are not for corporate enrichment, but are actively recycled into driver wealth creation and vehicle asset equity.',
+          'Fees charged are not for corporate enrichment, but are actively recycled into Cabi Legacy equity and driver vehicle ownership.',
       'author': 'Cabi Operations Team',
     },
     {
@@ -25,9 +25,9 @@ class PromotionalCarousel extends StatelessWidget {
       'readTime': '3 min read',
       'image': 'assets/images/driver-economic-growth.jpg',
       'summary':
-          'A candid look at how reusable commissions and driver wealth creation turn daily miles into real asset ownership and long-term security.',
+          'A candid look at how reusable commissions and Cabi Legacy programs turn daily miles into real asset ownership and long-term security.',
       'quote':
-          '"For the first time in five years of driving, I am not just surviving day-to-day. My daily trips now contribute automatically to my driver wealth fund." — Samuel M., Driver Partner',
+          '"For the first time in five years of driving, I am not just surviving day-to-day. My daily trips now contribute automatically to my Cabi Legacy fund." — Samuel M., Driver Partner',
       'author': 'Cabi Editorial Desk',
     },
     {

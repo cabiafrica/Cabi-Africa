@@ -125,7 +125,7 @@ export default function AboutPage() {
                   What started right here in Nairobi is steadily growing into a welcoming community of everyday commuters, corporate teams, diplomatic guests, and dedicated driver-partners across Kenya.
                 </p>
                 <p>
-                  Unlike conventional platforms, we focus on helping drivers build lasting, rewarding mobility businesses—backed by fair partner economics, instant earnings settlement, performance incentives, and long-term wealth creation programs.
+                  Unlike conventional platforms, we focus on helping drivers build lasting, rewarding mobility businesses—backed by fair partner economics, instant earnings settlement, performance incentives, and long-term Cabi Legacy programs.
                 </p>
                 <p>
                   As our footprint grows across East and Pan-African corridors, our promise stays clear: thoughtful service, vetted partners, and everyday rides you can truly count on.

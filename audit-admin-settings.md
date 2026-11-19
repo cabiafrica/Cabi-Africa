@@ -12,7 +12,7 @@ Comprehensive audit and modernization of the Cabi Africa Admin Panel settings an
 
 ### Key Deliverables:
 1. **Fix Critical Environment & Auth Header Bugs:**
-   - Resolve `VITE_DISPATCH_API_URL` vs `VITE_DISPATCH_SERVICE_URL` disconnect across `AppSettingsManagement`, `WelfareSchemeManagement`, and `WealthCreationProgramsPage`.
+   - Resolve `VITE_DISPATCH_API_URL` vs `VITE_DISPATCH_SERVICE_URL` disconnect across `AppSettingsManagement`, `WelfareSchemeManagement`, and `LegacyPrograms.tsx`.
    - Ensure all `fetch` and Axios requests attach `Authorization: Bearer <token>` from `localStorage.getItem('authToken') || localStorage.getItem('token')`.
    - Fix auth token key mismatch in `SaccoIntegrationHub`.
 2. **Eliminate Non-Persistent Mocks:**
@@ -43,7 +43,7 @@ Comprehensive audit and modernization of the Cabi Africa Admin Panel settings an
 | `web/admin_panel/src/services/dispatchApiClient.ts` | New unified client for dispatch service | `AppSettingsManagement`, `WelfareSchemeManagement`, etc. | LOW (isolated helper) |
 | `web/admin_panel/src/components/settings/AppSettingsManagement.tsx` | Full redesign with multi-tab configs, auth headers, error handling | Route `/app-settings`, Admin layout | MEDIUM (UI & API interaction) |
 | `web/admin_panel/src/components/settings/WelfareSchemeManagement.tsx` | Fix URL resolution and add Bearer auth headers | Route `/welfare-schemes` | LOW (bugfix only) |
-| `web/admin_panel/src/pages/WealthCreationProgramsPage.tsx` | Fix URL resolution and add Bearer auth headers | Route `/wealth-programs` | LOW (bugfix only) |
+| `web/admin_panel/src/pages/LegacyPrograms.tsx` | Fix URL resolution and add Bearer auth headers | Route `/legacy-programs` & `/wealth-programs` | LOW (bugfix only) |
 | `web/admin_panel/src/pages/sacco/SaccoIntegrationHub.tsx` | Fix `token` -> `authToken` key lookup | Route `/sacco-integration` | LOW (bugfix only) |
 | `web/admin_panel/src/components/PromotionalConfig.tsx` | Connect to `adminService` promo config API | Route `/promo-config` | LOW (replace mock with API) |
 | `web/admin_panel/src/components/settings/GamificationManagement.tsx` | Connect save and data fetch to persistent settings | Route `/gamification` | LOW (replace mock with persistent API) |
@@ -65,7 +65,7 @@ Comprehensive audit and modernization of the Cabi Africa Admin Panel settings an
 ### Step 3: Fix Welfare Schemes & Wealth Creation Pages
 - In `WelfareSchemeManagement.tsx`:
   - Use the unified client or authenticated fetch helper to pass Bearer token and resolved base URL.
-- In `WealthCreationProgramsPage.tsx`:
+- In `LegacyPrograms.tsx`:
   - Use authenticated fetch helper for all `${DISPATCH_API_BASE}` calls.
 - In `SaccoIntegrationHub.tsx`:
   - Update token retrieval to `localStorage.getItem('authToken') || localStorage.getItem('token')`.

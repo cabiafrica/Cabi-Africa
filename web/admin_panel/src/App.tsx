@@ -52,7 +52,7 @@ const GamificationManagement = lazy(() => import('./components/settings/Gamifica
 const AppSettingsManagement = lazy(() => import('./components/settings/AppSettingsManagement').then(m => ({ default: m.AppSettingsManagement })));
 const JobActivitiesDashboard = lazy(() => import('./components/operations/JobActivitiesDashboard').then(m => ({ default: m.JobActivitiesDashboard })));
 const WelfareSchemeManagement = lazy(() => import('./components/settings/WelfareSchemeManagement').then(m => ({ default: m.WelfareSchemeManagement })));
-const WealthCreationProgramsPage = lazy(() => import('./pages/WealthCreationProgramsPage').then(m => ({ default: m.WealthCreationProgramsPage })));
+const LegacyPrograms = lazy(() => import('./pages/LegacyPrograms').then(m => ({ default: m.LegacyPrograms })));
 const SaccoIntegrationHub = lazy(() => import('./pages/sacco/SaccoIntegrationHub'));
 const RolesList = lazy(() => import('./pages/Roles/RolesList'));
 const RoleEditor = lazy(() => import('./pages/Roles/RoleEditor'));
@@ -141,7 +141,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
       { icon: <Wallet className="w-4 h-4" />, label: 'Payout Processing', view: '/payouts', permission: 'PAYMENTS_PROCESS' },
       { icon: <Clock className="w-4 h-4" />, label: 'Payout Scheduler', view: '/payout-scheduler', permission: 'PAYMENTS_PROCESS' },
       { icon: <Landmark className="w-4 h-4" />, label: 'Welfare Schemes', view: '/welfare-schemes', permission: 'COMMISSION_EDIT' },
-      { icon: <TrendingUp className="w-4 h-4" />, label: 'Wealth Creation', view: '/wealth-programs', permission: 'SYSTEM_SETTINGS_EDIT' },
+      { icon: <TrendingUp className="w-4 h-4" />, label: 'Cabi Legacy', view: '/legacy-programs', permission: 'SYSTEM_SETTINGS_EDIT' },
       { icon: <Building className="w-4 h-4" />, label: 'Sacco Integration', view: '/sacco-integration', permission: 'SYSTEM_SETTINGS_EDIT' },
       { icon: <Download className="w-4 h-4" />, label: 'Data Exports', view: '/exports', permission: 'FINANCIAL_REPORTS_VIEW' },
       { icon: <Building2 className="w-4 h-4" />, label: 'Corporate Billing', view: '/corporate-billing', permission: 'FINANCIAL_REPORTS_VIEW' },
@@ -517,7 +517,8 @@ function App() {
               <Route path="/gamification" element={<GamificationManagement />} />
               <Route path="/app-settings" element={<AppSettingsManagement />} />
               <Route path="/welfare-schemes" element={<WelfareSchemeManagement />} />
-              <Route path="/wealth-programs" element={<WealthCreationProgramsPage />} />
+              <Route path="/legacy-programs" element={<LegacyPrograms />} />
+              <Route path="/wealth-programs" element={<LegacyPrograms />} />
               <Route path="/vehicle-benefits" element={<VehicleBenefitsPage />} />
               <Route path="/vehicle-qualifications" element={<VehicleQualificationsPage />} />
               <Route path="/benefit-claims" element={<BenefitClaimsPage />} />

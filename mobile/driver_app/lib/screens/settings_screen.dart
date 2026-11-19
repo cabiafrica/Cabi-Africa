@@ -15,6 +15,7 @@ import 'package:driver_app/screens/safety_checkup_screen.dart';
 import 'package:driver_app/screens/support_screen.dart';
 import 'package:driver_app/screens/vehicle_account_screen.dart';
 import 'package:driver_app/screens/sacco_screen.dart';
+import 'package:driver_app/screens/wealth_creation_screen.dart';
 import 'package:driver_app/theme/app_theme.dart';
 import 'package:core_ui/core_ui.dart';
 import '../services/audio_notification_service.dart';
@@ -181,12 +182,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
           const SizedBox(height: 28),
 
-          // ── SACCO & WEALTH ACCUMULATION ──
-          _buildSettingsSection('SACCO & WEALTH ACCUMULATION', isDark: isDark),
+          // ── SACCO & CABI LEGACY ──
+          _buildSettingsSection('SACCO & CABI LEGACY', isDark: isDark),
+          _buildNavigationTile(
+            context: context,
+            title: 'Cabi Legacy Programs',
+            subtitle: 'Choose programs, custom deduction % and automatic trip allocations',
+            icon: Icons.auto_awesome_rounded,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const WealthCreationScreen()),
+            ),
+          ),
           _buildNavigationTile(
             context: context,
             title: l10n.saccoSavings,
-            subtitle: 'Configure percentage trip deductions, view accumulated savings & welfare ledger',
+            subtitle: 'Enroll with 2% deduction + 3% Cabi match for 6 months & view shares ledger',
             icon: Icons.savings_outlined,
             onTap: () => Navigator.push(
               context,

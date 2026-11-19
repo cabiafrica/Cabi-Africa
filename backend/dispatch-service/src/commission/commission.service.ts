@@ -117,16 +117,25 @@ export class CommissionService {
             driverSaccoFee = fare.times(saccoSavingsRate);
 
             // Incentive eligibility check:
-            // 1. New driver in grace period (< 50 trips)
-            // 2. Or maintains an admin-designated top badge (ELITE, ROAD_MASTER, or privileges.saccoBonusPercent > 0)
+            // 1. First 6 months after enrollment: guaranteed 3% platform match
+            // 2. After 6 months (> 180 days): must maintain an admin-designated active badge tier
             const hasTopBadge = highestActiveBadge === 'ELITE' ||
                 highestActiveBadge === 'ROAD_MASTER' ||
+                highestActiveBadge === 'STAR_DRIVER' ||
                 (privileges && privileges.saccoBonusPercent > 0);
-            const isNewDriver = this.isInGracePeriod(driverProfile.totalRidesCompleted);
 
-            if (isNewDriver || hasTopBadge) {
+            const enrolledAt = driverProfile.saccoEnrolledAt ? new Date(driverProfile.saccoEnrolledAt).getTime() : Date.now();
+            const daysSinceEnrollment = Math.max(0, (Date.now() - enrolledAt) / (1000 * 60 * 60 * 24));
+            const isFirstSixMonths = daysSinceEnrollment <= 180;
+
+            if (isFirstSixMonths) {
+                // Guaranteed 3% Cabi match for the first 6 months
                 badgeBonusActive = true;
-                badgeBonusAmount = fare.times(badgeBonusRate); // 3% paid from Cabi's 18% commission
+                badgeBonusAmount = fare.times(badgeBonusRate);
+            } else if (hasTopBadge) {
+                // After 6 months: Driver must maintain admin-designated badge tier to keep 3% match
+                badgeBonusActive = true;
+                badgeBonusAmount = fare.times(badgeBonusRate);
             }
         }
 
@@ -231,24 +240,37 @@ export class CommissionService {
             ]);
 
             let totalVoluntaryPct = 0;
+            const seenPrograms = new Set<string>();
 
             if (consents && consents.length > 0) {
                 for (const c of consents) {
                     // Avoid double-counting core Sacco deduction already processed above
                     if (c.serviceType === 'Sacco' && isSaccoEnrolled) continue;
-                    totalVoluntaryPct += Number(c.deductionPct || 0);
+                    const key = c.partnerId || c.serviceType;
+                    if (!seenPrograms.has(key)) {
+                        seenPrograms.add(key);
+                        totalVoluntaryPct += Number(c.deductionPct || 0);
+                    }
                 }
             }
 
             if (wealthEnrollments && wealthEnrollments.length > 0) {
                 for (const we of wealthEnrollments) {
                     if (we.program?.category === 'Sacco' && isSaccoEnrolled) continue;
-                    totalVoluntaryPct += Number(we.deductionPct || 0);
+                    const key = we.programId || we.program?.code || we.program?.category;
+                    if (!seenPrograms.has(key)) {
+                        seenPrograms.add(key);
+                        totalVoluntaryPct += Number(we.deductionPct || 0);
+                    }
                 }
             }
 
             if (totalVoluntaryPct > 0) {
-                const effectivePct = Math.min(totalVoluntaryPct, 0.30); // 30% cap
+                // Default 30% voluntary cap unless admin configured a custom higher cap for this driver
+                const customCap = (driverProfile as any)?.customMaxDeductionCap
+                    ? Number((driverProfile as any).customMaxDeductionCap)
+                    : 0.30;
+                const effectivePct = Math.min(totalVoluntaryPct, customCap);
                 wealthProgramDeductions = driverShare.times(effectivePct);
                 driverNetTakeHome = driverNetTakeHome.minus(wealthProgramDeductions);
             }

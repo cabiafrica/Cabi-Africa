@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
 import { RideStatus, VehicleType, ShiftStatus, ClaimStatus } from '@prisma/client';
 
@@ -130,8 +130,21 @@ export class DispatchService {
     }
 
     async updateDriverStatus(driverId: string, isOnline: boolean) {
-        return this.prisma.driverProfile.update({
-            where: { id: driverId },
+        if (isOnline) {
+            const driver = await this.prisma.driverProfile.findFirst({
+                where: { OR: [{ id: driverId }, { userId: driverId }] },
+                include: { user: true }
+            });
+            if (driver) {
+                const driverStatus = (driver as any).status;
+                const userStatus = driver.user?.status;
+                if (driverStatus === 'PENDING' || userStatus === 'PENDING' || userStatus === 'SUSPENDED' || userStatus === 'BLOCKED') {
+                    throw new BadRequestException('Driver account is pending document verification and cannot go online.');
+                }
+            }
+        }
+        return this.prisma.driverProfile.updateMany({
+            where: { OR: [{ id: driverId }, { userId: driverId }] },
             data: { isOnline }
         });
     }

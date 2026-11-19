@@ -388,6 +388,20 @@ export class WealthService {
       throw new NotFoundException('Active wealth enrollment not found');
     }
 
+    // Enforce mandatory 6-month Sacco lock-in period for the 2% + 3% incentive match
+    if (enrollment.program?.category === 'Sacco') {
+      const enrolledAt = enrollment.createdAt ? new Date(enrollment.createdAt).getTime() : Date.now();
+      const sixMonthsMs = 180 * 24 * 60 * 60 * 1000;
+      const timeElapsed = Date.now() - enrolledAt;
+      if (timeElapsed < sixMonthsMs) {
+        const unlockDate = new Date(enrolledAt + sixMonthsMs);
+        const daysLeft = Math.ceil((sixMonthsMs - timeElapsed) / (1000 * 60 * 60 * 24));
+        throw new BadRequestException(
+          `Sacco 2% + 3% match incentive requires a mandatory 6-month minimum lock-in period. You can opt out in ${daysLeft} days (after ${unlockDate.toLocaleDateString('en-KE', { dateStyle: 'medium' })}).`
+        );
+      }
+    }
+
     if (enrollment.status === 'PENDING_CANCELLATION') {
       const daysRemaining = enrollment.cancellationEffectiveDate
         ? Math.max(0, Math.ceil((new Date(enrollment.cancellationEffectiveDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))

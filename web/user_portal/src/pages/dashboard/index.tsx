@@ -527,9 +527,9 @@ export default function Dashboard() {
                                         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                                             <div>
                                                 <div className="inline-block px-3 py-1 rounded-full bg-brand-accent/20 text-brand-accent text-xs font-bold mb-3">Scale Your Business</div>
-                                                <h2 className="text-2xl font-bold mb-2">Join or Start a Wealth Partner Group</h2>
+                                                <h2 className="text-2xl font-bold mb-2">Join or Start a Cabi Legacy Partner Group</h2>
                                                 <p className="text-gray-400 max-w-lg text-sm leading-relaxed">
-                                                    Unlock fleet management tools, welfare support, and wealth creation opportunities. Register your own fleet or join an existing Wealth Creation Cooperative.
+                                                    Unlock fleet management tools, welfare support, and Cabi Legacy asset opportunities. Register your own fleet or join an existing Cabi Legacy Cooperative.
                                                 </p>
                                             </div>
                                             <div className="flex gap-4">

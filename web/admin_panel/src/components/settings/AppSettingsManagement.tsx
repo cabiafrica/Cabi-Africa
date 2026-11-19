@@ -259,6 +259,21 @@ const SETTING_DEFINITIONS: SettingField[] = [
     tab: 'platform',
     placeholder: 'https://partners.cabi.africa/tours',
   },
+  {
+    key: 'PASSENGER_LEGACY_IMPACT_MESSAGE',
+    label: 'Passenger Cabi Legacy Impact Message',
+    description: 'The social impact message displayed to passengers on post-trip receipts and rating screens.',
+    type: 'text',
+    tab: 'platform',
+    placeholder: '🌱 Cabi Legacy Impact: Your trip helped fund this driver\'s Sacco savings and vehicle equity through our ethical reusable commission.',
+  },
+  {
+    key: 'PASSENGER_LEGACY_IMPACT_ENABLED',
+    label: 'Enable Passenger Cabi Legacy Impact Badge',
+    description: 'Toggle display of the Cabi Legacy social impact card on passenger receipts and rating screens.',
+    type: 'boolean',
+    tab: 'platform',
+  },
 ];
 
 const DEFAULT_SETTINGS_MAP: Record<string, string> = {
@@ -283,6 +298,8 @@ const DEFAULT_SETTINGS_MAP: Record<string, string> = {
   MIN_SUPPORTED_APP_VERSION: '1.1.0',
   DEFAULT_CURRENCY_CODE: 'KES',
   tours_url: '',
+  PASSENGER_LEGACY_IMPACT_MESSAGE: '🌱 Cabi Legacy Impact: Your trip helped fund this driver\'s Sacco savings and vehicle equity through our ethical reusable commission.',
+  PASSENGER_LEGACY_IMPACT_ENABLED: 'true',
 };
 
 type TabType = 'dispatch' | 'pricing' | 'cancellation' | 'safety' | 'platform';

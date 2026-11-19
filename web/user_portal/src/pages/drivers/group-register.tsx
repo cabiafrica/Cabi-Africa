@@ -211,7 +211,7 @@ export default function GroupRegistrationPage() {
                     <div>
                         <h3 className="text-lg font-bold text-slate-900 dark:text-[#ffe088] mb-1">Fleet &amp; Driver Group Onboarding</h3>
                         <p className="text-sm text-neutral-700 dark:text-neutral-300">
-                            Register your drivers or fleet with streamlined verification, coordinated dispatch management, and automated wealth creation pools.
+                            Register your drivers or fleet with streamlined verification, coordinated dispatch management, and automated Cabi Legacy pools.
                         </p>
                     </div>
                 </div>

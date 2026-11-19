@@ -90,6 +90,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final passwordCtrl = TextEditingController();
     bool isSubmitting = false;
     String? regError;
+    bool optInSacco = true;
 
     showModalBottomSheet(
       context: context,
@@ -202,6 +203,51 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           labelStyle: TextStyle(color: Colors.white70),
                         ),
                         validator: (v) => (v == null || v.length < 6) ? 'Minimum 6 characters' : null,
+                      ),
+                      const SizedBox(height: 14),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1E1A11),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppTheme.outlineGold.withValues(alpha: 0.5)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: optInSacco,
+                                  activeColor: AppTheme.primaryColor,
+                                  checkColor: Colors.black,
+                                  onChanged: (v) => setModalState(() => optInSacco = v ?? true),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    'Join Partner Sacco (3% Cabi Match)',
+                                    style: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12.5,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 12, right: 8, bottom: 4),
+                              child: Text(
+                                '• 2% automatically deducted per trip into your Sacco shares.\n• Cabi funds an additional 3% match for 6 months (Total 5% savings!).\n• Mandatory 6-month minimum lock-in applies.\n• After 6 months, maintain an active Star/Elite badge to keep bonus matching.\n• Statutory Ksh 10 pension per trip is compulsory.',
+                                style: GoogleFonts.inter(
+                                  fontSize: 11,
+                                  color: Colors.white70,
+                                  height: 1.35,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       if (regError != null) ...[
                         const SizedBox(height: 12),

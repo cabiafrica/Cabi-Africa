@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import '../config/app_config.dart';
 import '../services/ride_service.dart';
 import '../theme/app_theme.dart';
 import '../utils/pdf_receipt_generator.dart';
@@ -51,6 +54,43 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
     'GREAT SERVICE',
     'EXCEPTIONAL EXPERIENCE',
   ];
+
+  String _legacyImpactMessage =
+      '🌱 Cabi Legacy Impact: Your trip helped fund this driver\'s Sacco savings and vehicle equity through our ethical reusable commission.';
+  bool _showLegacyImpact = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAdminImpactMessage();
+  }
+
+  Future<void> _fetchAdminImpactMessage() async {
+    try {
+      final uri = Uri.parse('${AppConfig.dispatchApiUrl}/settings/system');
+      final res = await http.get(uri).timeout(const Duration(seconds: 4));
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        if (data is List) {
+          for (final item in data) {
+            if (item is Map) {
+              if (item['key'] == 'PASSENGER_LEGACY_IMPACT_MESSAGE' && item['value'] != null) {
+                final val = item['value'].toString();
+                if (val.trim().isNotEmpty && mounted) {
+                  setState(() => _legacyImpactMessage = val);
+                }
+              } else if (item['key'] == 'PASSENGER_LEGACY_IMPACT_ENABLED') {
+                final enabled = item['value']?.toString().toLowerCase() != 'false';
+                if (mounted) {
+                  setState(() => _showLegacyImpact = enabled);
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (_) {}
+  }
 
   @override
   void dispose() {
@@ -480,7 +520,12 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
+
+            // Cabi Legacy Impact Card (Admin-Configured)
+            _buildLegacyImpactCard(cardBg, cardBorder, headlineColor, subColor),
+
+            const SizedBox(height: 16),
 
             // Captain Rating & Feedback Card
             Container(
@@ -935,6 +980,87 @@ class _RateDriverScreenState extends State<RateDriverScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildLegacyImpactCard(Color cardBg, Color cardBorder, Color headlineColor, Color subColor) {
+    if (!_showLegacyImpact) return const SizedBox.shrink();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final goldAccent = isDark ? AppTheme.primaryColor : AppTheme.aurumBronze;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1A11) : const Color(0xFFFAF6EE),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: goldAccent.withValues(alpha: 0.5)),
+        boxShadow: [
+          BoxShadow(
+            color: goldAccent.withValues(alpha: 0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              color: goldAccent.withValues(alpha: 0.18),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.eco_rounded, size: 16, color: goldAccent),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'CABI LEGACY IMPACT',
+                      style: AppTheme.inter(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w800,
+                        color: goldAccent,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                      decoration: BoxDecoration(
+                        color: goldAccent.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        'ETHICAL RIDE',
+                        style: AppTheme.inter(
+                          fontSize: 8.5,
+                          fontWeight: FontWeight.w800,
+                          color: goldAccent,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  _legacyImpactMessage,
+                  style: AppTheme.inter(
+                    fontSize: 11.5,
+                    color: headlineColor.withValues(alpha: 0.88),
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
