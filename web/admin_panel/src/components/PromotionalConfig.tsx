@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { adminService } from '../services/adminService';
 import {
   Campaign,
   Save,
@@ -41,37 +42,64 @@ export const PromotionalConfig: React.FC = () => {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   useEffect(() => {
-    // Mock fetch config
-    setTimeout(() => {
-      setConfig({
-        isActive: true,
-        startDate: '2026-02-01T00:00',
-        endDate: '2026-02-28T23:59',
-        splits: { system: 10, driver: 80, upline1: 5, upline2: 5 },
-        requiredBadgeId: 'b1',
-      });
-      setBadges([
-        { id: 'b1', name: 'Promo Qualified' },
-        { id: 'b2', name: 'Super Driver' },
-        { id: 'b3', name: 'Top Earner' },
-      ]);
-      setLoading(false);
-    }, 500);
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const [promoRes, badgesRes] = await Promise.allSettled([
+          adminService.getPromoConfig(),
+          adminService.getBadges(),
+        ]);
+
+        if (badgesRes.status === 'fulfilled' && badgesRes.value?.length > 0) {
+          setBadges(badgesRes.value);
+        } else {
+          setBadges([
+            { id: 'b1', name: 'Promo Qualified' },
+            { id: 'b2', name: 'Super Driver' },
+            { id: 'b3', name: 'Top Earner' },
+          ]);
+        }
+
+        if (promoRes.status === 'fulfilled' && promoRes.value) {
+          const p = promoRes.value as any;
+          setConfig({
+            isActive: p.isActive ?? true,
+            startDate: p.startDate || '2026-02-01T00:00',
+            endDate: p.endDate || '2026-02-28T23:59',
+            splits: p.splits || {
+              system: p.systemCut ?? 10,
+              driver: p.driverCut ?? 80,
+              upline1: p.upline1Cut ?? 5,
+              upline2: p.upline2Cut ?? 5,
+            },
+            requiredBadgeId: p.requiredBadgeId || p.qualification?.requiredBadge || 'b1',
+          });
+        }
+      } catch (err) {
+        console.error('Failed to load promo config', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
   }, []);
 
   const totalSplit = config.splits.system + config.splits.driver + config.splits.upline1 + config.splits.upline2;
   const isValidSplit = totalSplit === 100;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!isValidSplit) {
       return;
     }
     setSaveStatus('saving');
-    // API Call: PUT /admin/config/promotions
-    setTimeout(() => {
+    try {
+      await adminService.updatePromoConfig(config as any);
       setSaveStatus('saved');
-      setTimeout(() => setSaveStatus('idle'), 2000);
-    }, 1000);
+      setTimeout(() => setSaveStatus('idle'), 2500);
+    } catch (error) {
+      console.error('Failed to save promo config', error);
+      setSaveStatus('idle');
+    }
   };
 
   const updateSplit = (key: keyof typeof config.splits, value: string) => {

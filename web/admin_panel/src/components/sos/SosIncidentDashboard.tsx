@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { adminService, SOSIncidentDetails } from '../../services/adminService';
+import { SafetyService } from '../../services/admin/safetyService';
 import { SosResolutionModal } from '../SosResolutionModal';
+
+const safetyService = new SafetyService();
 
 interface Props {
   incidentId: string;
@@ -195,6 +198,71 @@ export const SosIncidentDashboard: React.FC<Props> = ({ incidentId, onBack }) =>
                     {isLoading ? 'Saving...' : 'Add Log Entry'}
                   </button>
                 </div>
+              </div>
+            </div>
+
+            {/* Senior Official Distress Fee & Pardon Review */}
+            <div className="bg-white p-6 rounded-xl shadow-md border border-amber-200">
+              <div className="flex items-center justify-between mb-3 border-b pb-2">
+                <h3 className="font-bold text-base text-gray-800 flex items-center gap-2">
+                  <span>🛡️</span> Sacco Distress Fee Waiver
+                </h3>
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-black uppercase bg-amber-100 text-amber-800">
+                  KES 500 Buffer
+                </span>
+              </div>
+              <p className="text-xs text-gray-600 mb-4">
+                Captains debited with the emergency distress fee may request a full waiver. Senior Cabi Distress Officials can adjudicate this request:
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={async () => {
+                    const notes = prompt('Enter official pardon approval notes (e.g. Verified legitimate violent attack / police case):');
+                    if (!notes) return;
+                    setIsLoading(true);
+                    try {
+                      await safetyService.pardonDistressFee(incidentId, {
+                        officialId: 'super-admin',
+                        officialName: 'Senior Cabi Distress Official',
+                        approved: true,
+                        notes,
+                      });
+                      alert('Distress fee pardon APPROVED. KES 500 refunded to Captain wallet.');
+                      fetchIncident();
+                    } catch (e: any) {
+                      alert(`Pardon failed: ${e.message}`);
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg text-xs font-bold transition shadow-sm"
+                >
+                  Approve Waiver (Refund KES 500)
+                </button>
+                <button
+                  onClick={async () => {
+                    const notes = prompt('Enter reason for declining pardon:');
+                    if (!notes) return;
+                    setIsLoading(true);
+                    try {
+                      await safetyService.pardonDistressFee(incidentId, {
+                        officialId: 'super-admin',
+                        officialName: 'Senior Cabi Distress Official',
+                        approved: false,
+                        notes,
+                      });
+                      alert('Distress fee pardon DECLINED. KES 500 fee upheld.');
+                      fetchIncident();
+                    } catch (e: any) {
+                      alert(`Pardon rejection failed: ${e.message}`);
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2.5 rounded-lg text-xs font-bold transition"
+                >
+                  Decline Pardon
+                </button>
               </div>
             </div>
 

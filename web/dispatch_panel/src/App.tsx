@@ -67,6 +67,74 @@ function App() {
         surgeAreas: 0,
     });
     const [selectedRide, setSelectedRide] = useState<RideRequest | null>(null);
+    const [emergencyAlerts, setEmergencyAlerts] = useState<any[]>([]);
+
+    // SOS Emergency Socket Listener
+    useEffect(() => {
+        const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://auth-gateway-746659778850.us-central1.run.app';
+        const sosSocket = io(`${socketUrl}/sos`);
+
+        sosSocket.on('connect', () => {
+            console.log('Connected to SOS Real-time Safety Gateway');
+            sosSocket.emit('registerClient', { userId: user?.id || 'dispatcher', role: user?.role || 'DISPATCHER' });
+        });
+
+        sosSocket.on('sos_alert', (alert: any) => {
+            console.warn('🚨 Real-time SOS alert received:', alert);
+            setEmergencyAlerts((prev) => {
+                const exists = prev.some((a) => a.id === alert.alertId || a.id === alert.id || a.obNumber === alert.obNumber);
+                if (exists) return prev;
+                return [alert, ...prev];
+            });
+
+            // Synthesize audible siren/alarm via Web Audio API
+            try {
+                const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+                if (AudioCtx) {
+                    const ctx = new AudioCtx();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(800, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.35);
+                    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.7);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.85);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.85);
+                }
+            } catch (_) {}
+        });
+
+        sosSocket.on('sos_acknowledged', (ack: any) => {
+            setEmergencyAlerts((prev) => prev.filter((a) => a.id !== ack.occurrenceId && a.obNumber !== ack.obNumber));
+        });
+
+        sosSocket.on('sos_resolved', (res: any) => {
+            setEmergencyAlerts((prev) => prev.filter((a) => a.id !== res.occurrenceId && a.obNumber !== res.obNumber));
+        });
+
+        return () => {
+            sosSocket.disconnect();
+        };
+    }, [user]);
+
+    // Initial fetch of active open SOS alerts
+    useEffect(() => {
+        const fetchOpenAlerts = async () => {
+            try {
+                const res = await apiClient.get('/safety/alerts?status=OPEN');
+                if (Array.isArray(res.data)) {
+                    setEmergencyAlerts(res.data);
+                }
+            } catch (_) {}
+        };
+        if (isAuthenticated) {
+            fetchOpenAlerts();
+        }
+    }, [isAuthenticated]);
 
     // Socket.io for Real-time Tracking
     useEffect(() => {
@@ -465,6 +533,48 @@ function App() {
 
                         return (
                             <>
+                                {emergencyAlerts.length > 0 && (
+                                    <div className="mb-6 bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4 shadow-xl shadow-red-950/30 border border-red-400/40 animate-pulse">
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-2xl animate-bounce">🚨</span>
+                                            <div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="bg-black/30 px-2 py-0.5 rounded text-[11px] font-black uppercase tracking-wider text-red-200">
+                                                        CRITICAL DISTRESS BEACON
+                                                    </span>
+                                                    <span className="font-mono text-xs font-bold text-white">
+                                                        {emergencyAlerts[0].obNumber}
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs text-red-100 mt-1">
+                                                    {emergencyAlerts[0].callerType || emergencyAlerts[0].userType || 'User'} ({emergencyAlerts[0].callerName || emergencyAlerts[0].driverName || emergencyAlerts[0].passengerName || 'Victim'}) initiated distress beacon • Coordinates: [{emergencyAlerts[0].location?.lat ? Number(emergencyAlerts[0].location.lat).toFixed(4) : '0'}, {emergencyAlerts[0].location?.lng ? Number(emergencyAlerts[0].location.lng).toFixed(4) : '0'}]
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => setActiveView('map')}
+                                                className="bg-white hover:bg-red-50 text-red-700 px-4 py-2 rounded-xl font-bold text-xs shadow-md transition"
+                                            >
+                                                View on Live Map
+                                            </button>
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        const targetId = emergencyAlerts[0].id || emergencyAlerts[0].obNumber;
+                                                        await apiClient.put(`/safety/alerts/${targetId}/acknowledge`);
+                                                        setEmergencyAlerts((prev) => prev.slice(1));
+                                                    } catch (_) {
+                                                        setEmergencyAlerts((prev) => prev.slice(1));
+                                                    }
+                                                }}
+                                                className="bg-black/30 hover:bg-black/50 text-white px-3 py-2 rounded-xl text-xs font-semibold transition"
+                                            >
+                                                Acknowledge
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                                 {activeView === 'overview' && (
                                     <MetricsOverview
                                         metrics={metrics}
@@ -505,6 +615,7 @@ function App() {
                                         drivers={drivers}
                                         rideRequests={rideRequests}
                                         surgeZones={[]}
+                                        emergencyAlerts={emergencyAlerts}
                                     />
                                 )}
                                 {activeView === 'surge' && (

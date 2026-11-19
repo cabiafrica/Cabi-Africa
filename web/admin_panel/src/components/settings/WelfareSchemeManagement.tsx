@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-
-const DISPATCH_API_BASE =
-  import.meta.env.VITE_DISPATCH_API_URL || 'http://localhost:3334/api';
+import { dispatchFetch } from '../../services/dispatchApiClient';
 
 interface WelfareScheme {
   id: string;
@@ -64,9 +62,7 @@ export function WelfareSchemeManagement() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${DISPATCH_API_BASE}/welfare/schemes`, {
-        credentials: 'include',
-      });
+      const res = await dispatchFetch('/welfare/schemes');
       if (!res.ok) throw new Error(`Failed to load schemes: ${res.status}`);
       const data = await res.json();
       setSchemes(data.data || []);
@@ -128,13 +124,11 @@ export function WelfareSchemeManagement() {
       };
 
       const url = editingScheme
-        ? `${DISPATCH_API_BASE}/welfare/schemes/${editingScheme.id}`
-        : `${DISPATCH_API_BASE}/welfare/schemes`;
+        ? `/welfare/schemes/${editingScheme.id}`
+        : `/welfare/schemes`;
 
-      const res = await fetch(url, {
+      const res = await dispatchFetch(url, {
         method: editingScheme ? 'PUT' : 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
@@ -153,10 +147,8 @@ export function WelfareSchemeManagement() {
 
   const toggleActive = async (scheme: WelfareScheme) => {
     try {
-      const res = await fetch(`${DISPATCH_API_BASE}/welfare/schemes/${scheme.id}`, {
+      const res = await dispatchFetch(`/welfare/schemes/${scheme.id}`, {
         method: 'PUT',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isActive: !scheme.isActive }),
       });
       if (!res.ok) throw new Error(`Failed to toggle scheme: ${res.status}`);
@@ -170,9 +162,7 @@ export function WelfareSchemeManagement() {
     setReportSchemeId(schemeId);
     setIsLoadingReport(true);
     try {
-      const res = await fetch(`${DISPATCH_API_BASE}/welfare/report/${schemeId}`, {
-        credentials: 'include',
-      });
+      const res = await dispatchFetch(`/welfare/report/${schemeId}`);
       if (!res.ok) throw new Error(`Failed to load report: ${res.status}`);
       const data = await res.json();
       setReport(data.data);

@@ -2,13 +2,26 @@ import { useState } from 'react';
 import { Driver, RideRequest, SurgeZone } from '../types';
 import { CabiMap, MapMarker } from './CabiMap';
 
+export interface EmergencyAlertItem {
+    id: string;
+    obNumber: string;
+    callerName?: string;
+    callerType?: string;
+    userType?: string;
+    location: { lat: number; lng: number };
+    tripId?: string;
+    timestamp?: string | Date;
+    status?: string;
+}
+
 interface LiveMapProps {
     drivers: Driver[];
     rideRequests: RideRequest[];
     surgeZones: SurgeZone[];
+    emergencyAlerts?: EmergencyAlertItem[];
 }
 
-const LiveMap = ({ drivers, rideRequests, surgeZones }: LiveMapProps) => {
+const LiveMap = ({ drivers, rideRequests, surgeZones, emergencyAlerts = [] }: LiveMapProps) => {
     const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
     const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
@@ -64,7 +77,34 @@ const LiveMap = ({ drivers, rideRequests, surgeZones }: LiveMapProps) => {
         });
     });
 
-    const allMarkers = [...driverMarkers, ...rideMarkers];
+    // Create markers for active emergency SOS alerts
+    const emergencyMarkers: MapMarker[] = emergencyAlerts.map((alert) => ({
+        id: `emergency-${alert.id || alert.obNumber}`,
+        position: [alert.location.lat, alert.location.lng],
+        type: 'emergency',
+        popup: `
+            <div style="padding: 10px; min-width: 220px; font-family: sans-serif;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                    <span style="background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 11px;">🚨 SOS DISTRESS</span>
+                    <span style="font-weight: 800; font-size: 11px; color: #111;">${alert.obNumber}</span>
+                </div>
+                <p style="margin: 4px 0; font-size: 13px; color: #111;">
+                    <strong>${alert.callerType || alert.userType || 'Victim'}:</strong> ${alert.callerName || 'Distressed User'}
+                </p>
+                <p style="margin: 2px 0; font-size: 11px; color: #666;">
+                    Trip: ${alert.tripId || 'UNASSIGNED'}
+                </p>
+                <p style="margin: 2px 0 8px 0; font-size: 11px; color: #666;">
+                    Coords: [${alert.location.lat.toFixed(4)}, ${alert.location.lng.toFixed(4)}]
+                </p>
+                <a href="https://cabi.africa/sos/${alert.obNumber}" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #111; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 11px; font-weight: bold;">
+                    Open Incident Tracking Map →
+                </a>
+            </div>
+        `,
+    }));
+
+    const allMarkers = [...emergencyMarkers, ...driverMarkers, ...rideMarkers];
 
     // Get route for selected driver if they have an active ride
     const selectedDriverRide = selectedDriver
@@ -112,6 +152,12 @@ const LiveMap = ({ drivers, rideRequests, surgeZones }: LiveMapProps) => {
                     <div className="absolute bottom-4 left-4 bg-slate-800/95 backdrop-blur-xl border border-slate-700 rounded-xl p-4 shadow-lg z-[1000]">
                         <h4 className="text-sm font-semibold text-white mb-3">Map Legend</h4>
                         <div className="space-y-2">
+                            {emergencyAlerts.length > 0 && (
+                                <div className="flex items-center gap-2 animate-pulse pb-1 border-b border-slate-700">
+                                    <div className="w-3 h-3 rounded-full bg-red-600 shadow-[0_0_8px_rgba(239,68,68,0.9)]"></div>
+                                    <span className="text-xs font-bold text-red-400">🚨 SOS Distress Active ({emergencyAlerts.length})</span>
+                                </div>
+                            )}
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
                                 <span className="text-xs text-slate-300">Available Drivers ({onlineDrivers.filter(d => d.status === 'online').length})</span>

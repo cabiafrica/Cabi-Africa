@@ -16,9 +16,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
-
-const DISPATCH_API_BASE =
-  import.meta.env.VITE_DISPATCH_API_URL || 'http://localhost:3334/api';
+import { dispatchFetch } from '../services/dispatchApiClient';
 
 type WealthCategory =
   | 'Sacco'
@@ -152,8 +150,8 @@ export function WealthCreationProgramsPage() {
     setError(null);
     try {
       const [programsRes, badgesRes] = await Promise.all([
-        fetch(`${DISPATCH_API_BASE}/wealth-programs`, { credentials: 'include' }),
-        fetch(`${DISPATCH_API_BASE}/admin/badges`, { credentials: 'include' }),
+        dispatchFetch('/wealth-programs'),
+        dispatchFetch('/admin/badges'),
       ]);
       if (!programsRes.ok) {
         throw new Error(`Failed to load wealth programs (${programsRes.status})`);
@@ -242,13 +240,11 @@ export function WealthCreationProgramsPage() {
       }
 
       const url = editingProgram
-        ? `${DISPATCH_API_BASE}/wealth-programs/${editingProgram.id}`
-        : `${DISPATCH_API_BASE}/wealth-programs`;
+        ? `/wealth-programs/${editingProgram.id}`
+        : `/wealth-programs`;
 
-      const res = await fetch(url, {
+      const res = await dispatchFetch(url, {
         method: editingProgram ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify(payload),
       });
 
@@ -269,10 +265,8 @@ export function WealthCreationProgramsPage() {
 
   const handleToggleActive = async (p: WealthProgram) => {
     try {
-      const res = await fetch(`${DISPATCH_API_BASE}/wealth-programs/${p.id}`, {
+      const res = await dispatchFetch(`/wealth-programs/${p.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ isActive: !p.isActive }),
       });
       if (!res.ok) throw new Error('Failed to update program status');
@@ -286,9 +280,8 @@ export function WealthCreationProgramsPage() {
   const handleDeleteProgram = async (p: WealthProgram) => {
     if (!window.confirm(`Delete "${p.name}"? Existing enrollments will be removed.`)) return;
     try {
-      const res = await fetch(`${DISPATCH_API_BASE}/wealth-programs/${p.id}`, {
+      const res = await dispatchFetch(`/wealth-programs/${p.id}`, {
         method: 'DELETE',
-        credentials: 'include',
       });
       if (!res.ok) throw new Error('Failed to delete program');
       showToast(`${p.name} deleted.`);
@@ -311,12 +304,10 @@ export function WealthCreationProgramsPage() {
     if (!incentiveTargetProgram || !incentiveBadgeId) return;
     setIsSaving(true);
     try {
-      const res = await fetch(
-        `${DISPATCH_API_BASE}/wealth-programs/${incentiveTargetProgram.id}/badge-incentives`,
+      const res = await dispatchFetch(
+        `/wealth-programs/${incentiveTargetProgram.id}/badge-incentives`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
           body: JSON.stringify({
             badgeId: incentiveBadgeId,
             incentiveMode,
@@ -338,9 +329,9 @@ export function WealthCreationProgramsPage() {
 
   const handleRemoveIncentive = async (programId: string, incentiveId: string) => {
     try {
-      const res = await fetch(
-        `${DISPATCH_API_BASE}/wealth-programs/${programId}/badge-incentives/${incentiveId}`,
-        { method: 'DELETE', credentials: 'include' }
+      const res = await dispatchFetch(
+        `/wealth-programs/${programId}/badge-incentives/${incentiveId}`,
+        { method: 'DELETE' }
       );
       if (!res.ok) throw new Error('Failed to remove badge incentive');
       showToast('Badge incentive removed.');

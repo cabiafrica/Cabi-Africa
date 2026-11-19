@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { dispatchFetch } from '../../services/dispatchApiClient';
 import {
     EmojiEvents,
     Star,
@@ -82,6 +83,8 @@ export const GamificationManagement: React.FC = () => {
     const [saccoBadges, setSaccoBadges] = useState<any[]>([]);
     const [rewards, setRewards] = useState<any[]>([]);
     const [badgeStats, setBadgeStats] = useState<any>(null);
+    const [saveSuccess, setSaveSuccess] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
 
     useEffect(() => {
         fetchSaccoData();
@@ -89,24 +92,45 @@ export const GamificationManagement: React.FC = () => {
 
     const fetchSaccoData = async () => {
         try {
-            const [badgesRes, rewardsRes, statsRes] = await Promise.all([
-                fetch(`${API_BASE_URL}/badges`),
-                fetch(`${API_BASE_URL}/admin/badges/rewards`),
-                fetch(`${API_BASE_URL}/admin/badges/stats`),
+            // Load saved gamification settings from database if available
+            try {
+                const configRes = await dispatchFetch('/settings/system/gamification_config');
+                if (configRes.ok) {
+                    const configData = await configRes.json();
+                    if (configData?.value) {
+                        const parsed = typeof configData.value === 'string' ? JSON.parse(configData.value) : configData.value;
+                        if (parsed && typeof parsed === 'object') {
+                            setConfig(prev => ({ ...prev, ...parsed }));
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not load persistent gamification config:', e);
+            }
+
+            const [badgesRes, rewardsRes, statsRes] = await Promise.allSettled([
+                dispatchFetch('/badges'),
+                dispatchFetch('/admin/badges/rewards'),
+                dispatchFetch('/admin/badges/stats'),
             ]);
 
-            const badgesData = await badgesRes.json();
-            const rewardsData = await rewardsRes.json();
-            const statsData = await statsRes.json();
-
-            if (badgesData.success) {
-                setSaccoBadges(badgesData.data.filter((b: any) => ['ROOKIE', 'STAR_DRIVER', 'ROAD_MASTER', 'ELITE'].includes(b.code)));
+            if (badgesRes.status === 'fulfilled' && badgesRes.value.ok) {
+                const badgesData = await badgesRes.value.json();
+                if (badgesData.success && Array.isArray(badgesData.data)) {
+                    setSaccoBadges(badgesData.data.filter((b: any) => ['ROOKIE', 'STAR_DRIVER', 'ROAD_MASTER', 'ELITE'].includes(b.code)));
+                }
             }
-            if (rewardsData.success) {
-                setRewards(rewardsData.data);
+            if (rewardsRes.status === 'fulfilled' && rewardsRes.value.ok) {
+                const rewardsData = await rewardsRes.value.json();
+                if (rewardsData.success) {
+                    setRewards(rewardsData.data);
+                }
             }
-            if (statsData.success) {
-                setBadgeStats(statsData.data);
+            if (statsRes.status === 'fulfilled' && statsRes.value.ok) {
+                const statsData = await statsRes.value.json();
+                if (statsData.success) {
+                    setBadgeStats(statsData.data);
+                }
             }
         } catch (error) {
             console.error('Failed to fetch sacco data:', error);
@@ -145,12 +169,23 @@ export const GamificationManagement: React.FC = () => {
         }));
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setLoading(true);
-        setTimeout(() => {
+        setSaveError(null);
+        try {
+            const res = await dispatchFetch('/settings/system/gamification_config', {
+                method: 'PUT',
+                body: JSON.stringify({ value: config }),
+            });
+            if (!res.ok) throw new Error(`Save failed (${res.status})`);
+            setSaveSuccess(true);
+            setTimeout(() => setSaveSuccess(false), 3000);
+        } catch (err: any) {
+            console.error('Failed to save gamification config:', err);
+            setSaveError(err.message || 'Failed to save configuration');
+        } finally {
             setLoading(false);
-            // In a real app, call API here
-        }, 1500);
+        }
     };
 
     const getBadgeColorClass = (color: string) => {
@@ -176,12 +211,25 @@ export const GamificationManagement: React.FC = () => {
                 <button
                     onClick={handleSave}
                     disabled={loading}
-                    className="flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 text-white px-6 py-2.5 rounded-lg font-bold shadow-lg transition-transform hover:scale-105 active:scale-95"
+                    className={`flex items-center gap-2 ${saveSuccess ? 'bg-green-600' : 'bg-cyan-600 hover:bg-cyan-700'} disabled:opacity-50 text-white px-6 py-2.5 rounded-lg font-bold shadow-lg transition-transform hover:scale-105 active:scale-95`}
                 >
-                    {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save />}
-                    Save Configuration
+                    {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : saveSuccess ? <CheckCircle /> : <Save />}
+                    {saveSuccess ? 'Configuration Saved!' : 'Save Configuration'}
                 </button>
             </div>
+
+            {saveSuccess && (
+                <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 text-sm text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-emerald-600" />
+                    <span>Gamification and loyalty rules saved successfully to the system database.</span>
+                </div>
+            )}
+
+            {saveError && (
+                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/40 text-sm text-red-800 dark:text-red-300">
+                    ⚠️ {saveError}
+                </div>
+            )}
 
             <TabGroup>
                 <TabList className="flex gap-2 border-b border-slate-200 dark:border-white/10 overflow-x-auto pb-1 mb-6">

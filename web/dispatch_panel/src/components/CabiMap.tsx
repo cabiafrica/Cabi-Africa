@@ -13,7 +13,7 @@ L.Icon.Default.mergeOptions({
 export interface MapMarker {
     id: string;
     position: [number, number];
-    type: 'driver' | 'passenger' | 'pickup' | 'dropoff' | 'custom';
+    type: 'driver' | 'passenger' | 'pickup' | 'dropoff' | 'emergency' | 'custom';
     icon?: L.Icon;
     popup?: string;
     onClick?: () => void;
@@ -109,6 +109,57 @@ const createPickupIcon = () => {
     });
 };
 
+const createEmergencyIcon = () => {
+    return L.divIcon({
+        className: 'custom-emergency-icon',
+        html: `
+      <div style="
+        position: relative;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+        <div style="
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background: rgba(239, 68, 68, 0.45);
+          animation: pulse-emergency-ring 1.3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        "></div>
+        <div style="
+          background-color: #ef4444;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          border: 2.5px solid white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 0 16px rgba(239, 68, 68, 0.85);
+          z-index: 2;
+        ">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+      </div>
+      <style>
+        @keyframes pulse-emergency-ring {
+          0% { transform: scale(0.7); opacity: 0.95; }
+          100% { transform: scale(2.4); opacity: 0; }
+        }
+      </style>
+    `,
+        iconSize: [44, 44],
+        iconAnchor: [22, 22],
+    });
+};
+
 const createDropoffIcon = () => {
     return L.divIcon({
         className: 'custom-div-icon',
@@ -198,6 +249,9 @@ export const CabiMap: React.FC<CabiMapProps> = ({
                         break;
                     case 'dropoff':
                         icon = createDropoffIcon();
+                        break;
+                    case 'emergency':
+                        icon = createEmergencyIcon();
                         break;
                     default:
                         icon = createDriverIcon(true);

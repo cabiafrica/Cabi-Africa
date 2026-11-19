@@ -233,21 +233,33 @@ export const ReferralConfiguration: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="bg-white dark:bg-card-dark p-4 rounded-lg border border-slate-200 dark:border-white/10 shadow-sm flex justify-between items-center mt-4">
+                  <div className="bg-white dark:bg-card-dark p-4 rounded-lg border border-slate-200 dark:border-white/10 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 mt-4">
                     <div>
                       <span className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
                         <AccountBalance className="text-amber-500" fontSize="small" /> SACCO Matching Pool Auto-Save
                       </span>
                       <p className="text-xs text-slate-500 mt-0.5">Route opt-in percentage of driver referral earnings directly to their SACCO ledger.</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        value={config.saccoMatchingPool.defaultSavingsPercent}
-                        onChange={(e) => handleConfigChange('saccoMatchingPool.defaultSavingsPercent', Number(e.target.value))}
-                        className="w-20 px-2 py-1 bg-slate-50 dark:bg-surface-dark border rounded text-right font-mono"
-                      />
-                      <span className="text-slate-400 font-bold">%</span>
+                    <div className="flex items-center gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        <input
+                          type="checkbox"
+                          checked={config.saccoMatchingPool.enabled}
+                          onChange={(e) => handleConfigChange('saccoMatchingPool.enabled', e.target.checked)}
+                          className="rounded text-amber-600 focus:ring-amber-500 h-4 w-4"
+                        />
+                        <span>Enabled</span>
+                      </label>
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="number"
+                          disabled={!config.saccoMatchingPool.enabled}
+                          value={config.saccoMatchingPool.defaultSavingsPercent}
+                          onChange={(e) => handleConfigChange('saccoMatchingPool.defaultSavingsPercent', Number(e.target.value))}
+                          className="w-20 px-2 py-1 bg-slate-50 dark:bg-surface-dark border rounded text-right font-mono disabled:opacity-50"
+                        />
+                        <span className="text-slate-400 font-bold">%</span>
+                      </div>
                     </div>
                   </div>
                 </div>

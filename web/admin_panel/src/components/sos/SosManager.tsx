@@ -1,30 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
 import { SosAlertBanner } from './SosAlertBanner';
 import { SosIncidentDashboard } from './SosIncidentDashboard';
 
-/**
- * This component simulates a global WebSocket listener for SOS alerts.
- * In a real app, it would be placed in the root layout and use a WebSocket library.
- */
 export const SosManager: React.FC = () => {
   const [activeIncidentId, setActiveIncidentId] = useState<string | null>(null);
   const [viewingIncidentId, setViewingIncidentId] = useState<string | null>(null);
 
-  // useEffect(() => {
-  //   // Simulate receiving a WebSocket message for a new SOS alert
-  //   const timeout = setTimeout(() => {
-  //     console.log('Simulating SOS alert received via WebSocket...');
-  //     setActiveIncidentId('sos-xyz-123');
-  //     // In a real app, you'd also play an audible alarm here.
-  //     // new Audio('/path/to/alarm.mp3').play();
-  //   }, 5000); // Show alert 5 seconds after app loads
+  useEffect(() => {
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://auth-gateway-746659778850.us-central1.run.app';
+    const socket = io(`${socketUrl}/sos`, {
+      transports: ['websocket', 'polling'],
+    });
 
-  //   return () => clearTimeout(timeout);
-  // }, []);
+    socket.on('connect', () => {
+      console.log('Admin SOS Safety Gateway Connected');
+      socket.emit('registerClient', { userId: 'admin', role: 'ADMIN' });
+    });
+
+    socket.on('sos_alert', (alert: any) => {
+      console.warn('🚨 Admin Panel: Live SOS alert received:', alert);
+      const targetId = alert.alertId || alert.occurrenceId || alert.id || alert.obNumber;
+      setActiveIncidentId(targetId);
+
+      // Synthesize audible siren/alarm via Web Audio API
+      try {
+        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+        if (AudioCtx) {
+          const ctx = new AudioCtx();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(880, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.35);
+          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.7);
+          gain.gain.setValueAtTime(0.35, ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.85);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.85);
+        }
+      } catch (_) {}
+    });
+
+    socket.on('sos_resolved', (res: any) => {
+      setActiveIncidentId((prev) => (prev === res.occurrenceId || prev === res.obNumber ? null : prev));
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const handleViewIncident = (incidentId: string) => {
     setViewingIncidentId(incidentId);
-    setActiveIncidentId(null); // Hide the banner once viewing
+    setActiveIncidentId(null); // Hide banner once viewing details
   };
 
   const handleCloseDashboard = () => {
@@ -39,5 +70,5 @@ export const SosManager: React.FC = () => {
     return <SosAlertBanner incidentId={activeIncidentId} onView={handleViewIncident} />;
   }
 
-  return null; // No active alert
+  return null;
 };

@@ -64,6 +64,8 @@ const OrganizationDetails = lazy(() => import('./pages/organizations/Organizatio
 const VehicleBenefitsPage = lazy(() => import('./pages/VehicleBenefitsPage').then(m => ({ default: m.VehicleBenefitsPage })));
 const VehicleQualificationsPage = lazy(() => import('./pages/VehicleQualificationsPage').then(m => ({ default: m.VehicleQualificationsPage })));
 const BenefitClaimsPage = lazy(() => import('./pages/BenefitClaimsPage').then(m => ({ default: m.BenefitClaimsPage })));
+const DisputeAdjudicationDashboard = lazy(() => import('./components/dispute/DisputeAdjudicationDashboard').then(m => ({ default: m.DisputeAdjudicationDashboard })));
+const CorporateBillingConsole = lazy(() => import('./components/corporate/CorporateBillingConsole').then(m => ({ default: m.CorporateBillingConsole })));
 
 // Widgets
 const RevenueWidget = lazy(() => import('./components/widgets/RevenueWidget').then(m => ({ default: m.RevenueWidget })));
@@ -82,7 +84,7 @@ const RouteFallback = () => (
   </div>
 );
 
-type View = 'dashboard' | 'applications' | 'job-activities' | 'referral-dashboard' | 'referral-config' | 'promo-config' | 'badge-management' | 'blog-management' | 'permissions' | 'roles' | 'users' | 'platform-users' | 'commission-ledger' | 'audit-log' | 'sos-config' | 'suspended-accounts' | 'organization-management' | 'simulation-dashboard' | 'support-tickets' | 'surge-zones' | 'airport-zones' | 'vehicle-categories' | 'promo-codes' | 'scheduled-rides' | 'cms' | 'bulk-messaging' | 'driver-performance' | 'city-management' | 'heat-maps' | 'driver-unions' | 'live-map' | 'bi-dashboard' | 'fraud-alerts' | 'gamification' | 'traction-logs' | 'occurrences';
+type View = 'dashboard' | 'applications' | 'job-activities' | 'referral-dashboard' | 'referral-config' | 'promo-config' | 'badge-management' | 'blog-management' | 'permissions' | 'roles' | 'users' | 'platform-users' | 'commission-ledger' | 'audit-log' | 'sos-config' | 'suspended-accounts' | 'organization-management' | 'simulation-dashboard' | 'support-tickets' | 'surge-zones' | 'airport-zones' | 'vehicle-categories' | 'promo-codes' | 'scheduled-rides' | 'cms' | 'bulk-messaging' | 'driver-performance' | 'city-management' | 'heat-maps' | 'driver-unions' | 'live-map' | 'bi-dashboard' | 'fraud-alerts' | 'gamification' | 'traction-logs' | 'occurrences' | 'disputes' | 'corporate-billing';
 
 interface MenuItem {
   icon: ReactNode;
@@ -129,6 +131,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
       { icon: <Scale className="w-4 h-4" />, label: 'Resolution Dash', view: '/resolution-dashboard', permission: 'OCCURRENCE_RESOLVE' },
       { icon: <Ticket className="w-4 h-4" />, label: 'Support Tickets', view: '/support-tickets', permission: 'OCCURRENCE_VIEW' },
       { icon: <ShieldCheck className="w-4 h-4" />, label: 'Benefit Claims', view: '/benefit-claims', permission: 'OCCURRENCE_VIEW' },
+      { icon: <Scale className="w-4 h-4" />, label: 'Disputes & Detours', view: '/disputes', permission: 'OCCURRENCE_RESOLVE' },
     ]
   },
   {
@@ -141,6 +144,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
       { icon: <TrendingUp className="w-4 h-4" />, label: 'Wealth Creation', view: '/wealth-programs', permission: 'SYSTEM_SETTINGS_EDIT' },
       { icon: <Building className="w-4 h-4" />, label: 'Sacco Integration', view: '/sacco-integration', permission: 'SYSTEM_SETTINGS_EDIT' },
       { icon: <Download className="w-4 h-4" />, label: 'Data Exports', view: '/exports', permission: 'FINANCIAL_REPORTS_VIEW' },
+      { icon: <Building2 className="w-4 h-4" />, label: 'Corporate Billing', view: '/corporate-billing', permission: 'FINANCIAL_REPORTS_VIEW' },
       { icon: <Activity className="w-4 h-4" />, label: 'Traction Logs', view: '/traction-logs', permission: 'AUDIT_LOGS_VIEW' },
     ]
   },
@@ -517,6 +521,8 @@ function App() {
               <Route path="/vehicle-benefits" element={<VehicleBenefitsPage />} />
               <Route path="/vehicle-qualifications" element={<VehicleQualificationsPage />} />
               <Route path="/benefit-claims" element={<BenefitClaimsPage />} />
+              <Route path="/disputes" element={<ProtectedRoute permission="OCCURRENCE_RESOLVE"><DisputeAdjudicationDashboard /></ProtectedRoute>} />
+              <Route path="/corporate-billing" element={<ProtectedRoute permission="FINANCIAL_REPORTS_VIEW"><CorporateBillingConsole /></ProtectedRoute>} />
               <Route path="/sacco-integration" element={<ProtectedRoute permission="SYSTEM_SETTINGS_EDIT"><SaccoIntegrationHub /></ProtectedRoute>} />
               </Routes>
             </Suspense>
