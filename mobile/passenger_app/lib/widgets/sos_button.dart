@@ -118,24 +118,33 @@ class _SOSButtonState extends State<SOSButton> {
                 onPressed: () async {
                   Navigator.pop(ctx);
                   try {
-                    await SafetyService().logEmergencyEvent();
+                    final res = await SafetyService().triggerRealSOS();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '🚨 Incident #${res.obNumber} active! ${res.notifiedCaptainsCount} Captains and Safety Center alerted.',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          backgroundColor: AppTheme.errorRed,
+                          duration: const Duration(seconds: 5),
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      );
+                    }
                   } catch (e) {
-                    debugPrint('Error logging emergency: $e');
-                  }
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text(
-                          '🚨 Emergency alert dispatched to Cabi Security Team!',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('⚠️ Emergency Beacon Error: $e'),
+                          backgroundColor: AppTheme.errorRed,
+                          behavior: SnackBarBehavior.floating,
                         ),
-                        backgroundColor: AppTheme.errorRed,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    );
+                      );
+                    }
                   }
                 },
                 icon: const Icon(Icons.shield_rounded, color: Colors.white, size: 20),
@@ -164,14 +173,26 @@ class _SOSButtonState extends State<SOSButton> {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () {
+                onPressed: () async {
                   Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('📍 Live GPS tracking link generated & shared with emergency contacts.'),
-                      backgroundColor: AppTheme.surfaceContainerHighest,
-                    ),
-                  );
+                  try {
+                    final res = await SafetyService().triggerRealSOS();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('📍 Live GPS tracking link (${res.trackingUrl}) dispatched to trusted contacts via SMS.'),
+                          backgroundColor: AppTheme.surfaceContainerHighest,
+                          duration: const Duration(seconds: 5),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Could not share live tracking: $e')),
+                      );
+                    }
+                  }
                 },
                 icon: const Icon(Icons.share_location_rounded, color: AppTheme.electricBlue, size: 18),
                 label: Text(

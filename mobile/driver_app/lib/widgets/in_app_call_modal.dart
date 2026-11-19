@@ -116,6 +116,10 @@ class _InAppCallModalState extends State<InAppCallModal> with SingleTickerProvid
         statusText = 'CALL ENDED';
         statusColor = Colors.redAccent;
         break;
+      case VoipCallState.timeout:
+        statusText = 'DATA CONNECTION UNREACHABLE';
+        statusColor = Colors.amber;
+        break;
       case VoipCallState.idle:
         statusText = 'CONNECTING ENCRYPTED AUDIO...';
         statusColor = Colors.grey;
@@ -259,7 +263,73 @@ class _InAppCallModalState extends State<InAppCallModal> with SingleTickerProvid
           const Spacer(),
 
           // Controls Row
-          if (state == VoipCallState.incomingRinging) ...[
+          if (state == VoipCallState.timeout) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.signal_cellular_connected_no_internet_4_bar_rounded,
+                          color: Colors.amber,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Data network timeout (CGNAT / 3G drop). Audio packet relay blocked.',
+                            style: GoogleFonts.inter(
+                              color: isDark ? Colors.white70 : Colors.black87,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF10B981),
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size.fromHeight(46),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        elevation: 0,
+                      ),
+                      icon: const Icon(Icons.phone_in_talk_rounded, size: 18),
+                      label: Text(
+                        'SWITCH TO MASKED CELLULAR CALL',
+                        style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+                      ),
+                      onPressed: () async {
+                        await comm.switchToMaskedCellularCall();
+                        if (context.mounted) Navigator.of(context).maybePop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: () {
+                comm.endCall();
+                Navigator.of(context).maybePop();
+              },
+              child: Text(
+                'Dismiss',
+                style: GoogleFonts.inter(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ] else if (state == VoipCallState.incomingRinging) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Row(
@@ -323,6 +393,20 @@ class _InAppCallModalState extends State<InAppCallModal> with SingleTickerProvid
                 ],
               ),
             ),
+            if (state == VoipCallState.outgoingCalling) ...[
+              const SizedBox(height: 14),
+              TextButton.icon(
+                icon: const Icon(Icons.phone_in_talk_outlined, size: 14, color: Colors.grey),
+                label: Text(
+                  'Prefer cellular? Use Masked Phone Call',
+                  style: GoogleFonts.inter(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w600),
+                ),
+                onPressed: () async {
+                  await comm.switchToMaskedCellularCall();
+                  if (context.mounted) Navigator.of(context).maybePop();
+                },
+              ),
+            ],
           ],
 
           const SizedBox(height: 36),

@@ -1,12 +1,153 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socket_io_client/socket_io_client.dart' as io;
+import '../../config/app_config.dart';
+
 typedef MessageCallback = void Function(Map<String, dynamic> data);
 
 class TripCommChannel {
   final String tripId;
   MessageCallback? onMessageReceived;
+  io.Socket? _socket;
+  bool _isDisposed = false;
 
-  TripCommChannel(this.tripId);
+  TripCommChannel(this.tripId) {
+    _initSocket();
+  }
 
-  void postMessage(Map<String, dynamic> message) {}
+  Future<void> _initSocket() async {
+    try {
+      final token = await _resolveAuthToken();
+      if (_isDisposed) return;
 
-  void dispose() {}
+      final socketUrl = '${AppConfig.dispatchSocketUrl}/chat';
+      final options = io.OptionBuilder()
+          .setTransports(['websocket', 'polling'])
+          .enableAutoConnect()
+          .setAuth({'token': token ?? 'mock-jwt'})
+          .setExtraHeaders(token != null ? {'Authorization': 'Bearer $token'} : {})
+          .build();
+
+      _socket = io.io(socketUrl, options);
+
+      _socket?.onConnect((_) {
+        debugPrint('💬 [Driver TripCommChannel] Connected to chat gateway for trip $tripId');
+        _socket?.emit('joinRoom', {'tripId': tripId});
+      });
+
+      _socket?.on('joinedRoom', (data) {
+        debugPrint('💬 [Driver TripCommChannel] Successfully joined trip room: $data');
+      });
+
+      _socket?.on('newMessage', (data) {
+        if (_isDisposed || data == null) return;
+        try {
+          final Map<String, dynamic> msgMap =
+              data is Map ? Map<String, dynamic>.from(data) : {};
+          final chatData = {
+            'type': 'CHAT',
+            'id': msgMap['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
+            'tripId': msgMap['tripId'] ?? tripId,
+            'senderName': msgMap['senderName'] ?? 'Passenger',
+            'senderRole': msgMap['senderRole'] ?? 'PASSENGER',
+            'text': msgMap['text'] ?? '',
+            'timestamp': msgMap['timestamp'] ?? DateTime.now().toIso8601String(),
+            'wasRedacted': msgMap['wasRedacted'] ?? false,
+          };
+          onMessageReceived?.call(chatData);
+        } catch (e) {
+          debugPrint('💬 [Driver TripCommChannel] Error parsing newMessage: $e');
+        }
+      });
+
+      _socket?.on('callSignal', (data) {
+        if (_isDisposed || data == null) return;
+        try {
+          final Map<String, dynamic> signalData =
+              data is Map ? Map<String, dynamic>.from(data) : {};
+          onMessageReceived?.call(signalData);
+        } catch (e) {
+          debugPrint('💬 [Driver TripCommChannel] Error parsing callSignal: $e');
+        }
+      });
+
+      _socket?.on('roomHistory', (data) {
+        if (_isDisposed || data == null) return;
+        try {
+          final history = data['history'] as List?;
+          if (history != null) {
+            for (final item in history) {
+              final Map<String, dynamic> msgMap =
+                  item is Map ? Map<String, dynamic>.from(item) : {};
+              onMessageReceived?.call({
+                'type': 'CHAT',
+                'id': msgMap['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
+                'tripId': msgMap['tripId'] ?? tripId,
+                'senderName': msgMap['senderName'] ?? 'Passenger',
+                'senderRole': msgMap['senderRole'] ?? 'PASSENGER',
+                'text': msgMap['text'] ?? '',
+                'timestamp': msgMap['timestamp'] ?? DateTime.now().toIso8601String(),
+              });
+            }
+          }
+        } catch (e) {
+          debugPrint('💬 [Driver TripCommChannel] Error parsing roomHistory: $e');
+        }
+      });
+
+      _socket?.onDisconnect((_) {
+        debugPrint('💬 [Driver TripCommChannel] Disconnected from chat server');
+      });
+
+      _socket?.onError((err) {
+        debugPrint('💬 [Driver TripCommChannel] Socket error: $err');
+      });
+    } catch (e) {
+      debugPrint('💬 [Driver TripCommChannel] Socket initialization failed: $e');
+    }
+  }
+
+  Future<String?> _resolveAuthToken() async {
+    try {
+      const storage = FlutterSecureStorage();
+      final token = await storage.read(key: 'jwt_token');
+      if (token != null && token.isNotEmpty) return token;
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('auth_token') ?? prefs.getString('driver_token');
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void postMessage(Map<String, dynamic> message) {
+    if (_isDisposed) return;
+    try {
+      final type = message['type']?.toString();
+      if (type == 'CHAT') {
+        final text = message['text']?.toString() ?? '';
+        if (text.isNotEmpty) {
+          _socket?.emit('sendMessage', {
+            'tripId': tripId,
+            'text': text,
+          });
+        }
+      } else if (type != null && type.startsWith('CALL_')) {
+        _socket?.emit('callSignal', message);
+      }
+    } catch (e) {
+      debugPrint('💬 [Driver TripCommChannel] postMessage error: $e');
+    }
+  }
+
+  void dispose() {
+    _isDisposed = true;
+    try {
+      _socket?.emit('leaveRoom', {'tripId': tripId});
+      _socket?.disconnect();
+      _socket?.dispose();
+      _socket = null;
+    } catch (_) {}
+  }
 }

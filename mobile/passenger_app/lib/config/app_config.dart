@@ -41,6 +41,12 @@ class AppConfig {
       ? 'https://www.cabi.africa/api'
       : '$protocol://$host:3338/api';
 
+  static String get voiceApiUrl => isProduction && customHost.isEmpty
+      ? 'https://www.cabi.africa/api/voice'
+      : '$protocol://$host:3334/api/voice';
+
+  static const String maskedProxyNumber = '+254711082000';
+
   // WebSocket
   static String get socketUrl => isProduction && customHost.isEmpty
       ? 'https://dispatch-service-746659778850.us-central1.run.app'

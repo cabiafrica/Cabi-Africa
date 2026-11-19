@@ -48,6 +48,12 @@ class AppConfig {
       ? 'https://www.cabi.africa/api'
       : '$protocol://$host:3338/api';
 
+  static String get voiceApiUrl => isProduction && customHost.isEmpty
+      ? 'https://www.cabi.africa/api/voice'
+      : '$protocol://$host:3334/api/voice';
+
+  static const String maskedProxyNumber = '+254711082000';
+
   static String getSosSocketUrl(String tripId) {
     const wsProtocol = AppConfig.isProduction ? 'wss' : 'ws';
     final socketHost = AppConfig.isProduction

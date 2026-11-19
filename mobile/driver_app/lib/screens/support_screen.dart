@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
+import 'driver_dispute_appeal_screen.dart';
+import 'lost_item_response_screen.dart';
 
 class DriverSupportScreen extends StatelessWidget {
   const DriverSupportScreen({super.key});
@@ -186,6 +188,51 @@ class DriverSupportScreen extends StatelessWidget {
                   const SnackBar(
                     content: Text("Connecting to real-time dispatch radio..."),
                     backgroundColor: Colors.blueAccent,
+                  ),
+                );
+              },
+            ),
+            _buildContactOption(
+              context,
+              icon: Icons.alt_route_rounded,
+              title: "Route Detour Appeals",
+              subtitle: "Appeal flagged GPS detours within your 48-hr SLA",
+              iconColor: const Color(0xFFFFB800),
+              isDark: isDark,
+              textColor: textColor,
+              subtextColor: subtextColor,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (ctx) => DriverDisputeAppealScreen(
+                      disputeId: 'disp_demo_982',
+                      tripId: 'trip_nairobi_cbd_551',
+                      detourPercent: 34.8,
+                      claimedOvercharge: 420.0,
+                      appealDeadline: DateTime.now().add(const Duration(hours: 42, minutes: 15)),
+                    ),
+                  ),
+                );
+              },
+            ),
+            _buildContactOption(
+              context,
+              icon: Icons.find_in_page_outlined,
+              title: "Lost & Found Returns",
+              subtitle: "Verify 4-digit handover PIN for courier fee payout",
+              iconColor: const Color(0xFF00A859),
+              isDark: isDark,
+              textColor: textColor,
+              subtextColor: subtextColor,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (ctx) => const LostItemResponseScreen(
+                      rideId: 'trip_nairobi_cbd_551',
+                      reportId: 'rep_lost_item_101',
+                    ),
                   ),
                 );
               },

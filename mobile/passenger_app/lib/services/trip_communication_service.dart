@@ -1,5 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../config/app_config.dart';
 import 'trip_comm_channel/trip_comm_channel.dart';
 
 enum MessageRole { passenger, driver }
@@ -10,6 +16,7 @@ enum VoipCallState {
   incomingRinging,
   connected,
   ended,
+  timeout,
 }
 
 class TripChatMessage {
@@ -74,6 +81,7 @@ class TripCommunicationService extends ChangeNotifier {
   String? _peerAvatar;
   int _callDurationSeconds = 0;
   Timer? _callDurationTimer;
+  Timer? _connectionTimeoutTimer;
 
   List<TripChatMessage> get messages => List.unmodifiable(_messages);
   VoipCallState get callState => _callState;
@@ -103,14 +111,13 @@ class TripCommunicationService extends ChangeNotifier {
     _channel?.onMessageReceived = _handleIncomingMessage;
 
     if (_messages.isEmpty) {
-      // Add initial contextual prompt if empty
       _messages.add(
         TripChatMessage(
           id: 'sys_init',
           tripId: _tripId,
           senderName: 'Cabi Secure Trip Relay',
           senderRole: MessageRole.driver,
-          text: 'Trip CABI-982 active. End-to-end encrypted captain messaging ready.',
+          text: 'Trip $_tripId active. End-to-end encrypted captain messaging ready.',
           timestamp: DateTime.now().subtract(const Duration(minutes: 2)),
           isMe: false,
         ),
@@ -126,7 +133,6 @@ class TripCommunicationService extends ChangeNotifier {
       final isFromMe = (_myRole == MessageRole.passenger && roleStr == 'PASSENGER') ||
           (_myRole == MessageRole.driver && roleStr == 'DRIVER');
 
-      // Only add if not from myself to prevent double appending
       if (!isFromMe) {
         final newMsg = TripChatMessage.fromJson(data, isMe: false);
         _messages.add(newMsg);
@@ -147,16 +153,22 @@ class TripCommunicationService extends ChangeNotifier {
       }
     } else if (type == 'CALL_ACCEPT') {
       if (_callState == VoipCallState.outgoingCalling) {
+        _connectionTimeoutTimer?.cancel();
         _startCallTimer();
         _callState = VoipCallState.connected;
         notifyListeners();
       }
+    } else if (type == 'CALL_TIMEOUT') {
+      _connectionTimeoutTimer?.cancel();
+      _callState = VoipCallState.timeout;
+      notifyListeners();
     } else if (type == 'CALL_DECLINE' || type == 'CALL_END') {
+      _connectionTimeoutTimer?.cancel();
       _stopCallTimer();
       _callState = VoipCallState.ended;
       notifyListeners();
       Future.delayed(const Duration(seconds: 2), () {
-        if (_callState == VoipCallState.ended) {
+        if (_callState == VoipCallState.ended || _callState == VoipCallState.timeout) {
           _callState = VoipCallState.idle;
           notifyListeners();
         }
@@ -185,6 +197,20 @@ class TripCommunicationService extends ChangeNotifier {
   void startCall() {
     _callState = VoipCallState.outgoingCalling;
     _callDurationSeconds = 0;
+    _connectionTimeoutTimer?.cancel();
+
+    // 10-second CGNAT hole-punching / network connection timeout
+    _connectionTimeoutTimer = Timer(const Duration(seconds: 10), () {
+      if (_callState == VoipCallState.outgoingCalling) {
+        _callState = VoipCallState.timeout;
+        _channel?.postMessage({
+          'type': 'CALL_TIMEOUT',
+          'tripId': _tripId,
+        });
+        notifyListeners();
+      }
+    });
+
     _channel?.postMessage({
       'type': 'CALL_START',
       'tripId': _tripId,
@@ -197,6 +223,7 @@ class TripCommunicationService extends ChangeNotifier {
   }
 
   void acceptCall() {
+    _connectionTimeoutTimer?.cancel();
     _startCallTimer();
     _callState = VoipCallState.connected;
     _channel?.postMessage({
@@ -207,6 +234,7 @@ class TripCommunicationService extends ChangeNotifier {
   }
 
   void declineCall() {
+    _connectionTimeoutTimer?.cancel();
     _stopCallTimer();
     _callState = VoipCallState.idle;
     _channel?.postMessage({
@@ -217,6 +245,7 @@ class TripCommunicationService extends ChangeNotifier {
   }
 
   void endCall() {
+    _connectionTimeoutTimer?.cancel();
     _stopCallTimer();
     _callState = VoipCallState.ended;
     _channel?.postMessage({
@@ -225,11 +254,55 @@ class TripCommunicationService extends ChangeNotifier {
     });
     notifyListeners();
     Future.delayed(const Duration(seconds: 2), () {
-      if (_callState == VoipCallState.ended) {
+      if (_callState == VoipCallState.ended || _callState == VoipCallState.timeout) {
         _callState = VoipCallState.idle;
         notifyListeners();
       }
     });
+  }
+
+  Future<String?> _resolveAuthToken() async {
+    try {
+      const storage = FlutterSecureStorage();
+      final token = await storage.read(key: 'jwt_token');
+      if (token != null && token.isNotEmpty) return token;
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('auth_token') ?? prefs.getString('access_token');
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /**
+   * Switches from failed or slow WebRTC audio to Cabi Africa Masked Cellular Call
+   */
+  Future<bool> switchToMaskedCellularCall() async {
+    endCall();
+
+    // 1. Asynchronously inform backend voice bridge
+    try {
+      final token = await _resolveAuthToken();
+      if (token != null) {
+        final url = Uri.parse('${AppConfig.voiceApiUrl}/bridge');
+        http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({'tripId': _tripId}),
+        ).catchError((_) => http.Response('', 500));
+      }
+    } catch (_) {}
+
+    // 2. Launch phone dialer with virtual masked proxy number
+    try {
+      final dialUri = Uri.parse('tel:${AppConfig.maskedProxyNumber}');
+      return await launchUrl(dialUri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      debugPrint('[TripCommunicationService] Failed to launch cellular dialer: $e');
+      return false;
+    }
   }
 
   void _startCallTimer() {
@@ -248,6 +321,7 @@ class TripCommunicationService extends ChangeNotifier {
 
   @override
   void dispose() {
+    _connectionTimeoutTimer?.cancel();
     _stopCallTimer();
     _channel?.dispose();
     super.dispose();

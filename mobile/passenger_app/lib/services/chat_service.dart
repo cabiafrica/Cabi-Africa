@@ -53,17 +53,5 @@ class ChatService {
     );
     _messages.add(newMessage);
     _controller.add(List.from(_messages));
-
-    // Simulate driver reply after a delay
-    await Future.delayed(const Duration(seconds: 3));
-    final reply = ChatMessage(
-      id: DateTime.now().toString(),
-      senderId: 'driver',
-      text: "Got it. See you soon!",
-      timestamp: DateTime.now(),
-      isMe: false,
-    );
-    _messages.add(reply);
-    _controller.add(List.from(_messages));
   }
 }

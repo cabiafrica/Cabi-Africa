@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:driver_app/theme/app_theme.dart';
 import 'package:driver_app/screens/sos_alert_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:geolocator/geolocator.dart';
+import '../services/sos_service.dart';
 
 class SosButton extends StatefulWidget {
   final VoidCallback? onTriggered;
@@ -110,15 +112,50 @@ class _SosButtonState extends State<SosButton> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () {
+                onPressed: () async {
                   Navigator.pop(ctx);
                   widget.onDistressSignal?.call();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SosAlertScreen(alertData: {}),
-                    ),
-                  );
+                  try {
+                    Position? position;
+                    try {
+                      position = await Geolocator.getCurrentPosition(
+                        desiredAccuracy: LocationAccuracy.high,
+                        timeLimit: const Duration(seconds: 5),
+                      );
+                    } catch (_) {}
+
+                    position ??= Position(
+                      latitude: -1.2921,
+                      longitude: 36.8219,
+                      timestamp: DateTime.now(),
+                      accuracy: 100.0,
+                      altitude: 1795.0,
+                      altitudeAccuracy: 10.0,
+                      heading: 0.0,
+                      headingAccuracy: 0.0,
+                      speed: 0.0,
+                      speedAccuracy: 0.0,
+                    );
+
+                    final res = await SosService().activateSos('UNASSIGNED', {
+                      'lat': position.latitude,
+                      'lng': position.longitude,
+                    });
+
+                    if (context.mounted) {
+                      _showDistressActiveDialog(context, res);
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('⚠️ Distress Broadcast Error: $e'),
+                          backgroundColor: AppTheme.errorRed,
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    }
+                  }
                 },
                 icon: const Icon(Icons.shield_rounded, color: Colors.white, size: 20),
                 label: const Text(
@@ -185,6 +222,133 @@ class _SosButtonState extends State<SosButton> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showDistressActiveDialog(BuildContext context, DriverSosActivationResult res) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dCtx) => AlertDialog(
+        backgroundColor: const Color(0xFF161616),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: AppTheme.errorRed, width: 2),
+        ),
+        title: Row(
+          children: const [
+            Icon(Icons.shield_rounded, color: AppTheme.errorRed, size: 28),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'DISTRESS BEACON ENGAGED',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppTheme.errorRed.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'OB REF: ${res.obNumber}',
+                style: const TextStyle(color: AppTheme.errorRed, fontWeight: FontWeight.w900, fontSize: 13),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Universal Proximity Mesh broadcast to ${res.notifiedCaptainsCount} nearby Captains and Safety Command Center.',
+              style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              '⚠️ KES ${res.distressFeeBilled} emergency distress fee billed with negative balance allowance. You may submit a pardon request for Senior Official waiver.',
+              style: const TextStyle(color: Colors.orangeAccent, fontSize: 12, height: 1.3),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dCtx);
+              _showPardonRequestDialog(context, res.alertId);
+            },
+            child: const Text('Request Fee Pardon', style: TextStyle(color: Colors.orangeAccent)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(dCtx),
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.errorRed),
+            child: const Text('Acknowledged / Stand Down', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPardonRequestDialog(BuildContext context, String alertId) {
+    final reasonController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (pCtx) => AlertDialog(
+        backgroundColor: const Color(0xFF161616),
+        title: const Text('Request Distress Fee Waiver', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Explain the nature of the emergency for Senior Cabi Distress Official review:',
+              style: TextStyle(color: Colors.white70, fontSize: 13),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: reasonController,
+              maxLines: 3,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                hintText: 'e.g. Critical vehicle assault, violent robbery, immediate medical hazard...',
+                hintStyle: TextStyle(color: Colors.white38, fontSize: 12),
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(pCtx), child: const Text('Cancel', style: TextStyle(color: Colors.white60))),
+          ElevatedButton(
+            onPressed: () async {
+              if (reasonController.text.trim().isEmpty) return;
+              Navigator.pop(pCtx);
+              try {
+                final result = await SosService().requestPardon(alertId, reasonController.text.trim());
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(result['message'] ?? 'Pardon request submitted for official review.'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Could not submit pardon request: $e')),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor),
+            child: const Text('Submit Request', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
+        ],
       ),
     );
   }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import '../../config/app_config.dart';
 
@@ -29,7 +31,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  late io.Socket _socket;
+  io.Socket? _socket;
   final TextEditingController _textController = TextEditingController();
   final List<Message> _messages = [];
 
@@ -39,46 +41,64 @@ class _ChatScreenState extends State<ChatScreen> {
     _connectToSocket();
   }
 
-  void _connectToSocket() {
-    _socket = io.io(AppConfig.socketUrl, <String, dynamic>{
-      'transports': ['websocket'],
+  Future<String?> _resolveAuthToken() async {
+    try {
+      const storage = FlutterSecureStorage();
+      final token = await storage.read(key: 'jwt_token');
+      if (token != null && token.isNotEmpty) return token;
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('auth_token') ?? prefs.getString('access_token');
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _connectToSocket() async {
+    final token = await _resolveAuthToken();
+    final socketUrl = '${AppConfig.socketUrl}/chat';
+
+    _socket = io.io(socketUrl, <String, dynamic>{
+      'transports': ['websocket', 'polling'],
       'autoConnect': false,
-      'extraHeaders': {'Authorization': 'Bearer mock-jwt'},
+      'auth': {'token': token ?? 'mock-jwt'},
+      'extraHeaders': token != null ? {'Authorization': 'Bearer $token'} : {},
     });
 
-    _socket.connect();
+    _socket?.connect();
 
-    _socket.onConnect((_) {
+    _socket?.onConnect((_) {
       debugPrint('Connected to chat server');
-      _socket.emit('joinRoom', widget.tripId);
+      _socket?.emit('joinRoom', {'tripId': widget.tripId});
     });
 
-    _socket.on('newMessage', (data) {
-      if (!mounted) return;
+    _socket?.on('newMessage', (data) {
+      if (!mounted || data == null) return;
+      final sender = data['senderId'] ?? data['user'] ?? '';
       setState(() {
         _messages.add(
           Message(
-            text: data['text'],
-            senderId: data['user'],
-            isSentByMe: data['user'] == widget.currentUserId,
+            text: data['text'] ?? '',
+            senderId: sender,
+            isSentByMe: sender == widget.currentUserId,
           ),
         );
       });
     });
 
-    _socket.onDisconnect((_) => debugPrint('Disconnected from chat server'));
+    _socket?.onDisconnect((_) => debugPrint('Disconnected from chat server'));
   }
 
   void _sendMessage() {
     if (_textController.text.isNotEmpty) {
-      _socket.emit('sendMessage', {
+      final text = _textController.text.trim();
+      _socket?.emit('sendMessage', {
         'tripId': widget.tripId,
-        'message': _textController.text,
+        'text': text,
       });
       setState(() {
         _messages.add(
           Message(
-            text: _textController.text,
+            text: text,
             senderId: widget.currentUserId,
             isSentByMe: true,
           ),

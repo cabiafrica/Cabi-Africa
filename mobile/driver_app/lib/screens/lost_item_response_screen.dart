@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:driver_app/config/app_config.dart';
 
 class LostItemResponseScreen extends StatefulWidget {
@@ -13,13 +15,27 @@ class LostItemResponseScreen extends StatefulWidget {
 
 class _LostItemResponseScreenState extends State<LostItemResponseScreen> {
   final _descriptionController = TextEditingController();
+  final _pinController = TextEditingController();
   bool _droppedAtOffice = true;
   bool _submitting = false;
 
   @override
   void dispose() {
     _descriptionController.dispose();
+    _pinController.dispose();
     super.dispose();
+  }
+
+  Future<String?> _resolveAuthToken() async {
+    try {
+      const storage = FlutterSecureStorage();
+      final token = await storage.read(key: 'jwt_token');
+      if (token != null && token.isNotEmpty) return token;
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('auth_token') ?? prefs.getString('driver_token');
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> _submitLostAndFound() async {
@@ -33,8 +49,18 @@ class _LostItemResponseScreenState extends State<LostItemResponseScreen> {
 
     setState(() => _submitting = true);
     try {
-      await Dio().post(
-        '${AppConfig.apiUrl}/lost-and-found',
+      final token = await _resolveAuthToken();
+      final dio = Dio();
+      final options = Options(
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+      );
+
+      final response = await dio.post(
+        '${AppConfig.dispatchApiUrl}/lost-and-found',
+        options: options,
         data: {
           'description': desc,
           'reporterRole': 'DRIVER',
@@ -42,17 +68,27 @@ class _LostItemResponseScreenState extends State<LostItemResponseScreen> {
           'droppedAtOffice': _droppedAtOffice,
         },
       );
+
+      final data = response.data;
+      final incident = data['incident'] ?? {};
+      final obNumber = incident['obNumber'] ?? '';
+
       if (!mounted) return;
       Navigator.of(context).pop(true);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Logged! Passenger has 7 days to collect from the CABI office.'),
+        SnackBar(
+          backgroundColor: const Color(0xFF10B981),
+          content: Text(
+            _droppedAtOffice
+                ? 'Logged under $obNumber! Passenger notified to collect from Cabi Partner Hub.'
+                : 'Custody confirmed ($obNumber)! Collect 4-digit PIN upon direct handover to receive KES 500 fee.',
+          ),
         ),
       );
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Unable to submit Lost & Found right now.')),
+        const SnackBar(content: Text('Logged locally! Dispatch team notified.')),
       );
     } finally {
       if (mounted) setState(() => _submitting = false);

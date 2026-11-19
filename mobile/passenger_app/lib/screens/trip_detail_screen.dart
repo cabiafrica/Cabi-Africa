@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/tip_selection_widget.dart';
+import 'trip_dispute_screen.dart';
+import 'report_lost_item_screen.dart';
 
 class TripDetailScreen extends StatefulWidget {
   final String tripId;
@@ -237,6 +239,87 @@ class _TripDetailScreenState extends State<TripDetailScreen> {
                 ),
               ),
             ],
+
+            const SizedBox(height: 24),
+            const Text(
+              'Trip Support & Incident Reporting',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 12),
+
+            // Dispute Fare / Route Detour Card
+            Card(
+              elevation: 0.5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(color: Colors.grey.shade300),
+              ),
+              child: ListTile(
+                leading: const CircleAvatar(
+                  backgroundColor: Color(0x1F00A859),
+                  child: Icon(Icons.alt_route, color: Color(0xFF00A859)),
+                ),
+                title: const Text(
+                  'Dispute Fare / Report Detour',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                subtitle: const Text(
+                  'Audit GPS trajectory and claim automatic fare recalculation',
+                  style: TextStyle(fontSize: 12),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => TripDisputeScreen(
+                        tripId: widget.tripId,
+                        driverId: 'drv_sample_442',
+                        driverName: 'John Smith',
+                        fareAmount: _fareAmount,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // Report Lost Item Card
+            Card(
+              elevation: 0.5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(color: Colors.grey.shade300),
+              ),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.blue.shade50,
+                  child: Icon(Icons.find_in_page_outlined, color: Colors.blue.shade700),
+                ),
+                title: const Text(
+                  'Lost an Item in this Vehicle?',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                subtitle: const Text(
+                  'File an incident report, track return PIN, and escrow courier',
+                  style: TextStyle(fontSize: 12),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => ReportLostItemScreen(
+                        rideId: widget.tripId,
+                        driverId: 'drv_sample_442',
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
           ],
         ),
       ),

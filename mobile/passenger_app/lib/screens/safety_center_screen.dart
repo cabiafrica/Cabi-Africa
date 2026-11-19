@@ -75,8 +75,10 @@ class _SafetyCenterScreenState extends State<SafetyCenterScreen>
       _sosDispatched = true;
     });
 
+    String obInfo = '';
     try {
-      await SafetyService().logEmergencyEvent();
+      final res = await SafetyService().triggerRealSOS();
+      obInfo = ' (Incident #${res.obNumber})';
     } catch (e) {
       debugPrint('Error logging emergency: $e');
     }
@@ -85,13 +87,13 @@ class _SafetyCenterScreenState extends State<SafetyCenterScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
-            children: const [
-              Icon(Icons.shield_rounded, color: Colors.white),
-              SizedBox(width: 10),
+            children: [
+              const Icon(Icons.shield_rounded, color: Colors.white),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  '🚨 Emergency protocol engaged! Kenya Police & Cabi Rapid Unit notified.',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  '🚨 Emergency protocol engaged$obInfo! Proximity Mesh & Cabi Rapid Unit notified.',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ],
