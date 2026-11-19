@@ -26,6 +26,63 @@ export class LostAndFoundService {
   ) {}
 
   /**
+   * Write-through persistence to PostgreSQL `lost_item_incidents` table
+   */
+  private persistIncident(incident: LostItemIncident): void {
+    const repo = (this.prisma as any)?.lostItemIncident;
+    if (!repo?.upsert) return;
+
+    repo
+      .upsert({
+        where: { id: incident.id },
+        create: {
+          id: incident.id,
+          obNumber: incident.obNumber,
+          occurrenceId: incident.occurrenceId || null,
+          tripId: incident.tripId,
+          passengerId: incident.passengerId,
+          passengerName: incident.passengerName,
+          passengerPhone: incident.passengerPhone || null,
+          driverId: incident.driverId,
+          driverName: incident.driverName,
+          driverPhone: incident.driverPhone || null,
+          category: incident.category,
+          description: incident.description,
+          itemPhotoUrl: incident.itemPhotoUrl || null,
+          status: incident.status,
+          returnMethod: incident.returnMethod,
+          handoverPin: incident.handoverPin,
+          handoverPhotoUrl: incident.handoverPhotoUrl || null,
+          standardReturnFee: incident.standardReturnFee,
+          voluntaryRewardEscrow: incident.voluntaryRewardEscrow,
+          feeStatus: incident.feeStatus,
+          disbursedAmount: incident.disbursedAmount ?? null,
+          droppedAtOffice: incident.droppedAtOffice,
+          officeLocation: incident.officeLocation || null,
+          resolutionNotes: incident.resolutionNotes || null,
+          createdAt: incident.createdAt,
+          resolvedAt: incident.resolvedAt || null,
+        },
+        update: {
+          status: incident.status,
+          returnMethod: incident.returnMethod,
+          itemPhotoUrl: incident.itemPhotoUrl || null,
+          handoverPhotoUrl: incident.handoverPhotoUrl || null,
+          voluntaryRewardEscrow: incident.voluntaryRewardEscrow,
+          feeStatus: incident.feeStatus,
+          disbursedAmount: incident.disbursedAmount ?? null,
+          droppedAtOffice: incident.droppedAtOffice,
+          officeLocation: incident.officeLocation || null,
+          resolutionNotes: incident.resolutionNotes || null,
+          resolvedAt: incident.resolvedAt || null,
+        },
+      })
+      .catch((err: Error) =>
+        this.logger.warn(`LostItem write-through skipped for ${incident.id}: ${err.message}`),
+      );
+  }
+
+  /**
    * Generates a collision-free Police Occurrence Book (OB) tracking number
    */
   private generateObNumber(): string {
@@ -127,6 +184,7 @@ export class LostAndFoundService {
     };
 
     this.incidents.set(id, incident);
+    this.persistIncident(incident);
 
     // 2. Dispatch SMS alert to driver
     if (incident.driverPhone) {
@@ -157,6 +215,7 @@ export class LostAndFoundService {
       incident.feeStatus = 'REFUNDED';
       incident.resolutionNotes = dto.driverNotes || 'Driver reported item not found in vehicle.';
       this.incidents.set(incidentId, incident);
+    this.persistIncident(incident);
 
       if (incident.passengerPhone) {
         this.safetySmsService.sendSms(
@@ -175,6 +234,7 @@ export class LostAndFoundService {
     incident.returnMethod = dto.droppedAtOffice ? 'OFFICE_DROPOFF' : 'DIRECT_HANDOVER';
     incident.status = dto.droppedAtOffice ? 'RETURN_OFFICE_DROP' : 'DRIVER_CONFIRMED';
     this.incidents.set(incidentId, incident);
+    this.persistIncident(incident);
 
     // Dispatch notification to passenger with 4-digit Handover PIN instructions
     if (incident.passengerPhone) {
@@ -198,6 +258,7 @@ export class LostAndFoundService {
 
     incident.voluntaryRewardEscrow += Math.max(0, amount);
     this.incidents.set(incidentId, incident);
+    this.persistIncident(incident);
 
     if (incident.driverPhone) {
       this.safetySmsService.sendSms(
@@ -246,6 +307,7 @@ export class LostAndFoundService {
     incident.disbursedAmount = totalDisbursed;
     incident.resolvedAt = new Date();
     this.incidents.set(incidentId, incident);
+    this.persistIncident(incident);
 
     // 3. Update PostgreSQL Occurrence
     if (incident.occurrenceId) {

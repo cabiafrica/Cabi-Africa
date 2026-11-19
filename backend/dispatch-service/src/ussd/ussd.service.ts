@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
 import { RideService } from '../ride/ride.service';
 import { SafetySmsService } from '../safety/safety-sms.service';
+import { EphemeralStore } from '../common/ephemeral-store.util';
 import {
   POPULAR_LANDMARKS,
   Landmark,
@@ -22,7 +23,7 @@ export interface UssdSessionDraft {
 @Injectable()
 export class UssdService {
   private readonly logger = new Logger(UssdService.name);
-  private sessionDrafts = new Map<string, UssdSessionDraft>();
+  private sessionDrafts = new EphemeralStore<UssdSessionDraft>('ussd-drafts', 300);
 
   constructor(
     private readonly prisma: PrismaService,
@@ -93,7 +94,7 @@ export class UssdService {
     this.logger.log(`[USSD] ${phone} -> text: "${rawText}" (parts: ${parts.length})`);
 
     // 1. Check for 5-Minute Session Resume
-    const existingDraft = this.sessionDrafts.get(phone);
+    const existingDraft = await this.sessionDrafts.get(phone);
     const hasValidDraft =
       existingDraft &&
       Date.now() - existingDraft.createdAt < 5 * 60 * 1000 &&
@@ -117,7 +118,7 @@ export class UssdService {
         return this.dispatchOfflineBooking(phone, existingDraft);
       } else {
         // Discard draft and proceed to standard main menu
-        this.sessionDrafts.delete(phone);
+        await this.sessionDrafts.delete(phone);
         return this.renderMainMenu();
       }
     }
@@ -225,7 +226,7 @@ export class UssdService {
       fare,
       createdAt: Date.now(),
     };
-    this.sessionDrafts.set(phone, draft);
+    await this.sessionDrafts.set(phone, draft, 300);
 
     if (steps.length === 2) {
       return (
@@ -246,7 +247,7 @@ export class UssdService {
       return this.dispatchOfflineBooking(phone, draft);
     }
 
-    this.sessionDrafts.delete(phone);
+    await this.sessionDrafts.delete(phone);
     return `END Booking cancelled. Dial *384*222# anytime to book again.`;
   }
 
@@ -258,7 +259,7 @@ export class UssdService {
     draft: UssdSessionDraft,
   ): Promise<string> {
     try {
-      this.sessionDrafts.delete(phone);
+      await this.sessionDrafts.delete(phone);
 
       // Ensure passenger account exists
       const passenger = await this.ensureOfflinePassenger(phone);

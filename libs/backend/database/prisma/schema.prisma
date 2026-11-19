@@ -1636,3 +1636,175 @@ model LoyaltyTransaction {
   @@index([createdAt])
   @@map("loyalty_transactions")
 }
+
+// ─── Dispute Resolution & Fare Recalculation Escrow ───────────────────────────
+
+model DisputeClaim {
+  id                          String    @id @default(uuid())
+  tripId                      String
+  tripCode                    String
+  passengerId                 String
+  passengerPhone              String?
+  driverId                    String?
+  driverPhone                 String?
+  reason                      String
+  description                 String
+  originalFare                Float
+  optimalFare                 Float
+  detourPercent               Float
+  claimedAmount               Float
+  awardedVoucherAmount        Float     @default(0)
+  voucherCode                 String?   @unique
+  status                      String    @default("PENDING_REVIEW") // PENDING_REVIEW, AUTO_RESOLVED_VOUCHER, ESCALATED_MANUAL_AUDIT, RESOLVED_REFUND, REJECTED
+  driverAppealWindowExpiresAt DateTime
+  driverAppealed              Boolean   @default(false)
+  driverAppealNotes           String?
+  trafficProofUrl             String?
+  driverAppealSubmittedAt     DateTime?
+  adjudicatorNotes            String?
+  createdAt                   DateTime  @default(now())
+  resolvedAt                  DateTime?
+  updatedAt                   DateTime  @updatedAt
+
+  @@index([tripId])
+  @@index([passengerId, createdAt])
+  @@index([driverId, status])
+  @@index([status])
+  @@map("dispute_claims")
+}
+
+// ─── Lost & Found Incident Resolution Lifecycle ───────────────────────────────
+
+model LostItemIncident {
+  id                    String    @id @default(uuid())
+  obNumber              String    @unique
+  occurrenceId          String?
+  tripId                String
+  passengerId           String
+  passengerName         String
+  passengerPhone        String?
+  driverId              String
+  driverName            String
+  driverPhone           String?
+  category              String
+  description           String
+  itemPhotoUrl          String?
+  status                String    @default("REPORTED") // REPORTED, DRIVER_CONFIRMED, EN_ROUTE_RETURN, RETURN_OFFICE_DROP, RESOLVED, DISPUTED
+  returnMethod          String    @default("DIRECT_HANDOVER") // DIRECT_HANDOVER, OFFICE_DROPOFF
+  handoverPin           String
+  handoverPhotoUrl      String?
+  standardReturnFee     Float     @default(500)
+  voluntaryRewardEscrow Float     @default(0)
+  feeStatus             String    @default("PENDING") // PENDING, ESCROWED, DISBURSED_TO_DRIVER, REFUNDED
+  disbursedAmount       Float?
+  droppedAtOffice       Boolean   @default(false)
+  officeLocation        String?
+  resolutionNotes       String?
+  createdAt             DateTime  @default(now())
+  resolvedAt            DateTime?
+  updatedAt             DateTime  @updatedAt
+
+  @@index([tripId])
+  @@index([passengerId])
+  @@index([driverId, status])
+  @@index([occurrenceId])
+  @@map("lost_item_incidents")
+}
+
+// ─── Corporate Account Centralized Billing & KRA VAT Invoicing ────────────────
+
+model CorporateAccount {
+  id                 String                @id @default(uuid())
+  companyName        String
+  kraPin             String                @unique
+  billingEmail       String
+  contactPhone       String?
+  creditLimit        Float                 @default(500000)
+  creditUsed         Float                 @default(0)
+  graceBufferPercent Float                 @default(10)
+  paymentTerms       String                @default("NET_30") // NET_30, NET_60
+  status             String                @default("ACTIVE") // ACTIVE, SUSPENDED, CREDIT_HOLD
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+
+  costCenters        CorporateCostCenter[]
+  employees          CorporateEmployee[]
+  invoices           CorporateInvoice[]
+
+  @@index([status])
+  @@map("corporate_accounts")
+}
+
+model CorporateCostCenter {
+  id                 String              @id @default(uuid())
+  corporateAccountId String
+  code               String
+  name               String
+  monthlyBudget      Float
+  currentSpend       Float               @default(0)
+  managerUserId      String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  account            CorporateAccount    @relation(fields: [corporateAccountId], references: [id], onDelete: Cascade)
+  employees          CorporateEmployee[]
+
+  @@unique([corporateAccountId, code])
+  @@index([corporateAccountId])
+  @@index([managerUserId])
+  @@map("corporate_cost_centers")
+}
+
+model CorporateEmployee {
+  id                    String              @id @default(uuid())
+  corporateAccountId    String
+  costCenterId          String
+  userId                String
+  employeeId            String
+  fullName              String
+  email                 String
+  phone                 String?
+  monthlyAllowance      Float               @default(25000)
+  currentMonthSpent     Float               @default(0)
+  requiresApprovalAbove Float               @default(1500)
+  allowAfterHours       Boolean             @default(false)
+  status                String              @default("ACTIVE")
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  account               CorporateAccount    @relation(fields: [corporateAccountId], references: [id], onDelete: Cascade)
+  costCenter            CorporateCostCenter @relation(fields: [costCenterId], references: [id], onDelete: Cascade)
+
+  @@unique([corporateAccountId, userId])
+  @@index([userId, status])
+  @@index([costCenterId])
+  @@index([employeeId])
+  @@map("corporate_employees")
+}
+
+model CorporateInvoice {
+  id                  String           @id @default(uuid())
+  invoiceNumber       String           @unique
+  corporateAccountId  String
+  companyName         String
+  kraPin              String
+  billingMonth        String
+  totalTrips          Int              @default(0)
+  subtotal            Float
+  vatRatePercent      Float            @default(16)
+  vatAmount           Float
+  totalAmount         Float
+  costCenterBreakdown Json
+  status              String           @default("ISSUED") // ISSUED, PAID, OVERDUE
+  paymentRef          String?
+  issuedAt            DateTime         @default(now())
+  dueDate             DateTime
+  paidAt              DateTime?
+  createdAt           DateTime         @default(now())
+
+  account             CorporateAccount @relation(fields: [corporateAccountId], references: [id], onDelete: Cascade)
+
+  @@index([corporateAccountId, billingMonth])
+  @@index([status])
+  @@map("corporate_invoices")
+}

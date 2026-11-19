@@ -29,6 +29,59 @@ export class DisputeService {
   ) {}
 
   /**
+   * Write-through persistence to PostgreSQL `dispute_claims` table (non-blocking fallback)
+   */
+  private persistClaim(claim: DisputeClaim): void {
+    const repo = (this.prisma as any)?.disputeClaim;
+    if (!repo?.upsert) return;
+
+    repo
+      .upsert({
+        where: { id: claim.id },
+        create: {
+          id: claim.id,
+          tripId: claim.tripId,
+          tripCode: claim.tripCode,
+          passengerId: claim.passengerId,
+          passengerPhone: claim.passengerPhone || null,
+          driverId: claim.driverId || null,
+          driverPhone: claim.driverPhone || null,
+          reason: claim.reason,
+          description: claim.description,
+          originalFare: claim.originalFare,
+          optimalFare: claim.optimalFare,
+          detourPercent: claim.detourPercent,
+          claimedAmount: claim.claimedAmount,
+          awardedVoucherAmount: claim.awardedVoucherAmount,
+          voucherCode: claim.voucherCode || null,
+          status: claim.status,
+          driverAppealWindowExpiresAt: claim.driverAppealWindowExpiresAt,
+          driverAppealed: claim.driverAppealed,
+          driverAppealNotes: claim.driverAppealNotes || null,
+          trafficProofUrl: claim.trafficProofUrl || null,
+          driverAppealSubmittedAt: claim.driverAppealSubmittedAt || null,
+          adjudicatorNotes: claim.adjudicatorNotes || null,
+          createdAt: claim.createdAt,
+          resolvedAt: claim.resolvedAt || null,
+        },
+        update: {
+          status: claim.status,
+          awardedVoucherAmount: claim.awardedVoucherAmount,
+          voucherCode: claim.voucherCode || null,
+          driverAppealed: claim.driverAppealed,
+          driverAppealNotes: claim.driverAppealNotes || null,
+          trafficProofUrl: claim.trafficProofUrl || null,
+          driverAppealSubmittedAt: claim.driverAppealSubmittedAt || null,
+          adjudicatorNotes: claim.adjudicatorNotes || null,
+          resolvedAt: claim.resolvedAt || null,
+        },
+      })
+      .catch((err: Error) =>
+        this.logger.warn(`Dispute write-through skipped for ${claim.id}: ${err.message}`),
+      );
+  }
+
+  /**
    * Great-Circle distance formula
    */
   private calculateDistanceKm(
@@ -208,6 +261,7 @@ export class DisputeService {
     };
 
     this.disputeClaims.set(id, claim);
+    this.persistClaim(claim);
 
     // 1. Notify Passenger
     if (claim.passengerPhone) {
@@ -258,6 +312,7 @@ export class DisputeService {
     claim.driverAppealSubmittedAt = new Date();
     claim.status = 'ESCALATED_MANUAL_AUDIT'; // Queued for Sacco hearing
     this.disputeClaims.set(claimId, claim);
+    this.persistClaim(claim);
 
     this.logger.log(`Driver submitted appeal on dispute ${claimId}: "${dto.appealNotes}"`);
     return claim;
@@ -288,6 +343,7 @@ export class DisputeService {
     }
 
     this.disputeClaims.set(claimId, claim);
+    this.persistClaim(claim);
     this.logger.log(`Dispute ${claimId} adjudicated: ${claim.status} by admin ${adminUserId}`);
     return claim;
   }
