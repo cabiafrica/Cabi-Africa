@@ -170,7 +170,7 @@ export const CorporateBillingConsole: React.FC = () => {
               setActionMessage('Synced real-time cost-center telemetry with core ledger.');
               setTimeout(() => setActionMessage(null), 3500);
             }}
-            className="px-4 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors shadow-sm"
+            className="px-4 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors shadow-sm whitespace-nowrap shrink-0"
           >
             Sync Ledger
           </button>
@@ -332,23 +332,23 @@ export const CorporateBillingConsole: React.FC = () => {
             <tbody className="divide-y divide-slate-200 dark:divide-white/10">
               {invoices.map(inv => (
                 <tr key={inv.id} className="hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors">
-                  <td className="px-5 py-3.5 font-mono text-xs font-semibold text-slate-900 dark:text-white">
+                  <td className="px-5 py-3.5 font-mono text-xs font-semibold text-slate-900 dark:text-white whitespace-nowrap">
                     {inv.invoiceNumber}
                   </td>
-                  <td className="px-5 py-3.5 text-xs">
+                  <td className="px-5 py-3.5 text-xs whitespace-nowrap">
                     {inv.billingPeriod}
                   </td>
-                  <td className="px-5 py-3.5 text-xs font-medium">
+                  <td className="px-5 py-3.5 text-xs font-medium whitespace-nowrap">
                     KES {inv.subtotal.toLocaleString()}
                   </td>
-                  <td className="px-5 py-3.5 text-xs text-blue-600 font-semibold">
+                  <td className="px-5 py-3.5 text-xs text-blue-600 font-semibold whitespace-nowrap">
                     KES {inv.vatAmount.toLocaleString()}
                   </td>
-                  <td className="px-5 py-3.5 text-xs font-bold text-slate-900 dark:text-white">
+                  <td className="px-5 py-3.5 text-xs font-bold text-slate-900 dark:text-white whitespace-nowrap">
                     KES {inv.totalPayable.toLocaleString()}
                   </td>
-                  <td className="px-5 py-3.5">
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                  <td className="px-5 py-3.5 whitespace-nowrap">
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap ${
                       inv.status === 'PAID'
                         ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
                         : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
@@ -356,10 +356,10 @@ export const CorporateBillingConsole: React.FC = () => {
                       {inv.status.replace(/_/g, ' ')}
                     </span>
                   </td>
-                  <td className="px-5 py-3.5 text-right space-x-2">
+                  <td className="px-5 py-3.5 text-right whitespace-nowrap">
                     <button
                       onClick={() => setActiveInvoicePreview(inv)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-white/10 hover:bg-emerald-600 hover:text-white transition-colors"
+                      className="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-white/10 hover:bg-emerald-600 hover:text-white transition-colors whitespace-nowrap"
                     >
                       Preview & Print
                     </button>

@@ -72,7 +72,10 @@ export const SosIncidentDashboard = () => {
 
   useEffect(() => {
     const loadIncident = async () => {
-      if (!incidentId) return;
+      if (!incidentId) {
+        setLoading(false);
+        return;
+      }
       try {
         setLoading(true);
         const data = await adminService.getSosIncidentDetails(incidentId);
@@ -197,7 +200,30 @@ export const SosIncidentDashboard = () => {
     </Box>
   );
 
-  if (!incident) return <Alert severity="warning">Incident not found.</Alert>;
+  if (!incident) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh" p={4}>
+        <Paper sx={{ p: 4, maxWidth: 480, textAlign: 'center', bgcolor: GLASS_BG, border: `1px solid ${CARD_BORDER}`, borderRadius: 4, color: 'white' }}>
+          <SecurityIcon sx={{ fontSize: 48, color: '#FFD700', mb: 2 }} />
+          <Typography variant="h6" sx={{ fontWeight: 800, mb: 1 }}>
+            {incidentId ? 'Incident Not Found' : 'SOS Crisis Resolution Console'}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mb: 3 }}>
+            {incidentId
+              ? `No active SOS incident record matched ID "${incidentId}".`
+              : 'Select an active SOS incident from the Occurrences ledger to open live telemetry, audio monitoring, and resolution controls.'}
+          </Typography>
+          <Button
+            variant="contained"
+            href="/occurrences"
+            sx={{ bgcolor: '#FFD700', color: '#000', fontWeight: 800, '&:hover': { bgcolor: '#EAB308' } }}
+          >
+            Open Occurrences Ledger
+          </Button>
+        </Paper>
+      </Box>
+    );
+  }
 
   const severityColor = (incident.severity === 'CRITICAL' || incident.severity === 'HIGH') ? '#EF4444' : '#FFD700';
 

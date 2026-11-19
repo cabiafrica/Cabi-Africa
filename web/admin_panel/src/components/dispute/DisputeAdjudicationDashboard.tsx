@@ -211,7 +211,7 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
             Trip Detour & Fare Recalculation Escrow
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">
-            Audit GPS trajectory anomalies (>30% variance), evaluate driver 48-hour appeals, and adjudicate fair compensation.
+            Audit GPS trajectory anomalies (&gt;30% variance), evaluate driver 48-hour appeals, and adjudicate fair compensation.
           </p>
         </div>
         <div className="flex items-center gap-3">
