@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:3333/api';
 const CREDENTIALS = {
-    email: 'ke.africabi@gmail.com',
+    email: 'ithrivebusinessnetworks@gmail.com',
     password: 'Admin@2026'
 };
 

@@ -6,6 +6,7 @@ import cabiLogo from './assets/cabi_logo_white.png';
 import { Header } from './components/layout/Header';
 import { CommandPalette, CommandItem } from './components/layout/CommandPalette';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
+import { Admin2FAStepUpModal } from './components/modals/Admin2FAStepUpModal';
 import {
   LayoutDashboard, Radio, Flame, TrendingUp, ShieldAlert,
   Users, UserCog, FileCheck, FolderKanban, BarChart3, Building2, Ban,
@@ -529,6 +530,7 @@ function App() {
             </Suspense>
           </div>
         </div>
+        <Admin2FAStepUpModal />
       </main>
     </div>
   );

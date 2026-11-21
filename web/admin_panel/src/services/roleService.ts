@@ -9,16 +9,57 @@ const apiClient = axios.create({
     baseURL: API_URL
 });
 
-// Add authentication token to all requests
+// Add authentication token and MFA step-up token to all requests
 apiClient.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('authToken');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+        const mfaToken = sessionStorage.getItem('adminMfaToken');
+        if (mfaToken) {
+            config.headers['x-admin-mfa-token'] = mfaToken;
+        }
         return config;
     },
     (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// Intercept 403 step-up required responses to automatically trigger the 2FA challenge modal
+apiClient.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+        const msg = String(error.response?.data?.message || '');
+        if (
+            error.response?.status === 403 &&
+            msg.toLowerCase().includes('step-up 2fa') &&
+            !originalRequest._retry
+        ) {
+            originalRequest._retry = true;
+            return new Promise((resolve, reject) => {
+                const onMfaSuccess = async (event: any) => {
+                    window.removeEventListener('cabi:admin:mfa-verified', onMfaSuccess);
+                    const newMfaToken = event.detail?.stepUpToken;
+                    if (newMfaToken) {
+                        originalRequest.headers['x-admin-mfa-token'] = newMfaToken;
+                        try {
+                            const retryRes = await apiClient(originalRequest);
+                            resolve(retryRes);
+                        } catch (retryErr) {
+                            reject(retryErr);
+                        }
+                    } else {
+                        reject(error);
+                    }
+                };
+
+                window.addEventListener('cabi:admin:mfa-verified', onMfaSuccess);
+                window.dispatchEvent(new CustomEvent('cabi:admin:require-2fa'));
+            });
+        }
         return Promise.reject(error);
     }
 );

@@ -81,7 +81,7 @@ class FrontendIntegrationTest {
     async testLogin(): Promise<void> {
         await this.runTest('Login with Super Admin credentials', async () => {
             const response = await this.apiClient.post('/auth/login', {
-                email: 'ke.africabi@gmail.com',
+                email: 'ithrivebusinessnetworks@gmail.com',
                 password: 'Admin@2026',
             });
 

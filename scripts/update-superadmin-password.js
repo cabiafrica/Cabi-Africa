@@ -19,7 +19,7 @@ async function updateSuperAdminPassword() {
 
         // Find the super admin user
         const user = await prisma.user.findUnique({
-            where: { email: 'ke.africabi@gmail.com' }
+            where: { email: 'ithrivebusinessnetworks@gmail.com' }
         });
 
         if (!user) {

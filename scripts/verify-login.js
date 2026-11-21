@@ -3,7 +3,7 @@ const axios = require('axios');
 async function testLogin() {
     const data = {
         email: 'passenger@test.com',
-        password: 'Password123!'
+        password: 'Driver@2026'
     };
 
     console.log('Testing login for passenger@test.com...');

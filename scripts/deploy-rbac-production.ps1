@@ -39,10 +39,10 @@ function Write-Log {
     }
     
     $Icons = @{
-        "INFO"    = "[i]"
-        "SUCCESS" = "[+]"
-        "WARNING" = "[!]"
-        "ERROR"   = "[x]"
+        "INFO"    = "ℹ"
+        "SUCCESS" = "✓"
+        "WARNING" = "⚠"
+        "ERROR"   = "✗"
     }
     
     $formattedMessage = "$($Icons[$Level]) $Message"
@@ -50,31 +50,12 @@ function Write-Log {
     "$((Get-Date).ToString('yyyy-MM-dd HH:mm:ss')) [$Level] $Message" | Out-File -Append -FilePath $LogFile
 }
 
-function Import-EnvFile {
-    param([string]$Path)
-    if (Test-Path $Path) {
-        Write-Log "Loading environment variables from $Path..." "INFO"
-        Get-Content $Path | ForEach-Object {
-            $line = $_.Trim()
-            if ($line -and -not $line.StartsWith("#")) {
-                $name, $value = $line -split '=', 2
-                if ($name -and $value) {
-                    $name = $name.Trim()
-                    $value = $value.Trim().Trim('"').Trim("'")
-                    [System.Environment]::SetEnvironmentVariable($name, $value)
-                    Set-Item "env:$name" $value
-                }
-            }
-        }
-    }
-}
-
 function Write-Header {
     param([string]$Title)
     
-    Write-Host "`n****************************************" -ForegroundColor Cyan
+    Write-Host "`n════════════════════════════════════════" -ForegroundColor Cyan
     Write-Host "  $Title" -ForegroundColor Cyan
-    Write-Host "****************************************`n" -ForegroundColor Cyan
+    Write-Host "════════════════════════════════════════`n" -ForegroundColor Cyan
 }
 
 function Test-Prerequisites {
@@ -125,7 +106,7 @@ function Invoke-RBACTests {
     
     # Check if service is running
     try {
-        Invoke-WebRequest -Uri "http://localhost:3333/api/health" -UseBasicParsing -TimeoutSec 5 | Out-Null
+        $response = Invoke-WebRequest -Uri "http://localhost:3333/api/health" -UseBasicParsing -TimeoutSec 5
         Write-Log "Auth-gateway started (Job ID: $($authGatewayJob.Id))" "SUCCESS"
     }
     catch {
@@ -156,7 +137,7 @@ function Invoke-RBACTests {
     Write-Log "Auth-gateway stopped" "SUCCESS"
 }
 
-function Invoke-BackendBuild {
+function Build-Backend {
     Write-Header "Building Backend (Auth-Gateway)"
     
     Write-Log "Building auth-gateway for $Environment..." "INFO"
@@ -176,7 +157,7 @@ function Invoke-BackendBuild {
     }
 }
 
-function Invoke-FrontendBuild {
+function Build-Frontend {
     Write-Header "Building Frontend (Admin Panel)"
     
     Write-Log "Building admin panel for $Environment..." "INFO"
@@ -211,7 +192,7 @@ function Invoke-FrontendBuild {
 function Invoke-Migrations {
     Write-Header "Running Database Migrations"
     
-    if ($Environment -eq "production" -and -not $AutoDeploy) {
+    if ($Environment -eq "production") {
         Write-Log "About to run migrations on PRODUCTION database" "WARNING"
         $confirm = Read-Host "Continue? (yes/no)"
         if ($confirm -ne "yes") {
@@ -251,14 +232,14 @@ function New-SuperAdmin {
 function Show-DeploymentSummary {
     Write-Header "Deployment Summary"
     
-    Write-Host "[+] Tests Passed: 11/11" -ForegroundColor Green
-    Write-Host "[+] Backend Built: auth-gateway" -ForegroundColor Green
-    Write-Host "[+] Frontend Built: admin-panel" -ForegroundColor Green
-    Write-Host "[+] Migrations: Up to date" -ForegroundColor Green
-    Write-Host "[+] Super Admin: Configured" -ForegroundColor Green
+    Write-Host "✓ Tests Passed: 11/11" -ForegroundColor Green
+    Write-Host "✓ Backend Built: auth-gateway" -ForegroundColor Green
+    Write-Host "✓ Frontend Built: admin-panel" -ForegroundColor Green
+    Write-Host "✓ Migrations: Up to date" -ForegroundColor Green
+    Write-Host "✓ Super Admin: Configured" -ForegroundColor Green
     Write-Host ""
     
-    if ($Environment -eq "production" -and -not $AutoDeploy) {
+    if ($Environment -eq "production") {
         Write-Log "This will deploy to PRODUCTION" "WARNING"
         $proceed = Read-Host "Proceed with deployment? (yes/no)"
         if ($proceed -ne "yes") {
@@ -301,7 +282,7 @@ function Test-Deployment {
     
     Write-Log "Verifying backend health..." "INFO"
     try {
-        Invoke-WebRequest -Uri "$apiUrl/health" -UseBasicParsing -TimeoutSec 5 | Out-Null
+        $response = Invoke-WebRequest -Uri "$apiUrl/health" -UseBasicParsing -TimeoutSec 5
         Write-Log "Backend is healthy" "SUCCESS"
     }
     catch {
@@ -313,7 +294,7 @@ function Test-Deployment {
     $frontendUrl = if ($env:FRONTEND_URL) { $env:FRONTEND_URL } else { "http://localhost:3001" }
     Write-Log "Checking frontend..." "INFO"
     try {
-        Invoke-WebRequest -Uri $frontendUrl -UseBasicParsing -TimeoutSec 5 | Out-Null
+        $response = Invoke-WebRequest -Uri $frontendUrl -UseBasicParsing -TimeoutSec 5
         Write-Log "Frontend is accessible" "SUCCESS"
     }
     catch {
@@ -326,9 +307,9 @@ try {
     Clear-Host
     
     Write-Host ""
-    Write-Host "********************************************" -ForegroundColor Blue
-    Write-Host "*   RBAC Production Deployment Script     *" -ForegroundColor Blue
-    Write-Host "********************************************" -ForegroundColor Blue
+    Write-Host "╔══════════════════════════════════════════╗" -ForegroundColor Blue
+    Write-Host "║   RBAC Production Deployment Script     ║" -ForegroundColor Blue
+    Write-Host "╚══════════════════════════════════════════╝" -ForegroundColor Blue
     Write-Host ""
     Write-Host "Environment: $Environment" -ForegroundColor Yellow
     Write-Host "Timestamp: $Timestamp" -ForegroundColor Yellow
@@ -336,12 +317,6 @@ try {
     Write-Host ""
     
     # Run all steps
-    if ($Environment -eq "production") {
-        Import-EnvFile ".env.production"
-    } else {
-        Import-EnvFile ".env"
-    }
-    
     Test-Prerequisites
     
     if (-not $SkipTests) {
@@ -351,8 +326,8 @@ try {
         Write-Log "Tests skipped (-SkipTests flag)" "WARNING"
     }
     
-    Invoke-BackendBuild
-    Invoke-FrontendBuild
+    Build-Backend
+    Build-Frontend
     
     if ($Environment -eq "production") {
         Invoke-Migrations
@@ -376,7 +351,7 @@ try {
     # Final summary
     Write-Header "Deployment Complete!"
     
-    Write-Host "[+] RBAC system built successfully" -ForegroundColor Green
+    Write-Host "✓ RBAC system built successfully" -ForegroundColor Green
     Write-Host "  Log file: $LogFile"
     Write-Host ""
     

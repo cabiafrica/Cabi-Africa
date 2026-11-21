@@ -1,39 +1,123 @@
-// import apiClient from '@/shared/utils/apiClient';
+import * as crypto from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export interface AuditEvent {
   id: string;
   userId: string;
   userFullName?: string;
-  action: AuditEventAction;
+  action: AuditEventAction | string;
   timestamp: string;
+  ipAddress?: string;
+  userAgent?: string;
+  severity?: 'INFO' | 'WARN' | 'CRITICAL';
   details?: Record<string, any>;
+  prevHash?: string;
+  entryHash?: string;
 }
 
 export type AuditEventAction =
   | 'PASSWORD_CHANGED'
   | '2FA_ENABLED'
   | '2FA_DISABLED'
+  | '2FA_VERIFIED'
+  | '2FA_FAILED'
+  | 'ADMIN_LOCKED_OUT'
+  | 'ADMIN_IP_BLOCKED'
+  | 'ADMIN_STEP_UP_ISSUED'
   | 'ACCOUNT_DELETED'
-  | 'ROLES_UPDATED' // Added for our tests
-  | 'PERMISSIONS_UPDATED'; // Added for our tests
+  | 'ROLES_UPDATED'
+  | 'PERMISSIONS_UPDATED';
 
 interface AuditEventPayload {
-  action: string; // Changed to string to be more flexible
+  action: string;
   userId: string;
+  userFullName?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  severity?: 'INFO' | 'WARN' | 'CRITICAL';
   details?: Record<string, any>;
 }
 
-export const logAuditEvent = async (payload: AuditEventPayload): Promise<{ success: boolean }> => {
-  console.log(`[Audit Service Mock] Logged event:`, JSON.stringify(payload, null, 2));
-  // In a real microservice architecture, this would emit an event to a message queue
-  // or call a dedicated audit service. For now, we just log it.
-  return { success: true };
+const AUDIT_LOG_DIR = path.join(process.cwd(), 'logs');
+const AUDIT_LOG_FILE = path.join(AUDIT_LOG_DIR, 'admin-security-audit.jsonl');
+
+const recentAuditEvents: AuditEvent[] = [];
+let lastHash = 'GENESIS';
+
+function computeEntryHash(event: Omit<AuditEvent, 'entryHash'>): string {
+  const payload = JSON.stringify({
+    id: event.id,
+    userId: event.userId,
+    action: event.action,
+    timestamp: event.timestamp,
+    ipAddress: event.ipAddress,
+    severity: event.severity,
+    details: event.details,
+    prevHash: event.prevHash,
+  });
+  return crypto.createHash('sha256').update(payload).digest('hex');
+}
+
+function redactSensitiveFields(details?: Record<string, any>): Record<string, any> | undefined {
+  if (!details) return undefined;
+  const sensitiveKeys = ['password', 'token', 'secret', 'totp', 'otp', 'backupCode', 'authorization'];
+  const sanitized: Record<string, any> = {};
+  for (const [key, value] of Object.entries(details)) {
+    if (sensitiveKeys.some((s) => key.toLowerCase().includes(s))) {
+      sanitized[key] = '[REDACTED]';
+    } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+      sanitized[key] = redactSensitiveFields(value);
+    } else {
+      sanitized[key] = value;
+    }
+  }
+  return sanitized;
+}
+
+export const logAuditEvent = async (
+  payload: AuditEventPayload
+): Promise<{ success: boolean; eventId: string; entryHash: string }> => {
+  const sanitizedDetails = redactSensitiveFields(payload.details);
+  const baseEvent: Omit<AuditEvent, 'entryHash'> = {
+    id: crypto.randomUUID(),
+    userId: payload.userId,
+    userFullName: payload.userFullName,
+    action: payload.action,
+    timestamp: new Date().toISOString(),
+    ipAddress: payload.ipAddress,
+    userAgent: payload.userAgent,
+    severity: payload.severity ?? 'INFO',
+    details: sanitizedDetails,
+    prevHash: lastHash,
+  };
+
+  const entryHash = computeEntryHash(baseEvent);
+  const event: AuditEvent = { ...baseEvent, entryHash };
+  lastHash = entryHash;
+
+  recentAuditEvents.unshift(event);
+  if (recentAuditEvents.length > 500) {
+    recentAuditEvents.pop();
+  }
+
+  try {
+    await fs.promises.mkdir(AUDIT_LOG_DIR, { recursive: true });
+    await fs.promises.appendFile(AUDIT_LOG_FILE, JSON.stringify(event) + '\n', 'utf8');
+  } catch (err) {
+    // Fallback to console if filesystem is read-only
+    console.warn(`[AdminAudit] File append failed, logged to stdout:`, JSON.stringify(event));
+  }
+
+  return { success: true, eventId: event.id, entryHash };
 };
 
 export const fetchUserAuditEvents = async (
-  userId: string,
-  limit = 5
+  userId?: string,
+  limit = 50
 ): Promise<AuditEvent[]> => {
-  console.log(`[Audit Service Mock] Fetching events for user ${userId}`);
-  return [];
+  const filtered = userId
+    ? recentAuditEvents.filter((e) => e.userId === userId)
+    : recentAuditEvents;
+  return filtered.slice(0, limit);
 };

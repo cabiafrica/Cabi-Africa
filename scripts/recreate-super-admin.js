@@ -10,7 +10,7 @@ async function recreateSuperAdmin() {
         // Step 1: Delete existing super admin
         console.log('Step 1: Removing existing super admin user...');
         const existingUser = await prisma.user.findUnique({
-            where: { email: 'ke.africabi@gmail.com' }
+            where: { email: 'ithrivebusinessnetworks@gmail.com' }
         });
 
         if (existingUser) {
@@ -44,7 +44,7 @@ async function recreateSuperAdmin() {
 
         const newUserData = {
             fullName: 'Super Admin',
-            email: 'ke.africabi@gmail.com',
+            email: 'ithrivebusinessnetworks@gmail.com',
             phone: '+254711786722',
             username: 'superadmin',
             password: await bcrypt.hash(customPassword, 10),

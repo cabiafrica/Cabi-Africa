@@ -16,6 +16,12 @@ export class AdminActionAuditInterceptor implements NestInterceptor {
         const user = request.user || {};
         const adminId = user.id ?? 'unknown';
         const adminName = user.fullName ?? '';
+        const ipAddress =
+            (request.headers?.['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+            request.ip ||
+            request.socket?.remoteAddress ||
+            '';
+        const userAgent = (request.headers?.['user-agent'] as string) || '';
         const method = request.method;
         const url = request.originalUrl;
         const action = `${method} ${url}`;
@@ -31,6 +37,9 @@ export class AdminActionAuditInterceptor implements NestInterceptor {
                     await logAuditEvent({
                         action: action as any,
                         userId: adminId,
+                        userFullName: adminName,
+                        ipAddress,
+                        userAgent,
                         details,
                     });
                 } catch (error) {

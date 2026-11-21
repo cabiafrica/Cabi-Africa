@@ -23,7 +23,7 @@ async function comprehensiveAdminTest() {
         console.log('-'.repeat(100));
 
         const user = await prisma.user.findUnique({
-            where: { email: 'ke.africabi@gmail.com' },
+            where: { email: 'ithrivebusinessnetworks@gmail.com' },
             include: {
                 userRoles: {
                     include: {
@@ -235,7 +235,7 @@ async function comprehensiveAdminTest() {
             console.log();
             console.log('Admin Panel Login Credentials:');
             console.log('━'.repeat(100));
-            console.log(`  Email:    ke.africabi@gmail.com`);
+            console.log(`  Email:    ithrivebusinessnetworks@gmail.com`);
             console.log(`  Password: Admin@2026`);
             console.log('━'.repeat(100));
             console.log();

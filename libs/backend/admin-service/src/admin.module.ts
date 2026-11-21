@@ -28,6 +28,9 @@ import { BlogController } from './blog.controller';
 import { BlogService } from './blog.service';
 import { OrganizationController } from './organization.controller';
 import { OrganizationService } from './organization.service';
+import { AdminSecurityController } from './admin-security.controller';
+import { AdminSecurityService } from './admin-security.service';
+import { AdminSecurityGuard } from './admin-security.guard';
 
 @Module({
   imports: [
@@ -43,13 +46,16 @@ import { OrganizationService } from './organization.service';
     ReferralController, 
     DriverApprovalController,
     BlogController,
-    OrganizationController
+    OrganizationController,
+    AdminSecurityController
   ],
   providers: [
     AdminService,
     AdminRolesService,
     AdminUsersService,
     Admin2FAService,
+    AdminSecurityService,
+    AdminSecurityGuard,
     SOSService,
     DriverGroupService,
     ReferralService,

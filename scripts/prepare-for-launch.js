@@ -72,12 +72,12 @@ async function prepareForLaunch() {
 
         // Step 6: Clean Organizations
         console.log('🧹 Step 6: Cleaning Organizations...');
-        const orgMemberCount = await prisma.organization_members.deleteMany({});
+        const orgMemberCount = await prisma.organizationMember.deleteMany({});
         // Break parent-child relationships first
-        await prisma.organizations.updateMany({
+        await prisma.organization.updateMany({
             data: { parentId: null }
         });
-        const orgCount = await prisma.organizations.deleteMany({});
+        const orgCount = await prisma.organization.deleteMany({});
         console.log(`   ✓ Deleted ${orgCount.count} organizations`);
         console.log(`   ✓ Deleted ${orgMemberCount.count} organization memberships`);
         console.log('');
@@ -104,7 +104,7 @@ async function prepareForLaunch() {
 
         const superAdminData = {
             fullName: 'Super Admin',
-            email: 'ke.africabi@gmail.com',
+            email: 'ithrivebusinessnetworks@gmail.com',
             phone: '+254711786722',
             username: 'superadmin',
             password: await bcrypt.hash(superAdminPassword, 10),

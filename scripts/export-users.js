@@ -5,7 +5,7 @@ async function main() {
     const users = await p.user.findMany({
         where: {
             email: {
-                in: ['driver@test.com', 'passenger@test.com', 'ke.africabi@gmail.com']
+                in: ['driver@test.com', 'passenger@test.com', 'ithrivebusinessnetworks@gmail.com']
             }
         },
         select: {
