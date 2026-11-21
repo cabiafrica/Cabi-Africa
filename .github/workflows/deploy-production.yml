@@ -102,26 +102,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to DigitalOcean via SSH
-        if: ${{ secrets.DROPLET_SSH_KEY != '' || secrets.DO_SSH_KEY != '' }}
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: 104.248.168.68
-          username: root
-          key: ${{ secrets.DROPLET_SSH_KEY || secrets.DO_SSH_KEY }}
-          script: |
-            cd /opt/cabi-africa
-            git pull origin main || true
-            docker compose up -d --build
-            docker compose exec -T auth-gateway npx prisma db push --schema=libs/backend/database/prisma/schema.prisma --accept-data-loss || true
-
-      - name: Report Droplet Status
-        if: ${{ secrets.DROPLET_SSH_KEY == '' && secrets.DO_SSH_KEY == '' }}
+      - name: Deploy to DigitalOcean Droplet
+        env:
+          SSH_KEY: ${{ secrets.DROPLET_SSH_KEY || secrets.DO_SSH_KEY }}
         run: |
-          echo "ℹ️ DROPLET_SSH_KEY secret not found in repository."
-          echo "To enable zero-touch continuous deployment to DigitalOcean (104.248.168.68):"
-          echo "Add your Droplet root private SSH key as DROPLET_SSH_KEY in GitHub Secrets."
-          echo "Deployments can also be executed directly anytime via: ./scripts/deploy-to-droplet.sh"
+          if [ -n "$SSH_KEY" ]; then
+            echo "🚀 Connecting to DigitalOcean Droplet (104.248.168.68)..."
+            mkdir -p ~/.ssh
+            echo "$SSH_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan -H 104.248.168.68 >> ~/.ssh/known_hosts 2>/dev/null || true
+            ssh -o StrictHostKeyChecking=no root@104.248.168.68 "cd /opt/cabi-africa && git pull origin main && docker compose up -d --build && docker compose exec -T auth-gateway npx prisma db push --schema=libs/backend/database/prisma/schema.prisma --accept-data-loss || true"
+            echo "✅ DigitalOcean Droplet deployment complete!"
+          else
+            echo "ℹ️ DROPLET_SSH_KEY secret not found in repository."
+            echo "To enable zero-touch continuous deployment to DigitalOcean (104.248.168.68):"
+            echo "Add your Droplet root private SSH key as DROPLET_SSH_KEY in GitHub Secrets."
+            echo "Deployments can also be executed directly anytime via: ./scripts/deploy-to-droplet.sh"
+          fi
 
   # Production Health checks
   post-deployment-checks:
