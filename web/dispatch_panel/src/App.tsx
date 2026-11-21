@@ -214,7 +214,10 @@ function App() {
                         (Array.isArray(d.vehicles) ? (d.vehicles.find((v: any) => v.isActive) || d.vehicles[0]) : d.vehicles) ||
                         (Array.isArray(d.vehicleDrivers) ? (d.vehicleDrivers.find((vd: any) => vd.isActive)?.vehicle || d.vehicleDrivers[0]?.vehicle) : null);
 
-                    const vehicleType = primaryVehicle?.category || primaryVehicle?.type || d.vehicleType || 'Standard';
+                    const vehicleName = (primaryVehicle?.make && primaryVehicle?.model)
+                        ? `${primaryVehicle.make} ${primaryVehicle.model}`
+                        : (primaryVehicle?.type && primaryVehicle.type !== 'STANDARD' ? primaryVehicle.type : null);
+                    const vehicleType = vehicleName || primaryVehicle?.type || primaryVehicle?.category || d.vehicleType || 'Toyota Axio';
                     const vehiclePlate = primaryVehicle?.plateNumber || d.vehiclePlate || 'KDH 452X';
 
                     // Parse location if string or object
@@ -313,7 +316,7 @@ function App() {
             totalRatings: Math.max(1, driver.completedRides),
             joinedDate: new Date().toISOString(),
             lastActiveDate: new Date().toISOString(),
-            vehicleModel: driver.vehicleType || 'Sedan',
+            vehicleModel: driver.vehicleType || 'Toyota Axio',
             vehicleYear: 2022,
             vehicleColor: 'Black',
             licenseNumber: driver.vehiclePlate || 'PENDING',
