@@ -86,21 +86,7 @@
         }
     </style>
     <script>
-        // Ensure stale service workers & caches are cleared for live updates
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for (var registration of registrations) {
-                    registration.unregister();
-                }
-            });
-        }
-        if ('caches' in window) {
-            caches.keys().then(function(names) {
-                for (var name of names) {
-                    caches.delete(name);
-                }
-            });
-        }
+        const serviceWorkerVersion = "1884450814" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */;
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0&libraries=places"></script>
     <script src="flutter.js" defer></script>
@@ -133,7 +119,9 @@
 
         window.addEventListener('load', function () {
             _flutter.loader.loadEntrypoint({
-                serviceWorker: null
+                serviceWorker: {
+                    serviceWorkerVersion: serviceWorkerVersion,
+                }
             }).then(function (engineInitializer) {
                 return engineInitializer.initializeEngine();
             }).then(function (appRunner) {
