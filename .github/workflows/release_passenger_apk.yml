@@ -63,7 +63,7 @@ jobs:
           mkdir -p web/user_portal/public/downloads
           cp Cabi-Drive-Official.apk web/user_portal/public/downloads/Cabi-Drive-Official.apk
           cp Cabi-Go-Official.apk web/user_portal/public/downloads/Cabi-Go-Official.apk
-          git config user.name "ibnke"
+          git config user.name "Cabi Africa"
           git config user.email "ke.africabi@gmail.com"
           git add -f web/user_portal/public/downloads/Cabi-Drive-Official.apk web/user_portal/public/downloads/Cabi-Go-Official.apk
           if ! git diff --staged --quiet; then

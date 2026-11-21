@@ -193,7 +193,7 @@ DIRECT_URL="postgresql://postgres.goasbgflheresuumhmvd:z%25gDuB9yZJbSpAd@aws-1-e
 
 ## 🔗 Quick Links
 
-- **GitHub Repository:** https://github.com/ibnke/Cabi-Africa
+- **GitHub Repository:** https://github.com/cabiafrica/Cabi-Africa
 - **Current Branch:** Prehost
 - **Latest Commit:** 815541e
 - **Supabase Dashboard:** https://supabase.com/dashboard

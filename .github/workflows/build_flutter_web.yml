@@ -57,7 +57,7 @@ jobs:
           mkdir -p web/user_portal/public/apps/passenger web/user_portal/public/apps/driver
           cp -r mobile/passenger_app/build/web/* web/user_portal/public/apps/passenger/
           cp -r mobile/driver_app/build/web/* web/user_portal/public/apps/driver/
-          git config user.name "ibnke"
+          git config user.name "Cabi Africa"
           git config user.email "ke.africabi@gmail.com"
           git add web/user_portal/public/apps
           if ! git diff --staged --quiet; then

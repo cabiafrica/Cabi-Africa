@@ -25,7 +25,7 @@
 
 ### **Email & Vendor Accounts Architecture**
 *   **Infrastructure & Vendor Services (`ke.africabi@gmail.com`)**:
-    *   **GitHub**: Repository owner/author for `ibnke/Cabi-Africa`.
+    *   **GitHub**: Official organization repository at `cabiafrica/Cabi-Africa`.
     *   **Supabase**: Super Admin account and database ownership.
     *   **Safaricom Daraja**: Developer Portal account & M-Pesa integration.
     *   **CI/CD & Internal Scripts**: Deployment automation author.
