@@ -393,7 +393,7 @@ const mockDrivers = [
       year: 2022,
       plateNumber: 'KDH 452X',
       category: 'STANDARD',
-      type: 'STANDARD'
+      type: 'Toyota Axio'
     },
     vehicles: [
       {
@@ -403,7 +403,7 @@ const mockDrivers = [
         year: 2022,
         plateNumber: 'KDH 452X',
         category: 'STANDARD',
-        type: 'STANDARD',
+        type: 'Toyota Axio',
         isActive: true
       }
     ]
@@ -502,48 +502,74 @@ function createMockApiServer(serviceName) {
       // Auth Login
       if (pathname.endsWith('/auth/login')) {
         const email = parsed.email || 'driver@test.com';
-        const isDriver = email.includes('driver') || email.includes('boda') || !email.includes('passenger');
-        const user = isDriver
-          ? {
-              id: 'driver-001',
+        const isDispatcher = email.includes('dispatch') || email.includes('admin');
+        const isDriver = !isDispatcher && (email.includes('driver') || email.includes('boda') || !email.includes('passenger'));
+        let user;
+        if (isDispatcher) {
+          user = {
+            id: 'disp-001',
+            userId: 'disp-001',
+            email,
+            firstName: 'Sarah',
+            lastName: 'Mwangi',
+            fullName: 'Sarah Mwangi',
+            phone: '+254700112233',
+            role: 'DISPATCHER',
+            status: 'ACTIVE',
+            permissions: [
+              'DISPATCH_DASHBOARD_VIEW',
+              'DISPATCH_RIDE_MONITOR',
+              'DISPATCH_DRIVER_MANAGE',
+              'DISPATCH_REAL_TIME_MAP',
+              'DISPATCH_ANALYTICS_VIEW',
+              'PASSENGER_PROFILES_VIEW',
+              'SUPER_ADMIN',
+              'ADMIN'
+            ]
+          };
+        } else if (isDriver) {
+          user = {
+            id: 'driver-001',
+            userId: 'driver-001',
+            email,
+            firstName: 'Joseph',
+            lastName: 'Kimani',
+            fullName: 'Joseph Kimani',
+            phone: '+254712345678',
+            role: 'DRIVER',
+            status: 'ACTIVE',
+            isBiometricVerified: true,
+            driverProfile: {
+              id: 'dp-001',
               userId: 'driver-001',
-              email,
-              firstName: 'Joseph',
-              lastName: 'Kimani',
-              fullName: 'Joseph Kimani',
-              phone: '+254712345678',
-              role: 'DRIVER',
-              status: 'ACTIVE',
-              isBiometricVerified: true,
-              driverProfile: {
-                id: 'dp-001',
-                userId: 'driver-001',
-                licenseNumber: 'DL-KE-99281',
-                status: 'APPROVED',
-                isOnline: true,
-                rating: 4.95,
-                totalTrips: 1240,
-                vehicle: {
-                  make: 'Toyota',
-                  model: 'Axio Hybrid',
-                  year: 2022,
-                  plateNumber: 'KDH 452X',
-                  category: 'STANDARD'
-                }
+              licenseNumber: 'DL-KE-99281',
+              status: 'APPROVED',
+              isOnline: mockDrivers[0].isOnline,
+              rating: 4.95,
+              totalTrips: 1240,
+              vehicle: {
+                make: 'Toyota',
+                model: 'Axio Hybrid',
+                year: 2022,
+                plateNumber: 'KDH 452X',
+                category: 'STANDARD'
               }
             }
-          : {
-              id: 'passenger-001',
-              userId: 'passenger-001',
-              email,
-              firstName: 'Brian',
-              lastName: 'Karanja',
-              fullName: 'Brian Karanja',
-              phone: '+254722111222',
-              role: 'PASSENGER',
-              status: 'ACTIVE',
-              walletBalance: 4500
-            };
+          };
+        } else {
+          user = {
+            id: 'passenger-001',
+            userId: 'passenger-001',
+            email,
+            firstName: 'Brian',
+            lastName: 'Karanja',
+            fullName: 'Brian Karanja',
+            phone: '+254722111222',
+            role: 'PASSENGER',
+            status: 'ACTIVE',
+            walletBalance: 4500
+          };
+        }
 
         res.writeHead(200);
         res.end(

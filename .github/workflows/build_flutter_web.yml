@@ -10,6 +10,9 @@ on:
       - '.github/workflows/build_flutter_web.yml'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-web:
     name: Build Passenger & Driver Web Bundles
