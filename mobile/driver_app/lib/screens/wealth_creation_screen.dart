@@ -226,8 +226,6 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
         isEnrolled: false,
         selectedPct: 0.05,
       ),
-        selectedPct: 0.05,
-      ),
     ];
   }
 

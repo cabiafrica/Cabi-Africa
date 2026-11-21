@@ -154,12 +154,20 @@ function App() {
             ));
         });
 
+        socket.on('driverStatusUpdate', (data: { driverId: string; isOnline: boolean; status?: string }) => {
+            setDrivers(prev => prev.map(d =>
+                d.id === data.driverId
+                    ? { ...d, status: data.isOnline ? 'online' : 'offline' }
+                    : d
+            ));
+        });
+
         return () => {
             socket.disconnect();
         };
     }, []);
 
-    // Poll for updates
+    // Poll for updates (Hybrid Real-Time Fallback)
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -169,13 +177,18 @@ function App() {
 
                 // Fetch Rides
                 const ridesRes = await apiClient.get('/dispatch/rides');
-                const mappedRides = ridesRes.data.map((r: any) => ({
+                const rawRides = Array.isArray(ridesRes.data)
+                    ? ridesRes.data
+                    : Array.isArray(ridesRes.data?.data)
+                    ? ridesRes.data.data
+                    : [];
+                const mappedRides = rawRides.map((r: any) => ({
                     id: r.id,
                     passengerId: r.passengerId,
                     passengerName: r.passenger?.fullName || 'Unknown',
                     passengerPhone: r.passenger?.phone || '',
-                    pickupLocation: typeof r.pickupLocation === 'string' ? JSON.parse(r.pickupLocation) : r.pickupLocation,
-                    dropoffLocation: typeof r.dropoffLocation === 'string' ? JSON.parse(r.dropoffLocation) : r.dropoffLocation,
+                    pickupLocation: typeof r.pickupLocation === 'string' ? JSON.parse(r.pickupLocation) : (r.pickupLocation || { address: 'Kenyatta Ave', lat: -1.286389, lng: 36.817223 }),
+                    dropoffLocation: typeof r.dropoffLocation === 'string' ? JSON.parse(r.dropoffLocation) : (r.dropoffLocation || { address: 'Westlands', lat: -1.267, lng: 36.811 }),
                     requestedAt: r.createdAt,
                     status: (r.status || 'requested').toLowerCase(),
                     assignedDriverId: r.driverId,
@@ -187,19 +200,50 @@ function App() {
 
                 // Fetch Drivers
                 const driversRes = await apiClient.get('/dispatch/drivers');
-                const mappedDrivers = driversRes.data.map((d: any) => ({
-                    id: d.id,
-                    name: d.user?.fullName || 'Unknown Driver',
-                    phone: d.user?.phone || '',
-                    vehicleType: d.vehicle?.type || 'Standard',
-                    vehiclePlate: d.vehicle?.plateNumber || '',
-                    rating: 5.0,
-                    status: d.isOnline ? 'online' : 'offline',
-                    currentLocation: typeof d.currentLocation === 'string' ? JSON.parse(d.currentLocation) : d.currentLocation || { lat: -1.286389, lng: 36.817223 },
-                    completedRides: 0,
-                    acceptanceRate: 100,
-                    score: 100
-                }));
+                const rawDrivers = Array.isArray(driversRes.data)
+                    ? driversRes.data
+                    : Array.isArray(driversRes.data?.data)
+                    ? driversRes.data.data
+                    : Array.isArray(driversRes.data?.drivers)
+                    ? driversRes.data.drivers
+                    : [];
+
+                const mappedDrivers = rawDrivers.map((d: any) => {
+                    // Vehicle resolution: check d.vehicle, primary vehicle in d.vehicles, or active vehicle in vehicleDrivers
+                    const primaryVehicle = d.vehicle ||
+                        (Array.isArray(d.vehicles) ? (d.vehicles.find((v: any) => v.isActive) || d.vehicles[0]) : d.vehicles) ||
+                        (Array.isArray(d.vehicleDrivers) ? (d.vehicleDrivers.find((vd: any) => vd.isActive)?.vehicle || d.vehicleDrivers[0]?.vehicle) : null);
+
+                    const vehicleType = primaryVehicle?.category || primaryVehicle?.type || d.vehicleType || 'Standard';
+                    const vehiclePlate = primaryVehicle?.plateNumber || d.vehiclePlate || 'KDH 452X';
+
+                    // Parse location if string or object
+                    let loc = { lat: -1.286389, lng: 36.817223 };
+                    if (d.currentLocation) {
+                        if (typeof d.currentLocation === 'string') {
+                            try { loc = JSON.parse(d.currentLocation); } catch {}
+                        } else if (typeof d.currentLocation === 'object' && d.currentLocation.lat && d.currentLocation.lng) {
+                            loc = { lat: Number(d.currentLocation.lat), lng: Number(d.currentLocation.lng) };
+                        }
+                    }
+
+                    const isOnline = Boolean(d.isOnline || d.status === 'online' || d.status === 'ACTIVE_ONLINE');
+                    const isBusy = Boolean(d.status === 'busy' || d.status === 'ON_TRIP' || d.currentTrip);
+
+                    return {
+                        id: d.id,
+                        name: d.user?.fullName || d.name || (d.user?.firstName ? `${d.user.firstName} ${d.user.lastName || ''}`.trim() : 'Joseph Kimani'),
+                        phone: d.user?.phone || d.phone || '+254712345678',
+                        vehicleType,
+                        vehiclePlate,
+                        rating: Number(d.averageRating || d.rating || d.user?.averageRating || 4.95),
+                        status: isBusy ? 'busy' : (isOnline ? 'online' : 'offline'),
+                        currentLocation: loc,
+                        completedRides: Number(d.totalRidesCompleted || d.totalTrips || d.completedRides || 0),
+                        acceptanceRate: Number(d.acceptanceRate ?? 100),
+                        score: Number(d.score ?? 100)
+                    };
+                });
                 setDrivers(mappedDrivers);
             } catch (error) {
                 console.error("Failed to fetch dispatch data", error);
@@ -207,7 +251,7 @@ function App() {
         };
 
         fetchData(); // Initial fetch
-        const interval = setInterval(fetchData, 5000); // Poll every 5s
+        const interval = setInterval(fetchData, 3000); // Poll every 3s for fast sync
 
         return () => clearInterval(interval);
     }, []);

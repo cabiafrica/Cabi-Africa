@@ -230,8 +230,7 @@ class DriverSupportScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (ctx) => const LostItemResponseScreen(
-                      rideId: 'trip_nairobi_cbd_551',
-                      reportId: 'rep_lost_item_101',
+                      ticketId: 'rep_lost_item_101',
                     ),
                   ),
                 );

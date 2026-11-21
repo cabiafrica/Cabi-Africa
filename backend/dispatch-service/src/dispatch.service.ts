@@ -88,12 +88,49 @@ export class DispatchService {
         });
     }
 
+    async isDriverProfileOwnedBy(driverId: string, userId: string): Promise<boolean> {
+        if (!driverId || !userId) return false;
+        try {
+            const profile = await this.prisma.driverProfile.findFirst({
+                where: {
+                    id: driverId,
+                    userId: userId,
+                },
+                select: { id: true },
+            });
+            return !!profile;
+        } catch {
+            return false;
+        }
+    }
+
     async getDispatchDrivers() {
-        return this.prisma.driverProfile.findMany({
+        const drivers = await this.prisma.driverProfile.findMany({
             include: {
                 user: { select: SAFE_DRIVER_USER_SELECT },
                 vehicles: true,
+                vehicleDrivers: {
+                    include: { vehicle: true },
+                },
             },
+            orderBy: { updatedAt: 'desc' },
+        });
+
+        return drivers.map((d: any) => {
+            const activeAssignedVehicle = d.vehicleDrivers?.find((vd: any) => vd.isActive)?.vehicle;
+            const primaryVehicle = activeAssignedVehicle || d.vehicles;
+            return {
+                ...d,
+                vehicle: primaryVehicle ? {
+                    id: primaryVehicle.id,
+                    make: primaryVehicle.make,
+                    model: primaryVehicle.model,
+                    plateNumber: primaryVehicle.plateNumber,
+                    type: primaryVehicle.category || primaryVehicle.type || 'STANDARD',
+                    year: primaryVehicle.year,
+                    color: primaryVehicle.color,
+                } : null,
+            };
         });
     }
 

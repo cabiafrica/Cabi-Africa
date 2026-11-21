@@ -48,6 +48,7 @@
   ],
   "exclude": [
     "node_modules",
+    "serve.ts",
     "jest.config.ts",
     "**/*.spec.ts",
     "**/*.test.ts",

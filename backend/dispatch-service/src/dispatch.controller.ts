@@ -67,7 +67,7 @@ export class DispatchController {
         }
     }
 
-    private assertSelfOrAdmin(req: any, targetUserId?: string): void {
+    private async assertSelfOrAdmin(req: any, targetUserId?: string): Promise<void> {
         const user = this.extractUser(req);
         if (!user) {
             throw new UnauthorizedException('Authentication required');
@@ -79,7 +79,14 @@ export class DispatchController {
 
         const callerId = user.id || user.userId || user.sub;
         if (targetUserId && callerId !== targetUserId) {
-            throw new ForbiddenException('Access denied: Cannot act on behalf of another user');
+            const callerProfileId = user.driverProfileId || user.driverProfile?.id;
+            if (callerProfileId && callerProfileId === targetUserId) {
+                return;
+            }
+            const isOwner = await this.dispatchService.isDriverProfileOwnedBy(targetUserId, callerId);
+            if (!isOwner) {
+                throw new ForbiddenException('Access denied: Cannot act on behalf of another user');
+            }
         }
     }
 
@@ -119,7 +126,7 @@ export class DispatchController {
 
     @Get('drivers/:driverId/status')
     async getDriverStatus(@Param('driverId') driverId: string, @Req() req: any) {
-        this.assertSelfOrAdmin(req, driverId);
+        await this.assertSelfOrAdmin(req, driverId);
         return this.dispatchService.getDriverStatus(driverId);
     }
 
@@ -129,7 +136,7 @@ export class DispatchController {
         @Body() body: ToggleDriverStatusDto,
         @Req() req: any,
     ) {
-        this.assertSelfOrAdmin(req, driverId);
+        await this.assertSelfOrAdmin(req, driverId);
         return this.dispatchService.updateDriverStatus(driverId, body.isOnline);
     }
 
@@ -139,7 +146,7 @@ export class DispatchController {
         @Body() location: UpdateDriverLocationDto,
         @Req() req: any,
     ) {
-        this.assertSelfOrAdmin(req, driverId);
+        await this.assertSelfOrAdmin(req, driverId);
         return this.dispatchService.updateDriverLocation(driverId, location);
     }
 
@@ -148,7 +155,7 @@ export class DispatchController {
         @Param('driverId') driverId: string,
         @Req() req: any,
     ) {
-        this.assertSelfOrAdmin(req, driverId);
+        await this.assertSelfOrAdmin(req, driverId);
         return this.dispatchService.getDriverPreferences(driverId);
     }
 
@@ -158,7 +165,7 @@ export class DispatchController {
         @Body() preferences: { allowBackToBack?: boolean; destinationMode?: any },
         @Req() req: any,
     ) {
-        this.assertSelfOrAdmin(req, driverId);
+        await this.assertSelfOrAdmin(req, driverId);
         return this.dispatchService.updateDriverPreferences(driverId, preferences);
     }
 

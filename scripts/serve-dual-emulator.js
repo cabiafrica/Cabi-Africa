@@ -359,6 +359,57 @@ const studioServer = http.createServer((req, res) => {
   return studioStaticHandler(req, res);
 });
 
+// Stateful in-memory driver store for preview & local dev
+const mockDrivers = [
+  {
+    id: 'driver-001',
+    userId: 'driver-001',
+    email: 'driver@test.com',
+    fullName: 'Joseph Kimani',
+    name: 'Joseph Kimani',
+    phone: '+254712345678',
+    isOnline: false,
+    status: 'offline',
+    averageRating: 4.95,
+    rating: 4.95,
+    totalRidesCompleted: 1240,
+    acceptanceRate: 98,
+    score: 99,
+    currentLocation: { lat: -1.286389, lng: 36.817223 },
+    licenseNumber: 'DL-KE-99281',
+    isBiometricVerified: true,
+    user: {
+      id: 'driver-001',
+      fullName: 'Joseph Kimani',
+      phone: '+254712345678',
+      email: 'driver@test.com',
+      averageRating: 4.95,
+      status: 'ACTIVE',
+      role: 'DRIVER'
+    },
+    vehicle: {
+      make: 'Toyota',
+      model: 'Axio Hybrid',
+      year: 2022,
+      plateNumber: 'KDH 452X',
+      category: 'STANDARD',
+      type: 'STANDARD'
+    },
+    vehicles: [
+      {
+        id: 'v-001',
+        make: 'Toyota',
+        model: 'Axio Hybrid',
+        year: 2022,
+        plateNumber: 'KDH 452X',
+        category: 'STANDARD',
+        type: 'STANDARD',
+        isActive: true
+      }
+    ]
+  }
+];
+
 // 2. Built-in Auth & Dispatch Mock API Responders (for Flutter Web Apps on 8081 & 8082)
 function createMockApiServer(serviceName) {
   return http.createServer((req, res) => {
@@ -384,6 +435,69 @@ function createMockApiServer(serviceName) {
       } catch {}
 
       res.setHeader('Content-Type', 'application/json');
+
+      // 1. Driver Toggle Online / Offline Status
+      if (pathname.includes('/dispatch/drivers') && pathname.includes('/toggle-status')) {
+        const parts = pathname.split('/');
+        const toggleIdx = parts.indexOf('toggle-status');
+        const driverId = toggleIdx > 0 ? parts[toggleIdx - 1] : 'driver-001';
+        let driver = mockDrivers.find(d => d.id === driverId || d.userId === driverId);
+        if (!driver) {
+          driver = mockDrivers[0];
+        }
+        driver.isOnline = Boolean(parsed.isOnline);
+        driver.status = driver.isOnline ? 'online' : 'offline';
+        console.log(`[DISPATCH] 🔄 Driver status changed: ${driver.name} is now ${driver.status.toUpperCase()}`);
+        res.writeHead(200);
+        res.end(JSON.stringify({ success: true, isOnline: driver.isOnline, driver }));
+        return;
+      }
+
+      // 2. Driver Location Update
+      if (pathname.includes('/dispatch/drivers') && pathname.includes('/location')) {
+        const parts = pathname.split('/');
+        const locIdx = parts.indexOf('location');
+        const driverId = locIdx > 0 ? parts[locIdx - 1] : 'driver-001';
+        let driver = mockDrivers.find(d => d.id === driverId || d.userId === driverId);
+        if (driver && parsed.lat && parsed.lng) {
+          driver.currentLocation = { lat: Number(parsed.lat), lng: Number(parsed.lng) };
+        }
+        res.writeHead(200);
+        res.end(JSON.stringify({ success: true, currentLocation: driver ? driver.currentLocation : null }));
+        return;
+      }
+
+      // 3. Driver Status Query
+      if (pathname.includes('/dispatch/drivers/') && pathname.endsWith('/status')) {
+        const parts = pathname.split('/');
+        const driverId = parts[parts.length - 2];
+        const driver = mockDrivers.find(d => d.id === driverId || d.userId === driverId) || mockDrivers[0];
+        res.writeHead(200);
+        res.end(JSON.stringify({ isOnline: driver.isOnline }));
+        return;
+      }
+
+      // 4. Dispatch Drivers List (for Dispatch Panel & Live Map)
+      if (pathname.endsWith('/dispatch/drivers') || pathname.endsWith('/dispatch/drivers/')) {
+        res.writeHead(200);
+        res.end(JSON.stringify(mockDrivers));
+        return;
+      }
+
+      // 5. Dispatch Metrics
+      if (pathname.endsWith('/dispatch/metrics')) {
+        const onlineCount = mockDrivers.filter(d => d.isOnline).length;
+        res.writeHead(200);
+        res.end(JSON.stringify({
+          activeDrivers: mockDrivers.length,
+          onlineDrivers: onlineCount,
+          activeRides: 0,
+          completedToday: 42,
+          surgeMultiplier: 1.0,
+          emergencyAlerts: 0
+        }));
+        return;
+      }
 
       // Auth Login
       if (pathname.endsWith('/auth/login')) {

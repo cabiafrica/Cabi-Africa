@@ -11,10 +11,20 @@ class RideService {
   RideService({http.Client? client}) : _client = client ?? http.Client();
   String get _dispatchBaseUrl => AppConfig.dispatchApiUrl;
 
+  Future<Map<String, String>> _getAuthHeaders() async {
+    final token = await const FlutterSecureStorage().read(key: 'jwt_token');
+    return {
+      'Content-Type': 'application/json',
+      if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
+    };
+  }
+
   Future<bool> getDriverStatus(String driverId) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await _client.get(
         Uri.parse('$_dispatchBaseUrl/dispatch/drivers/$driverId/status'),
+        headers: headers,
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -28,9 +38,10 @@ class RideService {
 
   Future<bool> toggleOnlineStatus(String driverId, bool isOnline) async {
     try {
+      final headers = await _getAuthHeaders();
       final response = await _client.post(
         Uri.parse('$_dispatchBaseUrl/dispatch/drivers/$driverId/toggle-status'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
         body: jsonEncode({'isOnline': isOnline}),
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -342,9 +353,10 @@ class RideService {
   Future<void> updateDriverLocation(
       String driverId, double lat, double lng) async {
     try {
+      final headers = await _getAuthHeaders();
       await _client.post(
         Uri.parse('$_dispatchBaseUrl/dispatch/drivers/$driverId/location'),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
         body: jsonEncode({'lat': lat, 'lng': lng}),
       );
     } catch (e) {

@@ -2483,6 +2483,9 @@
         <button class="btn-step-action" onclick="loginBothAppsWithCredentials('0711786722', 'Sam@2026')" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; font-weight: 800; cursor: pointer; padding: 6px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 5px;" title="Authenticate both Passenger and Driver with Samuel's credentials">
           <span>🔑</span> Login Both (0711786722)
         </button>
+        <a href="http://localhost:3002" target="_blank" class="btn-step-action" style="background: rgba(212, 175, 55, 0.15); border: 1px solid var(--border-gold); color: var(--gold-bright); text-decoration: none; display: inline-flex; align-items: center; gap: 5px; font-weight: 700; padding: 6px 12px; border-radius: 6px;" title="Open Dispatch Panel Live on Port 3002">
+          <span>📡</span> Dispatch Panel
+        </a>
         <button class="btn-step-action" id="btnRunFullDemo" onclick="runAutomatedTripDemo()">
           <span>▶</span> 1-Click Auto Demo
         </button>
@@ -4391,7 +4394,7 @@
         }
 
         playTone([523.25, 659.25, 783.99]);
-        log('🟢 Driver Test Driver (KDH 452X) went ONLINE in Nairobi CBD.', 'DRIVER');
+        log('🟢 Driver Joseph Kimani (KDH 452X • STANDARD) went ONLINE in Nairobi CBD.', 'DRIVER');
         updateStepIndicator(2);
       } else {
         btn.className = 'btn-toggle-online offline';
@@ -4412,6 +4415,17 @@
         log('🔴 Driver went OFFLINE.', 'DRIVER');
         updateStepIndicator(1);
       }
+
+      // Sync with Dispatch Service on port 3334 for Dispatch Panel visibility
+      try {
+        fetch('http://localhost:3334/api/dispatch/drivers/driver-001/toggle-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ isOnline: isDriverOnline })
+        }).then(r => r.json()).then(() => {
+          log(`📡 Dispatch server updated: Driver is ${isDriverOnline ? 'ONLINE' : 'OFFLINE'} on Dispatch Panel.`, 'DISPATCH');
+        }).catch(() => {});
+      } catch (_) {}
     }
 
     // Passenger Requests Ride
