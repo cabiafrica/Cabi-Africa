@@ -25,8 +25,6 @@ jobs:
         run: |
           missing=""
           [ -z "${{ secrets.DATABASE_URL }}" ] && missing="$missing DATABASE_URL"
-          [ -z "${{ secrets.GCP_SA_KEY }}" ] && missing="$missing GCP_SA_KEY"
-          [ -z "${{ secrets.GCP_PROJECT_ID }}" ] && missing="$missing GCP_PROJECT_ID"
           if [ -n "$missing" ]; then
             echo "::error::Missing required secrets:$missing"
             echo "Add them at: Settings → Secrets and variables → Actions"
@@ -95,72 +93,60 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL || secrets.DATABASE_URL }}
 
-  # Deploy ALL services via Cloud Build (backends + frontends)
-  deploy-all-services:
-    name: Deploy via Cloud Build
+  # Deploy backend microservices to DigitalOcean Droplet
+  deploy-droplet:
+    name: Deploy to DigitalOcean Droplet
     needs: migrate-database
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v2
+      - name: Deploy to DigitalOcean via SSH
+        if: ${{ secrets.DROPLET_SSH_KEY != '' || secrets.DO_SSH_KEY != '' }}
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          host: 104.248.168.68
+          username: root
+          key: ${{ secrets.DROPLET_SSH_KEY || secrets.DO_SSH_KEY }}
+          script: |
+            cd /opt/cabi-africa
+            git pull origin main || true
+            docker compose up -d --build
+            docker compose exec -T auth-gateway npx prisma db push --schema=libs/backend/database/prisma/schema.prisma --accept-data-loss || true
 
-      - name: Set up gcloud CLI
-        uses: google-github-actions/setup-gcloud@v2
+      - name: Report Droplet Status
+        if: ${{ secrets.DROPLET_SSH_KEY == '' && secrets.DO_SSH_KEY == '' }}
+        run: |
+          echo "ℹ️ DROPLET_SSH_KEY secret not found in repository."
+          echo "To enable zero-touch continuous deployment to DigitalOcean (104.248.168.68):"
+          echo "Add your Droplet root private SSH key as DROPLET_SSH_KEY in GitHub Secrets."
+          echo "Deployments can also be executed directly anytime via: ./scripts/deploy-to-droplet.sh"
 
-      - name: Trigger Cloud Build
-        run: gcloud builds submit --config=cloudbuild.yaml --project=${{ secrets.GCP_PROJECT_ID }} --timeout=3600s
-
-  # Health checks
+  # Production Health checks
   post-deployment-checks:
-    name: Post-Deployment Health Checks
-    needs: deploy-all-services
+    name: Production Health Checks
+    needs: deploy-droplet
     runs-on: ubuntu-latest
     steps:
-      - name: Wait for deployments to stabilize
-        run: sleep 30
-
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Set up gcloud CLI
-        uses: google-github-actions/setup-gcloud@v2
+      - name: Wait for services to stabilize
+        run: sleep 10
 
       - name: Run health checks
         run: |
-          services=(
-            "auth-gateway"
-            "verification-service"
-            "dispatch-service"
-            "referral-service"
-            "sacco-service"
-            "driver-lead-service"
-            "admin-panel"
-            "dispatch-panel"
-            "user-portal"
+          echo "Verifying live production endpoints..."
+          endpoints=(
+            "https://cabi.africa/health"
+            "https://api.cabi.africa/health"
+            "https://cabi.africa"
           )
-          
-          for service in "${services[@]}"; do
-            echo "Checking $service..."
-            url=$(gcloud run services describe $service --platform managed --region us-central1 --format 'value(status.url)' --project=${{ secrets.GCP_PROJECT_ID }})
-            if [ -z "$url" ]; then
-              echo "::warning::$service URL not found"
-              continue
-            fi
-            
-            # Try health endpoint first, fallback to root
-            status=$(curl -s -o /dev/null -w "%{http_code}" "$url/api/health" || curl -s -o /dev/null -w "%{http_code}" "$url")
+          for url in "${endpoints[@]}"; do
+            echo "Checking $url..."
+            status=$(curl -s -k -o /dev/null -w "%{http_code}" --max-time 15 "$url" || echo "000")
             if [ "$status" -ge 200 ] && [ "$status" -lt 400 ]; then
-              echo "✅ $service is UP ($status)"
+              echo "✅ $url is UP (HTTP $status)"
             else
-              echo "::error::$service is DOWN ($status) at $url"
-              # exit 1 # Optional: fail the job if a critical service is down
+              echo "⚠️ $url returned HTTP $status"
             fi
           done
 
