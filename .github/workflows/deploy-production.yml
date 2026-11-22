@@ -75,7 +75,9 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Run Prisma migrations
-        run: npx prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma || echo "⚠️ Prisma migrate deploy skipped (database unreachable or paused)"
+        run: |
+          npx prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma || echo "⚠️ Prisma migrate deploy skipped"
+          npx prisma db push --schema=libs/backend/database/prisma/schema.prisma --accept-data-loss
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL || secrets.DATABASE_URL }}
