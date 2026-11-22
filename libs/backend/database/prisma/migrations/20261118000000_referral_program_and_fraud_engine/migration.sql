@@ -113,9 +113,9 @@ ALTER TABLE "referral_relationships" ADD CONSTRAINT "referral_relationships_refe
 
 -- AddForeignKey
 ALTER TABLE "referral_commission_ledger" ADD CONSTRAINT "referral_commission_ledger_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "referral_commission_ledger" ADD CONSTRAINT "referral_commission_ledger_driverProfileId_fkey" FOREIGN KEY ("driverProfileId") REFERENCES "DriverProfile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "referral_commission_ledger" ADD CONSTRAINT "referral_commission_ledger_driverProfileId_fkey" FOREIGN KEY ("driverProfileId") REFERENCES "driver_profiles"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE "referral_commission_ledger" ADD CONSTRAINT "referral_commission_ledger_sourceUserId_fkey" FOREIGN KEY ("sourceUserId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "referral_commission_ledger" ADD CONSTRAINT "referral_commission_ledger_sourceDriverProfileId_fkey" FOREIGN KEY ("sourceDriverProfileId") REFERENCES "DriverProfile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "referral_commission_ledger" ADD CONSTRAINT "referral_commission_ledger_sourceDriverProfileId_fkey" FOREIGN KEY ("sourceDriverProfileId") REFERENCES "driver_profiles"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "notification_logs" ADD CONSTRAINT "notification_logs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
