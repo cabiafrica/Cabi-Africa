@@ -110,6 +110,8 @@ jobs:
           host: 104.248.168.68
           username: root
           key: ${{ secrets.DROPLET_SSH_KEY || secrets.DO_SSH_KEY }}
+          timeout: 30m
+          command_timeout: 30m
           script: |
             cd /opt/cabi-africa
             git pull origin main
