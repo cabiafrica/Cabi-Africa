@@ -14,7 +14,7 @@ export const APP_LINKS = {
         playStore: '/downloads/Cabi-Go-Official.apk',
         appStore: '/apps/passenger/index.html',
         githubRelease:
-            'https://github.com/ibnke/Cabi-Africa/releases/latest/download/Cabi-Go-Official.apk',
+            'https://github.com/cabiafrica/Cabi-Africa/releases/latest/download/Cabi-Go-Official.apk',
         iosWebApp: '/apps/passenger/index.html',
     },
     driver: {
@@ -26,7 +26,7 @@ export const APP_LINKS = {
         playStore: '/downloads/Cabi-Drive-Official.apk',
         appStore: '/apps/driver/index.html',
         githubRelease:
-            'https://github.com/ibnke/Cabi-Africa/releases/latest/download/Cabi-Drive-Official.apk',
+            'https://github.com/cabiafrica/Cabi-Africa/releases/latest/download/Cabi-Drive-Official.apk',
         iosWebApp: '/apps/driver/index.html',
     },
 } as const;
