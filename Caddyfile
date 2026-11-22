@@ -106,8 +106,8 @@ dispatch.cabi.africa {
     }
 
     # Direct high-speed static download handling for mobile APKs
-    handle /downloads/* {
-        root * /var/www
+    handle_path /downloads/* {
+        root * /var/www/downloads
         file_server
     }
 
