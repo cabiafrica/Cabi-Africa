@@ -62,32 +62,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           // No driver profile found -> route to login page
           nextScreen = const LoginScreen();
         }
-      } else if (kIsWeb) {
-        // In web preview mode, automatically bootstrap demo driver session
-        final demoUser = {
-          'id': 'drv-001',
-          'fullName': 'James Mwangi',
-          'firstName': 'James',
-          'lastName': 'Mwangi',
-          'phone': '+254 712 345 678',
-          'email': 'james.mwangi@cabi.africa',
-          'role': 'DRIVER',
-          'driverProfile': {
-            'id': 'dp-001',
-            'licenseNumber': 'DL-8921-KE',
-            'sacco': '2NK Sacco',
-            'isOnline': true,
-            'rating': 4.95,
-            'completedTrips': 2410,
-            'vehicle': {
-              'model': 'Toyota Axio',
-              'plate': 'KDA 892J',
-              'color': 'Silver',
-            }
-          }
-        };
-        ref.read(authProvider.notifier).setSession('demo-jwt-token', demoUser);
-        nextScreen = const MainShell();
+      } else {
+        nextScreen = const LoginScreen();
       }
 
       Navigator.pushReplacement(

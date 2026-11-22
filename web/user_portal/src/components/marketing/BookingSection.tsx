@@ -647,6 +647,7 @@ export default function BookingSection() {
                                             setPickup(label);
                                             setPickupCoords(coords);
                                         }}
+                                        onPinClick={() => setMapPickerMode('pickup')}
                                         placeholder="Enter or pin pickup point"
                                         ariaLabel="Pickup Location"
                                         surfaceClassName="bg-black/5 dark:bg-white/5 rounded-xl"
@@ -700,6 +701,7 @@ export default function BookingSection() {
                                             setDestination(label);
                                             setDropoffCoords(coords);
                                         }}
+                                        onPinClick={() => setMapPickerMode('dropoff')}
                                         placeholder="Enter or pin destination"
                                         ariaLabel="Drop-off Destination"
                                         surfaceClassName="bg-black/5 dark:bg-white/5 rounded-xl"

@@ -160,3 +160,22 @@ class _SecureWebViewState extends State<SecureWebView> {
     );
   }
 }
+
+void openSecurePortalSheet(
+  BuildContext context, {
+  required String url,
+  required String title,
+}) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (ctx) => ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.92,
+        child: SecureWebView(url: url, title: title),
+      ),
+    ),
+  );
+}

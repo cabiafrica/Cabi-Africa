@@ -2,13 +2,15 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/router';
 import { Car, MapPin, Navigation, ArrowRight } from 'lucide-react';
 import LocationAutocomplete from '@/components/ui/LocationAutocomplete';
+import MapPinModal, { Coords, MapPinMode } from '@/components/maps/MapPinModal';
 
 export default function RequestRideWidget() {
     const router = useRouter();
     const [pickup, setPickup] = useState('');
     const [destination, setDestination] = useState('');
-    const [pickupCoords, setPickupCoords] = useState<{ lat: number; lng: number } | null>(null);
-    const [dropoffCoords, setDropoffCoords] = useState<{ lat: number; lng: number } | null>(null);
+    const [pickupCoords, setPickupCoords] = useState<Coords | null>(null);
+    const [dropoffCoords, setDropoffCoords] = useState<Coords | null>(null);
+    const [mapPickerMode, setMapPickerMode] = useState<MapPinMode | null>(null);
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
@@ -58,11 +60,22 @@ export default function RequestRideWidget() {
                         setPickup(label);
                         setPickupCoords(coords);
                     }}
+                    onPinClick={() => setMapPickerMode('pickup')}
                     placeholder="Pickup location"
                     ariaLabel="Pickup location"
                     surfaceClassName="bg-slate-50 dark:bg-surface-dark rounded-xl"
                     inputClassName={sharedInputClass}
                     leftIcon={<Navigation className="w-3.5 h-3.5 text-[#D4AF37]" />}
+                    rightSlot={
+                        <button
+                            type="button"
+                            onClick={() => setMapPickerMode('pickup')}
+                            title="Pinpoint pickup location on map"
+                            className="absolute right-2.5 p-1 text-[#D4AF37] hover:text-black dark:hover:text-white"
+                        >
+                            <MapPin className="w-3.5 h-3.5" />
+                        </button>
+                    }
                 />
                 <LocationAutocomplete
                     id="sidebar-dropoff-input"
@@ -75,11 +88,22 @@ export default function RequestRideWidget() {
                         setDestination(label);
                         setDropoffCoords(coords);
                     }}
+                    onPinClick={() => setMapPickerMode('dropoff')}
                     placeholder="Drop-off destination"
                     ariaLabel="Drop-off destination"
                     surfaceClassName="bg-slate-50 dark:bg-surface-dark rounded-xl"
                     inputClassName={sharedInputClass}
                     leftIcon={<MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />}
+                    rightSlot={
+                        <button
+                            type="button"
+                            onClick={() => setMapPickerMode('dropoff')}
+                            title="Pinpoint drop-off destination on map"
+                            className="absolute right-2.5 p-1 text-[#D4AF37] hover:text-black dark:hover:text-white"
+                        >
+                            <MapPin className="w-3.5 h-3.5" />
+                        </button>
+                    }
                 />
                 <button
                     type="submit"
@@ -89,6 +113,25 @@ export default function RequestRideWidget() {
                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                 </button>
             </form>
+
+            <MapPinModal
+                mode={mapPickerMode}
+                onModeChange={setMapPickerMode}
+                pickup={pickup}
+                destination={destination}
+                pickupCoords={pickupCoords}
+                dropoffCoords={dropoffCoords}
+                onPickupSelect={(label, coords) => {
+                    setPickup(label);
+                    setPickupCoords(coords);
+                    setMapPickerMode(null);
+                }}
+                onDropoffSelect={(label, coords) => {
+                    setDestination(label);
+                    setDropoffCoords(coords);
+                    setMapPickerMode(null);
+                }}
+            />
         </div>
     );
 }

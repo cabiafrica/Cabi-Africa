@@ -79,7 +79,15 @@ Future<void> main() async {
     initialThemeMode = ThemeMode.dark;
   }
 
-  final langCode = prefs.getString(LanguageNotifier.languageKey) ?? 'en';
+  final savedLang = prefs.getString(LanguageNotifier.languageKey);
+  String langCode;
+  if (savedLang != null && savedLang.isNotEmpty) {
+    langCode = savedLang;
+  } else {
+    // Detect device default language
+    final deviceCode = WidgetsBinding.instance.platformDispatcher.locale.languageCode.toLowerCase();
+    langCode = const ['en', 'sw', 'fr', 'ar'].contains(deviceCode) ? deviceCode : 'en';
+  }
   final initialLocale = Locale(langCode);
 
   // Amplify configuration removed - app uses direct HTTP API calls

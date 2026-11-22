@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import {
     SupportedLang,
     TranslationResult,
+    PHRASE_MAP,
     translatePhraseOrWordsSync,
     translateTextWithBreakdown,
 } from '@/lib/translator';
@@ -15,7 +16,7 @@ const UI_TRANSLATIONS: Record<SupportedLang, Record<string, string>> = {
         'nav.intel': 'Intel',
         'nav.about': 'About Us',
         'nav.download': 'Download App',
-        'nav.login': 'Sign In',
+        'nav.login': 'Authenticate',
         'nav.register': 'Get Started',
         'booking.compute': 'Compute Trajectory',
         'booking.forOther': 'Requesting this ride for someone else?',
@@ -26,7 +27,7 @@ const UI_TRANSLATIONS: Record<SupportedLang, Record<string, string>> = {
         'nav.intel': 'Habari',
         'nav.about': 'Kuhusu Sisi',
         'nav.download': 'Pakua Programu',
-        'nav.login': 'Ingia',
+        'nav.login': 'Thibitisha',
         'nav.register': 'Anza Sasa',
         'booking.compute': 'Kokotoa Njia',
         'booking.forOther': 'Je, unaomba safari kwa ajili ya mtu mwingine?',
@@ -37,7 +38,7 @@ const UI_TRANSLATIONS: Record<SupportedLang, Record<string, string>> = {
         'nav.intel': 'Infos',
         'nav.about': 'À Propos',
         'nav.download': 'Télécharger',
-        'nav.login': 'Connexion',
+        'nav.login': 'S’authentifier',
         'nav.register': 'Commencer',
         'booking.compute': 'Calculer le Trajet',
         'booking.forOther': 'Commander cette course pour quelqu’un d’autre ?',
@@ -48,7 +49,7 @@ const UI_TRANSLATIONS: Record<SupportedLang, Record<string, string>> = {
         'nav.intel': 'الأخبار',
         'nav.about': 'من نحن',
         'nav.download': 'تحميل التطبيق',
-        'nav.login': 'تسجيل الدخول',
+        'nav.login': 'المصادقة',
         'nav.register': 'ابدأ الآن',
         'booking.compute': 'حساب المسار',
         'booking.forOther': 'هل تطلب هذه الرحلة لشخص آخر؟',
@@ -69,6 +70,26 @@ const LanguageContext = createContext<LanguageContextValue>({
     t: (key, fallback) => fallback || key,
     translateUserInput: (text, target = 'sw') => translateTextWithBreakdown(text, target),
 });
+
+function detectDeviceLanguage(): SupportedLang {
+    if (typeof window === 'undefined') return 'en';
+    const saved = localStorage.getItem('cabi_language') as SupportedLang | null;
+    if (saved && ['en', 'sw', 'fr', 'ar'].includes(saved)) {
+        return saved;
+    }
+    const nav = typeof navigator !== 'undefined' ? navigator : null;
+    if (!nav) return 'en';
+    const candidates = nav.languages?.length ? nav.languages : [nav.language || ''];
+    for (const c of candidates) {
+        if (!c) continue;
+        const code = c.toLowerCase().split('-')[0].split('_')[0];
+        if (code === 'sw') return 'sw';
+        if (code === 'fr') return 'fr';
+        if (code === 'ar') return 'ar';
+        if (code === 'en') return 'en';
+    }
+    return 'en';
+}
 
 function shouldSkipText(text: string): boolean {
     const trimmed = text.trim();
@@ -109,12 +130,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
-        const saved = localStorage.getItem('cabi_language') as SupportedLang | null;
-        if (saved && ['en', 'sw', 'fr', 'ar'].includes(saved)) {
-            setLanguageState(saved);
-            document.documentElement.lang = saved;
-            document.documentElement.dir = saved === 'ar' ? 'rtl' : 'ltr';
-        }
+        const initial = detectDeviceLanguage();
+        setLanguageState(initial);
+        document.documentElement.lang = initial;
+        document.documentElement.dir = initial === 'ar' ? 'rtl' : 'ltr';
     }, []);
 
     useEffect(() => {
@@ -248,8 +267,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
-    const t = (key: string, fallback?: string) => {
-        return UI_TRANSLATIONS[language]?.[key] || UI_TRANSLATIONS.en[key] || fallback || key;
+    const t = (key: string, fallback?: string): string => {
+        const direct = UI_TRANSLATIONS[language]?.[key];
+        if (direct) return direct;
+        const lookup = fallback || key;
+        const phrase = PHRASE_MAP[lookup.toLowerCase()]?.[language];
+        if (phrase) return phrase;
+        if (language === 'en') return lookup;
+        return translatePhraseOrWordsSync(lookup, language);
     };
 
     const translateUserInput = async (text: string, target?: SupportedLang) => {

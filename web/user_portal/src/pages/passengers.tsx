@@ -193,17 +193,15 @@ export default function ForPassengersPage(
         testimonials={[
           {
             quote:
-              'CABI is my go-to app for getting around the city. The drivers are professional and the rides are always safe and reliable.',
+              'CABI is my daily commute sanctuary across Nairobi. The captains are professional, 4-digit PIN verification gives complete safety, and the vehicles are spotless.',
             name: 'Grace M.',
-            role: 'Passenger in Nairobi',
-            avatarUrl: '/avatars/passenger1.png',
+            role: 'Corporate Commuter, Upper Hill Nairobi',
           },
           {
             quote:
-              'Booking a ride is so easy, and I love the real-time tracking feature. It gives me great peace of mind.',
+              'Booking a ride online or on the app takes seconds with instant transparent pricing. Real-time GPS tracking and dedicated executive support make all the difference.',
             name: 'David O.',
-            role: 'Passenger in Nairobi',
-            avatarUrl: '/avatars/passenger2.png',
+            role: 'Executive Rider, Westlands to JKIA',
           },
         ]}
       />

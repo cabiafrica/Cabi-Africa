@@ -27,8 +27,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   String _humanizeError(dynamic error) {
     final err = error.toString().toLowerCase();
-    if (err.contains('invalid login credentials')) {
-      return "Incorrect email or password. Please try again.";
+    if (err.contains('invalid login credentials') ||
+        err.contains('invalid credentials') ||
+        err.contains('credentials mismatch') ||
+        err.contains('incorrect') ||
+        err.contains('wrong password') ||
+        err.contains('unauthorized') ||
+        err.contains('401')) {
+      return "Credentials mismatch";
     }
     if (err.contains('email not confirmed')) {
       return "Your email hasn't been verified yet. Please check your inbox.";
@@ -327,7 +333,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
                               )
                             : const Text(
-                                'CREATE ACCOUNT & SIGN IN',
+                                'CREATE ACCOUNT & AUTHENTICATE',
                                 style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
                               ),
                       ),
@@ -585,50 +591,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
                           child: const Text('CREATE ACCOUNT', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2, fontSize: 12)),
-                        ),
-
-                        const SizedBox(height: 12),
-                        TextButton.icon(
-                          onPressed: () async {
-                            final demoUser = {
-                              'id': 'drv-001',
-                              'fullName': 'James Mwangi',
-                              'firstName': 'James',
-                              'lastName': 'Mwangi',
-                              'phone': '+254 712 345 678',
-                              'email': 'james.mwangi@cabi.africa',
-                              'role': 'DRIVER',
-                              'driverProfile': {
-                                'id': 'dp-001',
-                                'licenseNumber': 'DL-8921-KE',
-                                'sacco': '2NK Sacco',
-                                'isOnline': true,
-                                'rating': 4.95,
-                                'completedTrips': 2410,
-                                'vehicle': {
-                                  'model': 'Toyota Axio',
-                                  'plate': 'KDA 892J',
-                                  'color': 'Silver',
-                                }
-                              }
-                            };
-                            await ref.read(authProvider.notifier).setSession('demo-jwt-token', demoUser);
-                            if (mounted) {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(builder: (_) => const MainShell()),
-                              );
-                            }
-                          },
-                          icon: const Icon(Icons.flash_on_rounded, color: AppTheme.primaryColor, size: 18),
-                          label: const Text(
-                            'EXPLORE AS DEMO CAPTAIN',
-                            style: TextStyle(
-                              color: AppTheme.primaryColor,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 1.2,
-                              fontSize: 12,
-                            ),
-                          ),
                         ),
 
                         if (_errorMessage != null) ...[

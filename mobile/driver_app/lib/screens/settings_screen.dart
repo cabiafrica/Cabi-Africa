@@ -16,6 +16,7 @@ import 'package:driver_app/screens/support_screen.dart';
 import 'package:driver_app/screens/vehicle_account_screen.dart';
 import 'package:driver_app/screens/sacco_screen.dart';
 import 'package:driver_app/screens/wealth_creation_screen.dart';
+import 'package:driver_app/screens/service_defaults_summary_sheet.dart';
 import 'package:driver_app/theme/app_theme.dart';
 import 'package:core_ui/core_ui.dart';
 import '../services/audio_notification_service.dart';
@@ -172,11 +173,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             title: l10n.vehicleAccount,
             subtitle: 'Inspect maintenance ledger, active shift & vehicle incentives',
             icon: Icons.directions_car_filled_rounded,
-            onTap: () => Navigator.push(
+            onTap: () => ServiceDefaultsSummarySheet.show(
               context,
-              MaterialPageRoute(
-                builder: (_) => const VehicleAccountScreen(vehicleData: {}),
-              ),
+              ServiceToolType.vehicle,
             ),
           ),
 
@@ -187,21 +186,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _buildNavigationTile(
             context: context,
             title: 'Cabi Legacy Programs',
-            subtitle: 'Choose programs, custom deduction % and automatic trip allocations',
+            subtitle: 'Configured programs, deduction % and automatic trip allocations',
             icon: Icons.auto_awesome_rounded,
-            onTap: () => Navigator.push(
+            onTap: () => ServiceDefaultsSummarySheet.show(
               context,
-              MaterialPageRoute(builder: (_) => const WealthCreationScreen()),
+              ServiceToolType.cabiLegacy,
             ),
           ),
           _buildNavigationTile(
             context: context,
             title: l10n.saccoSavings,
-            subtitle: 'Enroll with 2% deduction + 3% Cabi match for 6 months & view shares ledger',
+            subtitle: 'Configured 2% deduction + 3% Cabi match & verified shares ledger',
             icon: Icons.savings_outlined,
-            onTap: () => Navigator.push(
+            onTap: () => ServiceDefaultsSummarySheet.show(
               context,
-              MaterialPageRoute(builder: (_) => const SaccoScreen()),
+              ServiceToolType.cabiLegacy,
             ),
           ),
 

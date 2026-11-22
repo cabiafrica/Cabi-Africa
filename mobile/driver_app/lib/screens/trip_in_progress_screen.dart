@@ -1194,12 +1194,6 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                   isActive: true,
                   onTap: () {},
                 ),
-                const SizedBox(height: 8),
-                _buildMapControlBtn(
-                  icon: Icons.person_remove_rounded,
-                  isActive: false,
-                  onTap: _simulatePassengerCancellation,
-                ),
               ],
             ),
           ),

@@ -51,7 +51,7 @@ export class AuthController {
       };
     } catch (error) {
       console.error('Login error:', error?.message || error);
-      throw new UnauthorizedException('Invalid email/phone or password.');
+      throw new UnauthorizedException('Credentials mismatch');
     }
   }
 
@@ -61,7 +61,7 @@ export class AuthController {
     try {
       return await this.userService.initiateAdminLogin(loginDto.email, loginDto.password);
     } catch (error: any) {
-      throw new UnauthorizedException(error?.message || 'Invalid credentials.');
+      throw new UnauthorizedException(error?.message || 'Credentials mismatch');
     }
   }
 

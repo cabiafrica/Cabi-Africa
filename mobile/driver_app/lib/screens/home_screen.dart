@@ -1191,13 +1191,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 _MapButton(
-                  icon: isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-                  iconColor: isDark ? AppTheme.primaryLight : AppTheme.aurumBronze,
-                  tooltip: isDark ? 'Switch to Lustre Platinum (Light)' : 'Switch to Obsidian Gold (Dark)',
-                  onTap: () => ref.read(themeProvider.notifier).toggleTheme(),
-                ),
-                const SizedBox(height: 7),
-                _MapButton(
                   icon: Icons.layers_outlined,
                   tooltip: 'Change Map Provider',
                   onTap: () => _showMapSelectionSheet(context, mapType),
@@ -1502,7 +1495,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                _isOnline ? 'Dispatch Active • Available' : 'Shift Inactive',
+                                _isOnline ? 'Online • Ready for Rides' : 'Offline',
                                 style: GoogleFonts.inter(
                                   color: theme.textTheme.bodyLarge?.color,
                                   fontSize: 16,

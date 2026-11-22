@@ -347,13 +347,13 @@ export class UserService {
     });
 
     if (!user) {
-      throw new Error('Invalid credentials.');
+      throw new Error('Credentials mismatch');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new Error('Invalid credentials.');
+      throw new Error('Credentials mismatch');
     }
 
     // Aggregate Permissions
@@ -465,7 +465,7 @@ export class UserService {
       authUser = await this.login(identifier, password);
     } catch {
       this.recordFailedAttempt(rateKey);
-      throw new UnauthorizedException('Invalid credentials.');
+      throw new UnauthorizedException('Credentials mismatch');
     }
     this.resetFailedAttempts(rateKey);
 

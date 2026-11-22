@@ -1017,7 +1017,7 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
         ),
         const SizedBox(height: 16),
 
-        // Action / Test Buttons
+        // Action Button
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -1025,24 +1025,11 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
               onPressed: _isVerifying ? null : () => _startFaceRecognition(simulateMismatch: false),
               icon: Icon(Icons.refresh_rounded, size: 15, color: accent),
               label: Text(
-                'Scan Face (Match)',
+                'Scan Face',
                 style: TextStyle(color: accent, fontSize: 11, fontWeight: FontWeight.bold),
               ),
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: accent.withValues(alpha: 0.4)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-            ),
-            const SizedBox(width: 8),
-            OutlinedButton.icon(
-              onPressed: _isVerifying ? null : () => _startFaceRecognition(simulateMismatch: true),
-              icon: const Icon(Icons.close_rounded, size: 15, color: Colors.redAccent),
-              label: const Text(
-                'Test Mismatch (Fail)',
-                style: TextStyle(color: Colors.redAccent, fontSize: 11, fontWeight: FontWeight.bold),
-              ),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Colors.redAccent.withValues(alpha: 0.4)),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
             ),

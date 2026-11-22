@@ -200,24 +200,21 @@ export default function ForDriversPage(
         testimonials={[
           {
             quote:
-              'Driving with CABI has changed my life. The Business Builder program provides a second income stream I never thought possible.',
+              'Driving with CABI has transformed my household economics. Through the Business Builder program and reusable commissions, I have secondary earnings that fund school fees without stress.',
             name: 'James K.',
-            role: 'Driver in Nairobi',
-            avatarUrl: '/avatars/driver1.png',
+            role: 'Partner Captain, Westlands Nairobi',
           },
           {
             quote:
-              'The flexibility is amazing. I can set my own hours and be there for my family, all while earning a great income.',
+              'Cabi gives me full predictability. I set my own operating hours, earn respectful pay with zero surge extortion, and passengers treat drivers with genuine dignity.',
             name: 'Amina S.',
-            role: 'Driver in Nairobi',
-            avatarUrl: '/avatars/driver2.png',
+            role: 'Electric CabiGo Driver, Kilimani Nairobi',
           },
           {
             quote:
               'With Cabi\'s reusable commission model and automated servicing reserves dedicated to Cabi Legacy equity, repairing and maintaining my vehicle has become completely effortless. Fresh brake pads, genuine oil, and zero breakdown anxiety. Passengers always compliment how clean, smooth, and well-maintained the car is.',
             name: 'Josphat K.',
             role: 'Veteran Driver Partner, Nairobi',
-            avatarUrl: '/avatars/driver3.png',
           },
         ]}
       />

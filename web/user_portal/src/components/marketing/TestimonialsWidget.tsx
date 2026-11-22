@@ -81,8 +81,14 @@ export default function TestimonialsWidget() {
         prevArrow: <PrevArrow />,
         responsive: [
             {
-                breakpoint: 1280,
-                settings: { slidesToShow: 2, slidesToScroll: 1, infinite: true, autoplay: true, autoplaySpeed: 4500 },
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 1,
+                    infinite: true,
+                    autoplay: true,
+                    autoplaySpeed: 4500,
+                },
             },
             {
                 breakpoint: 768,
@@ -94,8 +100,23 @@ export default function TestimonialsWidget() {
                     infinite: true,
                     autoplay: true,
                     autoplaySpeed: 4000,
-                    pauseOnHover: false,
-                    swipeToSlide: true,
+                    pauseOnHover: true,
+                    swipeToSlide: false,
+                    arrows: false,
+                },
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    centerMode: false,
+                    variableWidth: false,
+                    infinite: true,
+                    autoplay: true,
+                    autoplaySpeed: 4000,
+                    pauseOnHover: true,
+                    swipeToSlide: false,
                     arrows: false,
                 },
             },

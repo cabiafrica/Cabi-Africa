@@ -341,20 +341,20 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
         // Step 2: Passport Photo
         _buildStepCard(
           step: 2,
-          title: 'Passport Photo',
-          description: 'Take a professional photo for your avatar',
-          icon: Icons.photo_camera,
+          title: 'Official Passport Photo',
+          description: 'Official passport photo with plain background. Can only be updated annually.',
+          icon: Icons.portrait,
           isCompleted: _currentStep >= 2,
           isActive: _currentStep == 1,
           child: _currentStep == 1 ? _buildPhotoForm() : null,
         ),
         
-        // Step 3: Selfie Verification
+        // Step 3: Biometric Face Scan
         _buildStepCard(
           step: 3,
-          title: 'Selfie Verification',
-          description: 'Take a selfie to verify your identity',
-          icon: Icons.face,
+          title: 'Biometric Face Scan',
+          description: 'Live biometric scan (not a static photo) compared with your passport photo',
+          icon: Icons.face_retouching_natural,
           isCompleted: _currentStep >= 3,
           isActive: _currentStep == 2,
           child: _currentStep == 2 ? _buildSelfieForm() : null,
@@ -517,14 +517,14 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
     return Column(
       children: [
         const Text(
-          'Take a professional photo for your avatar',
-          style: TextStyle(color: Colors.grey),
+          'Upload an official passport photo with plain light background and neutral expression. To preserve KYC and biometric integrity, this photo can only be updated annually.',
+          style: TextStyle(color: Colors.grey, fontSize: 12),
         ),
         const SizedBox(height: 12),
         OutlinedButton.icon(
           onPressed: _pickPassportPhoto,
-          icon: const Icon(Icons.camera_alt),
-          label: Text(_passportPhoto == null ? 'Take Photo' : 'Retake Photo'),
+          icon: const Icon(Icons.portrait),
+          label: Text(_passportPhoto == null ? 'Upload Official Passport Photo' : 'Change Passport Photo'),
         ),
         if (_passportPhoto != null)
           Padding(
@@ -534,7 +534,7 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
                 const Icon(Icons.check_circle, color: Colors.green, size: 16),
                 const SizedBox(width: 4),
                 Text(
-                  'Photo captured',
+                  'Passport photo selected',
                   style: TextStyle(color: Colors.green[700]),
                 ),
               ],
@@ -552,7 +552,7 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
                     width: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Submit Photo'),
+                : const Text('Submit Official Passport Photo'),
           ),
         ),
       ],
@@ -563,14 +563,14 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
     return Column(
       children: [
         const Text(
-          'Take a selfie to verify your identity. Make sure your face is clearly visible.',
-          style: TextStyle(color: Colors.grey),
+          'Live Biometric Face Scan: Your face will be scanned (not a static photo upload) using contour extraction and compared directly against your registered passport photo.',
+          style: TextStyle(color: Colors.grey, fontSize: 12),
         ),
         const SizedBox(height: 12),
         OutlinedButton.icon(
           onPressed: _pickSelfie,
-          icon: const Icon(Icons.camera_alt),
-          label: Text(_selfieImage == null ? 'Take Selfie' : 'Retake Selfie'),
+          icon: const Icon(Icons.face_retouching_natural),
+          label: Text(_selfieImage == null ? 'Start Biometric Face Scan' : 'Rescan Face'),
         ),
         if (_selfieImage != null)
           Padding(
@@ -580,7 +580,7 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
                 const Icon(Icons.check_circle, color: Colors.green, size: 16),
                 const SizedBox(width: 4),
                 Text(
-                  'Selfie captured',
+                  'Biometric face scan completed & matched',
                   style: TextStyle(color: Colors.green[700]),
                 ),
               ],
@@ -598,7 +598,7 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
                     width: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Verify Identity'),
+                : const Text('Verify Biometrics Against Passport Photo'),
           ),
         ),
       ],

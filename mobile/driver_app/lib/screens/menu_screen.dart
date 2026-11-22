@@ -8,6 +8,7 @@ import 'support_screen.dart';
 import 'finance_screen.dart';
 import 'my_organization_screen.dart';
 import 'wealth_creation_screen.dart';
+import 'service_defaults_summary_sheet.dart';
 import '../theme/app_theme.dart';
 
 class MenuScreen extends ConsumerWidget {
@@ -139,52 +140,50 @@ class MenuScreen extends ConsumerWidget {
                     label: 'CABI LEGACY',
                     color: AppTheme.primaryColor.withValues(alpha: 0.15),
                     iconColor: AppTheme.primaryColor,
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const WealthCreationScreen()))),
+                    onTap: () => ServiceDefaultsSummarySheet.show(
+                        context, ServiceToolType.cabiLegacy)),
                 _MenuGridItem(
                     icon: Icons.account_balance_wallet_outlined,
                     label: 'WALLET',
                     color: Colors.indigo.withValues(alpha: 0.1),
                     iconColor: Colors.indigoAccent,
-                    route: '/wallet'),
+                    onTap: () => ServiceDefaultsSummarySheet.show(
+                        context, ServiceToolType.wallet)),
                 _MenuGridItem(
                     icon: Icons.account_balance_rounded,
                     label: 'FINANCE',
                     color: Colors.orange.withValues(alpha: 0.12),
                     iconColor: Colors.orangeAccent,
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const FinanceScreen()))),
+                    onTap: () => ServiceDefaultsSummarySheet.show(
+                        context, ServiceToolType.finance)),
                 _MenuGridItem(
                     icon: Icons.groups_rounded,
                     label: 'DRIVER GROUP',
                     color: Colors.amber.withValues(alpha: 0.12),
                     iconColor: Colors.amber,
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const MyOrganizationScreen()))),
+                    onTap: () => ServiceDefaultsSummarySheet.show(
+                        context, ServiceToolType.driverGroup)),
                 _MenuGridItem(
                     icon: Icons.shield_outlined,
                     label: 'WELFARE',
                     color: Colors.cyan.withValues(alpha: 0.1),
                     iconColor: Colors.cyan,
-                    route: '/welfare_schemes'),
+                    onTap: () => ServiceDefaultsSummarySheet.show(
+                        context, ServiceToolType.welfare)),
                 _MenuGridItem(
                     icon: Icons.directions_car_filled_outlined,
                     label: 'VEHICLE',
                     color: Colors.blueGrey.withValues(alpha: 0.1),
                     iconColor: Colors.blueGrey,
-                    route: '/vehicles'),
+                    onTap: () => ServiceDefaultsSummarySheet.show(
+                        context, ServiceToolType.vehicle)),
                 _MenuGridItem(
                     icon: Icons.share_rounded,
                     label: 'NETWORK',
                     color: Colors.pink.withValues(alpha: 0.1),
                     iconColor: Colors.pinkAccent,
-                    route: '/referral_program'),
+                    onTap: () => ServiceDefaultsSummarySheet.show(
+                        context, ServiceToolType.network)),
                 _MenuGridItem(
                     icon: Icons.settings_outlined,
                     label: 'SETTINGS',

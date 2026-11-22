@@ -7,6 +7,7 @@ interface LocationAutocompleteProps {
     value: string;
     onChange: (value: string) => void;
     onSelect: (label: string, coords: { lat: number; lng: number }) => void;
+    onPinClick?: () => void;
     placeholder?: string;
     ariaLabel?: string;
     inputClassName?: string;
@@ -24,6 +25,7 @@ export default function LocationAutocomplete({
     value,
     onChange,
     onSelect,
+    onPinClick,
     placeholder = 'Enter location',
     ariaLabel,
     inputClassName = '',
@@ -186,11 +188,32 @@ export default function LocationAutocomplete({
                 {rightSlot}
             </div>
 
-            {open && suggestions.length > 0 && (
+            {open && (suggestions.length > 0 || onPinClick) && (
                 <ul
                     role="listbox"
-                    className="absolute left-0 right-0 top-full mt-2 z-[90] max-h-64 overflow-y-auto rounded-2xl bg-white dark:bg-card-dark border border-slate-200 dark:border-[#D4AF37]/30 shadow-2xl py-1.5"
+                    className="absolute left-0 right-0 top-full mt-2 z-[90] max-h-72 overflow-y-auto rounded-2xl bg-white dark:bg-card-dark border border-slate-200 dark:border-[#D4AF37]/30 shadow-2xl py-1.5"
                 >
+                    {onPinClick && (
+                        <li role="presentation" className="border-b border-slate-100 dark:border-white/10 mb-1">
+                            <button
+                                type="button"
+                                onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    setOpen(false);
+                                    onPinClick();
+                                }}
+                                className="w-full text-left px-3.5 py-2.5 flex items-center justify-between text-xs font-bold text-amber-600 dark:text-[#D4AF37] hover:bg-amber-500/10 transition-colors"
+                            >
+                                <span className="flex items-center gap-2.5">
+                                    <FaMapMarkerAlt className="w-3.5 h-3.5 text-amber-600 dark:text-[#D4AF37]" />
+                                    <span>Pinpoint on Interactive Map</span>
+                                </span>
+                                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-[#ffe088] uppercase tracking-wider">
+                                    Click Map
+                                </span>
+                            </button>
+                        </li>
+                    )}
                     {suggestions.map((item, idx) => {
                         const isHighlighted = idx === activeIndex;
                         return (

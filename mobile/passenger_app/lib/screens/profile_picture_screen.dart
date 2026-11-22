@@ -21,6 +21,8 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
   String? _currentImageUrl;
   File? _newImageFile;
   bool _isUploading = false;
+  bool _canUpdatePassport = true;
+  DateTime? _nextEligibleDate;
 
   @override
   void initState() {
@@ -28,8 +30,26 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final auth = legacy_provider.Provider.of<AuthProvider>(context, listen: false);
       if (auth.user != null) {
+        final passportUrl = auth.user?['passportPhotoUrl'] ?? auth.user?['profilePicture'];
+        final updatedStr = auth.user?['passportUpdatedAt'] ?? auth.user?['updatedAt'] ?? auth.user?['createdAt'];
+        bool canUpdate = true;
+        DateTime? nextDate;
+
+        if (passportUrl != null && passportUrl.toString().isNotEmpty && updatedStr != null) {
+          final lastUpdated = DateTime.tryParse(updatedStr.toString());
+          if (lastUpdated != null) {
+            final cutoff = lastUpdated.add(const Duration(days: 365));
+            if (DateTime.now().isBefore(cutoff)) {
+              canUpdate = false;
+              nextDate = cutoff;
+            }
+          }
+        }
+
         setState(() {
-          _currentImageUrl = auth.user?['profilePicture'] ?? auth.user?['passportPhotoUrl'];
+          _currentImageUrl = passportUrl;
+          _canUpdatePassport = canUpdate;
+          _nextEligibleDate = nextDate;
         });
       }
     });
@@ -186,7 +206,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          'PROFILE PICTURE',
+          'OFFICIAL PASSPORT PHOTO',
           style: TextStyle(
             color: AppTheme.primaryColor,
             fontWeight: FontWeight.bold,
@@ -224,8 +244,57 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                       : null,
                 ),
               ),
-              const SizedBox(height: 32),
-              if (_newImageFile == null)
+              const SizedBox(height: 24),
+              if (!_canUpdatePassport && _currentImageUrl != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.3)),
+                  ),
+                  child: Column(
+                    children: [
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.lock_clock, color: AppTheme.primaryColor, size: 18),
+                          SizedBox(width: 8),
+                          Text(
+                            'Passport Photo Locked (Annual Policy)',
+                            style: TextStyle(
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'To safeguard KYC compliance and live biometric scan integrity, your official passport photo can only be modified once per year (annually). Next eligible update: ${_nextEligibleDate != null ? "${_nextEligibleDate!.day}/${_nextEligibleDate!.month}/${_nextEligibleDate!.year}" : "Annual renewal pending"}.',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white70, fontSize: 11.5, height: 1.4),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.03),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                ),
+                child: const Text(
+                  'Passport Photo Standards:\n• Plain white or light-colored background\n• Full frontal view with neutral expression\n• No sunglasses, hats, or digital filters\n• Scanned during live selfie verification',
+                  style: TextStyle(color: Colors.white60, fontSize: 11.5, height: 1.45),
+                ),
+              ),
+              const SizedBox(height: 24),
+              if (_newImageFile == null && _canUpdatePassport)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -276,13 +345,13 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                     ),
                   ],
                 ),
-              if (_currentImageUrl != null && _newImageFile == null) ...[
+              if (_currentImageUrl != null && _newImageFile == null && _canUpdatePassport) ...[
                 const SizedBox(height: 24),
                 TextButton.icon(
                   onPressed: _isUploading ? null : _removeImage,
                   icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 18),
                   label: const Text(
-                    'Remove Picture',
+                    'Remove Passport Photo',
                     style: TextStyle(color: Colors.redAccent),
                   ),
                 ),

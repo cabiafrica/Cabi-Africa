@@ -137,21 +137,8 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                             })}
                         </div>
 
-                        {/* Right: Language Selector, Theme Toggle, Avatar Profile Menu & Mobile Hamburger */}
+                        {/* Right: Avatar Profile Menu & Mobile Hamburger */}
                         <div className="flex items-center gap-2 sm:gap-3">
-                            <select
-                                aria-label="Select Language"
-                                value={language}
-                                onChange={(e) => setLanguage(e.target.value as any)}
-                                className="h-9 px-2 rounded-xl border border-slate-200 dark:border-white/15 bg-slate-100/80 dark:bg-white/5 text-[11px] font-black uppercase text-slate-800 dark:text-white focus:outline-none focus:border-[#D4AF37]"
-                            >
-                                <option value="en">EN</option>
-                                <option value="sw">SW</option>
-                                <option value="fr">FR</option>
-                                <option value="ar">AR</option>
-                            </select>
-                            <ThemeToggle />
-
                             {/* Top-Right Avatar & Profile Dropdown Menu (Visible on both Desktop & Mobile) */}
                             <div className="relative" ref={profileRef}>
                                 <button
@@ -279,7 +266,7 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                                         Profile &amp; Access
                                                     </p>
                                                     <p className="text-xs text-slate-500 dark:text-white/50 mt-0.5">
-                                                        Sign in or create your CABI account
+                                                        Authenticate or create your CABI account
                                                     </p>
                                                 </div>
 
@@ -292,7 +279,7 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                                     >
                                                         <span className="flex items-center gap-3">
                                                             <LogIn className="h-4 w-4" />
-                                                            Login
+                                                            Authenticate
                                                         </span>
                                                         <span className="px-1.5 py-0.5 rounded bg-black/15 text-[10px] font-mono">VIP</span>
                                                     </Link>

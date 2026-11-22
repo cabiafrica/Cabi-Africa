@@ -48,42 +48,76 @@ export async function sendEmailMessage(params: {
     return { delivered: true, mode: 'smtp' };
 }
 
+export function formatToE164(phone: string): string {
+    let clean = phone.trim().replace(/[\s-]/g, '');
+    if (clean.startsWith('0')) {
+        return `+254${clean.slice(1)}`;
+    }
+    if (clean.startsWith('254')) {
+        return `+${clean}`;
+    }
+    if (!clean.startsWith('+')) {
+        return `+${clean}`;
+    }
+    return clean;
+}
+
 export async function sendSmsMessage(
     phone: string,
     message: string
 ): Promise<{ delivered: boolean; mode: 'africastalking' | 'sandbox' }> {
     const username = process.env.AT_USERNAME;
     const apiKey = process.env.AT_API_KEY;
-    const senderId = process.env.AT_SENDER_ID || 'CABI';
+    const senderId = process.env.AT_SENDER_ID;
+    const formattedPhone = formatToE164(phone);
 
     if (!username || !apiKey) {
-        console.log(`[SMS Sandbox] To: ${phone} | Message: ${message}`);
+        console.log(`[SMS Sandbox] To: ${formattedPhone} | Message: ${message}`);
         return { delivered: true, mode: 'sandbox' };
     }
 
-    const body = new URLSearchParams({
-        username,
-        to: phone,
-        message,
-        from: senderId,
-    });
+    const isSandbox = username.toLowerCase() === 'sandbox';
+    const endpoint = isSandbox
+        ? 'https://api.sandbox.africastalking.com/version1/messaging'
+        : 'https://api.africastalking.com/version1/messaging';
 
-    const res = await fetch('https://api.africastalking.com/version1/messaging', {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            apiKey,
-        },
-        body: body.toString(),
-    });
+    const sendAttempt = async (withSender: boolean) => {
+        const body = new URLSearchParams({
+            username,
+            to: formattedPhone,
+            message,
+        });
+        if (withSender && senderId && !isSandbox) {
+            body.append('from', senderId);
+        }
+
+        return await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                apiKey,
+            },
+            body: body.toString(),
+        });
+    };
+
+    let res = await sendAttempt(Boolean(senderId));
+
+    // If sender ID was rejected, retry immediately without 'from'
+    if (!res.ok && senderId) {
+        console.warn(`[Africa's Talking] Initial SMS with senderId '${senderId}' returned ${res.status}. Retrying without sender ID...`);
+        res = await sendAttempt(false);
+    }
 
     if (!res.ok) {
         const errText = await res.text().catch(() => '');
-        console.warn('AfricaTalking SMS failed, falling back to log:', res.status, errText);
+        console.warn('[Africa\'s Talking SMS] Failed:', res.status, errText);
         return { delivered: false, mode: 'sandbox' };
     }
 
+    const json = await res.json().catch(() => ({}));
+    console.log(`[Africa's Talking SMS] Sent to ${formattedPhone}:`, json);
     return { delivered: true, mode: 'africastalking' };
 }
 

@@ -14,74 +14,8 @@ class FinanceScreen extends StatefulWidget {
 }
 
 class _FinanceScreenState extends State<FinanceScreen> {
-  // Financial Services Data
-  final List<Map<String, dynamic>> _services = [
-    {
-      'id': 'sacco_shares',
-      'title': 'Sacco Capital Savings & Shares',
-      'category': 'COOPERATIVE BANKING',
-      'partner': 'Stima DT Sacco / Boda PSV Sacco',
-      'isSubscribed': false,
-      'statsLabel': 'Accumulated Shares',
-      'statsValue': 'KES 0.00',
-      'detail': 'Daily remittance of KES 100 auto-deducted from ride earnings. Earns 11.2% annual dividend.',
-      'icon': Icons.account_balance_rounded,
-      'accentColor': const Color(0xFFFFB300),
-      'portalPath': '/drivers/sacco/manage',
-    },
-    {
-      'id': 'welfare_fund',
-      'title': 'Driver Emergency & Benevolent Welfare',
-      'category': 'SAFETY NET & RELIEF',
-      'partner': 'Cabi Driver Community Welfare',
-      'isSubscribed': false,
-      'statsLabel': 'Welfare Pool',
-      'statsValue': 'KES 0.00',
-      'detail': 'Covers emergency hospitalization, roadside towing, and benevolent family support.',
-      'icon': Icons.shield_rounded,
-      'accentColor': const Color(0xFF00E5FF),
-      'portalPath': '/drivers/sacco/manage',
-    },
-    {
-      'id': 'fuel_advance',
-      'title': 'Daily Fuel & Maintenance Advances',
-      'category': 'WORKING CAPITAL',
-      'partner': 'TotalEnergies & Shell Fuel Pass',
-      'isSubscribed': false,
-      'statsLabel': 'Available Advance',
-      'statsValue': 'KES 0.00',
-      'detail': 'Instant micro-liquidity for daily petrol, oil service, and quick vehicle maintenance.',
-      'icon': Icons.local_gas_station_rounded,
-      'accentColor': const Color(0xFF00E676),
-      'portalPath': '/drivers/sacco/manage',
-    },
-    {
-      'id': 'asset_financing',
-      'title': 'Vehicle Asset Financing & Refinancing',
-      'category': 'ASSET ACQUISITION',
-      'partner': 'Harambee Sacco & Equity Bank',
-      'isSubscribed': false,
-      'statsLabel': 'Financing Limit',
-      'statsValue': 'Up to KES 1,200,000',
-      'detail': 'Lease-to-own financing for hybrid/EV vehicles with flexible daily fare remittances.',
-      'icon': Icons.directions_car_filled_rounded,
-      'accentColor': const Color(0xFFFF9100),
-      'portalPath': '/drivers/sacco/manage',
-    },
-    {
-      'id': 'psv_insurance',
-      'title': 'PSV Comprehensive & Health Insurance',
-      'category': 'INSURANCE SCHEME',
-      'partner': 'Jubilee / CIC General Insurance',
-      'isSubscribed': false,
-      'statsLabel': 'Annual Coverage',
-      'statsValue': 'KES 500,000 Underwriting',
-      'detail': 'Driver and passenger accident cover, outpatient clinic card, and inpatient medical package.',
-      'icon': Icons.health_and_safety_rounded,
-      'accentColor': const Color(0xFF7C4DFF),
-      'portalPath': '/drivers/sacco/manage',
-    },
-  ];
+  // Financial Services Data: populated only as created by administration
+  final List<Map<String, dynamic>> _services = [];
 
   void _openPortal(BuildContext context, {String path = '/drivers/sacco/manage'}) {
     Navigator.push(
@@ -362,6 +296,28 @@ class _FinanceScreenState extends State<FinanceScreen> {
                 const SizedBox(height: 12),
 
                 // List of Financial Services
+                if (_services.isEmpty)
+                  Container(
+                    padding: const EdgeInsets.all(18),
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.amber.withValues(alpha: 0.25)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.info_outline_rounded, color: Colors.amber, size: 20),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'No active financial programs have been configured by the administration yet.',
+                            style: GoogleFonts.inter(color: Colors.white70, fontSize: 13),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ..._services.map((svc) => _buildServiceCard(context, svc, isDark)),
               ],
             ),

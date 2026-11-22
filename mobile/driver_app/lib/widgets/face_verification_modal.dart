@@ -436,35 +436,18 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
             const SizedBox(height: 24),
             
             if (!_isScanning && !_isSuccess)
-              Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () => _startScan(simulateFail: false),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: accent,
-                          foregroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                        ),
-                        child: const Text('Scan Face (Match)', style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                    ),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () => _startScan(simulateFail: false),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: accent,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    height: 50,
-                    child: OutlinedButton(
-                      onPressed: () => _startScan(simulateFail: true),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.redAccent),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      ),
-                      child: const Text('Simulate Fail', style: TextStyle(color: Colors.redAccent, fontSize: 12)),
-                    ),
-                  ),
-                ],
+                  child: const Text('Scan Face', style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
               ),
           ],
           const SizedBox(height: 12),

@@ -133,9 +133,9 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
         }
       }
 
-      // If backend was unreachable or empty, use fallback defaults
+      // If backend was empty or has no programs, show no options (admin hasn't created any)
       if (loaded.isEmpty) {
-        loaded = _getFallbackPrograms();
+        loaded = [];
       }
 
       // Apply driver's active allocations
@@ -168,65 +168,11 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _programs = _getFallbackPrograms();
+          _programs = [];
           _isLoading = false;
         });
       }
     }
-  }
-
-  List<WealthProgramItem> _getFallbackPrograms() {
-    return [
-      WealthProgramItem(
-        id: 'sacco-capital-stima',
-        name: 'Stima DT / Boda PSV Sacco',
-        serviceCategory: 'Sacco',
-        description: 'Cooperative shares earning 11.2% annual dividend. 2% deducted automatically per trip + 3% Cabi match for 6 months (5% total). Mandatory 6-month minimum lock-in. After 6 months, maintain an active Star/Elite badge to keep bonus matching active.',
-        minPct: 0.02,
-        maxPct: 0.20,
-        defaultPct: 0.02,
-        dividendOrYield: '2% Driver + 3% Cabi Match (6 Mo Lock-in)',
-        platformBonusPct: 0.03,
-        isEnrolled: false,
-        selectedPct: 0.02,
-      ),
-      WealthProgramItem(
-        id: 'pension-octagon-tier2',
-        name: 'Mandatory Driver Pension & Retirement',
-        serviceCategory: 'PENSION',
-        description: 'Statutory Ksh 10 per trip is compulsory on all rides. Configure voluntary percentage top-ups here to compound your retirement nest egg.',
-        minPct: 0.0,
-        maxPct: 0.15,
-        defaultPct: 0.0,
-        dividendOrYield: 'Compulsory Ksh 10/Trip + Voluntary %',
-        isEnrolled: true,
-        selectedPct: 0.0,
-      ),
-      WealthProgramItem(
-        id: 'insurance-cic-medical',
-        name: 'CIC / Jubilee PSV & Family Health',
-        serviceCategory: 'INSURANCE_HEALTH',
-        description: 'Comprehensive outpatient & inpatient medical underwriting covering driver, spouse, and family.',
-        minPct: 0.02,
-        maxPct: 0.10,
-        defaultPct: 0.05,
-        dividendOrYield: 'KES 500,000 Medical & Accident Cover',
-        isEnrolled: false,
-        selectedPct: 0.05,
-      ),
-      WealthProgramItem(
-        id: 'mmf-britam-yield',
-        name: 'Britam High-Yield Money Market Fund',
-        serviceCategory: 'INVESTMENT_MMF',
-        description: 'Liquid wealth preservation with daily compound yields and instant emergency withdrawal.',
-        minPct: 0.02,
-        maxPct: 0.15,
-        defaultPct: 0.05,
-        dividendOrYield: '13.5% Daily Compound Yield',
-        isEnrolled: false,
-        selectedPct: 0.05,
-      ),
-    ];
   }
 
   void _applyPreset(String name, Map<String, double> targetPcts) {
@@ -438,6 +384,28 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
                   const SizedBox(height: 12),
 
                   // 4. Program Cards
+                  if (_programs.isEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(18),
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.amber.withValues(alpha: 0.25)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.info_outline_rounded, color: Colors.amber, size: 20),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'No active Cabi Legacy programs have been created by the administration yet.',
+                              style: GoogleFonts.inter(color: Colors.white70, fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ..._programs.map((program) => _buildProgramCard(program)),
 
                   const SizedBox(height: 20),

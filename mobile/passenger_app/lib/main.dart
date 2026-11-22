@@ -71,7 +71,15 @@ Future<void> main() async {
     initialThemeMode = ThemeMode.dark;
   }
 
-  final langCode = prefs.getString('cabi_preferred_language') ?? 'en';
+  final savedLang = prefs.getString('cabi_preferred_language');
+  String langCode;
+  if (savedLang != null && savedLang.isNotEmpty) {
+    langCode = savedLang;
+  } else {
+    // Detect device default language
+    final deviceCode = WidgetsBinding.instance.platformDispatcher.locale.languageCode.toLowerCase();
+    langCode = const ['en', 'sw', 'fr', 'ar'].contains(deviceCode) ? deviceCode : 'en';
+  }
   final initialLocale = Locale(langCode);
 
   runApp(

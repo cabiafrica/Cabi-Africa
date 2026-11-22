@@ -240,7 +240,7 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
                     Text(
                       isLoading
                           ? "UPDATING STATUS..."
-                          : (isOnline ? "DISPATCH ACTIVE • SLIDE TO PAUSE" : "OFFLINE • SLIDE TO GO ONLINE"),
+                          : (isOnline ? "ONLINE • SLIDE TO GO OFFLINE" : "OFFLINE • SLIDE TO GO ONLINE"),
                       style: GoogleFonts.inter(
                         color: labelColor,
                         fontWeight: FontWeight.w800,

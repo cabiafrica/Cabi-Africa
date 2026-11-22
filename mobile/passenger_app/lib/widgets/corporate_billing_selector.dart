@@ -140,11 +140,23 @@ class _CorporateBillingSelectorState extends State<CorporateBillingSelector> {
   }
 
   void _notifyChange() {
+    String? accId;
+    String? ccId;
+    String? purp;
+    if (_isCorporate) {
+      if (_selectedAccount != null) {
+        accId = _selectedAccount!['id']?.toString();
+      }
+      if (_selectedCostCenter != null) {
+        ccId = _selectedCostCenter!['id']?.toString();
+      }
+      purp = _purposeController.text.trim();
+    }
     widget.onChanged(
       isCorporate: _isCorporate,
-      accountId: _isCorporate ? _selectedAccount?['id'] : null,
-      costCenterId: _isCorporate ? _selectedCostCenter?['id'] : null,
-      purpose: _isCorporate ? _purposeController.text.trim() : null,
+      accountId: accId,
+      costCenterId: ccId,
+      purpose: purp,
     );
   }
 

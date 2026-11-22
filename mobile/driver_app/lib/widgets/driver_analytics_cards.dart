@@ -1,33 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:driver_app/config/app_config.dart';
 import 'package:driver_app/providers/auth_provider.dart';
 import 'package:driver_app/theme/app_theme.dart';
+import 'package:driver_app/widgets/secure_webview.dart';
 
 class DriverAnalyticsCards extends ConsumerWidget {
   const DriverAnalyticsCards({super.key});
 
   void _openUserPortal(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Row(
-          children: [
-            Icon(Icons.open_in_new_rounded, color: AppTheme.primaryLight, size: 20),
-            SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'Opening Driver Partner Web Portal for complete analytics...',
-                style: TextStyle(color: Colors.white, fontSize: 13),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: const Color(0xFF141414),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: AppTheme.primaryColor.withValues(alpha: 0.3)),
-        ),
-      ),
+    openSecurePortalSheet(
+      context,
+      url: '${AppConfig.userPortalUrl}/portal/analytics',
+      title: 'Comprehensive Score Matrix',
     );
   }
 
@@ -74,39 +59,6 @@ class DriverAnalyticsCards extends ConsumerWidget {
                     ),
                   ),
                 ],
-              ),
-              InkWell(
-                onTap: () => _openUserPortal(context),
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: AppTheme.primaryColor.withValues(alpha: 0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: const Row(
-                    children: [
-                      Text(
-                        'Web Portal',
-                        style: TextStyle(
-                          color: AppTheme.primaryDark,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(width: 4),
-                      Icon(
-                        Icons.open_in_new_rounded,
-                        size: 14,
-                        color: AppTheme.primaryDark,
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ],
           ),
@@ -570,7 +522,7 @@ class DriverAnalyticsCards extends ConsumerWidget {
               color: Colors.black,
             ),
             label: const Text(
-              'Open Comprehensive Score Matrix',
+              'Comprehensive Score Matrix',
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 14.5,

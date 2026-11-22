@@ -339,46 +339,6 @@ extension _HomeScreenPanels on _HomeScreenState {
               );
             }(),
 
-            const SizedBox(height: 20),
-
-            // Demo Stepper Control
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      if (_currentRideData?['status'] == 'DRIVER_ARRIVED') {
-                        simulateTripFlowStep('IN_PROGRESS');
-                      } else {
-                        simulateTripFlowStep('DRIVER_ARRIVED');
-                      }
-                    },
-                    icon: Icon(
-                      _currentRideData?['status'] == 'DRIVER_ARRIVED'
-                          ? Icons.play_arrow_rounded
-                          : Icons.location_on_rounded,
-                      size: 18,
-                      color: const Color(0xFF241A00),
-                    ),
-                    label: Text(
-                      _currentRideData?['status'] == 'DRIVER_ARRIVED'
-                          ? 'Simulate: Start Trip'
-                          : 'Simulate: Driver Arrived',
-                      style: AppTheme.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
-                        color: const Color(0xFF241A00),
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryColor,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 10),
 
             // Cancel Button
@@ -995,30 +955,7 @@ extension _HomeScreenPanels on _HomeScreenState {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-
-            // Demo Complete Trip Button
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton.icon(
-                onPressed: () => simulateTripFlowStep('COMPLETED'),
-                icon: const Icon(Icons.star_rounded, size: 20, color: Color(0xFF241A00)),
-                label: Text(
-                  'Simulate: Complete Trip & Open Rating',
-                  style: AppTheme.inter(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF241A00),
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
 
             // Actions
             Row(
@@ -2447,34 +2384,6 @@ extension _HomeScreenPanels on _HomeScreenState {
                       ),
                     ),
                     const SizedBox(height: 16),
-
-            // Wave Countdown Badge (Auto-restarts when it hits 00:00)
-
-
-
-            // Demo Match Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton.icon(
-                        onPressed: () => simulateTripFlowStep('DRIVER_ASSIGNED'),
-                        icon: const Icon(Icons.flash_on_rounded, size: 20, color: Color(0xFF241A00)),
-                        label: Text(
-                          'Simulate: Driver Found (Demo)',
-                          style: AppTheme.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                            color: const Color(0xFF241A00),
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryColor,
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
 
             // Cancel Search & Change Service Button
                     // Action Button: 'Cancel Ride' with Integrated Wave Countdown

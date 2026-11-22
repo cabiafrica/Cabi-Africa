@@ -98,6 +98,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     return res.status(401).json({
-        message: 'Invalid credentials. Please verify your email and password.'
+        message: 'Credentials mismatch'
     });
 }

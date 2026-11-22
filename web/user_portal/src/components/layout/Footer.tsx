@@ -1,10 +1,14 @@
 import Link from 'next/link';
 import { FaDownload, FaMobileAlt, FaCarSide, FaCheckCircle, FaShieldAlt, FaAndroid, FaApple } from 'react-icons/fa';
+import { Globe } from 'lucide-react';
 import SocialLinks from '@/components/ui/SocialLinks';
 import BrandLogo from '@/components/ui/BrandLogo';
+import { ThemeToggle } from '../ThemeToggle';
+import { useLanguage } from '@/context/LanguageContext';
 import { APP_LINKS } from '@/config/appLinks';
 
 export default function Footer() {
+    const { language, setLanguage } = useLanguage();
     return (
         <footer id="footer-download-menu" className="bg-neutral-50 dark:bg-surface-dark border-t border-neutral-200 dark:border-white/10 py-14 mt-auto relative transition-colors duration-300">
             {/* Brand Yellow Gradient Top Border */}
@@ -314,11 +318,28 @@ export default function Footer() {
                     </div>
                 </div>
 
-                {/* Sub-Footer Copyright */}
-                <div className="mt-12 border-t border-neutral-200 dark:border-white/10 pt-8 flex items-center justify-center text-xs text-neutral-500 text-center">
-                    <p>
+                {/* Sub-Footer Copyright & Executive Preferences */}
+                <div className="mt-12 border-t border-neutral-200 dark:border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
+                    <p className="text-center sm:text-left">
                         &copy; {new Date().getFullYear()} CABI Africa Technologies Inc. All rights reserved.
                     </p>
+                    <div className="flex items-center gap-3">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-200/60 dark:bg-white/5 border border-neutral-300 dark:border-white/10 text-neutral-700 dark:text-neutral-300 shadow-sm">
+                            <Globe className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                            <select
+                                aria-label="Select Language"
+                                value={language}
+                                onChange={(e) => setLanguage(e.target.value as 'en' | 'sw' | 'fr' | 'ar')}
+                                className="bg-transparent text-xs font-semibold focus:outline-none cursor-pointer text-neutral-800 dark:text-neutral-200"
+                            >
+                                <option value="en" className="text-black bg-white">English (EN)</option>
+                                <option value="sw" className="text-black bg-white">Kiswahili (SW)</option>
+                                <option value="fr" className="text-black bg-white">Français (FR)</option>
+                                <option value="ar" className="text-black bg-white">العربية (AR)</option>
+                            </select>
+                        </div>
+                        <ThemeToggle />
+                    </div>
                 </div>
             </div>
         </footer>

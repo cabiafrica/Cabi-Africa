@@ -179,6 +179,28 @@ class _WelfareSchemeScreenState extends ConsumerState<WelfareSchemeScreen> {
                           style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold, letterSpacing: 1.5, fontSize: 12),
                         ),
                         const SizedBox(height: 16),
+                        if (_schemes.isEmpty)
+                          Container(
+                            padding: const EdgeInsets.all(18),
+                            margin: const EdgeInsets.only(bottom: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.amber.withValues(alpha: 0.25)),
+                            ),
+                            child: const Row(
+                              children: [
+                                Icon(Icons.info_outline_rounded, color: Colors.amber, size: 20),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'No active welfare schemes configured by the administration yet.',
+                                    style: TextStyle(color: Colors.white70, fontSize: 13),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ..._schemes.map((s) => _buildSchemeCard(s)),
                       ],
                     ),

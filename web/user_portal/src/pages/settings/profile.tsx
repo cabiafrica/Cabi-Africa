@@ -161,7 +161,15 @@ export default function ProfileSettings() {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-bold uppercase text-gray-500 mb-2">Official Passport Photo</label>
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="block text-xs font-bold uppercase text-gray-500">Official Passport Photo</label>
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-[#D4AF37] bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                                        Annual Policy Active
+                                    </span>
+                                </div>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                                    Passport photos must meet official standards (white/plain light background, neutral facial expression, no hats/glasses). In accordance with biometric KYC compliance, passport photos can only be modified once annually (every 12 months) and are scanned during live identity verification.
+                                </p>
                                 <PassportPhotoUploader onFileSelect={() => setMessage({ text: 'Passport photo validated and attached.', type: 'success' })} />
                             </div>
 

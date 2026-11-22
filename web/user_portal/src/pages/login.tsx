@@ -27,7 +27,8 @@ export default function LoginPage() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || 'Login failed');
+                const isAuthError = response.status === 401 || (data.message && /invalid|credential|unauthorized/i.test(data.message));
+                throw new Error(isAuthError ? 'Credentials mismatch' : (data.message || 'Authentication failed'));
             }
 
             // Perform login via context (handles storage and redirect)
@@ -36,7 +37,12 @@ export default function LoginPage() {
             console.log('Login successful:', data);
         } catch (error: any) {
             console.error('Login error:', error);
-            setErrorMessage(error.message || 'Failed to login. Please try again.');
+            const errStr = (error.message || '').toLowerCase();
+            if (errStr.includes('credential') || errStr.includes('invalid') || errStr.includes('mismatch') || errStr.includes('401')) {
+                setErrorMessage('Credentials mismatch');
+            } else {
+                setErrorMessage(error.message || 'Authentication failed. Please try again.');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -154,32 +160,11 @@ export default function LoginPage() {
                             {isLoading ? (
                                 <Loader2 className="animate-spin -ml-1 mr-3 h-5 w-5 text-black" />
                             ) : null}
-                            {isLoading ? 'Authenticating...' : 'Sign In'}
+                            {isLoading ? 'Authenticating...' : 'Authenticate'}
                         </button>
                     </form>
 
-                    {/* Quick Demo Accounts */}
-                    <div className="mt-6 pt-5 border-t border-slate-200 dark:border-white/10">
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 mb-2.5 text-center">Quick Demo Credentials</p>
-                        <div className="grid grid-cols-2 gap-2">
-                            <button
-                                type="button"
-                                onClick={() => { setEmail('driver@cabi.africa'); setPassword('Cabi2026!'); setErrorMessage(null); }}
-                                className="px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-neutral-900/90 hover:bg-slate-200 dark:hover:bg-neutral-800 border border-slate-200 dark:border-neutral-700/80 hover:border-brand-yellow text-xs text-slate-800 dark:text-neutral-200 hover:text-amber-600 dark:hover:text-brand-yellow font-bold transition-all text-center flex items-center justify-center gap-2 shadow-sm"
-                            >
-                                <Car className="w-4.5 h-4.5 text-brand-yellow" /> Driver Demo
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => { setEmail('passenger@cabi.africa'); setPassword('Cabi2026!'); setErrorMessage(null); }}
-                                className="px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-neutral-900/90 hover:bg-slate-200 dark:hover:bg-neutral-800 border border-slate-200 dark:border-neutral-700/80 hover:border-brand-yellow text-xs text-slate-800 dark:text-neutral-200 hover:text-amber-600 dark:hover:text-brand-yellow font-bold transition-all text-center flex items-center justify-center gap-2 shadow-sm"
-                            >
-                                <UserCircle2 className="w-4.5 h-4.5 text-brand-yellow" /> Passenger Demo
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="mt-6 text-center">
+                    <div className="mt-8 text-center">
                         <p className="text-gray-400 text-sm">
                             Don't have an account?{' '}
                             <Link href="/register" className="font-bold text-amber-600 dark:text-brand-yellow hover:text-slate-900 dark:hover:text-white transition-colors uppercase tracking-wide">

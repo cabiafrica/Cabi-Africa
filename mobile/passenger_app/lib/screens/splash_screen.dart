@@ -61,18 +61,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         legacy_provider.Provider.of<AuthProvider>(context, listen: false)
             .login(authState.token, authState.user);
         nextScreen = const HomeScreen();
-      } else if (kIsWeb) {
-        // In web preview mode, automatically bootstrap demo passenger session
-        final mockUser = {
-          'id': 'demo_user_1',
-          'name': 'Sarah Jenkins',
-          'email': 'sarah.jenkins@cabi.africa',
-          'phone': '+254700000000',
-        };
-        ref.read(passengerAuthProvider.notifier).setSession('mock_jwt_token', mockUser);
-        legacy_provider.Provider.of<AuthProvider>(context, listen: false)
-            .login('mock_jwt_token', mockUser);
-        nextScreen = const HomeScreen();
       } else {
         nextScreen = const LoginScreen();
       }
