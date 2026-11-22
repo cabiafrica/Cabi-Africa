@@ -116,8 +116,7 @@ jobs:
             cd /opt/cabi-africa
             git fetch origin main
             git reset --hard origin/main
-            docker compose build --no-cache user-portal
-            docker compose up -d --build --force-recreate
+            docker compose up -d --build
             docker compose restart caddy
             docker compose exec -T auth-gateway npx prisma db push --schema=libs/backend/database/prisma/schema.prisma --accept-data-loss || true
 

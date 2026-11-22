@@ -105,6 +105,12 @@ dispatch.cabi.africa {
         reverse_proxy auth-gateway:3030
     }
 
+    # Direct high-speed static download handling for mobile APKs
+    handle /downloads/* {
+        root * /var/www
+        file_server
+    }
+
     # User Portal Frontend
     handle {
         reverse_proxy user-portal:8080
