@@ -72,8 +72,8 @@ export default function LoginPage() {
                         <div className="px-6 py-3.5 rounded-2xl border border-[#D4AF37]/30 bg-slate-50 dark:bg-surface-dark/80 shadow-[0_0_25px_rgba(245,158,11,0.12)] mb-4">
                             <BrandLogo size="lg" />
                         </div>
-                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-wide">Welcome Back</h2>
-                        <p className="text-slate-500 dark:text-gray-400 text-xs mt-1 uppercase tracking-widest">Driver & Passenger Portal</p>
+                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-wide">Authenticate</h2>
+                        <p className="text-slate-500 dark:text-gray-400 text-xs mt-1 uppercase tracking-widest">Authenticate or create your CABI account</p>
                     </div>
 
                     {/* Visual Error Banner */}

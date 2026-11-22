@@ -323,7 +323,7 @@ export default function Footer() {
                     <p className="text-center sm:text-left">
                         &copy; {new Date().getFullYear()} CABI Africa Technologies Inc. All rights reserved.
                     </p>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 pr-24">
                         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-200/60 dark:bg-white/5 border border-neutral-300 dark:border-white/10 text-neutral-700 dark:text-neutral-300 shadow-sm">
                             <Globe className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                             <select
