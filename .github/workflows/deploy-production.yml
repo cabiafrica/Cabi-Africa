@@ -111,7 +111,7 @@ jobs:
           if [ -n "$SSH_KEY" ]; then
             echo "🚀 Connecting to DigitalOcean Droplet (104.248.168.68)..."
             mkdir -p ~/.ssh
-            echo "$SSH_KEY" > ~/.ssh/id_rsa
+            printf '%s\n' "$SSH_KEY" > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan -H 104.248.168.68 >> ~/.ssh/known_hosts 2>/dev/null || true
             ssh -o StrictHostKeyChecking=no root@104.248.168.68 "cd /opt/cabi-africa && git pull origin main && docker compose up -d --build && docker compose exec -T auth-gateway npx prisma db push --schema=libs/backend/database/prisma/schema.prisma --accept-data-loss || true"
