@@ -55,9 +55,13 @@ USER nestjs
 # The app reads process.env.PORT and falls back to 3333
 EXPOSE 3333
 
-# Start the correct service based on IS_BACKEND_SUB_SERVICE flag
+# Start the correct service based on file existence and IS_BACKEND_SUB_SERVICE flag
 CMD ["sh", "-c", \
-    "if [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then \n\
+    "if [ -f \"dist/$SERVICE_NAME/main.js\" ]; then \n\
+        node dist/$SERVICE_NAME/main.js; \n\
+    elif [ -f \"dist/backend/$SERVICE_NAME/main.js\" ]; then \n\
+        node dist/backend/$SERVICE_NAME/main.js; \n\
+    elif [ \"$IS_BACKEND_SUB_SERVICE\" = \"true\" ]; then \n\
         node dist/backend/$SERVICE_NAME/main.js; \n\
     else \n\
         node dist/$SERVICE_NAME/main.js; \n\

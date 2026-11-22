@@ -101,11 +101,13 @@ services:
       dockerfile: Dockerfile.backend
       args:
         SERVICE_NAME: auth-gateway
+        IS_BACKEND_SUB_SERVICE: "false"
     container_name: cabi_auth_gateway
     ports:
       - "3030:3030"
     environment:
       NODE_ENV: production
+      IS_BACKEND_SUB_SERVICE: "false"
       DATABASE_URL: ${DATABASE_URL}
       REDIS_URL: ${REDIS_URL}
       PORT: 3030
