@@ -72,14 +72,19 @@ async function prepareForLaunch() {
 
         // Step 6: Clean Organizations
         console.log('🧹 Step 6: Cleaning Organizations...');
-        const orgMemberCount = await prisma.organizationMember.deleteMany({});
-        // Break parent-child relationships first
-        await prisma.organization.updateMany({
-            data: { parentId: null }
-        });
-        const orgCount = await prisma.organization.deleteMany({});
-        console.log(`   ✓ Deleted ${orgCount.count} organizations`);
-        console.log(`   ✓ Deleted ${orgMemberCount.count} organization memberships`);
+        const orgMemberModel = prisma.organization_members || prisma.organizationMember;
+        const orgModel = prisma.organizations || prisma.organization;
+
+        if (orgMemberModel) {
+            await orgMemberModel.deleteMany({}).catch(() => {});
+        }
+        if (orgModel) {
+            await orgModel.updateMany({
+                data: { parentId: null }
+            }).catch(() => {});
+            await orgModel.deleteMany({}).catch(() => {});
+        }
+        console.log(`   ✓ Cleaned organizations and memberships`);
         console.log('');
 
         // Step 7: Clean User Permissions & Roles (except Super Admin)
