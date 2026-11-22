@@ -1,11 +1,60 @@
-:80, cabi.africa, www.cabi.africa, api.cabi.africa {
+# ==============================================================================
+# CABI AFRICA - PRODUCTION CADDY CONFIGURATION (AUTO-SSL & MULTI-DOMAIN)
+# ==============================================================================
+
+# 1. API Gateway
+api.cabi.africa {
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
         X-Content-Type-Options "nosniff"
-        X-Frame-Options "DENY"
-        X-XSS-Protection "1; mode=block"
+        X-Frame-Options "SAMEORIGIN"
         Referrer-Policy "strict-origin-when-cross-origin"
-        -Server
+    }
+
+    handle /health {
+        respond "Cabi Africa API Active" 200
+    }
+
+    handle {
+        reverse_proxy auth-gateway:3030
+    }
+}
+
+# 2. Super Admin Panel
+admin.cabi.africa {
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    handle {
+        reverse_proxy admin-panel:8080
+    }
+}
+
+# 3. Live Dispatch Panel
+dispatch.cabi.africa {
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    handle {
+        reverse_proxy dispatch-panel:8080
+    }
+}
+
+# 4. User Portal & Platform Root (Landing Page, Booking, WebSockets)
+:80, cabi.africa, www.cabi.africa, app.cabi.africa {
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
     }
 
     request_body {
@@ -16,6 +65,7 @@
         respond "Cabi Africa Production Platform Active" 200
     }
 
+    # WebSockets for Real-time Dispatch
     @websockets {
         header Connection *Upgrade*
         header Upgrade websocket
@@ -27,11 +77,13 @@
     }
     reverse_proxy @socketio dispatch-service:3334
 
-    handle_path /api/* {
+    # Backend API endpoints
+    handle /api/* {
         reverse_proxy auth-gateway:3030
     }
 
+    # User Portal Frontend
     handle {
-        reverse_proxy auth-gateway:3030
+        reverse_proxy user-portal:8080
     }
 }
