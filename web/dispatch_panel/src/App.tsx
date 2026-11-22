@@ -71,7 +71,7 @@ function App() {
 
     // SOS Emergency Socket Listener
     useEffect(() => {
-        const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://auth-gateway-746659778850.us-central1.run.app';
+        const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://cabi.africa';
         const sosSocket = io(`${socketUrl}/sos`);
 
         sosSocket.on('connect', () => {
@@ -138,7 +138,7 @@ function App() {
 
     // Socket.io for Real-time Tracking
     useEffect(() => {
-        const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://auth-gateway-746659778850.us-central1.run.app';
+        const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://cabi.africa';
         const namespace = import.meta.env.VITE_TRIP_TRACKING_NAMESPACE || '/trip-tracking';
         const socket = io(`${socketUrl}${namespace}`);
 

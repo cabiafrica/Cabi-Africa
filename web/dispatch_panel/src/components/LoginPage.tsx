@@ -36,6 +36,9 @@ export const LoginPage = () => {
                     profilePictureUrl: user.profilePhotoUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.fullName),
                     permissions: user.permissions || []
                 });
+                if (typeof window !== 'undefined' && window.location.pathname === '/login') {
+                    window.history.replaceState(null, '', '/');
+                }
             } else {
                 alert('Invalid response from server');
             }

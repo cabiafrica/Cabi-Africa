@@ -15,6 +15,16 @@ api.cabi.africa {
         respond "Cabi Africa API Active" 200
     }
 
+    handle /socket.io* {
+        reverse_proxy dispatch-service:3334
+    }
+
+    # Dispatch & Real-Time Microservice Routes
+    @dispatch_routes path /api/safety* /api/dispatch* /api/rides* /api/wealth* /api/corporate* /api/lost-and-found* /api/disputes* /api/welfare* /api/pricing* /api/badges* /api/commissions*
+    handle @dispatch_routes {
+        reverse_proxy dispatch-service:3334
+    }
+
     handle {
         reverse_proxy auth-gateway:3030
     }
@@ -41,6 +51,12 @@ dispatch.cabi.africa {
         X-Content-Type-Options "nosniff"
         X-Frame-Options "SAMEORIGIN"
         Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    # Dispatch & Real-Time Microservice Routes
+    @dispatch_routes_dispatch path /api/safety* /api/dispatch* /api/rides* /api/wealth* /api/corporate* /api/lost-and-found* /api/disputes* /api/welfare* /api/pricing* /api/badges* /api/commissions*
+    handle @dispatch_routes_dispatch {
+        reverse_proxy dispatch-service:3334
     }
 
     handle /api/* {
@@ -75,6 +91,12 @@ dispatch.cabi.africa {
 
     # WebSockets & Socket.IO for Real-time Dispatch
     handle /socket.io* {
+        reverse_proxy dispatch-service:3334
+    }
+
+    # Dispatch & Real-Time Microservice Routes
+    @dispatch_routes_root path /api/safety* /api/dispatch* /api/rides* /api/wealth* /api/corporate* /api/lost-and-found* /api/disputes* /api/welfare* /api/pricing* /api/badges* /api/commissions*
+    handle @dispatch_routes_root {
         reverse_proxy dispatch-service:3334
     }
 
