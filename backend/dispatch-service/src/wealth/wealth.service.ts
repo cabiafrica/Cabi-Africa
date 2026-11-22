@@ -363,7 +363,7 @@ export class WealthService {
       });
 
       // If program is Sacco, ensure driverProfile.saccoEnrolled is synchronized
-      if (program.category === 'Sacco') {
+      if (program.category === WealthProgramCategory.SACCO) {
         await this.prisma.driverProfile.update({
           where: { id: driverProfileId },
           data: { saccoEnrolled: true, saccoEnrolledAt: new Date() },
@@ -389,8 +389,8 @@ export class WealthService {
     }
 
     // Enforce mandatory 6-month Sacco lock-in period for the 2% + 3% incentive match
-    if (enrollment.program?.category === 'Sacco') {
-      const enrolledAt = enrollment.createdAt ? new Date(enrollment.createdAt).getTime() : Date.now();
+    if (enrollment.program?.category === WealthProgramCategory.SACCO) {
+      const enrolledAt = enrollment.enrolledAt ? new Date(enrollment.enrolledAt).getTime() : Date.now();
       const sixMonthsMs = 180 * 24 * 60 * 60 * 1000;
       const timeElapsed = Date.now() - enrolledAt;
       if (timeElapsed < sixMonthsMs) {
@@ -533,7 +533,7 @@ export class WealthService {
     });
 
     // If Sacco program, unenroll driver from Sacco
-    if (enrollment.program?.category === 'Sacco') {
+    if (enrollment.program?.category === WealthProgramCategory.SACCO) {
       await this.prisma.driverProfile.update({
         where: { id: enrollment.driverProfileId },
         data: { saccoEnrolled: false, saccoEnrolledAt: null },
