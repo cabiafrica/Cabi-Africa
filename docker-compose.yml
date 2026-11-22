@@ -109,8 +109,12 @@ services:
       NODE_ENV: production
       IS_BACKEND_SUB_SERVICE: "false"
       DATABASE_URL: ${DATABASE_URL}
+      DIRECT_URL: ${DIRECT_URL:-${DATABASE_URL}}
       REDIS_URL: ${REDIS_URL}
       PORT: 3030
+      JWT_SECRET: ${JWT_SECRET:-cabi-production-jwt-secret-minimum-32-chars-long-secure-key-2026}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-24h}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-internal-service-api-key-cabi-africa-production-2026}
     depends_on:
       postgres:
         condition: service_healthy
@@ -131,8 +135,10 @@ services:
     environment:
       NODE_ENV: production
       DATABASE_URL: ${DATABASE_URL}
+      DIRECT_URL: ${DIRECT_URL:-${DATABASE_URL}}
       REDIS_URL: ${REDIS_URL}
       PORT: 3334
+      JWT_SECRET: ${JWT_SECRET:-cabi-production-jwt-secret-minimum-32-chars-long-secure-key-2026}
     depends_on:
       postgres:
         condition: service_healthy
