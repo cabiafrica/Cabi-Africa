@@ -114,8 +114,11 @@ jobs:
           command_timeout: 30m
           script: |
             cd /opt/cabi-africa
-            git pull origin main
-            docker compose up -d --build
+            git fetch origin main
+            git reset --hard origin/main
+            docker compose build --no-cache user-portal
+            docker compose up -d --build --force-recreate
+            docker compose restart caddy
             docker compose exec -T auth-gateway npx prisma db push --schema=libs/backend/database/prisma/schema.prisma --accept-data-loss || true
 
   # Production Health checks
