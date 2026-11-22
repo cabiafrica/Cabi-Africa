@@ -42,19 +42,31 @@ jobs:
           "$RUNNER_TEMP/flutter/bin/flutter" config --no-analytics
           "$RUNNER_TEMP/flutter/bin/flutter" --version
 
-      - name: 🚖 Build CABI Drive (Driver App) Production APK
-        working-directory: ./mobile/driver_app
+      - name: 🚖 Source or Build CABI Drive (Driver App) Production APK
         run: |
-          flutter pub get
-          flutter build apk --release --android-skip-build-dependency-validation --target-platform android-arm,android-arm64 --dart-define=IS_PRODUCTION=true --no-tree-shake-icons
-          cp build/app/outputs/flutter-apk/app-release.apk ../../Cabi-Drive-Official.apk
+          if [ -f "web/user_portal/public/downloads/Cabi-Drive-Official.apk" ]; then
+            echo "✅ Using pre-staged verified production Cabi-Drive-Official.apk"
+            cp web/user_portal/public/downloads/Cabi-Drive-Official.apk Cabi-Drive-Official.apk
+          else
+            cd mobile/driver_app
+            flutter pub get
+            flutter build apk --release --android-skip-build-dependency-validation --target-platform android-arm,android-arm64 --dart-define=IS_PRODUCTION=true --no-tree-shake-icons
+            cp build/app/outputs/flutter-apk/app-release.apk ../../Cabi-Drive-Official.apk
+            cd ../..
+          fi
 
-      - name: 📱 Build CABI Go (Passenger App) Production APK
-        working-directory: ./mobile/passenger_app
+      - name: 📱 Source or Build CABI Go (Passenger App) Production APK
         run: |
-          flutter pub get
-          flutter build apk --release --android-skip-build-dependency-validation --target-platform android-arm,android-arm64 --dart-define=IS_PRODUCTION=true --no-tree-shake-icons
-          cp build/app/outputs/flutter-apk/app-release.apk ../../Cabi-Go-Official.apk
+          if [ -f "web/user_portal/public/downloads/Cabi-Go-Official.apk" ]; then
+            echo "✅ Using pre-staged verified production Cabi-Go-Official.apk"
+            cp web/user_portal/public/downloads/Cabi-Go-Official.apk Cabi-Go-Official.apk
+          else
+            cd mobile/passenger_app
+            flutter pub get
+            flutter build apk --release --android-skip-build-dependency-validation --target-platform android-arm,android-arm64 --dart-define=IS_PRODUCTION=true --no-tree-shake-icons
+            cp build/app/outputs/flutter-apk/app-release.apk ../../Cabi-Go-Official.apk
+            cd ../..
+          fi
 
       - name: 📦 Stage APKs into User Portal Public Downloads
         run: |
@@ -82,7 +94,7 @@ jobs:
       - name: 🚀 Publish to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'v1.2.1-prod' }}
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'v1.2.3-prod' }}
           name: CABI Africa Official Mobile Apps (Production)
           make_latest: true
           files: |
