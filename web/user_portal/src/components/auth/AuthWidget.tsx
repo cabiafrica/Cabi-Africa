@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { FaUser, FaCar, FaGoogle, FaApple } from 'react-icons/fa';
-import { APP_LINKS } from '@/config/appLinks';
 
 type AuthMode = 'login' | 'register';
 type UserRole = 'passenger' | 'driver';
@@ -174,12 +173,12 @@ export default function AuthWidget() {
                     <div className="text-center pt-2">
                         <p className="text-xs text-gray-500 mb-3">Or sign up faster with the mobile app</p>
                         <div className="flex justify-center">
-                            <a
-                                href="#footer-download-menu"
-                                className="glass px-4 py-2 rounded-lg inline-flex items-center gap-2 text-xs font-bold hover:bg-white/10"
+                            <Link
+                                href="/download#passenger"
+                                className="glass px-4 py-2 rounded-lg inline-flex items-center gap-2 text-xs font-bold hover:bg-white/10 text-brand-yellow"
                             >
-                                Download CABI Go in Footer Menu ↓
-                            </a>
+                                Download CABI Go App &rarr;
+                            </Link>
                         </div>
                     </div>
                 )}

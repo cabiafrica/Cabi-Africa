@@ -27,7 +27,7 @@ export default function DownloadApp() {
 
                     <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                         {/* Passenger App Card */}
-                        <div className="rounded-2xl bg-white dark:bg-card-dark border-2 border-executive-gold/40 p-6 sm:p-8 shadow-lg flex flex-col justify-between">
+                        <div id="passenger" className="rounded-2xl bg-white dark:bg-card-dark border-2 border-executive-gold/40 p-6 sm:p-8 shadow-lg flex flex-col justify-between scroll-mt-24">
                             <div>
                                 <div className="flex items-center justify-between mb-3">
                                     <span className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-executive-gold">
@@ -67,7 +67,7 @@ export default function DownloadApp() {
                         </div>
 
                         {/* Driver App Card */}
-                        <div className="rounded-2xl bg-white dark:bg-card-dark border-2 border-slate-200 dark:border-white/15 p-6 sm:p-8 shadow-lg flex flex-col justify-between">
+                        <div id="driver" className="rounded-2xl bg-white dark:bg-card-dark border-2 border-slate-200 dark:border-white/15 p-6 sm:p-8 shadow-lg flex flex-col justify-between scroll-mt-24">
                             <div>
                                 <div className="flex items-center justify-between mb-3">
                                     <span className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-executive-gold">
@@ -108,7 +108,7 @@ export default function DownloadApp() {
                     </div>
 
                     {/* Quick Installation Guide */}
-                    <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                    <div id="guide" className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 text-left scroll-mt-24">
                         <div className="rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 p-6">
                             <h3 className="text-sm font-black uppercase tracking-wider text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                                 <FaAndroid className="text-emerald-500 text-lg" /> Android Installation

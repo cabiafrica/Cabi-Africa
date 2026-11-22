@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, Car, Download, Smartphone } from 'lucide-react';
-import { APP_LINKS } from '@/config/appLinks';
 
 export default function ExecutiveHero() {
     const scrollToBooking = () => {
@@ -53,42 +52,17 @@ export default function ExecutiveHero() {
                         </Link>
                     </div>
 
-                    {/* Direct Download Apps Bar */}
-                    <div className="pt-2 flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37] flex items-center gap-1.5">
-                                <Smartphone className="w-3.5 h-3.5" />
-                                Download Official Apps:
-                            </span>
-                        </div>
-                        <div className="flex flex-wrap items-center gap-2">
-                            <a
-                                href={APP_LINKS.passenger.apkDirect}
-                                download={APP_LINKS.passenger.fileName}
-                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-neutral-900 dark:bg-black text-white hover:bg-neutral-800 border border-[#D4AF37]/40 text-xs font-bold transition-all shadow-sm hover:-translate-y-0.5 active:scale-95"
-                                title="Download CABI Go Passenger App APK directly"
-                            >
-                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                <span>CABI Go (.apk)</span>
-                                <Download className="w-3.5 h-3.5 text-[#D4AF37]" />
-                            </a>
-                            <a
-                                href={APP_LINKS.driver.apkDirect}
-                                download={APP_LINKS.driver.fileName}
-                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-neutral-900 dark:bg-black text-white hover:bg-neutral-800 border border-[#D4AF37]/40 text-xs font-bold transition-all shadow-sm hover:-translate-y-0.5 active:scale-95"
-                                title="Download CABI Drive Driver App APK directly"
-                            >
-                                <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />
-                                <span>CABI Drive (.apk)</span>
-                                <Download className="w-3.5 h-3.5 text-[#D4AF37]" />
-                            </a>
-                            <Link
-                                href="/download"
-                                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-transparent hover:bg-neutral-100 dark:hover:bg-white/10 text-slate-700 dark:text-neutral-300 text-xs font-bold transition-all"
-                            >
-                                <span>iOS &amp; More &rarr;</span>
-                            </Link>
-                        </div>
+                    {/* Dedicated Download Page CTA */}
+                    <div className="pt-2">
+                        <Link
+                            href="/download"
+                            className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-neutral-900 dark:bg-black text-white hover:bg-neutral-800 border border-[#D4AF37]/50 text-xs font-bold transition-all shadow-md hover:-translate-y-0.5 active:scale-95"
+                            title="Download CABI Africa Mobile Apps"
+                        >
+                            <Smartphone className="w-4 h-4 text-[#D4AF37]" />
+                            <span>Download Official Apps (Android &amp; iOS)</span>
+                            <Download className="w-3.5 h-3.5 text-[#D4AF37]" />
+                        </Link>
                     </div>
                 </div>
 

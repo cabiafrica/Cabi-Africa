@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { FaAndroid, FaApple, FaDownload, FaMobileAlt, FaCarSide } from 'react-icons/fa';
-import { APP_LINKS } from '@/config/appLinks';
+import { FaDownload, FaMobileAlt, FaCarSide } from 'react-icons/fa';
 
 interface AppDownloadButtonsProps {
     role?: 'passenger' | 'driver' | 'both';
@@ -22,15 +21,31 @@ export default function AppDownloadButtons({
 
     const defaultCaption =
         role === 'driver'
-            ? 'Download Official CABI Drive App'
+            ? 'Get the Official CABI Drive App'
             : role === 'passenger'
-                ? 'Download Official CABI Go App'
-                : 'Download Official CABI Mobile Apps';
+                ? 'Get the Official CABI Go App'
+                : 'Get Official CABI Mobile Apps';
 
     const captionColor =
         tone === 'dark'
             ? 'text-neutral-400'
             : 'text-neutral-500 dark:text-neutral-400';
+
+    const targetHref =
+        role === 'driver'
+            ? '/download#driver'
+            : role === 'passenger'
+                ? '/download#passenger'
+                : '/download';
+
+    const buttonLabel =
+        role === 'driver'
+            ? 'Download CABI Drive (Driver App)'
+            : role === 'passenger'
+                ? 'Download CABI Go (Passenger App)'
+                : 'Download CABI Africa Apps';
+
+    const Icon = role === 'driver' ? FaCarSide : FaMobileAlt;
 
     return (
         <div className={`flex flex-col ${alignOuter} ${className}`}>
@@ -38,64 +53,14 @@ export default function AppDownloadButtons({
                 {caption || defaultCaption}
             </p>
 
-            <div className="flex flex-wrap items-center gap-3">
-                {/* Passenger Apps */}
-                {(role === 'passenger' || role === 'both') && (
-                    <div className="flex items-center gap-2">
-                        <a
-                            href={APP_LINKS.passenger.apkDirect}
-                            download={APP_LINKS.passenger.fileName}
-                            className="inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-[#D4AF37] hover:bg-[#ffe088] text-black font-extrabold text-xs tracking-wide shadow-md transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
-                            title="Download CABI Go APK for Android"
-                        >
-                            <FaAndroid className="text-base text-emerald-950" />
-                            <span>Passenger (.apk)</span>
-                            <FaDownload className="text-xs opacity-75" />
-                        </a>
-                        <a
-                            href={APP_LINKS.passenger.iosWebApp}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-3 py-3 rounded-xl bg-white/10 dark:bg-white/10 hover:bg-white/20 text-slate-800 dark:text-white border border-neutral-300 dark:border-white/15 font-bold text-xs transition-all duration-300 hover:-translate-y-0.5"
-                            title="Install CABI Go iOS PWA"
-                        >
-                            <FaApple className="text-sm" />
-                            <span>iOS App</span>
-                        </a>
-                    </div>
-                )}
-
-                {/* Driver Apps */}
-                {(role === 'driver' || role === 'both') && (
-                    <div className="flex items-center gap-2">
-                        <a
-                            href={APP_LINKS.driver.apkDirect}
-                            download={APP_LINKS.driver.fileName}
-                            className="inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-neutral-900 dark:bg-black hover:bg-neutral-800 text-white border border-[#D4AF37]/60 font-extrabold text-xs tracking-wide shadow-md transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
-                            title="Download CABI Drive APK for Android"
-                        >
-                            <FaCarSide className="text-sm text-[#D4AF37]" />
-                            <span>Driver (.apk)</span>
-                            <FaDownload className="text-xs text-[#D4AF37]" />
-                        </a>
-                        <a
-                            href={APP_LINKS.driver.iosWebApp}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-3 py-3 rounded-xl bg-white/10 dark:bg-white/10 hover:bg-white/20 text-slate-800 dark:text-white border border-neutral-300 dark:border-white/15 font-bold text-xs transition-all duration-300 hover:-translate-y-0.5"
-                            title="Install CABI Drive iOS PWA"
-                        >
-                            <FaApple className="text-sm" />
-                            <span>Driver iOS</span>
-                        </a>
-                    </div>
-                )}
-
+            <div className="flex items-center gap-3">
                 <Link
-                    href="/download"
-                    className="text-[11px] font-bold text-[#D4AF37] hover:underline underline-offset-4 ml-1"
+                    href={targetHref}
+                    className="inline-flex items-center gap-2.5 px-5 py-3 rounded-xl bg-[#D4AF37] hover:bg-[#ffe088] text-black font-extrabold text-xs tracking-wide shadow-md transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
                 >
-                    All Downloads &rarr;
+                    <Icon className="text-sm" />
+                    <span>{buttonLabel}</span>
+                    <FaDownload className="text-xs opacity-75" />
                 </Link>
             </div>
         </div>

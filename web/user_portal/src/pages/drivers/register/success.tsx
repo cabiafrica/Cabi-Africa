@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import MainLayout from '@/components/layout/MainLayout';
 import { Smartphone, FileText, Clock, Zap, PartyPopper, Gift, Share2, Coins, CheckCircle } from 'lucide-react';
-import { APP_LINKS } from '@/config/appLinks';
 
 export default function SuccessPage() {
     const router = useRouter();
@@ -109,12 +108,12 @@ export default function SuccessPage() {
                                         Get started by downloading our mobile app to complete your profile and upload required documents.
                                     </p>
                                     <div className="flex flex-wrap gap-3">
-                                        <a
-                                            href="#footer-download-menu"
+                                        <Link
+                                            href="/download#driver"
                                             className="inline-flex items-center px-5 py-2.5 bg-primary-container text-black font-semibold rounded-lg hover:bg-primary-highlight transition-colors"
                                         >
-                                            Download CABI Drive in Footer Menu ↓
-                                        </a>
+                                            Download CABI Drive App &rarr;
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
