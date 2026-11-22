@@ -133,3 +133,20 @@ Prepare Cabi Africa for 100% genuine market onboarding and testing:
   - **Cabi-Drive-Official.apk** (76.8 MB): Compiled & staged to `./Cabi-Drive-Official.apk`, `dist/mobile/Cabi-Drive-Official.apk`, and `web/user_portal/public/downloads/Cabi-Drive-Official.apk`.
   - **Cabi-Go-Official.apk** (86.8 MB): Compiled & staged to `./Cabi-Go-Official.apk`, `dist/mobile/Cabi-Go-Official.apk`, and `web/user_portal/public/downloads/Cabi-Go-Official.apk`.
 
+### F. Download Route Consolidation to Single Dedicated Page (`/download`)
+- **Direct Link Centralization:**
+  - Removed all scattered, duplicate direct `.apk` and iOS install buttons across the website (hero sections, footer banners, and sidebar widgets).
+  - Direct downloads are strictly restricted to the official dedicated download page: [`/download`](file:///Users/user/Downloads/Cabi%20Africa%20Final/web/user_portal/src/pages/download.tsx).
+- **Executive Hero (`ExecutiveHero.tsx`):**
+  - Replaced the three separate download buttons with a single, sleek CTA button: `"Download Official Apps (Android & iOS)"` pointing to `/download`.
+- **Footer Streamlining (`Footer.tsx`):**
+  - Purged the redundant 110-line `#footer-download-menu` banner cards.
+  - Replaced the "Download Menu" column with a clean "Official Apps" navigation column cleanly pointing to `/download`, `/download#passenger`, `/download#driver`, and `/download#guide`.
+- **Global Download Buttons (`AppDownloadButtons.tsx`):**
+  - Updated all marketing and portal pages (`passengers.tsx`, `drivers.tsx`, `referral-details.tsx`, `referral-program.tsx`, and `FeatureSplit.tsx`) to route directly to `/download` with contextual section anchors.
+- **Widgets & Success Pages:**
+  - Updated `AuthWidget.tsx`, `DownloadAppWidget.tsx`, and `drivers/register/success.tsx` to direct all download traffic straight to `/download`.
+- **Browser-Verified Flow:**
+  - The browser subagent verified the unified flow: Hero CTA &rarr; [`/download`](file:///Users/user/Downloads/Cabi%20Africa%20Final/web/user_portal/src/pages/download.tsx) housing both Passenger Edition (CABI Go) and Driver Partner Edition (CABI Drive) with direct `.apk` downloads, iOS Safari PWA installation guides, and zero clutter.
+
+
