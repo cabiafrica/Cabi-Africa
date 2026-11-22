@@ -43,6 +43,10 @@ dispatch.cabi.africa {
         Referrer-Policy "strict-origin-when-cross-origin"
     }
 
+    handle /api/* {
+        reverse_proxy auth-gateway:3030
+    }
+
     handle /socket.io* {
         reverse_proxy dispatch-service:3334
     }

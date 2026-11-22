@@ -46,7 +46,7 @@ export default function LiveMapPage() {
 
     // 2. Real-time WebSocket Connection
     useEffect(() => {
-        const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const socketUrl = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || 'https://cabi.africa';
         const socket = io(`${socketUrl}/trip-tracking`, {
             transports: ['websocket'],
         });

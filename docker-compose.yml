@@ -153,7 +153,9 @@ services:
       dockerfile: web/admin_panel/Dockerfile
       args:
         VITE_API_URL: https://api.cabi.africa/api
+        VITE_AUTH_API_URL: https://api.cabi.africa/api
         VITE_SOCKET_URL: https://cabi.africa
+        VITE_TRIP_TRACKING_NAMESPACE: /trip-tracking
         VITE_DISPATCH_SERVICE_URL: https://cabi.africa
     container_name: cabi_admin_panel
     restart: unless-stopped
@@ -169,7 +171,9 @@ services:
       dockerfile: web/dispatch_panel/Dockerfile
       args:
         VITE_API_URL: https://api.cabi.africa/api
+        VITE_AUTH_API_URL: https://api.cabi.africa/api
         VITE_SOCKET_URL: https://cabi.africa
+        VITE_TRIP_TRACKING_NAMESPACE: /trip-tracking
     container_name: cabi_dispatch_panel
     restart: unless-stopped
     ports:

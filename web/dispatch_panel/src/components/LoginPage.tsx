@@ -14,7 +14,10 @@ export const LoginPage = () => {
         setIsLoading(true);
 
         try {
-            const BACKEND_URL = (import.meta as any).env.VITE_AUTH_API_URL || 'http://localhost:3333/api';
+            const BACKEND_URL = (import.meta as any).env.VITE_AUTH_API_URL 
+                || (import.meta as any).env.VITE_API_URL 
+                || (import.meta as any).env.VITE_API_BASE_URL 
+                || 'https://api.cabi.africa/api';
             
             const response = await axios.post(`${BACKEND_URL}/auth/login`, {
                 email,
