@@ -36,7 +36,9 @@ export class EphemeralStore<T> {
     if (!redisUrl) return null;
 
     try {
-      const ioredis = await import('ioredis');
+      const redisPkg = 'ioredis';
+      const ioredis: any = await import(redisPkg).catch(() => null);
+      if (!ioredis) return null;
       const RedisCtor = (ioredis as any).default || ioredis;
       const client = new RedisCtor(redisUrl, {
         maxRetriesPerRequest: 2,

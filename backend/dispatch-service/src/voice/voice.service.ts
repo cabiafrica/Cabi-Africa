@@ -91,11 +91,11 @@ export class VoiceService {
 
     const callerRole: 'PASSENGER' | 'DRIVER' = isPassenger ? 'PASSENGER' : 'DRIVER';
     const callerPhone = isPassenger
-      ? ride.passenger?.phoneNumber
-      : ride.driver?.user?.phoneNumber;
+      ? (ride.passenger?.phone || (ride.passenger as any)?.phoneNumber)
+      : (ride.driver?.user?.phone || (ride.driver?.user as any)?.phoneNumber);
     const destinationPhone = isPassenger
-      ? ride.driver?.user?.phoneNumber
-      : ride.passenger?.phoneNumber;
+      ? (ride.driver?.user?.phone || (ride.driver?.user as any)?.phoneNumber)
+      : (ride.passenger?.phone || (ride.passenger as any)?.phoneNumber);
 
     const proxyNumber = this.getVirtualProxyNumber();
     const sessionId = `call_${Date.now()}_${Math.floor(Math.random() * 1000)}`;

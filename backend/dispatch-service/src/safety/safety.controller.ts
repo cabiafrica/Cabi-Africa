@@ -10,6 +10,7 @@ import {
   UnauthorizedException,
   ForbiddenException,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import * as crypto from 'crypto';

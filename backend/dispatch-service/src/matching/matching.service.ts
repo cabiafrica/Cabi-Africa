@@ -218,7 +218,7 @@ export class MatchingService {
                 },
                 user: {
                     status: {
-                        notIn: ['BLOCKED', 'SUSPENDED']
+                        notIn: ['SUSPENDED', 'REJECTED']
                     }
                 }
             },
@@ -291,8 +291,8 @@ export class MatchingService {
                 const extraPickupKm = isExtendedPickup ? Math.round((distance - driverPreferredRadius) * 10) / 10 : 0;
                 const extendedPickupSubsidy = isExtendedPickup ? Math.round(extraPickupKm * 30) : 0;
                 const activeVehicleType =
-                    driver.vehicles?.type ||
-                    driver.vehicleDrivers?.[0]?.vehicle?.type ||
+                    (driver as any).vehicles?.type ||
+                    (driver as any).vehicleDrivers?.[0]?.vehicle?.type ||
                     VehicleType.STANDARD;
 
                 // Multi-Factor Driver Selection Formula (35% Dist, 20% Rating, 15% Accept, 15% FIFO Idle, 10% Badge, 5% Sacco)

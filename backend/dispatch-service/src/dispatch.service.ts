@@ -113,7 +113,7 @@ export class DispatchService {
                     include: { vehicle: true },
                 },
             },
-            orderBy: { updatedAt: 'desc' },
+            orderBy: { id: 'desc' },
         });
 
         return drivers.map((d: any) => {
@@ -175,7 +175,7 @@ export class DispatchService {
             if (driver) {
                 const driverStatus = (driver as any).status;
                 const userStatus = driver.user?.status;
-                if (driverStatus === 'PENDING' || userStatus === 'PENDING' || userStatus === 'SUSPENDED' || userStatus === 'BLOCKED') {
+                if (driverStatus === 'PENDING' || userStatus === 'PENDING' || userStatus === 'SUSPENDED' || (userStatus as string) === 'BLOCKED' || userStatus === 'REJECTED') {
                     throw new BadRequestException('Driver account is pending document verification and cannot go online.');
                 }
             }

@@ -172,7 +172,7 @@ export class WealthService {
         code,
         name: dto.name.trim(),
         description: dto.description?.trim() || '',
-        category: dto.category ?? 'Sacco',
+        category: dto.category ?? WealthProgramCategory.SACCO,
         providerName: dto.providerName?.trim() || null,
         logoUrl: dto.logoUrl?.trim() || null,
         minPct,
@@ -206,7 +206,8 @@ export class WealthService {
       },
     });
 
-    for (const inc of program.badgeIncentives) {
+    const badgeIncentives = (program as any).badgeIncentives || [];
+    for (const inc of badgeIncentives) {
       await this.syncExistingBadgeHolders(inc.badgeId, program.id, inc);
     }
 
