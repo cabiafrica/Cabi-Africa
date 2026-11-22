@@ -26,7 +26,7 @@ ENV VITE_SOCKET_URL=${VITE_SOCKET_URL}
 ENV VITE_TRIP_TRACKING_NAMESPACE=${VITE_TRIP_TRACKING_NAMESPACE}
 
 # Build the Vite SPA (skip tsc for Docker builds — CI handles type-checking)
-RUN npx vite build --config web/dispatch_panel/vite.config.ts
+RUN cd web/dispatch_panel && npx vite build
 
 # Stage 2: Serve via Nginx with dynamic backend URL
 FROM nginx:stable-alpine
