@@ -8,7 +8,7 @@ export const APP_LINKS = {
     passenger: {
         name: 'CABI Go (Passenger App)',
         fileName: 'Cabi-Go-Official.apk',
-        version: 'v1.1.0 (Full Production)',
+        version: 'v1.2.0 (Full Production)',
         packageId: 'africa.cabi.passenger',
         apkDirect: '/downloads/Cabi-Go-Official.apk',
         playStore: '/downloads/Cabi-Go-Official.apk',
@@ -20,7 +20,7 @@ export const APP_LINKS = {
     driver: {
         name: 'CABI Drive (Driver App)',
         fileName: 'Cabi-Drive-Official.apk',
-        version: 'v1.1.0 (Full Production)',
+        version: 'v1.2.0 (Full Production)',
         packageId: 'africa.cabi.driver',
         apkDirect: '/downloads/Cabi-Drive-Official.apk',
         playStore: '/downloads/Cabi-Drive-Official.apk',
