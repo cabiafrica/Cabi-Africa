@@ -1,11 +1,11 @@
 import { Controller, Get, Post, Body, Query, Req, UseGuards, BadRequestException } from '@nestjs/common';
-import { MockJwtAuthGuard } from '@cabi/backend/rbac';
+import { JwtAuthGuard } from '@cabi/backend/rbac';
 import { AdminSecurityService } from './admin-security.service';
 import { AdminSecurityGuard, RequireAdminStepUp, SkipAdminStepUp } from './admin-security.guard';
 import { fetchUserAuditEvents } from './auditService';
 
 @Controller('admin/security')
-@UseGuards(MockJwtAuthGuard, AdminSecurityGuard)
+@UseGuards(JwtAuthGuard, AdminSecurityGuard)
 export class AdminSecurityController {
   constructor(private readonly adminSecurityService: AdminSecurityService) {}
 
