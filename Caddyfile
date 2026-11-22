@@ -105,10 +105,12 @@ dispatch.cabi.africa {
         reverse_proxy auth-gateway:3030
     }
 
-    # Direct high-speed static download handling for mobile APKs
-    handle_path /downloads/* {
-        root * /var/www/downloads
-        file_server
+    # High-speed global CDN redirection for official mobile APK downloads
+    handle /downloads/Cabi-Drive* {
+        redir https://github.com/cabiafrica/Cabi-Africa/releases/latest/download/Cabi-Drive-Official.apk 302
+    }
+    handle /downloads/Cabi-Go* {
+        redir https://github.com/cabiafrica/Cabi-Africa/releases/latest/download/Cabi-Go-Official.apk 302
     }
 
     # User Portal Frontend
