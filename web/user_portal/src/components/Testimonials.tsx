@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 interface Testimonial {
     quote: string;
@@ -59,14 +60,51 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
 
 export default function Testimonials({ title, testimonials }: TestimonialsProps) {
     const [activeIndex, setActiveIndex] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
+    const touchStartX = useRef<number | null>(null);
+    const touchEndX = useRef<number | null>(null);
+
+    const handleNext = useCallback(() => {
+        if (testimonials.length <= 1) return;
+        setActiveIndex((prev) => (prev + 1) % testimonials.length);
+    }, [testimonials.length]);
+
+    const handlePrev = useCallback(() => {
+        if (testimonials.length <= 1) return;
+        setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+    }, [testimonials.length]);
 
     useEffect(() => {
-        if (testimonials.length <= 1) return;
+        if (testimonials.length <= 1 || isPaused) return;
         const timer = setInterval(() => {
-            setActiveIndex((prev) => (prev + 1) % testimonials.length);
-        }, 4000);
+            handleNext();
+        }, 4500);
         return () => clearInterval(timer);
-    }, [testimonials.length]);
+    }, [testimonials.length, isPaused, handleNext]);
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        setIsPaused(true);
+        touchStartX.current = e.touches[0].clientX;
+        touchEndX.current = null;
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        touchEndX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = () => {
+        if (touchStartX.current !== null && touchEndX.current !== null) {
+            const diff = touchStartX.current - touchEndX.current;
+            if (diff > 40) {
+                handleNext();
+            } else if (diff < -40) {
+                handlePrev();
+            }
+        }
+        touchStartX.current = null;
+        touchEndX.current = null;
+        setTimeout(() => setIsPaused(false), 2500);
+    };
 
     return (
         <section className="py-16 sm:py-24 bg-slate-50 dark:bg-surface-dark border-t border-slate-200 dark:border-white/10 transition-colors duration-300">
@@ -84,8 +122,13 @@ export default function Testimonials({ title, testimonials }: TestimonialsProps)
                     </h2>
                 </div>
 
-                {/* Mobile: 1 slide per screen, auto-sliding */}
-                <div className="md:hidden overflow-hidden">
+                {/* Mobile: 1 slide per screen with touch-swipe & controls */}
+                <div
+                    className="md:hidden overflow-hidden"
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                >
                     <div
                         className="flex transition-transform duration-500 ease-out"
                         style={{ transform: `translateX(-${activeIndex * 100}%)` }}
@@ -96,25 +139,40 @@ export default function Testimonials({ title, testimonials }: TestimonialsProps)
                             </div>
                         ))}
                     </div>
+
                     {testimonials.length > 1 && (
-                        <div className="flex justify-center gap-2 mt-6">
-                            {testimonials.map((_, idx) => (
-                                <button
-                                    key={idx}
-                                    type="button"
-                                    aria-label={`View testimonial ${idx + 1}`}
-                                    onClick={() => setActiveIndex(idx)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter' || e.key === ' ') {
-                                            e.preventDefault();
-                                            setActiveIndex(idx);
-                                        }
-                                    }}
-                                    className={`h-2 rounded-full transition-all duration-300 ${
-                                        activeIndex === idx ? 'w-6 bg-[#D4AF37]' : 'w-2 bg-slate-300 dark:bg-white/20'
-                                    }`}
-                                />
-                            ))}
+                        <div className="flex items-center justify-between gap-4 mt-6 px-2">
+                            <button
+                                type="button"
+                                onClick={handlePrev}
+                                aria-label="Previous testimonial"
+                                className="w-9 h-9 rounded-xl bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 text-slate-700 dark:text-[#D4AF37] flex items-center justify-center shadow-sm active:scale-95"
+                            >
+                                <FaChevronLeft className="text-xs" />
+                            </button>
+
+                            <div className="flex items-center gap-2">
+                                {testimonials.map((_, idx) => (
+                                    <button
+                                        key={idx}
+                                        type="button"
+                                        aria-label={`View testimonial ${idx + 1}`}
+                                        onClick={() => setActiveIndex(idx)}
+                                        className={`h-2 rounded-full transition-all duration-300 ${
+                                            activeIndex === idx ? 'w-6 bg-[#D4AF37]' : 'w-2 bg-slate-300 dark:bg-white/20'
+                                        }`}
+                                    />
+                                ))}
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={handleNext}
+                                aria-label="Next testimonial"
+                                className="w-9 h-9 rounded-xl bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 text-slate-700 dark:text-[#D4AF37] flex items-center justify-center shadow-sm active:scale-95"
+                            >
+                                <FaChevronRight className="text-xs" />
+                            </button>
                         </div>
                     )}
                 </div>
