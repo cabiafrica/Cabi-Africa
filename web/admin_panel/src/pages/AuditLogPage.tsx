@@ -313,7 +313,7 @@ export const AuditLogPage = () => {
         });
       }
 
-      const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://auth-gateway-746659778850.us-central1.run.app';
+      const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://cabi.africa';
       socketRef.current = io(socketUrl, { path: '/audit-stream' });
 
       socketRef.current.on('connect', () => {

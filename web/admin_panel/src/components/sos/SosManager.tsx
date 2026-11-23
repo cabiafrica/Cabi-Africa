@@ -8,7 +8,7 @@ export const SosManager: React.FC = () => {
   const [viewingIncidentId, setViewingIncidentId] = useState<string | null>(null);
 
   useEffect(() => {
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://auth-gateway-746659778850.us-central1.run.app';
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://cabi.africa';
     const socket = io(`${socketUrl}/sos`, {
       transports: ['websocket', 'polling'],
     });

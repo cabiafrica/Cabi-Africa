@@ -2,7 +2,7 @@ import axios from 'axios';
 
 /**
  * Resolves the correct base URL for the Dispatch Microservice.
- * Handles local dev, Vercel deployments, and GCP Cloud Run environments.
+ * Handles local dev and production Docker container environments.
  */
 export function getDispatchBaseUrl(): string {
   const envDispatch = import.meta.env.VITE_DISPATCH_SERVICE_URL || import.meta.env.VITE_DISPATCH_API_URL;
@@ -10,13 +10,13 @@ export function getDispatchBaseUrl(): string {
     return envDispatch.replace(/\/+$/, '');
   }
 
-  // Production heuristic for Cloud Run / Vercel
+  // Production heuristic for DigitalOcean Droplet / production domain
   const isProd = import.meta.env.PROD || 
     (typeof window !== 'undefined' && 
      (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app')));
 
   if (isProd) {
-    return 'https://dispatch-service-746659778850.us-central1.run.app';
+    return 'https://cabi.africa';
   }
 
   // Local development fallback

@@ -11,11 +11,11 @@
   "rewrites": [
     {
       "source": "/api/dispatch/(.*)",
-      "destination": "https://auth-gateway-746659778850.us-central1.run.app/api/dispatch/$1"
+      "destination": "https://api.cabi.africa/api/dispatch/$1"
     },
     {
       "source": "/api/(.*)",
-      "destination": "https://auth-gateway-746659778850.us-central1.run.app/api/$1"
+      "destination": "https://api.cabi.africa/api/$1"
     },
     {
       "source": "/(.*)",

@@ -90,7 +90,7 @@ export default async function handler(
             const backendUrl =
                 process.env.DRIVER_LEAD_SERVICE_URL ||
                 (process.env.NODE_ENV === 'production'
-                    ? 'https://driver-lead-service-746659778850.us-central1.run.app/api'
+                    ? 'https://api.cabi.africa/api'
                     : 'http://localhost:3010/api');
             const response = await fetch(`${backendUrl}/driver-leads/register`, {
                 method: 'POST',

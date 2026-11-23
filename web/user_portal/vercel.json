@@ -10,15 +10,15 @@
   "rewrites": [
     {
       "source": "/api/dispatch/:path*",
-      "destination": "https://auth-gateway-746659778850.us-central1.run.app/api/dispatch/:path*"
+      "destination": "https://api.cabi.africa/api/dispatch/:path*"
     },
     {
       "source": "/api/verification/:path*",
-      "destination": "https://auth-gateway-746659778850.us-central1.run.app/api/verification/:path*"
+      "destination": "https://api.cabi.africa/api/verification/:path*"
     },
     {
       "source": "/api/:path*",
-      "destination": "https://auth-gateway-746659778850.us-central1.run.app/api/:path*"
+      "destination": "https://api.cabi.africa/api/:path*"
     }
   ]
 }

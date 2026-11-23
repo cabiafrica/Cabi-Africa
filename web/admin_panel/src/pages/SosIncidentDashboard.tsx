@@ -92,7 +92,7 @@ export const SosIncidentDashboard = () => {
 
   useEffect(() => {
     if (!incidentId || isResolved) return;
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://auth-gateway-746659778850.us-central1.run.app';
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://cabi.africa';
     const socket: Socket = io(socketUrl, { query: { incidentId } });
     socket.on('locationUpdate', (newLocation: { lat: number; lng: number }) => {
       setIncident(prev => prev ? { ...prev, liveLocation: { lat: newLocation.lat, lng: newLocation.lng } } : null);
@@ -135,7 +135,7 @@ export const SosIncidentDashboard = () => {
     } else {
       try {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-        const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://auth-gateway-746659778850.us-central1.run.app';
+        const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://cabi.africa';
         const wsUrl = socketUrl.replace('https://', 'wss://').replace('http://', 'ws://');
         const socket = new WebSocket(`${wsUrl}/audio?incidentId=${incidentId}`);
         socket.binaryType = 'arraybuffer';

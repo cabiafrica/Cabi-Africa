@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const base =
         process.env.DISPATCH_SERVICE_URL?.replace(/\/api\/?$/, '') ||
         (process.env.NODE_ENV === 'production'
-          ? 'https://dispatch-service-746659778850.us-central1.run.app'
+          ? 'https://cabi.africa'
           : 'http://localhost:3334');
       const response = await fetch(`${base}/settings/system/${key}`);
       const data = await response.json();

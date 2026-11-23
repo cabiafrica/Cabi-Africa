@@ -37,8 +37,8 @@ RUN apk add --no-cache bash gettext
 COPY --from=builder /app/web/dispatch_panel/dist /usr/share/nginx/html
 COPY web/dispatch_panel/nginx.conf /etc/nginx/templates/default.conf.template
 
-# Default backend URL — overridden by Cloud Run env vars
-ENV BACKEND_URL=https://auth-gateway-746659778850.us-central1.run.app
+# Default backend URL — overridden by environment variables
+ENV BACKEND_URL=https://api.cabi.africa
 
 # envsubst replaces ${BACKEND_URL} in the nginx template, then starts nginx
 CMD ["/bin/bash", "-c", "envsubst '${BACKEND_URL}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]

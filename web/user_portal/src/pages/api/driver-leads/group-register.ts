@@ -89,7 +89,7 @@ export default async function handler(
         const BACKEND_URL =
             process.env.NEXT_PUBLIC_DRIVER_LEAD_SERVICE_URL ||
             (process.env.NODE_ENV === 'production'
-                ? 'https://driver-lead-service-746659778850.us-central1.run.app'
+                ? 'https://api.cabi.africa'
                 : 'http://localhost:3010');
         const backendResponse = await fetch(`${BACKEND_URL}/api/v1/driver-groups`, {
             method: 'POST',
@@ -163,7 +163,7 @@ export default async function handler(
             const referralUrl =
                 process.env.NEXT_PUBLIC_REFERRAL_SERVICE_URL ||
                 (process.env.NODE_ENV === 'production'
-                    ? 'https://referral-service-746659778850.us-central1.run.app'
+                    ? 'https://api.cabi.africa'
                     : 'http://localhost:3338');
             await fetch(`${referralUrl}/api/referral/process-registration`, {
                 method: 'POST',

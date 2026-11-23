@@ -8,7 +8,7 @@ const BACKEND_URL =
     process.env.BACKEND_URL ||
     process.env.AUTH_GATEWAY_URL ||
     process.env.NEXT_PUBLIC_API_URL ||
-    'https://auth-gateway-746659778850.us-central1.run.app/api';
+    'https://api.cabi.africa/api';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {

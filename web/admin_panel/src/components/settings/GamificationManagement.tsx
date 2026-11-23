@@ -16,7 +16,7 @@ import {
 } from '@mui/icons-material';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@tremor/react';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://auth-gateway-746659778850.us-central1.run.app/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.cabi.africa/api';
 
 interface RatingRule {
     stars: number;
