@@ -151,7 +151,7 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
               name="vehicleType"
               value={data.vehicleType}
               onChange={handleInputChange}
-              className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white dark:bg-card-dark dark:text-white ${errors.vehicleType ? 'border-red-500' : 'border-slate-300 dark:border-white/10'}`}
+              className={`w-full px-4 py-3 sm:py-3.5 rounded-xl border focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white transition-all duration-300 ${errors.vehicleType ? 'border-red-500' : 'border-slate-200 dark:border-white/10'}`}
             >
               <option value="">Select Type</option>
               <option value="car">Car (Standard/Premium)</option>
@@ -169,7 +169,7 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
               name="licensePlate"
               value={data.licensePlate}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white dark:bg-card-dark dark:text-white"
+              className="w-full px-4 py-3 sm:py-3.5 rounded-xl border border-slate-200 dark:border-white/10 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 transition-all duration-300"
             />
           </div>
         </div>
@@ -185,7 +185,7 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
               value={data.vehicleMake}
               onChange={handleInputChange}
               placeholder="e.g. Toyota"
-              className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white dark:bg-card-dark dark:text-white"
+              className="w-full px-4 py-3 sm:py-3.5 rounded-xl border border-slate-200 dark:border-white/10 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 transition-all duration-300"
             />
           </div>
           <div>
@@ -198,7 +198,7 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
               value={data.vehicleModel}
               onChange={handleInputChange}
               placeholder="e.g. Prius"
-              className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white dark:bg-card-dark dark:text-white"
+              className="w-full px-4 py-3 sm:py-3.5 rounded-xl border border-slate-200 dark:border-white/10 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 transition-all duration-300"
             />
           </div>
         </div>
@@ -214,7 +214,7 @@ export const Step3Vehicle: React.FC<Props> = ({ data, onChange, errors }) => {
                 value={data.vehicleYear}
                 onChange={handleInputChange}
                 placeholder="2018"
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white dark:bg-card-dark dark:text-white"
+                className="w-full px-4 py-3 sm:py-3.5 rounded-xl border border-slate-200 dark:border-white/10 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 transition-all duration-300"
               />
             </div>
         </div>

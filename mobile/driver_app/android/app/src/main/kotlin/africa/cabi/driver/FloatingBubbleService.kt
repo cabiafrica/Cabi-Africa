@@ -27,6 +27,10 @@ import kotlin.math.abs
 
 class FloatingBubbleService : Service() {
 
+    companion object {
+        var instance: FloatingBubbleService? = null
+    }
+
     private var windowManager: WindowManager? = null
     private var bubbleView: View? = null
     private val CHANNEL_ID = "cabi_driver_floating_bubble"
@@ -36,6 +40,7 @@ class FloatingBubbleService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        instance = this
         startInForeground()
         showFloatingBubble()
     }
@@ -225,7 +230,7 @@ class FloatingBubbleService : Service() {
         }
     }
 
-    private fun openDriverApp() {
+    fun openDriverApp() {
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                     Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or
@@ -240,6 +245,7 @@ class FloatingBubbleService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        instance = null
         if (bubbleView != null) {
             try {
                 windowManager?.removeView(bubbleView)

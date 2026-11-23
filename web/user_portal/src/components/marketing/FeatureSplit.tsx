@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaArrowRight } from 'react-icons/fa';
-import AppDownloadButtons from '@/components/ui/AppDownloadButtons';
 
 interface FeatureSplitProps {
     type: 'driver' | 'passenger';
@@ -127,17 +126,6 @@ export default function FeatureSplit({ type }: FeatureSplitProps) {
                                 <FaArrowRight className="relative z-10 transition-transform duration-300 group-hover/btn:translate-x-1.5" />
                             )}
                         </Link>
-
-                        <AppDownloadButtons
-                            role={type}
-                            align="start"
-                            caption={
-                                isDriver
-                                    ? 'Download the CABI Driver App'
-                                    : 'Download the CABI Passenger App'
-                            }
-                            className="mt-7"
-                        />
                     </div>
                 </div>
             </div>

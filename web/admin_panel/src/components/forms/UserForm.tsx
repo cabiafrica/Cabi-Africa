@@ -111,7 +111,7 @@ export const UserForm: React.FC<Props> = ({ user, onSave, onCancel }) => {
             onChange={e => setEmail(e.target.value)}
             required
             disabled={!!user}
-            className="w-full border-slate-300 dark:border-slate-600 rounded-lg shadow-sm focus:ring-amber-500 focus:border-amber-500 p-2.5 border text-slate-900 dark:text-slate-100 bg-white dark:bg-card-dark disabled:bg-slate-100 dark:disabled:bg-slate-700"
+            className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             placeholder="admin@example.com"
           />
         </div>

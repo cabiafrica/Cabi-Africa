@@ -37,4 +37,11 @@ class FloatingBubbleService {
       await _channel.invokeMethod('hideBubble');
     } catch (_) {}
   }
+
+  /// Brings the driver app directly to the foreground (e.g. when an incoming trip arrives)
+  Future<void> bringToForeground() async {
+    try {
+      await _channel.invokeMethod('bringToForeground');
+    } catch (_) {}
+  }
 }

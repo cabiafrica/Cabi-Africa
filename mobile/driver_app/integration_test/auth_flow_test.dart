@@ -105,8 +105,8 @@ void main() {
 
       debugPrint("[TEST] Credentials entered. Tapping Start Driving...");
 
-      // Tap 'Start Driving' button
-      final loginButton = find.text('Start Driving');
+      // Tap 'AUTHENTICATE' button
+      final loginButton = find.text('AUTHENTICATE');
       await tester.ensureVisible(loginButton);
       await tester.tap(loginButton);
       
@@ -296,7 +296,7 @@ void main() {
       await tester.enterText(find.byType(TextFormField).at(1), 'wrongpass');
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Start Driving'));
+      await tester.tap(find.text('AUTHENTICATE'));
       await tester.pumpAndSettle();
 
       expect(find.textContaining('Incorrect email or password'), findsOneWidget);

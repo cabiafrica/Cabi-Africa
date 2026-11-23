@@ -112,7 +112,7 @@ void main() {
 
       // Login tab active by default — fields visible
       expect(find.byType(TextFormField), findsNWidgets(2));
-      expect(find.text('Start Driving'), findsOneWidget);
+      expect(find.text('AUTHENTICATE'), findsOneWidget);
 
       // Legal footer
       expect(find.textContaining('Terms of Service'), findsOneWidget);
@@ -130,14 +130,14 @@ void main() {
       await _waitForLoginScreen(tester);
 
       // Login tab is default
-      expect(find.text('Start Driving'), findsOneWidget);
+      expect(find.text('AUTHENTICATE'), findsOneWidget);
 
       // Tap Sign Up tab
       await tester.tap(find.text('Sign Up'));
       await tester.pumpAndSettle();
 
       // Login fields hidden
-      expect(find.text('Start Driving'), findsNothing);
+      expect(find.text('AUTHENTICATE'), findsNothing);
 
       // Registration portal message & button visible
       expect(find.text('Registration is handled via portal'), findsOneWidget);
@@ -146,7 +146,7 @@ void main() {
       // Switch back to Log In
       await tester.tap(find.text('Log In'));
       await tester.pumpAndSettle();
-      expect(find.text('Start Driving'), findsOneWidget);
+      expect(find.text('AUTHENTICATE'), findsOneWidget);
 
       debugPrint('[TEST 2] ✅ Tab switching works correctly.');
     });
@@ -162,7 +162,7 @@ void main() {
 
       // Tap Start Driving with empty fields
       await _dismissKeyboard(tester);
-      final startBtn = find.text('Start Driving');
+      final startBtn = find.text('AUTHENTICATE');
       await tester.ensureVisible(startBtn);
       await tester.tap(startBtn);
       await tester.pumpAndSettle();
@@ -189,7 +189,7 @@ void main() {
       await tester.enterText(find.byType(TextFormField).at(0), 'notanemail');
       await tester.enterText(find.byType(TextFormField).at(1), 'password123');
       await _dismissKeyboard(tester);
-      final startBtn = find.text('Start Driving');
+      final startBtn = find.text('AUTHENTICATE');
       await tester.ensureVisible(startBtn);
       await tester.tap(startBtn);
       await tester.pumpAndSettle();
@@ -222,7 +222,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await _dismissKeyboard(tester);
-      final startBtn = find.text('Start Driving');
+      final startBtn = find.text('AUTHENTICATE');
       await tester.ensureVisible(startBtn);
       await tester.tap(startBtn);
 
@@ -256,7 +256,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await _dismissKeyboard(tester);
-      final startBtn = find.text('Start Driving');
+      final startBtn = find.text('AUTHENTICATE');
       await tester.ensureVisible(startBtn);
       await tester.tap(startBtn);
       await tester.pumpAndSettle();
@@ -295,7 +295,7 @@ void main() {
       await tester.enterText(find.byType(TextFormField).at(0), 'temp@cabi.africa');
       await tester.enterText(find.byType(TextFormField).at(1), 'Pass@456');
       await _dismissKeyboard(tester);
-      final startBtn = find.text('Start Driving');
+      final startBtn = find.text('AUTHENTICATE');
       await tester.ensureVisible(startBtn);
       await tester.tap(startBtn);
 
@@ -386,7 +386,7 @@ void main() {
 
       await tester.enterText(find.byType(TextFormField).at(0), 'driver@cabi.africa');
       await tester.enterText(find.byType(TextFormField).at(1), 'Pass@123');
-      final startBtn = find.text('Start Driving');
+      final startBtn = find.text('AUTHENTICATE');
       await tester.ensureVisible(startBtn);
       await tester.tap(startBtn);
       await tester.pumpAndSettle();

@@ -3,11 +3,14 @@ import Head from 'next/head';
 import Link from 'next/link';
 import VerificationFlow from '../components/verification/VerificationFlow';
 import RandomBiometricCheck from '../components/verification/RandomBiometricCheck';
+import BiometricCapture from '../components/verification/BiometricCapture';
 import BrandLogo from '@/components/ui/BrandLogo';
 import { FaShieldAlt } from 'react-icons/fa';
+import { MdOutlineFaceUnlock } from 'react-icons/md';
 
 export default function VerificationDemo() {
     const [showFlow, setShowFlow] = useState(false);
+    const [showDirectBiometric, setShowDirectBiometric] = useState(false);
     const [verificationComplete, setVerificationComplete] = useState(false);
     const [verificationData, setVerificationData] = useState<any>(null);
     const [showRandomCheck, setShowRandomCheck] = useState(false);
@@ -36,6 +39,30 @@ export default function VerificationDemo() {
                 <meta name="description" content="AI Biometric and Document Verification interactive demo for CABI Africa." />
                 <meta property="og:title" content="Verification Demo - Cabi Africa" />
             </Head>
+
+            {/* Direct Biometric Face Scan Modal */}
+            {showDirectBiometric && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-200">
+                    <div className="bg-brand-dark border border-brand-yellow/30 rounded-2xl w-full max-w-xl p-6 shadow-2xl relative">
+                        <button
+                            onClick={() => setShowDirectBiometric(false)}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold w-8 h-8 rounded-full bg-white/10 flex items-center justify-center transition-colors z-20"
+                        >
+                            ✕
+                        </button>
+                        <BiometricCapture
+                            userId={mockUser.id}
+                            documentVerificationId="doc-test-123"
+                            onCaptureSuccess={(id, match, liveness) => {
+                                console.log('Face scan successful:', id, match, liveness);
+                            }}
+                            onCaptureError={(err) => {
+                                console.error('Face scan error:', err);
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* Random Check Component (Hidden unless triggered) */}
             {showRandomCheck && (
@@ -115,17 +142,27 @@ export default function VerificationDemo() {
                                 <li>Upload a document image</li>
                                 <li>Review the extracted fields vs provided fields</li>
                                 <li>Validate the fields</li>
-                                <li>Capture a selfie for biometric verification</li>
+                                <li>Perform a biometric face scan for instant identity verification</li>
                                 <li>Complete the verification process</li>
                             </ol>
                         </div>
 
-                        <button
-                            onClick={() => setShowFlow(true)}
-                            className="px-8 py-4 bg-brand-yellow hover:bg-yellow-400 text-black font-bold rounded-xl transition-colors text-lg"
-                        >
-                            Start Verification Demo
-                        </button>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <button
+                                onClick={() => setShowFlow(true)}
+                                className="w-full sm:w-auto px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl transition-colors text-lg"
+                            >
+                                Start Full Flow
+                            </button>
+                            <button
+                                id="launch-direct-face-scan"
+                                onClick={() => setShowDirectBiometric(true)}
+                                className="w-full sm:w-auto px-8 py-4 bg-brand-yellow hover:bg-yellow-400 text-black font-bold rounded-xl transition-all duration-300 text-lg flex items-center justify-center gap-2 shadow-lg shadow-brand-yellow/10"
+                            >
+                                <MdOutlineFaceUnlock className="text-2xl" />
+                                Launch Live Biometric Face Scan
+                            </button>
+                        </div>
 
                         <div className="mt-8 pt-8 border-t border-gray-800">
                             <h4 className="font-bold mb-4 text-gray-400">Additional Tests</h4>

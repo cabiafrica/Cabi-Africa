@@ -329,7 +329,7 @@ export default function Register() {
                                                         required: 'First name is required',
                                                         validate: (val) => validateName(val, 'First name')
                                                     })}
-                                                    className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600"
+                                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500"
                                                     placeholder="John"
                                                 />
                                                 {errors.firstName && <span className="text-red-500 text-xs block">{errors.firstName.message as string}</span>}
@@ -341,7 +341,7 @@ export default function Register() {
                                                         required: 'Last name is required',
                                                         validate: (val) => validateName(val, 'Last name')
                                                     })}
-                                                    className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600"
+                                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500"
                                                     placeholder="Doe"
                                                 />
                                                 {errors.lastName && <span className="text-red-500 text-xs block">{errors.lastName.message as string}</span>}
@@ -356,7 +356,7 @@ export default function Register() {
                                                     required: 'Phone number is required',
                                                     validate: validatePhone
                                                 })}
-                                                className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600"
+                                                className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500"
                                                 placeholder="+254 712 345 678"
                                             />
                                             {errors.phone && <span className="text-red-500 text-xs block">{errors.phone.message as string}</span>}
@@ -364,7 +364,7 @@ export default function Register() {
 
                                         <div className="space-y-2">
                                             <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Email Address</label>
-                                            <input type="email" {...register('email', { required: true })} className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600" placeholder="john@example.com" />
+                                            <input type="email" {...register('email', { required: true })} className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500" placeholder="john@example.com" />
                                         </div>
 
                                         <div className="space-y-2">
@@ -390,7 +390,7 @@ export default function Register() {
                                                         required: 'First name is required',
                                                         validate: (val) => validateName(val, 'First name')
                                                     })}
-                                                    className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600"
+                                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500"
                                                     placeholder="John"
                                                 />
                                                 {errors.firstName && <span className="text-red-500 text-xs block">{errors.firstName.message as string}</span>}
@@ -401,7 +401,7 @@ export default function Register() {
                                                     {...register('middleName', {
                                                         validate: (val) => !val || validateName(val, 'Middle name')
                                                     })}
-                                                    className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600"
+                                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500"
                                                     placeholder="Michael"
                                                 />
                                                 {errors.middleName && <span className="text-red-500 text-xs block">{errors.middleName.message as string}</span>}
@@ -413,7 +413,7 @@ export default function Register() {
                                                         required: 'Last name is required',
                                                         validate: (val) => validateName(val, 'Last name')
                                                     })}
-                                                    className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600"
+                                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500"
                                                     placeholder="Doe"
                                                 />
                                                 {errors.lastName && <span className="text-red-500 text-xs block">{errors.lastName.message as string}</span>}
@@ -422,7 +422,7 @@ export default function Register() {
 
                                         <div className="space-y-2">
                                             <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Email Address</label>
-                                            <input type="email" {...register('email', { required: true })} className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600" placeholder="john@example.com" />
+                                            <input type="email" {...register('email', { required: true })} className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500" placeholder="john@example.com" />
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4">
@@ -450,20 +450,20 @@ export default function Register() {
                                                         required: 'Phone number is required',
                                                         validate: validatePhone
                                                     })}
-                                                    className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600"
+                                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500"
                                                     placeholder="+254 712 345 678"
                                                 />
                                                 {errors.phone && <span className="text-red-500 text-xs block">{errors.phone.message as string}</span>}
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">ID Number</label>
-                                                <input {...register('idNumber', { required: true })} className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600" placeholder="12345678" />
+                                                <input {...register('idNumber', { required: true })} className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500" placeholder="12345678" />
                                             </div>
                                         </div>
 
                                         <div className="space-y-2">
                                             <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">License Number</label>
-                                            <input {...register('licenseNumber', { required: true })} className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600" placeholder="DL-1234567" />
+                                            <input {...register('licenseNumber', { required: true })} className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500" placeholder="DL-1234567" />
                                         </div>
 
                                         {/* Next Button for Step 1 */}
@@ -538,7 +538,7 @@ export default function Register() {
                                         {role !== 'vehicle_owner' && (
                                             <div className="space-y-2 animate-fade-in">
                                                 <label className="text-xs uppercase tracking-wider text-gray-500 font-bold">Referral Code (Optional)</label>
-                                                <input type="text" {...register('referralCode')} className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600" placeholder="Enter code if you have one" />
+                                                <input type="text" {...register('referralCode')} className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500" placeholder="Enter code if you have one" />
                                                 {referralValidation?.valid && (
                                                     <p className="text-sm text-green-500 flex items-center gap-1">
                                                         <CheckCircle className="w-4 h-4" /> Referred by {referralValidation.referrerName}
@@ -560,7 +560,7 @@ export default function Register() {
                                                         required: 'Password is required',
                                                         validate: validatePassword
                                                     })}
-                                                    className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600"
+                                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500"
                                                     placeholder="••••••••"
                                                 />
                                                 <button
@@ -616,7 +616,7 @@ export default function Register() {
                                                             return true;
                                                         }
                                                     })}
-                                                    className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-600"
+                                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500"
                                                     placeholder="••••••••"
                                                 />
                                                 <button
@@ -640,7 +640,7 @@ export default function Register() {
                                             <select
                                                 value={primaryLanguage}
                                                 onChange={(e) => setPrimaryLanguage(e.target.value as any)}
-                                                className="w-full bg-slate-50 dark:bg-brand-dark/50 border border-slate-300 dark:border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-brand-yellow text-slate-900 dark:text-white"
+                                                className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300 text-slate-900 dark:text-white"
                                             >
                                                 <option value="en">English (EN)</option>
                                                 <option value="sw">Kiswahili (SW)</option>

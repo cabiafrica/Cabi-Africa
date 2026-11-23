@@ -78,7 +78,7 @@ export const LoginPage = () => {
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-4 py-3 bg-brand-black/60 border border-white/15 rounded-xl focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow text-white placeholder-gray-500 transition-all outline-none"
+                                className="w-full px-4 py-3.5 bg-brand-black/60 border border-white/15 rounded-xl focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 text-white placeholder-gray-500 transition-all duration-300 outline-none"
                                 placeholder="operator@cabi.com"
                                 required
                             />
@@ -90,7 +90,7 @@ export const LoginPage = () => {
                                     type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full px-4 py-3 bg-brand-black/60 border border-white/15 rounded-xl focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow text-white placeholder-gray-500 transition-all outline-none"
+                                    className="w-full px-4 py-3.5 bg-brand-black/60 border border-white/15 rounded-xl focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 text-white placeholder-gray-500 transition-all duration-300 outline-none"
                                     placeholder="••••••••"
                                     required
                                 />

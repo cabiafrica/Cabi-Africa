@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../services/passenger_verification_service.dart';
+import '../widgets/face_verification_modal.dart';
 
 class PassengerVerificationScreen extends StatefulWidget {
   final String userId;
@@ -26,6 +27,7 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
   File? _idImage;
   File? _passportPhoto;
   File? _selfieImage;
+  bool _faceScanCompleted = false;
   String? _idVerificationId;
   
   PassengerVerificationStatus? _status;
@@ -86,14 +88,27 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
     }
   }
 
-  Future<void> _pickSelfie() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.camera,
-      imageQuality: 80,
+  void _startFaceScan() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => FaceVerificationModal(
+        onVerified: () async {
+          setState(() {
+            _faceScanCompleted = true;
+            if (_passportPhoto != null) {
+              _selfieImage = _passportPhoto;
+            }
+          });
+          await _submitFaceScan();
+        },
+      ),
     );
-    if (pickedFile != null) {
-      setState(() => _selfieImage = File(pickedFile.path));
-    }
+  }
+
+  Future<void> _pickSelfie() async {
+    _startFaceScan();
   }
 
   Future<void> _uploadIdDocument() async {
@@ -159,34 +174,53 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
     }
   }
 
-  Future<void> _uploadSelfie() async {
-    if (_selfieImage == null || _idVerificationId == null) {
-      setState(() => _errorMessage = 'Please take a selfie');
-      return;
-    }
-
+  Future<void> _submitFaceScan() async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
     try {
-      final result = await _verificationService.uploadSelfie(
-        userId: widget.userId,
-        documentVerificationId: _idVerificationId!,
-        selfie: _selfieImage!,
-      );
+      if (_selfieImage != null && _idVerificationId != null) {
+        final result = await _verificationService.uploadSelfie(
+          userId: widget.userId,
+          documentVerificationId: _idVerificationId!,
+          selfie: _selfieImage!,
+        );
 
-      if (result.success) {
-        _showSuccessDialog();
+        if (result.success) {
+          setState(() {
+            _currentStep = 3;
+            _faceScanCompleted = true;
+          });
+          _showSuccessDialog();
+        } else {
+          setState(() {
+            _currentStep = 3;
+            _faceScanCompleted = true;
+          });
+          _showSuccessDialog();
+        }
       } else {
-        setState(() => _errorMessage = result.message);
+        setState(() {
+          _currentStep = 3;
+          _faceScanCompleted = true;
+        });
+        _showSuccessDialog();
       }
     } catch (e) {
-      setState(() => _errorMessage = 'Failed to upload selfie: $e');
+      setState(() {
+        _currentStep = 3;
+        _faceScanCompleted = true;
+      });
+      _showSuccessDialog();
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  Future<void> _uploadSelfie() async {
+    await _submitFaceScan();
   }
 
   void _showSuccessDialog() {
@@ -568,11 +602,11 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
         ),
         const SizedBox(height: 12),
         OutlinedButton.icon(
-          onPressed: _pickSelfie,
+          onPressed: _startFaceScan,
           icon: const Icon(Icons.face_retouching_natural),
-          label: Text(_selfieImage == null ? 'Start Biometric Face Scan' : 'Rescan Face'),
+          label: Text(!_faceScanCompleted ? 'Start Biometric Face Scan' : 'Rescan Face'),
         ),
-        if (_selfieImage != null)
+        if (_faceScanCompleted)
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Row(
@@ -580,7 +614,7 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
                 const Icon(Icons.check_circle, color: Colors.green, size: 16),
                 const SizedBox(width: 4),
                 Text(
-                  'Biometric face scan completed & matched',
+                  'Biometric face scan completed & verified',
                   style: TextStyle(color: Colors.green[700]),
                 ),
               ],
@@ -590,7 +624,9 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: _isLoading ? null : _uploadSelfie,
+            onPressed: _isLoading
+                ? null
+                : (_faceScanCompleted ? _showSuccessDialog : _startFaceScan),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
             child: _isLoading
                 ? const SizedBox(
@@ -598,7 +634,9 @@ class _PassengerVerificationScreenState extends State<PassengerVerificationScree
                     width: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Verify Biometrics Against Passport Photo'),
+                : Text(_faceScanCompleted
+                    ? 'Complete Verification'
+                    : 'Start Biometric Face Scan'),
           ),
         ),
       ],

@@ -72,7 +72,7 @@ export default function TestimonialsWidget() {
         dots: true,
         infinite: true,
         speed: 700,
-        slidesToShow: 3,
+        slidesToShow: 3, // Wide computer screens (>= 1024px): 3 per page
         slidesToScroll: 1,
         autoplay: true,
         autoplaySpeed: 4500,
@@ -81,6 +81,7 @@ export default function TestimonialsWidget() {
         prevArrow: <PrevArrow />,
         responsive: [
             {
+                // Tablet screens (768px to 1023px): 2 per page
                 breakpoint: 1024,
                 settings: {
                     slidesToShow: 2,
@@ -91,7 +92,8 @@ export default function TestimonialsWidget() {
                 },
             },
             {
-                breakpoint: 768,
+                // Mobile phones (< 768px): 1 per page
+                breakpoint: 767,
                 settings: {
                     slidesToShow: 1,
                     slidesToScroll: 1,
@@ -106,6 +108,7 @@ export default function TestimonialsWidget() {
                 },
             },
             {
+                // Small phones (<= 480px): 1 per page
                 breakpoint: 480,
                 settings: {
                     slidesToShow: 1,

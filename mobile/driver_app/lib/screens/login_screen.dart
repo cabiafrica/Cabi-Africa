@@ -573,7 +573,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   borderRadius: BorderRadius.circular(12)),
                               elevation: 0,
                             ),
-                            child: const Text('START DRIVING',
+                            child: const Text('AUTHENTICATE',
                                 style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,

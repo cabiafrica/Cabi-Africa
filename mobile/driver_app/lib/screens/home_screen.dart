@@ -244,6 +244,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 'passengerName': passenger?['fullName'] ?? 'Guest Passenger',
               };
               AudioNotificationService.instance.play('driver_request_incoming');
+              // Launch driver app into foreground when incoming ride arrives
+              FloatingBubbleService.instance.bringToForeground();
               rideReqProvider.setRideRequest(
                 formattedRequest,
                 onTimeout: () {
@@ -601,6 +603,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       },
     };
 
+    FloatingBubbleService.instance.bringToForeground();
     legacy_provider.Provider.of<RideRequestProvider>(context, listen: false)
         .setRideRequest(mockRequest);
   }

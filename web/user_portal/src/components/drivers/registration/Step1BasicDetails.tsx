@@ -33,7 +33,7 @@ export const Step1BasicDetails: React.FC<Props> = ({ data, onChange, errors }) =
             name="firstName"
             value={data.firstName}
             onChange={onChange}
-            className={`w-full px-4 py-3 rounded-xl border ${errors.firstName ? 'border-red-500' : 'border-slate-300 dark:border-white/10'} focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-slate-50 dark:bg-surface-dark dark:text-white`}
+            className={`w-full px-4 py-3 rounded-xl border ${errors.firstName ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 transition-all duration-300`}
           />
           {errors.firstName && <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>}
         </div>
@@ -45,7 +45,7 @@ export const Step1BasicDetails: React.FC<Props> = ({ data, onChange, errors }) =
             name="lastName"
             value={data.lastName}
             onChange={onChange}
-            className={`w-full px-4 py-3 rounded-xl border ${errors.lastName ? 'border-red-500' : 'border-slate-300 dark:border-white/10'} focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-slate-50 dark:bg-surface-dark dark:text-white`}
+            className={`w-full px-4 py-3 rounded-xl border ${errors.lastName ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 transition-all duration-300`}
           />
           {errors.lastName && <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>}
         </div>
@@ -60,7 +60,7 @@ export const Step1BasicDetails: React.FC<Props> = ({ data, onChange, errors }) =
             name="email"
             value={data.email}
             onChange={onChange}
-            className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500' : 'border-slate-300 dark:border-white/10'} focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-slate-50 dark:bg-surface-dark dark:text-white`}
+            className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 transition-all duration-300`}
           />
           {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
         </div>
@@ -73,7 +73,7 @@ export const Step1BasicDetails: React.FC<Props> = ({ data, onChange, errors }) =
             value={data.phone}
             onChange={onChange}
             placeholder="+254722123456"
-            className={`w-full px-4 py-3 rounded-xl border ${errors.phone ? 'border-red-500' : 'border-slate-300 dark:border-white/10'} focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-slate-50 dark:bg-surface-dark dark:text-white`}
+            className={`w-full px-4 py-3 rounded-xl border ${errors.phone ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 transition-all duration-300`}
           />
           {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
         </div>
@@ -88,7 +88,7 @@ export const Step1BasicDetails: React.FC<Props> = ({ data, onChange, errors }) =
             name="password"
             value={data.password}
             onChange={onChange}
-            className={`w-full px-4 py-3 rounded-xl border ${errors.password ? 'border-red-500' : 'border-slate-300 dark:border-white/10'} focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-slate-50 dark:bg-surface-dark dark:text-white`}
+            className={`w-full px-4 py-3 rounded-xl border ${errors.password ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 transition-all duration-300`}
           />
           {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
         </div>
@@ -100,7 +100,7 @@ export const Step1BasicDetails: React.FC<Props> = ({ data, onChange, errors }) =
             name="confirmPassword"
             value={data.confirmPassword}
             onChange={onChange}
-            className={`w-full px-4 py-3 rounded-xl border ${errors.confirmPassword ? 'border-red-500' : 'border-slate-300 dark:border-white/10'} focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-slate-50 dark:bg-surface-dark dark:text-white`}
+            className={`w-full px-4 py-3 rounded-xl border ${errors.confirmPassword ? 'border-red-500' : 'border-slate-200 dark:border-white/10'} focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 transition-all duration-300`}
           />
           {errors.confirmPassword && <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>}
         </div>
@@ -114,7 +114,7 @@ export const Step1BasicDetails: React.FC<Props> = ({ data, onChange, errors }) =
           name="referralCode"
           value={data.referralCode}
           onChange={onChange}
-          className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-slate-50 dark:bg-surface-dark dark:text-white"
+          className="w-full px-4 py-3 sm:py-3.5 rounded-xl border border-slate-200 dark:border-white/10 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 transition-all duration-300"
         />
       </div>
 

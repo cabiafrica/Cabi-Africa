@@ -79,7 +79,7 @@ export default function DriverPerksPage() {
                                 type="text"
                                 value={formData.partner}
                                 onChange={(e) => setFormData({ ...formData, partner: e.target.value })}
-                                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-cyan-500 outline-none"
+                                className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm"
                                 placeholder="e.g. Shell"
                             />
                         </div>
@@ -89,7 +89,7 @@ export default function DriverPerksPage() {
                                 type="text"
                                 value={formData.title}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-cyan-500 outline-none"
+                                className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm"
                                 placeholder="e.g. 5% Off Fuel"
                             />
                         </div>
@@ -98,7 +98,7 @@ export default function DriverPerksPage() {
                             <textarea
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-cyan-500 outline-none"
+                                className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm"
                                 rows={2}
                                 placeholder="Short description of the offer..."
                             />
@@ -108,7 +108,7 @@ export default function DriverPerksPage() {
                             <select
                                 value={formData.type}
                                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                                className="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-cyan-500 outline-none"
+                                className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm"
                             >
                                 <option value="CODE">Promo Code</option>
                                 <option value="LINK">External Link</option>

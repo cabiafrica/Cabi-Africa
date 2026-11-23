@@ -367,8 +367,8 @@ void main() {
     tester.view.devicePixelRatio = 3.0;
 
     await tester.pumpWidget(createWidgetUnderTest());
-    await tester.ensureVisible(find.text('Start Driving'));
-    await tester.tap(find.text('Start Driving'));
+    await tester.ensureVisible(find.text('AUTHENTICATE'));
+    await tester.tap(find.text('AUTHENTICATE'));
     await tester.pumpAndSettle();
 
     expect(find.text('Invalid email'), findsOneWidget);
@@ -390,8 +390,8 @@ void main() {
         find.byType(TextFormField).at(0), 'wrong@example.com');
     await tester.enterText(find.byType(TextFormField).at(1), 'wrongpass');
 
-    await tester.ensureVisible(find.text('Start Driving'));
-    await tester.tap(find.text('Start Driving'));
+    await tester.ensureVisible(find.text('AUTHENTICATE'));
+    await tester.tap(find.text('AUTHENTICATE'));
     await tester.pumpAndSettle();
 
     expect(find.textContaining('Invalid credentials'), findsOneWidget);
@@ -416,8 +416,8 @@ void main() {
         find.byType(TextFormField).at(0), 'driver@example.com');
     await tester.enterText(find.byType(TextFormField).at(1), 'password123');
 
-    await tester.ensureVisible(find.text('Start Driving'));
-    await tester.tap(find.text('Start Driving'));
+    await tester.ensureVisible(find.text('AUTHENTICATE'));
+    await tester.tap(find.text('AUTHENTICATE'));
 
     await tester.pump();
     await tester.pump(const Duration(seconds: 1)); // Auth logic

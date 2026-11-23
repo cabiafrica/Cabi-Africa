@@ -239,7 +239,7 @@ export default function CorporateRegisterPage() {
                                     onChange={handleChange}
                                     placeholder="e.g. Acme Africa Ltd"
                                     required
-                                    className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300"
                                 />
                             </div>
 
@@ -257,7 +257,7 @@ export default function CorporateRegisterPage() {
                                             onChange={handleChange}
                                             placeholder="corporate@company.com"
                                             required
-                                            className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                            className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl pl-11 pr-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300"
                                         />
                                     </div>
                                 </div>
@@ -275,7 +275,7 @@ export default function CorporateRegisterPage() {
                                             onChange={handleChange}
                                             placeholder="+254712345678"
                                             required
-                                            className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                            className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl pl-11 pr-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300"
                                         />
                                     </div>
                                 </div>
@@ -293,7 +293,7 @@ export default function CorporateRegisterPage() {
                                         onChange={handleChange}
                                         placeholder="e.g. CPR/2023/123456"
                                         required
-                                        className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                        className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300"
                                     />
                                 </div>
 
@@ -307,7 +307,7 @@ export default function CorporateRegisterPage() {
                                         value={formData.kraPin}
                                         onChange={handleChange}
                                         placeholder="e.g. P051234567Z"
-                                        className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                        className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300"
                                     />
                                 </div>
                             </div>
@@ -402,7 +402,7 @@ export default function CorporateRegisterPage() {
                                     onChange={handleChange}
                                     placeholder="e.g. David Kiprono"
                                     required
-                                    className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300"
                                 />
                             </div>
 
@@ -420,7 +420,7 @@ export default function CorporateRegisterPage() {
                                             onChange={handleChange}
                                             placeholder="••••••••"
                                             required
-                                            className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                            className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl pl-11 pr-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300"
                                         />
                                     </div>
                                 </div>
@@ -438,7 +438,7 @@ export default function CorporateRegisterPage() {
                                             onChange={handleChange}
                                             placeholder="••••••••"
                                             required
-                                            className="w-full bg-slate-50 dark:bg-brand-black/60 border border-slate-300 dark:border-white/15 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all"
+                                            className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl pl-11 pr-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300"
                                         />
                                     </div>
                                 </div>

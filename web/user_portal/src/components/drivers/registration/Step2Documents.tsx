@@ -147,7 +147,7 @@ export const Step2Documents: React.FC<Props> = ({ data, onChange, errors }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {renderUploadBox('Clear Passport Photo (Selfie)', 'passportPhotoUrl')}
+        {renderUploadBox('Official Passport Photo / Face Scan', 'passportPhotoUrl')}
         {renderUploadBox('National ID (Front & Back)', 'nationalIdUrl')}
         {renderUploadBox('Driving License', 'drivingLicenseUrl')}
         {renderUploadBox('PSV Badge (Optional)', 'psvBadgeUrl', false)}

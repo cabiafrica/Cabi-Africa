@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, Car, Download, Smartphone } from 'lucide-react';
+import { ArrowRight, Car } from 'lucide-react';
 
 export default function ExecutiveHero() {
     const scrollToBooking = () => {
@@ -49,19 +49,6 @@ export default function ExecutiveHero() {
                         >
                             <Car className="w-4 h-4 text-[#D4AF37]" />
                             <span>Drive with Cabi</span>
-                        </Link>
-                    </div>
-
-                    {/* Dedicated Download Page CTA */}
-                    <div className="pt-2">
-                        <Link
-                            href="/download"
-                            className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-neutral-900 dark:bg-black text-white hover:bg-neutral-800 border border-[#D4AF37]/50 text-xs font-bold transition-all shadow-md hover:-translate-y-0.5 active:scale-95"
-                            title="Download CABI Africa Mobile Apps"
-                        >
-                            <Smartphone className="w-4 h-4 text-[#D4AF37]" />
-                            <span>Download Official Apps (Android &amp; iOS)</span>
-                            <Download className="w-3.5 h-3.5 text-[#D4AF37]" />
                         </Link>
                     </div>
                 </div>

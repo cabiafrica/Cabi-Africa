@@ -57,6 +57,20 @@ class MainActivity : FlutterActivity() {
                     stopService(intent)
                     result.success(true)
                 }
+                "bringToForeground" -> {
+                    try {
+                        val intent = Intent(this, MainActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                                    Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or
+                                    Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        }
+                        startActivity(intent)
+                        FloatingBubbleService.instance?.openDriverApp()
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error("LAUNCH_ERROR", e.message, null)
+                    }
+                }
                 else -> result.notImplemented()
             }
         }

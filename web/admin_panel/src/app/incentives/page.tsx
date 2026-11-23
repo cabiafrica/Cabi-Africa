@@ -73,7 +73,7 @@ export default function IncentivesPage() {
                             <select
                                 value={formData.type}
                                 onChange={(e) => setFormData({ ...formData, type: e.target.value as IncentiveType })}
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm"
                             >
                                 <option value="CONSECUTIVE_TRIPS">Consecutive Trips</option>
                                 <option value="REFERRAL">Referral</option>
@@ -86,7 +86,7 @@ export default function IncentivesPage() {
                                 type="text"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm"
                                 placeholder="3 Trips Streak Bonus"
                             />
                         </div>
@@ -95,7 +95,7 @@ export default function IncentivesPage() {
                             <textarea
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm"
                                 rows={2}
                                 placeholder="Complete 3 trips in a row without canceling"
                             />
@@ -106,7 +106,7 @@ export default function IncentivesPage() {
                                 type="number"
                                 value={formData.threshold}
                                 onChange={(e) => setFormData({ ...formData, threshold: parseInt(e.target.value) })}
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm"
                             />
                         </div>
                         <div>
@@ -116,7 +116,7 @@ export default function IncentivesPage() {
                                 step="0.01"
                                 value={formData.bonusAmount}
                                 onChange={(e) => setFormData({ ...formData, bonusAmount: parseFloat(e.target.value) })}
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm"
                             />
                         </div>
                     </div>

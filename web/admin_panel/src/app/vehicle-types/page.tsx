@@ -189,20 +189,20 @@ export default function VehicleTypesPage() {
                             <form onSubmit={handleSave} className="p-6 space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Class Name</label>
-                                    <input type="text" defaultValue={editingType?.name} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-yellow-400" />
+                                    <input type="text" defaultValue={editingType?.name} className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                    <textarea defaultValue={editingType?.description} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-yellow-400" rows={3}></textarea>
+                                    <textarea defaultValue={editingType?.description} className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm" rows={3}></textarea>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Base Fare ($)</label>
-                                        <input type="number" step="0.01" defaultValue={editingType?.baseFare} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-yellow-400" />
+                                        <input type="number" step="0.01" defaultValue={editingType?.baseFare} className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm" />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Per Mile ($)</label>
-                                        <input type="number" step="0.01" defaultValue={editingType?.perMile} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-yellow-400" />
+                                        <input type="number" step="0.01" defaultValue={editingType?.perMile} className="w-full px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-white/10 rounded-xl bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm" />
                                     </div>
                                 </div>
 

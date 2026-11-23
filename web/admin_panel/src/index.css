@@ -88,7 +88,7 @@ body {
   @apply btn border border-primary text-primary hover:bg-primary hover:text-black;
 }
 
-/* Base styles for inputs */
+/* Base styles for inputs matching user login forms - clean, well padded, high contrast */
 @layer base {
 
   input[type="text"],
@@ -98,9 +98,12 @@ body {
   input[type="search"],
   input[type="tel"],
   input[type="url"],
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
   textarea,
   select {
-    @apply bg-white dark:bg-card-dark text-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-slate-400;
+    @apply px-4 py-3 sm:py-3.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm;
   }
 }
 

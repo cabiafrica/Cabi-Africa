@@ -165,7 +165,7 @@ export default function AuthWidget() {
                         : 'bg-white text-black hover:bg-gray-200 shadow-white/10'
                         }`}
                 >
-                    {loading ? 'Processing...' : (mode === 'login' ? 'Log In' : (role === 'driver' ? 'Apply to Drive' : 'Create Account'))}
+                    {loading ? 'Processing...' : (mode === 'login' ? (role === 'driver' ? 'Authenticate' : 'Log In') : (role === 'driver' ? 'Apply to Drive' : 'Create Account'))}
                 </button>
 
                 {/* Social / App Links */}

@@ -92,7 +92,7 @@ const AdvancedFilters = ({ filters, onFilterChange, onClear }: AdvancedFiltersPr
                                     <select
                                         value={activeFilters[filter.id] || ''}
                                         onChange={(e) => handleFilterChange(filter.id, e.target.value)}
-                                        className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500/50 focus:outline-none transition-colors"
+                                        className="w-full px-4 py-3 sm:py-3.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-brand-black/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500/50 transition-all duration-300 shadow-sm text-sm"
                                     >
                                         <option value="">All</option>
                                         {filter.options?.map((option) => (
@@ -138,7 +138,7 @@ const AdvancedFilters = ({ filters, onFilterChange, onClear }: AdvancedFiltersPr
                                         type="date"
                                         value={activeFilters[filter.id] || ''}
                                         onChange={(e) => handleFilterChange(filter.id, e.target.value)}
-                                        className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500/50 focus:outline-none transition-colors"
+                                        className="w-full px-4 py-3 sm:py-3.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-brand-black/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500/50 transition-all duration-300 shadow-sm text-sm"
                                     />
                                 )}
 
@@ -154,7 +154,7 @@ const AdvancedFilters = ({ filters, onFilterChange, onClear }: AdvancedFiltersPr
                                                 })
                                             }
                                             placeholder="Start date"
-                                            className="bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500/50 focus:outline-none transition-colors"
+                                            className="px-4 py-3 sm:py-3.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-brand-black/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500/50 transition-all duration-300 shadow-sm text-sm"
                                         />
                                         <input
                                             type="date"
@@ -166,7 +166,7 @@ const AdvancedFilters = ({ filters, onFilterChange, onClear }: AdvancedFiltersPr
                                                 })
                                             }
                                             placeholder="End date"
-                                            className="bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500/50 focus:outline-none transition-colors"
+                                            className="px-4 py-3 sm:py-3.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-brand-black/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500/50 transition-all duration-300 shadow-sm text-sm"
                                         />
                                     </div>
                                 )}
