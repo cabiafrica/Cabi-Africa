@@ -1,66 +1,141 @@
-import { Controller, Get, Post, Put, Body, Param, Query } from '@nestjs/common';
-import { SupportService } from './support.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Body,
+  Param,
+  Query,
+  Req,
+  UseGuards,
+  UnauthorizedException,
+  ForbiddenException
+} from '@nestjs/common';
+import { SupportService, CreateTicketDto, TicketReplyDto } from './support.service';
+import { JwtAuthGuard, Public } from '@cabi/backend/rbac';
 
 @Controller('support')
+@UseGuards(JwtAuthGuard)
 export class SupportController {
-    constructor(private readonly supportService: SupportService) { }
+  constructor(private readonly supportService: SupportService) {}
 
-    @Get('categories')
-    getCategories() {
-        return this.supportService.getCategories();
+  @Public()
+  @Get('categories')
+  getCategories() {
+    return this.supportService.getCategories();
+  }
+
+  // --- CLIENT ENDPOINTS ---
+
+  @Public()
+  @Post('tickets')
+  async createTicket(@Body() body: CreateTicketDto, @Req() req: any) {
+    const authenticatedUserId = req.user?.id || req.user?.userId;
+    return this.supportService.createTicket(body, authenticatedUserId);
+  }
+
+  @Get('tickets/my')
+  async getMyTickets(@Req() req: any, @Query('userId') queryUserId?: string) {
+    const userId = req.user?.id || req.user?.userId || queryUserId;
+    if (!userId) {
+      throw new UnauthorizedException('Authentication required');
+    }
+    return this.supportService.getMyTickets(userId);
+  }
+
+  @Get('tickets/:id')
+  async getTicket(@Param('id') id: string, @Req() req: any, @Query('userId') queryUserId?: string) {
+    const userId = req.user?.id || req.user?.userId || queryUserId;
+    const role = (req.user?.role || '').toUpperCase();
+    const isAdmin = ['ADMIN', 'SUPER_ADMIN', 'DISPATCHER', 'SUPPORT_AGENT'].includes(role);
+
+    if (!userId && !isAdmin) {
+      throw new UnauthorizedException('Authentication required');
     }
 
-    // Client Endpoints
-    @Post('tickets')
-    createTicket(@Body() body: any) {
-        // In real app, userId comes from request context/JWT
-        return this.supportService.createTicket(body.userId, body.userType, body.subject, body.category, body.description);
+    return this.supportService.getTicket(userId || '', id, isAdmin);
+  }
+
+  @Post('tickets/:id/reply')
+  async reply(
+    @Param('id') id: string,
+    @Body() body: TicketReplyDto & { userId?: string; senderName?: string },
+    @Req() req: any
+  ) {
+    const userId = req.user?.id || req.user?.userId || body.userId;
+    const role = (req.user?.role || '').toUpperCase();
+    const isAdmin = ['ADMIN', 'SUPER_ADMIN', 'DISPATCHER', 'SUPPORT_AGENT'].includes(role);
+    const senderRole = isAdmin ? 'AGENT' : 'USER';
+    const senderName = req.user?.fullName || req.user?.name || body.senderName || (isAdmin ? 'Support Desk' : 'Client');
+
+    if (!userId && !isAdmin) {
+      throw new UnauthorizedException('Authentication required');
     }
 
-    @Get('tickets/my')
-    getMyTickets(@Query('userId') userId: string) {
-        return this.supportService.getMyTickets(userId);
-    }
+    return this.supportService.replyToTicket(id, userId || 'agent', senderRole, senderName, body);
+  }
 
-    @Get('tickets/:id')
-    getTicket(@Param('id') id: string, @Query('userId') userId: string) {
-        return this.supportService.getTicket(userId, id);
+  @Post('tickets/:id/csat')
+  async submitCsat(
+    @Param('id') id: string,
+    @Body() body: { rating: number; feedback?: string },
+    @Req() req: any
+  ) {
+    const userId = req.user?.id || req.user?.userId;
+    if (!userId) {
+      throw new UnauthorizedException('Authentication required');
     }
+    return this.supportService.submitCsat(userId, id, body.rating, body.feedback);
+  }
 
-    @Post('tickets/:id/reply')
-    reply(@Param('id') id: string, @Body() body: any) {
-        return this.supportService.replyToTicket(body.userId, id, body.text);
-    }
+  // --- ADMIN & DISPATCH ENDPOINTS ---
 
-    // Admin Endpoints
-    @Get('admin/tickets')
-    getAll(@Query('status') status: string) {
-        return this.supportService.getAllTickets(status);
+  @Get('admin/tickets')
+  async getAllTickets(@Req() req: any, @Query() query: any) {
+    const role = (req.user?.role || '').toUpperCase();
+    const isAdmin = ['ADMIN', 'SUPER_ADMIN', 'DISPATCHER', 'SUPPORT_AGENT'].includes(role);
+    if (req.user && !isAdmin) {
+      throw new ForbiddenException('Admin privilege required');
     }
+    return this.supportService.getAllTickets(query);
+  }
 
-    @Post('admin/tickets/:id/reply')
-    adminReply(@Param('id') id: string, @Body() body: any) {
-        return this.supportService.adminReply(id, body.text, body.cannedKey);
+  @Post('admin/tickets/:id/reply')
+  async adminReply(@Param('id') id: string, @Body() body: TicketReplyDto, @Req() req: any) {
+    const role = (req.user?.role || '').toUpperCase();
+    const isAdmin = ['ADMIN', 'SUPER_ADMIN', 'DISPATCHER', 'SUPPORT_AGENT'].includes(role);
+    if (req.user && !isAdmin) {
+      throw new ForbiddenException('Admin privilege required');
     }
+    const agentName = req.user?.fullName || req.user?.name || 'Support Desk';
+    const agentId = req.user?.id || 'agent';
 
-    @Put('admin/tickets/:id/status')
-    updateStatus(@Param('id') id: string, @Body() body: any) {
-        return this.supportService.updateStatus(id, body.status);
-    }
+    return this.supportService.replyToTicket(id, agentId, 'AGENT', agentName, body);
+  }
 
-    @Post('admin/tickets/merge')
-    mergeTickets(@Body() body: { primaryId: string, secondaryIds: string[] }) {
-        return this.supportService.mergeTickets(body.primaryId, body.secondaryIds);
+  @Put('admin/tickets/:id/status')
+  async updateStatus(@Param('id') id: string, @Body() body: { status: string; assignedAgentId?: string }, @Req() req: any) {
+    const role = (req.user?.role || '').toUpperCase();
+    const isAdmin = ['ADMIN', 'SUPER_ADMIN', 'DISPATCHER', 'SUPPORT_AGENT'].includes(role);
+    if (req.user && !isAdmin) {
+      throw new ForbiddenException('Admin privilege required');
     }
+    return this.supportService.updateStatus(id, body.status, body.assignedAgentId);
+  }
 
-    @Get('admin/canned-responses')
-    getCanned() {
-        return this.supportService.getCannedResponses();
-    }
+  @Public()
+  @Get('admin/canned-responses')
+  getCanned() {
+    return this.supportService.getCannedResponses();
+  }
 
-    @Get('admin/performance')
-    getPerformance() {
-        return this.supportService.getPerformanceStats();
+  @Get('admin/performance')
+  async getPerformance(@Req() req: any) {
+    const role = (req.user?.role || '').toUpperCase();
+    const isAdmin = ['ADMIN', 'SUPER_ADMIN', 'DISPATCHER', 'SUPPORT_AGENT'].includes(role);
+    if (req.user && !isAdmin) {
+      throw new ForbiddenException('Admin privilege required');
     }
+    return this.supportService.getPerformanceStats();
+  }
 }
-```

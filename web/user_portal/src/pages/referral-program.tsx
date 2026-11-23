@@ -369,11 +369,11 @@ export default function ReferralProgramPage() {
                 </p>
                 <div className="flex flex-wrap gap-4 pt-1">
                   <Link
-                    href="/terms-of-service"
+                    href="/referral-terms"
                     className="inline-flex items-center gap-2 text-sm font-extrabold text-slate-900 dark:text-[#ffe088] hover:underline"
                   >
                     <FileText className="w-4 h-4 text-[#D4AF37]" />
-                    Review Terms &amp; Conditions &rarr;
+                    Review Official Referral Terms &amp; Conditions &rarr;
                   </Link>
                   <Link
                     href="/contact"

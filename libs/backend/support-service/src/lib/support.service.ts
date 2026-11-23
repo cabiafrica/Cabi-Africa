@@ -1,226 +1,332 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException, Logger } from '@nestjs/common';
+import { PrismaService } from '@cabi/backend/database';
 
-export interface Ticket {
-    id: string;
-    userId: string;
-    userType: 'PASSENGER' | 'DRIVER';
-    subject: string;
-    category: string;
-    description: string;
-    status: 'NEW' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
-    tags: string[];
-    priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-    slaDueAt: Date;
-    assignedAgentId?: string;
-    csatRating?: number;
-    createdAt: Date;
-    updatedAt: Date;
-    conversation: TicketMessage[];
+export interface CreateTicketDto {
+  userId?: string;
+  userType?: string;
+  subject: string;
+  category: string;
+  description: string;
+  rideId?: string;
+  contactEmail?: string;
+  contactPhone?: string;
 }
 
-export interface TicketMessage {
-    sender: 'USER' | 'AGENT';
-    text: string;
-    timestamp: Date;
+export interface TicketReplyDto {
+  text: string;
+  attachments?: any[];
+  isInternal?: boolean;
 }
 
 @Injectable()
 export class SupportService {
-    private tickets: Ticket[] = [];
-    private categories: string[] = ['Payment Issue', 'Lost Item', 'Account Issue', 'Ride Feedback', 'Other'];
-    private cannedResponses = new Map<string, string>();
+  private readonly logger = new Logger(SupportService.name);
+  private categories: string[] = [
+    'Payment Issue',
+    'Lost Item',
+    'Account Issue',
+    'Ride Feedback',
+    'Safety & Security',
+    'Corporate Billing',
+    'SACCO Inquiries',
+    'Other'
+  ];
 
-    constructor() {
-        // Story 62.8: Canned Responses
-        this.cannedResponses.set('greeting', 'Hi there! Thanks for reaching out to Cabi Support.');
-        this.cannedResponses.set('closing', 'Let us know if you need anything else. Safe rides!');
-        this.cannedResponses.set('refund_processed', 'We have processed your refund. It should appear in 3-5 days.');
-    }
+  private cannedResponses = new Map<string, string>([
+    ['greeting', 'Hello! Thank you for reaching out to Cabi Africa VIP Concierge & Support.'],
+    ['closing', 'Please let us know if you require any further assistance. Safe travels!'],
+    ['refund_processed', 'Your fare adjustment has been processed and returned to your Cabi Wallet.'],
+    ['lost_item_investigating', 'We have alerted the captain and Sacco dispatch patrol regarding your reported item.'],
+    ['safety_escalated', 'Your report has been escalated with priority to the Sacco Safety & Compliance team.']
+  ]);
 
-    // --- CLIENT FACING ---
+  constructor(private readonly prisma: PrismaService) {}
 
-    async getMyTickets(userId: string) {
-        return this.tickets.filter(t => t.userId === userId).sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
-    }
+  getCategories(): string[] {
+    return this.categories;
+  }
 
-    async getTicket(userId: string, ticketId: string) {
-        // Basic authorization check
-        return this.tickets.find(t => t.id === ticketId && t.userId === userId);
-    }
+  getCannedResponses(): Record<string, string> {
+    return Object.fromEntries(this.cannedResponses);
+  }
 
-    async createTicket(userId: string, userType: 'PASSENGER' | 'DRIVER', subject: string, category: string, description: string) {
-        // Story 62.5: Automated Tagging
-        const tags = [];
-        if (description.toLowerCase().includes('urgent') || description.toLowerCase().includes('safety')) tags.push('safety');
-        if (category === 'Payment Issue') tags.push('financial');
+  // --- CLIENT ENDPOINTS ---
 
-        // Story 62.7: SLA Tracking (Safety = 1h, Payment = 24h, Default = 48h)
-        const now = new Date();
-        let slaHours = 48;
-        if (tags.includes('safety')) slaHours = 1;
-        else if (tags.includes('financial')) slaHours = 24;
+  async createTicket(dto: CreateTicketDto, authenticatedUserId?: string) {
+    let resolvedUserId = authenticatedUserId || dto.userId;
 
-        const slaDueAt = new Date(now.getTime() + slaHours * 60 * 60 * 1000);
-
-        const newTicket: Ticket = {
-            id: `ticket_${Date.now()}`,
-            userId,
-            userType,
-            subject,
-            category,
-            description,
-            status: 'NEW',
-            tags,
-            priority: tags.includes('safety') ? 'CRITICAL' : 'MEDIUM',
-            slaDueAt,
-            createdAt: now,
-            updatedAt: now,
-            conversation: [
-                { sender: 'USER', text: description, timestamp: now } // Initial message is the description
+    // If unauthenticated guest (e.g. from public contact form), look up or link to guest/prospect
+    if (!resolvedUserId) {
+      if (dto.contactEmail || dto.contactPhone) {
+        const existing = await this.prisma.user.findFirst({
+          where: {
+            OR: [
+              ...(dto.contactEmail ? [{ email: dto.contactEmail.toLowerCase().trim() }] : []),
+              ...(dto.contactPhone ? [{ phone: dto.contactPhone.trim() }] : [])
             ]
-        };
-        this.tickets.push(newTicket);
-        return newTicket;
-    }
-
-    async replyToTicket(userId: string, ticketId: string, text: string) {
-        const ticket = this.tickets.find(t => t.id === ticketId && t.userId === userId);
-        if (!ticket) throw new Error('Ticket not found');
-
-        ticket.conversation.push({ sender: 'USER', text, timestamp: new Date() });
-        ticket.updatedAt = new Date();
-        // Re-open if resolved?
-        if (ticket.status === 'RESOLVED') ticket.status = 'IN_PROGRESS';
-
-        return ticket;
-    }
-
-    // Story 62.4: CSAT Survey
-    async submitCsat(userId: string, ticketId: string, rating: number) {
-        const ticket = this.tickets.find(t => t.id === ticketId && t.userId === userId);
-        if (!ticket) throw new Error('Ticket not found');
-        if (ticket.status !== 'RESOLVED') throw new Error('Ticket must be resolved to rate');
-        ticket.csatRating = rating;
-        return { status: 'rated' };
-    }
-
-    async getCategories() {
-        return this.categories;
-    }
-
-    // --- ADMIN FACING ---
-
-    async getAllTickets(status?: string, tag?: string) {
-        let result = this.tickets;
-        if (status) result = result.filter(t => t.status === status);
-        if (tag) result = result.filter(t => t.tags.includes(tag));
-        return result.sort((a, b) => a.slaDueAt.getTime() - b.slaDueAt.getTime()); // Sort by SLA urgency
-    }
-
-    async adminGetTicket(ticketId: string) {
-        return this.tickets.find(t => t.id === ticketId);
-    }
-
-    async adminReply(ticketId: string, text: string, cannedKey?: string) {
-        const ticket = this.tickets.find(t => t.id === ticketId);
-        if (!ticket) throw new Error('Ticket not found');
-
-        let replyText = text;
-        if (cannedKey && this.cannedResponses.has(cannedKey)) {
-            replyText = this.cannedResponses.get(cannedKey) + ' ' + text;
-        }
-
-        ticket.conversation.push({ sender: 'AGENT', text: replyText, timestamp: new Date() });
-        ticket.updatedAt = new Date();
-        return ticket;
-    }
-
-    async updateStatus(ticketId: string, status: any) {
-        const ticket = this.tickets.find(t => t.id === ticketId);
-        if (!ticket) throw new Error('Ticket not found');
-        ticket.status = status;
-        return ticket;
-    }
-
-    // Story 62.6: Ticket Merging
-    async mergeTickets(primaryTicketId: string, secondaryTicketIds: string[]) {
-        const primary = this.tickets.find(t => t.id === primaryTicketId);
-        if (!primary) throw new Error("Primary ticket not found");
-
-        secondaryTicketIds.forEach(sid => {
-            const secondary = this.tickets.find(t => t.id === sid);
-            if (secondary) {
-                // Move messages
-                primary.conversation.push(...secondary.conversation);
-                secondary.status = 'CLOSED';
-                secondary.tags.push('merged');
-            }
+          }
         });
-        // Sort convo by time
-        primary.conversation.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
-        return primary;
+        if (existing) {
+          resolvedUserId = existing.id;
+        }
+      }
     }
 
-    // Story 62.8: Get Canned Responses
-    async getCannedResponses() {
-        return Array.from(this.cannedResponses.entries()).map(([key, value]) => ({ key, value }));
+    if (!resolvedUserId) {
+      // Find or link to system guest user, or require authentication
+      const systemGuest = await this.prisma.user.findFirst({
+        where: { role: 'PASSENGER' }
+      });
+      resolvedUserId = systemGuest ? systemGuest.id : 'guest-user';
     }
 
-    // Story 62.10: Performance Stats
-    async getPerformanceStats() {
-        // Mock stats
-        return {
-            avgResponseTimeMinutes: 45,
-            ticketsResolvedLast24h: 120,
-            avgCsat: 4.8,
-            slaBreachCount: 2
-        };
+    const descLower = (dto.description || '').toLowerCase();
+    const isSafety = descLower.includes('urgent') || descLower.includes('safety') || dto.category === 'Safety & Security';
+    const isFinancial = dto.category === 'Payment Issue' || dto.category === 'Corporate Billing';
+
+    const now = new Date();
+    let slaHours = 48;
+    let priority = 'MEDIUM';
+
+    if (isSafety) {
+      slaHours = 1;
+      priority = 'CRITICAL';
+    } else if (isFinancial) {
+      slaHours = 24;
+      priority = 'HIGH';
     }
 
-    // Story 48.1: Driver Chat
-    private chatRooms = new Map<string, any[]>(); // roomId -> messages
+    const slaDueAt = new Date(now.getTime() + slaHours * 60 * 60 * 1000);
+    const ticketNumber = `TK-${Date.now().toString().slice(-6)}`;
 
-    async getChatRooms(location: string) {
-        // Real implementation would return nearby rooms based on location
-        return [];
+    const ticket = await this.prisma.supportTicket.create({
+      data: {
+        ticketNumber,
+        userId: resolvedUserId,
+        userType: dto.userType || 'PASSENGER',
+        subject: dto.subject || 'Support Request',
+        category: dto.category || 'Other',
+        description: dto.description,
+        status: 'NEW',
+        priority,
+        slaDueAt,
+        rideId: dto.rideId,
+        messages: {
+          create: {
+            senderId: resolvedUserId,
+            senderRole: 'USER',
+            senderName: 'Client',
+            message: dto.description,
+            isInternal: false
+          }
+        }
+      },
+      include: {
+        messages: {
+          orderBy: { createdAt: 'asc' }
+        }
+      }
+    });
+
+    this.logger.log(`Created support ticket ${ticket.ticketNumber} for user ${resolvedUserId} [${priority}]`);
+    return ticket;
+  }
+
+  async getMyTickets(userId: string) {
+    return this.prisma.supportTicket.findMany({
+      where: { userId },
+      include: {
+        messages: {
+          where: { isInternal: false },
+          orderBy: { createdAt: 'asc' }
+        }
+      },
+      orderBy: { updatedAt: 'desc' }
+    });
+  }
+
+  async getTicket(userId: string, ticketId: string, isAdmin = false) {
+    const whereClause: any = { id: ticketId };
+    if (!isAdmin) {
+      whereClause.userId = userId;
     }
 
-    async sendChatMessage(roomId: string, senderId: string, text: string, type: 'TEXT' | 'HELP_REQUEST' = 'TEXT') {
-        const messages = this.chatRooms.get(roomId) || [];
-        const message = {
-            id: `msg_${Date.now()}`,
-            senderId,
-            text: this.filterProfanity(text),
-            type,
-            timestamp: new Date()
-        };
-        messages.push(message);
-        this.chatRooms.set(roomId, messages);
-        return message;
+    const ticket = await this.prisma.supportTicket.findFirst({
+      where: whereClause,
+      include: {
+        messages: {
+          where: isAdmin ? {} : { isInternal: false },
+          orderBy: { createdAt: 'asc' }
+        },
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            phone: true,
+            role: true
+          }
+        }
+      }
+    });
+
+    if (!ticket) {
+      throw new NotFoundException(`Ticket ${ticketId} not found`);
     }
 
-    async getChatMessages(roomId: string) {
-        return this.chatRooms.get(roomId) || [];
+    return ticket;
+  }
+
+  async replyToTicket(
+    ticketId: string,
+    senderId: string,
+    senderRole: 'USER' | 'AGENT' | 'SYSTEM',
+    senderName: string,
+    replyDto: TicketReplyDto
+  ) {
+    const ticket = await this.prisma.supportTicket.findUnique({
+      where: { id: ticketId }
+    });
+
+    if (!ticket) {
+      throw new NotFoundException(`Ticket ${ticketId} not found`);
     }
 
-    private filterProfanity(text: string) {
-        return text.replace(/badword/gi, '****');
+    // If client is replying, verify ownership
+    if (senderRole === 'USER' && ticket.userId !== senderId) {
+      throw new ForbiddenException('You do not have permission to reply to this ticket');
     }
 
-    // Story 24.3: Admin Chat
-    async sendAdminMessage(ticketId: string, agentId: string, text: string) {
-        // Logic to send message as agent
-        const ticket = await this.adminReply(ticketId, text);
-        // In real app: Notify user via push/socket
-        return ticket;
+    const message = await this.prisma.supportMessage.create({
+      data: {
+        ticketId,
+        senderId,
+        senderRole,
+        senderName: senderName || (senderRole === 'AGENT' ? 'Support Concierge' : 'Client'),
+        message: replyDto.text,
+        attachments: replyDto.attachments || [],
+        isInternal: !!replyDto.isInternal
+      }
+    });
+
+    // Update ticket status
+    let nextStatus = ticket.status;
+    if (senderRole === 'USER' && (ticket.status === 'RESOLVED' || ticket.status === 'NEW')) {
+      nextStatus = 'IN_PROGRESS';
+    } else if (senderRole === 'AGENT' && !replyDto.isInternal && ticket.status === 'NEW') {
+      nextStatus = 'IN_PROGRESS';
     }
 
-    // Story 24.4: Contextual Info
-    async getContextualInfo(userId: string, tripId?: string) {
-        // Full implementation will fetch aggregation from UserService and RideService
-        return {
-            user: null,
-            trip: null
-        };
+    await this.prisma.supportTicket.update({
+      where: { id: ticketId },
+      data: {
+        status: nextStatus,
+        updatedAt: new Date()
+      }
+    });
+
+    return message;
+  }
+
+  async submitCsat(userId: string, ticketId: string, rating: number, feedback?: string) {
+    if (rating < 1 || rating > 5) {
+      throw new BadRequestException('Rating must be between 1 and 5');
     }
+
+    const ticket = await this.prisma.supportTicket.findFirst({
+      where: { id: ticketId, userId }
+    });
+
+    if (!ticket) {
+      throw new NotFoundException('Ticket not found');
+    }
+
+    return this.prisma.supportTicket.update({
+      where: { id: ticketId },
+      data: {
+        csatRating: Math.round(rating),
+        csatFeedback: feedback || null
+      }
+    });
+  }
+
+  // --- ADMIN ENDPOINTS ---
+
+  async getAllTickets(params: { status?: string; category?: string; priority?: string; page?: number; limit?: number }) {
+    const where: any = {};
+    if (params.status) where.status = params.status;
+    if (params.category) where.category = params.category;
+    if (params.priority) where.priority = params.priority;
+
+    const page = params.page && params.page > 0 ? Number(params.page) : 1;
+    const limit = params.limit && params.limit > 0 ? Number(params.limit) : 50;
+
+    const [data, total] = await Promise.all([
+      this.prisma.supportTicket.findMany({
+        where,
+        include: {
+          user: {
+            select: { id: true, fullName: true, email: true, phone: true }
+          },
+          messages: {
+            take: 1,
+            orderBy: { createdAt: 'desc' }
+          }
+        },
+        orderBy: [{ priority: 'desc' }, { updatedAt: 'desc' }],
+        skip: (page - 1) * limit,
+        take: limit
+      }),
+      this.prisma.supportTicket.count({ where })
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    };
+  }
+
+  async updateStatus(ticketId: string, status: string, assignedAgentId?: string) {
+    const ticket = await this.prisma.supportTicket.findUnique({ where: { id: ticketId } });
+    if (!ticket) throw new NotFoundException('Ticket not found');
+
+    return this.prisma.supportTicket.update({
+      where: { id: ticketId },
+      data: {
+        status,
+        ...(assignedAgentId !== undefined ? { assignedAgentId } : {})
+      }
+    });
+  }
+
+  async getPerformanceStats() {
+    const now = new Date();
+    const [total, resolved, open, breachedSla, avgCsat] = await Promise.all([
+      this.prisma.supportTicket.count(),
+      this.prisma.supportTicket.count({ where: { status: 'RESOLVED' } }),
+      this.prisma.supportTicket.count({ where: { status: { in: ['NEW', 'IN_PROGRESS'] } } }),
+      this.prisma.supportTicket.count({
+        where: {
+          status: { in: ['NEW', 'IN_PROGRESS'] },
+          slaDueAt: { lt: now }
+        }
+      }),
+      this.prisma.supportTicket.aggregate({
+        _avg: { csatRating: true },
+        where: { csatRating: { not: null } }
+      })
+    ]);
+
+    return {
+      totalTickets: total,
+      resolvedTickets: resolved,
+      openTickets: open,
+      breachedSlaTickets: breachedSla,
+      averageCsat: Number(avgCsat._avg.csatRating?.toFixed(2)) || 5.0,
+      slaComplianceRate: total > 0 ? Number((((total - breachedSla) / total) * 100).toFixed(1)) : 100
+    };
+  }
 }

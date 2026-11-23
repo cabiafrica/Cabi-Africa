@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
 import 'report_lost_item_screen.dart';
+import 'support_chat_screen.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({super.key});
@@ -210,12 +211,29 @@ class _SupportScreenState extends State<SupportScreen> {
             _buildContactCard(
               isDark: isDark,
               gold: gold,
+              icon: Icons.chat_bubble_outline_rounded,
+              title: '24/7 Live Support Chat',
+              subtitle: 'Message directly with our active concierge & dispatch desk',
+              badge: 'LIVE CHAT',
+              badgeColor: AppTheme.successGreen,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SupportChatScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 10),
+
+            _buildContactCard(
+              isDark: isDark,
+              gold: gold,
               icon: Icons.phone_in_talk_rounded,
-              title: 'Captain VIP Hotline',
-              subtitle: 'Speak directly with senior dispatch (+254 700 000 000)',
-              badge: 'PRIORITY',
+              title: 'Cabi Customer Hotline',
+              subtitle: 'Speak directly with senior dispatch (0758 777 222)',
+              badge: '24/7',
               badgeColor: gold,
-              onTap: () => _makePhoneCall('+254700000000'),
+              onTap: () => _makePhoneCall('+254758777222'),
             ),
             const SizedBox(height: 10),
 
@@ -223,11 +241,11 @@ class _SupportScreenState extends State<SupportScreen> {
               isDark: isDark,
               gold: gold,
               icon: Icons.email_outlined,
-              title: 'Executive Desk Email',
-              subtitle: 'concierge@cabi.africa • 15 min response time',
+              title: 'Customer Support Email',
+              subtitle: 'cabifastafrica@gmail.com • 24/7 support desk',
               badge: 'OFFICIAL',
               badgeColor: isDark ? Colors.white60 : AppTheme.porcelainTextSecondary,
-              onTap: () => _sendEmail('concierge@cabi.africa'),
+              onTap: () => _sendEmail('cabifastafrica@gmail.com'),
             ),
             const SizedBox(height: 10),
 

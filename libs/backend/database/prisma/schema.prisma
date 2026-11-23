@@ -83,6 +83,7 @@ model User {
   referralFraudAlerts    ReferralFraudAlert[]       @relation("UserFraudAlerts")
   relatedFraudAlerts     ReferralFraudAlert[]       @relation("RelatedFraudAlerts")
   fleetManagerProfile    FleetManager?
+  supportTickets         SupportTicket[]            @relation("UserSupportTickets")
 
   @@index([role])
   @@index([createdAt])
@@ -1808,3 +1809,50 @@ model CorporateInvoice {
   @@index([status])
   @@map("corporate_invoices")
 }
+
+model SupportTicket {
+  id              String           @id @default(uuid())
+  ticketNumber    String           @unique
+  userId          String
+  userType        String           @default("PASSENGER") // PASSENGER, DRIVER, CORPORATE, GUEST
+  subject         String
+  category        String           // Payment Issue, Lost Item, Account Issue, Ride Feedback, Safety, Other
+  description     String
+  status          String           @default("NEW") // NEW, IN_PROGRESS, RESOLVED, CLOSED
+  priority        String           @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  slaDueAt        DateTime?
+  assignedAgentId String?
+  csatRating      Int?
+  csatFeedback    String?
+  rideId          String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  user            User             @relation("UserSupportTickets", fields: [userId], references: [id], onDelete: Cascade)
+  messages        SupportMessage[]
+
+  @@index([userId, status])
+  @@index([status])
+  @@index([category])
+  @@index([priority])
+  @@index([assignedAgentId])
+  @@map("support_tickets")
+}
+
+model SupportMessage {
+  id          String        @id @default(uuid())
+  ticketId    String
+  senderId    String?
+  senderRole  String        // USER, AGENT, SYSTEM
+  senderName  String?
+  message     String
+  attachments Json?         @default("[]")
+  isInternal  Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+
+  ticket      SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId, createdAt])
+  @@map("support_messages")
+}
+

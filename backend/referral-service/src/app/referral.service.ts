@@ -28,7 +28,7 @@ export interface ReferralConfig {
     grandfatherExisting: boolean; // true - previously referred remain grandfathered
     disqualifyingFareThreshold: number; // 300 KES
     maxPlatformFeeDeductionPercent: number; // 40% max deduction from platform net
-    escrowHoldingHours: number; // 72 hours
+    escrowHoldingHours: number; // 168 hours (7 days dispute clearance)
   };
   fraudDetection: {
     deviceFingerprintBlock: boolean; // Block if IMEI/device ID matches referrer
@@ -105,7 +105,7 @@ export class ReferralService {
         grandfatherExisting: true,
         disqualifyingFareThreshold: 300,
         maxPlatformFeeDeductionPercent: 40.0,
-        escrowHoldingHours: 72,
+        escrowHoldingHours: 168, // 7 days (7 * 24h = 168h)
       },
       fraudDetection: {
         deviceFingerprintBlock: true,

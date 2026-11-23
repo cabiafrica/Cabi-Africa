@@ -82,7 +82,7 @@ describe('ReferralService', () => {
       expect(config.driverProgram.l2Percentage).toBe(1.0);
       expect(config.driverProgram.maxL1Drivers).toBe(10);
       expect(config.driverProgram.maxL2Drivers).toBe(100);
-      expect(config.qualifiers.escrowHoldingHours).toBe(72);
+      expect(config.qualifiers.escrowHoldingHours).toBe(168);
       expect(config.qualifiers.disqualifyingFareThreshold).toBe(300);
       expect(config.fraudDetection.maxReferrerTripDensity).toBe(0.30);
       expect(config.fraudDetection.deviceFingerprintBlock).toBe(true);

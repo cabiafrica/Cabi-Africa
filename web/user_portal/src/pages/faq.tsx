@@ -9,7 +9,8 @@ import { HelpCircle, ShieldCheck, DollarSign, Users, Award, FileText, PhoneCall 
 
 interface FAQItem {
   q: string;
-  a: string;
+  a: string | React.ReactNode;
+  rawText?: string;
   category: string;
 }
 
@@ -18,117 +19,120 @@ const faqData: FAQItem[] = [
   {
     category: 'Driver Onboarding',
     q: 'How do I become a Cabi driver partner?',
-    a: 'To become a Cabi driver partner, fill out our quick online registration form with your personal details and referral code (if someone invited you). Download the Cabi Driver app, upload your valid driver\'s license, vehicle logbook/inspection certificate, and national ID. Once digitally verified, your account is activated within 24 to 48 hours.',
+    a: 'To become a Cabi driver partner, fill out our quick registration form with your personal details and referral code (if someone invited you). Download the Cabi Driver app and upload your credentials. Once digitally verified, your account will be activated and ready to go online.',
   },
   {
     category: 'Driver Onboarding',
     q: 'Is there a registration fee to become a driver?',
-    a: 'No! There are absolutely NO registration fees to become a Cabi driver partner. Registration, onboarding, and profile activation are 100% free. Cabi does not charge any upfront or hidden fees to join our driver network.',
+    a: 'Cabi driver registration is completely free. There are no fees to join or activate your account, unless you voluntarily choose to enroll in a specialized program.',
   },
   {
     category: 'Driver Onboarding',
     q: 'What are the vehicle and document requirements to drive with Cabi?',
-    a: 'You must be at least 21 years old, hold a valid driver\'s license, have access to a clean and registered vehicle (4-door sedan, hatchback, SUV, motorcycle, or tuk-tuk), valid PSV/commercial vehicle insurance, and pass our digital verification. Vehicles must be roadworthy and well-maintained.',
+    a: 'To drive with Cabi, you must be at least 21 years old, hold a valid driver\'s license with an official NTSA badge, and comply with statutory NTSA guidelines. Your vehicle must be clean, well-maintained, and roadworthy with valid PSV insurance cover. Drivers must upload their credentials and successfully pass our digital qualifications.',
   },
   {
     category: 'Driver Onboarding',
-    q: 'How long does the verification and approval process take?',
-    a: 'Most driver partner applications are reviewed and digitally verified within 24 hours. You will receive real-time notifications via SMS and email when your documents are approved and your account is ready to go online.',
+    q: 'How will I know when my account is verified and approved?',
+    a: 'Once you submit your credentials, our verification team reviews your profile. You will receive notifications via SMS, in-app, or email alerts confirming your approval and activating your account to start driving.',
   },
 
   // Earnings & Daily Payouts
   {
-    category: 'Earnings & Payouts',
+    category: 'Earnings & Daily Payouts',
     q: 'How much can I earn as a Cabi driver partner?',
-    a: 'Cabi operates on an ethical reusable commission model. In as much as a commission is charged, it is a reusable commission designed purely for Cabi Legacy programs, vehicle equity, and community welfare—never for corporate extraction or personal enrichment. Active drivers in Nairobi and major Kenyan urban corridors take home between Ksh 3,000 to Ksh 7,000+ per day after expenses. Because drivers are not subjected to the oppressive commissions of legacy apps, your take-home pay and asset growth are significantly higher. You can also earn passive rewards through our 2-level referral program.',
+    a: 'How much you earn depends on your personal effort and resilience. Cabi provides different earning programs that a driver can voluntarily join to make their commissions reusable and significantly more valuable, building long-term financial growth and equity.',
   },
   {
-    category: 'Earnings & Payouts',
+    category: 'Earnings & Daily Payouts',
     q: 'When and how do I receive my payouts?',
-    a: 'Cabi provides instant payouts directly in Ksh to your Mobile Money wallet or local Kenyan bank account with zero settlement delay. Cash fares are collected immediately by you during the ride, while cashless digital trips and corporate rides are settled directly in Ksh into your wallet without holding periods.',
+    a: 'Cabi provides instant payouts directly to your Mobile Money wallet or local Kenyan bank account with zero settlement delay. Cash fares are collected immediately by you during the ride, while cashless digital trips and corporate rides are settled directly into your wallet without holding periods.',
   },
   {
-    category: 'Earnings & Payouts',
-    q: 'How do I track my earnings and vehicle upkeep reserves?',
-    a: 'The Cabi Driver app features a comprehensive earnings telemetry dashboard showing real-time earnings per trip, daily totals, tip bonuses, and your automated Cabi Legacy and vehicle maintenance reserves in Ksh. Statements can be exported anytime.',
+    category: 'Earnings & Daily Payouts',
+    q: 'How do I track my earnings?',
+    a: 'The Cabi Driver app features a comprehensive earnings dashboard where you can view your real-time earnings per trip, daily and weekly totals, and tips. You can also monitor your active program balances and export your statements at any time.',
   },
 
-  // Referral Program (2-Level Incentive)
+  // Referral Incentive Program
   {
-    category: 'Referral Program',
-    q: 'What is the Cabi Referral Incentive Program?',
-    a: 'The Cabi Referral Incentive Program is open to BOTH drivers and passengers! It is an ongoing incentive program spanning up to 2 levels:\n\n• Level 1 (Direct Referrals): When you refer a driver, you earn an ongoing incentive share from their trip earnings. When you refer a passenger, you earn an ongoing incentive share from their ride usage and spend.\n• Level 2 (Downstream Referrals): When your direct referrals invite new drivers or passengers, you earn an additional secondary share from those Level 2 partners\' earnings and passenger ride usage!\n\nAll referral rewards are calculated and credited in Ksh. Always check out our Terms & Conditions or contact us for full program rules, qualification thresholds, and operational guidelines.',
+    category: 'Referral Incentive Program',
+    q: 'Does Cabi have a referral incentive?',
+    rawText: 'Yes. As a gesture of appreciation for helping spread the word about Cabi, we offer a referral incentive for community members who introduce new drivers and passengers. Drivers can refer fellow drivers only, while passengers can refer both passengers and drivers. For qualification criteria, incentive structures, and operational guidelines, please review our official Referral Program Policy.',
+    a: (
+      <span>
+        Yes. As a gesture of appreciation for helping spread the word about Cabi, we offer a referral incentive for community members who introduce new drivers and passengers. Drivers can refer fellow drivers only, while passengers can refer both passengers and drivers. For qualification criteria, incentive structures, and operational guidelines, please review our official{' '}
+        <Link
+          href="/referral-terms"
+          className="text-[#D4AF37] underline font-bold hover:text-[#ffe088] transition-colors"
+        >
+          Referral Program Policy
+        </Link>.
+      </span>
+    ),
   },
   {
-    category: 'Referral Program',
-    q: 'Who can participate in the referral program?',
-    a: 'Both drivers and passengers can participate! Whether you drive full-time, part-time, or simply commute as a passenger, everyone receives a unique referral code inside their app to invite fellow drivers and passengers and build an ongoing 2-level incentive stream in Ksh. Always check out our Terms & Conditions or contact us to learn more.',
-  },
-  {
-    category: 'Referral Program',
-    q: 'How does the 2-level referral incentive structure work?',
-    a: 'The incentive operates on two tiers:\n\n1. Level 1 (Direct Referrals): You earn directly when someone signs up with your code — receiving a percentage share from referred drivers\' ongoing trip earnings and referred passengers\' ride usage.\n2. Level 2 (Secondary Referrals): When your Level 1 referrals invite others, you also receive an ongoing downstream incentive from those Level 2 drivers\' earnings and passengers\' ride usage as well!\n\nAll earnings accumulate in Ksh. Always check out our Terms & Conditions or contact us for current incentive rates and payout schedules.',
-  },
-  {
-    category: 'Referral Program',
-    q: 'Where do I find my referral code or link?',
-    a: 'Your unique referral code is automatically generated upon account registration. In either the Cabi Passenger app or Cabi Driver app, navigate to "Refer & Earn" or "My Network". You can share your link via WhatsApp, SMS, email, or QR code. Please check out our Terms & Conditions or contact us if you need help sharing your code.',
-  },
-  {
-    category: 'Referral Program',
-    q: 'Is there a limit to how many drivers or passengers I can refer?',
-    a: 'No! There is zero limit to how many drivers or passengers you can refer. The larger your Level 1 and Level 2 community grows, the more ongoing Ksh you accumulate every week. Terms and conditions apply — always check out our Terms & Conditions or contact us for fleet-scale referral partnerships.',
-  },
-  {
-    category: 'Referral Program',
-    q: 'How are referral earnings paid out?',
-    a: 'Referral bonuses accumulate in real-time in your Cabi wallet and are payable in Ksh directly via Mobile Money or bank transfer. Always check out our Terms & Conditions or contact us for settlement timelines and balance withdrawal minimums.',
+    category: 'Referral Incentive Program',
+    q: 'Where do I find my referral code?',
+    rawText: 'You can find your unique referral link directly in the Cabi app under your profile or menu. Please review our Referral Terms & Conditions to see the full details on how rewards are earned and credited.',
+    a: (
+      <span>
+        You can find your unique referral link directly in the Cabi app under your profile or menu. Please review our{' '}
+        <Link
+          href="/referral-terms"
+          className="text-[#D4AF37] underline font-bold hover:text-[#ffe088] transition-colors"
+        >
+          Referral Terms &amp; Conditions
+        </Link>{' '}
+        to see the full details on how rewards are earned and credited.
+      </span>
+    ),
   },
 
   // Driving & Operations
   {
     category: 'Driving & Operations',
     q: 'Can I choose when and where to drive?',
-    a: 'Yes, absolutely! Cabi offers complete flexibility. You can drive whenever you want—full-time, part-time, or just during peak commute hours. There are no mandatory shift requirements or penalties for going offline. You can operate across Nairobi, Mombasa, Kisumu, Nakuru, Eldoret, and all active service regions in Kenya.',
+    a: 'Yes. Cabi offers complete schedule flexibility—you can drive full-time, part-time, or whenever convenient, with no mandatory shifts. You can operate in any active Cabi coverage area, provided your vehicle complies with the local county transport bylaws and parking permits of that operational zone.',
   },
   {
     category: 'Driving & Operations',
     q: 'How do I accept ride requests?',
-    a: 'When you are online in the Cabi Driver app, you will receive nearby ride requests with transparent upfront details: pickup location, destination, estimated fare in Ksh, and passenger rating. You have ample time to accept or pass.',
-  },
-  {
-    category: 'Driving & Operations',
-    q: 'How does Cabi support vehicle repair and routine maintenance?',
-    a: 'Through Cabi\'s reusable commission model, funds collected are channeled directly into Cabi Legacy equity and vehicle maintenance pools rather than company profit extraction. Vehicle repair and servicing become effortless, allowing drivers to routinely acquire genuine spare parts, fresh oil, and brake checks without stress, ensuring cars remain safe, smooth, and well-maintained.',
+    a: 'When you are online in the Cabi Driver app, you will receive nearby ride requests with transparent upfront details: pickup location, destination, estimated fare, and passenger rating. You have ample time to accept or pass.',
   },
 
-  // Passengers & Booking
+  // Passenger Booking & Pricing
   {
-    category: 'For Passengers',
+    category: 'Passenger Booking & Pricing',
     q: 'How do I book a ride with Cabi?',
-    a: 'Download the Cabi Passenger app, enter your destination, and confirm your pickup location. You will see an upfront transparent fare estimate in Ksh, driver details, and an instant 4-digit safety PIN for mutual verification before boarding.',
+    a: 'You can book a trip either through the Cabi Passenger app or directly via our web-based booking portal. Simply choose from our available service options, enter your destination, and confirm your pickup to receive an upfront fare estimate and connect with your driver.',
   },
   {
-    category: 'For Passengers',
+    category: 'Passenger Booking & Pricing',
     q: 'What payment methods are accepted?',
-    a: 'We accept Mobile Money, major debit/credit cards (Visa/Mastercard), cash, and corporate travel billing. All fares are calculated and charged transparently in Ksh with zero surge manipulation.',
+    a: 'We accept Mobile Money, major debit and credit cards, cash, and corporate travel billing. All fares are calculated and presented upfront with transparent pricing.',
   },
   {
-    category: 'For Passengers',
-    q: 'Can passengers participate in the referral program too?',
-    a: 'Yes! Passengers can invite friends, family, and drivers using their unique referral link. You earn 2-level referral incentives in Ksh based on your referred passengers\' ride usage and referred drivers\' trip earnings. Check out our Terms & Conditions or contact us for program terms.',
+    category: 'Passenger Booking & Pricing',
+    q: 'How is the fare calculated?',
+    a: 'Fares are calculated based on a base rate, distance, and trip duration, presented upfront before confirming your ride. If you need to alter your destination or take an alternate route during the trip, changing the route must be a mutual agreement between you and your driver. The final fare will adjust transparently to reflect the updated distance and travel time.',
+  },
+  {
+    category: 'Passenger Booking & Pricing',
+    q: 'What should I do if I leave an item in a vehicle?',
+    a: 'If you leave an item behind, go to your Trip History in the Cabi app and select the relevant ride to contact your driver directly. You can also reach out to Cabi Customer Support, and our team will help coordinate the safe recovery and return of your property.',
   },
 
   // Safety & Support
   {
     category: 'Safety & Support',
     q: 'How does Cabi ensure safety for both drivers and passengers?',
-    a: 'Safety is built into every trip: verified 4-digit safety PINs, real-time GPS telemetry, an in-app emergency SOS alert button with 24/7 security dispatch, strictly vetted captains, and mutual two-way ratings.',
+    a: 'Safety is mutual and vital for everyone. To keep our shared community safe and accountable, both drivers and passengers undergo user verification. Every trip is further protected by real-time GPS tracking, an in-app emergency alert button, and mutual two-way ratings.',
   },
   {
     category: 'Safety & Support',
     q: 'How do I contact Cabi Customer Support?',
-    a: 'You can contact Cabi support 24/7 through in-app live chat, email at cabifastafrica@gmail.com, or our customer hotline at +254 756 777 222. For any inquiries regarding referral incentives or accounts, always check out our Terms & Conditions or contact us.',
+    a: 'You can contact Cabi support 24/7 through in-app live chat, email at cabifastafrica@gmail.com, or our customer hotline at 0758 777 222 (+254 758 777 222).',
   },
 ];
 
@@ -141,9 +145,10 @@ export default function FaqPage() {
 
   // Filter FAQs based on search and category
   const filteredFAQs = faqData.filter(item => {
+    const answerSearchText = item.rawText || (typeof item.a === 'string' ? item.a : '');
     const matchesSearch = searchQuery === '' ||
       item.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.a.toLowerCase().includes(searchQuery.toLowerCase());
+      answerSearchText.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -160,7 +165,7 @@ export default function FaqPage() {
   return (
     <MainLayout
       title="Frequently Asked Questions | Cabi Africa"
-      description="Answers to common questions about Cabi: zero driver registration fees, Ksh pricing, 2-level referral incentives for drivers & passengers, vehicle maintenance, and safety."
+      description="Authoritative answers about Cabi Africa: driver onboarding, schedule flexibility, earnings, referral incentives, passenger booking, and mutual safety."
     >
       <div className="bg-slate-50 dark:bg-surface-dark min-h-screen transition-colors duration-300">
         {/* Hero Section */}
@@ -180,14 +185,14 @@ export default function FaqPage() {
               </span>
             </h1>
             <p className="text-base sm:text-lg text-neutral-600 dark:text-neutral-300 mb-8 max-w-2xl mx-auto">
-              Everything you need to know about Cabi: zero registration fees for drivers, Ksh pricing, and our 2-level referral incentives.
+              Clear answers to your questions on driver onboarding, schedule flexibility, earnings, referral incentives, and mutual safety.
             </p>
 
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto">
               <input
                 type="text"
-                placeholder="Search questions (e.g. registration fee, referral program, payouts in Ksh)..."
+                placeholder="Search questions (e.g. registration, referral, payouts, booking)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-6 py-4 rounded-2xl bg-white dark:bg-card-dark border border-slate-300 dark:border-white/15 text-slate-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] shadow-lg text-sm sm:text-base"
@@ -223,24 +228,24 @@ export default function FaqPage() {
             <div className="p-4 rounded-2xl bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 flex items-start gap-3 shadow-sm">
               <ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">Zero Driver Fees</h4>
-                <p className="text-[11px] text-neutral-600 dark:text-neutral-400 mt-0.5">Registration is 100% free with zero activation costs.</p>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">Free Driver Registration</h4>
+                <p className="text-[11px] text-neutral-600 dark:text-neutral-400 mt-0.5">Registration is completely free unless voluntarily enrolling in specialized programs.</p>
               </div>
             </div>
 
             <div className="p-4 rounded-2xl bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 flex items-start gap-3 shadow-sm">
               <DollarSign className="w-5 h-5 text-[#D4AF37] shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">All Fares in Ksh</h4>
-                <p className="text-[11px] text-neutral-600 dark:text-neutral-400 mt-0.5">Transparent Kenyan Shilling pricing with zero USD fees.</p>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">Upfront Transparent Fares</h4>
+                <p className="text-[11px] text-neutral-600 dark:text-neutral-400 mt-0.5">Clear upfront pricing with mutual agreement required for route changes.</p>
               </div>
             </div>
 
             <div className="p-4 rounded-2xl bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 flex items-start gap-3 shadow-sm">
               <Award className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">2-Level Referrals</h4>
-                <p className="text-[11px] text-neutral-600 dark:text-neutral-400 mt-0.5">Earn from driver earnings &amp; passenger usage up to 2 tiers.</p>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">Mutual Safety &amp; Verification</h4>
+                <p className="text-[11px] text-neutral-600 dark:text-neutral-400 mt-0.5">Accountable user verification for both drivers and passengers.</p>
               </div>
             </div>
           </div>

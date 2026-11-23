@@ -41,6 +41,9 @@
       "@cabi/backend/admin-service": [
         "libs/backend/admin-service/src/index.ts"
       ],
+      "@cabi/backend/support-service": [
+        "libs/backend/support-service/src/index.ts"
+      ],
       "@cabi/backend/auth": [
         "libs/backend/src/auth/index.ts"
       ],

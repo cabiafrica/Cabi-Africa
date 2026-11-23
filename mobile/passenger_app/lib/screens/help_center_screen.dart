@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'faq_screen.dart';
 
 class HelpCenterScreen extends StatelessWidget {
   const HelpCenterScreen({super.key});
@@ -70,18 +71,18 @@ class HelpCenterScreen extends StatelessWidget {
               context,
               icon: Icons.phone_in_talk,
               title: "Call Support",
-              subtitle: "Speak directly with an agent",
+              subtitle: "0758 777 222 (24/7 Helpline)",
               iconColor: Colors.green,
               onTap: () =>
-                  _makePhoneCall("+254700000000"), // Replace with actual number
+                  _makePhoneCall("+254758777222"),
             ),
             _buildContactOption(
               context,
               icon: Icons.email_outlined,
               title: "Email Support",
-              subtitle: "Get a response within 24 hours",
+              subtitle: "cabifastafrica@gmail.com",
               iconColor: Colors.blue,
-              onTap: () => _sendEmail("support@cabiapp.com"),
+              onTap: () => _sendEmail("cabifastafrica@gmail.com"),
             ),
             _buildContactOption(
               context,
@@ -134,6 +135,24 @@ class HelpCenterScreen extends StatelessWidget {
 
             // FAQs
             _buildSectionHeader("Frequently Asked Questions"),
+            ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.quiz_outlined, color: Color(0xFFD4AF37)),
+              ),
+              title: const Text('View All FAQs', style: TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: const Text('Browse all questions, policies & driver onboarding', style: TextStyle(fontSize: 12, color: Colors.grey)),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const FAQScreen()));
+              },
+            ),
+            const Divider(height: 1, indent: 24, endIndent: 24),
             _buildCategory(context, 'Account & Profile'),
             _buildCategory(context, 'Trips & Fares'),
             _buildCategory(context, 'Payment Methods'),
