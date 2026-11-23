@@ -62632,7 +62632,7 @@ g=A.J(14)
 s=A.ak(p?B.aV:B.T,1)
 B.b.M(i,A.b([h,A.O(q,A.a4(A.b([A.O(q,B.XN,B.l,q,q,new A.P(B.bj.v(0.15),q,q,A.J(10),q,q,B.p),q,40,q,q,q,q,40),B.ec,A.bk(A.a6(A.b([A.p("2NK SACCO Fleet Manager",q,q,q,A.an().$3$color$fontSize$fontWeight(m,13.5,B.r),q,q),A.p("Direct route marshal & welfare desk",q,q,q,A.an().$2$color$fontSize(l,11),q,q)],f),B.z,q,B.h,B.j),1),A.ia(q,q,q,B.YR,q,q,new A.alm(r),q,q,q,q)],f),B.m,B.h,B.j,0,q),B.l,q,q,new A.P(n,q,s,g,q,q,B.p),q,q,q,B.cW,q,q,q),B.aO],f))
 i.push(r.Yd("COMMUNICATION CHANNELS",p,k))
-i.push(r.xY(a,B.ly,B.bj,p,new A.aln(r),l,"Immediate emergency & accident escalation",m,"Toll-Free Dispatch Helpline"))
+i.push(r.xY(a,B.ly,B.bj,p,new A.aln(r),l,"0758 777 222 \u2022 Immediate emergency & accident escalation",m,"Toll-Free Dispatch Helpline"))
 i.push(r.xY(a,B.WA,B.Dc,p,new A.alo(a),l,"Average response time: < 2 minutes",m,"Live Chat with Dispatch"))
 i.push(r.xY(a,B.pE,B.eW,p,new A.alp(a),l,"Appeal flagged GPS detours within your 48-hr SLA",m,"Route Detour Appeals"))
 i.push(r.xY(a,B.W7,B.dm,p,new A.alq(a),l,"Verify 4-digit handover PIN for courier fee payout",m,"Lost & Found Returns"))
@@ -62649,7 +62649,7 @@ A.alm.prototype={
 $0(){return this.a.yJ("+254711111111")},
 $S:0}
 A.aln.prototype={
-$0(){return this.a.yJ("+254700000000")},
+$0(){return this.a.yJ("+254758777222")},
 $S:0}
 A.alo.prototype={
 $0(){this.a.P(t.q).f.bA(B.agt)},
