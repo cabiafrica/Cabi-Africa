@@ -41,11 +41,11 @@ jobs:
         run: flutter pub get
 
       - name: 🚀 Publish Shorebird Patch
-        if: ${{ secrets.SHOREBIRD_TOKEN != '' }}
+        if: secrets.SHOREBIRD_TOKEN != ''
         run: shorebird patch android
         env:
           SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
 
       - name: ℹ️ Skip Shorebird Notice
-        if: ${{ secrets.SHOREBIRD_TOKEN == '' }}
+        if: secrets.SHOREBIRD_TOKEN == ''
         run: echo "SHOREBIRD_TOKEN secret not set in repository secrets. Skipping OTA patch (production APK releases are handled by release_passenger_apk.yml)."
