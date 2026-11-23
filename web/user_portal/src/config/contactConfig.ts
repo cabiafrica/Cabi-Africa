@@ -2,8 +2,10 @@
  * Centralized Contact details, support issue categories, and appointment slots.
  */
 export const CONTACT_INFO = {
-    phoneDisplay: '+254 756 777 222',
-    phoneDial: '+254756777222',
+    phoneDisplay: '+254 758 777 222',
+    phoneDial: '+254758777222',
+    whatsAppDisplay: '+254 758 777 222',
+    whatsAppUrl: 'https://wa.me/254758777222',
     email: 'cabifastafrica@gmail.com',
     officeName: 'Nairobi Hub (HQ) • Westlands & CBD',
     officeHours: 'Mon – Sat • 8:00 AM – 6:00 PM EAT',

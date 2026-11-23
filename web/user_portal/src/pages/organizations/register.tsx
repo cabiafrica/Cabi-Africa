@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useRouter } from 'next/router';
-import { FaBuilding, FaArrowLeft, FaCheck, FaSearch, FaUser, FaGlobe, FaTwitter, FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { FaBuilding, FaArrowLeft, FaCheck, FaSearch, FaUser, FaGlobe, FaTwitter, FaFacebook, FaInstagram } from 'react-icons/fa';
 import VideoEmbed from '../../components/VideoEmbed';
 
 // Mock list of registered drivers for demonstration
@@ -151,7 +151,6 @@ export default function RegisterOrganization() {
             twitter: '',
             facebook: '',
             instagram: '',
-            linkedin: '',
             // Tax PIN removed
 
             members: [
@@ -213,7 +212,6 @@ export default function RegisterOrganization() {
                 twitter: data.twitter,
                 facebook: data.facebook,
                 instagram: data.instagram,
-                linkedin: data.linkedin,
                 primaryColor: brandColor,
                 members: data.members,
                 subgroups: data.subgroups
@@ -400,16 +398,6 @@ export default function RegisterOrganization() {
                                                 {...register('instagram')}
                                                 className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
                                                 placeholder="@handle"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-xs uppercase tracking-wider text-gray-500 font-bold flex items-center gap-2">
-                                                <FaLinkedin className="text-blue-500" /> LinkedIn
-                                            </label>
-                                            <input
-                                                {...register('linkedin')}
-                                                className="w-full bg-brand-black/50 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
-                                                placeholder="Profile URL"
                                             />
                                         </div>
                                     </div>
