@@ -16,7 +16,7 @@ export default function VideoEmbed({
     autoplay = false,
     className = '',
     showChannelLink = false,
-    channelUrl = 'https://youtube.com/@cabi_education',
+    channelUrl = 'https://youtube.com/@cabifastafrica',
 }: VideoEmbedProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);

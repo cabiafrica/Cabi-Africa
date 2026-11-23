@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:driver_app/theme/app_theme.dart';
 import '../services/auth_service.dart';
 
@@ -310,10 +311,11 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: OutlinedButton.icon(
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Opening Driver Sacco Help Desk...')),
-                            );
+                          onPressed: () async {
+                            final uri = Uri.parse('https://wa.me/254758777222');
+                            if (await canLaunchUrl(uri)) {
+                              await launchUrl(uri, mode: LaunchMode.externalApplication);
+                            }
                           },
                           icon: const Icon(Icons.chat, size: 14, color: Colors.greenAccent),
                           label: const Text('WhatsApp Help', style: TextStyle(color: Colors.greenAccent, fontSize: 11)),

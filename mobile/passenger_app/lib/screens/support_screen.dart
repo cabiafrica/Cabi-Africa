@@ -41,6 +41,18 @@ class _SupportScreenState extends State<SupportScreen> {
     }
   }
 
+  Future<void> _openWhatsApp(String phone) async {
+    final cleanPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    final Uri launchUri = Uri.parse('https://wa.me/$cleanPhone');
+    if (!await launchUrl(launchUri, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not open WhatsApp for $phone')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -234,6 +246,18 @@ class _SupportScreenState extends State<SupportScreen> {
               badge: '24/7',
               badgeColor: gold,
               onTap: () => _makePhoneCall('+254758777222'),
+            ),
+            const SizedBox(height: 10),
+
+            _buildContactCard(
+              isDark: isDark,
+              gold: gold,
+              icon: Icons.chat_bubble_rounded,
+              title: 'Official WhatsApp Concierge',
+              subtitle: '+254 758 777 222 • Instant VIP Support Desk',
+              badge: 'WHATSAPP',
+              badgeColor: const Color(0xFF25D366),
+              onTap: () => _openWhatsApp('+254758777222'),
             ),
             const SizedBox(height: 10),
 

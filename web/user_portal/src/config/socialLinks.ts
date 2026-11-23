@@ -2,7 +2,6 @@ export type SocialPlatformId =
     | 'x'
     | 'instagram'
     | 'facebook'
-    | 'linkedin'
     | 'tiktok'
     | 'youtube'
     | 'whatsapp';
@@ -47,17 +46,9 @@ export const SOCIAL_PLATFORMS: SocialPlatformConfig[] = [
         id: 'facebook',
         name: 'Facebook',
         href: process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK_URL || 'https://facebook.com/cabiafrica',
-        handle: process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK_HANDLE || 'Cabi Africa',
+        handle: process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK_HANDLE || 'cabiafrica',
         enabled: isEnabled(process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK_ENABLED, true),
         envKey: 'NEXT_PUBLIC_SOCIAL_FACEBOOK_URL',
-    },
-    {
-        id: 'linkedin',
-        name: 'LinkedIn',
-        href: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN_URL || 'https://linkedin.com/company/cabi-africa',
-        handle: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN_HANDLE || 'Cabi Africa',
-        enabled: isEnabled(process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN_ENABLED, true),
-        envKey: 'NEXT_PUBLIC_SOCIAL_LINKEDIN_URL',
     },
     {
         id: 'tiktok',
@@ -70,16 +61,16 @@ export const SOCIAL_PLATFORMS: SocialPlatformConfig[] = [
     {
         id: 'youtube',
         name: 'YouTube',
-        href: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE_URL || 'https://youtube.com/@cabiafrica',
-        handle: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE_HANDLE || 'Cabi Africa',
+        href: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE_URL || 'https://youtube.com/@cabifastafrica',
+        handle: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE_HANDLE || '@cabifastafrica',
         enabled: isEnabled(process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE_ENABLED, true),
         envKey: 'NEXT_PUBLIC_SOCIAL_YOUTUBE_URL',
     },
     {
         id: 'whatsapp',
-        name: 'WhatsApp Concierge',
-        href: process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP_URL || 'https://wa.me/254700000000',
-        handle: process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP_HANDLE || '+254 Concierge',
+        name: 'WhatsApp',
+        href: process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP_URL || 'https://wa.me/254758777222',
+        handle: process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP_HANDLE || '+254 758 777 222',
         enabled: isEnabled(process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP_ENABLED, true),
         envKey: 'NEXT_PUBLIC_SOCIAL_WHATSAPP_URL',
     },

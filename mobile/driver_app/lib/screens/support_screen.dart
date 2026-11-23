@@ -31,6 +31,14 @@ class DriverSupportScreen extends StatelessWidget {
     }
   }
 
+  Future<void> _openWhatsApp(String phone) async {
+    final cleanPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    final Uri launchUri = Uri.parse('https://wa.me/$cleanPhone');
+    if (!await launchUrl(launchUri, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $launchUri');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -173,6 +181,17 @@ class DriverSupportScreen extends StatelessWidget {
               textColor: textColor,
               subtextColor: subtextColor,
               onTap: () => _makePhoneCall("+254758777222"),
+            ),
+            _buildContactOption(
+              context,
+              icon: Icons.chat_rounded,
+              title: "WhatsApp Dispatch Desk",
+              subtitle: "+254 758 777 222 • Dedicated Driver Support Desk",
+              iconColor: const Color(0xFF25D366),
+              isDark: isDark,
+              textColor: textColor,
+              subtextColor: subtextColor,
+              onTap: () => _openWhatsApp("+254758777222"),
             ),
             _buildContactOption(
               context,

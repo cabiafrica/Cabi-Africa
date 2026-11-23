@@ -4,7 +4,6 @@ import {
     FaTwitter,
     FaInstagram,
     FaFacebookF,
-    FaLinkedinIn,
     FaTiktok,
     FaYoutube,
     FaWhatsapp,
@@ -15,7 +14,6 @@ const PLATFORM_ICONS: Record<SocialPlatformId, React.ComponentType<{ className?:
     x: FaTwitter,
     instagram: FaInstagram,
     facebook: FaFacebookF,
-    linkedin: FaLinkedinIn,
     tiktok: FaTiktok,
     youtube: FaYoutube,
     whatsapp: FaWhatsapp,
@@ -86,7 +84,7 @@ export default function SocialLinks({ variant = 'contact', className = '' }: Soc
                 </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
                 {platforms.map((platform, idx) => {
                     const Icon = PLATFORM_ICONS[platform.id];
                     return (

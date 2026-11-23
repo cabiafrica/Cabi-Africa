@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
 import '../services/passenger_biometric_service.dart';
 
@@ -601,13 +602,11 @@ class _SecurityVerificationModalState extends ConsumerState<SecurityVerification
                   const SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            backgroundColor: AppTheme.darkSurface,
-                            content: Text('Opening Cabi WhatsApp Support Desk...'),
-                          ),
-                        );
+                      onPressed: () async {
+                        final uri = Uri.parse('https://wa.me/254758777222');
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(uri, mode: LaunchMode.externalApplication);
+                        }
                       },
                       icon: const Icon(Icons.chat_bubble_outline_rounded, size: 14, color: Colors.greenAccent),
                       label: const Text(
