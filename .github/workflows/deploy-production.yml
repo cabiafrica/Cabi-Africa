@@ -117,6 +117,8 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             chmod -R 755 /opt/cabi-africa/web/user_portal/public/downloads
+            docker compose build user-portal
+            docker compose up -d --force-recreate user-portal
             docker compose up -d --build
             docker compose up -d --force-recreate caddy
             docker compose exec -T auth-gateway npx prisma db push --schema=libs/backend/database/prisma/schema.prisma --accept-data-loss || true
