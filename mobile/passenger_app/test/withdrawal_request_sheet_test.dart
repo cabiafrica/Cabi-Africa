@@ -38,11 +38,11 @@ void main() {
     await tester.pump();
     expect(find.text('Amount exceeds balance'), findsOneWidget);
 
-    // Test Validation: Amount < Minimum
-    await tester.enterText(find.byType(TextFormField), '50');
+    // Test Validation: Amount < Minimum (KES 500)
+    await tester.enterText(find.byType(TextFormField), '250');
     await tester.tap(find.text('Confirm Withdrawal'));
     await tester.pump();
-    expect(find.text('Minimum withdrawal is KES 100'), findsOneWidget);
+    expect(find.text('Minimum withdrawal is KES 500'), findsOneWidget);
 
     // Test Success
     await tester.enterText(find.byType(TextFormField), '1000');

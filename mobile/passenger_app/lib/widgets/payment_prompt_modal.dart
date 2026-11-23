@@ -230,8 +230,8 @@ class _PaymentPromptModalState extends State<PaymentPromptModal> {
       ElevatedButton.icon(
         icon: const Icon(Icons.phone_android),
         label: const Text(
-          'Pay with M-Pesa',
-        ), // Assuming M-Pesa can be initiated before rating
+          'Pay with Mobile Money',
+        ),
         onPressed: _rating > 0 ? _initiateMpesaPayment : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.green,
@@ -253,7 +253,7 @@ class _PaymentPromptModalState extends State<PaymentPromptModal> {
       const CircularProgressIndicator(),
       const SizedBox(height: 24),
       const Text(
-        'An M-Pesa STK push has been sent to your phone. Please enter your PIN to complete the payment.',
+        'A Mobile Money prompt has been sent to your phone. Please enter your PIN to complete the payment.',
         textAlign: TextAlign.center,
       ),
       const SizedBox(height: 32),

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const VAULT_DIR = 'D:/IBN/iBN-Cabi Vault';
+const VAULT_DIR = process.env.VAULT_DIR || (process.platform === 'win32' ? 'D:/IBN/iBN-Cabi Vault' : path.resolve(__dirname, '..', '..', 'iBN-Cabi Vault'));
 const ENG_DIR = path.join(VAULT_DIR, '01-System Architecture & Engineering');
 
 if (!fs.existsSync(ENG_DIR)) {
@@ -377,10 +377,19 @@ aliases:
 * **Source Directory:** \`backend/referral-service/src\`
 * **Domain Focus:** Growth viral loop through driver and rider referral bonuses.
 * **Key Capabilities:**
-  * Hierarchical referral tree calculation (Direct sponsor, Secondary upline).
-  * Automatic trip commission distribution:
-    * Calculates the 18% platform commission and allocates sponsor referral dividends into \`CommissionLedger\`.
-  * Real-time payout processing via M-Pesa B2C integration.
+  * **Role-Based Attribution:**
+    * Drivers can refer fellow **Drivers ONLY** (attempts to refer passengers throw 403 Forbidden).
+    * Passengers can refer both **Passengers** and **Drivers**.
+  * **Onboarding Registration Incentive Campaign:**
+    * Active 90-day attribution window per referred user (not an indefinite annuity).
+  * **Driver Activation Deposit:**
+    * Ksh 1,000 onboarding activation deposit, with 100% value-back credited directly into driver platform wallet for rides and platform commissions (non-refundable as cash).
+  * **7-Day (168-Hour) Dispute Clearance Escrow:**
+    * Commissions credited into \`PENDING_REVIEW\` / \`ESCROW\` for 168 hours before moving to \`AVAILABLE\` to protect against trip disputes, chargebacks, and collusion.
+  * **Withdrawal Threshold & Weekly Schedule:**
+    * Minimum withdrawal threshold of **KES 500**, disbursed on a weekly cycle via carrier-neutral **Mobile Money** or Bank.
+  * **Hierarchical Referral Trees:**
+    * Multi-tier referral calculations and platform commission ledger allocations.
 
 ---
 

@@ -306,41 +306,50 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(10),
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.check_circle_rounded,
+                          color: AppTheme.successGreen, size: 20),
                     ),
-                    child: const Icon(Icons.check_circle_rounded,
-                        color: AppTheme.successGreen, size: 20),
-                  ),
-                  const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Ride Successfully Completed',
-                        style: AppTheme.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: textPrimary,
-                        ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Ride Completed',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTheme.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: textPrimary,
+                            ),
+                          ),
+                          Text(
+                            'Westlands Mall Gate B',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTheme.plusJakartaSans(
+                              fontSize: 11,
+                              color: textDim,
+                            ),
+                          ),
+                        ],
                       ),
-                      Text(
-                        'Westlands Mall Gate B',
-                        style: AppTheme.plusJakartaSans(
-                          fontSize: 11,
-                          color: textDim,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -1045,7 +1054,7 @@ class _RatePassengerScreenState extends State<RatePassengerScreen>
                       ],
                     ),
                     Text(
-                      'Transferred to M-Pesa Wallet',
+                      'Transferred to Mobile Money Wallet',
                       style:
                           AppTheme.plusJakartaSans(fontSize: 10, color: textDim),
                     ),

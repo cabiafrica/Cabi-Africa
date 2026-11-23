@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 class AppConfig {
-  // Configurable via --dart-define=IS_PRODUCTION=true; defaults to true in release builds
-  static const bool isProduction = bool.fromEnvironment('IS_PRODUCTION', defaultValue: kReleaseMode);
+  // Configurable via --dart-define=IS_PRODUCTION=true; defaults to false so local dev/emulators connect to local bridge
+  static const bool isProduction = bool.fromEnvironment('IS_PRODUCTION', defaultValue: false);
 
   // Custom API host override via --dart-define=API_HOST=... (empty by default so production URLs are used)
   static const String customHost = String.fromEnvironment('API_HOST', defaultValue: '');

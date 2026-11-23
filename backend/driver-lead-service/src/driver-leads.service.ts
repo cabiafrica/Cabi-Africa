@@ -31,11 +31,11 @@ export class DriverLeadsService {
       referralCode: registerLeadDto.referralCode
     });
 
-    // 3. Process Registration Fee (Mock Stripe)
-    await this.processPayment(userId, 500); // 500 KES fee
+    // 3. Driver Activation Deposit (1000 KES 100% credited to driver wallet for commissions)
+    await this.processPayment(userId, 1000);
 
-    // 4. Distribute Fee via Referral Program
-    await this.referralService.distributeFee(userId, 500);
+    // 4. Distribute / Record Activation Deposit via Referral Program
+    await this.referralService.distributeFee(userId, 1000);
 
     // 5. Update Status to PENDING (waiting for documents)
     await this.userService.updateUserStatus(userId, 'PENDING');

@@ -48,7 +48,7 @@ class _PayoutSetupScreenState extends State<PayoutSetupScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
-                  '${_selectedMethod == PayoutMethodType.mpesa ? "M-Pesa" : "Bank"} details saved successfully!'),
+                  '${_selectedMethod == PayoutMethodType.mpesa ? "Mobile Money" : "Bank"} details saved successfully!'),
               backgroundColor: Colors.green),
         );
         Navigator.pop(context);

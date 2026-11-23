@@ -153,6 +153,85 @@ class _ReferralCommissionsScreenState
                     ),
                   ),
 
+                  // Policy & Terms Notice
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: Colors.amber.shade300),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.03),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            )
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.verified_user, color: Colors.amber.shade800, size: 20),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'Captain Referral Program Terms',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              '• Registration Incentive: Designed to reward recruiting new captains on registration (90-day attribution window). Not a continuous annuity.\n'
+                              '• Driver Scope: Captains can refer fellow Captain Drivers only.\n'
+                              '• 7-Day Clearance: Referral earnings undergo a 7-day (168h) escrow clearance before moving to available balance.\n'
+                              '• Weekly Payouts: Minimum withdrawal is KES 500, disbursed weekly via carrier-neutral Mobile Money or Bank.\n'
+                              '• Activation Deposit: Ksh 1,000 deposit is 100% credited to captain wallet for ride commissions (non-refundable as cash).',
+                              style: TextStyle(fontSize: 12, height: 1.45, color: Colors.black87),
+                            ),
+                            const SizedBox(height: 10),
+                            InkWell(
+                              onTap: () => _showCaptainReferralTermsSheet(context),
+                              borderRadius: BorderRadius.circular(8),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Read Full Updated Referral Terms & Conditions',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.amber.shade900,
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: Colors.amber.shade900,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(
+                                      Icons.open_in_new_rounded,
+                                      size: 14,
+                                      color: Colors.amber.shade900,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
                   // Referral Code Section
                   SliverToBoxAdapter(
                     child: Padding(
@@ -334,6 +413,248 @@ class _ReferralCommissionsScreenState
           style: const TextStyle(color: Colors.white38, fontSize: 10),
         ),
       ],
+    );
+  }
+
+  void _showCaptainReferralTermsSheet(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = isDark ? const Color(0xFF1B1915) : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF1E1E1E);
+    final subtextColor = isDark ? Colors.white70 : const Color(0xFF555555);
+    final cardBg = isDark ? const Color(0xFF26221C) : const Color(0xFFFBF8F1);
+    final borderColor = AppTheme.primaryColor.withValues(alpha: isDark ? 0.25 : 0.35);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.85,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          builder: (_, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                border: Border.all(color: borderColor, width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.4),
+                    blurRadius: 25,
+                    offset: const Offset(0, -6),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  const SizedBox(height: 12),
+                  Container(
+                    width: 44,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryColor.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.gavel_rounded,
+                            color: AppTheme.primaryColor,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Captain Referral Program Terms',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: textColor,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              const Text(
+                                'Updated November 2026 • Registration Incentive',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: AppTheme.primaryColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close_rounded),
+                          color: subtextColor,
+                          onPressed: () => Navigator.pop(ctx),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Divider(color: borderColor, height: 1),
+                  Expanded(
+                    child: ListView(
+                      controller: scrollController,
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                      children: [
+                        _buildDriverTermsCard(
+                          icon: Icons.campaign_rounded,
+                          title: '1. Onboarding Registration Campaign',
+                          body: 'The Captain Referral Program is structured as an onboarding incentive for registering new captains (active 90-day attribution window). It is not an indefinite or permanent annuity.',
+                          cardBg: cardBg,
+                          borderColor: borderColor,
+                          textColor: textColor,
+                          subtextColor: subtextColor,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDriverTermsCard(
+                          icon: Icons.badge_rounded,
+                          title: '2. Captain-to-Captain Scope',
+                          body: 'Captains are authorized to recruit and refer fellow Captain Drivers only. Passenger referral attribution is restricted by platform policy.',
+                          cardBg: cardBg,
+                          borderColor: borderColor,
+                          textColor: textColor,
+                          subtextColor: subtextColor,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDriverTermsCard(
+                          icon: Icons.hourglass_top_rounded,
+                          title: '3. 7-Day (168h) Dispute Clearance Escrow',
+                          body: 'All referral dividends enter a 7-day (168-hour) dispute clearance holding period (PENDING_REVIEW) post-trip. Matures to available balance once trip verification and fair ride audits are completed.',
+                          cardBg: cardBg,
+                          borderColor: borderColor,
+                          textColor: textColor,
+                          subtextColor: subtextColor,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDriverTermsCard(
+                          icon: Icons.account_balance_wallet_rounded,
+                          title: '4. Minimum KES 500 Weekly Disbursal',
+                          body: 'The minimum balance to request a withdrawal is KES 500. Payout disbursements are settled weekly directly to your registered Mobile Money or Bank account.',
+                          cardBg: cardBg,
+                          borderColor: borderColor,
+                          textColor: textColor,
+                          subtextColor: subtextColor,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDriverTermsCard(
+                          icon: Icons.verified_user_rounded,
+                          title: '5. Ksh 1,000 Captain Value-Back Deposit',
+                          body: 'The Ksh 1,000 driver activation deposit is 100% credited into your captain platform wallet for trip commissions and platform service fees (non-refundable as cash).',
+                          cardBg: cardBg,
+                          borderColor: borderColor,
+                          textColor: textColor,
+                          subtextColor: subtextColor,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDriverTermsCard(
+                          icon: Icons.shield_rounded,
+                          title: '6. Platform Funded & Anti-Collusion',
+                          body: 'Referral dividends are funded 100% from the platform\'s commission margin without reducing driver fares. Automated collusion audits safeguard the integrity of the earnings pool.',
+                          cardBg: cardBg,
+                          borderColor: borderColor,
+                          textColor: textColor,
+                          subtextColor: subtextColor,
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.primaryColor,
+                              foregroundColor: const Color(0xFF1E1602),
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: () => Navigator.pop(ctx),
+                            child: const Text(
+                              'I Understand & Agree',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildDriverTermsCard({
+    required IconData icon,
+    required String title,
+    required String body,
+    required Color cardBg,
+    required Color borderColor,
+    required Color textColor,
+    required Color subtextColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: borderColor, width: 0.8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: AppTheme.primaryColor),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            body,
+            style: TextStyle(
+              fontSize: 11.5,
+              height: 1.45,
+              color: subtextColor,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

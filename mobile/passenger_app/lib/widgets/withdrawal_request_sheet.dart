@@ -85,8 +85,8 @@ class _WithdrawalRequestSheetState extends State<WithdrawalRequestSheet> {
                 if (amount == null) {
                   return 'Invalid amount';
                 }
-                if (amount < 100) {
-                  return 'Minimum withdrawal is KES 100';
+                if (amount < 500) {
+                  return 'Minimum withdrawal is KES 500';
                 }
                 if (amount > widget.availableBalance) {
                   return 'Amount exceeds balance';

@@ -68,7 +68,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               onPressed: _isProcessing ? null : _payWithMpesa,
               icon: const Icon(Icons.phone_android),
               label: Text(
-                _mpesaInitiated ? 'RESEND M-PESA PROMPT' : 'PAY WITH M-PESA',
+                _mpesaInitiated ? 'RESEND PROMPT' : 'PAY WITH MOBILE MONEY',
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,

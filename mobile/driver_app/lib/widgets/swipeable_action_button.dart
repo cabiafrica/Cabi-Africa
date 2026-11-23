@@ -50,15 +50,20 @@ class _SwipeableActionButtonState extends State<SwipeableActionButton>
     });
   }
 
+  void _triggerCompletion() {
+    if (_isCompleted) return;
+    setState(() {
+      _dragValue = _maxWidth - _thumbSize - (_padding * 2);
+      _isCompleted = true;
+    });
+    widget.onAction();
+  }
+
   void _onDragEnd(DragEndDetails details) {
     if (_isCompleted) return;
     if (_dragValue > (_maxWidth - _thumbSize - (_padding * 2)) * 0.7) {
       // Threshold reached
-      setState(() {
-        _dragValue = _maxWidth - _thumbSize - (_padding * 2);
-        _isCompleted = true;
-      });
-      widget.onAction();
+      _triggerCompletion();
     } else {
       // Snap back
       _snapBack();
@@ -106,33 +111,37 @@ class _SwipeableActionButtonState extends State<SwipeableActionButton>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Label with trailing hint arrows
+              // Label with trailing hint arrows (supports tap or slide to complete)
               Positioned.fill(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 36, right: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          widget.label.toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: widget.color,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 11.5,
-                            letterSpacing: 0.8,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: _triggerCompletion,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 36, right: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            widget.label.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: widget.color,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 11.5,
+                              letterSpacing: 0.8,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        Icons.keyboard_double_arrow_right_rounded,
-                        size: 14,
-                        color: widget.color.withValues(alpha: 0.5),
-                      ),
-                    ],
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.keyboard_double_arrow_right_rounded,
+                          size: 14,
+                          color: widget.color.withValues(alpha: 0.5),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

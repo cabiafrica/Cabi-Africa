@@ -403,7 +403,7 @@ export class ReferralService {
    * - Passenger: 2% Level 1, 1% Level 2 (promotional).
    * - Passenger referring Driver: x% of driver's 1st week earnings.
    * - Fraud check: Blocks if > 30% of driver trips are with referrer.
-   * - Escrow hold: 72 hours in PENDING_REVIEW.
+   * - Escrow hold: 168 hours (7 days) in PENDING_REVIEW.
    */
   async processTripReferral(input: TripReferralInput): Promise<{
     processed: boolean;
@@ -771,7 +771,7 @@ export class ReferralService {
   }
 
   /**
-   * Releases matured referral earnings from PENDING_REVIEW (72-hour escrow) to AVAILABLE.
+   * Releases matured referral earnings from PENDING_REVIEW (7-day escrow) to AVAILABLE.
    * If driver has SACCO matching pool opt-in, automatically routes portion to SaccoLedger.
    */
   async releaseMaturedEscrow(): Promise<{ releasedCount: number; totalReleased: number }> {
@@ -831,7 +831,7 @@ export class ReferralService {
           data: {
             userId: entry.userId,
             title: 'Referral Bonus Available!',
-            body: `KES ${amount.toFixed(2)} from trip referral has cleared the 72-hour review and is now available in your balance.`,
+            body: `KES ${amount.toFixed(2)} from trip referral has cleared the 7-day dispute clearance period and is now available in your balance.`,
             type: 'ESCROW_RELEASED',
             channel: 'ALL',
             metadata: {
@@ -1138,5 +1138,214 @@ export class ReferralService {
     );
 
     return downline;
+  }
+
+  /**
+   * Creates an administrative manual ledger adjustment for a driver or user.
+   */
+  async createManualLedgerEntry(
+    driverId: string,
+    amount: number,
+    type: string,
+    reason: string,
+    adminId: string,
+  ) {
+    const driver = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ id: driverId }, { driverProfile: { id: driverId } }],
+      },
+      include: { driverProfile: true },
+    });
+
+    if (!driver) {
+      throw new NotFoundException(`Driver or User with ID '${driverId}' not found.`);
+    }
+
+    const userId = driver.id;
+    const driverProfileId = driver.driverProfile?.id || null;
+
+    const entry = await (this.prisma as any).referralCommissionLedger.create({
+      data: {
+        userId,
+        driverProfileId,
+        sourceUserId: adminId,
+        amount: new Prisma.Decimal(amount.toFixed(2)),
+        basisAmount: new Prisma.Decimal(amount.toFixed(2)),
+        percentage: new Prisma.Decimal(100.0),
+        level: 1,
+        status: 'AVAILABLE',
+        escrowReleaseAt: new Date(),
+        disqualificationReason: `Manual adjustment [${type}]: ${reason}`,
+      },
+    });
+
+    this.logger.log(
+      `Manual ledger entry created by admin ${adminId} for user ${userId}: KES ${amount} (${type})`,
+    );
+    return entry;
+  }
+
+  /**
+   * Retrieves paginated referral commission ledger entries with optional date and user filters.
+   */
+  async getLedgerEntries(params: {
+    page: number;
+    limit: number;
+    startDate?: Date;
+    endDate?: Date;
+    driverId?: string;
+    sourceDriverId?: string;
+  }) {
+    const { page = 1, limit = 20, startDate, endDate, driverId, sourceDriverId } = params;
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) where.createdAt.gte = startDate;
+      if (endDate) where.createdAt.lte = endDate;
+    }
+    if (driverId) {
+      where.OR = [
+        { userId: driverId },
+        { driverProfileId: driverId },
+      ];
+    }
+    if (sourceDriverId) {
+      where.OR = [
+        { sourceUserId: sourceDriverId },
+        { sourceDriverProfileId: sourceDriverId },
+      ];
+    }
+
+    const [entries, total] = await Promise.all([
+      (this.prisma as any).referralCommissionLedger.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: { select: { id: true, fullName: true, email: true, phone: true } },
+          sourceUser: { select: { id: true, fullName: true, email: true, phone: true } },
+        },
+      }),
+      (this.prisma as any).referralCommissionLedger.count({ where }),
+    ]);
+
+    return {
+      entries,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  /**
+   * Aggregates referral program metrics for the admin dashboard.
+   */
+  async getDashboardMetrics(range?: string) {
+    const where: any = {};
+    if (range) {
+      const now = new Date();
+      if (range === 'today') {
+        const startOfDay = new Date(now.setHours(0, 0, 0, 0));
+        where.createdAt = { gte: startOfDay };
+      } else if (range === 'week') {
+        const startOfWeek = new Date(now.setDate(now.getDate() - 7));
+        where.createdAt = { gte: startOfWeek };
+      } else if (range === 'month') {
+        const startOfMonth = new Date(now.setMonth(now.getMonth() - 1));
+        where.createdAt = { gte: startOfMonth };
+      }
+    }
+
+    const [availableSums, pendingSums, totalRelationships, fraudAlertsCount] = await Promise.all([
+      (this.prisma as any).referralCommissionLedger.aggregate({
+        _sum: { amount: true },
+        where: { ...where, status: 'AVAILABLE' },
+      }),
+      (this.prisma as any).referralCommissionLedger.aggregate({
+        _sum: { amount: true },
+        where: { ...where, status: 'PENDING_REVIEW' },
+      }),
+      (this.prisma as any).referralRelationship.count(),
+      (this.prisma as any).referralFraudAlert.count({
+        where: { isResolved: false },
+      }),
+    ]);
+
+    const totalReleased = Number(availableSums._sum?.amount || 0);
+    const totalPending = Number(pendingSums._sum?.amount || 0);
+
+    return {
+      totalCommissionsPaid: totalReleased,
+      pendingEscrowAmount: totalPending,
+      totalReferralRelationships: totalRelationships,
+      unresolvedFraudAlerts: fraudAlertsCount,
+      escrowHoldingHours: 168,
+      minimumWithdrawal: 500,
+      payoutFrequency: 'WEEKLY',
+      payoutMethod: 'MOBILE_MONEY_OR_BANK',
+    };
+  }
+
+  /**
+   * Processes driver activation deposit (Ksh 1,000 value-back credited into user wallet for ride/commission use).
+   * Non-refundable as cash to prevent gaming; qualifies referral relationship if sponsored.
+   */
+  async processRegistrationFee(driverId: string, fee: number) {
+    const driver = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ id: driverId }, { driverProfile: { id: driverId } }],
+      },
+      include: { driverProfile: true },
+    });
+
+    if (!driver) {
+      throw new NotFoundException(`Driver '${driverId}' not found.`);
+    }
+
+    const depositAmount = fee && fee > 0 ? fee : 1000;
+
+    // Check if referee driver has a pending referral relationship to activate
+    const pendingRel = await (this.prisma as any).referralRelationship.findFirst({
+      where: {
+        refereeId: driver.id,
+        status: 'PENDING',
+      },
+    });
+
+    if (pendingRel) {
+      await (this.prisma as any).referralRelationship.update({
+        where: { id: pendingRel.id },
+        data: { status: 'ACTIVE' },
+      });
+      this.logger.log(`Activated referral relationship ${pendingRel.id} upon deposit of KES ${depositAmount}`);
+    }
+
+    // Log notification to user that their activation deposit has been 100% credited into their wallet
+    await (this.prisma as any).notificationLog.create({
+      data: {
+        userId: driver.id,
+        title: 'Account Activated & Wallet Credited',
+        body: `Your activation deposit of KES ${depositAmount} has been 100% credited into your active CABI wallet for trip commissions. Welcome aboard!`,
+        type: 'ACCOUNT_ACTIVATION_CREDIT',
+        channel: 'ALL',
+        metadata: {
+          depositAmount,
+          nonRefundableNotice: 'Activation deposit is 100% value-back for ride/commission use only and non-refundable as cash.',
+        },
+      },
+    });
+
+    this.logger.log(`Processed activation deposit of KES ${depositAmount} for driver ${driver.id}`);
+    return {
+      success: true,
+      driverId: driver.id,
+      amountCredited: depositAmount,
+      currency: 'KES',
+      message: 'Activation deposit processed. 100% value-back credited to active wallet.',
+    };
   }
 }

@@ -380,7 +380,7 @@ class RideRequestModal extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    paymentMethod.contains('CASH') ? 'CASH' : 'M-PESA INSTANT',
+                                    paymentMethod.contains('CASH') ? 'CASH' : 'MOBILE MONEY INSTANT',
                                     style: const TextStyle(
                                       color: Color(0xFF10B981),
                                       fontSize: 11,

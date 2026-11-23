@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:passenger_app/widgets/referral_tree_graph.dart';
 import 'package:passenger_app/theme/app_theme.dart';
+import 'referral_screen.dart';
 import '../services/referral_service.dart';
 import '../providers/auth_provider.dart';
 
@@ -39,12 +40,29 @@ class _ReferralStatusScreenState extends ConsumerState<ReferralStatusScreen> {
       _loadHistory(userId);
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Referrals'),
         backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.black,
         elevation: 0,
+        actions: [
+          TextButton.icon(
+            onPressed: () => showPassengerReferralTermsSheet(context, isDark: isDark),
+            icon: const Icon(Icons.gavel_rounded, size: 16, color: Colors.black),
+            label: const Text(
+              'Terms',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _historyFuture,
@@ -145,18 +163,52 @@ class _ReferralStatusScreenState extends ConsumerState<ReferralStatusScreen> {
                             color: Colors.white.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: Colors.white24)),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: Icon(Icons.info_outline,
-                                  color: AppTheme.primaryColor, size: 20),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: Icon(Icons.info_outline,
+                                      color: AppTheme.primaryColor, size: 20),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    'Earn KES 500 for each friend who completes their first ride',
+                                    style: TextStyle(
+                                        color: Colors.grey.shade300, fontSize: 12),
+                                  ),
+                                ),
+                              ],
                             ),
-                            Expanded(
-                              child: Text(
-                                'Earn KES 500 for each friend who completes their first ride',
-                                style: TextStyle(
-                                    color: Colors.grey.shade300, fontSize: 12),
+                            const SizedBox(height: 8),
+                            InkWell(
+                              onTap: () => showPassengerReferralTermsSheet(context, isDark: isDark),
+                              borderRadius: BorderRadius.circular(4),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 2),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Referral Terms & Conditions',
+                                      style: TextStyle(
+                                        color: AppTheme.primaryColor,
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: AppTheme.primaryColor,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(
+                                      Icons.open_in_new_rounded,
+                                      color: AppTheme.primaryColor,
+                                      size: 12,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -177,7 +229,10 @@ class _ReferralStatusScreenState extends ConsumerState<ReferralStatusScreen> {
                     ),
                     TextButton.icon(
                       onPressed: () {
-                        // Share referral code
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ReferralScreen()),
+                        );
                       },
                       icon: const Icon(Icons.share, size: 18),
                       label: const Text('Invite More'),
@@ -213,6 +268,11 @@ class _ReferralStatusScreenState extends ConsumerState<ReferralStatusScreen> {
                   )
                 else
                   ...referrals.map((referral) => _buildReferralCard(referral)),
+
+                const SizedBox(height: 20),
+
+                // Updated Terms & Conditions Notice Card
+                _buildProgramTermsNotice(context, isDark),
 
                 const SizedBox(height: 24),
 
@@ -419,6 +479,81 @@ class _ReferralStatusScreenState extends ConsumerState<ReferralStatusScreen> {
     if (diff.inDays < 7) return '${diff.inDays} days ago';
     if (diff.inDays < 30) return '${(diff.inDays / 7).floor()} weeks ago';
     return '${date.day}/${date.month}/${date.year}';
+  }
+
+  Widget _buildProgramTermsNotice(BuildContext context, bool isDark) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1B15) : const Color(0xFFFFFDF5),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.primaryColor.withValues(alpha: isDark ? 0.35 : 0.45),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.verified_user_rounded, color: AppTheme.primaryColor, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                'Referral Program Terms Notice',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '• Registration Incentive: Rewarding new passenger & driver onboarding (90-day window). Not a continuous annuity.\n'
+            '• Escrow Clearance: All referral dividends enter a 7-day (168h) dispute holding period.\n'
+            '• Weekly Payouts: Minimum withdrawal KES 500 settled weekly via carrier-neutral Mobile Money or Bank.\n'
+            '• Captain Deposit: Ksh 1,000 driver deposit is 100% credited to captain wallet for ride commissions.',
+            style: TextStyle(
+              fontSize: 11,
+              height: 1.45,
+              color: isDark ? Colors.white70 : Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 10),
+          InkWell(
+            onTap: () => showPassengerReferralTermsSheet(context, isDark: isDark),
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Read Full Updated Referral Terms & Conditions',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryColor,
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppTheme.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.open_in_new_rounded,
+                    size: 13,
+                    color: AppTheme.primaryColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

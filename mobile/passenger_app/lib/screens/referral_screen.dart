@@ -201,6 +201,11 @@ class _ReferralScreenState extends State<ReferralScreen> {
 
                   const SizedBox(height: 16),
 
+                  // 1b. Registration Campaign Policy & Terms Banner
+                  _buildProgramTermsNotice(isDark),
+
+                  const SizedBox(height: 16),
+
                   // 2. Horizontal Split-Cockpit QR & Passcode Module
                   _buildSplitCockpitPasscode(isDark),
 
@@ -280,7 +285,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Tier Sovereign • 8% L1 + 4% L2 Lifetime',
+                    'Tier Sovereign • 8% L1 + 4% L2 • Registration Incentive',
                     style: AppTheme.plusJakartaSans(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
@@ -317,7 +322,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
                 child: _buildTelemetryCell(
                   label: 'TOTAL EARNED',
                   value: 'KES ${_totalEarned.toStringAsFixed(0)}',
-                  subtitle: 'Settled M-Pesa',
+                  subtitle: 'Mobile Money',
                   accentColor: AppTheme.primaryColor,
                   isDark: isDark,
                 ),
@@ -346,6 +351,111 @@ class _ReferralScreenState extends State<ReferralScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  // --- 1b. Registration Campaign Policy & Terms Banner ---
+  Widget _buildProgramTermsNotice(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1B1812) : const Color(0xFFFFFDF5),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: AppTheme.primaryColor.withValues(alpha: isDark ? 0.35 : 0.45),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.campaign_rounded,
+                color: AppTheme.primaryColor,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'New User Registration Incentive Terms',
+                  style: AppTheme.montserrat(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '• Registration Incentive: This campaign rewards introducing new users upon registration (90-day attribution window). It is not a permanent annuity.\n'
+            '• Dual Referral Scope: Passengers may refer both new Passengers and Drivers. Drivers may refer fellow Drivers only.\n'
+            '• 7-Day Dispute Clearance: Referral commissions are held in escrow for 7 days (168 hours) to verify trip integrity before release.\n'
+            '• Weekly Payouts: Minimum withdrawal threshold is KES 500, disbursed weekly via carrier-neutral Mobile Money or Bank.\n'
+            '• Captain Value-Back Deposit: Ksh 1,000 driver activation deposit is 100% credited to their wallet for ride commissions (non-refundable as cash).',
+            style: AppTheme.plusJakartaSans(
+              fontSize: 11,
+              height: 1.45,
+              color: isDark ? Colors.white70 : Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 10),
+          InkWell(
+            onTap: () => _showUpdatedReferralTermsSheet(context, isDark),
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Read Full Updated Referral Terms & Conditions',
+                    style: AppTheme.plusJakartaSans(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.primaryColor,
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppTheme.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(
+                    Icons.open_in_new_rounded,
+                    size: 13,
+                    color: AppTheme.primaryColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showUpdatedReferralTermsSheet(BuildContext context, bool isDark) {
+    showPassengerReferralTermsSheet(context, isDark: isDark);
+  }
+
+  Widget _buildTermsCard({
+    required IconData icon,
+    required String title,
+    required String body,
+    required Color cardBg,
+    required Color borderColor,
+    required Color textColor,
+    required Color subtextColor,
+  }) {
+    return buildPassengerTermsCard(
+      icon: icon,
+      title: title,
+      body: body,
+      cardBg: cardBg,
+      borderColor: borderColor,
+      textColor: textColor,
+      subtextColor: subtextColor,
     );
   }
 
@@ -1206,4 +1316,247 @@ class GenealogyTreePainter extends CustomPainter {
   bool shouldRepaint(covariant GenealogyTreePainter oldDelegate) {
     return oldDelegate.mode != mode || oldDelegate.isDark != isDark;
   }
+}
+
+/// Standalone, reusable modal bottom sheet displaying the updated Referral Terms & Conditions
+/// for passengers across referral screens.
+void showPassengerReferralTermsSheet(BuildContext context, {bool isDark = false}) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (ctx) {
+      final surfaceColor = isDark ? const Color(0xFF1B1915) : Colors.white;
+      final textColor = isDark ? Colors.white : const Color(0xFF1E1E1E);
+      final subtextColor = isDark ? Colors.white70 : const Color(0xFF555555);
+      final cardBg = isDark ? const Color(0xFF26221C) : const Color(0xFFFBF8F1);
+      final borderColor = AppTheme.primaryColor.withValues(alpha: isDark ? 0.25 : 0.35);
+
+      return DraggableScrollableSheet(
+        initialChildSize: 0.85,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (_, scrollController) {
+          return Container(
+            decoration: BoxDecoration(
+              color: surfaceColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              border: Border.all(color: borderColor, width: 1),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.4),
+                  blurRadius: 25,
+                  offset: const Offset(0, -6),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 12),
+                Container(
+                  width: 44,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryColor.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.gavel_rounded,
+                          color: AppTheme.primaryColor,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Program Terms & Conditions',
+                              style: AppTheme.montserrat(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Updated November 2026 • Registration Incentive',
+                              style: AppTheme.plusJakartaSans(
+                                fontSize: 11,
+                                color: AppTheme.primaryColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close_rounded),
+                        color: subtextColor,
+                        onPressed: () => Navigator.pop(ctx),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Divider(color: borderColor, height: 1),
+                Expanded(
+                  child: ListView(
+                    controller: scrollController,
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                    children: [
+                      buildPassengerTermsCard(
+                        icon: Icons.campaign_rounded,
+                        title: '1. Onboarding Registration Campaign',
+                        body: 'This incentive program is structured strictly as an onboarding registration incentive to reward introducing new users upon initial platform signup (active 90-day attribution window per referee). It is not an ongoing or permanent annuity.',
+                        cardBg: cardBg,
+                        borderColor: borderColor,
+                        textColor: textColor,
+                        subtextColor: subtextColor,
+                      ),
+                      const SizedBox(height: 12),
+                      buildPassengerTermsCard(
+                        icon: Icons.people_alt_rounded,
+                        title: '2. Role-Based Attribution Scope',
+                        body: '• Passengers: Authorized to refer both new Passengers and Captain Drivers.\n• Drivers: Authorized to refer fellow Captain Drivers ONLY. Attempts to refer passengers are barred by platform policy.',
+                        cardBg: cardBg,
+                        borderColor: borderColor,
+                        textColor: textColor,
+                        subtextColor: subtextColor,
+                      ),
+                      const SizedBox(height: 12),
+                      buildPassengerTermsCard(
+                        icon: Icons.hourglass_top_rounded,
+                        title: '3. 7-Day (168h) Dispute Clearance Escrow',
+                        body: 'All referral commissions are initially credited in a holding escrow status (PENDING_REVIEW) for exactly 7 days (168 hours) post-trip. This window guarantees fair resolution of passenger fare disputes, ride cancellations, and fraud integrity reviews before funds become available for withdrawal.',
+                        cardBg: cardBg,
+                        borderColor: borderColor,
+                        textColor: textColor,
+                        subtextColor: subtextColor,
+                      ),
+                      const SizedBox(height: 12),
+                      buildPassengerTermsCard(
+                        icon: Icons.account_balance_wallet_rounded,
+                        title: '4. Minimum KES 500 Weekly Disbursal',
+                        body: 'The minimum balance required to initiate a withdrawal is KES 500. Payout disbursements are processed automatically on a weekly settlement cycle directly to the user\'s registered Mobile Money account or Bank.',
+                        cardBg: cardBg,
+                        borderColor: borderColor,
+                        textColor: textColor,
+                        subtextColor: subtextColor,
+                      ),
+                      const SizedBox(height: 12),
+                      buildPassengerTermsCard(
+                        icon: Icons.verified_rounded,
+                        title: '5. Captain Ksh 1,000 Value-Back Deposit',
+                        body: 'New Captains make a Ksh 1,000 onboarding activation deposit, which is 100% credited back into their driver wallet for platform ride commissions and trips (non-refundable as cash).',
+                        cardBg: cardBg,
+                        borderColor: borderColor,
+                        textColor: textColor,
+                        subtextColor: subtextColor,
+                      ),
+                      const SizedBox(height: 12),
+                      buildPassengerTermsCard(
+                        icon: Icons.shield_rounded,
+                        title: '6. Platform Funded & Anti-Collusion',
+                        body: 'All referral incentives are funded 100% out of the platform\'s commission share, ensuring driver trip take-home earnings are never reduced. Automated hardware device fingerprinting and route co-occurrence checks immediately flag and disqualify collusive ride farming.',
+                        cardBg: cardBg,
+                        borderColor: borderColor,
+                        textColor: textColor,
+                        subtextColor: subtextColor,
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryColor,
+                            foregroundColor: const Color(0xFF1E1602),
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: () => Navigator.pop(ctx),
+                          child: Text(
+                            'I Understand & Agree',
+                            style: AppTheme.montserrat(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+Widget buildPassengerTermsCard({
+  required IconData icon,
+  required String title,
+  required String body,
+  required Color cardBg,
+  required Color borderColor,
+  required Color textColor,
+  required Color subtextColor,
+}) {
+  return Container(
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      color: cardBg,
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: borderColor, width: 0.8),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 18, color: AppTheme.primaryColor),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                title,
+                style: AppTheme.montserrat(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Text(
+          body,
+          style: AppTheme.plusJakartaSans(
+            fontSize: 11.5,
+            height: 1.45,
+            color: subtextColor,
+          ),
+        ),
+      ],
+    ),
+  );
 }

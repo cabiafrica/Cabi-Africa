@@ -333,7 +333,7 @@ class RideService {
       'reason': afterArrival
           ? 'Passenger cancelled after captain arrival at pickup'
           : 'Passenger cancelled within initial grace window',
-      'creditedTo': 'M-PESA ESCROW WALLET',
+      'creditedTo': 'MOBILE MONEY ESCROW WALLET',
     };
   }
 

@@ -1463,7 +1463,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Text(
-                                'M-PESA / LOCKED',
+                                'MOBILE MONEY / LOCKED',
                                 style: TextStyle(
                                   color: Color(0xFF10B981),
                                   fontSize: 8.5,

@@ -47,7 +47,7 @@ class _PayoutSetupScreenState extends State<PayoutSetupScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
-                  '${_selectedMethod == PayoutMethodType.mpesa ? "M-Pesa" : "Bank"} details saved successfully!'),
+                  '${_selectedMethod == PayoutMethodType.mpesa ? "Mobile Money" : "Bank"} details saved successfully!'),
               backgroundColor: Colors.green),
         );
         Navigator.pop(context);
@@ -103,7 +103,7 @@ class _PayoutSetupScreenState extends State<PayoutSetupScreen> {
                                     ? cabiYellow
                                     : Colors.grey),
                             const SizedBox(height: 4),
-                            Text("M-Pesa",
+                            Text("Mobile Money",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: _selectedMethod ==
@@ -178,7 +178,7 @@ class _PayoutSetupScreenState extends State<PayoutSetupScreen> {
                 TextFormField(
                   controller: _mpesaPhoneController,
                   decoration: const InputDecoration(
-                      labelText: 'M-Pesa Phone Number',
+                      labelText: 'Mobile Money Phone Number',
                       border: OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: cabiYellow, width: 2)),
