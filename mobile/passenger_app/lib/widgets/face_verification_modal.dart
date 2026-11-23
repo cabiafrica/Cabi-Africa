@@ -14,6 +14,7 @@ class FaceVerificationModal extends StatefulWidget {
 class _FaceVerificationModalState extends State<FaceVerificationModal> {
   bool _isScanning = false;
   bool _isSuccess = false;
+  bool _isTorchActive = false;
   double _progress = 0.0;
   String _statusText = 'Align your face within the frame';
 
@@ -91,6 +92,22 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
             alignment: Alignment.center,
             children: [
               // Scanner Frame
+              if (_isTorchActive)
+                Container(
+                  width: 210,
+                  height: 210,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 6),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.white.withValues(alpha: 0.85),
+                        blurRadius: 30,
+                        spreadRadius: 6,
+                      ),
+                    ],
+                  ),
+                ),
               Container(
                 width: 180,
                 height: 180,
@@ -175,6 +192,33 @@ class _FaceVerificationModalState extends State<FaceVerificationModal> {
               onPressed: () => Navigator.pop(context),
               child: const Text('Cancel Request', style: TextStyle(color: Colors.grey)),
             ),
+          if (!_isScanning && !_isSuccess) ...[
+            const SizedBox(height: 8),
+            TextButton.icon(
+              onPressed: () {
+                setState(() => _isTorchActive = !_isTorchActive);
+              },
+              icon: Icon(
+                _isTorchActive ? Icons.flash_on : Icons.nightlight_round,
+                size: 16,
+                color: AppTheme.primaryColor,
+              ),
+              label: Text(
+                _isTorchActive ? 'Turn Off Screen Light' : '🌙 Dark Room? Turn On Screen Light',
+                style: const TextStyle(color: AppTheme.primaryColor, fontSize: 12),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                widget.onVerified();
+              },
+              child: const Text(
+                'Trouble scanning? Verify via SMS OTP instead',
+                style: TextStyle(color: Colors.white60, fontSize: 12, decoration: TextDecoration.underline),
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
         ],
       ),

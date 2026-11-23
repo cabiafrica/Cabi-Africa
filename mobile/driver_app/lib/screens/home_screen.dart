@@ -549,11 +549,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             zoom: _calculateZoomForRadius(_tripRadiusKm),
           );
           _startRidePolling();
-          FloatingBubbleService.instance.checkPermission().then((granted) {
-            if (!granted) {
-              FloatingBubbleService.instance.requestPermission();
-            }
-          });
+          _checkAndPromptFloatingPermissions();
         } else {
           AudioNotificationService.instance.play('driver_offline');
           _ridePollingTimer?.cancel();
@@ -571,6 +567,59 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
         );
       }
+    }
+  }
+
+  Future<void> _checkAndPromptFloatingPermissions() async {
+    final hasOverlay = await FloatingBubbleService.instance.checkPermission();
+    final isIgnoringBattery = await FloatingBubbleService.instance.checkBatteryOptimization();
+
+    if (!hasOverlay || !isIgnoringBattery) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          backgroundColor: AppTheme.darkSurface,
+          title: const Row(
+            children: [
+              Icon(Icons.layers_outlined, color: AppTheme.primaryColor),
+              SizedBox(width: 10),
+              Text(
+                '1-Touch Floating Launcher',
+                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: const Text(
+            'To keep receiving trip calls with instant 1-touch launch while navigating with Google Maps or using other apps, please grant overlay and background battery permissions.',
+            style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Later', style: TextStyle(color: Colors.grey)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryColor,
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () async {
+                Navigator.pop(ctx);
+                if (!hasOverlay) {
+                  await FloatingBubbleService.instance.requestPermission();
+                }
+                if (!isIgnoringBattery) {
+                  await FloatingBubbleService.instance.requestIgnoreBatteryOptimization();
+                }
+              },
+              child: const Text('Enable Permissions', style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      );
     }
   }
 

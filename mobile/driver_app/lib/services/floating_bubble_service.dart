@@ -23,6 +23,22 @@ class FloatingBubbleService {
     } catch (_) {}
   }
 
+  Future<bool> checkBatteryOptimization() async {
+    try {
+      final bool? isIgnoring =
+          await _channel.invokeMethod<bool>('checkBatteryOptimization');
+      return isIgnoring ?? false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> requestIgnoreBatteryOptimization() async {
+    try {
+      await _channel.invokeMethod('requestIgnoreBatteryOptimization');
+    } catch (_) {}
+  }
+
   Future<bool> showBubble() async {
     try {
       final bool? res = await _channel.invokeMethod<bool>('showBubble');
