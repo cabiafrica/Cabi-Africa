@@ -59,21 +59,21 @@ export default function LoginPage() {
             </div>
 
             {/* Glass Card */}
-            <div className="relative z-10 w-full max-w-md p-8 m-4">
+            <div className="relative z-10 w-full max-w-md px-3 sm:px-6 py-6 sm:py-8 m-2 sm:m-4">
                 {/* Card Background with Golden/Yellow Tint Border */}
                 <div className="absolute inset-0 bg-white/90 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xl dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]"></div>
 
                 {/* Glow Border Effect (Golden) */}
                 <div className="absolute -inset-[1px] bg-gradient-to-r from-brand-yellow/40 to-yellow-600/40 rounded-2xl opacity-30 blur-sm group-hover:opacity-100 transition duration-1000"></div>
 
-                <div className="relative p-8">
+                <div className="relative p-5 sm:p-8">
                     {/* Logo Section */}
-                    <div className="flex flex-col items-center justify-center mb-8">
+                    <div className="flex flex-col items-center justify-center mb-6 sm:mb-8">
                         <div className="px-6 py-3.5 rounded-2xl border border-[#D4AF37]/30 bg-slate-50 dark:bg-surface-dark/80 shadow-[0_0_25px_rgba(245,158,11,0.12)] mb-4">
                             <BrandLogo size="lg" />
                         </div>
                         <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-wide">Authenticate</h2>
-                        <p className="text-slate-500 dark:text-gray-400 text-xs mt-1 uppercase tracking-widest">Authenticate or create your CABI account</p>
+                        <p className="text-slate-500 dark:text-gray-400 text-xs mt-1 uppercase tracking-widest text-center">Authenticate or create your CABI account</p>
                     </div>
 
                     {/* Visual Error Banner */}
@@ -84,10 +84,10 @@ export default function LoginPage() {
                         </div>
                     )}
 
-                    <form className="space-y-5" onSubmit={handleLogin}>
+                    <form className="space-y-4 sm:space-y-5" onSubmit={handleLogin}>
                         {/* Username/Email Input */}
                         <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                                 <User className="h-5 w-5 text-gray-500 group-focus-within:text-brand-yellow transition-colors duration-300" />
                             </div>
                             <input
@@ -96,7 +96,7 @@ export default function LoginPage() {
                                 type="text"
                                 autoComplete="email"
                                 required
-                                className="block w-full pl-12 pr-4 py-3.5 border border-slate-200 dark:border-white/5 rounded-xl bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 transition-all duration-300"
+                                className="block w-full !pl-12 pr-4 py-3.5 border border-slate-200 dark:border-white/5 rounded-xl bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 transition-all duration-300 text-sm"
                                 placeholder="Email or Phone Number"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -105,7 +105,7 @@ export default function LoginPage() {
 
                         {/* Password Input */}
                         <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                                 <Lock className="h-5 w-5 text-gray-500 group-focus-within:text-brand-yellow transition-colors duration-300" />
                             </div>
                             <input
@@ -114,15 +114,16 @@ export default function LoginPage() {
                                 type={showPassword ? "text" : "password"}
                                 autoComplete="current-password"
                                 required
-                                className="block w-full pl-12 pr-12 py-3.5 border border-slate-200 dark:border-white/5 rounded-xl bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 transition-all duration-300 tracking-widest"
+                                className="block w-full !pl-12 !pr-12 py-3.5 border border-slate-200 dark:border-white/5 rounded-xl bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 transition-all duration-300 text-sm"
                                 placeholder="Password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                             <button
                                 type="button"
-                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-brand-yellow transition-colors duration-300 focus:outline-none"
+                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-brand-yellow transition-colors duration-300 focus:outline-none z-10"
                                 onClick={() => setShowPassword(!showPassword)}
+                                aria-label={showPassword ? "Hide password" : "Show password"}
                             >
                                 {showPassword ? (
                                     <EyeOff className="h-5 w-5" />
@@ -132,20 +133,18 @@ export default function LoginPage() {
                             </button>
                         </div>
 
-                        {/* Remember Me & Forgot Password */}
-                        <div className="flex items-center justify-between text-sm pt-1">
-                            <div className="flex items-center">
+                        {/* Remember Me & Forgot Password (Strict single line on mobile) */}
+                        <div className="flex items-center justify-between gap-2 text-xs sm:text-sm pt-1">
+                            <label htmlFor="remember-me" className="flex items-center gap-2 cursor-pointer select-none text-slate-600 dark:text-gray-400 whitespace-nowrap">
                                 <input
                                     id="remember-me"
                                     name="remember-me"
                                     type="checkbox"
-                                    className="h-4 w-4 rounded border-slate-300 dark:border-gray-600 text-brand-yellow focus:ring-brand-yellow bg-white dark:bg-black/50"
+                                    className="h-4 w-4 rounded border-slate-300 dark:border-gray-600 text-brand-yellow focus:ring-brand-yellow bg-white dark:bg-black/50 shrink-0"
                                 />
-                                <label htmlFor="remember-me" className="ml-2 block text-slate-600 dark:text-gray-400 select-none cursor-pointer">
-                                    Remember me
-                                </label>
-                            </div>
-                            <Link href="/reset-password" className="font-medium text-brand-yellow hover:text-yellow-400 transition-colors">
+                                <span className="text-xs sm:text-sm">Remember me</span>
+                            </label>
+                            <Link href="/reset-password" className="font-medium text-brand-yellow hover:text-yellow-400 transition-colors whitespace-nowrap text-xs sm:text-sm shrink-0">
                                 Forgot Password?
                             </Link>
                         </div>
@@ -164,8 +163,8 @@ export default function LoginPage() {
                         </button>
                     </form>
 
-                    <div className="mt-8 text-center">
-                        <p className="text-gray-400 text-sm">
+                    <div className="mt-6 sm:mt-8 text-center">
+                        <p className="text-gray-400 text-xs sm:text-sm">
                             Don't have an account?{' '}
                             <Link href="/register" className="font-bold text-amber-600 dark:text-brand-yellow hover:text-slate-900 dark:hover:text-white transition-colors uppercase tracking-wide">
                                 Register Here
@@ -176,7 +175,7 @@ export default function LoginPage() {
             </div>
 
             {/* Footer / Copyright */}
-            <div className="absolute bottom-6 w-full text-center">
+            <div className="relative sm:absolute bottom-4 sm:bottom-6 w-full text-center mt-6 sm:mt-0 pb-4 sm:pb-0">
                 <p className="text-gray-600 text-xs tracking-wide">© 2024 Cabi Africa. All rights reserved.</p>
             </div>
         </div>

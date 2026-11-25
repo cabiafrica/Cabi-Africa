@@ -63,12 +63,12 @@ export default function CorporateLoginPage() {
 
             <Header />
 
-            <main className="pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center justify-center">
-                <div className="w-full max-w-md bg-white dark:bg-surface-dark/95 border border-slate-200 dark:border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+            <main className="pt-28 pb-20 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center justify-center">
+                <div className="w-full max-w-md bg-white dark:bg-surface-dark/95 border border-slate-200 dark:border-white/10 rounded-2xl p-5 sm:p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden">
                     {/* Glow Accents */}
                     <div className="absolute -top-12 -right-12 w-48 h-48 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
 
-                    <div className="text-center mb-8">
+                    <div className="text-center mb-6 sm:mb-8">
                         <BrandLogo size="md" className="mx-auto mb-4" />
                         <h1 className="text-2xl font-black tracking-tight">Corporate Portal Sign In</h1>
                         <p className="text-xs text-gray-400 mt-1">
@@ -89,14 +89,14 @@ export default function CorporateLoginPage() {
                                 Work Email
                             </label>
                             <div className="relative">
-                                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 z-10 pointer-events-none" />
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="corporate@yourcompany.com"
                                     required
-                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl pl-11 pr-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300"
+                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl !pl-11 pr-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300"
                                 />
                             </div>
                         </div>
@@ -106,24 +106,24 @@ export default function CorporateLoginPage() {
                                 Password
                             </label>
                             <div className="relative">
-                                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 z-10 pointer-events-none" />
                                 <input
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
                                     required
-                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl pl-11 pr-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300"
+                                    className="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl !pl-11 pr-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow transition-all duration-300"
                                 />
                             </div>
                         </div>
 
-                        <div className="flex justify-between items-center text-xs text-gray-400 pt-1">
-                            <label className="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" defaultChecked className="rounded text-brand-yellow focus:ring-brand-yellow bg-brand-black" />
-                                <span>Remember device</span>
+                        <div className="flex justify-between items-center text-xs text-gray-400 pt-1 gap-2">
+                            <label className="flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0">
+                                <input type="checkbox" defaultChecked className="rounded text-brand-yellow focus:ring-brand-yellow bg-brand-black shrink-0" />
+                                <span className="whitespace-nowrap">Remember device</span>
                             </label>
-                            <Link href="/reset-password" className="hover:text-brand-yellow transition-colors">
+                            <Link href="/reset-password" className="hover:text-brand-yellow transition-colors whitespace-nowrap shrink-0">
                                 Forgot password?
                             </Link>
                         </div>
