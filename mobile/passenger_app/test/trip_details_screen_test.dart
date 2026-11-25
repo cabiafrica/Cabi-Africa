@@ -23,17 +23,17 @@ void main() {
     expect(find.text('Nairobi CBD'), findsOneWidget);
     expect(find.text('123 Mock Pickup St'), findsOneWidget); // Mocked pickup
 
-    // Verify Financials
+    // Verify Financials (18% Statutory NTSA Cap)
     // Fare: 1000
-    // Fee: 200
-    // Earnings: 800
+    // Fee: 180 (18%)
+    // Earnings: 820 (82%)
     expect(find.text('Total Fare'), findsOneWidget);
     expect(find.text('KES 1000.00'), findsOneWidget);
 
-    expect(find.text('Platform Fee (20%)'), findsOneWidget);
-    expect(find.text('- KES 200.00'), findsOneWidget);
+    expect(find.text('Platform Fee (18%)'), findsOneWidget);
+    expect(find.text('- KES 180.00'), findsOneWidget);
 
     expect(find.text('Your Earnings'), findsOneWidget);
-    expect(find.text('KES 800.00'), findsOneWidget);
+    expect(find.text('KES 820.00'), findsOneWidget);
   });
 }

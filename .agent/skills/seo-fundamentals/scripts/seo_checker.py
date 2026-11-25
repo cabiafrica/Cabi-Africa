@@ -35,7 +35,7 @@ SKIP_DIRS = {
     'node_modules', '.next', 'dist', 'build', '.git', '.github',
     '__pycache__', '.vscode', '.idea', 'coverage', 'test', 'tests',
     '__tests__', 'spec', 'docs', 'documentation', 'examples',
-    '_archive', '_docs_archive', 'scratch', 'design_system', 'tools'
+    '_archive', '_docs_archive', 'scratch', 'design_system', 'tools', 'compliance'
 }
 
 # Files to skip (not pages)

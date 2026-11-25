@@ -211,6 +211,9 @@ model Vehicle {
   capacity                Float?
   capacityUnit            String?
   isShared                Boolean         @default(false)
+  hasDashcam              Boolean         @default(false)
+  dashcamDecalVerified    Boolean         @default(false)
+  dashcamInstalledAt      DateTime?
   createdAt               DateTime        @default(now())
   updatedAt               DateTime        @updatedAt
   occurrences             Occurrence[]    @relation("VehicleOccurrences")
@@ -1603,6 +1606,7 @@ enum ReferralType {
   DRIVER_TO_DRIVER
   PASSENGER_TO_PASSENGER
   PASSENGER_TO_DRIVER
+  DRIVER_TO_PASSENGER
 }
 
 enum FraudRule {

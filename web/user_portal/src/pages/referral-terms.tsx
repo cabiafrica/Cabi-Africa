@@ -53,15 +53,17 @@ export default function ReferralTermsPage() {
             </h1>
 
             <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-300 leading-relaxed max-w-2xl">
-              This document governs participation in the Cabi Referral Incentive Program. By subscribing to the program, sharing your referral link, or registering with a Cabi referral code, you acknowledge and agree to comply with all terms herein.
+              This document governs participation in the Cabi Referral Incentive Program operated by <strong>CABI FAST AFRICA LIMITED</strong> (Reg No: PVT-OD169L8L). By subscribing to the program, sharing your referral link, or registering with a Cabi referral code, you acknowledge and agree to comply with all terms herein.
             </p>
 
             <div className="mt-6 pt-6 border-t border-slate-100 dark:border-white/10 flex flex-wrap items-center gap-4 text-xs text-neutral-500 dark:text-neutral-400">
+              <span><strong>Operating Entity:</strong> CABI FAST AFRICA LIMITED</span>
+              <span>•</span>
               <span><strong>Effective Date:</strong> January 2026</span>
               <span>•</span>
               <span><strong>Governing Law:</strong> Republic of Kenya</span>
               <span>•</span>
-              <span><strong>Program Scope:</strong> New User Registration Growth</span>
+              <span><strong>Program Scope:</strong> Driver &amp; Commuter Registration Growth</span>
             </div>
           </div>
 
@@ -93,12 +95,26 @@ export default function ReferralTermsPage() {
                 <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10">
                   <h3 className="font-bold text-slate-900 dark:text-white text-sm mb-1.5 flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    Role-Based Referral Authorization
+                    Role-Based Referral Authorization &amp; Cross-Referrals
                   </h3>
-                  <ul className="text-xs sm:text-sm space-y-1.5 list-disc list-inside text-neutral-600 dark:text-neutral-300">
-                    <li><strong>Drivers:</strong> Can refer <strong>Drivers only</strong>. Drivers cannot refer passengers. Must hold an active account, valid NTSA badge, and maintain a qualifying driver rating.</li>
-                    <li><strong>Passengers:</strong> Can refer <strong>Both Passengers and Drivers</strong>. Must hold an active user account, specific passenger badge, and maintain a positive user rating.</li>
+                  <ul className="text-xs sm:text-sm space-y-2 list-disc list-inside text-neutral-600 dark:text-neutral-300">
+                    <li><strong>Drivers:</strong> Can refer <strong>Both Fellow Drivers and Passengers / Commuters</strong>. Drivers must hold an active account, valid NTSA PSV badge, and maintain a qualifying driver rating.</li>
+                    <li><strong>Passengers:</strong> Can refer <strong>Both Passengers and Drivers</strong>. Must hold an active user account, verified profile avatar, and maintain a positive user rating.</li>
                   </ul>
+
+                  {/* Driver-to-Passenger Referral & Fair Competition Guidelines */}
+                  <div className="mt-3 pt-3 border-t border-slate-200 dark:border-white/10 text-xs text-neutral-600 dark:text-neutral-400 space-y-1.5">
+                    <p className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <Scale className="w-3.5 h-3.5 text-[#D4AF37]" />
+                      Driver-to-Passenger Referral &amp; Fair Competition Guidelines:
+                    </p>
+                    <p>
+                      Pursuant to the Competition Act (Cap 504) and NTSA multi-homing rules, independent driver-partners have the lawful right to introduce Cabi Africa to commuters they encounter during their transportation activities (including passengers requesting rides on other platforms) by sharing their personal referral QR code, discount voucher, or download link.
+                    </p>
+                    <p className="bg-amber-500/10 text-amber-800 dark:text-amber-300 p-2.5 rounded-lg border border-amber-500/20 font-medium">
+                      <strong>Important Boundary (No Tortious Interference):</strong> Driver-partners are strictly prohibited from soliciting, coercing, or encouraging passengers to cancel an in-progress trip dispatched on another platform. Referrals must strictly target the passenger's <strong>future journeys</strong> on Cabi Africa. Drivers earn published referral rewards once the referred passenger registers and completes their first qualifying trip.
+                    </p>
+                  </div>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30">

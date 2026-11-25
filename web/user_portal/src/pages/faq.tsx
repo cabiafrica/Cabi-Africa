@@ -29,7 +29,7 @@ const faqData: FAQItem[] = [
   {
     category: 'Driver Onboarding',
     q: 'What are the vehicle and document requirements to drive with Cabi?',
-    a: 'To drive with Cabi, you must be at least 21 years old, hold a valid driver\'s license with an official NTSA badge, and comply with statutory NTSA guidelines. Your vehicle must be clean, well-maintained, and roadworthy with valid PSV insurance cover. Drivers must upload their credentials and successfully pass our digital qualifications.',
+    a: 'To drive with Cabi, you must be at least 24 years old (in accordance with Traffic Act Cap 403 for commercial passenger vehicles), hold a valid driver\'s license with an official NTSA badge, and comply with statutory NTSA guidelines. Your vehicle must be clean, well-maintained, and roadworthy with valid PSV insurance cover. Drivers must upload their credentials and successfully pass our digital qualifications.',
   },
   {
     category: 'Driver Onboarding',

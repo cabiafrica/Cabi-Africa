@@ -19,6 +19,6 @@ export class AdminServiceClient {
   async getFareCommissionConfig(): Promise<{ totalCommission: number }> {
     console.log('Fetching fare commission config from Admin Service...');
     await new Promise(resolve => setTimeout(resolve, 100));
-    return { totalCommission: 0.2 }; // 20%
+    return { totalCommission: 0.18 }; // 18% statutory cap under NTSA Regulation 9
   }
 }

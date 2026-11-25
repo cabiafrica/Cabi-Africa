@@ -71,6 +71,11 @@ class _TripDisputeScreenState extends State<TripDisputeScreen> {
       'label': 'Routing / Traffic Anomaly',
       'description': 'Driver GPS failure or navigation error caused extreme delay',
     },
+    {
+      'key': 'VEHICLE_SOILING',
+      'label': 'Cabin Soiling / Detailing Fee Dispute',
+      'description': 'Contesting interior vehicle soiling charge or cleaning fee assessment',
+    },
   ];
 
   @override

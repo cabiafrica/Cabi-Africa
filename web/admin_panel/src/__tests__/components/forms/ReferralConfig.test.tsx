@@ -16,7 +16,7 @@ const mockConfig: ReferralConfigType = {
     upline2Cut: 0.2,
   },
   fareCommission: {
-    totalCommission: 0.2,
+    totalCommission: 0.18,
     systemCut: 0.5,
     upline1Cut: 0.3,
     upline2Cut: 0.2,

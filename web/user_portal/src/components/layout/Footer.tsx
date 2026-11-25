@@ -191,9 +191,9 @@ export default function Footer() {
                 </div>
 
                 {/* Sub-Footer Copyright & Executive Preferences */}
-                <div className="mt-12 border-t border-neutral-200 dark:border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
-                    <p className="text-center sm:text-left">
-                        &copy; {new Date().getFullYear()} CABI Africa Technologies Inc. All rights reserved.
+                <div className="mt-12 border-t border-neutral-200 dark:border-white/10 pt-8 pb-16 sm:pb-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
+                    <p className="text-center sm:text-left sm:pl-28">
+                        &copy; {new Date().getFullYear()} CABI FAST AFRICA LIMITED. All rights reserved.
                     </p>
                     <div className="flex items-center gap-3 pr-24">
                         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-200/60 dark:bg-white/5 border border-neutral-300 dark:border-white/10 text-neutral-700 dark:text-neutral-300 shadow-sm">

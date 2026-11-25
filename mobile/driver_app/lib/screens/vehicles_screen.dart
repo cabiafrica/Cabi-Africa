@@ -199,6 +199,39 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                                     color: Colors.grey[600], fontSize: 12)),
                           ],
                         ),
+                        if (vehicle['hasDashcam'] == true) ...[
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.shade50,
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(
+                                      color: Colors.blue.shade300, width: 0.8),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.videocam,
+                                        color: Colors.blue, size: 14),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'DASHCAM REGISTERED (SURVEILLANCE ACTIVE)',
+                                      style: TextStyle(
+                                        color: Colors.blue,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                         const SizedBox(height: 16),
                         SizedBox(
                           width: double.infinity,
@@ -291,6 +324,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   final _colorController = TextEditingController();
   final _plateController = TextEditingController();
   String _vehicleType = 'SEDAN';
+  bool _hasDashcam = false;
+  bool _dashcamDecalAffixed = false;
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
@@ -302,6 +337,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
         'color': _colorController.text,
         'licensePlate': _plateController.text.toUpperCase(),
         'type': _vehicleType,
+        'hasDashcam': _hasDashcam,
+        'dashcamDecalAffixed': _dashcamDecalAffixed,
         'isActive': false,
       });
     }
@@ -399,6 +436,56 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 DropdownMenuItem(value: 'LUXURY', child: Text('Luxury')),
               ],
               onChanged: (value) => setState(() => _vehicleType = value!),
+            ),
+            const SizedBox(height: 20),
+            // Mandatory Dashcam & Surveillance Declaration
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Column(
+                children: [
+                  SwitchListTile(
+                    title: const Text(
+                      'Vehicle has Dashcam / Surveillance Camera',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                    subtitle: const Text(
+                      'Declare if inward- or outward-facing cameras are fitted to this vehicle for safety and crime deterrence.',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    secondary: const Icon(Icons.videocam, color: Color(0xFFFFBE0B)),
+                    value: _hasDashcam,
+                    onChanged: (val) {
+                      setState(() {
+                        _hasDashcam = val;
+                        if (!val) _dashcamDecalAffixed = false;
+                      });
+                    },
+                  ),
+                  if (_hasDashcam) ...[
+                    const Divider(height: 1),
+                    CheckboxListTile(
+                      title: const Text(
+                        'Passenger Warning Decal Affixed',
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                      ),
+                      subtitle: const Text(
+                        'I confirm visible interior warning stickers notify passengers of active recording, and I covenant NEVER to upload or leak footage to social media under penalty of Section 72 of the Data Protection Act (2019).',
+                        style: TextStyle(fontSize: 11, color: Colors.black87),
+                      ),
+                      value: _dashcamDecalAffixed,
+                      onChanged: (val) {
+                        setState(() {
+                          _dashcamDecalAffixed = val ?? false;
+                        });
+                      },
+                    ),
+                  ],
+                ],
+              ),
             ),
             const SizedBox(height: 24),
             ElevatedButton(

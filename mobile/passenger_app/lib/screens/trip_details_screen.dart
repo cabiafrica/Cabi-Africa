@@ -10,8 +10,8 @@ class TripDetailsScreen extends StatelessWidget {
     final fareString = trip['fare'] ?? '0';
     final numericFare =
         double.tryParse(fareString.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0.0;
-    final platformFee = numericFare * 0.20;
-    final earnings = numericFare * 0.80;
+    final platformFee = numericFare * 0.18;
+    final earnings = numericFare * 0.82;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Trip Details')),
@@ -129,7 +129,7 @@ class TripDetailsScreen extends StatelessWidget {
         _buildFinancialRow('Total Fare', 'KES ${fare.toStringAsFixed(2)}'),
         const SizedBox(height: 8),
         _buildFinancialRow(
-          'Platform Fee (20%)',
+          'Platform Fee (18%)',
           '- KES ${fee.toStringAsFixed(2)}',
           isDeduction: true,
         ),

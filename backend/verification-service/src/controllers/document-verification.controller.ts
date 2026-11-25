@@ -23,7 +23,7 @@ import {
 } from '../dto/document-verification.dto';
 import { VerificationDocumentType, VerificationStatus } from '@prisma/client';
 
-@Controller('api/v1/verification/document')
+@Controller('v1/verification/document')
 export class DocumentVerificationController {
   private readonly logger = new Logger(DocumentVerificationController.name);
 

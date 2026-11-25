@@ -76,7 +76,7 @@ export default function BlogPostPage({ post, recentPosts, categories }: BlogPost
                             },
                             publisher: {
                                 '@type': 'Organization',
-                                name: 'CABI Africa Technologies Inc.',
+                                name: 'CABI FAST AFRICA LIMITED',
                                 logo: {
                                     '@type': 'ImageObject',
                                     url: 'https://cabi.africa/images/cabi-logo-dark.png',

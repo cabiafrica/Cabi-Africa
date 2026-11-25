@@ -339,6 +339,46 @@ extension _HomeScreenPanels on _HomeScreenState {
               );
             }(),
 
+            // In-Cabin Dashcam & Surveillance Indicator (Regulation & ODPC Compliance)
+            () {
+              final vehicleMap = (_currentRideData?['driver'] as Map<String, dynamic>?)?['vehicle'] as Map<String, dynamic>? ??
+                  _currentRideData?['vehicle'] as Map<String, dynamic>?;
+              final hasDashcam = vehicleMap?['hasDashcam'] == true ||
+                  _currentRideData?['hasDashcam'] == true ||
+                  (_currentRideData?['driver'] as Map<String, dynamic>?)?['hasDashcam'] == true;
+              if (!hasDashcam) return const SizedBox.shrink();
+
+              return Container(
+                margin: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0284C7).withValues(alpha: isDark ? 0.2 : 0.08),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: const Color(0xFF0284C7).withValues(alpha: 0.35),
+                    width: 1,
+                  ),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.videocam_rounded, color: Color(0xFF0284C7), size: 16),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'SURVEILLANCE CAMERA INSTALLED • ACTIVE FOR RIDER SAFETY',
+                        style: TextStyle(
+                          color: Color(0xFF0284C7),
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }(),
+
             const SizedBox(height: 10),
 
             // Cancel Button
@@ -891,6 +931,46 @@ extension _HomeScreenPanels on _HomeScreenState {
                 );
               },
             ),
+
+            // In-Cabin Dashcam & Surveillance Indicator (Trip In Progress)
+            () {
+              final vehicleMap = (_currentRideData?['driver'] as Map<String, dynamic>?)?['vehicle'] as Map<String, dynamic>? ??
+                  _currentRideData?['vehicle'] as Map<String, dynamic>?;
+              final hasDashcam = vehicleMap?['hasDashcam'] == true ||
+                  _currentRideData?['hasDashcam'] == true ||
+                  (_currentRideData?['driver'] as Map<String, dynamic>?)?['hasDashcam'] == true;
+              if (!hasDashcam) return const SizedBox.shrink();
+
+              return Container(
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0284C7).withValues(alpha: isDark ? 0.2 : 0.08),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: const Color(0xFF0284C7).withValues(alpha: 0.35),
+                    width: 1,
+                  ),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.videocam_rounded, color: Color(0xFF0284C7), size: 15),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'SURVEILLANCE CAMERA ACTIVE • IN-CABIN SAFETY RECORDING',
+                        style: TextStyle(
+                          color: Color(0xFF0284C7),
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }(),
             if (_currentRideData?['tripCode'] != null) ...[
               const SizedBox(height: 12),
               Container(

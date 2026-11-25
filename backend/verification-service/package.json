@@ -32,6 +32,10 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "moduleNameMapper": {
+      "^@cabi/backend/database$": "<rootDir>/../../../libs/backend/database/src/index.ts",
+      "^@cabi/backend/common$": "<rootDir>/../../../libs/backend/common/src/index.ts"
+    },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],

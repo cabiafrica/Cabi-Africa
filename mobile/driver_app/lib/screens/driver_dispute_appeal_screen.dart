@@ -60,6 +60,16 @@ class _DriverDisputeAppealScreenState extends State<DriverDisputeAppealScreen> {
       'description': 'Rider specifically instructed to stop or take another route',
     },
     {
+      'key': 'CABIN_SOILING_CLEANING_CLAIM',
+      'label': 'Cabin Soiling Claim (KES 1,500 - 3,500)',
+      'description': 'Passenger soiled vehicle interior (food/drinks/vomit) requiring commercial detailing',
+    },
+    {
+      'key': 'FARE_EVASION_MPESA_REVERSAL',
+      'label': 'Fare Evasion / Malicious M-Pesa Reversal',
+      'description': 'Passenger failed to settle trip fare or initiated post-trip transaction reversal',
+    },
+    {
       'key': 'OTHER',
       'label': 'Other Operational Justification',
       'description': 'Weather, vehicle safety precaution, or external event',

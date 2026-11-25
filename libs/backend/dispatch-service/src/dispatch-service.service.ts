@@ -287,7 +287,7 @@ export class DispatchService {
         if (driverUser?.email && driverUser.email.includes('@')) {
             results.driverEmail = driverUser.email;
             try {
-                const commissionRate = 20; // 20% platform commission
+                const commissionRate = 18; // 18% statutory platform commission under NTSA Regulation 9
                 const commissionAmount = Number((totalFare * (commissionRate / 100)).toFixed(2));
                 const netDriverEarnings = Number((totalFare - commissionAmount).toFixed(2));
 

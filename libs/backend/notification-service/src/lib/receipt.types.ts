@@ -52,7 +52,7 @@ export interface DriverReceiptPayload {
   durationMinutes?: number;
   currency?: string;
   grossFare: number;
-  platformCommissionRate?: number; // e.g. 20 for 20%
+  platformCommissionRate?: number; // e.g. 18 for 18% statutory NTSA cap
   platformCommissionAmount: number;
   saccoDeductionAmount?: number;
   tipAmount?: number;

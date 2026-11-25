@@ -91,12 +91,21 @@ class _ReferralProgramScreenState extends ConsumerState<ReferralProgramScreen> {
     }
   }
 
-  void _shareCode(String code) {
+  void _shareDriverCode(String code) {
     final message =
-        'Join Cabi Africa as a driver and earn more! Use my referral code: $code\nSign up here: https://cabi.africa/d';
+        'Join Cabi Africa as a driver and earn more with 18% capped commissions! Use my referral code: $code\nSign up here: https://cabi.africa/d';
     Clipboard.setData(ClipboardData(text: message));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Driver invite message copied to clipboard!')),
+    );
+  }
+
+  void _sharePassengerCode(String code) {
+    final message =
+        'Ride with Cabi Africa! Safe, reliable rides with in-cabin safety cameras and fair fares. Use my referral code $code for discounts on your rides: https://cabi.africa/p';
+    Clipboard.setData(ClipboardData(text: message));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Commuter invite message copied to clipboard!')),
     );
   }
 
@@ -158,7 +167,7 @@ class _ReferralProgramScreenState extends ConsumerState<ReferralProgramScreen> {
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          'Share this unique code or QR with other drivers.',
+                          'Share this unique code or QR with fellow drivers and commuters.',
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.grey),
                         ),
@@ -173,32 +182,45 @@ class _ReferralProgramScreenState extends ConsumerState<ReferralProgramScreen> {
                   children: [
                     Expanded(
                       child: ElevatedButton.icon(
-                        onPressed: () => _shareCode(referralInfo.referralCode),
-                        icon: const Icon(Icons.copy),
-                        label: const Text('Copy Code'),
+                        onPressed: () => _shareDriverCode(referralInfo.referralCode),
+                        icon: const Icon(Icons.drive_eta, size: 16),
+                        label: const Text('Invite Driver', style: TextStyle(fontSize: 12)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.grey[200],
                           foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const DownlineScreen()));
-                        },
-                        icon: const Icon(Icons.people),
-                        label: const Text('View Team'),
+                        onPressed: () => _sharePassengerCode(referralInfo.referralCode),
+                        icon: const Icon(Icons.person_add_alt_1, size: 16),
+                        label: const Text('Invite Rider', style: TextStyle(fontSize: 12)),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryColor,
+                          backgroundColor: Colors.amber.shade100,
                           foregroundColor: Colors.black,
+                          side: BorderSide(color: Colors.amber.shade400),
+                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                         ),
                       ),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      tooltip: 'View Downline Team',
+                      icon: const Icon(Icons.people, color: Colors.black),
+                      style: IconButton.styleFrom(
+                        backgroundColor: AppTheme.primaryColor,
+                        padding: const EdgeInsets.all(12),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const DownlineScreen()));
+                      },
                     ),
                   ],
                 ),
@@ -313,8 +335,9 @@ class _ReferralProgramScreenState extends ConsumerState<ReferralProgramScreen> {
           ),
           const SizedBox(height: 8),
           const Text(
-            '• Registration Incentive: Designed to reward recruiting new captains on registration (90-day attribution window). Not a continuous annuity.\n'
-            '• Driver Scope: Captains can refer fellow Captain Drivers only.\n'
+            '• Registration Incentive: Designed to reward recruiting new captains and commuters on registration (90-day attribution window).\n'
+            '• Cross-Referral Scope: Captains can refer both fellow Drivers and Commuters/Passengers.\n'
+            '• Fair Competition: Drivers may share personal referral links with commuters met in transit for future trips (no mid-trip cancellations).\n'
             '• 7-Day Clearance: Referral earnings undergo a 7-day (168h) escrow clearance before moving to available balance.\n'
             '• Weekly Payouts: Minimum withdrawal is KES 500, disbursed weekly via carrier-neutral Mobile Money or Bank.\n'
             '• Activation Deposit: Ksh 1,000 deposit is 100% credited to captain wallet for ride commissions (non-refundable as cash).',
@@ -464,9 +487,9 @@ class _ReferralProgramScreenState extends ConsumerState<ReferralProgramScreen> {
                         ),
                         const SizedBox(height: 12),
                         _buildDriverTermsCard(
-                          icon: Icons.badge_rounded,
-                          title: '2. Captain-to-Captain Scope',
-                          body: 'Captains are authorized to recruit and refer fellow Captain Drivers only. Passenger referral attribution is restricted by platform policy.',
+                          icon: Icons.people_outline_rounded,
+                          title: '2. Driver & Commuter Referral Scope',
+                          body: 'Captains are authorized to refer both fellow Captain Drivers and Commuters/Passengers. Drivers earn qualifying referral rewards when referred commuters register and complete trips on Cabi Africa.',
                           cardBg: cardBg,
                           borderColor: borderColor,
                           textColor: textColor,

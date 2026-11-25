@@ -31,7 +31,7 @@ export default function TermsOfServicePage() {
                 1. User Accounts &amp; Eligibility
               </h2>
               <p>
-                To access the CABI platform as a driver partner or passenger, you must register and maintain an active account. You must be at least 18 years of age to book rides, and at least 21 years of age with a valid commercial driver's license to register as a driver. Account information must be accurate, current, and verified against government identification.
+                To access the CABI platform as a driver partner or passenger, you must register and maintain an active account. You must be at least 18 years of age to book rides, and at least 24 years of age (in accordance with Traffic Act Cap 403 and NTSA commercial PSV licensing requirements) with a valid commercial driver's license (Class D1) to register as a driver. Account information must be accurate, current, and verified against government identification.
               </p>
             </section>
 
@@ -86,7 +86,7 @@ export default function TermsOfServicePage() {
                 4. Currency, Fares &amp; Local Mobile Money Settlement
               </h2>
               <p>
-                All platform pricing, passenger fares, driver disbursements, tips, and referral incentives are denominated and processed in <strong className="text-slate-900 dark:text-white">Kenyan Shillings (Ksh)</strong>. Settlement is conducted seamlessly via Mobile Money networks and authorized local payment partners with full digital receipts.
+                All platform pricing, passenger fares, driver disbursements, tips, and referral incentives are denominated and processed in <strong className="text-slate-900 dark:text-white">Kenyan Shillings (Ksh)</strong>. In strict compliance with the NTSA (Operation of Transport Network Companies) Regulations, Legal Notice No. 120 of 2022, Cabi's platform service fee is capped at a maximum of <strong className="text-slate-900 dark:text-white">18% of the agreed trip fare</strong>, ensuring driver partners retain at least 82% of all earned trip fares plus 100% of customer tips. Settlement is conducted seamlessly via Mobile Money networks and authorized local payment partners with full digital receipts.
               </p>
             </section>
 

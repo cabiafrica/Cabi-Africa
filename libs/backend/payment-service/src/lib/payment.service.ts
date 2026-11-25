@@ -330,12 +330,12 @@ export class PaymentService {
             payerWallet.balance -= amount;
 
             const payeeWallet = await this.getWallet(payeeId);
-            payeeWallet.balance += amount * 0.8; // Driver gets 80%
-            // 20% Platform Fee stays in system
+            payeeWallet.balance += amount * 0.82; // Driver gets 82%
+            // 18% Statutory Platform Fee (NTSA Regulation 9) stays in system
         }
         else if (method === 'CASH') {
-            // Driver collects 100% cash. Platform deducts 20% commission from Driver Wallet.
-            const commission = amount * 0.2;
+            // Driver collects 100% cash. Platform deducts 18% statutory commission from Driver Wallet.
+            const commission = amount * 0.18;
             const driverWallet = await this.getWallet(payeeId);
             driverWallet.balance -= commission;
             console.log(`[PaymentService] Deducted commission $${commission} from driver ${payeeId}`);

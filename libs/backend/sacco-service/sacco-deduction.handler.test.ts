@@ -28,18 +28,18 @@ describe('handleSaccoDeduction', () => {
   it('should calculate and log the correct savings amount', async () => {
     // Arrange
     mockAdminClient.getSaccoConfig.mockResolvedValue({ savingsRate: 0.05 }); // 5%
-    mockAdminClient.getFareCommissionConfig.mockResolvedValue({ totalCommission: 0.2 }); // 20%
+    mockAdminClient.getFareCommissionConfig.mockResolvedValue({ totalCommission: 0.18 }); // 18% statutory cap
 
     // Act
     await handleSaccoDeduction(testEvent);
 
     // Assert
-    // Total Commission = 1000 * 0.2 = 200
-    // Savings Amount = 200 * 0.05 = 10
+    // Total Commission = 1000 * 0.18 = 180
+    // Savings Amount = 180 * 0.05 = 9
     expect(mockTransactionRepo.create).toHaveBeenCalledTimes(1);
     expect(mockTransactionRepo.create).toHaveBeenCalledWith({
       userId: 'driver-abc',
-      amount: 10,
+      amount: 9,
       type: 'Sacco_SAVING',
       relatedTripId: 'trip-xyz-789',
     });
@@ -48,7 +48,7 @@ describe('handleSaccoDeduction', () => {
   it('should do nothing if the savings rate is zero', async () => {
     // Arrange
     mockAdminClient.getSaccoConfig.mockResolvedValue({ savingsRate: 0 });
-    mockAdminClient.getFareCommissionConfig.mockResolvedValue({ totalCommission: 0.2 });
+    mockAdminClient.getFareCommissionConfig.mockResolvedValue({ totalCommission: 0.18 });
 
     // Act
     await handleSaccoDeduction(testEvent);

@@ -79,9 +79,9 @@ describe('NotificationService - HTML Email Receipts', () => {
       durationMinutes: 35,
       currency: 'KES',
       grossFare: 1450.0,
-      platformCommissionRate: 20,
-      platformCommissionAmount: 290.0,
-      netDriverEarnings: 1160.0,
+      platformCommissionRate: 18,
+      platformCommissionAmount: 261.0,
+      netDriverEarnings: 1189.0,
       paymentMethod: 'MPESA',
       payoutStatus: 'CREDITED_TO_WALLET',
       passengerName: 'Jane Doe',
@@ -94,11 +94,11 @@ describe('NotificationService - HTML Email Receipts', () => {
       expect(html).toContain('Trip Earnings Summary');
       expect(html).toContain('Peter Kamau');
       expect(html).toContain('Your Net Earnings');
-      expect(html).toContain('KES 1,160.00');
+      expect(html).toContain('KES 1,189.00');
       expect(html).toContain('Gross Trip Fare');
       expect(html).toContain('KES 1,450.00');
-      expect(html).toContain('Platform Service Fee (20%)');
-      expect(html).toContain('- KES 290.00');
+      expect(html).toContain('Platform Service Fee (18%)');
+      expect(html).toContain('- KES 261.00');
       expect(html).toContain('Westlands Square, Nairobi');
       expect(html).toContain('Jane Doe');
       expect(html).toContain('CREDITED_TO_WALLET');

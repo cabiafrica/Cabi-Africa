@@ -11,6 +11,7 @@ class DriverDetailsPanel extends StatelessWidget {
   final String eta;
   final String? vehicleColor;
   final String? profilePictureUrl;
+  final bool hasDashcam;
 
   const DriverDetailsPanel({
     super.key,
@@ -20,6 +21,7 @@ class DriverDetailsPanel extends StatelessWidget {
     required this.eta,
     this.vehicleColor,
     this.profilePictureUrl,
+    this.hasDashcam = false,
   });
 
   Future<void> _handleSOS(BuildContext context) async {
@@ -167,6 +169,37 @@ class DriverDetailsPanel extends StatelessWidget {
               ),
             ],
           ),
+          if (hasDashcam) ...[
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0284C7).withValues(alpha: isDark ? 0.2 : 0.08),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: const Color(0xFF0284C7).withValues(alpha: 0.35),
+                  width: 1,
+                ),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.videocam_rounded, color: Color(0xFF0284C7), size: 16),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'SURVEILLANCE CAMERA INSTALLED • ACTIVE FOR RIDER SAFETY',
+                      style: TextStyle(
+                        color: Color(0xFF0284C7),
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,

@@ -6,6 +6,8 @@ import { DocumentVerificationController } from './controllers/document-verificat
 import { BiometricVerificationController } from './controllers/biometric-verification.controller';
 import { PassengerVerificationController } from './controllers/passenger-verification.controller';
 import { DocumentVerificationService } from './services/document-verification.service';
+import { FastRegistryVerificationService } from './services/fast-registry-verification.service';
+import { SmileIdClientService } from './services/smile-id-client.service';
 import { BiometricVerificationService } from './services/biometric-verification.service';
 import { AiDocumentVerificationService } from './services/ai-document-verification.service';
 import { VerificationNotificationService } from './services/verification-notification.service';
@@ -31,6 +33,8 @@ import { PrismaModule } from '@cabi/backend/database';
   providers: [
     AppService,
     OcrService,
+    SmileIdClientService,
+    FastRegistryVerificationService,
     DocumentVerificationService,
     BiometricVerificationService,
     AiDocumentVerificationService,

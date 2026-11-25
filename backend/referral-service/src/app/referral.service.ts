@@ -217,14 +217,10 @@ export class ReferralService {
     const isReferrerDriver = Boolean(referrer.driverProfile || referrer.role === 'DRIVER');
     const isRefereeDriver = Boolean(referee.driverProfile || referee.role === 'DRIVER');
 
-    // 3. ROLE-BASED CONSTRAINTS (Rule #1 & #2)
-    // Driver can refer drivers only and cannot refer passenger
-    if (isReferrerDriver && !isRefereeDriver) {
-      throw new ForbiddenException(
-        'Drivers are only authorized to refer fellow drivers. Referring passengers is not permitted.',
-      );
-    }
-    // Passenger can refer both passengers and drivers (Allowed)
+    // 3. ROLE-BASED CONSTRAINTS (Harmonized for Driver & Passenger Cross-Referrals)
+    // Both Drivers and Passengers are authorized to refer new users.
+    // Drivers can refer fellow drivers and passengers (commuters).
+    // Passengers can refer fellow passengers and drivers.
 
     const config = await this.getConfig();
 
@@ -282,8 +278,8 @@ export class ReferralService {
       currentCheckId = uplineUser?.referredById || null;
     }
 
-    // 6. DRIVER LEVEL 1 CAP CHECK (Up to 10 drivers)
-    let referralType: 'DRIVER_TO_DRIVER' | 'PASSENGER_TO_PASSENGER' | 'PASSENGER_TO_DRIVER' =
+    // 6. REFERRAL TYPE DETERMINATION & DRIVER LEVEL 1 CAP CHECK
+    let referralType: 'DRIVER_TO_DRIVER' | 'PASSENGER_TO_PASSENGER' | 'PASSENGER_TO_DRIVER' | 'DRIVER_TO_PASSENGER' =
       'PASSENGER_TO_PASSENGER';
 
     if (isReferrerDriver && isRefereeDriver) {
@@ -304,6 +300,8 @@ export class ReferralService {
       }
     } else if (!isReferrerDriver && isRefereeDriver) {
       referralType = 'PASSENGER_TO_DRIVER';
+    } else if (isReferrerDriver && !isRefereeDriver) {
+      referralType = 'DRIVER_TO_PASSENGER';
     }
 
     // 7. BADGE QUALIFICATION SNAPSHOT (Grandfathering Support)
@@ -612,7 +610,7 @@ export class ReferralService {
       }
     }
 
-    // 5. PASSENGER REFERRING DRIVER (First Week Incentive: e.g. 2% of Driver Earnings)
+    // 5. PASSENGER REFERRING DRIVER (Badge Holders Earn Ongoing Share; Non-Badged Earn First Week)
     const paxDriverRel = await (this.prisma as any).referralRelationship.findFirst({
       where: {
         refereeId: driverProfile.userId,
@@ -623,10 +621,24 @@ export class ReferralService {
 
     if (paxDriverRel && remainingPool > 0) {
       const now = new Date();
-      if (paxDriverRel.firstWeekExpiresAt && now <= new Date(paxDriverRel.firstWeekExpiresAt)) {
-        const paxFirstWeekPct = config.passengerProgram.paxReferDriverFirstWeekPercent || 2.0;
+      const isFirstWeek =
+        paxDriverRel.firstWeekExpiresAt && now <= new Date(paxDriverRel.firstWeekExpiresAt);
+
+      // Check if passenger holds the required qualifying badge to benefit ongoing from driver earnings
+      const isPaxBadgeQualified = await this.checkUserQualification(
+        paxDriverRel.referrerId,
+        null,
+        config.qualifiers.requiredBadgeCode,
+      );
+
+      // Qualified badge holders earn ongoing referral share from driver earnings; unbadged earn during the promotional first week
+      if (isPaxBadgeQualified || isFirstWeek) {
+        const paxEarningsPct = isPaxBadgeQualified
+          ? (config.driverProgram.l1Percentage || 2.0)
+          : (config.passengerProgram.paxReferDriverFirstWeekPercent || 2.0);
+
         const paxCommission = Math.min(
-          driverEarnings * (paxFirstWeekPct / 100),
+          driverEarnings * (paxEarningsPct / 100),
           remainingPool,
         );
 
@@ -643,7 +655,7 @@ export class ReferralService {
             amount: new Prisma.Decimal(paxCommission.toFixed(2)),
             level: 1,
             basisAmount: new Prisma.Decimal(driverEarnings.toFixed(2)),
-            percentage: new Prisma.Decimal(paxFirstWeekPct),
+            percentage: new Prisma.Decimal(paxEarningsPct),
             status: 'PENDING_REVIEW',
             escrowReleaseAt,
           });
@@ -659,7 +671,7 @@ export class ReferralService {
       });
     }
 
-    // 6. PASSENGER REFERRAL REWARDS (Passenger -> Passenger: L1 2%, L2 1% of Spend)
+    // 6. PASSENGER TRIP REFERRAL REWARDS (Passenger referred by Passenger OR by Driver)
     if (config.passengerProgram.enabled && remainingPool > 0) {
       const passenger = await this.prisma.user.findUnique({
         where: { id: passengerId },
@@ -667,20 +679,24 @@ export class ReferralService {
       });
 
       if (passenger?.referredById) {
-        const l1PaxReferrer = await this.prisma.user.findUnique({
+        const l1Referrer = await this.prisma.user.findUnique({
           where: { id: passenger.referredById },
-          select: { id: true, role: true },
+          select: {
+            id: true,
+            role: true,
+            driverProfile: { select: { id: true } },
+          },
         });
 
-        // Passenger cannot benefit from driver earnings, but benefits from passenger spend
-        if (l1PaxReferrer && l1PaxReferrer.role === 'PASSENGER') {
-          const isPaxQualified = await this.checkUserQualification(
-            l1PaxReferrer.id,
-            null,
+        if (l1Referrer) {
+          const l1DriverProfileId = l1Referrer.driverProfile?.id || null;
+          const isL1Qualified = await this.checkUserQualification(
+            l1Referrer.id,
+            l1DriverProfileId,
             config.qualifiers.requiredBadgeCode,
           );
 
-          if (isPaxQualified) {
+          if (isL1Qualified) {
             const paxL1Gross = baseFare * (config.passengerProgram.l1Percentage / 100);
             const paxL1Actual = Math.min(paxL1Gross, remainingPool);
 
@@ -689,8 +705,8 @@ export class ReferralService {
               totalReferralDeduction += paxL1Actual;
 
               ledgerEntriesToCreate.push({
-                userId: l1PaxReferrer.id,
-                driverProfileId: null,
+                userId: l1Referrer.id,
+                driverProfileId: l1DriverProfileId,
                 sourceUserId: passengerId,
                 sourceDriverProfileId: null,
                 relatedTripId: tripId,
@@ -704,22 +720,27 @@ export class ReferralService {
             }
           }
 
-          // Level 2 Passenger Referrer
+          // Level 2 Referrer (Upline of L1)
           const l1User = await this.prisma.user.findUnique({
-            where: { id: l1PaxReferrer.id },
+            where: { id: l1Referrer.id },
             select: { referredById: true },
           });
 
           if (l1User?.referredById && remainingPool > 0) {
-            const l2PaxReferrer = await this.prisma.user.findUnique({
+            const l2Referrer = await this.prisma.user.findUnique({
               where: { id: l1User.referredById },
-              select: { id: true, role: true },
+              select: {
+                id: true,
+                role: true,
+                driverProfile: { select: { id: true } },
+              },
             });
 
-            if (l2PaxReferrer && l2PaxReferrer.role === 'PASSENGER') {
+            if (l2Referrer) {
+              const l2DriverProfileId = l2Referrer.driverProfile?.id || null;
               const isL2Qualified = await this.checkUserQualification(
-                l2PaxReferrer.id,
-                null,
+                l2Referrer.id,
+                l2DriverProfileId,
                 config.qualifiers.requiredBadgeCode,
               );
 
@@ -732,8 +753,8 @@ export class ReferralService {
                   totalReferralDeduction += paxL2Actual;
 
                   ledgerEntriesToCreate.push({
-                    userId: l2PaxReferrer.id,
-                    driverProfileId: null,
+                    userId: l2Referrer.id,
+                    driverProfileId: l2DriverProfileId,
                     sourceUserId: passengerId,
                     sourceDriverProfileId: null,
                     relatedTripId: tripId,

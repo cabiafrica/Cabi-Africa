@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { AiDocumentVerificationService } from './ai-document-verification.service';
+import { FastRegistryVerificationService } from './fast-registry-verification.service';
 import { VerificationNotificationService } from './verification-notification.service';
 import {
   VerificationAuditService,
@@ -22,6 +23,7 @@ export class DocumentVerificationService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly aiService: AiDocumentVerificationService,
+    private readonly fastRegistryService: FastRegistryVerificationService,
     private readonly notificationService: VerificationNotificationService,
     private readonly auditService: VerificationAuditService,
   ) {
@@ -46,15 +48,65 @@ export class DocumentVerificationService {
   ): Promise<any> {
     try {
       this.logger.log(
-        `Processing AI document upload for user ${userId}, type: ${documentType}`,
+        `Processing fast AI document upload for user ${userId}, type: ${documentType}`,
       );
 
-      // 1. Analyze with AI
-      const analysis = await this.aiService.analyzeDocument(
+      // 1. Try Fast-Path Automated Registry & Security Verification (< 3 seconds)
+      const fastResult = await this.fastRegistryService.verifyDocumentFastPath(
+        userId,
+        documentType,
         file.buffer,
-        documentType as any,
+        file.originalname,
       );
-      this.logger.debug(`AI Analysis Result: ${JSON.stringify(analysis)}`);
+
+      let analysis: any;
+      let status: VerificationStatus;
+      let rejectionReason: string | null = null;
+
+      if (fastResult.isAutoApproved) {
+        status = VerificationStatus.VERIFIED;
+        analysis = {
+          isValid: true,
+          confidence: fastResult.confidence,
+          extractedFields: fastResult.extractedData,
+          processingTimeMs: fastResult.processingTimeMs,
+          verificationSource: fastResult.extractedData.verificationSource,
+        };
+        this.logger.log(
+          `[FAST-PATH APPROVED] Document ${documentType} for user ${userId} auto-approved in ${fastResult.processingTimeMs}ms`,
+        );
+      } else if (fastResult.status === VerificationStatus.FAILED) {
+        status = VerificationStatus.FAILED;
+        rejectionReason = fastResult.rejectionReason || 'Document validation failed';
+        analysis = {
+          isValid: false,
+          confidence: fastResult.confidence,
+          extractedFields: fastResult.extractedData,
+          processingTimeMs: fastResult.processingTimeMs,
+        };
+      } else {
+        // Fallback: deep multi-language OCR analysis
+        analysis = await this.aiService.analyzeDocument(
+          file.buffer,
+          documentType as any,
+        );
+        this.logger.debug(`Fallback AI Analysis Result: ${JSON.stringify(analysis)}`);
+
+        if (analysis.expiryStatus === 'EXPIRED') {
+          status = VerificationStatus.FAILED;
+          rejectionReason = 'Document is expired';
+        } else if (analysis.confidence < 0.7) {
+          status = VerificationStatus.FAILED;
+          rejectionReason =
+            analysis.validationErrors.length > 0
+              ? analysis.validationErrors.join(', ')
+              : 'Document image quality is too low';
+        } else if (analysis.confidence >= 0.9 && analysis.isValid) {
+          status = VerificationStatus.VERIFIED;
+        } else {
+          status = VerificationStatus.PENDING;
+        }
+      }
 
       // 2. Save file to disk with strict path sanitization
       const extMap: Record<string, string> = {
@@ -74,26 +126,7 @@ export class DocumentVerificationService {
       }
       await fs.writeFile(filePath, file.buffer);
 
-      // 3. Determine initial status based on AI result
-      let status: VerificationStatus = VerificationStatus.PENDING;
-      let rejectionReason: string | null = null;
-
-      if (analysis.expiryStatus === 'EXPIRED') {
-        status = VerificationStatus.FAILED;
-        rejectionReason = 'Document is expired';
-      } else if (analysis.confidence < 0.7) {
-        status = VerificationStatus.FAILED;
-        rejectionReason =
-          analysis.validationErrors.length > 0
-            ? analysis.validationErrors.join(', ')
-            : 'Document image quality is too low';
-      } else if (analysis.confidence >= 0.9 && analysis.isValid) {
-        status = VerificationStatus.VERIFIED;
-      } else {
-        status = VerificationStatus.PENDING;
-      }
-
-      // 4. Create/Update DocumentVerification in DB
+      // 3. Create/Update DocumentVerification in DB
       const verification = await this.prisma.documentVerification.create({
         data: {
           userId,

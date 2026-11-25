@@ -4,6 +4,8 @@ export type DisputeReason =
   | 'UNAUTHORIZED_WAIT_TIME'
   | 'FARE_DISCREPANCY'
   | 'DRIVER_BEHAVIOR'
+  | 'VEHICLE_SOILING'
+  | 'FARE_EVASION_REVERSAL'
   | 'OTHER';
 
 export type DisputeStatus =

@@ -47,7 +47,7 @@ interface PassengerVerificationConfig {
   requireAdminApproval: boolean;
 }
 
-@Controller('api/v1/verification/passenger')
+@Controller('v1/verification/passenger')
 export class PassengerVerificationController {
   private readonly logger = new Logger(PassengerVerificationController.name);
 

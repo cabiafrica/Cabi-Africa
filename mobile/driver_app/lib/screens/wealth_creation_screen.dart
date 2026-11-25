@@ -1389,8 +1389,8 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
 
   Widget _buildTripDeductionExplainer(double totalPct) {
     const exampleGross = 600.0;
-    const examplePlatformFee = exampleGross * 0.20; // KES 120
-    const exampleNetPayout = exampleGross * 0.80; // KES 480
+    const examplePlatformFee = exampleGross * 0.18; // KES 108
+    const exampleNetPayout = exampleGross * 0.82; // KES 492
     final exampleLegacyAllocation = exampleNetPayout * totalPct;
     final exampleFinalCash = exampleNetPayout - exampleLegacyAllocation;
 
@@ -1421,13 +1421,13 @@ class _WealthCreationScreenState extends ConsumerState<WealthCreationScreen> {
           ),
           const SizedBox(height: 10),
           Text(
-            'For every completed trip, Cabi deducts your chosen legacy allocations directly from your 80% net payout. You build long-term generational wealth without manual deposits.',
+            'For every completed trip, Cabi deducts your chosen legacy allocations directly from your 82% net payout. You build long-term generational wealth without manual deposits.',
             style: GoogleFonts.inter(fontSize: 11.5, color: Colors.white70, height: 1.4),
           ),
           const SizedBox(height: 10),
           _buildReceiptRow('Example Gross Trip Fare:', 'KES ${exampleGross.toStringAsFixed(0)}'),
-          _buildReceiptRow('Cabi Platform Commission (20%):', '- KES ${examplePlatformFee.toStringAsFixed(0)}'),
-          _buildReceiptRow('Driver Net Payout (80%):', 'KES ${exampleNetPayout.toStringAsFixed(0)}', isBold: true),
+          _buildReceiptRow('Cabi Platform Commission (18%):', '- KES ${examplePlatformFee.toStringAsFixed(0)}'),
+          _buildReceiptRow('Driver Net Payout (82%):', 'KES ${exampleNetPayout.toStringAsFixed(0)}', isBold: true),
           _buildReceiptRow(
             'Cabi Legacy (${(totalPct * 100).toStringAsFixed(1)}% total):',
             '- KES ${exampleLegacyAllocation.toStringAsFixed(2)}',

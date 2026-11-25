@@ -19,6 +19,12 @@ api.cabi.africa {
         reverse_proxy dispatch-service:3334
     }
 
+    # Verification Service (KYD / Document Verification)
+    @verification_routes path /api/v1/verification*
+    handle @verification_routes {
+        reverse_proxy verification-service:3003
+    }
+
     # Dispatch & Real-Time Microservice Routes
     @dispatch_routes path /api/safety* /api/dispatch* /api/rides* /api/wealth* /api/corporate* /api/lost-and-found* /api/disputes* /api/welfare* /api/pricing* /api/badges* /api/commissions*
     handle @dispatch_routes {
@@ -51,6 +57,12 @@ dispatch.cabi.africa {
         X-Content-Type-Options "nosniff"
         X-Frame-Options "SAMEORIGIN"
         Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    # Verification Service (KYD / Document Verification)
+    @verification_routes path /api/v1/verification*
+    handle @verification_routes {
+        reverse_proxy verification-service:3003
     }
 
     # Dispatch & Real-Time Microservice Routes
@@ -94,10 +106,22 @@ dispatch.cabi.africa {
         reverse_proxy dispatch-service:3334
     }
 
+    # Verification Service (KYD / Document Verification)
+    @verification_routes path /api/v1/verification*
+    handle @verification_routes {
+        reverse_proxy verification-service:3003
+    }
+
     # Dispatch & Real-Time Microservice Routes
     @dispatch_routes_root path /api/safety* /api/dispatch* /api/rides* /api/wealth* /api/corporate* /api/lost-and-found* /api/disputes* /api/welfare* /api/pricing* /api/badges* /api/commissions*
     handle @dispatch_routes_root {
         reverse_proxy dispatch-service:3334
+    }
+
+    # User Portal Next.js Internal API endpoints (Places Autocomplete, Contact, etc.)
+    @user_portal_api path /api/places* /api/contact* /api/appointments* /api/driver-leads* /api/driver-org* /api/concierge*
+    handle @user_portal_api {
+        reverse_proxy user-portal:8080
     }
 
     # Backend API endpoints

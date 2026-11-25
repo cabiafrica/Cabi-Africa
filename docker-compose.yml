@@ -49,6 +49,10 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       REDIS_URL: ${REDIS_URL}
       PORT: 3003
+      SMILE_ID_PARTNER_ID: ${SMILE_ID_PARTNER_ID:-}
+      SMILE_ID_API_KEY: ${SMILE_ID_API_KEY:-}
+      SMILE_ID_BASE_URL: ${SMILE_ID_BASE_URL:-https://api.smileidentity.com/v1}
+      ALLOW_KYC_SANDBOX: ${ALLOW_KYC_SANDBOX:-false}
     depends_on:
       postgres:
         condition: service_healthy

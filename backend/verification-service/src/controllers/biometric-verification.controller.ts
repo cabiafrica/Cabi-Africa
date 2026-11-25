@@ -21,7 +21,7 @@ import {
   BiometricVerificationResponseDto,
 } from '../dto/biometric-verification.dto';
 
-@Controller('api/v1/verification/biometric')
+@Controller('v1/verification/biometric')
 export class BiometricVerificationController {
   private readonly logger = new Logger(BiometricVerificationController.name);
 
