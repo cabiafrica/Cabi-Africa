@@ -34,6 +34,22 @@
     *   **Driver Onboarding**: Direct support link on driver registration completion (`/drivers/register/success`).
     *   **Central Contact Configuration**: [contactConfig.ts](web/user_portal/src/config/contactConfig.ts).
 
+### **Production Edge Droplet (DigitalOcean - London LON1)**
+*   **Host IP**: `104.248.168.68` (Droplet ID: `620693036`)
+*   **Proxy & Ingress**: Caddy Web Server with automatic TLS, OWASP headers (HSTS 1-year preload, X-Frame-Options DENY, X-Content-Type-Options nosniff, `-Server`, 10MB payload cap)
+*   **Compliance Routes**:
+    *   Privacy Policy: `https://www.cabi.africa/privacy` (HTTP/2 200 OK)
+    *   Account Deletion: `https://www.cabi.africa/delete-account` (HTTP/2 200 OK)
+    *   Health Check: `https://www.cabi.africa/health` (HTTP/2 200 OK)
+*   **Network & Database Hardening**:
+    *   PostgreSQL (`5432`) & Redis (`6379`) isolated strictly to Docker internal network (`cabi_network`); `0.0.0.0` host binding completely removed.
+    *   `fail2ban` active on `sshd` jail.
+    *   UFW rate limiting active (`ufw limit 22/tcp`).
+*   **Automated Database Backups**:
+    *   Script: `/opt/cabi-africa/backup-db.sh`
+    *   Destination: `/var/backups/cabi-postgres/`
+    *   Schedule: Daily at 02:00 AM UTC via cron, with 7-day automated retention rotation.
+
 ### **CORS Policy**
 *   **Allowed Origins**: `*.cabi.africa`, `*.cabi-africa.com`, `*.run.app`.
 *   **Security**: WebSocket gateways are locked down to production domains in `NODE_ENV=production`.
@@ -56,13 +72,25 @@
 
 ## 📱 Mobile Applications
 
+### **Developer & Corporate Registration**
+*   **Legal Corporate Entity**: `CABI FAST AFRICA LIMITED`
+*   **Dun & Bradstreet (D-U-N-S)**: `369977841`
+*   **Google Play Developer Account**: `Cabi Africa` (Account ID: `5629884656101342191`, `ke.africabi@gmail.com`)
+*   **Internal Testing Tester List**: `Cabi Internal Testers` (`ke.africabi@gmail.com`)
+
 ### **Driver App (`africa.cabi.driver`)**
+*   **Google Play App ID**: `4975500425821662088`
+*   **Active Release**: `1.2.0 (5)`
+*   **Google Play Internal Testing Link**: [https://play.google.com/apps/internaltest/4701264692996746126](https://play.google.com/apps/internaltest/4701264692996746126)
 *   **Base API URL**: `https://www.cabi.africa/api` (with automatic Cloud Run proxy + Supabase Prisma fallback)
 *   **Android Direct APK (Verified 48.47 MB)**: `https://www.cabi.africa/downloads/Cabi-Drive-Official.apk`
 *   **iOS / iPhone PWA**: `https://www.cabi.africa/apps/driver/index.html` (Safari → Share → Add to Home Screen)
 *   **Sockets**: Use `wss://` for secure production WebSocket communication.
 
 ### **Passenger App (`africa.cabi.passenger`)**
+*   **Google Play App ID**: `4975837026656133898`
+*   **Active Release**: `1.2.0 (6)`
+*   **Google Play Internal Testing Link**: [https://play.google.com/apps/internaltest/4699590138026876820](https://play.google.com/apps/internaltest/4699590138026876820)
 *   **Base API URL**: `https://www.cabi.africa/api` (with automatic Cloud Run proxy + Supabase Prisma fallback)
 *   **Android Direct APK (Verified 56.76 MB)**: `https://www.cabi.africa/downloads/Cabi-Go-Official.apk`
 *   **iOS / iPhone PWA**: `https://www.cabi.africa/apps/passenger/index.html` (Safari → Share → Add to Home Screen)
